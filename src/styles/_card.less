@@ -1,0 +1,40 @@
+.card {
+  text-decoration: none;
+  color: initial;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+
+  &.shop {
+    flex: 1 0 25%;
+    cursor: pointer;
+
+    .image {
+      height: 200px;
+      width: 200px;
+      border-radius: 1rem;
+    }
+
+    .text-container {
+      text-align: left;
+
+      .title {
+        font-weight: bold;
+      }
+
+      .price {
+        color: grey;
+      }
+    }
+  }
+
+  &.nft {
+    flex: 1 0 25%;
+    cursor: pointer;
+
+    .image {
+      max-width: 50%;
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "language": "en",
+  "words": [
+    "Avenir",
+    "NFTMOVER",
+    "vuex"
+  ],
+  "ignorePaths": [
+    "src/i18n/messages/**.ts",
+    "node_modules/**"
+  ]
+}

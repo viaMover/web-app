@@ -1,0 +1,51 @@
+@import "_button.less";
+@import "_card.less";
+@import "_sections.less";
+@import "_input.less";
+@import "_transactions.less";
+
+* {
+  box-sizing: border-box;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+
+.content-wrapper {
+  margin: auto;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  max-width: 1920px;
+
+  .left.rail {
+    flex: 1 0 30%;
+    max-width: 30%;
+  }
+
+  .main {
+    flex: 2 0 70%;
+    min-width: 70%;
+  }
+
+  .columns {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+
+    .column.one.of.two {
+      flex-grow: 1;
+      width: 50%;
+      flex-shrink: 0;
+      margin-right: 0.5rem;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}

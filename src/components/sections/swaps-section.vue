@@ -1,0 +1,26 @@
+<template>
+  <heading-section
+    has-expand-button
+    :name="$t('lblSwaps')"
+    navigate-to-name="swaps"
+  >
+    <template v-slot:heading>
+      {{ $t('lblSwaps') }}
+    </template>
+
+    {{ $t('lblSwapsSubheading') }}
+  </heading-section>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+
+import HeadingSection from './heading-section.vue';
+
+export default Vue.extend({
+  name: 'SwapsSection',
+  components: {
+    HeadingSection
+  }
+});
+</script>
