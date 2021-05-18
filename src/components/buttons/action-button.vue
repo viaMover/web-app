@@ -1,10 +1,5 @@
 <template>
-  <div
-    v-if="text"
-    class="button"
-    :class="[buttonClass]"
-    @click.prevent.stop="handleClick"
-  >
+  <div class="button" :class="[buttonClass]" @click.prevent.stop="handleClick">
     <template v-if="text">
       {{ text }}
     </template>
