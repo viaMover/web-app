@@ -26,7 +26,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/swaps',
     name: 'swaps',
-    component: () => import(/* webpackChunkName: "swaps" */ '@/views/home.vue')
+    component: () => import(/* webpackChunkName: "swaps" */ '@/views/swaps.vue')
   },
   {
     path: '/savings',
