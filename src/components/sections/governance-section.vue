@@ -17,13 +17,14 @@
         <h5>Governance Analysis Period</h5>
         <sub>Voting is open</sub>
       </div>
-      <action-button button-class="button-primary" :text="$t('btnVote')" />
+      <action-button button-class="button-primary">{{
+        $t('btnVote')
+      }}</action-button>
     </div>
     <div class="button-container">
-      <action-button
-        button-class="button-secondary w-100"
-        :text="$t('btnSeeAll')"
-      />
+      <action-button button-class="button-secondary w-100">
+        {{ $t('btnSeeAll') }}
+      </action-button>
     </div>
   </heading-section>
 </template>
@@ -32,7 +33,7 @@
 import Vue from 'vue';
 
 import HeadingSection from './heading-section.vue';
-import ActionButton from '../action-button.vue';
+import ActionButton from '../buttons/action-button.vue';
 
 export default Vue.extend({
   name: 'GovernanceSection',
