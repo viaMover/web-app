@@ -160,6 +160,7 @@ export default {
     simple: '@:btnClaim.simple & @:btnExchange.simple',
     emoji: '🦍 @:btnClaimAndExchange.simple'
   },
+  btnSwap: 'Swap',
   /* Buttons end */
 
   /* NFTs */
@@ -175,6 +176,27 @@ export default {
         'This NFT is dropped for all participants in our Twitter promo. ' +
         'The Unexpected Move NFT can be exchanged for 1 MOVE token, but only once.'
     }
-  }
+  },
   /* NFTs end */
+
+  /* other pages start */
+  swapsPage: {
+    lblSwapPrefix: 'Swap',
+    lblSwapFrom: '@:swapsPage.lblSwapPrefix from',
+    lblSwapTo: '@:swapsPage.lblSwapPrefix to',
+    lblChooseAsset: 'Choose asset',
+    asset: {
+      prefix: 'input',
+      txtAlt: '{name} icon',
+      txtFallbackAlt: '{fieldRole} asset icon',
+      lblSelectMax: 'MAX {amount} {name}'
+    },
+    lblMinimumReceived: 'Minimum received',
+    lblRate: 'Rate',
+    lblEstimatedNetworkFee: 'Estimated network fee',
+    lblSmartTreasuryCover: 'Smart Treasury coven',
+    lblSlippage: 'Slippage',
+    lblGasSettings: 'Gas Settings'
+  }
+  /* other pages end */
 };
