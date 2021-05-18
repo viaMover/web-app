@@ -11,9 +11,13 @@ export default {
   lblGovernance: 'Governance',
   lblNibbleShop: 'Nibble Shop',
   lblNFTDrops: 'NFT Drops',
-  lblSelectWallet: 'Select your wallet',
+  lblConnectWallet: 'Connect a wallet',
   lblWallet: 'Wallet',
   /* Home screen labels end */
+
+  /* Transaction history labels */
+  lblConnectWalletTransactionHistory: '@:lblConnectWallet to see history',
+  /* Transaction history labels end*/
 
   /* Release Radar section labels */
   lblReleaseRadarNewTokensToday: '{amount} new tokens today',

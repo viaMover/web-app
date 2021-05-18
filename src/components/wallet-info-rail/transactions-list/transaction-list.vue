@@ -1,7 +1,11 @@
 <template>
   <div class="transactions-list">
+    <div v-if="!transactionGroups.length" class="transactions-list_empty-state">
+      {{ $t('lblConnectWalletTransactionHistory') }}
+    </div>
     <transaction-group
       v-for="txGroup in transactionGroups"
+      v-else
       :key="txGroup.date"
       :heading-text="formatDate(txGroup.timeStamp)"
       :transactions="txGroup.transactions"
