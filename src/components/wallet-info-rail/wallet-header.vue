@@ -4,7 +4,6 @@
       <label for="wallet_address">{{ $t('lblWallet') }}</label>
       <select
         id="wallet_address"
-        name="wallet address"
         :value="currentAddress"
         @change="handleAddressChanged"
       >
