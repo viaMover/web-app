@@ -2,7 +2,7 @@
   <heading-section
     has-expand-button
     :name="$t('lblSavings')"
-    navigate-to-name="savings"
+    navigate-to-name="savings-manage"
   >
     <template v-slot:heading>
       {{ $t('lblSavingsHeader', { amount: totalAmountInSavings }) }}
