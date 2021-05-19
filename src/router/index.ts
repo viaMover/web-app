@@ -30,9 +30,44 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/savings',
-    name: 'savings',
     component: () =>
-      import(/* webpackChunkName: "savings" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
+      ),
+    children: [
+      {
+        path: 'month-statistics',
+        name: 'savings-month-stats',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
+          )
+      },
+      {
+        path: 'deposit',
+        name: 'savings-deposit',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit.vue'
+          )
+      },
+      {
+        path: 'withdraw',
+        name: 'savings-withdraw',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'savings-manage',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage.vue'
+          )
+      }
+    ]
   },
   {
     path: '/treasury',
@@ -69,6 +104,12 @@ const routes: Array<RouteConfig> = [
     name: 'nft-asset-exact-page',
     component: () =>
       import(/* webpackChunkName: "nft-asset-page" */ '@/views/home.vue')
+  },
+  {
+    path: '/transactions/:txHash',
+    name: 'transaction',
+    component: () =>
+      import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
   }
 ];
 
