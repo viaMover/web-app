@@ -160,6 +160,9 @@ export default {
     simple: '@:btnClaim.simple & @:btnExchange.simple',
     emoji: '🦍 @:btnClaimAndExchange.simple'
   },
+  btnView: {
+    simple: 'View'
+  },
   btnSwap: 'Swap',
   /* Buttons end */
 
@@ -180,23 +183,94 @@ export default {
   /* NFTs end */
 
   /* other pages start */
+  asset: {
+    txtAlt: '{name} icon',
+    txtFallbackAlt: '{fieldRole} asset icon',
+    lblSelectMax: 'MAX {amount} {name}'
+  },
   swapsPage: {
     lblSwapPrefix: 'Swap',
     lblSwapFrom: '@:swapsPage.lblSwapPrefix from',
     lblSwapTo: '@:swapsPage.lblSwapPrefix to',
     lblChooseAsset: 'Choose asset',
-    asset: {
-      prefix: 'input',
-      txtAlt: '{name} icon',
-      txtFallbackAlt: '{fieldRole} asset icon',
-      lblSelectMax: 'MAX {amount} {name}'
-    },
     lblMinimumReceived: 'Minimum received',
     lblRate: 'Rate',
     lblEstimatedNetworkFee: 'Estimated network fee',
     lblSmartTreasuryCover: 'Smart Treasury coven',
     lblSlippage: 'Slippage',
     lblGasSettings: 'Gas Settings'
+  },
+  savingsPage: {
+    lblSavingsPrefix: 'Savings',
+    lblManageSavings: 'Manage @:savingsPage.lblSavingsPrefix',
+    lblSavingsOverview: '@:savingsPage.lblSavingsPrefix overview',
+    lblDepositedAssets: 'Deposited assets',
+    lblCurrentVariableAPY: 'Current variable APY',
+    lbl30DayAverageAPY: '30-day average APY',
+    lblTotalAssetsUnderManagement: 'Total assets under management',
+    lblSavingsStats: '@:savingsPage.lblSavingsPrefix Stats',
+    lblSavingsEarnedToday: 'Earned today',
+    lblEarnedThisMonth: 'Earned this month',
+    lblEarnedInTotal: 'Earned in total',
+    lblSavingsEstimation: '@:savingsPage.lblSavingsPrefix Estimation',
+    lblEstimatedEarningsTomorrow: 'Est. earnings tomorrow',
+    lblEstimatedEarningsNextMonth: 'Est. earnings next month',
+    lblEstimatedEarningsAnnually: 'Est. earnings annually',
+    btnDeposit: {
+      simple: 'Deposit in @:savingsPage.lblSavingsPrefix',
+      emoji: '💰 @:savingsPage.btnDeposit.simple'
+    },
+    btnWithdraw: {
+      simple: 'Withdraw from @:savingsPage.lblSavingsPrefix',
+      emoji: '🚪 @:savingsPage.btnWithdraw.simple'
+    },
+    lblEarnedRelativeMonthlyChange: '{amount} earned this month',
+    lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
+    lblInProgress: 'In progress',
+    statement: {
+      lblMonthStatisticFallback: 'Month statistic',
+      lblBalance: '{month} balance',
+      lblDeposits: '{month} deposits',
+      lblWithdrawals: '{month} withdrawals',
+      lblSavedFees: 'Saved fees',
+      lblPayoutsToTreasury: 'Payouts to @:lblTreasury'
+    },
+    deposit: {
+      lblDepositInSavings: 'Deposit in @:savingsPage.lblSavingsPrefix',
+      txtDepositDescription:
+        'Once you deposit your assets in savings, Mover is ' +
+        'constantly searching for the highest paying option using multiple DeFi protocols. ' +
+        'Mover does automatic rebalancing, yield collection, and capital optimization.',
+      txtAssetWillBeConverted: {
+        part1: 'Your asset will be automatically convered to ',
+        part2: 'USDC at the market rate at the time of the deposit transaction.'
+      },
+      lblWhatToDeposit: 'What to deposit',
+      btnDeposit: 'Deposit',
+      lblYieldEstimation: 'Yield estimation',
+      txtYieldEstimation:
+        'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
+    },
+    withdraw: {
+      lblWithdrawFromSavings: 'Withdraw from @:savingsPage.lblSavingsPrefix',
+      txtWithdrawDescription:
+        'You can withdraw the entire or partial balance. ' +
+        'Available balance consists of principal amount you deposited together with the accumulated yield.',
+      lblWhatToWithdraw: 'What to withdraw',
+      btnWithdraw: 'Withdraw',
+      lblWhatAboutTheYield: 'What about the yield?',
+      txtWhatAboutTheYield:
+        'Estimated lost annual yield based on your withdrawal amount is {amount} at the current rate of {apy}% APY.'
+    },
+    btnEnterAmount: 'Enter amount'
+  },
+  transactionPage: {
+    lblState: {
+      prefix: 'Your transaction',
+      pending: '@:transactionPage.lblState.prefix is processing',
+      processed: '@:transactionPage.lblState.prefix was processed!',
+      failed: 'Something went wrong. @:transactionPage.lblState.prefix failed'
+    }
   }
   /* other pages end */
 };

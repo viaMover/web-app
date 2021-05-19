@@ -76,10 +76,10 @@ export default Vue.extend({
     iconAlt(): string {
       return (
         this.asset == null
-          ? this.$t('swapsPage.asset.txtFallbackAlt', {
+          ? this.$t('asset.txtFallbackAlt', {
               fieldRole: this.fieldRole
             })
-          : this.$t('swapsPage.asset.txtAlt', {
+          : this.$t('asset.txtAlt', {
               name: this.asset.name
             })
       ) as string;
@@ -88,7 +88,7 @@ export default Vue.extend({
       return (
         this.asset == null
           ? ''
-          : this.$t('swapsPage.asset.lblSelectMax', {
+          : this.$t('asset.lblSelectMax', {
               name: this.asset.name,
               amount: this.asset.amount
             })
