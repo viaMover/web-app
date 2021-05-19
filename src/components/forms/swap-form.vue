@@ -47,9 +47,12 @@
         <span class="value">{{ info.gasSettings }}</span>
       </div>
     </div>
-    <action-button :button-class="buttonClass" @button-click="executeSwap">{{
-      $t('btnSwap')
-    }}</action-button>
+    <action-button
+      :button-class="buttonClass"
+      @button-click="handleExecuteSwap"
+    >
+      {{ $t('btnSwap') }}
+    </action-button>
   </form>
 </template>
 
@@ -98,7 +101,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    executeSwap(): void {
+    handleExecuteSwap(): void {
       //
     },
     handleUpdateInputAmount(amount: number): void {
