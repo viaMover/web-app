@@ -37,7 +37,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleClose(): string {
+    handleClose(): void {
       this.$router.replace({ name: 'home' });
     }
   }
