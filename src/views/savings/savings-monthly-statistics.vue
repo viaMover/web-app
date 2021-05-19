@@ -28,7 +28,9 @@ export default Vue.extend({
 
         return dayjs.unix(tsFrom).format('MMMM YYYY');
       } catch {
-        return this.$t('swapsPage.statement.lblMonthStatisticFallback');
+        return this.$t(
+          'swapsPage.statement.lblMonthStatisticFallback'
+        ) as string;
       }
     }
   }
