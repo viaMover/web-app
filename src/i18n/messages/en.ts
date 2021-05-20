@@ -8,6 +8,7 @@ export default {
   lblSavings: 'Savings',
   lblTreasuryBonuses: 'Treasury Bonuses',
   lblTreasury: 'Treasury',
+  lblSmartTreasury: 'Smart Treasury',
   lblGovernance: 'Governance',
   lblNibbleShop: 'Nibble Shop',
   lblNFTDrops: 'NFT Drops',
@@ -226,6 +227,8 @@ export default {
     },
     lblEarnedRelativeMonthlyChange: '{amount} earned this month',
     lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
+    lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
+      '{amount} earned in {date}',
     lblInProgress: 'In progress',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
@@ -263,6 +266,92 @@ export default {
         'Estimated lost annual yield based on your withdrawal amount is {amount} at the current rate of {apy}% APY.'
     },
     btnEnterAmount: 'Enter amount'
+  },
+  treasuryPage: {
+    lblTreasuryPrefix: 'Treasury',
+    lblManageTreasury: 'Manage @:treasuryPage.lblTreasuryPrefix',
+    lblTreasuryOverview: '@:treasuryPage.lblTreasuryPrefix Overview',
+    lblReservedAssetsValue: 'Reserved assets value',
+    lblCurrentBoost: 'Current boost',
+    lblMaximumBoost: 'Maximum boost',
+    lblSmartTreasurySize: 'Smart Treasury Size',
+    lblTreasuryStats: '@:treasuryPage.lblTreasuryPrefix Stats',
+    lblEarnedToday: 'Earned today',
+    lblEarnedThisMonth: 'Earned this month',
+    lblEarnedInTotal: 'Earned in total',
+    lblSpentToday: 'Spent today',
+    lblSpentThisMonth: 'Spent this month',
+    lblSpentInTotal: 'Spent in total',
+    lblReservedAssets: 'Reserved Assets',
+    btnDeposit: {
+      simple: 'Increase Boost',
+      emoji: '📈 @:treasuryPage.btnDeposit.simple'
+    },
+    btnWithdraw: {
+      simple: 'Decrease Boost',
+      emoji: '📉 @:treasuryPage.btnWithdraw.simple'
+    },
+    btnClaimAndBurn: {
+      simple: 'Claim & Burn',
+      emoji: '🔥 @:treasuryPage.btnClaimAndBurn.simple'
+    },
+    lblEarnedRelativeMonthlyChange:
+      '{amount} bonuses from @:treasuryPage.lblTreasuryPrefix this month',
+    lblEarnedRelativeMonthlyChangeExtended:
+      '{amount} bonuses from @:treasuryPage.lblTreasuryPrefix on {date}',
+    lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
+      '{amount} bonuses from @:treasuryPage.lblTreasuryPrefix in {month}',
+    lblInProgress: 'In progress',
+    statement: {
+      lblMonthStatisticFallback: 'Month statistic',
+      lblBalance: '{month} balance',
+      lblRewardsUsed: 'Rewards used',
+      lblReservedAssets: 'Reserved assets',
+      lblRemovedAssets: 'Removed assets',
+      lblAverageBoost: 'Average boost'
+    },
+    increaseBoost: {
+      lblIncreaseBoost: 'Increase boost',
+      txtIncreaseBoostDescription: {
+        part1: 'There are two boost options. Reserving ',
+        part2:
+          ' MOVE tokens will increase (1x) your rewards share based on the ' +
+          'total amount of the tokens you have reserved. Reserving ',
+        part3:
+          ' MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share ' +
+          'based on the total amount of LP tokens you have reserved.'
+      },
+      lblWhatToReserve: 'What to reserve',
+      btnIncreaseBoost: 'Increase Boost',
+      lblEstimatedBoost: 'Estimated boost',
+      txtEstimatedBoost:
+        'Estimated new Treasury boost is {estimatedAmount}x. ' +
+        'As a reminder, your current boost rate is {currentAmount}x.'
+    },
+    decreaseBoost: {
+      lblDecreaseBoost: 'Decrease Boost',
+      txtDecreaseBoostDescription:
+        'Decrease the boost, will return your reserved assets, ' +
+        'but will also decrease your Treasury share.',
+      lblWhatToReturn: 'What to return',
+      btnDecreaseBoost: 'Decrease Boost',
+      lblWhatAboutTheBoost: 'What about the boost?',
+      txtWhatAboutTheBoost:
+        'Estimated new Treasury boost is {estimatedAmount}x. ' +
+        'As a reminder, your current boost rate is {currentAmount}x.'
+    },
+    claimAndBurn: {
+      lblClaimAndBurn: 'Claim & Burn',
+      txtClaimAndBurnDescription:
+        'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
+        'portion of the Smart Treasury. You will burn your MOVE tokens, ' +
+        'and receive four times (4x) of your treasury share in a one-time payout.',
+      lblWhatToBurn: 'What to burn',
+      btnClaimAndBurn: 'Claim & Burn',
+      lblThePayout: 'The payout',
+      txtThePayout:
+        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.'
+    }
   },
   transactionPage: {
     lblState: {
