@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import ContentWrapper from '@/components/layout/content-wrapper.vue';
+import { ContentWrapper } from '@/components/layout';
 
 // probably enum will suit us better :?
 type TransactionStatus = 'pending' | 'processed' | 'failed';

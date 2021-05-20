@@ -1,5 +1,5 @@
 <template>
-  <div class="savings-overview">
+  <div class="overview savings-overview">
     <h4>{{ $t('savingsPage.lblSavingsEstimation') }}</h4>
     <div class="info info-bordered">
       <div class="item">

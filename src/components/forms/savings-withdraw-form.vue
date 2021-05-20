@@ -25,7 +25,7 @@
     </div>
     <action-button
       :button-class="buttonClass"
-      @button-click="handleExecuteDeposit"
+      @button-click="handleExecuteWithdraw"
     >
       {{ $t('savingsPage.withdraw.btnWithdraw') }}
     </action-button>
@@ -35,8 +35,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import AssetField from '@/components/controls/asset-field.vue';
-import ActionButton from '@/components/buttons/action-button.vue';
+import { AssetField } from '@/components/controls';
+import { ActionButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'SavingsWithdrawForm',
@@ -67,7 +67,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleExecuteDeposit(): void {
+    handleExecuteWithdraw(): void {
       //
     },
     handleUpdateInputAmount(amount: number): void {

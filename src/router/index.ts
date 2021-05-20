@@ -71,9 +71,52 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/treasury',
-    name: 'treasury',
     component: () =>
-      import(/* webpackChunkName: "treasury" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
+      ),
+    children: [
+      {
+        path: 'month-statistics',
+        name: 'treasury-month-stats',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
+          )
+      },
+      {
+        path: 'increase-boost',
+        name: 'treasury-deposit',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-boost.vue'
+          )
+      },
+      {
+        path: 'decrease-boost',
+        name: 'treasury-decrease-boost',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-boost.vue'
+          )
+      },
+      {
+        path: 'claim-and-burn',
+        name: 'treasury-claim-and-burn',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'treasury-manage',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage.vue'
+          )
+      }
+    ]
   },
   {
     path: '/governance',

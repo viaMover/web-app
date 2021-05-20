@@ -12,7 +12,7 @@ import Vue from 'vue';
 import dayjs from 'dayjs';
 
 export default Vue.extend({
-  name: 'SavingsMonthlyChart',
+  name: 'TreasuryMonthlyChart',
   data() {
     return {
       selectedDay: null as number | null,
@@ -46,7 +46,7 @@ export default Vue.extend({
     relativeChangeText(): string {
       if (this.selectedDay === null) {
         return this.$t(
-          'savingsPage.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
+          'treasuryPage.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
           {
             amount: this.earnedRelativeMonthlyChange,
             month: this.monthName
@@ -64,7 +64,7 @@ export default Vue.extend({
 
       if (selectedDayChange === undefined) {
         return this.$t(
-          'savingsPage.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
+          'treasuryPage.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
           {
             amount: this.earnedRelativeMonthlyChange,
             month: this.monthName
@@ -72,7 +72,7 @@ export default Vue.extend({
         ) as string;
       }
 
-      return this.$t('savingsPage.lblEarnedRelativeMonthlyChangeExtended', {
+      return this.$t('treasuryPage.lblEarnedRelativeMonthlyChangeExtended', {
         amount: selectedDayChange.value,
         date: this.selectedDayText
       }) as string;

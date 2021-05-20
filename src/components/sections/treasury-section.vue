@@ -2,7 +2,7 @@
   <heading-section
     has-expand-button
     :name="$t('lblTreasury')"
-    navigate-to-name="treasury"
+    navigate-to-name="treasury-manage"
   >
     <template v-slot:heading>
       {{ $t('lblTreasuryHeader', { amount: '$864.17' }) }}

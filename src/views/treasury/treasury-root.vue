@@ -6,9 +6,9 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <savings-overview />
-      <savings-stats />
-      <savings-estimation />
+      <treasury-overview />
+      <treasury-stats />
+      <treasury-reserved-assets />
     </template>
 
     <router-view />
@@ -20,18 +20,18 @@ import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  SavingsOverview,
-  SavingsStats,
-  SavingsEstimation
-} from '@/components/savings';
+  TreasuryOverview,
+  TreasuryStats,
+  TreasuryReservedAssets
+} from '@/components/treasury';
 
 export default Vue.extend({
-  name: 'SavingsRoot',
+  name: 'TreasuryRoot',
   components: {
     ContentWrapper,
-    SavingsOverview,
-    SavingsStats,
-    SavingsEstimation
+    TreasuryOverview,
+    TreasuryStats,
+    TreasuryReservedAssets
   },
   computed: {
     hasBackButton(): boolean {

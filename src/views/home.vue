@@ -21,16 +21,18 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import ContentWrapper from '@/components/layout/content-wrapper.vue';
-import WalletInfoRail from '@/components/wallet-info-rail/wallet-info-rail.vue';
-import ReleaseRadarSection from '@/components/sections/release-radar-section.vue';
-import SwapsSection from '@/components/sections/swaps-section.vue';
-import DebitCardSection from '@/components/sections/debit-card-section.vue';
-import SavingsSection from '@/components/sections/savings-section.vue';
-import TreasurySection from '@/components/sections/treasury-section.vue';
-import GovernanceSection from '@/components/sections/governance-section.vue';
-import NibbleShopSection from '@/components/sections/nibble-shop-section.vue';
-import NftsSection from '@/components/sections/nfts-section.vue';
+import { ContentWrapper } from '@/components/layout';
+import { WalletInfoRail } from '@/components/wallet-info-rail';
+import {
+  ReleaseRadarSection,
+  SwapsSection,
+  DebitCardSection,
+  SavingsSection,
+  TreasurySection,
+  GovernanceSection,
+  NibbleShopSection,
+  NftsSection
+} from '@/components/sections';
 
 export default Vue.extend({
   name: 'Home',

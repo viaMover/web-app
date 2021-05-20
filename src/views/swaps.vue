@@ -9,9 +9,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import ContentWrapper from '@/components/layout/content-wrapper.vue';
-import SecondaryPage from '@/components/layout/secondary-page.vue';
-import SwapForm from '@/components/forms/swap-form.vue';
+import { ContentWrapper, SecondaryPage } from '@/components/layout';
+import { SwapForm } from '@/components/forms';
 
 export default Vue.extend({
   name: 'Swaps',

@@ -11,8 +11,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import SecondaryPage from '@/components/layout/secondary-page.vue';
-import SavingsDepositForm from '@/components/forms/savings-deposit-form.vue';
+import { SecondaryPage } from '@/components/layout';
+import { SavingsDepositForm } from '@/components/forms';
 
 export default Vue.extend({
   name: 'SavingsDeposit',

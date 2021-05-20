@@ -1,27 +1,27 @@
 <template>
-  <secondary-page :title="$t('lblSavings')">
+  <secondary-page :title="$t('lblSmartTreasury')">
     <h2>{{ pageTitle }}</h2>
-    <savings-monthly-chart />
-    <savings-monthly-statement />
+    <treasury-monthly-chart />
+    <treasury-monthly-statement />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import dayjs from 'dayjs';
 
 import { SecondaryPage } from '@/components/layout';
 import {
-  SavingsMonthlyChart,
-  SavingsMonthlyStatement
-} from '@/components/savings';
+  TreasuryMonthlyChart,
+  TreasuryMonthlyStatement
+} from '@/components/treasury';
+import dayjs from 'dayjs';
 
 export default Vue.extend({
-  name: 'SavingsMonthlyStatistics',
+  name: 'TreasuryMonthlyStatistics',
   components: {
     SecondaryPage,
-    SavingsMonthlyChart,
-    SavingsMonthlyStatement
+    TreasuryMonthlyChart,
+    TreasuryMonthlyStatement
   },
   computed: {
     pageTitle(): string {

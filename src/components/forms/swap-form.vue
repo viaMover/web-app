@@ -59,8 +59,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import AssetField from '@/components/controls/asset-field.vue';
-import ActionButton from '@/components/buttons/action-button.vue';
+import { AssetField } from '@/components/controls';
+import { ActionButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'SwapForm',

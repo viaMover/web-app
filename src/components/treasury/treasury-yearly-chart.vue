@@ -3,7 +3,7 @@
     <div class="stats-text">
       <span>{{ earnedThisMonth }}</span>
       <span>{{
-        $t('savingsPage.lblEarnedRelativeMonthlyChange', {
+        $t('treasuryPage.lblEarnedRelativeMonthlyChange', {
           amount: earnedRelativeMonthlyChange
         })
       }}</span>
@@ -15,7 +15,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'SavingsYearlyChart',
+  name: 'TreasuryYearlyChart',
   data() {
     return {
       earnedThisMonth: 2984.49,

@@ -6,6 +6,7 @@
 
     <page-container>
       <close-button v-if="hasCloseButton" @close="handleClose" />
+      <back-button v-if="hasBackButton" @close="handleClose" />
       <slot></slot>
     </page-container>
   </div>
@@ -16,13 +17,14 @@ import Vue from 'vue';
 
 import LeftRail from './left-rail.vue';
 import PageContainer from './page-container.vue';
-import CloseButton from '@/components/buttons/close-button.vue';
+import { BackButton, CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'ContentWrapper',
   components: {
     PageContainer,
     LeftRail,
+    BackButton,
     CloseButton
   },
   props: {
@@ -31,6 +33,10 @@ export default Vue.extend({
       default: false
     },
     hasCloseButton: {
+      type: Boolean,
+      default: false
+    },
+    hasBackButton: {
       type: Boolean,
       default: false
     }

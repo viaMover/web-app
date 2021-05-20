@@ -24,10 +24,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import SecondaryPage from '@/components/layout/secondary-page.vue';
-import HeadingNavButton from '@/components/buttons/heading-nav-button.vue';
-import SavingsYearlyChart from '@/components/savings/savings-yearly-chart.vue';
-import SavingsStatements from '@/components/savings/savings-statements.vue';
+import { SecondaryPage } from '@/components/layout';
+import { HeadingNavButton } from '@/components/buttons';
+import { SavingsYearlyChart, SavingsStatements } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsManage',

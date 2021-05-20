@@ -4,26 +4,21 @@
       :amount="input.amount"
       :assets="assets"
       field-role="input"
-      :label="$t('savingsPage.deposit.lblWhatToDeposit')"
+      :label="$t('treasuryPage.increaseBoost.lblWhatToReserve')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
       @update-native-amount="handleUpdateInputNativeAmount"
     />
-    <div v-if="showAssetWillBeConverted" class="reminder">
-      {{ $t('savingsPage.deposit.txtAssetWillBeConverted.part1') }}
-      <i class="usdc">USDC</i>
-      {{ $t('savingsPage.deposit.txtAssetWillBeConverted.part2') }}
-    </div>
-    <div v-if="isYieldEstimationReady">
+    <div v-if="isEstimatedBoostReady">
       <h2 class="heading">
-        {{ $t('savingsPage.deposit.lblYieldEstimation') }}
+        {{ $t('treasuryPage.increaseBoost.lblEstimatedBoost') }}
       </h2>
       <div class="reminder">
         {{
-          $t('savingsPage.deposit.txtYieldEstimation', {
-            amount: yieldEstimation.amount,
-            apy: yieldEstimation.apy
+          $t('treasuryPage.increaseBoost.txtEstimatedBoost', {
+            estimatedAmount: boostEstimation.estimated,
+            currentAmount: boostEstimation.current
           })
         }}
       </div>
@@ -32,7 +27,7 @@
       :button-class="buttonClass"
       @button-click="handleExecuteDeposit"
     >
-      {{ $t('savingsPage.deposit.btnDeposit') }}
+      {{ $t('treasuryPage.increaseBoost.btnIncreaseBoost') }}
     </action-button>
   </form>
 </template>
@@ -44,7 +39,7 @@ import { AssetField } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 
 export default Vue.extend({
-  name: 'SavingsDepositForm',
+  name: 'TreasuryIncreaseBoostForm',
   components: {
     AssetField,
     ActionButton
@@ -57,9 +52,9 @@ export default Vue.extend({
         amount: 0,
         nativeAmount: 0
       },
-      yieldEstimation: {
-        amount: 0,
-        apy: 0
+      boostEstimation: {
+        estimated: 2.2,
+        current: 0.7
       }
     };
   },
@@ -67,11 +62,8 @@ export default Vue.extend({
     buttonClass(): string {
       return 'primary';
     },
-    showAssetWillBeConverted(): boolean {
-      return true;
-    },
-    isYieldEstimationReady(): boolean {
-      return this.yieldEstimation !== null;
+    isEstimatedBoostReady(): boolean {
+      return this.boostEstimation !== null;
     }
   },
   methods: {

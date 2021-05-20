@@ -1,38 +1,33 @@
 <template>
-  <form class="deposit form">
+  <form class="claim-and-burn form">
     <asset-field
       :amount="input.amount"
       :assets="assets"
       field-role="input"
-      :label="$t('savingsPage.deposit.lblWhatToDeposit')"
+      :label="$t('treasuryPage.claimAndBurn.lblWhatToBurn')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
       @update-native-amount="handleUpdateInputNativeAmount"
     />
-    <div v-if="showAssetWillBeConverted" class="reminder">
-      {{ $t('savingsPage.deposit.txtAssetWillBeConverted.part1') }}
-      <i class="usdc">USDC</i>
-      {{ $t('savingsPage.deposit.txtAssetWillBeConverted.part2') }}
-    </div>
-    <div v-if="isYieldEstimationReady">
+    <div v-if="isPayoutEstimationReady">
       <h2 class="heading">
-        {{ $t('savingsPage.deposit.lblYieldEstimation') }}
+        {{ $t('treasuryPage.claimAndBurn.lblThePayout') }}
       </h2>
       <div class="reminder">
         {{
-          $t('savingsPage.deposit.txtYieldEstimation', {
-            amount: yieldEstimation.amount,
-            apy: yieldEstimation.apy
+          $t('treasuryPage.claimAndBurn.txtThePayout', {
+            payout: payoutEstimation.payout,
+            burning: payoutEstimation.burning
           })
         }}
       </div>
     </div>
     <action-button
       :button-class="buttonClass"
-      @button-click="handleExecuteDeposit"
+      @button-click="handleExecuteClaimAndBurn"
     >
-      {{ $t('savingsPage.deposit.btnDeposit') }}
+      {{ $t('treasuryPage.claimAndBurn.btnClaimAndBurn') }}
     </action-button>
   </form>
 </template>
@@ -44,7 +39,7 @@ import { AssetField } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 
 export default Vue.extend({
-  name: 'SavingsDepositForm',
+  name: 'TreasuryClaimAndBurnForm',
   components: {
     AssetField,
     ActionButton
@@ -57,9 +52,9 @@ export default Vue.extend({
         amount: 0,
         nativeAmount: 0
       },
-      yieldEstimation: {
-        amount: 0,
-        apy: 0
+      payoutEstimation: {
+        payout: 24841.01,
+        burning: 124191.11
       }
     };
   },
@@ -67,15 +62,12 @@ export default Vue.extend({
     buttonClass(): string {
       return 'primary';
     },
-    showAssetWillBeConverted(): boolean {
-      return true;
-    },
-    isYieldEstimationReady(): boolean {
-      return this.yieldEstimation !== null;
+    isPayoutEstimationReady(): boolean {
+      return this.payoutEstimation !== null;
     }
   },
   methods: {
-    handleExecuteDeposit(): void {
+    handleExecuteClaimAndBurn(): void {
       //
     },
     handleUpdateInputAmount(amount: number): void {
