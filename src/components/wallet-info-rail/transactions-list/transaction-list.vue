@@ -24,7 +24,7 @@ export default Vue.extend({
   props: {
     address: {
       type: String,
-      required: true
+      required: false
     }
   },
   computed: {
