@@ -4,7 +4,7 @@
       :amount="input.amount"
       :assets="assets"
       field-role="input"
-      :label="$t('treasuryPage.decreaseBoost.lblWhatToReturn')"
+      :label="$t('treasury.decreaseBoost.lblWhatToReturn')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
@@ -12,11 +12,11 @@
     />
     <div v-if="isEstimatedBoostReady">
       <h2 class="heading">
-        {{ $t('treasuryPage.decreaseBoost.lblWhatAboutTheBoost') }}
+        {{ $t('treasury.decreaseBoost.lblWhatAboutTheBoost') }}
       </h2>
       <div class="reminder">
         {{
-          $t('treasuryPage.decreaseBoost.txtWhatAboutTheBoost', {
+          $t('treasury.decreaseBoost.txtWhatAboutTheBoost', {
             estimatedAmount: boostEstimation.estimated,
             currentAmount: boostEstimation.current
           })
@@ -27,7 +27,7 @@
       :button-class="buttonClass"
       @button-click="handleExecuteWithdraw"
     >
-      {{ $t('treasuryPage.decreaseBoost.btnDecreaseBoost') }}
+      {{ $t('treasury.decreaseBoost.btnDecreaseBoost') }}
     </action-button>
   </form>
 </template>

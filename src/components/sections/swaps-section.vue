@@ -1,14 +1,14 @@
 <template>
   <heading-section
     has-expand-button
-    :name="$t('lblSwaps')"
+    :name="$t('swaps.lblSwaps')"
     navigate-to-name="swaps"
   >
     <template v-slot:heading>
-      {{ $t('lblSwaps') }}
+      {{ $t('swaps.lblSwaps') }}
     </template>
 
-    {{ $t('lblSwapsSubheading') }}
+    {{ $t('swaps.lblSwapsSubheading') }}
   </heading-section>
 </template>
 

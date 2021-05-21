@@ -1,54 +1,20 @@
 <template>
-  <heading-section
-    class="section governance"
-    has-expand-button
-    :name="$t('governance.lblGovernance')"
-    navigate-to-name="governance-view-all"
-  >
-    <template v-slot:heading>
-      {{ $t('governance.lblGovernance') }}
-    </template>
-
-    <div v-if="lastActiveProposal !== null" class="item">
-      <div class="image-placeholder">
-        <div class="image-placeholder inner"></div>
-      </div>
-      <div class="text-container">
-        <h5>{{ lastActiveProposal.name }}</h5>
-        <sub>{{
-          $t(`governance.lblVotingStatus.${lastActiveProposal.status}`)
-        }}</sub>
-      </div>
-      <router-link
-        button-class="button-primary"
-        :to="{ name: 'governance-view', params: { id: lastActiveProposal.id } }"
-      >
-        {{ $t('governance.btnVote.simple') }}
-      </router-link>
-    </div>
-    <div class="button-container">
-      <router-link
-        button-class="button-secondary w-100"
-        :to="{ name: 'governance-view-all' }"
-      >
-        {{ $t('governance.btnSeeAll.simple') }}
-      </router-link>
-    </div>
-  </heading-section>
+  <div>Governance proposal details</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import HeadingSection from './heading-section.vue';
-
 export default Vue.extend({
-  name: 'GovernanceSection',
-  components: {
-    HeadingSection
+  name: 'GovernanceProposalDetails',
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
   },
   computed: {
-    lastActiveProposal(): Record<string, any> | null {
+    proposal(): Record<string, any> | null {
       return {
         // todo: should be in the store some day
         id: 'CIP10-1',

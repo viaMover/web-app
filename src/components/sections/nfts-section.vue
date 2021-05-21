@@ -2,11 +2,11 @@
   <heading-section
     class="section nft"
     has-expand-button
-    :name="$t('lblNFTDrops')"
+    :name="$t('NFTs.lblNFTDrops')"
     navigate-to-name="nft-drops"
   >
     <template v-slot:heading>
-      {{ $t('lblNFTDrops') }}
+      {{ $t('NFTs.lblNFTDrops') }}
     </template>
 
     <div class="nfts-row">

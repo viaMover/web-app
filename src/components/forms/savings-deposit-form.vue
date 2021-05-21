@@ -4,24 +4,24 @@
       :amount="input.amount"
       :assets="assets"
       field-role="input"
-      :label="$t('savingsPage.deposit.lblWhatToDeposit')"
+      :label="$t('savings.deposit.lblWhatToDeposit')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
       @update-native-amount="handleUpdateInputNativeAmount"
     />
     <div v-if="showAssetWillBeConverted" class="reminder">
-      {{ $t('savingsPage.deposit.txtAssetWillBeConverted.part1') }}
+      {{ $t('savings.deposit.txtAssetWillBeConverted.part1') }}
       <i class="usdc">USDC</i>
-      {{ $t('savingsPage.deposit.txtAssetWillBeConverted.part2') }}
+      {{ $t('savings.deposit.txtAssetWillBeConverted.part2') }}
     </div>
     <div v-if="isYieldEstimationReady">
       <h2 class="heading">
-        {{ $t('savingsPage.deposit.lblYieldEstimation') }}
+        {{ $t('savings.deposit.lblYieldEstimation') }}
       </h2>
       <div class="reminder">
         {{
-          $t('savingsPage.deposit.txtYieldEstimation', {
+          $t('savings.deposit.txtYieldEstimation', {
             amount: yieldEstimation.amount,
             apy: yieldEstimation.apy
           })
@@ -32,7 +32,7 @@
       :button-class="buttonClass"
       @button-click="handleExecuteDeposit"
     >
-      {{ $t('savingsPage.deposit.btnDeposit') }}
+      {{ $t('savings.deposit.btnDeposit') }}
     </action-button>
   </form>
 </template>

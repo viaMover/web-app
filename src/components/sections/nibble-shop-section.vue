@@ -2,11 +2,11 @@
   <heading-section
     class="section nibble"
     has-expand-button
-    :name="$t('lblNibbleShop')"
+    :name="$t('nibbleShop.lblNibbleShop')"
     navigate-to-name="nibble-shop"
   >
     <template v-slot:heading>
-      {{ $t('lblNibbleShop') }}
+      {{ $t('nibbleShop.lblNibbleShop') }}
     </template>
 
     <div class="assets-row">

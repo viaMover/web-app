@@ -1,14 +1,18 @@
 <template>
   <heading-section
     has-expand-button
-    :name="$t('lblReleaseRadar')"
+    :name="$t('releaseRadar.lblReleaseRadar')"
     navigate-to-name="release-radar"
   >
     <template v-slot:heading>
-      {{ $t('lblReleaseRadar') }}
+      {{ $t('releaseRadar.lblReleaseRadar') }}
     </template>
 
-    {{ $t('lblReleaseRadarNewTokensToday', { amount: newTokensToday }) }}
+    {{
+      $t('releaseRadar.lblReleaseRadarNewTokensToday', {
+        amount: newTokensToday
+      })
+    }}
   </heading-section>
 </template>
 

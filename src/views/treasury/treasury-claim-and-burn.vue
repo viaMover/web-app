@@ -1,8 +1,8 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('lblSmartTreasury')">
-    <h2>{{ $t('treasuryPage.claimAndBurn.lblClaimAndBurn') }}</h2>
+  <secondary-page has-heading-buttons :title="$t('treasury.lblSmartTreasury')">
+    <h2>{{ $t('treasury.claimAndBurn.lblClaimAndBurn') }}</h2>
     <div class="description">
-      {{ $t('treasuryPage.claimAndBurn.txtClaimAndBurnDescription') }}
+      {{ $t('treasury.claimAndBurn.txtClaimAndBurnDescription') }}
     </div>
     <treasury-claim-and-burn-form />
   </secondary-page>

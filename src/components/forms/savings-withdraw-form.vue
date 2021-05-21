@@ -4,7 +4,7 @@
       :amount="input.amount"
       :assets="assets"
       field-role="input"
-      :label="$t('savingsPage.withdraw.lblWhatToWithdraw')"
+      :label="$t('savings.withdraw.lblWhatToWithdraw')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
@@ -12,11 +12,11 @@
     />
     <div v-if="isYieldEstimationReady">
       <h2 class="heading">
-        {{ $t('savingsPage.withdraw.lblWhatAboutTheYield') }}
+        {{ $t('savings.withdraw.lblWhatAboutTheYield') }}
       </h2>
       <div class="reminder">
         {{
-          $t('savingsPage.withdraw.txtWhatAboutTheYield', {
+          $t('savings.withdraw.txtWhatAboutTheYield', {
             amount: yieldEstimation.amount,
             apy: yieldEstimation.apy
           })
@@ -27,7 +27,7 @@
       :button-class="buttonClass"
       @button-click="handleExecuteWithdraw"
     >
-      {{ $t('savingsPage.withdraw.btnWithdraw') }}
+      {{ $t('savings.withdraw.btnWithdraw') }}
     </action-button>
   </form>
 </template>

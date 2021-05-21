@@ -3,7 +3,7 @@
     <div class="stats-text">
       <span>{{ earnedThisMonth }}</span>
       <span>{{
-        $t('treasuryPage.lblEarnedRelativeMonthlyChange', {
+        $t('treasury.lblEarnedRelativeMonthlyChange', {
           amount: earnedRelativeMonthlyChange
         })
       }}</span>

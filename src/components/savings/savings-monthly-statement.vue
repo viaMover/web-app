@@ -2,31 +2,31 @@
   <div class="info info-bordered">
     <div class="item">
       <div class="title">
-        {{ $t('savingsPage.statement.lblBalance', { month: monthName }) }}
+        {{ $t('savings.statement.lblBalance', { month: monthName }) }}
       </div>
       <div class="value">{{ balance }}</div>
     </div>
     <div class="item">
       <div class="title">
-        {{ $t('savingsPage.statement.lblDeposits', { month: monthName }) }}
+        {{ $t('savings.statement.lblDeposits', { month: monthName }) }}
       </div>
       <div class="value">{{ deposits }}</div>
     </div>
     <div class="item">
       <div class="title">
-        {{ $t('savingsPage.statement.lblWithdrawals', { month: monthName }) }}
+        {{ $t('savings.statement.lblWithdrawals', { month: monthName }) }}
       </div>
       <div class="value">{{ withdrawals }}</div>
     </div>
     <div class="item">
       <div class="title">
-        {{ $t('savingsPage.statement.lblSavedFees') }}
+        {{ $t('savings.statement.lblSavedFees') }}
       </div>
       <div class="value">{{ savedFees }}</div>
     </div>
     <div class="item">
       <div class="title">
-        {{ $t('savingsPage.statement.lblPayoutsToTreasury') }}
+        {{ $t('savings.statement.lblPayoutsToTreasury') }}
       </div>
       <div class="value">{{ payoutsToTreasury }}</div>
     </div>

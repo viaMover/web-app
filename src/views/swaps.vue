@@ -1,6 +1,6 @@
 <template>
   <content-wrapper has-close-button @close="handleClose">
-    <secondary-page :title="$t('lblSwaps')">
+    <secondary-page :title="$t('swaps.lblSwaps')">
       <swap-form />
     </secondary-page>
   </content-wrapper>

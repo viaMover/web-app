@@ -1,21 +1,21 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('lblSavings')">
+  <secondary-page has-heading-buttons :title="$t('savings.lblSavings')">
     <template v-slot:heading-buttons>
       <heading-nav-button
         button-class="transparent"
         navigate-to-name="savings-deposit"
       >
-        {{ $t('savingsPage.btnDeposit.emoji') }}
+        {{ $t('savings.btnDeposit.emoji') }}
       </heading-nav-button>
       <heading-nav-button
         button-class="transparent"
         navigate-to-name="savings-withdraw"
       >
-        {{ $t('savingsPage.btnWithdraw.emoji') }}
+        {{ $t('savings.btnWithdraw.emoji') }}
       </heading-nav-button>
     </template>
 
-    <h2>{{ $t('savingsPage.lblManageSavings') }}</h2>
+    <h2>{{ $t('savings.lblManageSavings') }}</h2>
     <savings-yearly-chart />
     <savings-statements />
   </secondary-page>

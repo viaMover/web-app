@@ -1,5 +1,5 @@
 <template>
-  <secondary-page :title="$t('lblSavings')">
+  <secondary-page :title="$t('savings.lblSavings')">
     <h2>{{ pageTitle }}</h2>
     <savings-monthly-chart />
     <savings-monthly-statement />
@@ -30,9 +30,7 @@ export default Vue.extend({
 
         return dayjs.unix(tsFrom).format('MMMM YYYY');
       } catch {
-        return this.$t(
-          'swapsPage.statement.lblMonthStatisticFallback'
-        ) as string;
+        return this.$t('swaps.statement.lblMonthStatisticFallback') as string;
       }
     }
   }

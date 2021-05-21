@@ -2,7 +2,7 @@
   <content-wrapper has-close-button @close="handleClose">
     <div class="transaction-wrapper">
       <h2 class="title">
-        {{ $t(`transactionPage.lblState.${state}`) }}
+        {{ $t(`transaction.lblState.${state}`) }}
       </h2>
       <p>{{ txHash }}</p>
       <!-- todo: replace with SVG images-->

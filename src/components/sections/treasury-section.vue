@@ -1,14 +1,14 @@
 <template>
   <heading-section
     has-expand-button
-    :name="$t('lblTreasury')"
+    :name="$t('treasury.lblSmartTreasury')"
     navigate-to-name="treasury-manage"
   >
     <template v-slot:heading>
-      {{ $t('lblTreasuryHeader', { amount: '$864.17' }) }}
+      {{ $t('treasury.lblTreasuryHeader', { amount: '$864.17' }) }}
     </template>
 
-    {{ $t('lblTreasuryEarnedToday', { amount: '+$24.89' }) }}
+    {{ $t('treasury.lblTreasuryEarnedToday', { amount: '+$24.89' }) }}
   </heading-section>
 </template>
 

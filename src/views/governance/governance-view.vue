@@ -1,56 +1,59 @@
 <template>
-  <heading-section
-    class="section governance"
-    has-expand-button
-    :name="$t('governance.lblGovernance')"
-    navigate-to-name="governance-view-all"
+  <content-wrapper
+    :has-back-button="hasBackButton"
+    has-close-button
+    has-left-rail
+    @close="handleClose"
   >
-    <template v-slot:heading>
-      {{ $t('governance.lblGovernance') }}
+    <template v-slot:left-rail>
+      <governance-proposal-overview :id="proposal.id" />
+      <governance-proposal-details :id="proposal.id" />
     </template>
 
-    <div v-if="lastActiveProposal !== null" class="item">
-      <div class="image-placeholder">
-        <div class="image-placeholder inner"></div>
-      </div>
-      <div class="text-container">
-        <h5>{{ lastActiveProposal.name }}</h5>
-        <sub>{{
-          $t(`governance.lblVotingStatus.${lastActiveProposal.status}`)
-        }}</sub>
-      </div>
-      <router-link
-        button-class="button-primary"
-        :to="{ name: 'governance-view', params: { id: lastActiveProposal.id } }"
-      >
-        {{ $t('governance.btnVote.simple') }}
-      </router-link>
-    </div>
-    <div class="button-container">
-      <router-link
-        button-class="button-secondary w-100"
-        :to="{ name: 'governance-view-all' }"
-      >
-        {{ $t('governance.btnSeeAll.simple') }}
-      </router-link>
-    </div>
-  </heading-section>
+    <secondary-page
+      :has-heading-buttons="isEnoughVotingPower"
+      :title="$t('governance.lblProposal')"
+    >
+      <template v-if="isEnoughVotingPower" v-slot:heading-buttons>
+        <action-button button-class="transparent" @button-click="vote(true)">
+          {{ $t('governance.btnVoteFor.emoji') }}
+        </action-button>
+        <action-button button-class="transparent" @button-click="vote(false)">
+          {{ $t('governance.btnVoteAgainst.emoji') }}
+        </action-button>
+      </template>
+
+      <h2>{{ proposal.name }}</h2>
+      <governance-proposal :id="proposal.id" />
+    </secondary-page>
+  </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import HeadingSection from './heading-section.vue';
+import { SecondaryPage, ContentWrapper } from '@/components/layout';
+import { ActionButton } from '@/components/buttons';
+import {
+  GovernanceProposalOverview,
+  GovernanceProposalDetails,
+  GovernanceProposal
+} from '@/components/governance';
 
 export default Vue.extend({
-  name: 'GovernanceSection',
+  name: 'GovernanceView',
   components: {
-    HeadingSection
+    ContentWrapper,
+    SecondaryPage,
+    ActionButton,
+    GovernanceProposalOverview,
+    GovernanceProposalDetails,
+    GovernanceProposal
   },
-  computed: {
-    lastActiveProposal(): Record<string, any> | null {
-      return {
-        // todo: should be in the store some day
+  data() {
+    return {
+      // todo: should be in the store some day
+      proposal: {
         id: 'CIP10-1',
         name: 'Governance Analysis Period',
         status: 'open',
@@ -81,7 +84,23 @@ export default Vue.extend({
         votesFor: 8194000,
         votesAgainst: 46000,
         currentOutcome: 'quorumNotReached'
-      };
+      }
+    };
+  },
+  computed: {
+    hasBackButton(): boolean {
+      return this.$route.path.split('/').filter((part) => !!part).length > 1;
+    },
+    isEnoughVotingPower(): boolean {
+      return true;
+    }
+  },
+  methods: {
+    handleClose(): void {
+      this.$router.back();
+    },
+    vote(decision: boolean): void {
+      //
     }
   }
 });

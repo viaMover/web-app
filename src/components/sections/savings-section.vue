@@ -1,14 +1,18 @@
 <template>
   <heading-section
     has-expand-button
-    :name="$t('lblSavings')"
+    :name="$t('savings.lblSavings')"
     navigate-to-name="savings-manage"
   >
     <template v-slot:heading>
-      {{ $t('lblSavingsHeader', { amount: totalAmountInSavings }) }}
+      {{ $t('savings.lblSavingsHeader', { amount: totalAmountInSavings }) }}
     </template>
 
-    {{ $t('lblSavingsEarnedToday', { amount: amountEarnedToday }) }}
+    {{
+      $t('savings.lblSavingsEarnedTodaySection', {
+        amount: amountEarnedToday
+      })
+    }}
   </heading-section>
 </template>
 

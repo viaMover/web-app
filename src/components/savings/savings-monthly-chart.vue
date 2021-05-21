@@ -46,7 +46,7 @@ export default Vue.extend({
     relativeChangeText(): string {
       if (this.selectedDay === null) {
         return this.$t(
-          'savingsPage.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
+          'savings.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
           {
             amount: this.earnedRelativeMonthlyChange,
             month: this.monthName
@@ -64,7 +64,7 @@ export default Vue.extend({
 
       if (selectedDayChange === undefined) {
         return this.$t(
-          'savingsPage.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
+          'savings.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
           {
             amount: this.earnedRelativeMonthlyChange,
             month: this.monthName
@@ -72,7 +72,7 @@ export default Vue.extend({
         ) as string;
       }
 
-      return this.$t('savingsPage.lblEarnedRelativeMonthlyChangeExtended', {
+      return this.$t('savings.lblEarnedRelativeMonthlyChangeExtended', {
         amount: selectedDayChange.value,
         date: this.selectedDayText
       }) as string;

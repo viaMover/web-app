@@ -1,8 +1,8 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('lblSavings')">
-    <h2>{{ $t('savingsPage.withdraw.lblWithdrawFromSavings') }}</h2>
+  <secondary-page has-heading-buttons :title="$t('savings.lblSavings')">
+    <h2>{{ $t('savings.withdraw.lblWithdrawFromSavings') }}</h2>
     <div class="description">
-      {{ $t('savingsPage.withdraw.txtWithdrawDescription') }}
+      {{ $t('savings.withdraw.txtWithdrawDescription') }}
     </div>
     <savings-withdraw-form />
   </secondary-page>

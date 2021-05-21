@@ -4,7 +4,7 @@
       :amount="input.amount"
       :assets="assets"
       field-role="input"
-      :label="$t('treasuryPage.claimAndBurn.lblWhatToBurn')"
+      :label="$t('treasury.claimAndBurn.lblWhatToBurn')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
@@ -12,11 +12,11 @@
     />
     <div v-if="isPayoutEstimationReady">
       <h2 class="heading">
-        {{ $t('treasuryPage.claimAndBurn.lblThePayout') }}
+        {{ $t('treasury.claimAndBurn.lblThePayout') }}
       </h2>
       <div class="reminder">
         {{
-          $t('treasuryPage.claimAndBurn.txtThePayout', {
+          $t('treasury.claimAndBurn.txtThePayout', {
             payout: payoutEstimation.payout,
             burning: payoutEstimation.burning
           })
@@ -27,7 +27,7 @@
       :button-class="buttonClass"
       @button-click="handleExecuteClaimAndBurn"
     >
-      {{ $t('treasuryPage.claimAndBurn.btnClaimAndBurn') }}
+      {{ $t('treasury.claimAndBurn.btnClaimAndBurn') }}
     </action-button>
   </form>
 </template>

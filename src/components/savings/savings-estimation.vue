@@ -1,22 +1,22 @@
 <template>
   <div class="overview savings-overview">
-    <h4>{{ $t('savingsPage.lblSavingsEstimation') }}</h4>
+    <h4>{{ $t('savings.lblSavingsEstimation') }}</h4>
     <div class="info info-bordered">
       <div class="item">
         <span class="title">{{
-          $t('savingsPage.lblEstimatedEarningsTomorrow')
+          $t('savings.lblEstimatedEarningsTomorrow')
         }}</span>
         <span class="value">{{ estimatedEarningsTomorrow }}</span>
       </div>
       <div class="item">
         <span class="title">{{
-          $t('savingsPage.lblEstimatedEarningsNextMonth')
+          $t('savings.lblEstimatedEarningsNextMonth')
         }}</span>
         <span class="value">{{ estimatedEarningsNextMonth }}%</span>
       </div>
       <div class="item">
         <span class="title">{{
-          $t('savingsPage.lblEstimatedEarningsAnnually')
+          $t('savings.lblEstimatedEarningsAnnually')
         }}</span>
         <span class="value">{{ estimatedEarningsAnnually }}%</span>
       </div>

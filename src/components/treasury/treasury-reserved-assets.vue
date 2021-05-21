@@ -1,6 +1,6 @@
 <template>
   <div class="overview treasury-overview">
-    <h4>{{ $t('treasuryPage.lblReservedAssets') }}</h4>
+    <h4>{{ $t('treasury.lblReservedAssets') }}</h4>
     <div class="info info-bordered">
       <div v-for="asset in assets" :key="asset.name" class="item">
         <span class="title">{{ asset.name }}</span>

@@ -10,7 +10,7 @@
         :value="asset"
         @change="handleUpdateAsset($event.target.value)"
       >
-        <option :value="null">{{ $t('swapsPage.lblChooseAsset') }}</option>
+        <option :value="null">{{ $t('swaps.lblChooseAsset') }}</option>
         <option v-for="asset in assets" :key="asset.address">
           {{ asset.name }}
         </option>

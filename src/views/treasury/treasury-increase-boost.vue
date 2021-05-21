@@ -1,12 +1,12 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('lblSmartTreasury')">
-    <h2>{{ $t('treasuryPage.increaseBoost.lblIncreaseBoost') }}</h2>
+  <secondary-page has-heading-buttons :title="$t('treasury.lblSmartTreasury')">
+    <h2>{{ $t('treasury.increaseBoost.lblIncreaseBoost') }}</h2>
     <div class="description">
-      {{ $t('treasuryPage.increaseBoost.txtIncreaseBoostDescription.part1') }}
+      {{ $t('treasury.increaseBoost.txtIncreaseBoostDescription.part1') }}
       <i class="move">MOVE</i>
-      {{ $t('treasuryPage.increaseBoost.txtIncreaseBoostDescription.part2') }}
+      {{ $t('treasury.increaseBoost.txtIncreaseBoostDescription.part2') }}
       <i class="move-eth-lp">MOVE-ETH LP</i>
-      {{ $t('treasuryPage.increaseBoost.txtIncreaseBoostDescription.part3') }}
+      {{ $t('treasury.increaseBoost.txtIncreaseBoostDescription.part3') }}
     </div>
     <treasury-increase-boost-form />
   </secondary-page>

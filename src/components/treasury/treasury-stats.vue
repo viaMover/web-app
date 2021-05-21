@@ -1,29 +1,29 @@
 <template>
   <div class="overview treasury-overview">
-    <h4>{{ $t('treasuryPage.lblTreasuryStats') }}</h4>
+    <h4>{{ $t('treasury.lblTreasuryStats') }}</h4>
     <div class="info info-bordered">
       <div class="item">
-        <span class="title">{{ $t('treasuryPage.lblEarnedToday') }}</span>
+        <span class="title">{{ $t('treasury.lblEarnedToday') }}</span>
         <span class="value">{{ earnedToday }}</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('treasuryPage.lblEarnedThisMonth') }}</span>
+        <span class="title">{{ $t('treasury.lblEarnedThisMonth') }}</span>
         <span class="value">{{ earnedThisMonth }}%</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('treasuryPage.lblEarnedInTotal') }}</span>
+        <span class="title">{{ $t('treasury.lblEarnedInTotal') }}</span>
         <span class="value">{{ earnedInTotal }}%</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('treasuryPage.lblSpentToday') }}</span>
+        <span class="title">{{ $t('treasury.lblSpentToday') }}</span>
         <span class="value">{{ spentToday }}%</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('treasuryPage.lblSpentThisMonth') }}</span>
+        <span class="title">{{ $t('treasury.lblSpentThisMonth') }}</span>
         <span class="value">{{ spentThisMonth }}%</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('treasuryPage.lblSpentInTotal') }}</span>
+        <span class="title">{{ $t('treasury.lblSpentInTotal') }}</span>
         <span class="value">{{ spentInTotal }}%</span>
       </div>
     </div>

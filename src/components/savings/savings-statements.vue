@@ -6,7 +6,7 @@
         <span v-if="item.timeStampTo > 0">{{
           formatItemRanges(item.timeStampFrom, item.timeStampTo)
         }}</span>
-        <span v-else>{{ $t('savingsPage.lblInProgress') }}</span>
+        <span v-else>{{ $t('savings.lblInProgress') }}</span>
       </div>
       <div v-if="item.timeStampTo > 0" class="link">
         <router-link
@@ -16,7 +16,7 @@
             query: { tsFrom: item.timeStampFrom }
           }"
         >
-          {{ $t('btnView.simple') }}
+          {{ $t('savings.btnView.simple') }}
         </router-link>
       </div>
     </div>

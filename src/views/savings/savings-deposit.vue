@@ -1,8 +1,8 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('lblSavings')">
-    <h2>{{ $t('savingsPage.deposit.lblDepositInSavings') }}</h2>
+  <secondary-page has-heading-buttons :title="$t('savings.lblSavings')">
+    <h2>{{ $t('savings.deposit.lblDepositInSavings') }}</h2>
     <div class="description">
-      {{ $t('savingsPage.deposit.txtDepositDescription') }}
+      {{ $t('savings.deposit.txtDepositDescription') }}
     </div>
     <savings-deposit-form />
   </secondary-page>

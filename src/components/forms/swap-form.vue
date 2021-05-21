@@ -5,7 +5,7 @@
       :assets="assets"
       field-role="input"
       :initial-asset="initialAsset"
-      :label="$t('swapsPage.lblSwapFrom')"
+      :label="$t('swaps.lblSwapFrom')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
@@ -15,7 +15,7 @@
       :amount="output.amount"
       :assets="assets"
       field-role="output"
-      :label="$t('swapsPage.lblSwapTo')"
+      :label="$t('swaps.lblSwapTo')"
       :native-amount="output.nativeAmount"
       @update-amount="handleUpdateOutputAmount"
       @update-asset="handleUpdateOutputAsset"
@@ -23,27 +23,27 @@
     />
     <div v-if="isSwapInfoAvailable" class="swap-info">
       <div class="swap-info-item">
-        <span class="title">{{ $t('swapsPage.lblMinimumReceived') }}</span>
+        <span class="title">{{ $t('swaps.lblMinimumReceived') }}</span>
         <span class="value">{{ info.minimumReceived }}</span>
       </div>
       <div class="swap-info-item">
-        <span class="title">{{ $t('swapsPage.lblRate') }}</span>
+        <span class="title">{{ $t('swaps.lblRate') }}</span>
         <span class="value">{{ info.rate }}</span>
       </div>
       <div class="swap-info-item">
-        <span class="title">{{ $t('swapsPage.lblEstimatedNetworkFee') }}</span>
+        <span class="title">{{ $t('swaps.lblEstimatedNetworkFee') }}</span>
         <span class="value">{{ info.estimatedNetworkFee }}</span>
       </div>
       <div class="swap-info-item">
-        <span class="title">{{ $t('swapsPage.lblSmartTreasuryCover') }}</span>
+        <span class="title">{{ $t('swaps.lblSmartTreasuryCover') }}</span>
         <span class="value">{{ info.smartTreasuryCover }}</span>
       </div>
       <div class="swap-info-item">
-        <span class="title">{{ $t('swapsPage.lblSlippage') }}</span>
+        <span class="title">{{ $t('swaps.lblSlippage') }}</span>
         <span class="value">{{ info.slippage }}</span>
       </div>
       <div class="swap-info-item">
-        <span class="title">{{ $t('swapsPage.lblGasSettings') }}</span>
+        <span class="title">{{ $t('swaps.lblGasSettings') }}</span>
         <span class="value">{{ info.gasSettings }}</span>
       </div>
     </div>
@@ -51,7 +51,7 @@
       :button-class="buttonClass"
       @button-click="handleExecuteSwap"
     >
-      {{ $t('btnSwap') }}
+      {{ $t('swaps.btnSwap.simple') }}
     </action-button>
   </form>
 </template>

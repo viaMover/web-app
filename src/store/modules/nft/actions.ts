@@ -39,8 +39,9 @@ export default {
           id: '$SAS',
           name: 'Sweet & Sour',
           description:
-            (rootState.i18n?.t('txtNFTs.sweetAndSour.description') as string) ??
-            '',
+            (rootState.i18n?.t(
+              'NFTs.txtNFTs.sweetAndSour.description'
+            ) as string) ?? '',
           imageSrc:
             'https://viamover.com/assets/images/social-holyheld-is-moving.png'
         },
@@ -53,7 +54,7 @@ export default {
           name: 'UnexpectedMove',
           description:
             (rootState.i18n?.t(
-              'txtNFTs.unexpectedMove.description'
+              'NFTs.txtNFTs.unexpectedMove.description'
             ) as string) ?? '',
           imageSrc:
             'https://viamover.com/assets/images/social-holyheld-is-moving.png'

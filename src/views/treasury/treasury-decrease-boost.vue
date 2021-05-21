@@ -1,8 +1,8 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('lblSmartTreasury')">
-    <h2>{{ $t('treasuryPage.decreaseBoost.lblDecreaseBoost') }}</h2>
+  <secondary-page has-heading-buttons :title="$t('treasury.lblSmartTreasury')">
+    <h2>{{ $t('treasury.decreaseBoost.lblDecreaseBoost') }}</h2>
     <div class="description">
-      {{ $t('treasuryPage.decreaseBoost.txtDecreaseBoostDescription') }}
+      {{ $t('treasury.decreaseBoost.txtDecreaseBoostDescription') }}
     </div>
     <treasury-decrease-boost-form />
   </secondary-page>

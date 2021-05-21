@@ -120,9 +120,36 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/governance',
-    name: 'governance',
     component: () =>
-      import(/* webpackChunkName: "governance" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "governance" */ '@/views/governance/governance-root.vue'
+      ),
+    children: [
+      {
+        path: 'create',
+        name: 'governance-create',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
+          )
+      },
+      {
+        path: 'view/:id',
+        name: 'governance-view',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'governance-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
+          )
+      }
+    ]
   },
   {
     path: '/nibble-shop',
@@ -131,10 +158,10 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "nibble-shop" */ '@/views/home.vue')
   },
   {
-    path: '/nibble-shop/:address',
+    path: '/nibble-shop/view/:address',
     name: 'shop-asset-exact-page',
     component: () =>
-      import(/* webpackChunkName: "shop-asset-page" */ '@/views/home.vue')
+      import(/* webpackChunkName: "nibble-shop" */ '@/views/home.vue')
   },
   {
     path: '/nft-drops',
@@ -143,10 +170,10 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
   },
   {
-    path: '/nft-drops/:id',
+    path: '/nft-drops/view/:id',
     name: 'nft-asset-exact-page',
     component: () =>
-      import(/* webpackChunkName: "nft-asset-page" */ '@/views/home.vue')
+      import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
   },
   {
     path: '/transactions/:txHash',
