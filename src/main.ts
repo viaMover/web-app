@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Vuelidate from 'vuelidate';
 import App from './app.vue';
 import router from './router';
 import store from './store';
@@ -8,6 +9,7 @@ import './styles/styles.less';
 
 import * as dayjs from './dayjs';
 Vue.config.productionTip = false;
+Vue.use(Vuelidate);
 
 dayjs.init();
 
