@@ -1,5 +1,35 @@
 <template>
-  <div>Governance proposal details</div>
+  <div class="overview governance-overview">
+    <h4>{{ $t('governance.lblProposalDetails') }}</h4>
+    <div class="info info-bordered">
+      <div class="item">
+        <span class="title">{{
+          $t('governance.lblAvailableVotingPower')
+        }}</span>
+        <span class="value">{{ availableVotingPower }}</span>
+      </div>
+      <div class="item">
+        <span class="title">{{
+          $t('governance.lblCommunityVotingPower')
+        }}</span>
+        <span class="value">{{ communityVotingPower }}</span>
+      </div>
+      <div class="item">
+        <span class="title">{{ $t('governance.lblVotesFor') }}</span>
+        <span class="value">{{ proposal.votesFor }}</span>
+      </div>
+      <div class="item">
+        <span class="title">{{ $t('governance.lblVotesAgainst') }}</span>
+        <span class="value">{{ proposal.votesAgainst }}</span>
+      </div>
+      <div class="item">
+        <span class="title">{{ $t('governance.lblCurrentOutcome') }}</span>
+        <span class="value">{{
+          $t(`governance.lblOutcome.${proposal.currentOutcome}`)
+        }}</span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -12,6 +42,12 @@ export default Vue.extend({
       type: String,
       required: true
     }
+  },
+  data() {
+    return {
+      availableVotingPower: 0,
+      communityVotingPower: 0
+    };
   },
   computed: {
     proposal(): Record<string, any> | null {

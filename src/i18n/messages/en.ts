@@ -250,13 +250,15 @@ export default {
     txtVotingPeriod: '{days} days',
     lblMinimumVotingThreshold: 'Minimum voting threshold',
     lblProposer: 'Proposer',
-    lblProposalId: '@:proposal.lblProposal ID',
-    lblVotingEnds: 'VotingEnds',
+    lblProposalId: '@:governance.lblProposal ID',
+    lblVotingEnds: 'Voting ends',
     lblVotingActivity: 'Voting activity',
     txtVotingActivity: '{amount}%',
-    lblProposalDetails: '@:proposal.lblProposal Details',
+    lblProposalDetails: '@:governance.lblProposal Details',
     lblAvailableVotingPower: 'Available voting power',
-    lblVotesFor: ''
+    lblVotesFor: 'Votes FOR',
+    lblVotesAgainst: 'Votes AGAINST',
+    lblCurrentOutcome: 'Current outcome'
   },
   nibbleShop: {
     lblNibbleShop: 'Nibble shop',
