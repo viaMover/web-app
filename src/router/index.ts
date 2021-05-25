@@ -153,15 +153,36 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/nibble-shop',
-    name: 'nibble-shop',
     component: () =>
-      import(/* webpackChunkName: "nibble-shop" */ '@/views/home.vue')
-  },
-  {
-    path: '/nibble-shop/view/:address',
-    name: 'shop-asset-exact-page',
-    component: () =>
-      import(/* webpackChunkName: "nibble-shop" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-root.vue'
+      ),
+    children: [
+      {
+        path: 'view/:id',
+        name: 'nibble-shop-view',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view.vue'
+          )
+      },
+      {
+        path: 'no-nft',
+        name: 'nibble-shop-no-nft',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-no-nft.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'nibble-shop-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
+          )
+      }
+    ]
   },
   {
     path: '/nft-drops',

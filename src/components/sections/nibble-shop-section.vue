@@ -3,21 +3,18 @@
     class="section nibble"
     has-expand-button
     :name="$t('nibbleShop.lblNibbleShop')"
-    navigate-to-name="nibble-shop"
+    navigate-to-name="nibble-shop-view-all"
   >
     <template v-slot:heading>
       {{ $t('nibbleShop.lblNibbleShop') }}
     </template>
 
     <div class="assets-row">
-      <shop-asset-card
-        v-for="asset in assets"
-        :key="asset.address"
-        :address="asset.address"
-        :image-src="asset.imageSrc"
-        :price="asset.price"
-        :title="asset.title"
-      ></shop-asset-card>
+      <nibble-shop-product-mini
+        v-for="product in products"
+        :id="product.id"
+        :key="product.id"
+      ></nibble-shop-product-mini>
     </div>
   </heading-section>
 </template>
@@ -27,16 +24,16 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 
 import HeadingSection from './heading-section.vue';
-import ShopAssetCard from '@/components/cards/shop-asset-card.vue';
+import { NibbleShopProductMini } from '@/components/nibble-shop';
 
 export default Vue.extend({
   name: 'NibbleShopSection',
   components: {
     HeadingSection,
-    ShopAssetCard
+    NibbleShopProductMini
   },
   computed: {
-    ...mapState('shop', ['assets'])
+    ...mapState('shop', { products: 'assets' })
   }
 });
 </script>

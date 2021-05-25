@@ -296,7 +296,25 @@ export default {
     lblTownOrCity: 'Town or city',
     townOrCityPlaceholder: 'Nakamoto Town',
     lblPostalCode: 'Postal code',
-    postalCodePlaceholder: 'Just a code'
+    postalCodePlaceholder: 'Just a code',
+    btnGet: 'Get',
+    txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
+    txtProductAlt: '{title} product image',
+    btnBuy: {
+      simple: 'Buy',
+      emoji: '🛍 @:nibbleShop.btnBuy.simple'
+    },
+    btnSell: {
+      simple: 'Sell',
+      emoji: '🚪 @:nibbleShop.btnSell.simple'
+    },
+    btnRedeem: {
+      simple: 'Redeem',
+      emoji: '📦 @:nibbleShop.btnRedeem.simple'
+    },
+    lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
+    txtNoNFT:
+      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop."
   },
   NFTs: {
     lblNFTDrops: 'NFT Drops',
