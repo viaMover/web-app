@@ -5,7 +5,7 @@
       <div class="item">
         <span class="title">{{ $t('governance.lblVotingPeriod') }}</span>
         <span class="value">{{
-          $t('governance.txtVotingPeriod', { period: votingPeriod })
+          $t('governance.txtVotingPeriod', { days: votingPeriod })
         }}</span>
       </div>
       <div class="item">
