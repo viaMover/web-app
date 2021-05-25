@@ -1,8 +1,13 @@
 import Web3 from 'web3';
 
 export type Transaction = {
+  blockNumber: string;
   hash: string;
-  timeStamp: number;
+  timeStamp: string;
+  nonce: string;
+  from: string;
+  to: string;
+  value: string;
 };
 
 export type TransactionGroup = {
@@ -17,12 +22,21 @@ export type AccountData = {
   networkId: number | null;
 };
 
+export type Token = {
+  symbol: string;
+  name: string;
+  balance: string;
+};
+
 export type AccountStoreState = {
   addresses: Array<string>;
   balance: null | string;
   networkId: null | number;
   currentAddress: string | null;
   transactions: Array<Transaction>;
+  tokens: Array<Token>;
+  allTokens: Array<Token>;
   web3: null | Web3;
   providerBeforeClose: () => void;
+  refreshError: string | null;
 };

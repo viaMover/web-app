@@ -12,11 +12,14 @@ export default {
     addresses: [],
     currentAddress: null,
     transactions: [],
+    tokens: [],
     web3: null,
     balance: null,
     networkId: null,
     // eslint-disable-next-line
-    providerBeforeClose: () => {}
+    providerBeforeClose: () => {},
+    allTokens: [],
+    refreshError: null
   },
   actions,
   getters,
