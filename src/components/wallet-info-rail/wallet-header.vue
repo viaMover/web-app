@@ -78,7 +78,8 @@ export default Vue.extend({
       setProviderBeforeCloseCb: 'setProviderBeforeCloseCb'
     }),
     ...mapActions('account', {
-      clearProvider: 'clearProvider'
+      clearProvider: 'clearProvider',
+      refreshWallet: 'refreshWallet'
     }),
     handleAddressChanged(address: string): void {
       this.$emit('selected-address-changed', address);
@@ -169,6 +170,7 @@ export default Vue.extend({
         const accData = await this.getAccountData(web3Inst, injected);
 
         this.setAccountData(accData);
+        this.refreshWallet();
       } catch (err) {
         console.log('User cancelled');
         console.log(err);

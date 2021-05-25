@@ -3,7 +3,7 @@ import Web3 from 'web3';
 export type Transaction = {
   blockNumber: string;
   hash: string;
-  timeStamp: string;
+  timeStamp: number;
   nonce: string;
   from: string;
   to: string;

@@ -28,7 +28,7 @@ export default {
       return {
         blockNumber: et.blockNumber,
         hash: et.hash,
-        timeStamp: et.timeStamp,
+        timeStamp: parseInt(et.timeStamp),
         nonce: et.nonce,
         from: et.from,
         to: et.to,
