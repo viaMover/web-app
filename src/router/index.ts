@@ -26,25 +26,130 @@ const routes: Array<RouteConfig> = [
   {
     path: '/swaps',
     name: 'swaps',
-    component: () => import(/* webpackChunkName: "swaps" */ '@/views/home.vue')
+    component: () => import(/* webpackChunkName: "swaps" */ '@/views/swaps.vue')
   },
   {
     path: '/savings',
-    name: 'savings',
     component: () =>
-      import(/* webpackChunkName: "savings" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
+      ),
+    children: [
+      {
+        path: 'month-statistics',
+        name: 'savings-month-stats',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
+          )
+      },
+      {
+        path: 'deposit',
+        name: 'savings-deposit',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit.vue'
+          )
+      },
+      {
+        path: 'withdraw',
+        name: 'savings-withdraw',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'savings-manage',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage.vue'
+          )
+      }
+    ]
   },
   {
     path: '/treasury',
-    name: 'treasury',
     component: () =>
-      import(/* webpackChunkName: "treasury" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
+      ),
+    children: [
+      {
+        path: 'month-statistics',
+        name: 'treasury-month-stats',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
+          )
+      },
+      {
+        path: 'increase-boost',
+        name: 'treasury-deposit',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-boost.vue'
+          )
+      },
+      {
+        path: 'decrease-boost',
+        name: 'treasury-decrease-boost',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-boost.vue'
+          )
+      },
+      {
+        path: 'claim-and-burn',
+        name: 'treasury-claim-and-burn',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'treasury-manage',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage.vue'
+          )
+      }
+    ]
   },
   {
     path: '/governance',
-    name: 'governance',
     component: () =>
-      import(/* webpackChunkName: "governance" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "governance" */ '@/views/governance/governance-root.vue'
+      ),
+    children: [
+      {
+        path: 'create',
+        name: 'governance-create',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
+          )
+      },
+      {
+        path: 'view/:id',
+        name: 'governance-view',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'governance-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
+          )
+      }
+    ]
   },
   {
     path: '/nibble-shop',
@@ -53,10 +158,10 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "nibble-shop" */ '@/views/home.vue')
   },
   {
-    path: '/nibble-shop/:address',
+    path: '/nibble-shop/view/:address',
     name: 'shop-asset-exact-page',
     component: () =>
-      import(/* webpackChunkName: "shop-asset-page" */ '@/views/home.vue')
+      import(/* webpackChunkName: "nibble-shop" */ '@/views/home.vue')
   },
   {
     path: '/nft-drops',
@@ -65,10 +170,16 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
   },
   {
-    path: '/nft-drops/:id',
+    path: '/nft-drops/view/:id',
     name: 'nft-asset-exact-page',
     component: () =>
-      import(/* webpackChunkName: "nft-asset-page" */ '@/views/home.vue')
+      import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
+  },
+  {
+    path: '/transactions/:txHash',
+    name: 'transaction',
+    component: () =>
+      import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
   }
 ];
 

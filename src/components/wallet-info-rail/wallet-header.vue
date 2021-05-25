@@ -4,11 +4,10 @@
       <label for="wallet_address">{{ $t('lblWallet') }}</label>
       <select
         id="wallet_address"
-        name="wallet address"
         :value="currentAddress"
         @change="handleAddressChanged"
       >
-        <option disabled :value="null">{{ $t('lblSelectWallet') }}</option>
+        <option disabled :value="null">{{ $t('lblConnectWallet') }}</option>
         <option v-for="address in addresses" :key="address" :value="address">
           {{ address }}
         </option>
