@@ -2,7 +2,7 @@
   <form class="swap form">
     <asset-field
       :amount="input.amount"
-      :assets="assets"
+      :assets="tokens"
       field-role="input"
       :initial-asset="initialAsset"
       :label="$t('swaps.lblSwapFrom')"
@@ -61,6 +61,7 @@ import Vue from 'vue';
 
 import { AssetField } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -93,6 +94,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('account', ['tokens']),
     buttonClass(): string {
       return 'primary';
     },

@@ -8,6 +8,9 @@ export default {
   setWalletTokens(state, tokens: Array<Token>): void {
     state.tokens = tokens;
   },
+  setAllTokens(state, tokens: Array<Token>): void {
+    state.allTokens = tokens;
+  },
   setWalletTransactions(state, transactions: Array<Transaction>): void {
     state.transactions = transactions;
   },

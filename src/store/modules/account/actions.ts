@@ -1,8 +1,9 @@
 import { EtherscanTransaction } from './../../../services/etherscan/transactions';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
-import { AccountStoreState, AccountData, Transaction } from './types';
+import { AccountStoreState, AccountData, Transaction, Token } from './types';
 import { GetTransactions } from '@/services/etherscan/transactions';
+import { EthplorerToken, GetWalletInfo } from '@/services/ethplorer/tokens';
 
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
@@ -13,18 +14,40 @@ export default {
     if (!state.currentAddress) {
       return;
     }
+    console.info('Updating wallet tokens from Etherscan');
 
-    console.info('Updating txns from Etherscan');
-    const res = await GetTransactions(state.currentAddress);
-    if (res.isError || res.result === undefined) {
+    const walletRes = await GetWalletInfo(state.currentAddress);
+    if (walletRes.isError || walletRes.result === undefined) {
       commit(
         'setRefreshEror',
-        `Can't get transactions from Etherscan: ${res.errorMessage}`
+        `Can't get wallet info from ethplorer: ${walletRes.errorMessage}`
       );
       return;
     }
 
-    const newTransactions = res.result.map((et: EtherscanTransaction) => {
+    const walletTokens = walletRes.result.tokens.map((et: EthplorerToken) => {
+      return {
+        address: et.tokenInfo.address,
+        decimals: parseInt(et.tokenInfo.decimals),
+        balance: et.rawBalance,
+        name: et.tokenInfo.name,
+        priceUSD: et.tokenInfo.price.rate,
+        symbol: et.tokenInfo.symbol
+      } as Token;
+    });
+    commit('setWalletTokens', walletTokens);
+
+    console.info('Updating txns from Etherscan');
+    const txRes = await GetTransactions(state.currentAddress);
+    if (txRes.isError || txRes.result === undefined) {
+      commit(
+        'setRefreshEror',
+        `Can't get transactions from Etherscan: ${txRes.errorMessage}`
+      );
+      return;
+    }
+
+    const newTransactions = txRes.result.map((et: EtherscanTransaction) => {
       return {
         blockNumber: et.blockNumber,
         hash: et.hash,
