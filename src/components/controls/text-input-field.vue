@@ -33,6 +33,10 @@ export default Vue.extend({
     placeholder: {
       type: String,
       default: ''
+    },
+    validationObject: {
+      type: Object,
+      default: undefined
     }
   },
   methods: {

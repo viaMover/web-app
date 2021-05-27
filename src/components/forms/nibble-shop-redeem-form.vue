@@ -15,36 +15,42 @@
       field-id="full-name"
       :field-label="$t('nibbleShop.lblFullName')"
       :placeholder="$t('nibbleShop.lblPlaceholders.fullName')"
+      :validation-object="$v.fullName"
     />
     <text-input-field
       v-model="email"
       field-id="email"
       :field-label="$t('nibbleShop.lblEmail')"
       :placeholder="$t('nibbleShop.lblPlaceholders.email')"
+      :validation-object="$v.email"
     />
     <text-input-field
       v-model="country"
       field-id="country"
       :field-label="$t('nibbleShop.lblCountry')"
       :placeholder="$t('nibbleShop.lblPlaceholders.country')"
+      :validation-object="$v.country"
     />
     <text-input-field
       v-model="fullAddress"
       field-id="fullAddress"
       :field-label="$t('nibbleShop.lblFullAddress')"
       :placeholder="$t('nibbleShop.lblPlaceholders.fullAddress')"
+      :validation-object="$v.fullAddress"
     />
     <text-input-field
       v-model="townOrCity"
       field-id="townOrCity"
       :field-label="$t('nibbleShop.lblTownOrCity')"
       :placeholder="$t('nibbleShop.lblPlaceholders.townOrCity')"
+      :validation-object="$v.townOrCity"
     />
     <text-input-field
       v-model="postalCode"
       field-id="postalCode"
       :field-label="$t('nibbleShop.lblPostalCode')"
       :placeholder="$t('nibbleShop.lblPlaceholders.postalCode')"
+      :validation-object="$v.postalCode"
     />
     <action-button
       :button-class="buttonClass"
