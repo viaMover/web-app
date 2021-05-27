@@ -14,7 +14,7 @@
         {{ $t('nibbleShop.lblAssetActions.buy', { title: product.title }) }}
       </h2>
       <p class="description">
-        {{ $t('nibbleShop.txtAssetActionDescription') }}
+        {{ $t('nibbleShop.txtTokenizedAsset', { name: product.title }) }}
       </p>
       <nibble-shop-buy-form :id="id" />
     </secondary-page>

@@ -12,8 +12,8 @@
       </div>
       <div class="price-container">{{ product.price }}</div>
       <div class="button-container">
-        <router-link button-class="primary" :to="routeTo">
-          {{ $t('nibbleShop.btnGet') }}
+        <router-link class="button button-primary" :to="routeTo">
+          {{ $t('nibbleShop.btnGet.simple') }}
         </router-link>
       </div>
     </div>

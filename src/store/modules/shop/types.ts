@@ -15,4 +15,6 @@ export type Asset = {
 
 export type ShopStoreState = {
   assets: Array<Asset>;
+  isLoading: boolean;
+  loadingPromise: Promise<Array<Asset>> | null;
 };
