@@ -300,7 +300,9 @@ export default {
       townOrCity: 'Nakamoto Town',
       postalCode: 'Just a code'
     },
-    btnGet: 'Get',
+    btnGet: {
+      simple: 'Get'
+    },
     txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
     txtProductAlt: '{title} product image',
     btnBuy: {
@@ -318,17 +320,23 @@ export default {
     lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
     txtNoNFT:
       "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop.",
-    txtAssetActionDescription:
-      'CEO of Money is a tokenized asset. When buying a tokenized asset, you are buying a token ' +
-      'that can be redeemed for a physical asset. Buying and selling affects the current price of ' +
-      'the asset. Purchasing a token doesn’t require redemption.'
+    txtAssets: {
+      $CEO1: {
+        description:
+          'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
+          'This is a genesis limited addition with only 30 ever caps to be made. ' +
+          'This item will not be restocked. One size fits all CEOs.'
+      }
+    }
   },
   NFTs: {
     lblNFTDrops: 'NFT Drops',
-    lblNftOverview: '{name} Overview',
+    lblNFTOverview: '{name} Overview',
     lblTotalNumberOfNFTs: 'Total number of NFTs',
     lblTotalClaimed: 'Total claimed',
     lblTotalExchanged: 'Total exchanged',
+    txtLogoAlt: '@:NFTs.lblNFTDrops image',
+    txtAssetAlt: '{name} NFT asset image',
     txtNFTs: {
       sweetAndSour: {
         description:
@@ -341,6 +349,21 @@ export default {
           'This NFT is dropped for all participants in our Twitter promo. ' +
           'The Unexpected Move NFT can be exchanged for 1 MOVE token, but only once.'
       }
+    },
+    btnGet: {
+      simple: 'Get'
+    },
+    btnClaimAndExchange: {
+      simple: 'Claim & Exchange',
+      emoji: '🦍 @:NFTs.btnClaimAndExchange.simple'
+    },
+    btnExchange: {
+      simple: 'Exchange',
+      emoji: '🔥 @:NFTs.btnExchange.simple'
+    },
+    btnClaim: {
+      simple: 'Claim',
+      emoji: '🎉 @:NFTs.btnClaim.simple'
     }
   },
   asset: {

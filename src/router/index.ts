@@ -210,15 +210,24 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/nft-drops',
-    name: 'nft-drops',
     component: () =>
-      import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
-  },
-  {
-    path: '/nft-drops/view/:id',
-    name: 'nft-asset-exact-page',
-    component: () =>
-      import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
+      import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-root.vue'),
+    children: [
+      {
+        path: 'view/:id',
+        name: 'nft-view',
+        component: () =>
+          import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view.vue')
+      },
+      {
+        path: '',
+        name: 'nft-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
+          )
+      }
+    ]
   },
   {
     path: '/transactions/:txHash',
