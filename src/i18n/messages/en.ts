@@ -275,9 +275,9 @@ export default {
     },
     lblCurrentPrice: 'Current price',
     lblAssetActions: {
-      buy: 'Buy {name}',
-      sell: 'Sell {name}',
-      redeem: 'Redeem {name}'
+      buy: 'Buy {title}',
+      sell: 'Sell {title}',
+      redeem: 'Redeem {title}'
     },
     txtTokenizedAsset:
       '{name} is a tokenized asset. When buying a tokenized asset, you are buying a token that can be redeemed for a physical asset. ' +
@@ -285,18 +285,21 @@ export default {
     lblBuyWith: 'Buy with',
     lblBalance: 'Balance',
     lblRedeem: 'Redeem',
+    lblSell: 'Sell',
     lblFullName: 'Full name',
-    fullNamePlaceholder: 'Antoshi Nakamoto',
     lblEmail: 'Email',
-    emailPlaceholder: 'your@email.com',
     lblCountry: 'Country',
-    countryPlaceholder: 'Nakamoto Land',
     lblFullAddress: 'Full address',
-    fullAddressPlaceholder: 'Street name, house or apartment number',
     lblTownOrCity: 'Town or city',
-    townOrCityPlaceholder: 'Nakamoto Town',
     lblPostalCode: 'Postal code',
-    postalCodePlaceholder: 'Just a code',
+    lblPlaceholders: {
+      fullName: 'Antoshi Nakamoto',
+      email: 'your@email.com',
+      country: 'Nakamoto Land',
+      fullAddress: 'Street name, house or apartment number',
+      townOrCity: 'Nakamoto Town',
+      postalCode: 'Just a code'
+    },
     btnGet: 'Get',
     txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
     txtProductAlt: '{title} product image',
@@ -314,7 +317,11 @@ export default {
     },
     lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
     txtNoNFT:
-      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop."
+      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop.",
+    txtAssetActionDescription:
+      'CEO of Money is a tokenized asset. When buying a tokenized asset, you are buying a token ' +
+      'that can be redeemed for a physical asset. Buying and selling affects the current price of ' +
+      'the asset. Purchasing a token doesn’t require redemption.'
   },
   NFTs: {
     lblNFTDrops: 'NFT Drops',

@@ -18,10 +18,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import { NibbleShopProduct } from '@/components/nibble-shop';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'NibbleShopViewAll',

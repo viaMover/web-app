@@ -23,9 +23,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+import { RawLocation } from 'vue-router';
 
 import { Asset } from '@/store/modules/shop/types';
-import { RawLocation } from 'vue-router';
 
 export default Vue.extend({
   name: 'NibbleShopProduct',
@@ -36,7 +36,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapState('shop', ['assets']),
+    ...mapState('shop', { products: 'assets' }),
     routeTo(): RawLocation {
       return {
         name: 'nibble-shop-view',
@@ -45,7 +45,7 @@ export default Vue.extend({
     },
     product(): Asset | null {
       return (
-        (this.assets as Array<Asset>).find(
+        (this.products as Array<Asset>).find(
           (asset: Asset) => asset.id === this.id
         ) || null
       );
