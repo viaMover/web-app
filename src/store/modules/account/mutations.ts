@@ -1,11 +1,18 @@
+import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
-import { AccountStoreState, AccountData, Transaction, Token } from './types';
+import {
+  AccountStoreState,
+  AccountData,
+  Transaction,
+  Token,
+  TokenWithBalance
+} from './types';
 
 export default {
   setCurrentWallet(state, address): void {
     state.currentAddress = address;
   },
-  setWalletTokens(state, tokens: Array<Token>): void {
+  setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
     state.tokens = tokens;
   },
   setAllTokens(state, tokens: Array<Token>): void {
@@ -38,6 +45,10 @@ export default {
     }
     state.balance = ad.balance;
     state.web3 = ad.web3Inst;
-    state.networkId = ad.networkId;
+    if (ad.networkId !== undefined) {
+      state.networkInfo = getNetworkByChainId(ad.networkId);
+    } else {
+      state.networkInfo = undefined;
+    }
   }
 } as MutationTree<AccountStoreState>;

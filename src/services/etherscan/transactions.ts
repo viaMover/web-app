@@ -1,5 +1,7 @@
+import { Network } from '@/utils/networkTypes';
 import axios from 'axios';
 import { Result } from '../responses';
+import { apiEndpoints } from './endpoints';
 
 export type EtherscanTransaction = {
   blockNumber: string;
@@ -18,12 +20,22 @@ type EtherScanResponse = {
 };
 
 export const GetTransactions = async (
-  address: string
+  address: string,
+  network: Network
 ): Promise<Result<Array<EtherscanTransaction>>> => {
+  const endpoint = apiEndpoints.get(network);
+  if (endpoint === undefined) {
+    return {
+      isError: true,
+      result: [],
+      errorMessage: `can't get ethescan api endpoint for '${network}'`
+    };
+  }
+
   try {
     const response = (
       await axios.get<EtherScanResponse>(
-        `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc`
+        `${endpoint}/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc`
       )
     ).data;
     if (response.status !== '1') {

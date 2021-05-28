@@ -1,3 +1,4 @@
+import { NetworkInfo } from '@/utils/networkTypes';
 import Web3 from 'web3';
 
 export type Transaction = {
@@ -17,9 +18,9 @@ export type TransactionGroup = {
 
 export type AccountData = {
   addresses: Array<string>;
-  web3Inst: Web3 | null;
-  balance: string | null;
-  networkId: number | null;
+  web3Inst: Web3 | undefined;
+  balance: string | undefined;
+  networkId: number | undefined;
 };
 
 export type Token = {
@@ -27,19 +28,25 @@ export type Token = {
   decimals: number;
   symbol: string;
   name: string;
-  balance: string;
   priceUSD: string;
+  logo: string;
 };
+
+export type TokenWithBalance =
+  | Token
+  | {
+      balance: string;
+    };
 
 export type AccountStoreState = {
   addresses: Array<string>;
-  balance: null | string;
-  networkId: null | number;
-  currentAddress: string | null;
+  balance: undefined | string;
+  networkInfo: undefined | NetworkInfo;
+  currentAddress: undefined | string;
   transactions: Array<Transaction>;
-  tokens: Array<Token>;
+  tokens: Array<TokenWithBalance>;
   allTokens: Array<Token>;
-  web3: null | Web3;
+  web3: undefined | Web3;
   providerBeforeClose: () => void;
-  refreshError: string | null;
+  refreshError: undefined | string;
 };
