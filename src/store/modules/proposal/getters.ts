@@ -7,7 +7,7 @@ export default {
     return (
       state.proposals
         .slice()
-        .sort((a: Proposal, b: Proposal) => a.ends - b.ends)[0] ?? null
+        .sort((a: Proposal, b: Proposal) => b.ends - a.ends)[0] ?? null
     );
   }
 } as GetterTree<ProposalStoreState, RootStoreState>;
