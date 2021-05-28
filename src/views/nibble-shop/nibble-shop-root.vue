@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions } from 'vuex';
 
 export default Vue.extend({
   name: 'NibbleShopRoot',
@@ -12,12 +13,16 @@ export default Vue.extend({
       return true;
     }
   },
-  beforeMount() {
+  async beforeMount() {
     if (this.hasNFT) {
+      await this.loadAssetsInfoList();
       return;
     }
 
     this.$router.replace({ name: 'nibble-shop-no-nft' });
+  },
+  methods: {
+    ...mapActions('shop', ['loadAssetsInfoList'])
   }
 });
 </script>

@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import HeadingSection from './heading-section.vue';
 import { NibbleShopProductMini } from '@/components/nibble-shop';
@@ -34,6 +34,12 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('shop', { products: 'assets' })
+  },
+  async beforeMount() {
+    await this.loadAssetsInfoList();
+  },
+  methods: {
+    ...mapActions('shop', ['loadAssetsInfoList'])
   }
 });
 </script>

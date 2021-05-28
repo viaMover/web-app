@@ -51,7 +51,7 @@ export default {
       {
         nft: {
           id: '$NFTMOVER1',
-          name: 'UnexpectedMove',
+          name: 'Unexpected Move',
           description:
             (rootState.i18n?.t(
               'NFTs.txtNFTs.unexpectedMove.description'

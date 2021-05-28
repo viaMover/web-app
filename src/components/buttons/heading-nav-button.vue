@@ -1,5 +1,5 @@
 <template>
-  <router-link button-class="button" :to="{ name: navigateToName }">
+  <router-link class="button" :to="{ name: navigateToName }">
     <slot></slot>
   </router-link>
 </template>

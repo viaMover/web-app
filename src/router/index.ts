@@ -167,6 +167,30 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'buy/:id',
+        name: 'nibble-shop-buy',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-buy.vue'
+          )
+      },
+      {
+        path: 'sell/:id',
+        name: 'nibble-shop-sell',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-sell.vue'
+          )
+      },
+      {
+        path: 'redeem/:id',
+        name: 'nibble-shop-redeem',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
+          )
+      },
+      {
         path: 'no-nft',
         name: 'nibble-shop-no-nft',
         component: () =>
@@ -186,15 +210,24 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/nft-drops',
-    name: 'nft-drops',
     component: () =>
-      import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
-  },
-  {
-    path: '/nft-drops/view/:id',
-    name: 'nft-asset-exact-page',
-    component: () =>
-      import(/* webpackChunkName: "nft-drops" */ '@/views/home.vue')
+      import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-root.vue'),
+    children: [
+      {
+        path: 'view/:id',
+        name: 'nft-view',
+        component: () =>
+          import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view.vue')
+      },
+      {
+        path: '',
+        name: 'nft-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
+          )
+      }
+    ]
   },
   {
     path: '/transactions/:txHash',
