@@ -6,9 +6,10 @@
       </h2>
       <p>{{ txHash }}</p>
       <!-- todo: replace with SVG images-->
-      <div v-if="state === 'pending'">🐌</div>
+      <div v-if="state === 'waiting'">🕓</div>
+      <div v-else-if="state === 'pending'">🐌</div>
       <div v-else-if="state === 'processed'">👌</div>
-      <div v-else-if="state === 'failed'">🚨</div>
+      <div v-else-if="state === 'reverted'">🚨</div>
     </div>
   </content-wrapper>
 </template>
@@ -19,8 +20,9 @@ import Vue from 'vue';
 import { ContentWrapper } from '@/components/layout';
 
 // probably enum will suit us better :?
-type TransactionStatus = 'pending' | 'processed' | 'failed';
+type TransactionStatus = 'waiting' | 'pending' | 'processed' | 'reverted';
 
+// TODO: delete once transition to the new design is finished
 export default Vue.extend({
   name: 'Transaction',
   components: {
@@ -28,7 +30,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      state: 'pending' as TransactionStatus
+      state: 'waiting' as TransactionStatus
     };
   },
   computed: {

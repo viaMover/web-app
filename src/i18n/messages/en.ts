@@ -373,10 +373,22 @@ export default {
   },
   transaction: {
     lblState: {
-      prefix: 'Your transaction',
-      pending: '@:transaction.lblState.prefix is processing',
-      processed: '@:transaction.lblState.prefix was processed!',
-      failed: 'Something went wrong. @:transaction.lblState.prefix failed'
+      waiting: {
+        header: 'Waiting for confirmation',
+        description: 'Confirm this transaction in your wallet'
+      },
+      pending: {
+        header: 'Your transaction is processing',
+        description: 'Waiting for transaction to be confirmed'
+      },
+      processed: {
+        header: 'Success!',
+        description: 'Your transaction was processed!'
+      },
+      reverted: {
+        header: 'Transaction was reverted',
+        description: 'Your transaction failed'
+      }
     }
   }
 };
