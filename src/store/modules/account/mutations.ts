@@ -5,7 +5,8 @@ import {
   AccountData,
   Transaction,
   Token,
-  TokenWithBalance
+  TokenWithBalance,
+  ProviderData
 } from './types';
 
 export default {
@@ -35,8 +36,18 @@ export default {
   setRefreshEror(state, error): void {
     state.refreshError = error;
   },
-  setProviderBeforeCloseCb(state, cb): void {
-    state.providerBeforeClose = cb;
+  setDetectedProvider(state, provider: any): void {
+    state.detectedProvider = provider;
+  },
+  setIsDetecting(state, isDetecting: boolean): void {
+    state.isDetecting = isDetecting;
+  },
+  setProvider(state, payload: ProviderData): void {
+    state.provider = {
+      providerName: payload.providerName,
+      web3: payload.web3,
+      providerBeforeClose: payload.providerBeforeClose
+    } as ProviderData;
   },
   setAccountData(state, ad: AccountData): void {
     state.addresses = ad.addresses;
@@ -44,11 +55,20 @@ export default {
       state.currentAddress = ad.addresses[0];
     }
     state.balance = ad.balance;
-    state.web3 = ad.web3Inst;
     if (ad.networkId !== undefined) {
       state.networkInfo = getNetworkByChainId(ad.networkId);
     } else {
       state.networkInfo = undefined;
     }
+  },
+  clearWalletData(state): void {
+    state.provider = undefined;
+    state.addresses = [];
+    state.balance = undefined;
+    state.currentAddress = undefined;
+    state.networkInfo = undefined;
+    state.refreshError = undefined;
+    state.tokens = [];
+    state.transactions = [];
   }
 } as MutationTree<AccountStoreState>;

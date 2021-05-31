@@ -8,15 +8,19 @@
         @change="handleAddressChanged"
       >
         <option disabled :value="null">{{ $t('lblConnectWallet') }}</option>
-        <option v-for="address in addresses" :key="address" :value="address">
+        <option
+          v-for="address in accountAddresses"
+          :key="address"
+          :value="address"
+        >
           {{ address }}
         </option>
       </select>
 
-      <button v-if="!web3" @click="connectMetaMask()">
+      <button v-if="!provider" @click="connectMetaMask()">
         {{ metaMaskBtnText }}
       </button>
-      <button v-if="!web3" @click="connectWalletConnect()">
+      <button v-if="!provider" @click="connectWalletConnect()">
         WalletConnect
       </button>
     </div>
@@ -26,62 +30,39 @@
 <script lang="ts">
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Vue from 'vue';
-import Web3 from 'web3';
-import { provider } from 'web3-core';
 
-import { AccountData } from '@/store/modules/account/types';
 import MetaMaskOnboarding from '@metamask/onboarding';
-import detectEthereumProvider from '@metamask/detect-provider';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
+import { InitCallbacks } from '@/web3/callbacks';
 
 export default Vue.extend({
   name: 'WalletHeader',
-  props: {
-    currentAddress: {
-      type: String,
-      required: false
-    },
-    addresses: {
-      type: Array,
-      required: true
-    }
-  },
-  data() {
-    return {
-      metaMaskBtnText: '' as string,
-      metaMaskProvider: null as null | unknown,
-      metaMaskDetecting: true as boolean
-    };
-  },
   computed: {
-    ...mapState('account', ['web3'])
-  },
-  mounted() {
-    (async () => {
-      this.metaMaskDetecting = true;
-      this.metaMaskBtnText = 'Detecting MetaMask';
-      this.metaMaskProvider = await detectEthereumProvider({
-        mustBeMetaMask: true
-      });
-      if (this.metaMaskProvider) {
-        this.metaMaskBtnText = 'Connect MetaMask';
-      } else {
-        this.metaMaskBtnText = 'Install MetaMask';
-      }
-      this.metaMaskDetecting = false;
-    })();
+    ...mapState('account', [
+      'detectedProvider',
+      'provider',
+      'addresses',
+      'currentAddress'
+    ]),
+    metaMaskBtnText(): string {
+      return this.detectedProvider ? 'Connect MetaMask' : 'Install MetaMask';
+    },
+    accountAddresses(): Array<string> {
+      return this.addresses;
+    }
   },
   methods: {
     ...mapMutations('account', {
-      setAccountData: 'setAccountData',
-      setCurrentWallet: 'setCurrentWallet',
-      setProviderBeforeCloseCb: 'setProviderBeforeCloseCb'
+      setCurrentWallet: 'setCurrentWallet'
     }),
     ...mapActions('account', {
-      clearProvider: 'clearProvider',
-      refreshWallet: 'refreshWallet'
+      refreshWallet: 'refreshWallet',
+      initWallet: 'initWallet'
     }),
     handleAddressChanged(address: string): void {
+      this.setCurrentWallet(address);
+      this.refreshWallet();
       this.$emit('selected-address-changed', address);
     },
     async connectWalletConnect(): Promise<void> {
@@ -89,91 +70,30 @@ export default Vue.extend({
       const provider = new WalletConnectProvider({
         infuraId: 'eac548bd478143d09d2c090d09251bf1'
       });
-      //  Enable session (triggers QR Code modal)
       await provider.enable();
-      this.webConnect(provider as unknown as provider, false);
+      const providerWithCb = await InitCallbacks(this.detectedProvider);
+
+      //  Enable session (triggers QR Code modal)
+      this.initWallet({
+        provider: providerWithCb.provider,
+        providerName: 'WalletConnect',
+        providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+        injected: false
+      } as InitWalletPayload);
     },
     async connectMetaMask(): Promise<void> {
-      if (this.metaMaskDetecting) {
-        return;
-      }
-      if (this.metaMaskProvider) {
-        const provider = this.metaMaskProvider as any;
-
-        await this.webConnect(provider, true);
-
-        const chainChangedHandler = () => {
-          console.log('MetaMask - chain has been chainged! Reloading page...');
-          window.location.reload();
-        };
-
-        const disconnectHandler = () => {
-          console.log('MetaMask - has been disconnected! Reloading page...');
-          window.location.reload();
-        };
-
-        const accountsChangedHandler = async (accounts: Array<string>) => {
-          console.log('MetaMask - accounts array has been changed!', accounts);
-
-          if (accounts.length === 0) {
-            this.clearProvider();
-          } else if (accounts[0] !== this.currentAddress) {
-            const accData = await this.getAccountData(this.web3, true);
-            this.setAccountData(accData);
-            this.setCurrentWallet(accounts[0]);
-          }
-        };
-
-        provider.on('chainChanged', chainChangedHandler);
-        provider.on('disconnect', disconnectHandler);
-        provider.on('accountsChanged', accountsChangedHandler);
-
-        this.setProviderBeforeCloseCb(() => {
-          console.log(provider);
-          provider.removeListener('chainChanged', chainChangedHandler);
-          provider.removeListener('disconnect', disconnectHandler);
-          provider.removeListener('accountsChanged', accountsChangedHandler);
-        });
+      if (this.detectedProvider) {
+        await this.detectedProvider.enable();
+        const providerWithCb = await InitCallbacks(this.detectedProvider);
+        this.initWallet({
+          provider: providerWithCb.provider,
+          providerName: 'MetaMask',
+          providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+          injected: false
+        } as InitWalletPayload);
       } else {
         const onboarding = new MetaMaskOnboarding();
         onboarding.startOnboarding();
-      }
-    },
-    async getAccountData(
-      web3Inst: Web3,
-      useRequest: boolean
-    ): Promise<AccountData> {
-      let accounts;
-      if (useRequest) {
-        accounts = await web3Inst.eth.requestAccounts();
-      } else {
-        accounts = await web3Inst.eth.getAccounts();
-      }
-      console.log('accounts: ', accounts);
-      let balance = '';
-      if (accounts) {
-        balance = await web3Inst.eth.getBalance(accounts[0]);
-      }
-      console.log('balance:', balance);
-      const chainId = await web3Inst.eth.getChainId();
-      return {
-        addresses: accounts,
-        web3Inst: web3Inst,
-        balance: balance,
-        networkId: chainId
-      } as AccountData;
-    },
-    async webConnect(provider: provider, injected: boolean): Promise<void> {
-      try {
-        const web3Inst = new Web3(provider);
-
-        const accData = await this.getAccountData(web3Inst, injected);
-
-        this.setAccountData(accData);
-        this.refreshWallet();
-      } catch (err) {
-        console.log('User cancelled');
-        console.log(err);
       }
     }
   }

@@ -1,22 +1,86 @@
-import { EtherscanTransaction } from './../../../services/etherscan/transactions';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
 import {
   AccountStoreState,
   AccountData,
-  Transaction,
-  TokenWithBalance
-} from './types';
+  TokenWithBalance,
+  ProviderNames,
+  ProviderData
+} from './../types';
 import { GetTransactions } from '@/services/etherscan/transactions';
 import { EthplorerToken, GetWalletInfo } from '@/services/ethplorer/tokens';
 import { Network } from '@/utils/networkTypes';
+import { provider } from 'web3-core';
+import Web3 from 'web3';
+
+export type RefreshWalletPayload = {
+  injected: boolean;
+};
+
+export type InitWalletPayload = {
+  provider: provider;
+  providerName: ProviderNames;
+  providerBeforeCloseCb: () => void;
+  injected: boolean;
+};
 
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
   },
 
-  async refreshWallet({ commit, state }): Promise<void> {
+  async initWallet(
+    { commit, state, dispatch },
+    payload: InitWalletPayload
+  ): Promise<void> {
+    try {
+      const web3Inst = new Web3(payload.provider);
+      commit('setProvider', {
+        providerBeforeClose: payload.providerBeforeCloseCb,
+        providerName: payload.providerName,
+        web3: web3Inst
+      } as ProviderData);
+      dispatch('refreshWallet', {
+        injected: payload.injected
+      } as RefreshWalletPayload);
+    } catch (err) {
+      console.log("can't init the wallet");
+      console.log(err);
+    }
+  },
+
+  async refreshWallet(
+    { commit, state },
+    payload: RefreshWalletPayload
+  ): Promise<void> {
+    if (state.provider === undefined) {
+      console.info("can't refresh wallet due to empty provider");
+      return;
+    }
+
+    console.info('getting accounts...');
+    let accounts;
+    if (payload.injected) {
+      accounts = await state.provider.web3.eth.requestAccounts();
+    } else {
+      accounts = await state.provider.web3.eth.getAccounts();
+    }
+    console.info('accounts: ', accounts);
+
+    let balance = '';
+    if (accounts) {
+      balance = await state.provider.web3.eth.getBalance(accounts[0]);
+    }
+    console.info('balance of the current account:', balance);
+
+    const chainId = await state.provider.web3.eth.getChainId();
+
+    commit('setAccountData', {
+      addresses: accounts,
+      balance: balance,
+      networkId: chainId
+    } as AccountData);
+
     if (!state.currentAddress || !state.networkInfo) {
       console.info("can't refresh wallet due to empty address");
       return;
@@ -25,7 +89,8 @@ export default {
       console.info("can't refresh wallet due to empty networkInfo");
       return;
     }
-    console.info('Updating wallet tokens from Etherscan');
+
+    console.info('Updating wallet tokens from Etherscan...');
     if (state.networkInfo.network === Network.mainnet) {
       console.info('Use ethplorer for mainnet wallet...');
       const walletRes = await GetWalletInfo(state.currentAddress);
@@ -64,29 +129,13 @@ export default {
       return;
     }
 
-    const newTransactions = txRes.result.map((et: EtherscanTransaction) => {
-      return {
-        blockNumber: et.blockNumber,
-        hash: et.hash,
-        timeStamp: parseInt(et.timeStamp),
-        nonce: et.nonce,
-        from: et.from,
-        to: et.to,
-        value: et.value
-      } as Transaction;
-    });
-    commit('updateWalletTransactions', newTransactions);
+    commit('updateWalletTransactions', txRes.result);
   },
 
-  clearProvider({ commit, state }): void {
-    if (state.providerBeforeClose) {
-      state.providerBeforeClose();
+  disconnectWallet({ commit, state }): void {
+    if (state.provider) {
+      state.provider.providerBeforeClose();
     }
-    commit('setAccountData', {
-      addresses: [] as Array<string>,
-      web3Inst: undefined,
-      balance: undefined,
-      networkId: undefined
-    } as AccountData);
+    commit('clearWalletData');
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

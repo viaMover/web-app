@@ -1,5 +1,5 @@
 import { NetworkInfo } from './../../../utils/networkTypes';
-import actions from './actions';
+import walletActions from './actions/wallet';
 import mutations from './mutations';
 import getters from './getters';
 import { Module } from 'vuex';
@@ -16,7 +16,9 @@ export default {
     currentAddress: undefined,
     transactions: [],
     tokens: [],
-    web3: undefined,
+    provider: undefined,
+    detectedProvider: undefined,
+    isDetecting: false,
     balance: undefined,
     networkInfo: undefined,
     // eslint-disable-next-line
@@ -33,7 +35,7 @@ export default {
     ),
     refreshError: undefined
   },
-  actions,
+  actions: { ...walletActions },
   getters,
   mutations
 } as Module<AccountStoreState, RootStoreState>;

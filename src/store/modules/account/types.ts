@@ -1,6 +1,13 @@
 import { NetworkInfo } from '@/utils/networkTypes';
 import Web3 from 'web3';
 
+export enum TransactionTypes {
+  sendERC20 = 'sendERC20',
+  receiveERC20 = 'receiveERC20',
+  sendEth = 'sendEth',
+  receiveEth = 'receiveEth'
+}
+
 export type Transaction = {
   blockNumber: string;
   hash: string;
@@ -9,6 +16,8 @@ export type Transaction = {
   from: string;
   to: string;
   value: string;
+  type: TransactionTypes;
+  symbol?: string;
 };
 
 export type TransactionGroup = {
@@ -18,7 +27,6 @@ export type TransactionGroup = {
 
 export type AccountData = {
   addresses: Array<string>;
-  web3Inst: Web3 | undefined;
   balance: string | undefined;
   networkId: number | undefined;
 };
@@ -38,6 +46,14 @@ export type TokenWithBalance =
       balance: string;
     };
 
+export type ProviderNames = 'MetaMask' | 'WalletConnect' | null;
+
+export type ProviderData = {
+  web3: Web3;
+  providerName: ProviderNames;
+  providerBeforeClose: () => void;
+};
+
 export type AccountStoreState = {
   addresses: Array<string>;
   balance: undefined | string;
@@ -46,7 +62,8 @@ export type AccountStoreState = {
   transactions: Array<Transaction>;
   tokens: Array<TokenWithBalance>;
   allTokens: Array<Token>;
-  web3: undefined | Web3;
-  providerBeforeClose: () => void;
+  provider: ProviderData | undefined;
+  detectedProvider: any | undefined;
+  isDetecting: boolean;
   refreshError: undefined | string;
 };
