@@ -1,3 +1,5 @@
+import { GetTokensPrice } from './../../../../services/thegraph/api';
+import { InitExplorer } from './../../../../services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
 import {
@@ -15,6 +17,7 @@ import Web3 from 'web3';
 
 export type RefreshWalletPayload = {
   injected: boolean;
+  startZerion: boolean;
 };
 
 export type InitWalletPayload = {
@@ -40,8 +43,10 @@ export default {
         providerName: payload.providerName,
         web3: web3Inst
       } as ProviderData);
+
       dispatch('refreshWallet', {
-        injected: payload.injected
+        injected: payload.injected,
+        startZerion: true
       } as RefreshWalletPayload);
     } catch (err) {
       console.log("can't init the wallet");
@@ -92,44 +97,61 @@ export default {
 
     console.info('Updating wallet tokens from Etherscan...');
     if (state.networkInfo.network === Network.mainnet) {
-      console.info('Use ethplorer for mainnet wallet...');
-      const walletRes = await GetWalletInfo(state.currentAddress);
-      if (walletRes.isError || walletRes.result === undefined) {
-        commit(
-          'setRefreshEror',
-          `Can't get wallet info from ethplorer: ${walletRes.errorMessage}`
+      if (payload.startZerion) {
+        console.log('Starting Zerion...');
+        InitExplorer(
+          state.currentAddress,
+          'usd',
+          (txns: Array<Transaction>) => {
+            commit('updateWalletTransactions', txns);
+          }
         );
-        return;
       }
-      const walletTokens = walletRes.result.tokens.map((et: EthplorerToken) => {
-        return {
-          address: et.tokenInfo.address,
-          decimals: parseInt(et.tokenInfo.decimals),
-          balance: et.rawBalance,
-          name: et.tokenInfo.name,
-          priceUSD: et.tokenInfo.price.rate,
-          symbol: et.tokenInfo.symbol
-        } as TokenWithBalance;
-      });
-      commit('setWalletTokens', walletTokens);
+
+      //
+      // console.info('Use ethplorer for mainnet wallet...');
+      // const walletRes = await GetWalletInfo(state.currentAddress);
+      // if (walletRes.isError || walletRes.result === undefined) {
+      // commit(
+      //     'setRefreshEror',
+      //     `Can't get wallet info from ethplorer: ${walletRes.errorMessage}`
+      // );
+      // return;
+      // }
+      // const walletTokens = walletRes.result.tokens.map((et: EthplorerToken) => {
+      // return {
+      //     address: et.tokenInfo.address,
+      //     decimals: parseInt(et.tokenInfo.decimals),
+      //     balance: et.rawBalance,
+      //     name: et.tokenInfo.name,
+      //     priceUSD: et.tokenInfo.price.rate,
+      //     symbol: et.tokenInfo.symbol
+      // } as TokenWithBalance;
+      // });
+      // commit('setWalletTokens', walletTokens);
+      //
     } else {
       console.info('Not mainnet - should use balancer');
     }
 
-    console.info('Updating txns from Etherscan');
-    const txRes = await GetTransactions(
-      state.currentAddress,
-      state.networkInfo.network
-    );
-    if (txRes.isError || txRes.result === undefined) {
-      commit(
-        'setRefreshEror',
-        `Can't get transactions from Etherscan: ${txRes.errorMessage}`
-      );
-      return;
-    }
-
-    commit('updateWalletTransactions', txRes.result);
+    //const res = await GetTokensPrice([state.allTokens[0].address]);
+    //console.log(res);
+    //
+    // console.info('Updating txns from Etherscan');
+    // const txRes = await GetTransactions(
+    // state.currentAddress,
+    // state.networkInfo.network
+    // );
+    // if (txRes.isError || txRes.result === undefined) {
+    // commit(
+    //     'setRefreshEror',
+    //     `Can't get transactions from Etherscan: ${txRes.errorMessage}`
+    // );
+    // return;
+    // }
+    //
+    // commit('updateWalletTransactions', txRes.result);
+    //
   },
 
   disconnectWallet({ commit, state }): void {

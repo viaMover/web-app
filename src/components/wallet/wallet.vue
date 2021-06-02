@@ -44,8 +44,6 @@ export default Vue.extend({
     })
   },
   render() {
-    // The container node is expected to provide a single root,
-    // so it's okay to return `VNode[]` as any.
     return {} as any;
   }
 });
