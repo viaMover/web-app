@@ -2,13 +2,22 @@
   <section class="section" :name="name">
     <h2 class="heading-row">
       <slot class="heading-row--text" name="heading"></slot>
-      <router-link
-        v-if="showExpandButton"
-        class="expand-button"
-        :to="{ name: navigateToName }"
-      >
-        &lt;&gt;
-      </router-link>
+      <template v-if="hasExpandButton">
+        <router-link
+          v-if="navigateToName"
+          class="expand-button"
+          :to="{ name: navigateToName }"
+        >
+          &lt;&gt;
+        </router-link>
+        <div
+          v-else-if="useClickEvent"
+          class="expand-button"
+          @click="handleClick"
+        >
+          &lt;&gt;
+        </div>
+      </template>
     </h2>
     <div class="heading--body">
       <slot></slot>
@@ -33,11 +42,15 @@ export default Vue.extend({
     name: {
       type: String,
       required: true
+    },
+    useClickEvent: {
+      type: Boolean,
+      default: false
     }
   },
-  computed: {
-    showExpandButton(): boolean {
-      return this.hasExpandButton && !!this.navigateToName;
+  methods: {
+    handleClick(): void {
+      this.$emit('navigation-click');
     }
   }
 });

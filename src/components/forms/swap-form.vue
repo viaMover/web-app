@@ -4,7 +4,6 @@
       :amount="input.amount"
       :assets="tokens"
       field-role="input"
-      :initial-asset="initialAsset"
       :label="$t('swaps.lblSwapFrom')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
@@ -13,7 +12,7 @@
     />
     <asset-field
       :amount="output.amount"
-      :assets="assets"
+      :assets="tokens"
       field-role="output"
       :label="$t('swaps.lblSwapTo')"
       :native-amount="output.nativeAmount"
@@ -72,7 +71,6 @@ export default Vue.extend({
   data() {
     return {
       assets: [],
-      initialAsset: null,
       info: {
         minimumReceived: 0,
         rate: 0,
@@ -105,6 +103,7 @@ export default Vue.extend({
   methods: {
     handleExecuteSwap(): void {
       //
+      this.$emit('tx-created', 'transaction-hash');
     },
     handleUpdateInputAmount(amount: number): void {
       this.input.amount = amount;
