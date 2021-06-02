@@ -1,9 +1,5 @@
 <template>
-  <modal-window
-    v-show="transaction && isVisible"
-    has-close-button
-    @close="isVisible"
-  >
+  <centered-modal-window v-cloak :modal-id="modalId" @toggle="handleToggled">
     <div v-if="state === 'waiting'">🕓</div>
     <div v-else-if="state === 'pending'">🐌</div>
     <div v-else-if="state === 'processed'">👌</div>
@@ -14,36 +10,34 @@
     <div class="description">
       {{ $t(`transaction.lblState.${state}.description`) }}
     </div>
-  </modal-window>
+  </centered-modal-window>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
-import ModalWindow from './modal-window.vue';
 import { mapState } from 'vuex';
+
+import CenteredModalWindow from './centered-modal-window.vue';
 import { Transaction } from '@/store/modules/account/types';
 
 // probably enum will suit us better :?
 type TransactionStatus = 'waiting' | 'pending' | 'processed' | 'reverted';
+type HandleToggledPayload = {
+  txHash: Promise<string>;
+};
 
 // TODO: Should be reworked
 // At least we should get tx status before displaying something
 export default Vue.extend({
   name: 'TransactionModal',
   components: {
-    ModalWindow
-  },
-  props: {
-    hash: {
-      type: String,
-      required: true
-    }
+    CenteredModalWindow
   },
   data() {
     return {
-      state: 'waiting' as TransactionStatus,
-      isVisible: false
+      modalId: 'transaction-modal',
+      hash: '',
+      state: 'waiting' as TransactionStatus
     };
   },
   computed: {
@@ -57,8 +51,15 @@ export default Vue.extend({
     }
   },
   methods: {
-    toggleIsVisible(): void {
-      this.isVisible = !this.isVisible;
+    async handleToggled(payload: HandleToggledPayload): Promise<void> {
+      try {
+        this.state = 'waiting';
+        this.hash = await payload.txHash;
+        this.isVisible = !this.isVisible;
+      } catch {
+        this.isVisible = false;
+        this.hash = '';
+      }
     }
   }
 });
