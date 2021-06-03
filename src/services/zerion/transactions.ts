@@ -1,26 +1,12 @@
 import { ZerionTransaction, ZerionTransactionsReceived } from './responses';
 import find from 'lodash-es/find';
-import uniqBy from 'lodash-es/uniqBy';
-import orderBy from 'lodash-es/orderBy';
+
 import { Transaction } from '@/store/modules/account/types';
 
-export const HandleZerionTransactionReceived = (
-  data: ZerionTransactionsReceived,
-  append = false,
-  addTransactions: (txns: Array<Transaction>) => void
-): void => {
-  const dedupedResults = uniqBy<ZerionTransaction>(
-    data.payload.transactions,
-    (txn) => txn.hash
-  );
-
-  const orderedDedupedResults = orderBy<ZerionTransaction>(
-    dedupedResults,
-    ['minedAt', 'nonce'],
-    ['desc', 'desc']
-  );
-
-  const txns = orderedDedupedResults.map((t) => {
+export const mapZerionTxns = (
+  data: ZerionTransactionsReceived
+): Array<Transaction> => {
+  const txns = data.payload.transactions.map((t) => {
     return {
       blockNumber: String(t.block_number),
       hash: t.hash,
@@ -34,7 +20,7 @@ export const HandleZerionTransactionReceived = (
     } as Transaction;
   });
 
-  addTransactions(txns);
+  return txns;
 };
 
 const potentialNftTransaction = (txns: Array<ZerionTransaction>): boolean =>

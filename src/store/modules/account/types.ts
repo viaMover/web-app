@@ -40,11 +40,9 @@ export type Token = {
   logo: string;
 };
 
-export type TokenWithBalance =
-  | Token
-  | {
-      balance: string;
-    };
+export type TokenWithBalance = Token & {
+  balance: string;
+};
 
 export type ProviderNames = 'MetaMask' | 'WalletConnect' | null;
 

@@ -5,13 +5,18 @@ export type ZerionAsset = {
   is_displayable: boolean;
   is_verified: boolean;
   name: string;
-  price: {
+  price?: {
     changed_at: number;
     relative_change_24h: number;
     value: number;
   };
   symbol: string;
   type: string;
+};
+
+export type ZerionAssetWithBalance = {
+  asset: ZerionAsset;
+  quantity: string;
 };
 
 export type ZerionTransaction = {
@@ -50,5 +55,16 @@ export type ZerionTransactionsReceived = {
   };
   payload: {
     transactions: Array<ZerionTransaction>;
+  };
+};
+
+export type ZerionAssetsReceived = {
+  meta: {
+    address: string;
+    currency: string;
+    status: string;
+  };
+  payload: {
+    assets: Map<string, ZerionAssetWithBalance>;
   };
 };

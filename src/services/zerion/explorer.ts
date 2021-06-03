@@ -1,13 +1,22 @@
-import { ZerionTransactionsReceived } from './responses';
+import { sameAddress } from './../../utils/address';
+import { mapZerionTokens } from './tokens';
+import { ZerionAssetsReceived, ZerionTransactionsReceived } from './responses';
 import io from 'socket.io-client';
 import { messages, TRANSACTIONS_LIMIT } from './messages';
-import { Transaction } from '@/store/modules/account/types';
-import { HandleZerionTransactionReceived } from './transactions';
+import { TokenWithBalance, Transaction } from '@/store/modules/account/types';
+import { mapZerionTxns } from './transactions';
+import { GetTokensPrice } from '../thegraph/api';
+import findIndex from 'lodash-es/findIndex';
 
 export const InitExplorer = (
   accountAddress: string,
   nativeCurrency: string,
-  addTransactions: (txns: Array<Transaction>) => void
+  setTransactions: (txns: Array<Transaction>) => void,
+  updateTransactions: (txns: Array<Transaction>) => void,
+  removeTransactions: (txns: Array<string>) => void,
+  setTokens: (tokens: Array<TokenWithBalance>) => void,
+  updateTokens: (tokens: Array<TokenWithBalance>) => void,
+  removeTokens: (tokens: Array<string>) => void
 ) => {
   const io_options = {
     extraHeaders: { origin: 'http://localhost:3000' },
@@ -25,24 +34,96 @@ export const InitExplorer = (
         currency: nativeCurrency.toLowerCase(),
         transactions_limit: TRANSACTIONS_LIMIT
       },
-      scope: ['transactions']
+      scope: ['transactions', 'assets']
     });
   });
 
+  // Transactions
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.RECEIVED,
     (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.RECEIVED, message);
-      HandleZerionTransactionReceived(message, false, addTransactions);
+      const txns = mapZerionTxns(message);
+      setTransactions(txns);
     }
   );
-  addressSocket.on(messages.ADDRESS_TRANSACTIONS.CHANGED, (message) => {
-    console.log(messages.ADDRESS_TRANSACTIONS.RECEIVED, message);
-  });
-  addressSocket.on(messages.ADDRESS_TRANSACTIONS.APPENDED, (message) => {
-    console.log(messages.ADDRESS_TRANSACTIONS.RECEIVED, message);
-  });
-  addressSocket.on(messages.ADDRESS_TRANSACTIONS.REMOVED, (message) => {
-    console.log(messages.ADDRESS_TRANSACTIONS.RECEIVED, message);
-  });
+  addressSocket.on(
+    messages.ADDRESS_TRANSACTIONS.CHANGED,
+    (message: ZerionTransactionsReceived) => {
+      console.log(messages.ADDRESS_TRANSACTIONS.CHANGED, message);
+      const txns = mapZerionTxns(message);
+      updateTransactions(txns);
+    }
+  );
+  addressSocket.on(
+    messages.ADDRESS_TRANSACTIONS.APPENDED,
+    (message: ZerionTransactionsReceived) => {
+      console.log(messages.ADDRESS_TRANSACTIONS.APPENDED, message);
+      const txns = mapZerionTxns(message);
+      updateTransactions(txns);
+    }
+  );
+  addressSocket.on(
+    messages.ADDRESS_TRANSACTIONS.REMOVED,
+    (message: ZerionTransactionsReceived) => {
+      console.log(messages.ADDRESS_TRANSACTIONS.REMOVED, message);
+      const txns = mapZerionTxns(message);
+      removeTransactions(txns.map((t) => t.hash));
+    }
+  );
+
+  // Tokens
+  addressSocket.on(
+    messages.ADDRESS_ASSETS.RECEIVED,
+    async (message: ZerionAssetsReceived) => {
+      console.log(messages.ADDRESS_ASSETS.RECEIVED, message);
+      const tokens = mapZerionTokens(message);
+
+      console.log('tokens: ', tokens);
+
+      const missingPriceAssetAddresses = tokens
+        .filter((t) => t.priceUSD === '0')
+        .map((t) => t.address);
+
+      console.log('missingPriceAssetAddresses: ', missingPriceAssetAddresses);
+
+      if (missingPriceAssetAddresses) {
+        const missingPrices = await GetTokensPrice(missingPriceAssetAddresses);
+        Array.from(missingPrices).forEach(([addr, price]) => {
+          const ind = findIndex(tokens, (t) => sameAddress(t.address, addr));
+          if (ind !== -1) {
+            tokens[ind].priceUSD = price;
+          }
+        });
+      }
+
+      console.log('tokens: ', tokens);
+
+      setTokens(tokens);
+    }
+  );
+  addressSocket.on(
+    messages.ADDRESS_ASSETS.CHANGED,
+    (message: ZerionAssetsReceived) => {
+      console.log(messages.ADDRESS_ASSETS.CHANGED, message);
+      const tokens = mapZerionTokens(message);
+      updateTokens(tokens);
+    }
+  );
+  addressSocket.on(
+    messages.ADDRESS_ASSETS.APPENDED,
+    (message: ZerionAssetsReceived) => {
+      console.log(messages.ADDRESS_ASSETS.APPENDED, message);
+      const tokens = mapZerionTokens(message);
+      updateTokens(tokens);
+    }
+  );
+  addressSocket.on(
+    messages.ADDRESS_ASSETS.REMOVED,
+    (message: ZerionAssetsReceived) => {
+      console.log(messages.ADDRESS_ASSETS.REMOVED, message);
+      const tokens = mapZerionTokens(message);
+      removeTokens(tokens.map((t) => t.address));
+    }
+  );
 };
