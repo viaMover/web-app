@@ -7,7 +7,8 @@ import {
   AccountData,
   TokenWithBalance,
   ProviderNames,
-  ProviderData
+  ProviderData,
+  Transaction
 } from './../types';
 import { GetTransactions } from '@/services/etherscan/transactions';
 import { EthplorerToken, GetWalletInfo } from '@/services/ethplorer/tokens';
@@ -103,7 +104,22 @@ export default {
           state.currentAddress,
           'usd',
           (txns: Array<Transaction>) => {
+            commit('setWalletTransactions', txns);
+          },
+          (txns: Array<Transaction>) => {
             commit('updateWalletTransactions', txns);
+          },
+          (txnsHashes: Array<string>) => {
+            commit('removeWalletTransaction', txnsHashes);
+          },
+          (tokens: Array<TokenWithBalance>) => {
+            commit('setWalletTokens', tokens);
+          },
+          (tokens: Array<TokenWithBalance>) => {
+            commit('updateWalletTokens', tokens);
+          },
+          (tokens: Array<string>) => {
+            commit('removeWalletTokens', tokens);
           }
         );
       }
