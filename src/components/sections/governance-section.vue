@@ -14,14 +14,17 @@
         <div class="image-placeholder inner"></div>
       </div>
       <div class="text-container">
-        <h5>{{ lastProposal.name }}</h5>
-        <sub>{{ $t(`governance.lblVotingStatus.${lastProposal.status}`) }}</sub>
+        <span class="heading">{{ lastProposal.name }}</span>
+        <span class="sub-heading">{{
+          $t(`governance.lblVotingStatus.${lastProposal.status}`)
+        }}</span>
       </div>
       <router-link
-        button-class="button-primary"
         :to="{ name: 'governance-view', params: { id: lastProposal.id } }"
       >
-        {{ $t('governance.btnVote.simple') }}
+        <action-button class="button-primary">
+          {{ $t('governance.btnVote.simple') }}
+        </action-button>
       </router-link>
     </div>
     <div class="button-container">
@@ -40,11 +43,13 @@ import Vue from 'vue';
 
 import HeadingSection from './heading-section.vue';
 import { mapGetters } from 'vuex';
+import ActionButton from '../buttons/action-button.vue';
 
 export default Vue.extend({
   name: 'GovernanceSection',
   components: {
-    HeadingSection
+    HeadingSection,
+    ActionButton
   },
   computed: {
     ...mapGetters('proposal', ['lastProposal'])

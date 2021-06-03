@@ -10,15 +10,21 @@
     </template>
 
     <div class="body">
-      <h3>{{ $t('debitCard.lblDebitCardHeading') }}</h3>
-      <p>{{ $t('debitCard.txtDebitCard') }}</p>
+      <div>
+        <div>
+          <h3 class="heading">{{ $t('debitCard.lblDebitCardHeading') }}</h3>
+          <p class="content">{{ $t('debitCard.txtDebitCard') }}</p>
+        </div>
+        <div class="emoji right floating">🐐</div>
+      </div>
+
       <div class="button-container">
         <action-button class="button-primary">
           {{ $t('debitCard.btnOrderDebitCard') }}
         </action-button>
-        <action-button class="button-primary round-icon">X</action-button>
-        <div class="emoji right floating">🐐</div>
-        <div class="clearfix"></div>
+        <div class="cross-icon">
+          <img src="@/assets/images/cross.svg" />
+        </div>
       </div>
     </div>
   </heading-section>

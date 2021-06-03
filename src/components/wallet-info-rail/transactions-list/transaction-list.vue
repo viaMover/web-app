@@ -1,11 +1,18 @@
 <template>
   <div class="transactions-list">
-    <div v-if="!transactionGroups.length" class="transactions-list_empty-state">
+    <div v-if="!transactionGroups.length" class="empty-state">
       {{ $t('lblConnectWalletTransactionHistory') }}
     </div>
     <transaction-group
       v-for="txGroup in transactionGroups"
       v-else
+      :key="txGroup.date"
+      :heading-text="formatDate(txGroup.timeStamp)"
+      :transactions="txGroup.transactions"
+    />
+    <!-- component with dummy data -->
+    <transaction-group
+      v-for="txGroup in dummyTransactionData"
       :key="txGroup.date"
       :heading-text="formatDate(txGroup.timeStamp)"
       :transactions="txGroup.transactions"
@@ -19,6 +26,7 @@ import dayjs from 'dayjs';
 
 import TransactionGroup from './transaction-group.vue';
 import { mapGetters } from 'vuex';
+import { dummyTransactionData } from './dummy-data';
 
 export default Vue.extend({
   name: 'TransactionList',
@@ -30,6 +38,11 @@ export default Vue.extend({
       type: String,
       required: false
     }
+  },
+  data: function () {
+    return {
+      dummyTransactionData
+    };
   },
   computed: {
     ...mapGetters('account', {

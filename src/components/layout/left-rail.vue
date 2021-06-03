@@ -1,5 +1,6 @@
 <template>
   <div class="left rail">
+    <img alt="logo" class="logo" src="@/assets/images/logo.svg" />
     <slot></slot>
   </div>
 </template>

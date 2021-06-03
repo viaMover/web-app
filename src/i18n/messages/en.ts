@@ -1,7 +1,9 @@
 export default {
   lblWelcome: 'Welcome',
+  headingBalance: 'Your wallet balance',
   lblConnectWallet: 'Connect a wallet',
   lblWallet: 'Wallet',
+  lblDisconnect: 'Disconnect',
   lblConnectWalletTransactionHistory: '@:lblConnectWallet to see history',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',

@@ -1,5 +1,19 @@
 <template>
-  <div class="header">
+  <div class="wallet">
+    <div class="connect">
+      <img alt="imageprofile" :src="'https://linkpicture.com/q/Group-6.png'" />
+      <div class="content">
+        <div class="label">
+          <span class="id">0xf13</span>
+          <img
+            alt="arrow-down"
+            class="arrow"
+            src="@/assets/images/arrow-down.svg"
+          />
+        </div>
+        <span class="disconnect">{{ $t('lblDisconnect') }}</span>
+      </div>
+    </div>
     <div class="input">
       <label for="wallet_address">{{ $t('lblWallet') }}</label>
       <select

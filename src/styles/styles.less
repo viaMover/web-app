@@ -1,8 +1,10 @@
-@import "_button.less";
-@import "_card.less";
-@import "_sections.less";
-@import "_input.less";
-@import "_transactions.less";
+@import '_button.less';
+@import '_card.less';
+@import '_sections.less';
+@import '_wallet.less';
+@import '_input.less';
+@import '_transactions.less';
+@import 'variables.less';
 
 * {
   box-sizing: border-box;
@@ -12,7 +14,10 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+}
+
+body {
+  margin: 0;
 }
 
 .content-wrapper {
@@ -24,25 +29,30 @@
 
   .left.rail {
     flex: 1 0 30%;
-    max-width: 30%;
+    max-width: @leftWidth;
+    background-color: @leftBG;
+    padding: 1.4rem;
+    .logo {
+      border-radius: 8px;
+    }
   }
 
   .main {
     flex: 2 0 70%;
-    min-width: 70%;
+    min-width: @rightWidth;
+    background-color: @rightBG;
+    padding: 6rem 10rem;
   }
 
   .columns {
-    width: 100%;
-    display: flex;
-    flex-flow: row nowrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5rem;
 
     .column.one.of.two {
       flex-grow: 1;
-      width: 50%;
       flex-shrink: 0;
       margin-right: 0.5rem;
-
       &:last-child {
         margin-right: 0;
       }
