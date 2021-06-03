@@ -4,7 +4,7 @@
       <wallet-info-rail />
     </template>
 
-    <h1>{{ $t('lblWelcome') }}</h1>
+    <header-balance />
     <div class="columns">
       <release-radar-section class="column one of two" />
       <swaps-section class="column one of two" />
@@ -31,7 +31,8 @@ import {
   TreasurySection,
   GovernanceSection,
   NibbleShopSection,
-  NftsSection
+  NftsSection,
+  HeaderBalance
 } from '@/components/sections';
 
 export default Vue.extend({
@@ -46,7 +47,8 @@ export default Vue.extend({
     TreasurySection,
     GovernanceSection,
     NibbleShopSection,
-    NftsSection
+    NftsSection,
+    HeaderBalance
   }
 });
 </script>

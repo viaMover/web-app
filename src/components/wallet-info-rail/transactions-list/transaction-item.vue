@@ -1,5 +1,18 @@
 <template>
-  <div class="transaction-item">{{ transaction.hash }}</div>
+  <div class="transaction-item">
+    <div class="container">
+      <img :alt="transaction.symbol" class="image" :src="transaction.symbol" />
+      <div class="content">
+        <span class="label">{{ transaction.heading }}</span>
+        <span class="amount">{{ transaction.amount }}</span>
+      </div>
+    </div>
+    <div>
+      <span class="operation">{{
+        `${true ? '-' : '+'} ${transaction.deducted}`
+      }}</span>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">

@@ -1,24 +1,52 @@
 .section {
-  background-color: aliceblue;
-  padding: 1rem;
   border-radius: 2rem;
   margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 2.5rem;
+
+  .labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .expand-button {
+      display: flex;
+    }
+  }
+
+  &.balance {
+    display: flex;
+    flex-direction: column;
+    .mainLabel {
+      font-size: 3rem;
+      font-weight: 700;
+    }
+    .description {
+      color: @light;
+      font-size: 0.875rem;
+    }
+  }
 
   .heading-row {
     position: relative;
     margin: 0;
     text-align: initial;
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .expand-button {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background-color: grey;
-      border-radius: 50%;
-      text-decoration: none;
-      color: black;
-      transform: rotate(-45deg);
+  .heading-body {
+    font-size: 0.875rem;
+    color: @light;
+    .body {
+      background-color: @white;
+      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.12);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+    }
+    .cross-icon {
+      display: flex;
+      margin-left: 1rem;
+      cursor: pointer;
     }
   }
 
@@ -26,6 +54,8 @@
     .item {
       width: 100%;
       padding: 1rem;
+      padding-right: 0;
+      padding-left: 0;
       display: flex;
       flex-flow: row nowrap;
       height: min-content;
@@ -57,21 +87,48 @@
         flex-shrink: 0;
         text-align: left;
         padding-left: 2rem;
-
-        h5 {
-          margin: 0;
+        font-size: 0.875rem;
+        display: flex;
+        flex-direction: column;
+        .heading {
+          font-weight: 500;
+          color: @black;
+        }
+        .sub-heading {
+          font-size: 0.75rem;
+          color: @light;
         }
       }
     }
 
     .button-container {
       padding: 1rem;
+      background-color: #f1f1f1;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 25px;
+      cursor: pointer;
+      a {
+        color: @black;
+        text-decoration: none;
+      }
     }
   }
 
   &.debit {
     .body {
       position: relative;
+      .heading {
+        font-size: 1.5rem;
+        margin: 0;
+        padding-top: 0.5rem;
+        color: @black;
+      }
+      .content {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: @light;
+      }
     }
 
     .emoji {
@@ -91,17 +148,15 @@
     }
 
     .button-container {
-      padding-left: 1rem;
-      padding-right: 1rem;
       display: flex;
-      flex-flow: row wrap;
-      justify-content: center;
+      align-items: center;
     }
   }
 
   &.nft {
     .nfts-row {
       width: 100%;
+      gap: 3rem;
       display: flex;
       flex-flow: row wrap;
     }

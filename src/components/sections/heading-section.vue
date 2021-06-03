@@ -1,16 +1,18 @@
 <template>
   <section class="section" :name="name">
-    <h2 class="heading-row">
-      <slot class="heading-row--text" name="heading"></slot>
+    <div class="labels">
+      <h2 class="heading-row">
+        <slot class="heading-row--text" name="heading"></slot>
+      </h2>
       <router-link
         v-if="showExpandButton"
         class="expand-button"
         :to="{ name: navigateToName }"
       >
-        &lt;&gt;
+        <img src="@/assets/images/arrows.svg" />
       </router-link>
-    </h2>
-    <div class="heading--body">
+    </div>
+    <div class="heading-body">
       <slot></slot>
     </div>
   </section>

@@ -1,6 +1,7 @@
 export { default as DebitCardSection } from './debit-card-section.vue';
 export { default as GovernanceSection } from './governance-section.vue';
 export { default as NftsSection } from './nfts-section.vue';
+export { default as HeaderBalance } from './header-balance.vue';
 export { default as NibbleShopSection } from './nibble-shop-section.vue';
 export { default as ReleaseRadarSection } from './release-radar-section.vue';
 export { default as SavingsSection } from './savings-section.vue';
