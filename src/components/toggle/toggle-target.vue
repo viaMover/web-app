@@ -50,17 +50,13 @@ export default Vue.extend({
     toggleEventBus.$off(`toggle-${this.toggleGroup}`, this.toggle);
   },
   methods: {
-    toggle({ toggleId, payload }: TogglePayload): void {
-      if (this.toggleId === toggleId) {
+    toggle({ id }: TogglePayload<never>): void {
+      if (this.toggleId === id) {
         this.isActive = !this.isActive;
       } else {
         this.isActive = false;
       }
       this.applyParameters();
-
-      if (payload !== undefined && toggleId === this.toggleId) {
-        this.$emit('toggle', payload);
-      }
     },
     applyParameters(): void {
       if (this.lockBody) {

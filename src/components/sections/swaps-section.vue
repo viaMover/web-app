@@ -17,7 +17,7 @@
 import Vue from 'vue';
 
 import HeadingSection from './heading-section.vue';
-import { toggleModal } from '@/components/toggle/toggle-root';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'SwapsSection',
@@ -26,7 +26,7 @@ export default Vue.extend({
   },
   methods: {
     handleClick(): void {
-      toggleModal('swap-modal');
+      toggleSingleItem('swap-modal');
     }
   }
 });

@@ -1,5 +1,5 @@
 <template>
-  <centered-modal-window v-cloak modal-id="swap-modal" @toggle="handleToggled">
+  <centered-modal-window v-cloak modal-id="swap-modal">
     <swap-form @tx-created="handleTxCreated"></swap-form>
   </centered-modal-window>
 </template>
@@ -9,11 +9,7 @@ import Vue from 'vue';
 
 import CenteredModalWindow from './centered-modal-window.vue';
 import { SwapForm } from '@/components/forms';
-import { toggleModal } from '@/components/toggle/toggle-root';
-
-type HandleToggledPayload = {
-  inputAssetAddress: string;
-};
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'SwapModal',
@@ -28,14 +24,14 @@ export default Vue.extend({
     };
   },
   methods: {
-    handleToggled(payload?: HandleToggledPayload): void {
-      this.inputAssetAddress = payload.inputAssetAddress ?? null;
-    },
     handleTxCreated(txHash: Promise<string>): void {
-      toggleModal(this.modalId);
-      toggleModal('transaction-modal', {
-        txHash
-      });
+      toggleSingleItem(this.modalId);
+      toggleSingleItem(
+        'transaction-modal',
+        new Promise<string>((resolve) =>
+          window.setTimeout(() => resolve(txHash), 5000)
+        )
+      );
     }
   }
 });

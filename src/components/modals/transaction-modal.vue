@@ -1,5 +1,5 @@
 <template>
-  <centered-modal-window v-cloak :modal-id="modalId" @toggle="handleToggled">
+  <centered-modal-window v-cloak :modal-id="modalId">
     <div v-if="state === 'waiting'">🕓</div>
     <div v-else-if="state === 'pending'">🐌</div>
     <div v-else-if="state === 'processed'">👌</div>
@@ -19,12 +19,15 @@ import { mapState } from 'vuex';
 
 import CenteredModalWindow from './centered-modal-window.vue';
 import { Transaction } from '@/store/modules/account/types';
+import {
+  subToggle,
+  TogglePayload,
+  unsubToggle
+} from '@/components/toggle/toggle-root';
 
 // probably enum will suit us better :?
 type TransactionStatus = 'waiting' | 'pending' | 'processed' | 'reverted';
-type HandleToggledPayload = {
-  txHash: Promise<string>;
-};
+type TxHashPayload = Promise<string>;
 
 // TODO: Should be reworked
 // At least we should get tx status before displaying something
@@ -50,14 +53,27 @@ export default Vue.extend({
       );
     }
   },
+  mounted() {
+    subToggle(this.modalId, this.handleToggle);
+  },
+  beforeDestroy() {
+    unsubToggle(this.modalId, this.handleToggle);
+  },
   methods: {
-    async handleToggled(payload: HandleToggledPayload): Promise<void> {
+    async handleToggle(
+      togglePayload: TogglePayload<TxHashPayload>
+    ): Promise<void> {
+      if (togglePayload.payload === undefined) {
+        return;
+      }
+
       try {
         this.state = 'waiting';
-        this.hash = await payload.txHash;
-        this.isVisible = !this.isVisible;
+        console.log(this.hash);
+        this.hash = await togglePayload.payload;
+        console.log(this.hash);
+        this.state = 'pending';
       } catch {
-        this.isVisible = false;
         this.hash = '';
       }
     }

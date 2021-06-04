@@ -1,34 +1,40 @@
 <template>
   <div class="form-group">
-    <div class="asset-icon">
-      <img :alt="iconAlt" :src="iconSrc" />
+    <div class="left">
+      <div class="top">
+        <div class="asset-icon">
+          <img :alt="iconAlt" :src="iconSrc" />
+        </div>
+        <price-input-field
+          :amount="amount"
+          :field-id="`${fieldRole}-selected-amount`"
+          @update-amount="handleUpdateAmount"
+        />
+      </div>
+      <div class="bottom">
+        <price-input-field
+          :amount="nativeAmount"
+          :field-id="`${fieldRole}-selected-native-amount`"
+          text-prefix="≈"
+          @update-amount="handleUpdateNativeAmount"
+        />
+      </div>
     </div>
-    <div class="dropdown input">
-      <label :for="`${fieldRole}-asset`">{{ label }}</label>
-      <select
-        :id="`${fieldRole}-asset`"
-        :value="asset"
-        @change="handleUpdateAsset($event.target.value)"
-      >
-        <option :value="null">{{ $t('swaps.lblChooseAsset') }}</option>
-        <option v-for="asset in assets" :key="asset.address">
-          {{ asset.name }}
-        </option>
-      </select>
-    </div>
-    <span v-if="asset">{{ selectMaxText }}</span>
-    <div class="prices">
-      <price-input-field
-        :amount="amount"
-        :field-id="`${fieldRole}-selected-amount`"
-        @update-amount="handleUpdateAmount"
-      />
-      <price-input-field
-        :amount="nativeAmount"
-        :field-id="`${fieldRole}-selected-native-amount`"
-        text-prefix="≈"
-        @update-amount="handleUpdateNativeAmount"
-      />
+    <div class="right">
+      <div class="dropdown input">
+        <label :for="`${fieldRole}-asset`">{{ label }}</label>
+        <select
+          :id="`${fieldRole}-asset`"
+          :value="asset"
+          @change="handleUpdateAsset($event.target.value)"
+        >
+          <option :value="null">{{ $t('swaps.lblChooseAsset') }}</option>
+          <option v-for="asset in assets" :key="asset.address">
+            {{ asset.name }}
+          </option>
+        </select>
+      </div>
+      <span v-if="asset">{{ selectMaxText }}</span>
     </div>
   </div>
 </template>
@@ -108,3 +114,47 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="less">
+.form-group {
+  margin: 0.5rem;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+
+  .left,
+  .right {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+
+  .left {
+    flex: 1 0 50%;
+
+    .top {
+      display: flex;
+      width: 100%;
+      flex-flow: row nowrap;
+      margin-bottom: 1rem;
+
+      .asset-icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 1rem;
+        margin-right: 0.25rem;
+      }
+    }
+  }
+
+  .right {
+    flex: 0 1 30%;
+    align-items: end;
+
+    .dropdown.input {
+      label {
+        display: none;
+      }
+    }
+  }
+}
+</style>

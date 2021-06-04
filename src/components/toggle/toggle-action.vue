@@ -24,7 +24,11 @@
 //
 import Vue from 'vue';
 
-import toggleEventBus from './toggle-root';
+import toggleEventBus, {
+  subToggle,
+  TogglePayload,
+  unsubToggle
+} from './toggle-root';
 import { isMobileDevice } from '@/utils/commonHelpers';
 
 export default Vue.extend({
@@ -43,7 +47,7 @@ export default Vue.extend({
   data() {
     return {
       isActive: false,
-      show: null as null | number
+      show: undefined as number | undefined
     };
   },
   computed: {
@@ -55,10 +59,10 @@ export default Vue.extend({
     }
   },
   mounted() {
-    toggleEventBus.$on(`toggle-${this.toggleGroup}`, this.toggle);
+    subToggle(this.toggleGroup, this.toggle);
   },
   beforeDestroy() {
-    toggleEventBus.$off(`toggle-${this.toggleGroup}`, this.toggle);
+    unsubToggle(this.toggleGroup, this.toggle);
   },
   methods: {
     click(toggleId: string): void {
@@ -70,7 +74,7 @@ export default Vue.extend({
         toggleEventBus.$emit(`toggle-${this.toggleGroup}`, toggleId);
       }
     },
-    mouseenter(toggleId): void {
+    mouseenter(toggleId: string): void {
       if (!this.hover || isMobileDevice()) {
         return;
       }
@@ -91,8 +95,8 @@ export default Vue.extend({
 
       window.clearTimeout(this.show);
     },
-    toggle(toggleId): void {
-      if (this.toggleId === toggleId) {
+    toggle(payload: TogglePayload<void>): void {
+      if (this.toggleId === payload.id) {
         this.isActive = !this.isActive;
       } else {
         this.isActive = false;

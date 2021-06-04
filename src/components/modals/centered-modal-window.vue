@@ -44,10 +44,10 @@
 import Vue from 'vue';
 
 import { ToggleAction, ToggleTarget } from '@/components/toggle';
-import { toggleModal } from '@/components/toggle/toggle-root';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
-  name: 'CenteredModal',
+  name: 'CenteredModalWindow',
   components: {
     ToggleAction,
     ToggleTarget
@@ -76,11 +76,40 @@ export default Vue.extend({
   },
   methods: {
     toggleModal(): void {
-      toggleModal(this.modalId);
-    },
-    handleToggle(payload: never): void {
-      this.$emit('toggle', payload);
+      toggleSingleItem(this.modalId);
     }
   }
 });
 </script>
+
+<style scoped lang="less">
+.ui.dimmer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.ui.modal {
+  position: fixed;
+  left: auto;
+  top: 50%;
+  text-align: left;
+  overflow-y: auto;
+  transform-origin: 50% 0;
+
+  &.center {
+    top: 20%;
+  }
+}
+
+.content {
+  background-color: white;
+  padding: 1rem;
+  min-width: 50vw;
+  min-height: 50vh;
+}
+</style>
