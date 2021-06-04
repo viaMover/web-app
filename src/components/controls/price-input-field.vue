@@ -1,5 +1,5 @@
 <template>
-  <div class="input">
+  <span class="input">
     <label :for="fieldId">{{ fieldLabel }}</label>
     {{ textPrefix }}
     <input
@@ -9,7 +9,7 @@
       :value="amount"
       @input="updateAmount($event.target.value)"
     />
-  </div>
+  </span>
 </template>
 
 <script lang="ts">

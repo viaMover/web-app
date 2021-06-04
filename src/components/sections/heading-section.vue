@@ -4,13 +4,22 @@
       <h2 class="heading-row">
         <slot class="heading-row--text" name="heading"></slot>
       </h2>
-      <router-link
-        v-if="showExpandButton"
-        class="expand-button"
-        :to="{ name: navigateToName }"
-      >
-        <img src="@/assets/images/arrows.svg" />
-      </router-link>
+      <template v-if="hasExpandButton">
+        <router-link
+          v-if="navigateToName"
+          class="expand-button"
+          :to="{ name: navigateToName }"
+        >
+          <img src="@/assets/images/arrows.svg" />
+        </router-link>
+        <div
+          v-else-if="useClickEvent"
+          class="expand-button"
+          @click="handleClick"
+        >
+          <img src="@/assets/images/arrows.svg" />
+        </div>
+      </template>
     </div>
     <div class="heading-body">
       <slot></slot>
@@ -35,11 +44,15 @@ export default Vue.extend({
     name: {
       type: String,
       required: true
+    },
+    useClickEvent: {
+      type: Boolean,
+      default: false
     }
   },
-  computed: {
-    showExpandButton(): boolean {
-      return this.hasExpandButton && !!this.navigateToName;
+  methods: {
+    handleClick(): void {
+      this.$emit('navigation-click');
     }
   }
 });

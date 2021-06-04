@@ -4,7 +4,6 @@
       :amount="input.amount"
       :assets="tokens"
       field-role="input"
-      :initial-asset="initialAsset"
       :label="$t('swaps.lblSwapFrom')"
       :native-amount="input.nativeAmount"
       @update-amount="handleUpdateInputAmount"
@@ -13,7 +12,7 @@
     />
     <asset-field
       :amount="output.amount"
-      :assets="assets"
+      :assets="tokens"
       field-role="output"
       :label="$t('swaps.lblSwapTo')"
       :native-amount="output.nativeAmount"
@@ -53,26 +52,27 @@
     >
       {{ $t('swaps.btnSwap.simple') }}
     </action-button>
+    <gas-selector @selected-gas-changed="handleSelectedGasChanged" />
   </form>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import { AssetField } from '@/components/controls';
+import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { mapState } from 'vuex';
+import { GasPrice } from '@/components/controls/gas-selector.vue';
 
 export default Vue.extend({
   name: 'SwapForm',
   components: {
     AssetField,
-    ActionButton
+    ActionButton,
+    GasSelector
   },
   data() {
     return {
-      assets: [],
-      initialAsset: null,
       info: {
         minimumReceived: 0,
         rate: 0,
@@ -90,7 +90,8 @@ export default Vue.extend({
         asset: null,
         amount: 0,
         nativeAmount: 0
-      }
+      },
+      selectedGasPrice: 0
     };
   },
   computed: {
@@ -105,6 +106,7 @@ export default Vue.extend({
   methods: {
     handleExecuteSwap(): void {
       //
+      this.$emit('tx-created', 'transaction-hash');
     },
     handleUpdateInputAmount(amount: number): void {
       this.input.amount = amount;
@@ -123,6 +125,9 @@ export default Vue.extend({
     },
     handleUpdateOutputAsset(asset: never) {
       this.output.asset = asset;
+    },
+    handleSelectedGasChanged(newGas: GasPrice): void {
+      this.selectedGasPrice = newGas.amount;
     }
   }
 });

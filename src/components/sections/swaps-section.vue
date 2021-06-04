@@ -2,7 +2,8 @@
   <heading-section
     has-expand-button
     :name="$t('swaps.lblSwaps')"
-    navigate-to-name="swaps"
+    use-click-event
+    @navigation-click="handleClick"
   >
     <template v-slot:heading>
       {{ $t('swaps.lblSwaps') }}
@@ -16,11 +17,17 @@
 import Vue from 'vue';
 
 import HeadingSection from './heading-section.vue';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'SwapsSection',
   components: {
     HeadingSection
+  },
+  methods: {
+    handleClick(): void {
+      toggleSingleItem('swap-modal');
+    }
   }
 });
 </script>

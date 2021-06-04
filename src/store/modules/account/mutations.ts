@@ -1,4 +1,6 @@
+import { SortAndDedupedTransactions } from './utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
+import find from 'lodash-es/find';
 import { MutationTree } from 'vuex';
 import {
   AccountStoreState,
@@ -8,30 +10,42 @@ import {
   TokenWithBalance,
   ProviderData
 } from './types';
+import { SortAndDedupedTokens } from './utils/tokens';
 
 export default {
   setCurrentWallet(state, address): void {
     state.currentAddress = address;
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
-    state.tokens = tokens;
+    const orderedDedupedResults = SortAndDedupedTokens(tokens);
+    state.tokens = orderedDedupedResults;
+  },
+  updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
+    const allTokens = [...newTokens, ...state.tokens];
+    const orderedDedupedResults = SortAndDedupedTokens(allTokens);
+    state.tokens = orderedDedupedResults;
+  },
+  removeWalletTokens(state, removeHashes: Array<string>): void {
+    state.tokens = state.tokens.filter(
+      (t: TokenWithBalance) => !removeHashes.includes(t.address)
+    );
   },
   setAllTokens(state, tokens: Array<Token>): void {
     state.allTokens = tokens;
   },
   setWalletTransactions(state, transactions: Array<Transaction>): void {
-    state.transactions = transactions;
+    const orderedDedupedResults = SortAndDedupedTransactions(transactions);
+    state.transactions = orderedDedupedResults;
   },
   updateWalletTransactions(state, newTransactions: Array<Transaction>): void {
-    const filteredExistedTransactions = state.transactions.filter(
-      (t: Transaction) => {
-        return (
-          newTransactions.findIndex((nt: Transaction) => nt.hash === t.hash) !==
-          -1
-        );
-      }
+    const allTransactions = [...newTransactions, ...state.transactions];
+    const orderedDedupedResults = SortAndDedupedTransactions(allTransactions);
+    state.transactions = orderedDedupedResults;
+  },
+  removeWalletTransaction(state, removeHashes: Array<string>): void {
+    state.transactions = state.transactions.filter(
+      (t: Transaction) => !removeHashes.includes(t.hash)
     );
-    state.transactions = [...filteredExistedTransactions, ...newTransactions];
   },
   setRefreshEror(state, error): void {
     state.refreshError = error;

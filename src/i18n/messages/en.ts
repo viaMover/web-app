@@ -392,5 +392,19 @@ export default {
         description: 'Your transaction failed'
       }
     }
+  },
+  search: {
+    lblSearchBar: 'Search tokens',
+    lblSearchBarPlaceholder: 'Search any token on Ethereum'
+  },
+  gas: {
+    lblNetworkFee: 'Network fee',
+    lblSelector: {
+      low: 'Low',
+      normal: 'Normal',
+      high: 'High',
+      custom: 'Custom',
+      treasury: 'Treasury'
+    }
   }
 };

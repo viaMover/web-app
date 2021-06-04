@@ -1,9 +1,5 @@
 <template>
-  <modal-window
-    v-show="transaction && isVisible"
-    has-close-button
-    @close="isVisible"
-  >
+  <centered-modal-window v-cloak :modal-id="modalId">
     <div v-if="state === 'waiting'">🕓</div>
     <div v-else-if="state === 'pending'">🐌</div>
     <div v-else-if="state === 'processed'">👌</div>
@@ -14,36 +10,37 @@
     <div class="description">
       {{ $t(`transaction.lblState.${state}.description`) }}
     </div>
-  </modal-window>
+  </centered-modal-window>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
-import ModalWindow from './modal-window.vue';
 import { mapState } from 'vuex';
+
+import CenteredModalWindow from './centered-modal-window.vue';
 import { Transaction } from '@/store/modules/account/types';
+import {
+  subToggle,
+  TogglePayload,
+  unsubToggle
+} from '@/components/toggle/toggle-root';
 
 // probably enum will suit us better :?
 type TransactionStatus = 'waiting' | 'pending' | 'processed' | 'reverted';
+type TxHashPayload = Promise<string>;
 
 // TODO: Should be reworked
 // At least we should get tx status before displaying something
 export default Vue.extend({
   name: 'TransactionModal',
   components: {
-    ModalWindow
-  },
-  props: {
-    hash: {
-      type: String,
-      required: true
-    }
+    CenteredModalWindow
   },
   data() {
     return {
-      state: 'waiting' as TransactionStatus,
-      isVisible: false
+      modalId: 'transaction-modal',
+      hash: '',
+      state: 'waiting' as TransactionStatus
     };
   },
   computed: {
@@ -56,9 +53,29 @@ export default Vue.extend({
       );
     }
   },
+  mounted() {
+    subToggle(this.modalId, this.handleToggle);
+  },
+  beforeDestroy() {
+    unsubToggle(this.modalId, this.handleToggle);
+  },
   methods: {
-    toggleIsVisible(): void {
-      this.isVisible = !this.isVisible;
+    async handleToggle(
+      togglePayload: TogglePayload<TxHashPayload>
+    ): Promise<void> {
+      if (togglePayload.payload === undefined) {
+        return;
+      }
+
+      try {
+        this.state = 'waiting';
+        console.log(this.hash);
+        this.hash = await togglePayload.payload;
+        console.log(this.hash);
+        this.state = 'pending';
+      } catch {
+        this.hash = '';
+      }
     }
   }
 });

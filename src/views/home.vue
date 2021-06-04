@@ -15,6 +15,9 @@
     <governance-section />
     <nibble-shop-section />
     <nfts-section />
+
+    <transaction-modal />
+    <swap-modal />
   </content-wrapper>
 </template>
 
@@ -34,6 +37,7 @@ import {
   NftsSection,
   HeaderBalance
 } from '@/components/sections';
+import { TransactionModal, SwapModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'Home',
@@ -48,7 +52,9 @@ export default Vue.extend({
     GovernanceSection,
     NibbleShopSection,
     NftsSection,
-    HeaderBalance
+    HeaderBalance,
+    TransactionModal,
+    SwapModal
   }
 });
 </script>
