@@ -23,16 +23,20 @@ export default {
     networkInfo: undefined,
     // eslint-disable-next-line
     providerBeforeClose: () => {},
-    allTokens: assetList.map(
-      (asset) =>
-        ({
-          address: asset.id,
-          decimals: asset.decimals,
-          symbol: asset.symbol,
-          name: asset.name,
-          logo: getTokenLogo(asset.id)
-        } as Token)
-    ),
+    allTokens: assetList
+      .map(
+        (asset) =>
+          ({
+            address: asset.id,
+            decimals: asset.decimals,
+            symbol: asset.symbol,
+            name: asset.name,
+            logo: getTokenLogo(asset.id)
+          } as Token)
+      )
+      .sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      }),
     refreshError: undefined
   },
   actions: { ...walletActions },

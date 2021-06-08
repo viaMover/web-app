@@ -395,7 +395,9 @@ export default {
   },
   search: {
     lblSearchBar: 'Search tokens',
-    lblSearchBarPlaceholder: 'Search any token on Ethereum'
+    lblSearchBarPlaceholder: 'Search any token on Ethereum',
+    lblFavorite: '⭐ Favorite',
+    lblVerified: '✔ Verified'
   },
   gas: {
     lblNetworkFee: 'Network fee',

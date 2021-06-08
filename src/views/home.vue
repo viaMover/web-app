@@ -18,6 +18,7 @@
 
     <transaction-modal />
     <swap-modal />
+    <search-modal />
   </content-wrapper>
 </template>
 
@@ -37,7 +38,7 @@ import {
   NftsSection,
   HeaderBalance
 } from '@/components/sections';
-import { TransactionModal, SwapModal } from '@/components/modals';
+import { TransactionModal, SwapModal, SearchModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'Home',
@@ -54,7 +55,8 @@ export default Vue.extend({
     NftsSection,
     HeaderBalance,
     TransactionModal,
-    SwapModal
+    SwapModal,
+    SearchModal
   }
 });
 </script>

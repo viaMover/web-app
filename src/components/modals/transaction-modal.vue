@@ -18,12 +18,14 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 
 import CenteredModalWindow from './centered-modal-window.vue';
+
 import { Transaction } from '@/store/modules/account/types';
 import {
   subToggle,
   TogglePayload,
   unsubToggle
 } from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals/modalTypes';
 
 // probably enum will suit us better :?
 type TransactionStatus = 'waiting' | 'pending' | 'processed' | 'reverted';
@@ -38,7 +40,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      modalId: 'transaction-modal',
+      modalId: Modal.Transaction,
       hash: '',
       state: 'waiting' as TransactionStatus
     };
@@ -54,10 +56,10 @@ export default Vue.extend({
     }
   },
   mounted() {
-    subToggle(this.modalId, this.handleToggle);
+    subToggle<void>(this.modalId, this.handleToggle);
   },
   beforeDestroy() {
-    unsubToggle(this.modalId, this.handleToggle);
+    unsubToggle<void>(this.modalId, this.handleToggle);
   },
   methods: {
     async handleToggle(
@@ -69,9 +71,7 @@ export default Vue.extend({
 
       try {
         this.state = 'waiting';
-        console.log(this.hash);
         this.hash = await togglePayload.payload;
-        console.log(this.hash);
         this.state = 'pending';
       } catch {
         this.hash = '';

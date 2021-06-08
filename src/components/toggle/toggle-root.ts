@@ -8,7 +8,7 @@ export interface TogglePayload<T> {
   payload?: T;
 }
 
-type HandleFunc = (payload: TogglePayload<never>) => void | Promise<void>;
+type HandleFunc<T> = (payload: TogglePayload<T>) => void | Promise<void>;
 
 export const toggleSingleItem = <T>(toggleId: string, payload?: T): void => {
   toggleEventBus.$emit(`toggle-${toggleId}`, {
@@ -30,19 +30,31 @@ export const toggleGroupItem = <T>(
   } as TogglePayload<T>);
 };
 
-export const subToggle = (toggleId: string, handler: HandleFunc): void => {
+export const subToggle = <T>(
+  toggleId: string,
+  handler: HandleFunc<TogglePayload<T>>
+): void => {
   toggleEventBus.$on(`toggle-${toggleId}`, handler);
 };
 
-export const unsubToggle = (toggleId: string, handler: HandleFunc): void => {
+export const unsubToggle = <T>(
+  toggleId: string,
+  handler: HandleFunc<TogglePayload<T>>
+): void => {
   toggleEventBus.$off(`toggle-${toggleId}`, handler);
 };
 
-export const subResult = (toggleId: string, handler: HandleFunc): void => {
+export const subResult = <T>(
+  toggleId: string,
+  handler: HandleFunc<T>
+): void => {
   toggleEventBus.$on(`toggle-${toggleId}-result`, handler);
 };
 
-export const unsubResult = (toggleId: string, handler: HandleFunc): void => {
+export const unsubResult = <T>(
+  toggleId: string,
+  handler: HandleFunc<T>
+): void => {
   toggleEventBus.$off(`toggle-${toggleId}-result`, handler);
 };
 

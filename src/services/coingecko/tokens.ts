@@ -8,6 +8,8 @@ export type CoingeckoToken = {
   address: string;
   symbol: string;
   decimals: number;
+  isFavorite: boolean;
+  isVerified: boolean;
 };
 
 type CoingeckoAllTokensResponse = {

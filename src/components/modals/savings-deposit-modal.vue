@@ -4,28 +4,29 @@
     :header-label="$t('swaps.lblSwaps')"
     modal-id="swap-modal"
   >
-    <swap-form @tx-created="handleTxCreated"></swap-form>
+    <savings-deposit-form @tx-created="handleTxCreated"></savings-deposit-form>
   </centered-modal-window>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import CenteredModalWindow from './centered-modal-window.vue';
-import { SwapForm } from '@/components/forms';
-
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals/modalTypes';
 
+import CenteredModalWindow from '@/components/modals/centered-modal-window.vue';
+import { SavingsDepositForm } from '@/components/forms';
+
 export default Vue.extend({
-  name: 'SwapModal',
+  name: 'SavingsDepositModal',
   components: {
     CenteredModalWindow,
-    SwapForm
+    SavingsDepositForm
   },
   data() {
     return {
-      modalId: Modal.Swap
+      modalId: Modal.SavingsDeposit,
+      inputAssetAddress: null as null | string
     };
   },
   methods: {

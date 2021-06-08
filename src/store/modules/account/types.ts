@@ -38,6 +38,8 @@ export type Token = {
   name: string;
   priceUSD: string;
   logo: string;
+  isFavorite: boolean;
+  isVerified: boolean;
 };
 
 export type TokenWithBalance = Token & {

@@ -5,6 +5,8 @@
     <input
       :id="fieldId"
       class="amount"
+      :max="maxAmount"
+      min="0"
       type="number"
       :value="amount"
       @input="updateAmount($event.target.value)"
@@ -33,6 +35,10 @@ export default Vue.extend({
     textPrefix: {
       type: String,
       default: ''
+    },
+    maxAmount: {
+      type: String,
+      required: false
     }
   },
   methods: {

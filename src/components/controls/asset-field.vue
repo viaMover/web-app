@@ -2,12 +2,11 @@
   <div class="form-group">
     <div class="left">
       <div class="top">
-        <div class="asset-icon">
-          <img :alt="iconAlt" :src="iconSrc" />
-        </div>
+        <img :alt="iconAlt" class="asset-icon" :src="iconSrc" />
         <price-input-field
           :amount="amount"
           :field-id="`${fieldRole}-selected-amount`"
+          :max-amount="maxAmount"
           @update-amount="handleUpdateAmount"
         />
       </div>
@@ -23,16 +22,9 @@
     <div class="right">
       <div class="dropdown input">
         <label :for="`${fieldRole}-asset`">{{ label }}</label>
-        <select
-          :id="`${fieldRole}-asset`"
-          :value="asset"
-          @change="handleUpdateAsset($event.target.value)"
-        >
-          <option :value="null">{{ $t('swaps.lblChooseAsset') }}</option>
-          <option v-for="asset in assets" :key="asset.address">
-            {{ asset.name }}
-          </option>
-        </select>
+        <button @click.prevent.stop="handleOpenSelectModal">
+          Open token search
+        </button>
       </div>
       <span v-if="asset">{{ selectMaxText }}</span>
     </div>
@@ -40,9 +32,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import PriceInputField from './price-input-field.vue';
+import {
+  subResult,
+  toggleSingleItem,
+  unsubResult
+} from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals';
+import { CoingeckoToken } from '@/services/coingecko/tokens';
+import { Token } from '@/store/modules/account/types';
 
 export default Vue.extend({
   name: 'AssetField',
@@ -51,12 +51,8 @@ export default Vue.extend({
   },
   props: {
     asset: {
-      type: Object,
+      type: Object as PropType<Token>,
       required: false
-    },
-    assets: {
-      type: Array,
-      required: true
     },
     fieldRole: {
       type: String,
@@ -73,11 +69,15 @@ export default Vue.extend({
     nativeAmount: {
       type: Number,
       required: true
+    },
+    useWalletTokens: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
     iconSrc(): string {
-      return this.asset == null ? 'fallback-url' : this.asset.iconUrl;
+      return this.asset == null ? 'fallback-url' : this.asset.logo;
     },
     iconAlt(): string {
       return (
@@ -90,13 +90,20 @@ export default Vue.extend({
             })
       ) as string;
     },
+    maxAmount(): string | undefined {
+      if (this.asset == null) {
+        return undefined;
+      }
+
+      return this.asset.balance;
+    },
     selectMaxText(): string {
       return (
         this.asset == null
           ? ''
           : this.$t('asset.lblSelectMax', {
               name: this.asset.name,
-              amount: this.asset.amount
+              amount: this.asset.balance
             })
       ) as string;
     }
@@ -108,8 +115,16 @@ export default Vue.extend({
     handleUpdateNativeAmount(amount: number): void {
       this.$emit('update-native-amount', amount);
     },
-    handleUpdateAsset(asset: never): void {
+    handleUpdateAsset(asset: CoingeckoToken): void {
+      toggleSingleItem(Modal.SearchToken);
+      unsubResult(Modal.SearchToken, this.handleUpdateAsset);
       this.$emit('update-asset', asset);
+    },
+    handleOpenSelectModal(): void {
+      subResult(Modal.SearchToken, this.handleUpdateAsset);
+      toggleSingleItem(Modal.SearchToken, {
+        useWalletTokens: this.useWalletTokens
+      });
     }
   }
 });

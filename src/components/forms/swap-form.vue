@@ -2,17 +2,18 @@
   <form class="swap form">
     <asset-field
       :amount="input.amount"
-      :assets="tokens"
+      :asset="input.asset"
       field-role="input"
       :label="$t('swaps.lblSwapFrom')"
       :native-amount="input.nativeAmount"
+      use-wallet-tokens
       @update-amount="handleUpdateInputAmount"
       @update-asset="handleUpdateInputAsset"
       @update-native-amount="handleUpdateInputNativeAmount"
     />
     <asset-field
       :amount="output.amount"
-      :assets="tokens"
+      :asset="output.asset"
       field-role="output"
       :label="$t('swaps.lblSwapTo')"
       :native-amount="output.nativeAmount"
@@ -59,9 +60,10 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import { Token, TokenWithBalance } from '@/store/modules/account/types';
+
 import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
-import { mapState } from 'vuex';
 import { GasPrice } from '@/components/controls/gas-selector.vue';
 
 export default Vue.extend({
@@ -82,12 +84,12 @@ export default Vue.extend({
         gasSettings: null
       },
       input: {
-        asset: null,
+        asset: null as TokenWithBalance | null,
         amount: 0,
         nativeAmount: 0
       },
       output: {
-        asset: null,
+        asset: null as TokenWithBalance | null,
         amount: 0,
         nativeAmount: 0
       },
@@ -95,7 +97,6 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['tokens']),
     buttonClass(): string {
       return 'primary';
     },
@@ -120,10 +121,10 @@ export default Vue.extend({
     handleUpdateOutputNativeAmount(amount: number): void {
       this.output.nativeAmount = amount;
     },
-    handleUpdateInputAsset(asset: never) {
+    handleUpdateInputAsset(asset: TokenWithBalance) {
       this.input.asset = asset;
     },
-    handleUpdateOutputAsset(asset: never) {
+    handleUpdateOutputAsset(asset: TokenWithBalance) {
       this.output.asset = asset;
     },
     handleSelectedGasChanged(newGas: GasPrice): void {
