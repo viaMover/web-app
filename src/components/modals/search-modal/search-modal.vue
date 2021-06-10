@@ -38,12 +38,13 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 import Fuse from 'fuse.js';
-import { partition } from 'lodash';
+import partition from 'lodash-es/partition';
 
 import {
   sendResult,
   subToggle,
   TogglePayload,
+  toggleSingleItem,
   unsubToggle
 } from '@/components/toggle/toggle-root';
 import { TokenGroups } from './types';
@@ -51,7 +52,7 @@ import { Modal } from '../modalTypes';
 
 import CenteredModalWindow from '../centered-modal-window.vue';
 import SearchModalTokenList from './search-modal-token-list.vue';
-import { TokenWithBalance } from '@/store/modules/account/types';
+import { Token } from '@/store/modules/account/types';
 
 export default Vue.extend({
   name: 'SearchModal',
@@ -66,14 +67,14 @@ export default Vue.extend({
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
       debounceTimeout: 500,
-      searcher: null as Fuse<TokenWithBalance> | null,
+      searcher: null as Fuse<Token> | null,
       useWalletTokens: false
     };
   },
   computed: {
     ...mapState('account', { allTokens: 'allTokens', walletTokens: 'tokens' }),
-    filteredTokens(): Array<TokenWithBalance> {
-      let tokens: Array<TokenWithBalance>;
+    filteredTokens(): Array<Token> {
+      let tokens: Array<Token>;
       if (!this.searcher || this.searchTermDebounced === '') {
         tokens = this.useWalletTokens ? this.walletTokens : this.allTokens;
       } else {
@@ -87,14 +88,8 @@ export default Vue.extend({
     tokenGroups(): TokenGroups {
       const tokens = this.filteredTokens.slice();
 
-      const [favorite, other] = partition<TokenWithBalance, TokenWithBalance>(
-        tokens,
-        (t) => t.isFavorite
-      );
-      const [verified, rest] = partition<TokenWithBalance, TokenWithBalance>(
-        other,
-        (t) => t.isVerified
-      );
+      const [favorite, other] = partition(tokens, (t) => t.isFavorite);
+      const [verified, rest] = partition(other, (t) => t.isVerified);
 
       return {
         favorite,
@@ -117,17 +112,17 @@ export default Vue.extend({
     }
   },
   beforeMount() {
-    subToggle<TokenWithBalance>(this.modalId, this.handleToggle);
+    subToggle(this.modalId, this.handleToggle);
     this.initSearcher();
   },
   beforeDestroy() {
     this.searcher = null;
     window.clearTimeout(this.debounce);
-    unsubToggle<TokenWithBalance>(this.modalId, this.handleToggle);
+    unsubToggle(this.modalId, this.handleToggle);
   },
   methods: {
     initSearcher(): void {
-      this.searcher = new Fuse<TokenWithBalance>(
+      this.searcher = new Fuse<Token>(
         this.useWalletTokens ? this.walletTokens : this.allTokens,
         {
           keys: ['name', 'symbol', 'address'],
@@ -135,9 +130,10 @@ export default Vue.extend({
         }
       );
     },
-    handleSelect(token: TokenWithBalance): void {
-      sendResult<TokenWithBalance>(this.modalId, token);
+    handleSelect(token: Token): void {
+      sendResult<Token>(this.modalId, token);
       this.searchTerm = '';
+      toggleSingleItem(this.modalId);
     },
     handleToggle(payload: TogglePayload<{ useWalletTokens: boolean }>): void {
       this.useWalletTokens = !!payload.payload?.useWalletTokens;

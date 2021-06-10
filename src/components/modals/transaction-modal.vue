@@ -56,10 +56,10 @@ export default Vue.extend({
     }
   },
   mounted() {
-    subToggle<void>(this.modalId, this.handleToggle);
+    subToggle(this.modalId, this.handleToggle);
   },
   beforeDestroy() {
-    unsubToggle<void>(this.modalId, this.handleToggle);
+    unsubToggle(this.modalId, this.handleToggle);
   },
   methods: {
     async handleToggle(

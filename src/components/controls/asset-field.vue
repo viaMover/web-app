@@ -35,14 +35,9 @@
 import Vue, { PropType } from 'vue';
 
 import PriceInputField from './price-input-field.vue';
-import {
-  subResult,
-  toggleSingleItem,
-  unsubResult
-} from '@/components/toggle/toggle-root';
+import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals';
-import { CoingeckoToken } from '@/services/coingecko/tokens';
-import { Token } from '@/store/modules/account/types';
+import { TokenWithBalance } from '@/store/modules/account/types';
 
 export default Vue.extend({
   name: 'AssetField',
@@ -51,7 +46,7 @@ export default Vue.extend({
   },
   props: {
     asset: {
-      type: Object as PropType<Token>,
+      type: Object as PropType<TokenWithBalance>,
       required: false
     },
     fieldRole: {
@@ -115,16 +110,17 @@ export default Vue.extend({
     handleUpdateNativeAmount(amount: number): void {
       this.$emit('update-native-amount', amount);
     },
-    handleUpdateAsset(asset: CoingeckoToken): void {
-      toggleSingleItem(Modal.SearchToken);
-      unsubResult(Modal.SearchToken, this.handleUpdateAsset);
+    handleUpdateAsset(asset: TokenWithBalance): void {
       this.$emit('update-asset', asset);
     },
     handleOpenSelectModal(): void {
-      subResult(Modal.SearchToken, this.handleUpdateAsset);
-      toggleSingleItem(Modal.SearchToken, {
-        useWalletTokens: this.useWalletTokens
-      });
+      toggleThenWaitForResult<{ useWalletTokens: boolean }, TokenWithBalance>(
+        Modal.SearchToken,
+        this.handleUpdateAsset,
+        {
+          useWalletTokens: this.useWalletTokens
+        }
+      );
     }
   }
 });

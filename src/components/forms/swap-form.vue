@@ -60,7 +60,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { Token, TokenWithBalance } from '@/store/modules/account/types';
+import { TokenWithBalance } from '@/store/modules/account/types';
 
 import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
