@@ -7,6 +7,7 @@ import { AccountStoreState, Token } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 import assetList from '@/../data/assetList.json';
 import { getTokenLogo } from '@/services/trustwallet/logo';
+import gas from './actions/gas';
 
 export default {
   namespaced: true,
@@ -21,6 +22,10 @@ export default {
     isDetecting: false,
     balance: undefined,
     networkInfo: undefined,
+
+    gasPrices: undefined,
+    gasUpdating: false,
+
     // eslint-disable-next-line
     providerBeforeClose: () => {},
     allTokens: assetList
@@ -39,7 +44,7 @@ export default {
       }),
     refreshError: undefined
   },
-  actions: { ...walletActions },
+  actions: { ...walletActions, ...gas },
   getters,
   mutations
 } as Module<AccountStoreState, RootStoreState>;

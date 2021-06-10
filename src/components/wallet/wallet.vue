@@ -32,6 +32,7 @@ export default Vue.extend({
         this.setDetectedProvider(undefined);
       }
       this.setIsDetecting(false);
+      this.startGasListening();
     })();
   },
   methods: {
@@ -40,7 +41,8 @@ export default Vue.extend({
       setIsDetecting: 'setIsDetecting'
     }),
     ...mapActions('account', {
-      initWallet: 'initWallet'
+      initWallet: 'initWallet',
+      startGasListening: 'startGasListening'
     })
   },
   render() {

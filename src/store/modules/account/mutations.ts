@@ -1,6 +1,6 @@
+import { GasData } from './../../../wallet/gas';
 import { SortAndDedupedTransactions } from './utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
-import find from 'lodash-es/find';
 import { MutationTree } from 'vuex';
 import {
   AccountStoreState,
@@ -84,5 +84,11 @@ export default {
     state.refreshError = undefined;
     state.tokens = [];
     state.transactions = [];
+  },
+  setGasPrices(state, gasPrices: GasData): void {
+    state.gasPrices = gasPrices;
+  },
+  setGasUpdating(state, val: boolean): void {
+    state.gasUpdating = val;
   }
 } as MutationTree<AccountStoreState>;

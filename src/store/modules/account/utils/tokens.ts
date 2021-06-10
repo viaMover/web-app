@@ -1,6 +1,5 @@
-import { Transaction, TokenWithBalance } from './../types';
+import { TokenWithBalance } from './../types';
 import uniqBy from 'lodash-es/uniqBy';
-import orderBy from 'lodash-es/orderBy';
 
 export const SortAndDedupedTokens = (
   tokens: Array<TokenWithBalance>

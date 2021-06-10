@@ -3,7 +3,8 @@ export enum Network {
   binanceTest = 'binanceTest',
   kovan = 'kovan',
   mainnet = 'mainnet',
-  matic = 'matic'
+  matic = 'matic',
+  ropsten = 'ropsten'
 }
 
 export type NetworkInfo = {
@@ -17,6 +18,11 @@ export const networks = new Array<NetworkInfo>(
     chainId: 1,
     network: Network.mainnet,
     explorer: 'https://etherscan.io'
+  },
+  {
+    chainId: 3,
+    network: Network.ropsten,
+    explorer: 'https://ropsten.etherscan.io'
   },
   {
     chainId: 42,

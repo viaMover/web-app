@@ -19,13 +19,13 @@ type CoingeckoAllTokensResponse = {
 const URL = 'https://tokens.coingecko.com/uniswap/all.json';
 
 export const GetAllTokens = async (): Promise<
-  Result<Array<CoingeckoToken>>
+  Result<Array<CoingeckoToken>, string>
 > => {
   try {
     const response = (await axios.get<CoingeckoAllTokensResponse>(URL)).data;
 
-    return { isError: false, result: response.tokens, errorMessage: '' };
+    return { isError: false, result: response.tokens };
   } catch (err) {
-    return { isError: true, result: [], errorMessage: err };
+    return { isError: true, error: err };
   }
 };

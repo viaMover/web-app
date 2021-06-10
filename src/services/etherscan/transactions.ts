@@ -1,3 +1,4 @@
+import { isError } from './../responses';
 import { BigNumber } from 'bignumber.js';
 import { sameAddress } from './../../utils/address';
 import {
@@ -9,6 +10,7 @@ import axios from 'axios';
 import { Result } from '../responses';
 import { apiEndpoints } from './endpoints';
 import { asyncSleep } from '@/utils/time';
+import { EtherScanResponse } from './response';
 
 type EtherscanTransaction = {
   blockNumber: string;
@@ -31,42 +33,33 @@ type EtherscanTokenTransaction = {
   tokenSymbol: string;
 };
 
-type EtherScanResponse<T> = {
-  status: string;
-  message: string;
-  result: Array<T>;
-};
-
 export const GetTransactions = async (
   address: string,
   network: Network
-): Promise<Result<Array<Transaction>>> => {
+): Promise<Result<Array<Transaction>, string>> => {
   const endpoint = apiEndpoints.get(network);
   if (endpoint === undefined) {
     return {
       isError: true,
-      result: [],
-      errorMessage: `can't get ethescan api endpoint for '${network}'`
+      error: `can't get ethescan api endpoint for '${network}'`
     };
   }
 
   const transfersRes = await GetERC20Transfers(address, endpoint);
-  if (transfersRes.isError || transfersRes.result === undefined) {
+  if (isError(transfersRes)) {
     return {
       isError: true,
-      result: [],
-      errorMessage: transfersRes.errorMessage
+      error: transfersRes.error
     };
   }
 
   await asyncSleep(5000);
 
   const transactionsRes = await GetCommonTransactions(address, endpoint);
-  if (transactionsRes.isError || transactionsRes.result === undefined) {
+  if (isError(transactionsRes)) {
     return {
       isError: true,
-      result: [],
-      errorMessage: transactionsRes.errorMessage
+      error: transactionsRes.error
     };
   }
 
@@ -108,45 +101,45 @@ export const GetTransactions = async (
     }
   });
 
-  return { isError: false, result: transactions, errorMessage: '' };
+  return { isError: false, result: transactions };
 };
 
 const GetERC20Transfers = async (
   address: string,
   endpoint: string
-): Promise<Result<Array<EtherscanTokenTransaction>>> => {
+): Promise<Result<Array<EtherscanTokenTransaction>, string>> => {
   try {
     const response = (
-      await axios.get<EtherScanResponse<EtherscanTokenTransaction>>(
+      await axios.get<EtherScanResponse<Array<EtherscanTokenTransaction>>>(
         `${endpoint}/api?module=account&action=tokentx&address=${address}&startblock=0&endblock=99999999&sort=asc`
       )
     ).data;
     if (response.status !== '1') {
-      return { isError: true, result: [], errorMessage: response.message };
+      return { isError: true, error: response.message };
     }
 
-    return { isError: false, result: response.result, errorMessage: '' };
+    return { isError: false, result: response.result };
   } catch (err) {
-    return { isError: true, result: [], errorMessage: err };
+    return { isError: true, error: err };
   }
 };
 
 const GetCommonTransactions = async (
   address: string,
   endpoint: string
-): Promise<Result<Array<EtherscanTransaction>>> => {
+): Promise<Result<Array<EtherscanTransaction>, string>> => {
   try {
     const response = (
-      await axios.get<EtherScanResponse<EtherscanTransaction>>(
+      await axios.get<EtherScanResponse<Array<EtherscanTransaction>>>(
         `${endpoint}/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc`
       )
     ).data;
     if (response.status !== '1') {
-      return { isError: true, result: [], errorMessage: response.message };
+      return { isError: true, error: response.message };
     }
 
-    return { isError: false, result: response.result, errorMessage: '' };
+    return { isError: false, result: response.result };
   } catch (err) {
-    return { isError: true, result: [], errorMessage: err };
+    return { isError: true, error: err };
   }
 };

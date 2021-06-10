@@ -46,7 +46,7 @@ const apiKey = 'freekey';
 
 export const GetWalletInfo = async (
   address: string
-): Promise<Result<WalletInfo>> => {
+): Promise<Result<WalletInfo, string>> => {
   try {
     const response = (
       await axios.get<EthplorerAddressInfoResponse>(
@@ -56,13 +56,12 @@ export const GetWalletInfo = async (
     if (response.error) {
       return {
         isError: true,
-        result: {} as WalletInfo,
-        errorMessage: response.error.message
+        error: response.error.message
       };
     }
 
-    return { isError: false, result: response, errorMessage: '' };
+    return { isError: false, result: response };
   } catch (err) {
-    return { isError: true, result: {} as WalletInfo, errorMessage: err };
+    return { isError: true, error: err };
   }
 };

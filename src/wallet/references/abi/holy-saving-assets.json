@@ -1,0 +1,18 @@
+{
+    "mainnet": {
+        "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643": {
+            "address": "0x6b175474e89094c44da98b954eedeac495271d1f",
+            "decimals": 18,
+            "name": "Holy saving 1",
+            "symbol": "HOLYs1"
+        }
+    },
+    "ropsten": {
+       "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643": {
+            "address": "0x6b175474e89094c44da98b954eedeac495271d1f",
+            "decimals": 18,
+            "name": "Holy saving 1",
+            "symbol": "HOLYs2"
+        }
+    }
+}

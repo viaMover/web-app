@@ -10,8 +10,6 @@ import {
   ProviderData,
   Transaction
 } from './../types';
-import { GetTransactions } from '@/services/etherscan/transactions';
-import { EthplorerToken, GetWalletInfo } from '@/services/ethplorer/tokens';
 import { Network } from '@/utils/networkTypes';
 import { provider } from 'web3-core';
 import Web3 from 'web3';

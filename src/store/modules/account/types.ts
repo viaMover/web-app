@@ -1,4 +1,5 @@
 import { NetworkInfo } from '@/utils/networkTypes';
+import { GasData } from '@/wallet/gas';
 import Web3 from 'web3';
 
 export enum TransactionTypes {
@@ -66,4 +67,7 @@ export type AccountStoreState = {
   detectedProvider: any | undefined;
   isDetecting: boolean;
   refreshError: undefined | string;
+
+  gasPrices: GasData | undefined;
+  gasUpdating: boolean;
 };
