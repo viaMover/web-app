@@ -14,6 +14,7 @@
     <asset-field
       :amount="output.amount"
       :asset="output.asset"
+      :exclude-tokens="[input.asset]"
       field-role="output"
       :label="$t('swaps.lblSwapTo')"
       :native-amount="output.nativeAmount"

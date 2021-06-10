@@ -39,6 +39,7 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 import Fuse from 'fuse.js';
 import partition from 'lodash-es/partition';
+import filter from 'lodash-es/filter';
 
 import {
   sendResult,
@@ -68,11 +69,15 @@ export default Vue.extend({
       debounce: undefined as number | undefined,
       debounceTimeout: 500,
       searcher: null as Fuse<Token> | null,
-      useWalletTokens: false
+      useWalletTokens: false,
+      excludedTokens: [] as Array<Token>
     };
   },
   computed: {
     ...mapState('account', { allTokens: 'allTokens', walletTokens: 'tokens' }),
+    excludedTokenAddresses(): Array<string> {
+      return this.excludedTokens.map((et) => et.address.toLowerCase());
+    },
     filteredTokens(): Array<Token> {
       let tokens: Array<Token>;
       if (!this.searcher || this.searchTermDebounced === '') {
@@ -81,6 +86,16 @@ export default Vue.extend({
         tokens = this.searcher
           .search(this.searchTermDebounced)
           .map((result) => result.item);
+      }
+
+      if (this.excludedTokenAddresses.length > 0) {
+        tokens = filter(
+          tokens,
+          (t) =>
+            !this.excludedTokenAddresses.some(
+              (et) => t.address.toLowerCase() === et
+            )
+        );
       }
 
       return tokens.slice(0, 100);
@@ -135,8 +150,14 @@ export default Vue.extend({
       this.searchTerm = '';
       toggleSingleItem(this.modalId);
     },
-    handleToggle(payload: TogglePayload<{ useWalletTokens: boolean }>): void {
+    handleToggle(
+      payload: TogglePayload<{
+        useWalletTokens: boolean;
+        excludeTokens: Array<Token>;
+      }>
+    ): void {
       this.useWalletTokens = !!payload.payload?.useWalletTokens;
+      this.excludedTokens = payload.payload?.excludeTokens ?? [];
     }
   }
 });

@@ -68,6 +68,10 @@ export default Vue.extend({
     useWalletTokens: {
       type: Boolean,
       default: false
+    },
+    excludeTokens: {
+      type: Array as PropType<Array<TokenWithBalance>>,
+      default: () => []
     }
   },
   computed: {
@@ -114,13 +118,10 @@ export default Vue.extend({
       this.$emit('update-asset', asset);
     },
     handleOpenSelectModal(): void {
-      toggleThenWaitForResult<{ useWalletTokens: boolean }, TokenWithBalance>(
-        Modal.SearchToken,
-        this.handleUpdateAsset,
-        {
-          useWalletTokens: this.useWalletTokens
-        }
-      );
+      toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
+        useWalletTokens: this.useWalletTokens,
+        excludeTokens: this.excludeTokens
+      });
     }
   }
 });
