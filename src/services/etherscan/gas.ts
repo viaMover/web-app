@@ -1,4 +1,4 @@
-import { GasData, GetGasErrors } from './../../wallet/gas';
+import { GetGasErrors } from '@/wallet/gas';
 import { Result } from './../responses';
 import { Network } from '@/utils/networkTypes';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import {
   EtherScanErrorResponse,
   isErrorResponse
 } from './response';
+import { GasData } from '@/wallet/types';
 
 type EtherScanGasData = {
   LastBlock: string;

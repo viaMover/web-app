@@ -1,13 +1,13 @@
-import { NetworkInfo } from './../../../utils/networkTypes';
 import walletActions from './actions/wallet';
 import mutations from './mutations';
 import getters from './getters';
 import { Module } from 'vuex';
-import { AccountStoreState, Token } from '@/store/modules/account/types';
+import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 import assetList from '@/../data/assetList.json';
 import { getTokenLogo } from '@/services/trustwallet/logo';
 import gas from './actions/gas';
+import { Token } from '@/wallet/types';
 
 export default {
   namespaced: true,

@@ -1,7 +1,7 @@
 import { ZerionTransaction, ZerionTransactionsReceived } from './responses';
 import find from 'lodash-es/find';
 
-import { Transaction } from '@/store/modules/account/types';
+import { Transaction } from '@/wallet/types';
 
 export const mapZerionTxns = (
   data: ZerionTransactionsReceived

@@ -1,7 +1,8 @@
 import { GetterTree } from 'vuex';
-import { AccountStoreState, Transaction, TransactionGroup } from './types';
+import { AccountStoreState, TransactionGroup } from './types';
 import { RootStoreState } from '@/store/types';
 import dayjs from 'dayjs';
+import { Transaction } from '@/wallet/types';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {

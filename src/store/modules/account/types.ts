@@ -1,25 +1,6 @@
 import { NetworkInfo } from '@/utils/networkTypes';
-import { GasData } from '@/wallet/gas';
+import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
 import Web3 from 'web3';
-
-export enum TransactionTypes {
-  sendERC20 = 'sendERC20',
-  receiveERC20 = 'receiveERC20',
-  sendEth = 'sendEth',
-  receiveEth = 'receiveEth'
-}
-
-export type Transaction = {
-  blockNumber: string;
-  hash: string;
-  timeStamp: number;
-  nonce: string;
-  from: string;
-  to: string;
-  value: string;
-  type: TransactionTypes;
-  symbol?: string;
-};
 
 export type TransactionGroup = {
   timeStamp: number;
@@ -30,21 +11,6 @@ export type AccountData = {
   addresses: Array<string>;
   balance: string | undefined;
   networkId: number | undefined;
-};
-
-export type Token = {
-  address: string;
-  decimals: number;
-  symbol: string;
-  name: string;
-  priceUSD: string;
-  logo: string;
-  isFavorite: boolean;
-  isVerified: boolean;
-};
-
-export type TokenWithBalance = Token & {
-  balance: string;
 };
 
 export type ProviderNames = 'MetaMask' | 'WalletConnect' | null;

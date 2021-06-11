@@ -1,4 +1,5 @@
-import { TokenWithBalance } from '@/store/modules/account/types';
+import { fromWei } from './../../utils/bigmath';
+import { TokenWithBalance } from '@/wallet/types';
 import { ZerionAssetsReceived } from './responses';
 
 export const mapZerionTokens = (
@@ -7,7 +8,7 @@ export const mapZerionTokens = (
   const tokens = Object.entries(data.payload.assets).map(([hash, t]) => {
     return {
       address: t.asset.asset_code,
-      balance: t.quantity,
+      balance: fromWei(t.quantity, t.asset.decimals),
       decimals: t.asset.decimals,
       logo: t.asset.icon_url,
       name: t.asset.name,

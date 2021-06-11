@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { Transaction } from '@/store/modules/account/types';
+import { Transaction } from '@/wallet/types';
 
 import TransactionItem from './transaction-item.vue';
 

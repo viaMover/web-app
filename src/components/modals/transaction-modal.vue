@@ -19,7 +19,7 @@ import { mapState } from 'vuex';
 
 import CenteredModalWindow from './centered-modal-window.vue';
 
-import { Transaction } from '@/store/modules/account/types';
+import { Transaction } from '@/wallet/types';
 import {
   subToggle,
   TogglePayload,

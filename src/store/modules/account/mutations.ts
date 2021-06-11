@@ -1,15 +1,8 @@
-import { GasData } from './../../../wallet/gas';
 import { SortAndDedupedTransactions } from './utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
-import {
-  AccountStoreState,
-  AccountData,
-  Transaction,
-  Token,
-  TokenWithBalance,
-  ProviderData
-} from './types';
+import { AccountStoreState, AccountData, ProviderData } from './types';
+import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
 import { SortAndDedupedTokens } from './utils/tokens';
 
 export default {

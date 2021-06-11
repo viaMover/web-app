@@ -37,7 +37,7 @@ import Vue, { PropType } from 'vue';
 import PriceInputField from './price-input-field.vue';
 import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals';
-import { TokenWithBalance } from '@/store/modules/account/types';
+import { TokenWithBalance } from '@/wallet/types';
 
 export default Vue.extend({
   name: 'AssetField',
@@ -58,11 +58,15 @@ export default Vue.extend({
       required: true
     },
     amount: {
-      type: Number,
+      type: String,
       required: true
     },
+    maxAmount: {
+      type: String,
+      default: undefined
+    },
     nativeAmount: {
-      type: Number,
+      type: String,
       required: true
     },
     useWalletTokens: {
@@ -89,13 +93,6 @@ export default Vue.extend({
             })
       ) as string;
     },
-    maxAmount(): string | undefined {
-      if (this.asset == null) {
-        return undefined;
-      }
-
-      return this.asset.balance;
-    },
     selectMaxText(): string {
       return (
         this.asset == null
@@ -109,10 +106,10 @@ export default Vue.extend({
   },
   methods: {
     handleUpdateAmount(amount: number): void {
-      this.$emit('update-amount', amount);
+      this.$emit('update-amount', String(amount));
     },
     handleUpdateNativeAmount(amount: number): void {
-      this.$emit('update-native-amount', amount);
+      this.$emit('update-native-amount', String(amount));
     },
     handleUpdateAsset(asset: TokenWithBalance): void {
       this.$emit('update-asset', asset);

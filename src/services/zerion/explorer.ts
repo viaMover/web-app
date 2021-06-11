@@ -3,7 +3,7 @@ import { mapZerionTokens } from './tokens';
 import { ZerionAssetsReceived, ZerionTransactionsReceived } from './responses';
 import io from 'socket.io-client';
 import { messages, TRANSACTIONS_LIMIT } from './messages';
-import { TokenWithBalance, Transaction } from '@/store/modules/account/types';
+import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { mapZerionTxns } from './transactions';
 import { GetTokensPrice } from '../thegraph/api';
 import findIndex from 'lodash-es/findIndex';

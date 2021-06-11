@@ -53,7 +53,7 @@ import { Modal } from '../modalTypes';
 
 import CenteredModalWindow from '../centered-modal-window.vue';
 import SearchModalTokenList from './search-modal-token-list.vue';
-import { Token } from '@/store/modules/account/types';
+import { Token } from '@/wallet/types';
 
 export default Vue.extend({
   name: 'SearchModal',

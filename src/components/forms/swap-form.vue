@@ -5,6 +5,7 @@
       :asset="input.asset"
       field-role="input"
       :label="$t('swaps.lblSwapFrom')"
+      :max-amount="maxInputAmount"
       :native-amount="input.nativeAmount"
       use-wallet-tokens
       @update-amount="handleUpdateInputAmount"
@@ -61,11 +62,17 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance } from '@/store/modules/account/types';
+import { TokenWithBalance, Token } from '@/wallet/types';
 
 import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasPrice } from '@/components/controls/gas-selector.vue';
+
+import { estimateSwap } from '@/wallet/actions/swap/estimate';
+import { getTransferData, TransferData } from '@/services/0x/api';
+import { mapState } from 'vuex';
+import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
+import { GetTokenPrice, GetTokensPrice } from '@/services/thegraph/api';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -85,24 +92,28 @@ export default Vue.extend({
         gasSettings: null
       },
       input: {
-        asset: null as TokenWithBalance | null,
-        amount: 0,
-        nativeAmount: 0
+        asset: undefined as TokenWithBalance | undefined,
+        amount: '',
+        nativeAmount: ''
       },
       output: {
-        asset: null as TokenWithBalance | null,
-        amount: 0,
-        nativeAmount: 0
+        asset: undefined as Token | undefined,
+        amount: '',
+        nativeAmount: ''
       },
       selectedGasPrice: 0
     };
   },
   computed: {
+    ...mapState('account', ['networkInfo', 'currentAddress', 'provider']),
+    maxInputAmount(): string {
+      return this.input.asset !== undefined ? this.input.asset.balance : '0';
+    },
     buttonClass(): string {
       return 'primary';
     },
     isSwapInfoAvailable(): boolean {
-      return this.input.amount !== 0;
+      return !!this.input.amount;
     }
   },
   methods: {
@@ -110,26 +121,248 @@ export default Vue.extend({
       //
       this.$emit('tx-created', 'transaction-hash');
     },
-    handleUpdateInputAmount(amount: number): void {
+    async handleUpdateInputAmount(amount: string): Promise<void> {
       this.input.amount = amount;
+      if (this.input.asset === undefined || this.output.asset === undefined) {
+        return;
+      }
+
+      if (!notZero(this.input.amount)) {
+        this.input.nativeAmount = '0';
+        this.output.amount = '0';
+        this.output.nativeAmount = '0';
+        return;
+      }
+
+      try {
+        const transferData = await this.calcData(
+          this.input.asset,
+          this.output.asset,
+          this.input.amount,
+          true
+        );
+
+        this.input.nativeAmount = multiply(
+          this.input.asset.priceUSD,
+          this.input.amount
+        );
+        this.output.amount = fromWei(
+          transferData.buyAmount,
+          this.output.asset.decimals
+        );
+        this.output.nativeAmount = multiply(
+          this.output.asset.priceUSD,
+          this.output.amount
+        );
+
+        await this.tryToEstimate(
+          this.input.amount,
+          this.input.asset,
+          this.output.asset,
+          transferData
+        );
+      } catch (err) {
+        console.error("can't calc data:", err);
+        return;
+      }
     },
-    handleUpdateInputNativeAmount(amount: number): void {
+    async handleUpdateInputNativeAmount(amount: string): Promise<void> {
       this.input.nativeAmount = amount;
+      if (this.input.asset === undefined || this.output.asset === undefined) {
+        return;
+      }
+
+      if (!notZero(this.input.amount)) {
+        this.input.amount = '0';
+        this.output.amount = '0';
+        this.output.nativeAmount = '0';
+        return;
+      }
+
+      try {
+        this.input.amount = divide(
+          this.input.nativeAmount,
+          this.input.asset.priceUSD
+        );
+
+        const transferData = await this.calcData(
+          this.input.asset,
+          this.output.asset,
+          this.input.amount,
+          true
+        );
+
+        this.output.amount = fromWei(
+          transferData.buyAmount,
+          this.output.asset.decimals
+        );
+        this.output.nativeAmount = multiply(
+          this.output.asset.priceUSD,
+          this.output.amount
+        );
+
+        await this.tryToEstimate(
+          this.input.amount,
+          this.input.asset,
+          this.output.asset,
+          transferData
+        );
+      } catch (err) {
+        console.error("can't calc data:", err);
+        return;
+      }
     },
-    handleUpdateOutputAmount(amount: number): void {
+    async handleUpdateOutputAmount(amount: string): Promise<void> {
       this.output.amount = amount;
+
+      if (this.input.asset === undefined || this.output.asset === undefined) {
+        return;
+      }
+
+      if (!notZero(this.output.amount)) {
+        this.input.amount = '0';
+        this.input.nativeAmount = '0';
+        this.output.nativeAmount = '0';
+        return;
+      }
+
+      try {
+        this.output.nativeAmount = multiply(
+          this.output.asset.priceUSD,
+          this.output.amount
+        );
+
+        const transferData = await this.calcData(
+          this.input.asset,
+          this.output.asset,
+          this.output.amount,
+          false
+        );
+
+        this.input.amount = fromWei(
+          transferData.sellAmount,
+          this.output.asset.decimals
+        );
+        this.input.nativeAmount = multiply(
+          this.input.asset.priceUSD,
+          this.input.amount
+        );
+
+        await this.tryToEstimate(
+          this.input.amount,
+          this.input.asset,
+          this.output.asset,
+          transferData
+        );
+      } catch (err) {
+        console.error("can't calc data:", err);
+        return;
+      }
     },
-    handleUpdateOutputNativeAmount(amount: number): void {
+    async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
       this.output.nativeAmount = amount;
+      if (this.input.asset === undefined || this.output.asset === undefined) {
+        return;
+      }
+
+      if (!notZero(this.output.nativeAmount)) {
+        this.input.amount = '0';
+        this.input.nativeAmount = '0';
+        this.output.amount = '0';
+        return;
+      }
+
+      try {
+        this.output.amount = divide(
+          this.output.nativeAmount,
+          this.output.asset.priceUSD
+        );
+
+        const transferData = await this.calcData(
+          this.input.asset,
+          this.output.asset,
+          this.output.amount,
+          false
+        );
+
+        this.input.amount = fromWei(
+          transferData.sellAmount,
+          this.output.asset.decimals
+        );
+        this.input.nativeAmount = multiply(
+          this.input.asset.priceUSD,
+          this.input.amount
+        );
+
+        await this.tryToEstimate(
+          this.input.amount,
+          this.input.asset,
+          this.output.asset,
+          transferData
+        );
+      } catch (err) {
+        console.error("can't calc data:", err);
+        return;
+      }
     },
-    handleUpdateInputAsset(asset: TokenWithBalance) {
-      this.input.asset = asset;
+    async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
+      const price = await GetTokenPrice(asset.address);
+      this.input.asset = { ...asset, priceUSD: price };
+      this.input.amount = '0';
+      this.input.nativeAmount = '0';
+      this.output.amount = '0';
+      this.output.nativeAmount = '0';
     },
-    handleUpdateOutputAsset(asset: TokenWithBalance) {
-      this.output.asset = asset;
+    async handleUpdateOutputAsset(asset: Token): Promise<void> {
+      const price = await GetTokenPrice(asset.address);
+      this.output.asset = { ...asset, priceUSD: price };
+      this.input.amount = '0';
+      this.input.nativeAmount = '0';
+      this.output.amount = '0';
+      this.output.nativeAmount = '0';
     },
     handleSelectedGasChanged(newGas: GasPrice): void {
       this.selectedGasPrice = newGas.amount;
+    },
+    async calcData(
+      inputAsset: Token,
+      outputAsset: Token,
+      amount: string,
+      isInput: boolean
+    ): Promise<TransferData> {
+      const inputInWei = toWei(
+        amount,
+        isInput ? inputAsset.decimals : outputAsset.decimals
+      );
+      const transferData = await getTransferData(
+        inputAsset.address,
+        outputAsset.address,
+        inputInWei,
+        isInput,
+        this.networkInfo.network
+      );
+      return transferData;
+    },
+    async tryToEstimate(
+      inputAmount: string,
+      inputAsset: Token,
+      outputAsset: Token,
+      transferData: TransferData
+    ): Promise<void> {
+      const resp = await estimateSwap(
+        inputAsset,
+        outputAsset,
+        inputAmount,
+        transferData,
+        this.networkInfo.network,
+        this.provider.web3,
+        this.currentAddress
+      );
+
+      if (resp.error) {
+        console.error("can't esitmate swap");
+        return;
+      }
     }
   }
 });

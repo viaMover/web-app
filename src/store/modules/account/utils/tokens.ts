@@ -1,4 +1,4 @@
-import { TokenWithBalance } from './../types';
+import { TokenWithBalance } from '@/wallet/types';
 import uniqBy from 'lodash-es/uniqBy';
 
 export const SortAndDedupedTokens = (

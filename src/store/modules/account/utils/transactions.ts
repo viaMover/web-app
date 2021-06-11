@@ -1,4 +1,4 @@
-import { Transaction } from './../types';
+import { Transaction } from '@/wallet/types';
 import uniqBy from 'lodash-es/uniqBy';
 import orderBy from 'lodash-es/orderBy';
 

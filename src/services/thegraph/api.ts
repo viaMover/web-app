@@ -19,6 +19,11 @@ type SushiSwapToken = {
   symbol: string;
 };
 
+export const GetTokenPrice = async (address: string): Promise<string> => {
+  const prices = await GetTokensPrice([address]);
+  return prices.get(address) ?? '0';
+};
+
 export const GetTokensPrice = async (
   addresses: Array<string>
 ): Promise<Map<string, string>> => {

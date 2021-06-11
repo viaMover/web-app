@@ -29,7 +29,7 @@ export default Vue.extend({
       default: ''
     },
     amount: {
-      type: Number,
+      type: String,
       required: true
     },
     textPrefix: {
@@ -44,7 +44,7 @@ export default Vue.extend({
   methods: {
     updateAmount(amount: never): void {
       try {
-        this.$emit('update-amount', Number(amount));
+        this.$emit('update-amount', amount);
       } catch {
         return;
       }

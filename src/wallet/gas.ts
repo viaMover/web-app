@@ -1,14 +1,8 @@
 import { isError, isSuccess } from './../services/responses';
 import { Network } from '@/utils/networkTypes';
 import { getGasPrices as getGasPricesFromEtherscan } from './../services/etherscan/gas';
-import { EtherScanErrorResponse } from '@/services/etherscan/response';
 import { asyncSleep } from '@/utils/time';
-
-export type GasData = {
-  SafeGasPrice: string;
-  ProposeGasPrice: string;
-  FastGasPrice: string;
-};
+import { GasData } from './types';
 
 export type GetGasErrors = 'RateReached' | 'NoEndpointForNetwork' | string;
 

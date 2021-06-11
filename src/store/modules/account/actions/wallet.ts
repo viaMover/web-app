@@ -1,18 +1,17 @@
-import { GetTokensPrice } from './../../../../services/thegraph/api';
-import { InitExplorer } from './../../../../services/zerion/explorer';
+import { GetTokensPrice } from '@/services/thegraph/api';
+import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
 import {
   AccountStoreState,
   AccountData,
-  TokenWithBalance,
   ProviderNames,
-  ProviderData,
-  Transaction
+  ProviderData
 } from './../types';
 import { Network } from '@/utils/networkTypes';
 import { provider } from 'web3-core';
 import Web3 from 'web3';
+import { TokenWithBalance, Transaction } from '@/wallet/types';
 
 export type RefreshWalletPayload = {
   injected: boolean;

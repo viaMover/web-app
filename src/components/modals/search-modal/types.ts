@@ -1,4 +1,4 @@
-import { Token } from '@/store/modules/account/types';
+import { Token } from '@/wallet/types';
 
 export type TokenGroups = {
   favorite: Array<Token>;

@@ -1,10 +1,7 @@
 import { isError } from './../responses';
 import { BigNumber } from 'bignumber.js';
 import { sameAddress } from './../../utils/address';
-import {
-  Transaction,
-  TransactionTypes
-} from './../../store/modules/account/types';
+import { Transaction, TransactionTypes } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import axios from 'axios';
 import { Result } from '../responses';
