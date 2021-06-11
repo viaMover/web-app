@@ -335,8 +335,8 @@ export default Vue.extend({
         isInput ? inputAsset.decimals : outputAsset.decimals
       );
       const transferData = await getTransferData(
-        inputAsset.address,
         outputAsset.address,
+        inputAsset.address,
         inputInWei,
         isInput,
         this.networkInfo.network
