@@ -12,10 +12,13 @@ import { Network } from '@/utils/networkTypes';
 import { provider } from 'web3-core';
 import Web3 from 'web3';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
+import { getTestnetAssets } from '@/wallet/references/testnetAssets';
+import { getWalletTokens } from '@/services/balancer';
+import { getAllTokens } from '@/wallet/allTokens';
 
 export type RefreshWalletPayload = {
   injected: boolean;
-  startZerion: boolean;
+  init: boolean;
 };
 
 export type InitWalletPayload = {
@@ -44,7 +47,7 @@ export default {
 
       dispatch('refreshWallet', {
         injected: payload.injected,
-        startZerion: true
+        init: true
       } as RefreshWalletPayload);
     } catch (err) {
       console.log("can't init the wallet");
@@ -93,9 +96,15 @@ export default {
       return;
     }
 
+    if (payload.init) {
+      console.info('getting all tokens...');
+      const allTokens = getAllTokens(state.networkInfo.network);
+      commit('setAllTokens', allTokens);
+    }
+
     console.info('Updating wallet tokens from Etherscan...');
     if (state.networkInfo.network === Network.mainnet) {
-      if (payload.startZerion) {
+      if (payload.init) {
         console.log('Starting Zerion...');
         InitExplorer(
           state.currentAddress,
@@ -145,6 +154,16 @@ export default {
       //
     } else {
       console.info('Not mainnet - should use balancer');
+      const tokensList = getTestnetAssets(state.networkInfo.network);
+      console.info('tokensList: ', tokensList);
+      const tokensWithAmount = await getWalletTokens(
+        tokensList,
+        state.currentAddress,
+        state.provider.web3,
+        state.networkInfo.network
+      );
+      console.info('tokensWithAmount: ', tokensWithAmount);
+      commit('setWalletTokens', tokensWithAmount);
     }
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);

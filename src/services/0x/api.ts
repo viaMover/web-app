@@ -45,6 +45,15 @@ export const getTransferData = async (
       value: resp.value
     } as TransferData;
   } catch (err) {
+    if (err && err.response && err.response.data) {
+      if (
+        err.response.data.reason === 'Validation Failed' &&
+        err.response.data.validationErrors &&
+        err.response.data.validationErrors.length > 0
+      ) {
+        throw new Error(err.response.data.validationErrors[0].reason);
+      }
+    }
     throw new Error(err);
   }
 };

@@ -4,7 +4,6 @@ import getters from './getters';
 import { Module } from 'vuex';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
-import assetList from '@/../data/assetList.json';
 import { getTokenLogo } from '@/services/trustwallet/logo';
 import gas from './actions/gas';
 import { Token } from '@/wallet/types';
@@ -28,20 +27,7 @@ export default {
 
     // eslint-disable-next-line
     providerBeforeClose: () => {},
-    allTokens: assetList
-      .map(
-        (asset) =>
-          ({
-            address: asset.id,
-            decimals: asset.decimals,
-            symbol: asset.symbol,
-            name: asset.name,
-            logo: getTokenLogo(asset.id)
-          } as Token)
-      )
-      .sort((a, b) => {
-        return a.name.localeCompare(b.name);
-      }),
+    allTokens: [],
     refreshError: undefined
   },
   actions: { ...walletActions, ...gas },
