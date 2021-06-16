@@ -14,7 +14,7 @@ export default {
     lblSwapFrom: '@:swaps.lblSwapPrefix from',
     lblSwapPrefix: 'Swap',
     lblSwapTo: '@:swaps.lblSwapPrefix to',
-    lblChooseAsset: 'Choose asset',
+    lblChooseToken: 'Choose Token ▼',
     lblMinimumReceived: 'Minimum received',
     lblRate: 'Rate',
     lblEstimatedNetworkFee: 'Estimated network fee',
@@ -371,7 +371,7 @@ export default {
   asset: {
     txtAlt: '{name} icon',
     txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: 'MAX {amount} {name}'
+    lblSelectMax: '➕ Use Max'
   },
   transaction: {
     lblState: {

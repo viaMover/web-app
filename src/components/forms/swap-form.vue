@@ -15,7 +15,7 @@
     <asset-field
       :amount="output.amount"
       :asset="output.asset"
-      :exclude-tokens="[input.asset]"
+      :exclude-tokens="excludedOutputTokens"
       field-role="output"
       :label="$t('swaps.lblSwapTo')"
       :native-amount="output.nativeAmount"
@@ -114,6 +114,13 @@ export default Vue.extend({
     },
     isSwapInfoAvailable(): boolean {
       return !!this.input.amount;
+    },
+    excludedOutputTokens(): Array<Token> {
+      if (this.input.asset === undefined) {
+        return [];
+      }
+
+      return [this.input.asset];
     }
   },
   methods: {

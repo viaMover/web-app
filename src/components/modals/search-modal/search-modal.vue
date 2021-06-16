@@ -124,6 +124,11 @@ export default Vue.extend({
       if (newVal !== oldVal) {
         this.initSearcher();
       }
+    },
+    allTokens(newVal: Array<Token>, oldVal: Array<Token>): void {
+      if (newVal !== oldVal) {
+        this.initSearcher();
+      }
     }
   },
   beforeMount() {

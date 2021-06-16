@@ -21,13 +21,12 @@
     </div>
     <div class="right">
       <div class="dropdown input">
-        <label :for="`${fieldRole}-asset`">{{ label }}</label>
         <button @click.prevent.stop="handleOpenSelectModal">
-          Open token search
+          {{ openSelectModalText }}
         </button>
       </div>
-      <span v-if="asset" @click="handleSelectMaxAmount">
-        {{ selectMaxText }}
+      <span v-if="showSelectMaxAmountButton" @click="handleSelectMaxAmount">
+        {{ this.$t('asset.lblSelectMax') }}
       </span>
     </div>
   </div>
@@ -95,15 +94,15 @@ export default Vue.extend({
             })
       ) as string;
     },
-    selectMaxText(): string {
-      return (
-        this.asset == null
-          ? ''
-          : this.$t('asset.lblSelectMax', {
-              name: this.asset.name,
-              amount: this.asset.balance
-            })
-      ) as string;
+    openSelectModalText(): string {
+      if (this.asset == null) {
+        return this.$t('swaps.lblChooseToken') as string;
+      }
+
+      return `${this.asset.name} ▼`;
+    },
+    showSelectMaxAmountButton(): boolean {
+      return this.fieldRole === 'input' && !!this.asset;
     }
   },
   methods: {
