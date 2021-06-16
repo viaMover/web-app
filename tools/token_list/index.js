@@ -64,6 +64,9 @@ updateTrustwalletRepo()
         'utf8'
       );
       const info = JSON.parse(buf);
+      if (info.status !== 'active') {
+        return acc;
+      }
       acc.push(info);
       return acc;
     }, []);
