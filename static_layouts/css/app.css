@@ -1,0 +1,126 @@
+@font-face {
+  font-family: 'Regular';
+  src: url("../fonts/Inter-Regular.woff2");
+}
+@font-face {
+  font-family: 'Bold';
+  src: url("../fonts/Inter-Bold.woff2");
+}
+@font-face {
+  font-family: 'Medium';
+  src: url("../fonts/Inter-Medium.woff2");
+}
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
+.g-wrapper {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+section,
+main {
+  position: relative;
+  display: block;
+}
+@media (max-width: 780px) {
+  .g-wrapper {
+    width: 100%;
+  }
+}
+html,
+body {
+  height: 100%;
+  background-color: #fff;
+}
+.render {
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  z-index: 99999;
+  background-color: #fff;
+}
+.logo {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0px 0px 16px rgba(0,54,35,0.5);
+          box-shadow: 0px 0px 16px rgba(0,54,35,0.5);
+  background-color: #003623;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.black-link {
+  height: 40px;
+  padding: 10px 24px;
+  display: inline-block;
+  text-align: center;
+  background-color: #000;
+  font-family: 'Bold';
+  font-size: 14px;
+  line-height: 17px;
+  color: #fff;
+  border-radius: 40px;
+}
+.general-no-wallet-desktop {
+  background-color: #fff;
+  height: 100vh;
+}
+.general-no-wallet-desktop__wrapper {
+  padding-top: 104px;
+}
+.general-no-wallet-desktop__wrapper-gif {
+  width: 120px;
+  height: 141px;
+}
+.general-no-wallet-desktop__wrapper-gif video {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.general-no-wallet-desktop__wrapper h1 {
+  font-family: 'Bold';
+  font-size: 48px;
+  line-height: 62px;
+  color: #000;
+  margin-top: 17px;
+}
+.general-no-wallet-desktop__wrapper p {
+  font-family: 'Medium';
+  font-size: 14px;
+  line-height: 22px;
+  color: rgba(60,60,67,0.6);
+  margin-top: 16px;
+}
+.general-no-wallet-desktop__wrapper a {
+  margin-top: 40px;
+}
