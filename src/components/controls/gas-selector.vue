@@ -87,8 +87,36 @@ export default Vue.extend({
     gasPrices(): Array<GasPrice> {
       return [
         {
-          type: 'high',
+          type: 'low',
           amount: 73,
+          txFee: {
+            native: {
+              value: {
+                amount: 43.25
+              }
+            },
+            value: {
+              amount: 21000
+            }
+          }
+        },
+        {
+          type: 'normal',
+          amount: 72,
+          txFee: {
+            native: {
+              value: {
+                amount: 43.25
+              }
+            },
+            value: {
+              amount: 21000
+            }
+          }
+        },
+        {
+          type: 'high',
+          amount: 75,
           txFee: {
             native: {
               value: {
@@ -103,20 +131,7 @@ export default Vue.extend({
       ];
     },
     selectedGasPrice(): GasPrice {
-      return {
-        type: 'high',
-        amount: 73,
-        txFee: {
-          native: {
-            value: {
-              amount: 43.25
-            }
-          },
-          value: {
-            amount: 21000
-          }
-        }
-      };
+      return this.gasPrices[this.selectedGasPriceIndex];
     }
   },
   methods: {
@@ -146,6 +161,33 @@ export default Vue.extend({
   .select-group {
     flex-shrink: 1;
     flex-grow: 0;
+
+    .indicators {
+      display: flex;
+      flex-flow: row nowrap;
+      flex: 0 0 100%;
+      justify-content: center;
+      align-items: center;
+
+      .option {
+        line-height: 0.5rem;
+        padding: 0.25rem;
+        background-color: #b1b1b1;
+        border-radius: 0.25rem;
+        display: inline-block;
+        margin-right: 0.25rem;
+        transition: padding 0.5s ease, background-color 0.5s ease;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &.active {
+          background-color: #2c3e50;
+          padding: 0.25rem 0.75rem;
+        }
+      }
+    }
   }
 }
 </style>

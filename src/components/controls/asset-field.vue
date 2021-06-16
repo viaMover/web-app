@@ -26,7 +26,9 @@
           Open token search
         </button>
       </div>
-      <span v-if="asset">{{ selectMaxText }}</span>
+      <span v-if="asset" @click="handleSelectMaxAmount">
+        {{ selectMaxText }}
+      </span>
     </div>
   </div>
 </template>
@@ -107,6 +109,11 @@ export default Vue.extend({
   methods: {
     handleUpdateAmount(amount: number): void {
       this.$emit('update-amount', String(amount));
+    },
+    handleSelectMaxAmount(): void {
+      if (this.asset?.balance) {
+        this.$emit('update-amount', String(this.asset.balance));
+      }
     },
     handleUpdateNativeAmount(amount: number): void {
       this.$emit('update-native-amount', String(amount));
