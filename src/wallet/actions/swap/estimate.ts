@@ -1,4 +1,5 @@
-import { toWei, floorDivide } from '@/utils/bigmath';
+import { estimateApprove, needApprove } from './../approve/needApprove';
+import { toWei, floorDivide, add } from '@/utils/bigmath';
 import { SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 import { provider } from 'web3-core';
 import { Network } from '@/utils/networkTypes';
@@ -18,7 +19,68 @@ import ethDefaults from '@/wallet/references/defaults';
 export type EstimateResponse = {
   error: boolean;
   gasLimit: string;
-  gasLimitWithBuffer: string;
+};
+
+export const estimateSwapCompound = async (
+  inputAsset: SmallTokenInfo,
+  outputAsset: SmallTokenInfo,
+  inputAmount: string,
+  transferData: TransferData,
+  network: Network,
+  web3: Web3,
+  accountAddress: string
+): Promise<EstimateResponse> => {
+  const contractAddress = HOLY_HAND_ADDRESS(network);
+
+  let isApproveNeeded = true;
+  try {
+    isApproveNeeded = await needApprove(
+      accountAddress,
+      inputAsset,
+      inputAmount,
+      contractAddress,
+      web3
+    );
+  } catch (err) {
+    console.error(`Can't estimate approve: ${err}`);
+    return {
+      error: true,
+      gasLimit: '0'
+    };
+  }
+
+  if (isApproveNeeded) {
+    console.log("Needs approve, can't do a proper estimation");
+    try {
+      const approveGasLimit = await estimateApprove(
+        accountAddress,
+        inputAsset.address,
+        contractAddress,
+        web3
+      );
+      const fullGasLimit = add(approveGasLimit, ethDefaults.basic_holy_swap);
+      return {
+        error: false,
+        gasLimit: fullGasLimit
+      };
+    } catch (err) {
+      console.error(`Can't estimate approve: ${err}`);
+      return {
+        error: true,
+        gasLimit: '0'
+      };
+    }
+  } else {
+    return await estimateSwap(
+      inputAsset,
+      outputAsset,
+      inputAmount,
+      transferData,
+      network,
+      web3,
+      accountAddress
+    );
+  }
 };
 
 export const estimateSwap = async (
@@ -132,20 +194,15 @@ export const estimateSwap = async (
         '[holy swap estimation] gas estimation by web3 (with additional 20% as buffer): ' +
           gasLimitWithBuffer
       );
-      return { error: false, gasLimit, gasLimitWithBuffer };
+      return { error: false, gasLimit: gasLimitWithBuffer };
     } else {
-      return {
-        error: true,
-        gasLimit: ethDefaults.basic_holy_swap,
-        gasLimitWithBuffer: ethDefaults.basic_holy_swap
-      };
+      throw new Error('empty gas limit');
     }
   } catch (error) {
-    console.error(error);
+    console.error(`can't estimate swap due to: ${error}`);
     return {
       error: true,
-      gasLimit: ethDefaults.basic_holy_swap,
-      gasLimitWithBuffer: ethDefaults.basic_holy_swap
+      gasLimit: '0'
     };
   }
 };

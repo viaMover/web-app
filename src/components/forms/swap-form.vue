@@ -68,11 +68,11 @@ import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasPrice } from '@/components/controls/gas-selector.vue';
 
-import { estimateSwap } from '@/wallet/actions/swap/estimate';
+import { estimateSwapCompound } from '@/wallet/actions/swap/estimate';
 import { getTransferData, TransferData } from '@/services/0x/api';
 import { mapState } from 'vuex';
 import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
-import { GetTokenPrice, GetTokensPrice } from '@/services/thegraph/api';
+import { GetTokenPrice } from '@/services/thegraph/api';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -101,7 +101,8 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
-      selectedGasPrice: 0
+      selectedGasPrice: 0,
+      swapGasLimit: '0'
     };
   },
   computed: {
@@ -356,7 +357,7 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await estimateSwap(
+      const resp = await estimateSwapCompound(
         inputAsset,
         outputAsset,
         inputAmount,
@@ -370,6 +371,8 @@ export default Vue.extend({
         console.error("can't esitmate swap");
         return;
       }
+
+      this.swapGasLimit = resp.gasLimit;
     }
   }
 });

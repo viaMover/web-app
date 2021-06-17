@@ -5,6 +5,7 @@ import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import ERC20_ABI from './abi/erc20-abi.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -92,12 +93,12 @@ const ADDRESSES = {
   }
 };
 
-const USDC_TOKEN_ADDRESS = (network: Network) => {
+const USDC_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].USDC_TOKEN_ADDRESS
     ? ADDRESSES[network].USDC_TOKEN_ADDRESS
     : '0x1';
 };
-const WETH_TOKEN_ADDRESS = (network: Network) => {
+const WETH_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].WETH_TOKEN_ADDRESS
     ? ADDRESSES[network].WETH_TOKEN_ADDRESS
     : '0x1';
@@ -160,7 +161,7 @@ const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
 export const isTokenValidForTreasuryDeposit = (
   address: string,
   network: Network
-) => {
+): boolean => {
   return (
     address.toUpperCase() === MOVE_ADDRESS(network).toUpperCase() ||
     address.toUpperCase() ===
@@ -186,5 +187,6 @@ export {
   MOVE_ADDRESS,
   WETH_TOKEN_ADDRESS,
   BALANCE_CHECKER_ADDRESS,
-  BALANCE_CHECKER_ABI
+  BALANCE_CHECKER_ABI,
+  ERC20_ABI
 };
