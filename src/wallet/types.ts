@@ -39,9 +39,19 @@ export type Transaction = {
 };
 
 export type GasData = {
-  SafeGasPrice: string;
-  ProposeGasPrice: string;
-  FastGasPrice: string;
+  LastBlock: string;
+  SafeGas: {
+    price: string;
+    estTime: number;
+  };
+  ProposeGas: {
+    price: string;
+    estTime: number;
+  };
+  FastGas: {
+    price: string;
+    estTime: number;
+  };
 };
 
 export type TransactionsParams = {
