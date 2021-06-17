@@ -124,9 +124,9 @@ export const estimateSwap = async (
       )
       .estimateGas(transactionParams);
 
-    const gasLimit = gasLimitObj.toString();
-    console.log('[holy swap estimation] gas estimation by web3: ' + gasLimit);
-    if (gasLimit) {
+    if (gasLimitObj) {
+      const gasLimit = gasLimitObj.toString();
+      console.log('[holy swap estimation] gas estimation by web3: ' + gasLimit);
       const gasLimitWithBuffer = floorDivide(multiply(gasLimit, '120'), '100');
       console.log(
         '[holy swap estimation] gas estimation by web3 (with additional 20% as buffer): ' +
