@@ -15,6 +15,15 @@ $(document).ready(function() {
 		}
 	})();
 
+	function orderClose() {
+		let order = $('.general-desktop__menu-wrapper-item .order'); 
+		let button = $('.order__buttons .close-button');
+
+		button.on('click', function() { 
+			order.addClass('order-close'); 
+		})
+	}
+	orderClose();
 	// function tttt() {
 	// 	new Swiper('.swiper-container', {
 	// 		slidesPerView: 2,
