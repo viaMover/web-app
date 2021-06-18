@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 
 $(document).ready(function() {
-	// rendering body
+
 	(function renderPage() {
 		let render = $('.render');
 		let tl = new TimelineLite();
@@ -15,6 +15,19 @@ $(document).ready(function() {
 		}
 	})();
 
+	function preload() {
+		let preload = $('.preload');
+		let body = $('body');
+		body.css('overflow', 'hidden');
+		setInterval(function() {
+			preload.fadeOut(function() {
+				preload.remove();
+			});
+			body.css('overflow', '');
+		});
+	}
+	preload();
+
 	function orderClose() {
 		let order = $('.general-desktop__menu-wrapper-item .order'); 
 		let button = $('.order__buttons .close-button');
@@ -24,6 +37,33 @@ $(document).ready(function() {
 		})
 	}
 	orderClose();
+
+	function liveUpdatesSlider() {
+		new Swiper('.live-updates', {
+			grabCursor: true,
+			spaceBetween: 40,
+			allowTouchMove: true,
+			slidesPerView: 4.43,
+		});
+	}
+	liveUpdatesSlider();
+
+	function ListsSlider() {
+		new Swiper('.swiper-lists', {
+			grabCursor: true,
+			spaceBetween: 64,
+			allowTouchMove: true,
+			slidesPerView: 5.58,
+		});
+	}
+	ListsSlider();
+
+	function dataHref() {
+		$('*[data-href]').on('click', function() {
+			window.location = $(this).data("href");
+		});
+	}
+	dataHref();
 	// function tttt() {
 	// 	new Swiper('.swiper-container', {
 	// 		slidesPerView: 2,
