@@ -3,28 +3,16 @@
 
 $(document).ready(function() {
 
-	(function renderPage() {
-		let render = $('.render');
-		let tl = new TimelineLite();
-		tl
-			.fromTo(render, 0.5, {opacity: '1', zIndex: '99999'}, {opacity: '0', zIndex: '-1'})
-			.delay(0.4)
-			.call(hideRender);
-		function hideRender(){
-			$(render).remove();
-		}
-	})();
-
 	function preload() {
 		let preload = $('.preload');
 		let body = $('body');
 		body.css('overflow', 'hidden');
-		setInterval(function() {
+		setTimeout(function() {
 			preload.fadeOut(function() {
 				preload.remove();
 			});
 			body.css('overflow', '');
-		});
+		}, 2000);
 	}
 	preload();
 
@@ -64,6 +52,21 @@ $(document).ready(function() {
 		});
 	}
 	dataHref();
+
+	function shadow() {
+		const img = document.querySelectorAll('.getShadow img');
+		const colorThief = new ColorThief();
+		
+		for (let i = 0; i < img.length; i++) {
+			img[i].addEventListener('load', function() {
+				let shadow = colorThief.getColor(img[i]);
+				img[i].style.boxShadow = '0px 0px 16px' + ' rgb(' + shadow + ')';
+			});
+		}
+	}
+	shadow();
+
+
 	// function tttt() {
 	// 	new Swiper('.swiper-container', {
 	// 		slidesPerView: 2,

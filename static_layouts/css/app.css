@@ -249,6 +249,14 @@ body {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.logo:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 .black-link {
   height: 40px;
@@ -261,6 +269,14 @@ body {
   line-height: 17px;
   color: #fff;
   border-radius: 40px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.black-link:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 .link-icon {
   display: -webkit-box;
@@ -283,6 +299,14 @@ body {
   position: absolute;
   right: 0;
   top: 0;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.link-icon:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 .back-link {
   position: absolute;
@@ -306,6 +330,14 @@ body {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.back-link:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 form.search-form {
   width: 100%;
@@ -332,6 +364,14 @@ form.search-form button {
   font-size: 14px;
   line-height: 24px;
   color: rgba(60,60,67,0.6);
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+form.search-form button:active {
+  -webkit-transform: scale(1.2);
+      -ms-transform: scale(1.2);
+          transform: scale(1.2);
 }
 .general-no-wallet-desktop {
   background-color: #fff;
@@ -556,6 +596,14 @@ form.search-form button {
           align-items: center;
   margin-top: 16px;
   background: none;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.general-desktop__sidebar-wrapper-user button:active {
+  -webkit-transform: scale(1.1);
+      -ms-transform: scale(1.1);
+          transform: scale(1.1);
 }
 .general-desktop__sidebar-wrapper-user button span {
   font-family: 'Medium';
@@ -616,6 +664,7 @@ form.search-form button {
           flex-basis: 18%;
 }
 .general-desktop__sidebar-wrapper-info-item .label-icon img {
+  border-radius: 50%;
   display: block;
   width: 38px;
   height: 38px;
@@ -774,6 +823,14 @@ form.search-form button {
   margin-left: 16px;
   width: 40px;
   height: 40px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.general-desktop__menu-wrapper-item .order__buttons .close-button:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 .general-desktop__menu-wrapper-item .order-close {
   display: none;
@@ -877,6 +934,14 @@ form.search-form button {
   margin-top: 20px;
   background-color: #f1f1f1;
   border-radius: 25px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.general-desktop__menu-wrapper-item .vote__link-all:active {
+  -webkit-transform: scale(1.1);
+      -ms-transform: scale(1.1);
+          transform: scale(1.1);
 }
 .general-desktop__menu-wrapper-item .vote__link-all a {
   padding: 12px;
@@ -907,6 +972,14 @@ form.search-form button {
   border-radius: 8px;
   overflow: hidden;
   height: 136px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.general-desktop__menu-wrapper-item .shop__items-item-image:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 .general-desktop__menu-wrapper-item .shop__items-item-image img {
   -o-object-fit: cover;
@@ -937,6 +1010,14 @@ form.search-form button {
   -webkit-box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
           box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
   border-radius: 8px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.general-desktop__menu-wrapper-item .drops__items-item:active {
+  -webkit-transform: scale(1.11);
+      -ms-transform: scale(1.11);
+          transform: scale(1.11);
 }
 .general-desktop__menu-wrapper-item .drops__items-item img {
   width: 100%;
@@ -986,6 +1067,7 @@ form.search-form button {
           flex-basis: 9.3%;
 }
 .release-radar-desktop__wrapper-item .token__info-coin img {
+  border-radius: 50%;
   display: block;
   width: 100%;
   max-width: 64px;
@@ -1032,6 +1114,14 @@ form.search-form button {
   font-family: 'Roboto-Regular';
   font-size: 80px;
   line-height: 94px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.release-radar-desktop__wrapper-item .live-updates__item-icon:active span {
+  -webkit-transform: scale(1.1);
+      -ms-transform: scale(1.1);
+          transform: scale(1.1);
 }
 .release-radar-desktop__wrapper-item .live-updates__item-title {
   margin-top: 16px;
@@ -1054,6 +1144,14 @@ form.search-form button {
   top: 4px;
   left: 4px;
   position: relative;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.release-radar-desktop__wrapper-item .swiper-lists__item-icon:active img {
+  -webkit-transform: scale(1.12);
+      -ms-transform: scale(1.12);
+          transform: scale(1.12);
 }
 .release-radar-desktop__wrapper-item .swiper-lists__item-icon.transparent-border {
   border-color: #f1f1f1;
@@ -1147,6 +1245,7 @@ form.search-form button {
           align-items: center;
 }
 .top-movers__wrapper-table tr td.asset .icon img {
+  border-radius: 50%;
   display: block;
   width: 38px;
   height: 38px;
