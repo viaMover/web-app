@@ -37,6 +37,10 @@ export type AccountStoreState = {
   isDetecting: boolean;
   refreshError: undefined | string;
 
+  nativeCurrency: 'usd';
+  // main prices in native currency
+  ethPrice: undefined | string;
+
   // explorer
   explorer: undefined | Explorer;
   //charts

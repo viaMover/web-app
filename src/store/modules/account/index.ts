@@ -24,6 +24,10 @@ export default {
     gasPrices: undefined,
     gasUpdating: false,
 
+    nativeCurrency: 'usd',
+
+    ethPrice: undefined,
+
     //explorer
     explorer: undefined,
 

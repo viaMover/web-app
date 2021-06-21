@@ -12,6 +12,9 @@ import { SortAndDedupedTokens } from './utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
 
 export default {
+  setEthPrice(state, ethPrice: string): void {
+    state.ethPrice = ethPrice;
+  },
   setExplorer(state, explorer: Explorer): void {
     state.explorer = explorer;
   },
