@@ -1,3 +1,5 @@
+export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
+
 export type SmallTokenInfo = {
   address: string;
   decimals: number;
@@ -57,5 +59,6 @@ export type GasData = {
 export type TransactionsParams = {
   from: string;
   gas?: number;
+  gasPrice?: string;
   value?: string;
 };

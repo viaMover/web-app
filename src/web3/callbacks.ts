@@ -4,18 +4,18 @@ export const InitCallbacks = async (
   provider: any
 ): Promise<ProviderWithCallbacks> => {
   const chainChangedHandler = () => {
-    console.log('MetaMask - chain has been chainged! Reloading page...');
+    console.log('Provider - chain has been chainged! Reloading page...');
     window.location.reload();
   };
 
   const disconnectHandler = () => {
-    console.log('MetaMask - has been disconnected! Reloading page...');
+    console.log('Provider - has been disconnected! Reloading page...');
     window.location.reload();
   };
 
   const accountsChangedHandler = async (accounts: Array<string>) => {
-    console.log('MetaMask - accounts array has been changed!', accounts);
-    //window.location.reload();
+    console.log('Provider - accounts array has been changed!', accounts);
+    window.location.reload();
   };
 
   provider.on('chainChanged', chainChangedHandler);

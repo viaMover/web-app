@@ -141,7 +141,6 @@ export default Vue.extend({
       });
       await provider.enable();
       const providerWithCb = await InitCallbacks(provider);
-
       //  Enable session (triggers QR Code modal)
       this.initWallet({
         provider: providerWithCb.provider,

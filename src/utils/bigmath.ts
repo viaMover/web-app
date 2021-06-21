@@ -21,6 +21,21 @@ export const greaterThan = (
   numberTwo: BigNumberish
 ): boolean => new BigNumber(numberOne).gt(numberTwo);
 
+export const greaterThanOrEqual = (
+  numberOne: BigNumberish,
+  numberTwo: BigNumberish
+): boolean => new BigNumber(numberOne).gte(numberTwo);
+
+export const lessThan = (
+  numberOne: BigNumberish,
+  numberTwo: BigNumberish
+): boolean => new BigNumber(numberOne).lt(numberTwo);
+
+export const lessThanOrEqual = (
+  numberOne: BigNumberish,
+  numberTwo: BigNumberish
+): boolean => new BigNumber(numberOne).lte(numberTwo);
+
 export const notZero = (numberOne: BigNumberish): boolean =>
   new BigNumber(numberOne).gt('0');
 

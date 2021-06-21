@@ -1,9 +1,7 @@
-import { estimateApprove, needApprove } from './../approve/needApprove';
+import { needApprove } from '../approve/needApprove';
 import { toWei, floorDivide, add } from '@/utils/bigmath';
-import { SmallTokenInfo, TransactionsParams } from '@/wallet/types';
-import { provider } from 'web3-core';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
-import { networks } from '@/utils/networkTypes';
 import { BigNumber } from 'bignumber.js';
 import {
   getPureEthAddress,
@@ -15,6 +13,7 @@ import { AbiItem } from 'web3-utils';
 import { multiply } from '@/utils/bigmath';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
+import { estimateApprove } from '../approve/approveEstimate';
 
 export type EstimateResponse = {
   error: boolean;
@@ -22,8 +21,8 @@ export type EstimateResponse = {
 };
 
 export const estimateSwapCompound = async (
-  inputAsset: SmallTokenInfo,
-  outputAsset: SmallTokenInfo,
+  inputAsset: SmallToken,
+  outputAsset: SmallToken,
   inputAmount: string,
   transferData: TransferData,
   network: Network,
@@ -84,8 +83,8 @@ export const estimateSwapCompound = async (
 };
 
 export const estimateSwap = async (
-  inputAsset: SmallTokenInfo,
-  outputAsset: SmallTokenInfo,
+  inputAsset: SmallToken,
+  outputAsset: SmallToken,
   inputAmount: string,
   transferData: TransferData,
   network: Network,
