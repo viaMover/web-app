@@ -23,6 +23,8 @@
 </template>
 
 <script lang="ts">
+import '@/styles/_general.less';
+
 import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';

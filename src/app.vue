@@ -6,6 +6,8 @@
 </template>
 
 <script lang="ts">
+import '@/styles/_common.less';
+
 import { mapActions } from 'vuex';
 import Vue from 'vue';
 import Wallet from '@/components/wallet/wallet.vue';
