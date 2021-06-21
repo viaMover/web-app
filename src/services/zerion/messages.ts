@@ -13,6 +13,9 @@ export const messages = {
     RECEIVED: 'received address transactions',
     REMOVED: 'removed address transactions'
   },
+  ASSET_CHARTS: {
+    RECEIVED: 'received assets charts'
+  },
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
   ERROR: 'error',

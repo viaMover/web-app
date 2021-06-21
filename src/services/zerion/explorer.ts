@@ -1,12 +1,25 @@
+import { ChartTypes } from './charts';
 import { sameAddress } from './../../utils/address';
 import { mapZerionTokens } from './tokens';
-import { ZerionAssetsReceived, ZerionTransactionsReceived } from './responses';
+import {
+  ZerionAssetsReceived,
+  ZerionChartsReceived,
+  ZerionTransactionsReceived
+} from './responses';
 import io from 'socket.io-client';
 import { messages, TRANSACTIONS_LIMIT } from './messages';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { mapZerionTxns } from './transactions';
 import { GetTokensPrice } from '../thegraph/api';
 import findIndex from 'lodash-es/findIndex';
+
+export type Explorer = {
+  GetChartData: (
+    assetCode: string,
+    nativeCurrency: string,
+    ChartTypes: string
+  ) => void;
+};
 
 export const InitExplorer = (
   accountAddress: string,
@@ -16,8 +29,9 @@ export const InitExplorer = (
   removeTransactions: (txns: Array<string>) => void,
   setTokens: (tokens: Array<TokenWithBalance>) => void,
   updateTokens: (tokens: Array<TokenWithBalance>) => void,
-  removeTokens: (tokens: Array<string>) => void
-) => {
+  removeTokens: (tokens: Array<string>) => void,
+  setChartData: (chartData: Record<string, Array<[number, number]>>) => void
+): Explorer => {
   const io_options = {
     extraHeaders: { origin: 'http://localhost:3000' },
     transports: ['websocket'],
@@ -25,7 +39,7 @@ export const InitExplorer = (
     allowEIO3: true
   };
   const addressSocket = io('wss://api-v4.zerion.io/address', io_options);
-  //const addressSocket = io('wss://api.zerion.io/address', io_options);
+  const assetSocket = io('wss://api.zerion.io/assets', io_options);
 
   addressSocket.on(messages.CONNECT, () => {
     addressSocket.emit('subscribe', {
@@ -126,4 +140,33 @@ export const InitExplorer = (
       removeTokens(tokens.map((t) => t.address));
     }
   );
+
+  assetSocket.on(
+    messages.ASSET_CHARTS.RECEIVED,
+    async (message: ZerionChartsReceived) => {
+      console.log(messages.ASSET_CHARTS.RECEIVED, message);
+      if (message.meta.status === 'ok') {
+        setChartData(message.payload.charts);
+      } else {
+        console.error("can't load charts data");
+      }
+    }
+  );
+
+  return {
+    GetChartData: (
+      assetCode: string,
+      nativeCurrency: string,
+      chartType: string
+    ) => {
+      assetSocket.emit('get', {
+        payload: {
+          asset_codes: [assetCode],
+          charts_type: chartType,
+          currency: nativeCurrency.toLowerCase()
+        },
+        scope: ['charts']
+      });
+    }
+  };
 };

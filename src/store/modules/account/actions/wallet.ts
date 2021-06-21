@@ -106,7 +106,7 @@ export default {
     if (state.networkInfo.network === Network.mainnet) {
       if (payload.init) {
         console.log('Starting Zerion...');
-        InitExplorer(
+        const explorer = InitExplorer(
           state.currentAddress,
           'usd',
           (txns: Array<Transaction>) => {
@@ -126,8 +126,12 @@ export default {
           },
           (tokens: Array<string>) => {
             commit('removeWalletTokens', tokens);
+          },
+          (chartData: any) => {
+            commit('setChartData', chartData);
           }
         );
+        commit('setExplorer', explorer);
       }
 
       //

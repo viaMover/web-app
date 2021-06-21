@@ -70,9 +70,11 @@ import { GasPrice } from '@/components/controls/gas-selector.vue';
 
 import { estimateSwapCompound } from '@/wallet/actions/swap/estimate';
 import { getTransferData, TransferData } from '@/services/0x/api';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
+import { EmitChartRequestPayload } from '@/store/modules/account/actions/charts';
+import { ChartTypes } from '@/services/zerion/charts';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -125,6 +127,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      emitChartRequest: 'emitChartRequest'
+    }),
     handleExecuteSwap(): void {
       //
       this.$emit('tx-created', 'transaction-hash');
@@ -320,6 +325,16 @@ export default Vue.extend({
       this.input.nativeAmount = '0';
       this.output.amount = '0';
       this.output.nativeAmount = '0';
+
+      // TODO: remove after test
+
+      this.emitChartRequest({
+        assetCode: asset.address,
+        nativeCurrency: 'USD',
+        ChartTypes: ChartTypes.hour
+      } as EmitChartRequestPayload);
+
+      //
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
