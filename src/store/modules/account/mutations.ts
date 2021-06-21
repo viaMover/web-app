@@ -1,11 +1,26 @@
 import { SortAndDedupedTransactions } from './utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
-import { AccountStoreState, AccountData, ProviderData } from './types';
+import {
+  AccountStoreState,
+  AccountData,
+  ProviderData,
+  ChartPair
+} from './types';
 import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
 import { SortAndDedupedTokens } from './utils/tokens';
+import { Explorer } from '@/services/zerion/explorer';
 
 export default {
+  setEthPrice(state, ethPrice: string): void {
+    state.ethPrice = ethPrice;
+  },
+  setExplorer(state, explorer: Explorer): void {
+    state.explorer = explorer;
+  },
+  setChartData(state, chartData: Record<string, ChartPair[]>): void {
+    state.chartData = chartData;
+  },
   setCurrentWallet(state, address): void {
     state.currentAddress = address;
   },

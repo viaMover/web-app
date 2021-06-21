@@ -68,11 +68,13 @@ import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasPrice } from '@/components/controls/gas-selector.vue';
 
-import { estimateSwap } from '@/wallet/actions/swap/estimate';
+import { estimateSwapCompound } from '@/wallet/actions/swap/estimate';
 import { getTransferData, TransferData } from '@/services/0x/api';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
-import { GetTokenPrice, GetTokensPrice } from '@/services/thegraph/api';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import { EmitChartRequestPayload } from '@/store/modules/account/actions/charts';
+import { ChartTypes } from '@/services/zerion/charts';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -101,7 +103,8 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
-      selectedGasPrice: 0
+      selectedGasPrice: 0,
+      swapGasLimit: '0'
     };
   },
   computed: {
@@ -124,6 +127,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      emitChartRequest: 'emitChartRequest'
+    }),
     handleExecuteSwap(): void {
       //
       this.$emit('tx-created', 'transaction-hash');
@@ -319,6 +325,16 @@ export default Vue.extend({
       this.input.nativeAmount = '0';
       this.output.amount = '0';
       this.output.nativeAmount = '0';
+
+      // TODO: remove after test
+
+      this.emitChartRequest({
+        assetCode: asset.address,
+        nativeCurrency: 'USD',
+        ChartTypes: ChartTypes.hour
+      } as EmitChartRequestPayload);
+
+      //
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
@@ -356,7 +372,7 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await estimateSwap(
+      const resp = await estimateSwapCompound(
         inputAsset,
         outputAsset,
         inputAmount,
@@ -370,6 +386,8 @@ export default Vue.extend({
         console.error("can't esitmate swap");
         return;
       }
+
+      this.swapGasLimit = resp.gasLimit;
     }
   }
 });
