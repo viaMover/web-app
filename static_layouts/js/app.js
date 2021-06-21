@@ -66,7 +66,97 @@ $(document).ready(function() {
 	}
 	shadow();
 
+	function swapsPopup() {
+		let popup = $('.swaps__popup'); 
+		let close = $('.swaps__popup-close');
+		let button = $('.general-desktop__menu-wrapper-item .swaps-item');
+		let bg = $('.swaps__popup-bg');
 
+		button.on('click', function() { 
+			popup.addClass('swaps__popup-active'); 
+			bg.addClass('swaps__popup-bg-active');
+			close.addClass('swaps__popup-close-active');
+		})
+		close.on('click', function() { 
+			popup.removeClass('swaps__popup-active'); 
+			bg.removeClass('swaps__popup-bg-active');
+			close.removeClass('swaps__popup-close-active');
+		})
+		bg.on('click', function() { 
+			popup.removeClass('swaps__popup-active'); 
+			bg.removeClass('swaps__popup-bg-active');
+			close.removeClass('swaps__popup-close-active');
+		})
+	}
+	swapsPopup();
+
+	function toggleSwaps() {
+		let next = $('.swaps__wrapper-info-items-item-right .currency'); 
+		let back = $('.swaps__wrapper-search-items-item'); 
+		let step1 = $('.swaps__wrapper-info'); 
+		let step2 = $('.swaps__wrapper-search'); 
+		let close = $('.swaps__popup-close'); 
+	
+		next.on('click', function() {
+			step2.show();
+			step1.hide();
+		});
+	
+		back.on('click', function() {
+			step2.hide();
+			step1.show();
+		});
+
+		close.on('click', function() {
+			setTimeout( function() {
+				step2.hide();
+				step1.show();
+			}, 300)
+		});
+	}
+	toggleSwaps();
+
+	function hideByClickEscButton() {
+		let popup = $('.swaps__popup');
+		let bg = $('.swaps__popup-bg');
+		let close = $('.swaps__popup-close');
+
+		$(window).on('keydown', function(e) {
+			if ( e.keyCode == 27 ) {
+				popup.removeClass('swaps__popup-active'); 
+				bg.removeClass('swaps__popup-bg-active');
+				close.removeClass('swaps__popup-close-active');
+			}
+		});
+	}
+	hideByClickEscButton();
+
+	function toggleSwapDetails() {
+		let button = $('.swap-details-active');
+		let container = $('.swap-details__content');
+		button.on('click', () => {
+			container.toggleClass('swap-details__content-active');
+		});
+	}
+	toggleSwapDetails();
+
+	function SwapsSlider() {
+		new Swiper('.swaps__wrapper-info-footer-right', {
+			grabCursor: true,
+			allowTouchMove: true,
+			slidesPerView: 1,
+			pagination: {
+				el: '.swaps__wrapper-info-footer-right .swiper-pagination',
+				type: 'bullets',
+				clickable: true,
+			},
+			navigation: {
+				nextEl: '.swaps__wrapper-info-footer-right .swiper-slide',
+			},
+		});
+	}
+	SwapsSlider();
+	
 	// function tttt() {
 	// 	new Swiper('.swiper-container', {
 	// 		slidesPerView: 2,
@@ -93,17 +183,5 @@ $(document).ready(function() {
 	// 	});
 	// }
 	// 	tttt();
-
-	// //close popup by "esc" button
-	// function hideByClickEscButton() {
-	// 	let selector = $('.selector'); // block selector
-	// 	$(window).on('keydown', function(e) {
-	// 		if ( e.keyCode == 27 ) {
-	// 			selector.removeClass('active-class'); // remove active class
-	// 			scrollLock.enablePageScroll();
-	// 		}
-	// 	});
-	// }
-	// hideByClickEscButton();
 
 });
