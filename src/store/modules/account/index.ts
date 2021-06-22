@@ -6,6 +6,7 @@ import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 import gasActions from './actions/gas';
 import chartsActions from './actions/charts';
+import utilityActions from './actions/utility';
 
 export default {
   namespaced: true,
@@ -37,9 +38,16 @@ export default {
     // eslint-disable-next-line
     providerBeforeClose: () => {},
     allTokens: [],
-    refreshError: undefined
+    refreshError: undefined,
+
+    isDebitCardSectionVisible: true
   },
-  actions: { ...walletActions, ...gasActions, ...chartsActions },
+  actions: {
+    ...walletActions,
+    ...gasActions,
+    ...chartsActions,
+    ...utilityActions
+  },
   getters,
   mutations
 } as Module<AccountStoreState, RootStoreState>;

@@ -1,5 +1,6 @@
 <template>
   <heading-section
+    class="links__item"
     has-expand-button
     :name="$t('swaps.lblSwaps')"
     use-click-event
@@ -8,16 +9,18 @@
     <template v-slot:heading>
       {{ $t('swaps.lblSwaps') }}
     </template>
-
-    {{ $t('swaps.lblSwapsSubheading') }}
+    <p>
+      {{ $t('swaps.lblSwapsSubheading') }}
+    </p>
   </heading-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import HeadingSection from './heading-section.vue';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
+
+import HeadingSection from './heading-section.vue';
 
 export default Vue.extend({
   name: 'SwapsSection',

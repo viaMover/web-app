@@ -1,6 +1,7 @@
 <template>
   <heading-section
-    class="section nibble"
+    class="general-desktop__menu-wrapper-item"
+    container-class="general-desktop__menu-wrapper-item-info"
     has-expand-button
     :name="$t('nibbleShop.lblNibbleShop')"
     navigate-to-name="nibble-shop-view-all"
@@ -9,13 +10,15 @@
       {{ $t('nibbleShop.lblNibbleShop') }}
     </template>
 
-    <div class="assets-row">
-      <nibble-shop-product-mini
-        v-for="product in products"
-        :id="product.id"
-        :key="product.id"
-      ></nibble-shop-product-mini>
-    </div>
+    <template v-slot:bottom>
+      <div class="shop__items">
+        <nibble-shop-product-mini
+          v-for="product in products"
+          :id="product.id"
+          :key="product.id"
+        ></nibble-shop-product-mini>
+      </div>
+    </template>
   </heading-section>
 </template>
 

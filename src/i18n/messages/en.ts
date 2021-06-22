@@ -1,5 +1,6 @@
 export default {
   lblWelcome: 'Welcome',
+  lblBalance: 'Balance',
   headingBalance: 'Your wallet balance',
   lblConnectWallet: 'Please connect a wallet',
   txtConnectWallet:

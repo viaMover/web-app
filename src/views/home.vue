@@ -1,22 +1,22 @@
 <template>
-  <content-wrapper has-left-rail wrapperClass="general-desktop">
+  <content-wrapper has-left-rail wrapper-class="general-desktop">
     <template v-slot:left-rail>
       <wallet-info-rail />
     </template>
 
-    <header-balance class="general-desktop__menu-wrapper-balance" />
+    <header-balance />
     <div class="general-desktop__menu-wrapper-item">
       <div class="general-desktop__menu-wrapper-item-links">
-        <release-radar-section class="links__item" />
-        <swaps-section class="links__item" />
+        <release-radar-section />
+        <swaps-section />
       </div>
     </div>
-    <debit-card-section class="general-desktop__menu-wrapper-item" />
-    <savings-section class="general-desktop__menu-wrapper-item" />
-    <treasury-section class="general-desktop__menu-wrapper-item" />
-    <governance-section class="general-desktop__menu-wrapper-item" />
-    <nibble-shop-section class="general-desktop__menu-wrapper-item" />
-    <nfts-section class="general-desktop__menu-wrapper-item" />
+    <debit-card-section />
+    <savings-section />
+    <treasury-section />
+    <governance-section />
+    <nibble-shop-section />
+    <nfts-section />
 
     <transaction-modal />
     <swap-modal />
