@@ -127,7 +127,7 @@ export default {
           (tokens: Array<string>) => {
             commit('removeWalletTokens', tokens);
           },
-          (chartData: any) => {
+          (chartData: Record<string, [number, number][]>) => {
             commit('setChartData', chartData);
           }
         );

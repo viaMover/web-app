@@ -3,38 +3,7 @@ import { isEth } from './../../../utils/address';
 import { AbiItem } from 'web3-utils';
 import { ERC20_ABI } from '@/wallet/references/data';
 import Web3 from 'web3';
-import { Token, TransactionsParams, SmallTokenInfo } from '@/wallet/types';
-import { MAXUINT256 } from '@/utils/consts';
-
-export const estimateApprove = async (
-  accountAddress: string,
-  tokenAddress: string,
-  spenderAddress: string,
-  web3: Web3
-): Promise<string> => {
-  const tokenContract = new web3.eth.Contract(
-    ERC20_ABI as AbiItem[],
-    tokenAddress
-  );
-  try {
-    const transactionParams = {
-      from: accountAddress
-    } as TransactionsParams;
-
-    const gasLimit = await tokenContract.methods
-      .approve(spenderAddress, MAXUINT256)
-      .estimateGas(transactionParams);
-
-    if (gasLimit) {
-      return gasLimit.toString();
-    }
-    throw new Error(`empty gas limit`);
-  } catch (error) {
-    throw new Error(
-      `can't estimate approve for token ${tokenAddress}: ${error}}`
-    );
-  }
-};
+import { TransactionsParams, SmallToken } from '@/wallet/types';
 
 const getAllowance = async (
   owner: string,
@@ -62,7 +31,7 @@ const getAllowance = async (
 
 export const needApprove = async (
   accountAddress: string,
-  token: SmallTokenInfo,
+  token: SmallToken,
   amountToApprove: string,
   contractAddress: string,
   web3: Web3

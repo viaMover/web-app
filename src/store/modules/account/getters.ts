@@ -29,7 +29,7 @@ export default {
 
     return Object.values(groupsByDay);
   },
-  isWalletConnected(state): boolean {
-    return state.provider !== undefined;
+  isWalletConnected(state: AccountStoreState): boolean {
+    return state.currentAddress !== undefined;
   }
 } as GetterTree<AccountStoreState, RootStoreState>;
