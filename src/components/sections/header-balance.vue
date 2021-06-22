@@ -1,7 +1,7 @@
 <template>
   <div class="section balance">
-    <span class="mainLabel">$154,849.94</span>
-    <span class="description">{{ $t('headingBalance') }}</span>
+    <span>$154,849.94</span>
+    <p>{{ $t('headingBalance') }}</p>
   </div>
 </template>
 

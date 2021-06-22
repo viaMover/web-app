@@ -1,20 +1,14 @@
 <template>
-  <div class="wallet">
-    <div class="connect">
-      <img alt="imageprofile" :src="'https://linkpicture.com/q/Group-6.png'" />
-      <div class="content">
-        <div class="label">
-          <span class="id">0xf13</span>
-          <img
-            alt="arrow-down"
-            class="arrow"
-            src="@/assets/images/arrow-down.svg"
-          />
-        </div>
-        <span class="disconnect">{{ $t('lblDisconnect') }}</span>
-      </div>
-    </div>
-    <div class="input">
+  <div class="general-desktop__sidebar-wrapper-user">
+    <div class="user user1"><span class="icon">🦁</span></div>
+    <button type="button">
+      <span>{{ currentAddressText }}</span>
+      <img
+        :alt="$t('txtChangeWalletAlt')"
+        src="@/assets/images/arrow-down.svg"
+      />
+    </button>
+    <!-- <div class="input">
       <label for="wallet_address">{{ $t('lblWallet') }}</label>
       <select
         id="wallet_address"
@@ -30,7 +24,10 @@
           {{ address }}
         </option>
       </select>
-    </div>
+    </div> -->
+    <button class="status" @click.prevent="disconnectWallet">
+      {{ $t('lblDisconnect') }}
+    </button>
   </div>
 </template>
 
@@ -41,26 +38,36 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'WalletHeader',
   computed: {
-    ...mapState('account', [
-      'detectedProvider',
-      'provider',
-      'addresses',
-      'currentAddress'
-    ]),
-    metaMaskBtnText(): string {
-      return this.detectedProvider ? 'Connect MetaMask' : 'Install MetaMask';
-    },
-    accountAddresses(): Array<string> {
-      return this.addresses;
+    ...mapState('account', ['currentAddress']),
+    currentAddressText(): string {
+      if (this.currentAddress) {
+        const val = this.currentAddress as string;
+        const cutSize = 3;
+
+        return [
+          ...val.slice(0, cutSize + 2),
+          '...',
+          ...val.slice(val.length - cutSize, val.length)
+        ].join('');
+      }
+
+      return this.$t('btnConnectWallet') as string;
     }
   },
   methods: {
     ...mapMutations('account', { setCurrentWallet: 'setCurrentWallet' }),
-    ...mapActions('account', { refreshWallet: 'refreshWallet' }),
+    ...mapActions('account', {
+      refreshWallet: 'refreshWallet',
+      clearWalletState: 'disconnectWallet'
+    }),
     handleAddressChanged(address: string): void {
       this.setCurrentWallet(address);
       this.refreshWallet();
       this.$emit('selected-address-changed', address);
+    },
+    disconnectWallet(): void {
+      this.clearWalletState();
+      window.location.reload();
     }
   }
 });
