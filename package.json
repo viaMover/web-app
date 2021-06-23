@@ -28,6 +28,7 @@
     "graphql-tag": "^2.12.4",
     "lodash-es": "^4.17.21",
     "socket.io-client": "2.3.1",
+    "ts-custom-error": "^3.2.0",
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.7",
     "vue-clickaway": "^2.2.2",

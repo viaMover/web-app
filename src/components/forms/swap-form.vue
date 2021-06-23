@@ -105,7 +105,9 @@ export default Vue.extend({
         nativeAmount: ''
       },
       selectedGasPrice: '0',
+      useSubsidized: false,
       swapGasLimit: '0',
+      approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
       loading: false
     };
@@ -170,7 +172,9 @@ export default Vue.extend({
         this.provider.web3,
         this.currentAddress,
         this.swapGasLimit,
-        this.selectedGasPrice
+        this.approveGasLimit,
+        this.selectedGasPrice,
+        this.useSubsidized
       );
       //this.$emit('tx-created', 'transaction-hash');
     },
@@ -401,6 +405,7 @@ export default Vue.extend({
       this.swapGasLimit = '0';
     },
     handleSelectedGasChanged(newGas: GasPrice): void {
+      this.useSubsidized = newGas.type === 'treasury';
       this.selectedGasPrice = String(newGas.amount);
     },
     async calcData(
@@ -436,7 +441,8 @@ export default Vue.extend({
         transferData,
         this.networkInfo.network,
         this.provider.web3,
-        this.currentAddress
+        this.currentAddress,
+        this.useSubsidized
       );
 
       if (resp.error) {
@@ -444,7 +450,8 @@ export default Vue.extend({
         return;
       }
 
-      this.swapGasLimit = resp.gasLimit;
+      this.swapGasLimit = resp.swapGasLimit;
+      this.approveGasLimit = resp.approveGasLimit;
     }
   }
 });

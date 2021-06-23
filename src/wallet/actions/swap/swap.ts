@@ -1,3 +1,4 @@
+import { approve } from './../approve/approve';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
@@ -11,6 +12,7 @@ import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import { swapSubsidized } from './swapSubsidized';
 
 export const swapCompound = async (
   inputAsset: SmallToken,
@@ -20,8 +22,10 @@ export const swapCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
-  gasLimit: string,
-  gasPriceInGwei: string
+  swapGasLimit: string,
+  approveGasLimit: string,
+  gasPriceInGwei: string,
+  useSubsidized: boolean
 ): Promise<void> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
@@ -32,20 +36,32 @@ export const swapCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      gasLimit,
+      approveGasLimit,
       gasPriceInGwei,
       async () => {
-        await swap(
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData,
-          network,
-          web3,
-          accountAddress,
-          gasLimit,
-          gasPriceInGwei
-        );
+        if (useSubsidized) {
+          await swapSubsidized(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData,
+            network,
+            web3,
+            accountAddress
+          );
+        } else {
+          await swap(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData,
+            network,
+            web3,
+            accountAddress,
+            swapGasLimit,
+            gasPriceInGwei
+          );
+        }
       }
     );
   } catch (err) {
