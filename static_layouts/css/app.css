@@ -812,6 +812,57 @@ body {
 .swaps__wrapper-search-items-item:last-child {
   padding-bottom: 24px;
 }
+.transaction__popup {
+  position: fixed;
+  top: calc(50% - 182px);
+  left: calc(50% - 264px);
+  width: 528px;
+  height: 364px;
+  z-index: -1;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0;
+  visibility: hidden;
+}
+.transaction__popup-active {
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+}
+.transaction__popup-wrapper {
+  background-color: #fdfbfd;
+  -webkit-box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+          box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 80px 40px 24px;
+  text-align: center;
+}
+.transaction__popup-wrapper-gif {
+  margin: 0 auto;
+  width: 158px;
+  height: 158px;
+}
+.transaction__popup-wrapper-gif video {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.transaction__popup-wrapper-status {
+  margin-top: 78px;
+}
+.transaction__popup-wrapper-status h2 {
+  font-family: 'Bold';
+}
+.transaction__popup-wrapper-status p {
+  color: rgba(60,60,67,0.6);
+  font-family: 'Medium';
+}
+.transaction__popup-wrapper.success,
+.transaction__popup-wrapper.failed {
+  background-color: #fff;
+}
 .logo {
   position: absolute;
   top: 25px;

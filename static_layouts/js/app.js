@@ -117,13 +117,15 @@ $(document).ready(function() {
 	toggleSwaps();
 
 	function hideByClickEscButton() {
-		let popup = $('.swaps__popup');
+		let swapsPopup = $('.swaps__popup');
+		let transactionPopup = $('.transaction__popup'); 
 		let bg = $('.swaps__popup-bg');
 		let close = $('.swaps__popup-close');
 
 		$(window).on('keydown', function(e) {
 			if ( e.keyCode == 27 ) {
-				popup.removeClass('swaps__popup-active'); 
+				swapsPopup.removeClass('swaps__popup-active'); 
+				transactionPopup.removeClass('transaction__popup-active'); 
 				bg.removeClass('swaps__popup-bg-active');
 				close.removeClass('swaps__popup-close-active');
 			}
@@ -156,32 +158,32 @@ $(document).ready(function() {
 		});
 	}
 	SwapsSlider();
-	
-	// function tttt() {
-	// 	new Swiper('.swiper-container', {
-	// 		slidesPerView: 2,
-	// 		loop: true,
-	// 		navigation: {
-	// 			nextEl: '.swiper-button-next',
-	// 			prevEl: '.swiper-button-prev',
-	// 		},
-	// 		pagination: {
-	// 			el: '.swiper-pagination',
-	// 			type: 'bullets',
-	// 			clickable: true,
-	// 		},
-	// 		breakpoints: {
-	// 			640: {
-	// 				slidesPerView: 1,
-	// 				allowTouchMove: true,
-	// 			},
-	// 			991: {
-	// 				slidesPerView: 2,
-	// 				allowTouchMove: true,
-	// 			}
-	// 		},
-	// 	});
-	// }
-	// 	tttt();
+
+	function transactionWaitingPopup() {
+		let transactionPopup = $('.transaction__popup'); 
+		let close = $('.swaps__popup-close');
+		let button = $('.swaps__wrapper-info-button .choose');
+		let bg = $('.swaps__popup-bg');
+		let swapsPopup = $('.swaps__popup');
+
+		button.on('click', function() { 
+			transactionPopup.addClass('transaction__popup-active'); 
+			bg.addClass('swaps__popup-bg-active');
+			close.addClass('swaps__popup-close-active');
+			swapsPopup.removeClass('swaps__popup-active');
+		})
+		close.on('click', function() { 
+			transactionPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('swaps__popup-bg-active');
+			close.removeClass('swaps__popup-close-active');
+			swapsPopup.removeClass('swaps__popup-active');
+		})
+		bg.on('click', function() { 
+			transactionPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('swaps__popup-bg-active');
+			close.removeClass('swaps__popup-close-active');
+		})
+	}
+	transactionWaitingPopup();
 
 });
