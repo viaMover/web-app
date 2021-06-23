@@ -29,11 +29,6 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "debit-card" */ '@/views/home.vue')
   },
   {
-    path: '/swaps',
-    name: 'swaps',
-    component: () => import(/* webpackChunkName: "swaps" */ '@/views/swaps.vue')
-  },
-  {
     path: '/savings',
     component: () =>
       import(
