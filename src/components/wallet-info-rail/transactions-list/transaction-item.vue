@@ -1,15 +1,17 @@
 <template>
-  <div class="transaction-item">
-    <div class="container">
-      <img :alt="transaction.symbol" class="image" :src="transaction.symbol" />
-      <div class="content">
-        <span class="label">{{ transaction.heading }}</span>
-        <span class="amount">{{ transaction.amount }}</span>
+  <div class="general-desktop__sidebar-wrapper-info-item">
+    <div class="label">
+      <div class="label-icon getShadow">
+        <img :alt="transaction.symbol" :src="tokenImageSrc" />
+      </div>
+      <div class="label-info">
+        <p>{{ transaction.heading }}</p>
+        <span>{{ transaction.amount }}</span>
       </div>
     </div>
-    <div>
+    <div class="volume">
       <span class="operation">{{
-        `${true ? '-' : '+'} ${transaction.deducted}`
+        `${true ? '-' : '+'} ${transaction.value || 0}`
       }}</span>
     </div>
   </div>
@@ -17,7 +19,9 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { Transaction } from '@/wallet/types';
+import { mapState } from 'vuex';
+
+import { Transaction, Token } from '@/wallet/types';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -25,6 +29,17 @@ export default Vue.extend({
     transaction: {
       type: Object as PropType<Transaction>,
       required: true
+    }
+  },
+  computed: {
+    ...mapState('account', ['allTokens']),
+    tokenImageSrc(): string {
+      return (
+        (this.allTokens as Array<Token>).find(
+          (t) =>
+            t.address.toLowerCase() === this.transaction.symbol?.toLowerCase()
+        )?.logo ?? ''
+      );
     }
   }
 });

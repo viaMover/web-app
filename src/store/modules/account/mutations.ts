@@ -98,5 +98,8 @@ export default {
   },
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
+  },
+  toggleIsDebitCardSectionVisible(state): void {
+    state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
   }
 } as MutationTree<AccountStoreState>;

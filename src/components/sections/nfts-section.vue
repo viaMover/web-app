@@ -1,6 +1,7 @@
 <template>
   <heading-section
-    class="section nft"
+    class="general-desktop__menu-wrapper-item"
+    container-class="general-desktop__menu-wrapper-item-info"
     has-expand-button
     :name="$t('NFTs.lblNFTDrops')"
     navigate-to-name="nft-view-all"
@@ -9,13 +10,15 @@
       {{ $t('NFTs.lblNFTDrops') }}
     </template>
 
-    <div class="nfts-row">
-      <nft-asset-card-mini
-        v-for="nft in list"
-        :id="nft.id"
-        :key="nft.id"
-      ></nft-asset-card-mini>
-    </div>
+    <template v-slot:bottom>
+      <div class="drops__items">
+        <nft-asset-card-mini
+          v-for="nft in list"
+          :id="nft.id"
+          :key="nft.id"
+        ></nft-asset-card-mini>
+      </div>
+    </template>
   </heading-section>
 </template>
 

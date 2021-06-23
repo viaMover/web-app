@@ -1,6 +1,6 @@
 <template>
-  <router-link v-if="asset" class="card nft" :to="routeTo">
-    <img :alt="asset.nft.imageSrc" class="image" :src="asset.nft.imageSrc" />
+  <router-link v-if="asset" class="drops__items-item" :to="routeTo">
+    <img :alt="asset.nft.imageSrc" :src="asset.nft.imageSrc" />
   </router-link>
 </template>
 

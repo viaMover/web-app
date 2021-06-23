@@ -1,7 +1,13 @@
 <template>
-  <div class="left rail">
-    <img alt="logo" class="logo" src="@/assets/images/logo.svg" />
-    <slot></slot>
+  <div :class="[containerClass]">
+    <a class="logo" href="#">
+      <img alt="logo" src="@/assets/images/logo.svg" />
+    </a>
+    <div class="sidebar-wrapper">
+      <div :class="contentWrapperClass">
+        <slot></slot>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -9,6 +15,17 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'LeftRail'
+  name: 'LeftRail',
+  props: {
+    containerClass: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    contentWrapperClass(): string {
+      return `${this.containerClass}-wrapper`;
+    }
+  }
 });
 </script>

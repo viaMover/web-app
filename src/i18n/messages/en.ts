@@ -1,10 +1,12 @@
 export default {
   lblWelcome: 'Welcome',
+  lblBalance: 'Balance',
   headingBalance: 'Your wallet balance',
   lblConnectWallet: 'Please connect a wallet',
   txtConnectWallet:
     'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
   btnConnectWallet: 'Connect a wallet',
+  txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
   lblDisconnect: 'Disconnect',
   lblConnectWalletTransactionHistory: '@:lblConnectWallet to see history',

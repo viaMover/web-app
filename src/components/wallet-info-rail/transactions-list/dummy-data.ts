@@ -4,21 +4,15 @@ export const dummyTransactionData: any = [
     transactions: [
       {
         hash: 'dhdhhdhdhdh',
-        symbol:
-          'https://www.linkpicture.com/q/4cf7d633-92fb-4d37-80ed-458c7d1ea410.png',
+        symbol: '0x3fa729b4548becbad4eab6ef18413470e6d5324c',
         heading: 'Deposit in Savings',
-        amount: '11,984.4953 USDC',
-        deducted: '$2,000.00',
-        date: '23-11-2020'
+        amount: '11,984.4953 USDC'
       },
       {
         hash: 'dhdhhddcdschdhdh',
-        symbol:
-          'https://www.linkpicture.com/q/4cf7d633-92fb-4d37-80ed-458c7d1ea410.png',
+        symbol: '0x3fa729b4548becbad4eab6ef18413470e6d5324c',
         heading: 'Withdraw from Savings',
-        amount: '11,984.4953 USDC',
-        deducted: '$11,984.49',
-        date: '23-11-2020'
+        amount: '11,984.4953 USDC'
       }
     ]
   },
@@ -27,12 +21,9 @@ export const dummyTransactionData: any = [
     transactions: [
       {
         hash: '13324244',
-        symbol:
-          'https://www.linkpicture.com/q/4cf7d633-92fb-4d37-80ed-458c7d1ea410.png',
+        symbol: '0x3fa729b4548becbad4eab6ef18413470e6d5324c',
         heading: 'Increase Boost',
-        amount: '11,984.4953 USDC',
-        deducted: '$11,984.49',
-        date: '23-11-2020'
+        amount: '11,984.4953 USDC'
       }
     ]
   }
