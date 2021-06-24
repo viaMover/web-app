@@ -1641,6 +1641,11 @@
     enc-utils "^3.0.0"
     randombytes "^2.1.0"
 
+"@popperjs/core@^2.9.2":
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.9.2.tgz#adea7b6953cbb34651766b0548468e743c6a2353"
+  integrity sha512-VZMYa7+fXHdwIq1TDhSXoVmSPEGM/aa+6Aiq3nVVJ9bXr24zScr+NlKFKC3iPljA7ho/GAZr+d2jOf5GIRC30Q==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.npm.taobao.org/@samverschueren/stream-to-observable/download/@samverschueren/stream-to-observable-0.3.1.tgz#a21117b19ee9be70c379ec1877537ef2e1c63301"
@@ -13248,6 +13253,11 @@ tryer@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/tryer/download/tryer-1.0.1.tgz#f2c85406800b9b0f74c9f7465b81eaad241252f8"
   integrity sha1-8shUBoALmw90yfdGW4HqrSQSUvg=
+
+ts-custom-error@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/ts-custom-error/-/ts-custom-error-3.2.0.tgz#ff8f80a3812bab9dc448536312da52dce1b720fb"
+  integrity sha512-cBvC2QjtvJ9JfWLvstVnI45Y46Y5dMxIaG1TDMGAD/R87hpvqFL+7LhvUDhnRCfOnx/xitollFWWvUKKKhbN0A==
 
 ts-invariant@^0.4.0:
   version "0.4.4"

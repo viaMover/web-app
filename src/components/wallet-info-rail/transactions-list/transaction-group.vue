@@ -1,11 +1,10 @@
 <template>
-  <div class="transaction-group">
-    <h4 class="heading">{{ headingText }}</h4>
+  <div class="general-desktop__sidebar-wrapper-info">
+    <h3>{{ headingText }}</h3>
     <div class="list">
       <transaction-item
         v-for="tx in transactions"
         :key="tx.hash"
-        class="item"
         :transaction="tx"
       ></transaction-item>
     </div>
@@ -14,6 +13,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import { Transaction } from '@/wallet/types';
 
 import TransactionItem from './transaction-item.vue';

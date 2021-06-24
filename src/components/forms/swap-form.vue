@@ -68,11 +68,14 @@ import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasPrice } from '@/components/controls/gas-selector.vue';
 
-import { estimateSwap } from '@/wallet/actions/swap/estimate';
+import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
+import { swapCompound } from '@/wallet/actions/swap/swap';
 import { getTransferData, TransferData } from '@/services/0x/api';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
-import { GetTokenPrice, GetTokensPrice } from '@/services/thegraph/api';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import { EmitChartRequestPayload } from '@/store/modules/account/actions/charts';
+import { ChartTypes } from '@/services/zerion/charts';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -101,11 +104,21 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
-      selectedGasPrice: 0
+      selectedGasPrice: '0',
+      useSubsidized: false,
+      swapGasLimit: '0',
+      approveGasLimit: '0',
+      transferData: undefined as TransferData | undefined,
+      loading: false
     };
   },
   computed: {
-    ...mapState('account', ['networkInfo', 'currentAddress', 'provider']),
+    ...mapState('account', [
+      'networkInfo',
+      'currentAddress',
+      'provider',
+      'gasPrices'
+    ]),
     maxInputAmount(): string {
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
@@ -123,10 +136,47 @@ export default Vue.extend({
       return [this.input.asset];
     }
   },
+  mounted() {
+    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+  },
   methods: {
-    handleExecuteSwap(): void {
+    ...mapActions('account', {
+      emitChartRequest: 'emitChartRequest'
+    }),
+    async handleExecuteSwap(): Promise<void> {
       //
-      this.$emit('tx-created', 'transaction-hash');
+      if (this.transferData === undefined) {
+        console.error(
+          "[swap-form] can't execute swap due to empty transfer data"
+        );
+        return;
+      }
+      if (this.input.asset === undefined) {
+        console.error(
+          "[swap-form] can't execute swap due to empty input asset"
+        );
+        return;
+      }
+      if (this.output.asset === undefined) {
+        console.error(
+          "[swap-form] can't execute swap due to empty output asset"
+        );
+        return;
+      }
+      await swapCompound(
+        this.input.asset,
+        this.output.asset,
+        this.input.amount,
+        this.transferData,
+        this.networkInfo.network,
+        this.provider.web3,
+        this.currentAddress,
+        this.swapGasLimit,
+        this.approveGasLimit,
+        this.selectedGasPrice,
+        this.useSubsidized
+      );
+      //this.$emit('tx-created', 'transaction-hash');
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
       this.input.amount = amount;
@@ -141,6 +191,7 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
       try {
         const transferData = await this.calcData(
           this.input.asset,
@@ -171,6 +222,8 @@ export default Vue.extend({
       } catch (err) {
         console.error("can't calc data:", err);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateInputNativeAmount(amount: string): Promise<void> {
@@ -186,6 +239,7 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
       try {
         this.input.amount = divide(
           this.input.nativeAmount,
@@ -217,6 +271,8 @@ export default Vue.extend({
       } catch (err) {
         console.error("can't calc data:", err);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateOutputAmount(amount: string): Promise<void> {
@@ -233,6 +289,7 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
       try {
         this.output.nativeAmount = multiply(
           this.output.asset.priceUSD,
@@ -264,6 +321,8 @@ export default Vue.extend({
       } catch (err) {
         console.error("can't calc data:", err);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
@@ -279,6 +338,7 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
       try {
         this.output.amount = divide(
           this.output.nativeAmount,
@@ -310,6 +370,8 @@ export default Vue.extend({
       } catch (err) {
         console.error("can't calc data:", err);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
@@ -319,6 +381,18 @@ export default Vue.extend({
       this.input.nativeAmount = '0';
       this.output.amount = '0';
       this.output.nativeAmount = '0';
+
+      this.swapGasLimit = '0';
+
+      // TODO: remove after test
+
+      this.emitChartRequest({
+        assetCode: asset.address,
+        nativeCurrency: 'USD',
+        ChartTypes: ChartTypes.hour
+      } as EmitChartRequestPayload);
+
+      //
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
@@ -327,9 +401,12 @@ export default Vue.extend({
       this.input.nativeAmount = '0';
       this.output.amount = '0';
       this.output.nativeAmount = '0';
+
+      this.swapGasLimit = '0';
     },
     handleSelectedGasChanged(newGas: GasPrice): void {
-      this.selectedGasPrice = newGas.amount;
+      this.useSubsidized = newGas.type === 'treasury';
+      this.selectedGasPrice = String(newGas.amount);
     },
     async calcData(
       inputAsset: Token,
@@ -348,6 +425,7 @@ export default Vue.extend({
         isInput,
         this.networkInfo.network
       );
+      this.transferData = transferData;
       return transferData;
     },
     async tryToEstimate(
@@ -356,20 +434,24 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await estimateSwap(
+      const resp = await estimateSwapCompound(
         inputAsset,
         outputAsset,
         inputAmount,
         transferData,
         this.networkInfo.network,
         this.provider.web3,
-        this.currentAddress
+        this.currentAddress,
+        this.useSubsidized
       );
 
       if (resp.error) {
         console.error("can't esitmate swap");
         return;
       }
+
+      this.swapGasLimit = resp.swapGasLimit;
+      this.approveGasLimit = resp.approveGasLimit;
     }
   }
 });

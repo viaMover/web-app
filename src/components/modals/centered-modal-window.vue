@@ -44,7 +44,6 @@
 import Vue from 'vue';
 
 import { ToggleAction, ToggleTarget } from '@/components/toggle';
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'CenteredModalWindow',
@@ -72,11 +71,6 @@ export default Vue.extend({
     backLabel: {
       type: String,
       default: ''
-    }
-  },
-  methods: {
-    toggleModal(): void {
-      toggleSingleItem(this.modalId);
     }
   }
 });

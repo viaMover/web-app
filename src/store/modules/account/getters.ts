@@ -28,5 +28,8 @@ export default {
     );
 
     return Object.values(groupsByDay);
+  },
+  isWalletConnected(state: AccountStoreState): boolean {
+    return state.currentAddress !== undefined;
   }
 } as GetterTree<AccountStoreState, RootStoreState>;
