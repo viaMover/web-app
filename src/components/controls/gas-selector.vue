@@ -7,14 +7,14 @@
     <div class="select-group">
       <div class="indicators">
         <span
-          v-for="price in gasPrices"
-          :key="price.type"
+          v-for="mode in avaialbleGasModes"
+          :key="mode"
           class="option"
-          :class="{ active: price === selectedGasPrice }"
+          :class="{ active: mode === selectedGasMode }"
         />
       </div>
       <div class="title">
-        {{ $t(`gas.lblSelector.${selectedGasPrice.type}`) }}
+        {{ $t(`gas.lblSelector.${selectedGasMode}`) }}
       </div>
       <div class="details">
         <span>{{ gasPriceInGwei }}</span>
@@ -32,7 +32,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { multiply } from '@/utils/bigmath';
+import Vue, { PropType } from 'vue';
+import { mapState } from 'vuex';
+import Web3 from 'web3';
+
+export type GasMode = 'high' | 'low' | 'normal' | 'custom' | 'treasury';
+export type GasModeData = {
+  mode: GasMode;
+  price: string;
+  estTime: number;
+};
 
 export type GasPrice = {
   type: 'high' | 'low' | 'normal' | 'custom' | 'treasury';
@@ -51,109 +61,110 @@ export type GasPrice = {
 
 export default Vue.extend({
   name: 'GasSelector',
+  props: {
+    avaialbleGasModes: {
+      type: Array as PropType<Array<GasMode>>,
+      required: true
+    },
+    txnGasLimit: {
+      type: String,
+      default: undefined
+    }
+  },
   data() {
     return {
-      selectedGasPriceIndex: 0,
+      selectedGasModeIndex: 0,
       isLoading: false
     };
   },
   computed: {
+    ...mapState('account', ['gasPrices', 'ethPrice']),
+    selectedGasMode(): GasMode {
+      return this.avaialbleGasModes[this.selectedGasModeIndex];
+    },
+    selectedGasData(): GasModeData | undefined {
+      if (this.gasPrices === undefined) {
+        return undefined;
+      }
+      switch (this.selectedGasMode) {
+        case 'low':
+          return {
+            mode: 'low',
+            price: this.gasPrices.SafeGas.price,
+            estTime: this.gasPrices.SafeGas.estTime
+          };
+        case 'normal':
+          return {
+            mode: 'normal',
+            price: this.gasPrices.ProposeGas.price,
+            estTime: this.gasPrices.ProposeGas.estTime
+          };
+        case 'high':
+          return {
+            mode: 'high',
+            price: this.gasPrices.FastGas.price,
+            estTime: this.gasPrices.FastGas.estTime
+          };
+        case 'treasury':
+          return {
+            mode: 'treasury',
+            price: this.gasPrices.FastGas.price,
+            estTime: this.gasPrices.FastGas.estTime
+          };
+      }
+      return undefined;
+    },
     nativeCurrencySymbol(): string {
       return '$';
     },
     gasPriceInGwei(): string {
-      if (this.selectedGasPrice === null) {
-        return '';
+      if (this.selectedGasData === undefined) {
+        return 'No data';
       }
 
-      return `${this.selectedGasPrice.amount} Gwei`;
+      return `${this.selectedGasData.price} Gwei`;
     },
     networkFee(): string {
-      if (this.selectedGasPrice === null) {
-        return '';
+      if (
+        this.selectedGasData === undefined ||
+        this.txnGasLimit === undefined ||
+        this.ethPrice === undefined
+      ) {
+        return 'No data';
       }
 
-      return `${this.nativeCurrencySymbol}${this.selectedGasPrice.txFee.native.value.amount}`;
+      const selectedGasPriceInWEI = Web3.utils.toWei(
+        this.selectedGasData.price,
+        'Gwei'
+      );
+
+      const txnPriceInWEI = multiply(selectedGasPriceInWEI, this.txnGasLimit);
+      const txnPriceInEth = Web3.utils.fromWei(txnPriceInWEI, 'ether');
+      const txnPriceNative = multiply(txnPriceInEth, this.ethPrice);
+
+      return `${this.nativeCurrencySymbol}${txnPriceNative}`;
     },
     estimatedTimeValue(): string {
-      return '43';
+      if (this.selectedGasData === undefined) {
+        return 'No data';
+      }
+      return String(this.selectedGasData.estTime);
     },
     estimatedTimeUnit(): string {
       return 'sec';
     },
     estimatedTimeSign(): string {
       return '~';
-    },
-    gasPrices(): Array<GasPrice> {
-      return [
-        {
-          type: 'low',
-          amount: 73,
-          txFee: {
-            native: {
-              value: {
-                amount: 43.25
-              }
-            },
-            value: {
-              amount: 21000
-            }
-          }
-        },
-        {
-          type: 'normal',
-          amount: 72,
-          txFee: {
-            native: {
-              value: {
-                amount: 43.25
-              }
-            },
-            value: {
-              amount: 21000
-            }
-          }
-        },
-        {
-          type: 'high',
-          amount: 75,
-          txFee: {
-            native: {
-              value: {
-                amount: 43.25
-              }
-            },
-            value: {
-              amount: 21000
-            }
-          }
-        },
-        {
-          type: 'treasury',
-          amount: 75,
-          txFee: {
-            native: {
-              value: {
-                amount: 0
-              }
-            },
-            value: {
-              amount: 0
-            }
-          }
-        }
-      ];
-    },
-    selectedGasPrice(): GasPrice {
-      return this.gasPrices[this.selectedGasPriceIndex];
     }
   },
   methods: {
     toggleGasPrice() {
-      this.selectedGasPriceIndex =
-        (this.selectedGasPriceIndex + 1) % this.gasPrices.length;
+      this.selectedGasModeIndex =
+        (this.selectedGasModeIndex + 1) % this.avaialbleGasModes.length;
       this.$nextTick(() => {
-        this.$emit('selected-gas-changed', this.selectedGasPrice);
+        if (this.selectedGasData !== undefined) {
+          this.$emit('selected-gas-changed', this.selectedGasData);
+        }
       });
     }
   }

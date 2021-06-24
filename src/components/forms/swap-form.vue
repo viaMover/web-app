@@ -55,7 +55,11 @@
     >
       {{ $t('swaps.btnSwap.simple') }}
     </action-button>
-    <gas-selector @selected-gas-changed="handleSelectedGasChanged" />
+    <gas-selector
+      :avaialbleGasModes="availableGasModes"
+      :txnGasLimit="allGasLimit"
+      @selected-gas-changed="handleSelectedGasChanged"
+    />
   </form>
 </template>
 
@@ -66,13 +70,20 @@ import { TokenWithBalance, Token } from '@/wallet/types';
 
 import { AssetField, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
-import { GasPrice } from '@/components/controls/gas-selector.vue';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
 import { getTransferData, TransferData } from '@/services/0x/api';
 import { mapActions, mapState } from 'vuex';
-import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
+import {
+  add,
+  divide,
+  fromWei,
+  multiply,
+  notZero,
+  toWei
+} from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { EmitChartRequestPayload } from '@/store/modules/account/actions/charts';
 import { ChartTypes } from '@/services/zerion/charts';
@@ -119,6 +130,12 @@ export default Vue.extend({
       'provider',
       'gasPrices'
     ]),
+    availableGasModes(): Array<GasMode> {
+      return ['low', 'normal', 'high', 'treasury'];
+    },
+    allGasLimit(): string {
+      return add(this.approveGasLimit, this.swapGasLimit);
+    },
     maxInputAmount(): string {
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
@@ -404,9 +421,9 @@ export default Vue.extend({
 
       this.swapGasLimit = '0';
     },
-    handleSelectedGasChanged(newGas: GasPrice): void {
-      this.useSubsidized = newGas.type === 'treasury';
-      this.selectedGasPrice = String(newGas.amount);
+    handleSelectedGasChanged(newGas: GasModeData): void {
+      this.useSubsidized = newGas.mode === 'treasury';
+      this.selectedGasPrice = String(newGas.price);
     },
     async calcData(
       inputAsset: Token,
