@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 export default Vue.extend({
@@ -27,6 +28,11 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('account', {
+      chartData: 'savingsReceipt',
+      isLoading: 'isSavingsReceiptLoading',
+      errorMessage: 'savingsReceiptError'
+    }),
     selectedDayText(): string {
       if (this.selectedDay === null) {
         return '';

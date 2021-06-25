@@ -40,7 +40,15 @@ export default {
     allTokens: [],
     refreshError: undefined,
 
-    isDebitCardSectionVisible: true
+    isDebitCardSectionVisible: true,
+
+    isSavingsInfoLoading: false,
+    savingsInfo: undefined,
+    savingsInfoError: undefined,
+
+    isSavingsRecepitLoading: false,
+    savingsReceipt: undefined,
+    savingsReceiptError: undefined
   },
   actions: {
     ...walletActions,

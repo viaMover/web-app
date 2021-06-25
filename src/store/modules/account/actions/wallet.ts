@@ -56,7 +56,7 @@ export default {
   },
 
   async refreshWallet(
-    { commit, state },
+    { dispatch, commit, state },
     payload: RefreshWalletPayload
   ): Promise<void> {
     if (state.provider === undefined) {
@@ -178,6 +178,8 @@ export default {
     } else {
       commit('setEthPrice', ethPriceInUSDResult.result);
     }
+
+    await dispatch('fetchSavingsInfo');
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);
     //console.log(res);
