@@ -1,29 +1,33 @@
 <template>
-  <div v-if="!isLoading" class="gas-selector" @click="toggleGasPrice">
-    <div class="network-fee">
-      <div class="price-container">{{ networkFee }}</div>
-      <div class="subtitle">{{ $t('gas.lblNetworkFee') }}</div>
+  <div
+    v-if="!isLoading"
+    class="swaps__wrapper-info-footer"
+    @click="toggleGasPrice"
+  >
+    <div class="swaps__wrapper-info-footer-left">
+      <span>{{ networkFee }}</span>
+      <p>{{ $t('gas.lblNetworkFee') }}</p>
     </div>
-    <div class="select-group">
-      <div class="indicators">
+    <div class="swaps__wrapper-info-footer-right">
+      <div class="swiper-pagination-bullets">
         <span
           v-for="mode in avaialbleGasModes"
           :key="mode"
-          class="option"
-          :class="{ active: mode === selectedGasMode }"
+          class="swiper-pagination-bullet"
+          :class="{
+            'swiper-pagination-bullet-active': mode === selectedGasMode
+          }"
         />
       </div>
-      <div class="title">
+      <p class="speed">
         {{ $t(`gas.lblSelector.${selectedGasMode}`) }}
-      </div>
-      <div class="details">
-        <span>{{ gasPriceInGwei }}</span>
-        <span>
-          {{ estimatedTimeSign }}
-          {{ estimatedTimeValue }}
-          {{ estimatedTimeUnit }}
-        </span>
-      </div>
+      </p>
+      <span>
+        {{ gasPriceInGwei }}
+        {{ estimatedTimeSign }}
+        {{ estimatedTimeValue }}
+        {{ estimatedTimeUnit }}
+      </span>
     </div>
   </div>
   <div v-else>

@@ -1,5 +1,5 @@
 <template>
-  <form class="swap form">
+  <form>
     <asset-field
       :amount="input.amount"
       :asset="input.asset"
@@ -49,12 +49,14 @@
         <span class="value">{{ info.gasSettings }}</span>
       </div>
     </div>
-    <action-button
-      :button-class="buttonClass"
-      @button-click="handleExecuteSwap"
-    >
-      {{ $t('swaps.btnSwap.simple') }}
-    </action-button>
+    <div class="swaps__wrapper-info-button">
+      <action-button
+        :button-class="buttonClass"
+        @button-click="handleExecuteSwap"
+      >
+        {{ $t('swaps.btnSwap.simple') }}
+      </action-button>
+    </div>
     <gas-selector
       :avaialbleGasModes="availableGasModes"
       :txnGasLimit="allGasLimit"
@@ -140,7 +142,7 @@ export default Vue.extend({
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
     buttonClass(): string {
-      return 'primary';
+      return 'swap';
     },
     isSwapInfoAvailable(): boolean {
       return !!this.input.amount;
