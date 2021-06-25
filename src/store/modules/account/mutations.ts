@@ -10,6 +10,7 @@ import {
 import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
 import { SortAndDedupedTokens } from './utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
+import { SavingsInfo, SavingsReceipt } from '@/services/mover/savings';
 
 export default {
   setEthPrice(state, ethPrice: string): void {
@@ -101,5 +102,23 @@ export default {
   },
   toggleIsDebitCardSectionVisible(state): void {
     state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
+  },
+  setIsSavingsInfoLoading(state, isLoading: boolean): void {
+    state.isSavingsInfoLoading = isLoading;
+  },
+  setSavingsInfoError(state, error: string | undefined): void {
+    state.savingsInfoError = error;
+  },
+  setSavingsInfo(state, info: SavingsInfo | undefined): void {
+    state.savingsInfo = info;
+  },
+  setIsSavingsReceiptLoading(state, isLoading: boolean): void {
+    state.isSavingsRecepitLoading = isLoading;
+  },
+  setSavingsReceiptError(state, error: string | undefined): void {
+    state.savingsReceiptError = error;
+  },
+  setSavingsReceipt(state, receipt: SavingsReceipt): void {
+    state.savingsReceipt = receipt;
   }
 } as MutationTree<AccountStoreState>;

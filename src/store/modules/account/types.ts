@@ -1,3 +1,4 @@
+import { SavingsInfo, SavingsReceipt } from '@/services/mover/savings';
 import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
@@ -49,4 +50,12 @@ export type AccountStoreState = {
   gasPrices: GasData | undefined;
   gasUpdating: boolean;
   isDebitCardSectionVisible: boolean;
+
+  isSavingsInfoLoading: boolean;
+  savingsInfo: SavingsInfo | undefined;
+  savingsInfoError: string | undefined;
+
+  isSavingsRecepitLoading: boolean;
+  savingsReceipt: SavingsReceipt | undefined;
+  savingsReceiptError: string | undefined;
 };
