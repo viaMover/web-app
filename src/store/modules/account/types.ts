@@ -1,6 +1,10 @@
+import { SavingsInfo, SavingsReceipt } from '@/services/mover/savings';
+import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
 import Web3 from 'web3';
+
+export type ChartPair = [number, number];
 
 export type TransactionGroup = {
   timeStamp: number;
@@ -34,6 +38,24 @@ export type AccountStoreState = {
   isDetecting: boolean;
   refreshError: undefined | string;
 
+  nativeCurrency: 'usd';
+  // main prices in native currency
+  ethPrice: undefined | string;
+
+  // explorer
+  explorer: undefined | Explorer;
+  //charts
+  chartData: undefined | Record<string, ChartPair[]>;
+
   gasPrices: GasData | undefined;
   gasUpdating: boolean;
+  isDebitCardSectionVisible: boolean;
+
+  isSavingsInfoLoading: boolean;
+  savingsInfo: SavingsInfo | undefined;
+  savingsInfoError: string | undefined;
+
+  isSavingsRecepitLoading: boolean;
+  savingsReceipt: SavingsReceipt | undefined;
+  savingsReceiptError: string | undefined;
 };

@@ -1,11 +1,27 @@
 import { SortAndDedupedTransactions } from './utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
-import { AccountStoreState, AccountData, ProviderData } from './types';
+import {
+  AccountStoreState,
+  AccountData,
+  ProviderData,
+  ChartPair
+} from './types';
 import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
 import { SortAndDedupedTokens } from './utils/tokens';
+import { Explorer } from '@/services/zerion/explorer';
+import { SavingsInfo, SavingsReceipt } from '@/services/mover/savings';
 
 export default {
+  setEthPrice(state, ethPrice: string): void {
+    state.ethPrice = ethPrice;
+  },
+  setExplorer(state, explorer: Explorer): void {
+    state.explorer = explorer;
+  },
+  setChartData(state, chartData: Record<string, ChartPair[]>): void {
+    state.chartData = chartData;
+  },
   setCurrentWallet(state, address): void {
     state.currentAddress = address;
   },
@@ -83,5 +99,26 @@ export default {
   },
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
+  },
+  toggleIsDebitCardSectionVisible(state): void {
+    state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
+  },
+  setIsSavingsInfoLoading(state, isLoading: boolean): void {
+    state.isSavingsInfoLoading = isLoading;
+  },
+  setSavingsInfoError(state, error: string | undefined): void {
+    state.savingsInfoError = error;
+  },
+  setSavingsInfo(state, info: SavingsInfo | undefined): void {
+    state.savingsInfo = info;
+  },
+  setIsSavingsReceiptLoading(state, isLoading: boolean): void {
+    state.isSavingsRecepitLoading = isLoading;
+  },
+  setSavingsReceiptError(state, error: string | undefined): void {
+    state.savingsReceiptError = error;
+  },
+  setSavingsReceipt(state, receipt: SavingsReceipt): void {
+    state.savingsReceipt = receipt;
   }
 } as MutationTree<AccountStoreState>;

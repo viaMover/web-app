@@ -1,9 +1,8 @@
-import { estimateApprove, needApprove } from './../approve/needApprove';
+import { sameAddress } from './../../../utils/address';
+import { needApprove } from '../approve/needApprove';
 import { toWei, floorDivide, add } from '@/utils/bigmath';
-import { SmallTokenInfo, TransactionsParams } from '@/wallet/types';
-import { provider } from 'web3-core';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
-import { networks } from '@/utils/networkTypes';
 import { BigNumber } from 'bignumber.js';
 import {
   getPureEthAddress,
@@ -15,21 +14,29 @@ import { AbiItem } from 'web3-utils';
 import { multiply } from '@/utils/bigmath';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
+import { estimateApprove } from '../approve/approveEstimate';
 
-export type EstimateResponse = {
+export type CompoudEstimateResponse = {
+  error: boolean;
+  approveGasLimit: string;
+  swapGasLimit: string;
+};
+
+type EstimateResponse = {
   error: boolean;
   gasLimit: string;
 };
 
 export const estimateSwapCompound = async (
-  inputAsset: SmallTokenInfo,
-  outputAsset: SmallTokenInfo,
+  inputAsset: SmallToken,
+  outputAsset: SmallToken,
   inputAmount: string,
   transferData: TransferData,
   network: Network,
   web3: Web3,
-  accountAddress: string
-): Promise<EstimateResponse> => {
+  accountAddress: string,
+  useSubsidized: boolean
+): Promise<CompoudEstimateResponse> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
   let isApproveNeeded = true;
@@ -45,7 +52,8 @@ export const estimateSwapCompound = async (
     console.error(`Can't estimate approve: ${err}`);
     return {
       error: true,
-      gasLimit: '0'
+      approveGasLimit: '0',
+      swapGasLimit: '0'
     };
   }
 
@@ -58,20 +66,29 @@ export const estimateSwapCompound = async (
         contractAddress,
         web3
       );
-      const fullGasLimit = add(approveGasLimit, ethDefaults.basic_holy_swap);
+      if (useSubsidized) {
+        return {
+          error: false,
+          approveGasLimit: approveGasLimit,
+          swapGasLimit: '0'
+        };
+      }
+
       return {
         error: false,
-        gasLimit: fullGasLimit
+        swapGasLimit: ethDefaults.basic_holy_swap,
+        approveGasLimit: approveGasLimit
       };
     } catch (err) {
       console.error(`Can't estimate approve: ${err}`);
       return {
         error: true,
-        gasLimit: '0'
+        swapGasLimit: '0',
+        approveGasLimit: '0'
       };
     }
   } else {
-    return await estimateSwap(
+    const swapEstimate = await estimateSwap(
       inputAsset,
       outputAsset,
       inputAmount,
@@ -80,12 +97,17 @@ export const estimateSwapCompound = async (
       web3,
       accountAddress
     );
+    return {
+      error: swapEstimate.error,
+      approveGasLimit: '0',
+      swapGasLimit: swapEstimate.gasLimit
+    };
   }
 };
 
 export const estimateSwap = async (
-  inputAsset: SmallTokenInfo,
-  outputAsset: SmallTokenInfo,
+  inputAsset: SmallToken,
+  outputAsset: SmallToken,
   inputAmount: string,
   transferData: TransferData,
   network: Network,

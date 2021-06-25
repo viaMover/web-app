@@ -1,5 +1,7 @@
 <template>
   <heading-section
+    class="general-desktop__menu-wrapper-item"
+    container-class="general-desktop__menu-wrapper-item-info"
     has-expand-button
     :name="$t('savings.lblSavings')"
     navigate-to-name="savings-manage"
@@ -8,11 +10,13 @@
       {{ $t('savings.lblSavingsHeader', { amount: totalAmountInSavings }) }}
     </template>
 
-    {{
-      $t('savings.lblSavingsEarnedTodaySection', {
-        amount: amountEarnedToday
-      })
-    }}
+    <p>
+      {{
+        $t('savings.lblSavingsEarnedTodaySection', {
+          amount: amountEarnedToday
+        })
+      }}
+    </p>
   </heading-section>
 </template>
 

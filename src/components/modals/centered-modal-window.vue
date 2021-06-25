@@ -16,17 +16,17 @@
 
     <toggle-target
       v-cloak
-      class="ui center modal"
+      class="modal__popup modal__wrapper"
       :class="{ tiny: isTiny }"
       :open-by-default="isActive"
       :toggle-group="modalId"
       :toggle-id="modalId"
     >
-      <div class="content">
-        <div class="ui header">
-          <span v-if="headerLabel">
+      <div class="modal__wrapper-info">
+        <div>
+          <h3 v-if="headerLabel" class="modal__wrapper-info-title">
             {{ headerLabel }}
-          </span>
+          </h3>
           <span v-else>&nbsp;</span>
           <div class="right floated icon">
             <toggle-action :toggle-group="modalId" :toggle-id="modalId">

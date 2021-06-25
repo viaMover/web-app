@@ -64,9 +64,8 @@ export default {
         id: '$CEO1',
         address:
           '0x806cb7767eb835e5fe0e4de354cc946e21418997d01b90d9f98b0e4da195ce92',
-        imageSrc:
-          'https://upload.wikimedia.org/wikipedia/commons/b/b0/Cadet_Cap.jpg',
-        title: 'CEO of Money',
+        imageSrc: require('@/assets/images/cap.png'),
+        title: 'Cap',
         price: '$49.99',
         edition: 'Genesis Edition',
         totalTrades: 0,
@@ -80,9 +79,8 @@ export default {
         id: '$SJ1',
         address:
           '0x806cb7767eb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        imageSrc:
-          'https://upload.wikimedia.org/wikipedia/commons/b/b0/Cadet_Cap.jpg',
-        title: 'Street Jungle',
+        imageSrc: require('@/assets/images/face-mask.png'),
+        title: 'Face mask',
         price: '$49.99',
         edition: 'Genesis Edition',
         totalTrades: 0,
@@ -96,9 +94,8 @@ export default {
         id: '$IC1',
         address:
           '0x806cb7767eb835f5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        imageSrc:
-          'https://upload.wikimedia.org/wikipedia/commons/b/b0/Cadet_Cap.jpg',
-        title: 'Instant Classic',
+        imageSrc: require('@/assets/images/classic-t-shirt.png'),
+        title: 'Classic T-Shirt',
         price: '$49.99',
         edition: 'Genesis Edition',
         totalTrades: 0,
@@ -112,8 +109,7 @@ export default {
         id: '$PWR01',
         address:
           '0x806cb7767fb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        imageSrc:
-          'https://upload.wikimedia.org/wikipedia/commons/b/b0/Cadet_Cap.jpg',
+        imageSrc: require('@/assets/images/power-t-shirt.png'),
         title: 'Power T-Shirt',
         price: '$49.99',
         edition: 'Genesis Edition',
