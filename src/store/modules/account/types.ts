@@ -58,4 +58,7 @@ export type AccountStoreState = {
   isSavingsRecepitLoading: boolean;
   savingsReceipt: SavingsReceipt | undefined;
   savingsReceiptError: string | undefined;
+
+  savingsAPY: string | undefined;
+  savingsDPY: string | undefined;
 };
