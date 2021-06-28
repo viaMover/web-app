@@ -18,7 +18,7 @@ export type ActionHistoryItem = {
   timestamp: number;
 };
 
-export type SavingsInfoResponsePayload = {
+export type SavingsInfo = {
   currentBalance: number;
   currentPoolBalance: number;
   earnedTotal: number;
@@ -27,18 +27,21 @@ export type SavingsInfoResponsePayload = {
   actionHistory: Array<ActionHistoryItem>;
 };
 
-export type SavingsInfo = MoverResponse<SavingsInfoResponsePayload>;
+export type SavingsInfoResponse = MoverResponse<SavingsInfo>;
 
 export const GetSavingsInfo = async (
   address: string
 ): Promise<Result<SavingsInfo, string>> => {
   try {
     const response = (
-      await axios.get<SavingsInfo>(`${baseUrl}/v1/savings/info/${address}`, {
-        headers: {
-          Accept: 'application/json'
+      await axios.get<SavingsInfoResponse>(
+        `${baseUrl}/v1/savings/info/${address}`,
+        {
+          headers: {
+            Accept: 'application/json'
+          }
         }
-      })
+      )
     ).data;
     if (response.status !== 'ok') {
       return {
@@ -47,7 +50,7 @@ export const GetSavingsInfo = async (
       };
     }
 
-    return { isError: false, result: response };
+    return { isError: false, result: response.payload };
   } catch (err) {
     return { isError: true, error: err };
   }
@@ -62,7 +65,7 @@ export type HourlyBalancesItem = {
   hour: number;
 };
 
-export type SavingsReceiptResponsePayload = {
+export type SavingsReceipt = {
   endOfMonthBalance: number;
   earnedThisMonth: number;
   hourlyBalances: Array<HourlyBalancesItem>;
@@ -71,7 +74,7 @@ export type SavingsReceiptResponsePayload = {
   totalWithdrawals: number;
 };
 
-export type SavingsReceipt = MoverResponse<SavingsInfo>;
+export type SavingsReceiptResponse = MoverResponse<SavingsReceipt>;
 
 export const GetSavingsReceipt = async (
   address: string,
@@ -80,7 +83,7 @@ export const GetSavingsReceipt = async (
 ): Promise<Result<SavingsReceipt, string>> => {
   try {
     const response = (
-      await axios.get<SavingsReceipt>(
+      await axios.get<SavingsReceiptResponse>(
         `${baseUrl}/v1/savings/receipt/${address}/${year}/${month}`,
         {
           headers: {
@@ -96,7 +99,7 @@ export const GetSavingsReceipt = async (
       };
     }
 
-    return { isError: false, result: response };
+    return { isError: false, result: response.payload };
   } catch (err) {
     return { isError: true, error: err };
   }

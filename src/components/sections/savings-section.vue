@@ -7,7 +7,7 @@
     navigate-to-name="savings-manage"
   >
     <template v-slot:heading>
-      {{ $t('savings.lblSavingsHeader', { amount: totalAmountInSavings }) }}
+      {{ $t('savings.lblSavingsHeader', { amount: savingsBalanceNative }) }}
     </template>
 
     <p>
@@ -22,6 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 import HeadingSection from './heading-section.vue';
 
@@ -32,9 +33,13 @@ export default Vue.extend({
   },
   data() {
     return {
-      totalAmountInSavings: '$22,984.49',
       amountEarnedToday: '+$24.89'
     };
+  },
+  computed: {
+    ...mapGetters('account', {
+      savingsBalanceNative: 'savingsInfoBalanceNative'
+    })
   }
 });
 </script>

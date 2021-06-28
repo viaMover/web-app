@@ -34,11 +34,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import dayjs from 'dayjs';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',
+  props: {
+    pageDate: {
+      type: Object as PropType<dayjs.Dayjs>,
+      required: true
+    }
+  },
   data() {
     return {
       balance: 0,
@@ -50,30 +56,7 @@ export default Vue.extend({
   },
   computed: {
     monthName(): string {
-      try {
-        const tsFrom = Number(this.$route.query.tsFrom);
-
-        return dayjs.unix(tsFrom).format('MMMM');
-      } catch {
-        return '';
-      }
-    }
-  },
-  methods: {
-    formatItemHeader(timestamp: number): string {
-      return dayjs.unix(timestamp).format('MMMM YYYY');
-    },
-    formatItemRanges(timestampFrom: number, timestampTo: number): string {
-      const dateFrom = dayjs.unix(timestampFrom);
-      const dateTo = dayjs.unix(timestampTo);
-
-      if (dateFrom.year() !== dateTo.year()) {
-        return `${dateFrom.format('MMM DD, YYYY')} – ${dateTo.format(
-          'MMM DD, YYYY'
-        )}`;
-      }
-
-      return `${dateFrom.format('MMM DD')} – ${dateTo.format('MMM DD, YYYY')}`;
+      return this.pageDate.format('MMMM');
     }
   }
 });

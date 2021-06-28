@@ -8,12 +8,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 export default Vue.extend({
   name: 'SavingsMonthlyChart',
+  props: {
+    pageDate: {
+      type: Object as PropType<dayjs.Dayjs>,
+      required: true
+    }
+  },
   data() {
     return {
       selectedDay: null as number | null,

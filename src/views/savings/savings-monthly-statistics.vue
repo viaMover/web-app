@@ -1,8 +1,8 @@
 <template>
   <secondary-page :title="$t('savings.lblSavings')">
     <h2>{{ pageTitle }}</h2>
-    <savings-monthly-chart />
-    <savings-monthly-statement />
+    <savings-monthly-chart :page-date="pageDate" />
+    <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
 
@@ -28,9 +28,13 @@ export default Vue.extend({
   computed: {
     pageDate(): dayjs.Dayjs {
       try {
-        const tsFrom = Number(this.$route.query.tsFrom);
-
-        return dayjs.unix(tsFrom);
+        return dayjs(
+          new Date(
+            Number(this.$route.params.year),
+            Number(this.$route.params.month),
+            0
+          )
+        );
       } catch {
         return dayjs().startOf('month');
       }
@@ -49,14 +53,23 @@ export default Vue.extend({
     ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' })
   },
   async beforeRouteUpdate(to, from, next) {
-    if (from.query.tsFrom === to.query.tsFrom) {
+    if (
+      from.params.year === to.params.year &&
+      from.params.month === to.params.month
+    ) {
       next();
       return;
     }
 
     let date: dayjs.Dayjs;
     try {
-      date = dayjs.unix(Number(this.$route.query.tsFrom));
+      date = dayjs(
+        new Date(
+          Number(this.$route.params.year),
+          Number(this.$route.params.month),
+          0
+        )
+      );
     } catch {
       date = dayjs();
     }

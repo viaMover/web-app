@@ -1,26 +1,32 @@
 <template>
-  <div class="chart-wrapper">
-    <div class="stats-text">
-      <span>{{ earnedThisMonth }}</span>
-      <span>{{
-        $t('savings.lblEarnedRelativeMonthlyChange', {
-          amount: earnedRelativeMonthlyChange
-        })
-      }}</span>
-    </div>
+  <div class="">
+    <span>{{ savingsBalance }}</span>
+    <p>{{ $t('savings.lblSavingsBalance') }}</p>
+    <savings-chart :chartData="chartData"></savings-chart>
+    <span>{{
+      $t('savings.lblEarnedRelativeMonthlyChange', {
+        amount: earnedLastMonth
+      })
+    }}</span>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+
+import SavingsChart from '@/components/charts/savings-chart.vue';
 
 export default Vue.extend({
   name: 'SavingsYearlyChart',
-  data() {
-    return {
-      earnedThisMonth: 2984.49,
-      earnedRelativeMonthlyChange: 30.37
-    };
+  components: { SavingsChart },
+  computed: {
+    ...mapGetters('account', {
+      chartData: 'savingsInfoChartData',
+      savingsBalance: 'savingsInfoBalanceNative',
+      earnedLastMonth: 'savingsInfoEarnedThisMonthNative'
+    }),
+    ...mapState('account', ['savingsInfo', 'isSavingsInfoLoading'])
   }
 });
 </script>

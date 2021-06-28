@@ -56,6 +56,15 @@ export default {
       return;
     }
 
+    if (
+      state.savingsReceipt !== undefined &&
+      state.savingsReceiptError === undefined &&
+      state.savingsReceipt.hourlyBalances[0].year === year &&
+      state.savingsReceipt.hourlyBalances[0].month === month
+    ) {
+      return;
+    }
+
     commit('setIsSavingsReceiptLoading', true);
     commit('setSavingsReceiptError', undefined);
     commit('setSavingsReceipt', undefined);

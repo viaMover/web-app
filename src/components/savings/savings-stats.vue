@@ -3,16 +3,16 @@
     <h4>{{ $t('savings.lblSavingsStats') }}</h4>
     <div class="info info-bordered">
       <div class="item">
-        <span class="title">{{ $t('savings.lblSavingsStats') }}</span>
+        <span class="title">{{ $t('savings.lblEarnedToday') }}</span>
         <span class="value">{{ earnedToday }}</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('savings.lblSavingsEarnedToday') }}</span>
-        <span class="value">{{ earnedThisMonth }}%</span>
+        <span class="title">{{ $t('savings.lblEarnedThisMonth') }}</span>
+        <span class="value">{{ earnedThisMonth }}</span>
       </div>
       <div class="item">
-        <span class="title">{{ $t('savings.lblEarnedThisMonth') }}</span>
-        <span class="value">{{ earnedTotal }}%</span>
+        <span class="title">{{ $t('savings.lblEarnedInTotal') }}</span>
+        <span class="value">{{ earnedTotal }}</span>
       </div>
     </div>
   </div>
@@ -20,15 +20,20 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsStats',
   data() {
     return {
-      earnedToday: 0,
-      earnedThisMonth: 0,
-      earnedTotal: 0
+      earnedToday: 0
     };
+  },
+  computed: {
+    ...mapGetters('account', {
+      earnedThisMonth: 'savingsInfoEarnedThisMonthNative',
+      earnedTotal: 'savingsInfoEarnedTotalNative'
+    })
   }
 });
 </script>

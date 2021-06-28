@@ -26,16 +26,21 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsOverview',
   data() {
     return {
-      depositedAssets: 0,
       currentVariableAPY: 0,
-      monthAverageAPY: 0,
-      totalAssetsUnderManagement: 0
+      monthAverageAPY: 0
     };
+  },
+  computed: {
+    ...mapGetters('account', {
+      depositedAssets: 'savingsInfoBalanceNative',
+      totalAssetsUnderManagement: 'savingsInfoTotalPoolBalanceNative'
+    })
   }
 });
 </script>

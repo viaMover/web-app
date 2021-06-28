@@ -36,7 +36,7 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        path: 'month-statistics',
+        path: 'month-statistics/:year/:month',
         name: 'savings-month-stats',
         component: () =>
           import(

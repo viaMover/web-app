@@ -1,4 +1,4 @@
-import { SavingsInfo, SavingsReceipt } from '@/services/mover/savings';
+import { SavingsInfo, SavingsReceipt } from '@/services/mover';
 import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';

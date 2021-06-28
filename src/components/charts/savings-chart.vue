@@ -9,14 +9,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Chart } from 'chart.js';
+import Vue, { PropType } from 'vue';
+
+import { Chart, ChartConfiguration } from './bootstrap';
+import { ChartData } from './types';
 
 export default Vue.extend({
   name: 'SavingsChart',
   props: {
-    assetAddress: {
-      type: String,
+    chartData: {
+      type: Object as PropType<ChartData>,
       required: true
     }
   },
@@ -25,13 +27,8 @@ export default Vue.extend({
       instance: undefined as Chart | undefined
     };
   },
-  computed: {
-    chartData(): Array<{ x: number; y: number }> {
-      return [];
-    }
-  },
   watch: {
-    chartData(newVal: Array<{ x: number; y: number }>): void {
+    chartData(newVal: ChartData): void {
       this.initChart(newVal);
     }
   },
@@ -43,14 +40,64 @@ export default Vue.extend({
     this.instance = undefined;
   },
   methods: {
-    initChart(dataset: Array<{ x: number; y: number }>): void {
-      const el = this.$refs.chartCanvas as HTMLCanvasElement;
-      this.instance = new Chart(el, {
+    getDataset(
+      template: ChartData
+    ): ChartConfiguration<'bar', number[], string | number> {
+      return {
         type: 'bar',
         data: {
-          datasets: [{ data: dataset }]
+          labels: template.labels,
+          datasets: [
+            ...template.datasets.map((item) => {
+              const backgroundColor = new Array(item.data.length).fill(
+                'rgba(60,60,67,0.3)'
+              );
+              // backgroundColor[item.data.length - 1] = 'rgba(245,147,174,1)';
+              backgroundColor[item.data.length - 1] = 'rgba(251, 157, 83, 1)';
+
+              return {
+                ...item,
+                borderRadius: 5,
+                borderWidth: 1,
+                borderColor: backgroundColor,
+                backgroundColor: backgroundColor
+              };
+            })
+          ]
+        },
+        options: {
+          interaction: {
+            intersect: true,
+            mode: 'index'
+          },
+          animation: false,
+          normalized: true,
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                align: 'center'
+              },
+              position: 'bottom'
+            },
+            y: {
+              display: false
+            }
+          }
         }
-      });
+      };
+    },
+    initChart(template: ChartData): void {
+      const el = this.$refs.chartCanvas as HTMLCanvasElement;
+      this.instance = new Chart(el, this.getDataset(template));
     }
   }
 });
