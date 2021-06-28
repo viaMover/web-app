@@ -1,8 +1,8 @@
 <template>
   <input
     :id="fieldId"
-    class="amount"
-    :max="maxAmount"
+    class="native"
+    :max="0"
     min="0"
     type="number"
     :value="amount"
@@ -14,7 +14,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'PriceInputField',
+  name: 'NativePriceInputField',
   props: {
     fieldId: {
       type: String,

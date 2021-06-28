@@ -120,5 +120,11 @@ export default {
   },
   setSavingsReceipt(state, receipt: SavingsReceipt): void {
     state.savingsReceipt = receipt;
+  },
+  setSavingsAPY(state, apy: string): void {
+    state.savingsAPY = apy;
+  },
+  setSavingsDPY(state, dpy: string): void {
+    state.savingsDPY = dpy;
   }
 } as MutationTree<AccountStoreState>;

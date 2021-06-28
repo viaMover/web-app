@@ -7,6 +7,8 @@ import { RootStoreState } from '@/store/types';
 import gasActions from './actions/gas';
 import chartsActions from './actions/charts';
 import utilityActions from './actions/utility';
+import savingsActions from './actions/savings';
+import savings from './actions/savings';
 
 export default {
   namespaced: true,
@@ -48,13 +50,17 @@ export default {
 
     isSavingsRecepitLoading: false,
     savingsReceipt: undefined,
-    savingsReceiptError: undefined
+    savingsReceiptError: undefined,
+
+    savingsAPY: undefined,
+    savingsDPY: undefined
   },
   actions: {
     ...walletActions,
     ...gasActions,
     ...chartsActions,
-    ...utilityActions
+    ...utilityActions,
+    ...savingsActions
   },
   getters,
   mutations
