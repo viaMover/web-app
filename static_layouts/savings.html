@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>AAVE</title>
+    <title>Savings</title>
     <link rel="stylesheet" href="css/libs.min.css"/>
     <link rel="stylesheet" href="css/app.css"/>
     <link rel="shortcut icon" href="images/favicon.ico"/>
@@ -12,61 +12,164 @@
   </head>
   <body>
     <main class="info__wrapper">
-      <div class="release-radar-asset__sidebar info__wrapper-sidebar"><a class="back-link button-active" href="#"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="savings__sidebar info__wrapper-sidebar"><a class="back-link button-active" href="#"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1.6109 9.11046L9.49999 15.4995" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M9.49994 2.50142L1.61085 8.89051" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg></a>
         <div class="sidebar-wrapper">
-          <div class="release-radar-asset__sidebar-wrapper">
-            <h3>AAVE</h3>
-            <ul>
-              <li> 
-                <p class="description">Market cap</p><span class="value">$3,546,450,249</span>
-              </li>
-              <li> 
-                <p class="description">24-hour volume</p><span class="value">$247,193,194</span>
-              </li>
-              <li> 
-                <p class="description">Circulation supply</p><span class="value">7,015,103</span>
-              </li>
-              <li> 
-                <p class="description">Total supply</p><span class="value">7,101,891</span>
-              </li>
-              <li> 
-                <p class="description">All-time high</p><span class="value">$689.84</span>
-              </li>
-              <li> 
-                <p class="description">All-time low</p><span class="value">$49.99</span>
-              </li>
-            </ul>
+          <div class="savings__sidebar-wrapper">
+            <div class="savings__sidebar-wrapper-item">
+              <h3>Savings Overview</h3>
+              <ul>
+                <li>
+                  <p class="description">Deposited assets</p><span class="value">0.00 USDC</span>
+                </li>
+                <li>
+                  <p class="description">Current variable APY</p><span class="value">12.38%</span>
+                </li>
+                <li>
+                  <p class="description">30-day average APY</p><span class="value">14.73%</span>
+                </li>
+                <li>
+                  <p class="description">Total assets under management</p><span class="value">$4,191,104.11</span>
+                </li>
+              </ul>
+            </div>
+            <div class="savings__sidebar-wrapper-item">
+              <h3>Savings Stats</h3>
+              <ul>
+                <li>
+                  <p class="description">Earned today</p><span class="value">$0.00</span>
+                </li>
+                <li>
+                  <p class="description">Earned this month</p><span class="value">$0.00</span>
+                </li>
+                <li>
+                  <p class="description">Earned in total</p><span class="value">$0.00</span>
+                </li>
+              </ul>
+            </div>
+            <div class="savings__sidebar-wrapper-item">
+              <h3>Savings Estimation</h3>
+              <ul class="estimation">
+                <li> 
+                  <p class="description">Est. earnings tomorrow</p><span class="value">$0.00</span>
+                </li>
+                <li> 
+                  <p class="description">Est. earnings next month</p><span class="value">$0.00</span>
+                </li>
+                <li> 
+                  <p class="description">Estimated earnings annualy</p><span class="value">$0.00</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-      <div class="release-radar-asset__menu info__wrapper-menu">
+      <div class="savings__menu info__wrapper-menu">
         <div class="g-wrapper">
-          <div class="release-radar-asset__menu-wrapper">
-            <div class="release-radar-asset__menu-wrapper-title">
+          <div class="savings__menu-wrapper">
+            <div class="savings__menu-wrapper-title">
               <div class="title">
-                <div class="icon getShadow"><img src="images/coin-icon4.png"/></div>
-                <h2>AAVE</h2>
+                <div class="icon"><span>💰</span></div>
+                <h2>Savings</h2>
               </div>
-              <div class="button button-active">
-                <button type="button"><span>💸</span> Swap</button>
+              <div class="button button-active burger-menu">
+                <button type="button">
+                   <svg width="20" height="4" viewBox="0 0 20 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="2" cy="2" r="2" fill="black"/>
+<circle cx="10" cy="2" r="2" fill="black"/>
+<circle cx="18" cy="2" r="2" fill="black"/>
+</svg>
+                </button>
               </div>
             </div>
-            <div class="release-radar-asset__menu-wrapper-balance">
-              <p class="balance">$349.18</p>
-              <p class="up">&#8593;3.47% This Year</p>
+            <div class="savings__menu-wrapper-balance"><span class="balance">$2,984.48</span>
+              <p>Savings Balance</p>
             </div>
-            <div class="release-radar-asset__menu-wrapper-about">
-              <h2>About AAVE</h2>
-              <p class="description">If DeFi and fintech had a baby. Building an easier way to trade, store, send, and earn interest on your crypto in a simple wallet with a debit card.</p>
-              <ul class="links">
-                <li class="button-active"><a href="#" target="_blank">🔍 Etherscan</a></li>
-                <li class="button-active"><a href="#" target="_blank">🏡 Homepage</a></li>
-                <li class="button-active"><a href="#" target="_blank">🐦 Twitter</a></li>
-                <li class="button-active"><a href="#" target="_blank">💬 Telegram</a></li>
-              </ul>
+            <div class="savings__menu-wrapper-graph">
+              <p>Yield earned in May <b>+$413.07</b></p>
+            </div>
+            <div class="savings__menu-wrapper-statements">
+              <h2>Savings Statements</h2>
+              <div class="savings__menu-wrapper-statements-item">
+                <div class="item__info">
+                  <div class="loading">
+                    <div class="hold left">
+                      <div class="fill"></div>
+                    </div>
+                    <div class="hold right">
+                      <div class="fill"></div>
+                    </div>
+                  </div>
+                  <div class="item__info-icon"><span>💰</span></div>
+                  <div class="item__info-label">
+                    <p>May 2021</p><span>In progress</span>
+                  </div>
+                </div>
+              </div>
+              <div class="savings__menu-wrapper-statements-item">
+                <div class="item__info">
+                  <div class="loading">
+                    <div class="hold left">
+                      <div class="fill"></div>
+                    </div>
+                    <div class="hold right">
+                      <div class="fill"></div>
+                    </div>
+                  </div>
+                  <div class="item__info-icon"><span>💰</span></div>
+                  <div class="item__info-label">
+                    <p>April 2021</p><span>Apr 01 - Apr 30, 2021</span>
+                  </div>
+                </div>
+                <div class="item__link"><a class="button-active" href="#">View</a></div>
+              </div>
+              <div class="savings__menu-wrapper-statements-item">
+                <div class="item__info">
+                  <div class="loading">
+                    <div class="hold left">
+                      <div class="fill"></div>
+                    </div>
+                    <div class="hold right">
+                      <div class="fill"></div>
+                    </div>
+                  </div>
+                  <div class="item__info-icon"><span>💰</span></div>
+                  <div class="item__info-label">
+                    <p>March 2021</p><span>Mar 01 - Mar 31, 2021</span>
+                  </div>
+                </div>
+                <div class="item__link"><a class="button-active" href="#">View</a></div>
+              </div>
+              <div class="savings__menu-wrapper-statements-item">
+                <div class="item__info">
+                  <div class="loading">
+                    <div class="hold left">
+                      <div class="fill"></div>
+                    </div>
+                    <div class="hold right">
+                      <div class="fill"></div>
+                    </div>
+                  </div>
+                  <div class="item__info-icon"><span>💰</span></div>
+                  <div class="item__info-label">
+                    <p>February 2021</p><span>Feb 01 - Feb 28, 2021</span>
+                  </div>
+                </div>
+                <div class="item__link"><a class="button-active" href="#">View</a></div>
+              </div>
+            </div>
+            <div class="burger-menu__popup-bg"></div>
+            <div class="burger-menu__popup">
+              <div class="burger-menu__wrapper">
+                <div class="burger-menu__wrapper-info">
+                  <ul>
+                    <li class="savings-deposit"><a href="#">💰 Deposit in Savings</a></li>
+                    <li class="savings-withdraw"><a href="#">🚪 Withdraw from Savings</a></li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
