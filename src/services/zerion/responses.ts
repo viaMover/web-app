@@ -68,3 +68,15 @@ export type ZerionAssetsReceived = {
     assets: Map<string, ZerionAssetWithBalance>;
   };
 };
+
+export type ZerionChartsReceived = {
+  meta: {
+    charts_type: string;
+    currency: string;
+    status: string;
+    asset_codes: string[];
+  };
+  payload: {
+    charts: Record<string, Array<[number, number]>>;
+  };
+};

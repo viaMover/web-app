@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import Home from '@/views/home.vue';
 import { loadLanguageAsync } from '@/i18n';
 
 Vue.use(VueRouter);
@@ -9,7 +8,13 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
+  },
+  {
+    path: '/connect-wallet',
+    name: 'connect-wallet',
+    component: () =>
+      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue')
   },
   {
     path: '/release-radar',
@@ -22,11 +27,6 @@ const routes: Array<RouteConfig> = [
     name: 'debit-card',
     component: () =>
       import(/* webpackChunkName: "debit-card" */ '@/views/home.vue')
-  },
-  {
-    path: '/swaps',
-    name: 'swaps',
-    component: () => import(/* webpackChunkName: "swaps" */ '@/views/swaps.vue')
   },
   {
     path: '/savings',
@@ -248,6 +248,20 @@ router.beforeEach((to, from, next) => {
   loadLanguageAsync(lang)
     .then(() => next())
     .catch(() => next(false));
+});
+
+// global 'require connected wallet' guard
+router.beforeResolve((to, from, next) => {
+  if (to.name === 'connect-wallet') {
+    next();
+    return;
+  }
+
+  if (!router.app.$store?.getters['account/isWalletConnected']) {
+    next({ name: 'connect-wallet' });
+  }
+
+  next();
 });
 
 export default router;

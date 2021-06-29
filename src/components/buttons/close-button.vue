@@ -1,9 +1,6 @@
 <template>
-  <action-button
-    button-class="close round-icon floating right"
-    @button-click="handleClick"
-  >
-    X
+  <action-button button-class="close-button" @button-click="handleClick">
+    <img alt="close icon" src="@/assets/images/cross.svg" />
   </action-button>
 </template>
 

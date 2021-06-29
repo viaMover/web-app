@@ -127,6 +127,20 @@ export default Vue.extend({
               amount: 21000
             }
           }
+        },
+        {
+          type: 'treasury',
+          amount: 75,
+          txFee: {
+            native: {
+              value: {
+                amount: 0
+              }
+            },
+            value: {
+              amount: 0
+            }
+          }
         }
       ];
     },

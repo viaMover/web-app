@@ -4,9 +4,9 @@ import getters from './getters';
 import { Module } from 'vuex';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
-import { getTokenLogo } from '@/services/trustwallet/logo';
-import gas from './actions/gas';
-import { Token } from '@/wallet/types';
+import gasActions from './actions/gas';
+import chartsActions from './actions/charts';
+import utilityActions from './actions/utility';
 
 export default {
   namespaced: true,
@@ -25,12 +25,29 @@ export default {
     gasPrices: undefined,
     gasUpdating: false,
 
+    nativeCurrency: 'usd',
+
+    ethPrice: undefined,
+
+    //explorer
+    explorer: undefined,
+
+    //charts
+    chartData: undefined,
+
     // eslint-disable-next-line
     providerBeforeClose: () => {},
     allTokens: [],
-    refreshError: undefined
+    refreshError: undefined,
+
+    isDebitCardSectionVisible: true
   },
-  actions: { ...walletActions, ...gas },
+  actions: {
+    ...walletActions,
+    ...gasActions,
+    ...chartsActions,
+    ...utilityActions
+  },
   getters,
   mutations
 } as Module<AccountStoreState, RootStoreState>;

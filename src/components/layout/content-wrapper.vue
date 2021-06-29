@@ -1,10 +1,10 @@
 <template>
-  <div class="content-wrapper">
-    <left-rail v-if="hasLeftRail">
+  <div :class="[wrapperClass]">
+    <left-rail v-if="hasLeftRail" :container-class="leftRailClass">
       <slot name="left-rail"></slot>
     </left-rail>
 
-    <page-container>
+    <page-container :container-class="pageContainerClass">
       <close-button v-if="hasCloseButton" @close="handleClose" />
       <back-button v-if="hasBackButton" @close="handleClose" />
       <slot></slot>
@@ -39,6 +39,18 @@ export default Vue.extend({
     hasBackButton: {
       type: Boolean,
       default: false
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    leftRailClass(): string {
+      return this.wrapperClass + '__sidebar';
+    },
+    pageContainerClass(): string {
+      return this.wrapperClass + '__menu';
     }
   },
   methods: {

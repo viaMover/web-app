@@ -5,7 +5,7 @@ import router from './router';
 import store from './store';
 import i18n from './i18n';
 
-import './styles/styles.less';
+// import './styles/styles.less';
 
 import * as dayjs from './dayjs';
 Vue.config.productionTip = false;

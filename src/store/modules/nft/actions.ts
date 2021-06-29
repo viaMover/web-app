@@ -42,8 +42,7 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.sweetAndSour.description'
             ) as string) ?? '',
-          imageSrc:
-            'https://viamover.com/assets/images/social-holyheld-is-moving.png'
+          imageSrc: require('@/assets/images/drops-img1.png')
         },
         totalNumber: 0,
         totalClaimed: 0
@@ -56,8 +55,7 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.unexpectedMove.description'
             ) as string) ?? '',
-          imageSrc:
-            'https://viamover.com/assets/images/social-holyheld-is-moving.png'
+          imageSrc: require('@/assets/images/drops-img2.png')
         },
         totalNumber: 0,
         totalClaimed: 0

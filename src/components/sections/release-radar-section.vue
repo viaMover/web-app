@@ -1,5 +1,6 @@
 <template>
   <heading-section
+    class="links__item"
     has-expand-button
     :name="$t('releaseRadar.lblReleaseRadar')"
     navigate-to-name="release-radar"
@@ -8,11 +9,13 @@
       {{ $t('releaseRadar.lblReleaseRadar') }}
     </template>
 
-    {{
-      $t('releaseRadar.lblReleaseRadarNewTokensToday', {
-        amount: newTokensToday
-      })
-    }}
+    <p>
+      {{
+        $t('releaseRadar.lblReleaseRadarNewTokensToday', {
+          amount: newTokensToday
+        })
+      }}
+    </p>
   </heading-section>
 </template>
 

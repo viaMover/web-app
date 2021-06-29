@@ -1,14 +1,12 @@
 <template>
-  <router-link v-if="product" class="card shop" :to="routeTo">
-    <img
-      :alt="$t('nibbleShop.txtProductAlt', { title: product.title })"
-      class="image"
-      :src="product.imageSrc"
-    />
-    <div class="text-container">
-      <div class="title">{{ product.title }}</div>
-      <div class="price">{{ product.price }}</div>
+  <router-link v-if="product" class="shop__items-item" :to="routeTo">
+    <div class="shop__items-item-image">
+      <img
+        :alt="$t('nibbleShop.txtProductAlt', { title: product.title })"
+        :src="product.imageSrc"
+      />
     </div>
+    <p>{{ product.title }}</p>
   </router-link>
 </template>
 

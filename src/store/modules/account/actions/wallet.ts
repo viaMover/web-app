@@ -1,4 +1,3 @@
-import { GetTokensPrice } from '@/services/thegraph/api';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -15,6 +14,7 @@ import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { getWalletTokens } from '@/services/balancer';
 import { getAllTokens } from '@/wallet/allTokens';
+import { geEthPrice } from '@/services/etherscan/ethPrice';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -106,7 +106,7 @@ export default {
     if (state.networkInfo.network === Network.mainnet) {
       if (payload.init) {
         console.log('Starting Zerion...');
-        InitExplorer(
+        const explorer = InitExplorer(
           state.currentAddress,
           'usd',
           (txns: Array<Transaction>) => {
@@ -126,8 +126,12 @@ export default {
           },
           (tokens: Array<string>) => {
             commit('removeWalletTokens', tokens);
+          },
+          (chartData: Record<string, [number, number][]>) => {
+            commit('setChartData', chartData);
           }
         );
+        commit('setExplorer', explorer);
       }
 
       //
@@ -164,6 +168,15 @@ export default {
       );
       console.info('tokensWithAmount: ', tokensWithAmount);
       commit('setWalletTokens', tokensWithAmount);
+    }
+
+    console.info('refresh eth price...');
+    // TODO: works only for USD
+    const ethPriceInUSDResult = await geEthPrice(state.networkInfo.network);
+    if (ethPriceInUSDResult.isError) {
+      console.log(`can't load eth price: ${ethPriceInUSDResult}`);
+    } else {
+      commit('setEthPrice', ethPriceInUSDResult.result);
     }
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);

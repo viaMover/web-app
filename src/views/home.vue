@@ -1,13 +1,15 @@
 <template>
-  <content-wrapper has-left-rail>
+  <content-wrapper has-left-rail wrapper-class="general-desktop">
     <template v-slot:left-rail>
       <wallet-info-rail />
     </template>
 
     <header-balance />
-    <div class="columns">
-      <release-radar-section class="column one of two" />
-      <swaps-section class="column one of two" />
+    <div class="general-desktop__menu-wrapper-item">
+      <div class="general-desktop__menu-wrapper-item-links">
+        <release-radar-section />
+        <swaps-section />
+      </div>
     </div>
     <debit-card-section />
     <savings-section />
@@ -23,6 +25,8 @@
 </template>
 
 <script lang="ts">
+import '@/styles/_general.less';
+
 import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';

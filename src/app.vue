@@ -1,19 +1,28 @@
 <template>
-  <div id="app">
+  <main id="app">
     <wallet />
-    <router-view />
-  </div>
+    <preload v-show="isDetecting" />
+    <router-view v-cloak v-show="!isDetecting" />
+  </main>
 </template>
 
 <script lang="ts">
-import { mapActions } from 'vuex';
+import '@/styles/_common.less';
+
 import Vue from 'vue';
+import { mapActions, mapState } from 'vuex';
+
 import Wallet from '@/components/wallet/wallet.vue';
+import Preload from '@/views/preload.vue';
 
 export default Vue.extend({
   name: 'App',
   components: {
+    Preload,
     Wallet
+  },
+  computed: {
+    ...mapState('account', ['isDetecting'])
   },
   mounted() {
     this.setI18n(this.$i18n);
