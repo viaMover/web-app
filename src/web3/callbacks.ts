@@ -1,7 +1,8 @@
 import { ProviderWithCallbacks } from './types';
 
 export const InitCallbacks = async (
-  provider: any
+  provider: any,
+  addresses: string[]
 ): Promise<ProviderWithCallbacks> => {
   const chainChangedHandler = () => {
     console.log('Provider - chain has been chainged! Reloading page...');
@@ -15,7 +16,9 @@ export const InitCallbacks = async (
 
   const accountsChangedHandler = async (accounts: Array<string>) => {
     console.log('Provider - accounts array has been changed!', accounts);
-    window.location.reload();
+    if (addresses.length !== 0) {
+      window.location.reload();
+    }
   };
 
   provider.on('chainChanged', chainChangedHandler);

@@ -45,7 +45,7 @@ import { InitCallbacks } from '@/web3/callbacks';
 export default Vue.extend({
   name: 'ImportWallet',
   computed: {
-    ...mapState('account', ['detectedProvider']),
+    ...mapState('account', ['detectedProvider', 'addresses']),
     ...mapGetters('account', ['isWalletConnected']),
     metaMaskBtnText(): string {
       return this.detectedProvider ? 'Connect MetaMask' : 'Install MetaMask';
@@ -76,7 +76,7 @@ export default Vue.extend({
         infuraId: 'eac548bd478143d09d2c090d09251bf1'
       });
       await provider.enable();
-      const providerWithCb = await InitCallbacks(provider);
+      const providerWithCb = await InitCallbacks(provider, this.addresses);
       //  Enable session (triggers QR Code modal)
       this.initWallet({
         provider: providerWithCb.provider,
@@ -87,7 +87,10 @@ export default Vue.extend({
     },
     async connectMetaMask(): Promise<void> {
       if (this.detectedProvider) {
-        const providerWithCb = await InitCallbacks(this.detectedProvider);
+        const providerWithCb = await InitCallbacks(
+          this.detectedProvider,
+          this.addresses
+        );
         this.initWallet({
           provider: providerWithCb.provider,
           providerName: 'MetaMask',

@@ -10,18 +10,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
-import { fromWei } from '@/utils/bigmath';
 import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
   name: 'HeaderBalance',
   computed: {
-    ...mapState('account', ['balance']),
+    ...mapGetters('account', ['entireBalance']),
     formattedBalance(): string {
       // todo: should be $, rounded to 2 decimal places
-      return new BigNumber(fromWei(this.balance, 18)).toFixed(6);
+      return new BigNumber(this.entireBalance).toFixed(6);
     }
   }
 });

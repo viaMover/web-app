@@ -4,7 +4,7 @@ import { RootStoreState } from '@/store/types';
 import dayjs from 'dayjs';
 import { Transaction } from '@/wallet/types';
 import { ChartData } from '@/components/charts';
-import { fromWei } from '@/utils/bigmath';
+import { add, fromWei, multiply } from '@/utils/bigmath';
 import { MonthBalanceItem } from '@/services/mover/savings';
 import { dateFromExplicitPair } from '@/utils/time';
 
@@ -79,6 +79,26 @@ export default {
     }
 
     return fromWei(state.savingsInfo.currentPoolBalance, 6);
+  },
+  entireBalance(state): string {
+    let balance = '0';
+    balance = state.tokens.reduce<string>((acc, token) => {
+      const tokenPrice = multiply(token.balance, token.priceUSD);
+      if (tokenPrice) {
+        return add(acc, tokenPrice);
+      }
+      return acc;
+    }, '0');
+
+    if (state.savingsInfo !== undefined) {
+      const savingsBalanceInUSDC = fromWei(
+        state.savingsInfo.currentBalance,
+        '6'
+      );
+      balance = add(balance, savingsBalanceInUSDC);
+    }
+
+    return balance;
   },
   savingsMonthStatsOptions(state): Array<MonthBalanceItem> {
     if (state.isSavingsInfoLoading || state.savingsInfo === undefined) {
