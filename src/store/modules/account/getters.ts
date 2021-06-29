@@ -6,6 +6,7 @@ import { Transaction } from '@/wallet/types';
 import { ChartData } from '@/components/charts';
 import { fromWei } from '@/utils/bigmath';
 import { MonthBalanceItem } from '@/services/mover/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {
@@ -84,13 +85,15 @@ export default {
       return [];
     }
 
-    return state.savingsInfo.last12MonthsBalances.reduce((acc, val) => {
-      if (val.balance === 0) {
-        return acc;
-      }
+    return state.savingsInfo.last12MonthsBalances
+      .reduce((acc, val) => {
+        if (val.balance === 0) {
+          return acc;
+        }
 
-      return acc.concat(val);
-    }, [] as Array<MonthBalanceItem>);
+        return acc.concat(val);
+      }, [] as Array<MonthBalanceItem>)
+      .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
   savingsInfoChartData(state): ChartData {
     if (state.savingsInfo === undefined || state.isSavingsInfoLoading) {
@@ -104,7 +107,7 @@ export default {
     const data: Array<number> = [];
     state.savingsInfo.last12MonthsBalances.forEach((item) => {
       labels.push(
-        dayjs(new Date(item.year, item.month, 0))
+        dateFromExplicitPair(item.year, item.month)
           .format('MMM, YY')
           .toUpperCase()
       );

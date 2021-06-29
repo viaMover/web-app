@@ -110,20 +110,7 @@ export default {
     state.savingsInfoError = error;
   },
   setSavingsInfo(state, info: SavingsInfo | undefined): void {
-    if (info === undefined) {
-      state.savingsInfo = info;
-      return;
-    }
-
-    state.savingsInfo = {
-      ...info,
-      actionHistory: info.actionHistory.sort(
-        (a, b) => a.timestamp - b.timestamp
-      ),
-      last12MonthsBalances: info.last12MonthsBalances.sort(
-        (a, b) => a.snapshotTimestamp - b.snapshotTimestamp
-      )
-    };
+    state.savingsInfo = info;
   },
   setIsSavingsReceiptLoading(state, isLoading: boolean): void {
     state.isSavingsRecepitLoading = isLoading;

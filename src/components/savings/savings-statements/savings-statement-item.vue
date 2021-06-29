@@ -24,6 +24,7 @@ import Vue, { PropType } from 'vue';
 import dayjs from 'dayjs';
 
 import { MonthBalanceItem } from '@/services/mover/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 
 export default Vue.extend({
   name: 'SavingsStatementItem',
@@ -39,16 +40,16 @@ export default Vue.extend({
 
       return (
         currentDate.get('year') === this.item.year &&
-        currentDate.get('month') === this.item.month
+        currentDate.get('month') + 1 === this.item.month
       );
     },
     headerText(): string {
-      return dayjs(new Date(this.item.year, this.item.month, 0)).format(
+      return dateFromExplicitPair(this.item.year, this.item.month).format(
         'MMMM YYYY'
       );
     },
     itemText(): string {
-      const dateFrom = dayjs(new Date(this.item.year, this.item.month, 0));
+      const dateFrom = dateFromExplicitPair(this.item.year, this.item.month);
       const dateTo = dateFrom.add(1, 'month');
 
       if (dateFrom.year() !== dateTo.year()) {

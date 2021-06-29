@@ -18,6 +18,7 @@ import {
   SavingsMonthlyChart,
   SavingsMonthlyStatement
 } from '@/components/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
@@ -28,12 +29,9 @@ export default Vue.extend({
   computed: {
     pageDate(): dayjs.Dayjs {
       try {
-        return dayjs(
-          new Date(
-            Number(this.$route.params.year),
-            Number(this.$route.params.month),
-            0
-          )
+        return dateFromExplicitPair(
+          Number(this.$route.params.year),
+          Number(this.$route.params.month)
         );
       } catch {
         return dayjs().startOf('month');
@@ -46,7 +44,7 @@ export default Vue.extend({
   async mounted() {
     await this.fetchMonthlyStats({
       year: this.pageDate.get('year'),
-      month: this.pageDate.get('month')
+      month: this.pageDate.get('month') + 1
     } as GetSavingsReceiptPayload);
   },
   methods: {
@@ -63,12 +61,9 @@ export default Vue.extend({
 
     let date: dayjs.Dayjs;
     try {
-      date = dayjs(
-        new Date(
-          Number(this.$route.params.year),
-          Number(this.$route.params.month),
-          0
-        )
+      date = dateFromExplicitPair(
+        Number(this.$route.params.year),
+        Number(this.$route.params.month)
       );
     } catch {
       date = dayjs();
@@ -76,7 +71,7 @@ export default Vue.extend({
 
     this.fetchMonthlyStats({
       year: date.get('year'),
-      month: date.get('month')
+      month: date.get('month') + 1
     } as GetSavingsReceiptPayload);
   }
 });
