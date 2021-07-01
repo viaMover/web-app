@@ -14,7 +14,11 @@ import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { getWalletTokens } from '@/services/balancer';
 import { getAllTokens } from '@/wallet/allTokens';
-import { geEthPrice } from '@/services/etherscan/ethPrice';
+import { getEthPrice } from '@/services/etherscan/ethPrice';
+import {
+  getMOVEPriceInWETH,
+  getUSDCPriceInWETH
+} from '@/services/mover/tokensPrices';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -172,12 +176,31 @@ export default {
 
     console.info('refresh eth price...');
     // TODO: works only for USD
-    const ethPriceInUSDResult = await geEthPrice(state.networkInfo.network);
+    const ethPriceInUSDResult = await getEthPrice(state.networkInfo.network);
     if (ethPriceInUSDResult.isError) {
       console.log(`can't load eth price: ${ethPriceInUSDResult}`);
     } else {
       commit('setEthPrice', ethPriceInUSDResult.result);
     }
+
+    const getMovePriceInWethPromise = getMOVEPriceInWETH(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
+      getMovePriceInWethPromise,
+      getUSDCPriceInWETHPromise
+    ]);
+    commit('setMovePriceInWeth', moveInWethPrice);
+    commit('setUsdcPriceInWeth', usdcInWethPrice);
 
     await dispatch('fetchSavingsInfo');
     await dispatch('fetchSavingsAPY');

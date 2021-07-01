@@ -16,6 +16,12 @@ export default {
   setEthPrice(state, ethPrice: string): void {
     state.ethPrice = ethPrice;
   },
+  setMovePriceInWeth(state, movePriceInWeth: string): void {
+    state.movePriceInWeth = movePriceInWeth;
+  },
+  setUsdcPriceInWeth(state, usdcPriceInWeth: string): void {
+    state.usdcPriceInWeth = usdcPriceInWeth;
+  },
   setExplorer(state, explorer: Explorer): void {
     state.explorer = explorer;
   },

@@ -55,3 +55,11 @@ export const floorDivide = (
   new BigNumber(numberOne)
     .dividedToIntegerBy(new BigNumber(numberTwo))
     .toFixed();
+
+export const isNaN = (num: BigNumberish): boolean => {
+  return new BigNumber(num).isNaN();
+};
+
+export const isFinite = (num: BigNumberish): boolean => {
+  return new BigNumber(num).isFinite();
+};

@@ -15,7 +15,7 @@ type EtherScanEthPriceData = {
   ethbtc_timestamp: string;
 };
 
-export const geEthPrice = async (
+export const getEthPrice = async (
   network = Network.mainnet
 ): Promise<Result<string, string>> => {
   const endpoint = apiEndpoints.get(network);

@@ -100,6 +100,18 @@ export default {
 
     return balance;
   },
+  moveNativePrice(state): string {
+    if (state.movePriceInWeth === undefined || state.ethPrice === undefined) {
+      return '0';
+    }
+    return multiply(state.movePriceInWeth, state.ethPrice);
+  },
+  usdcNativePrice(state): string {
+    if (state.usdcPriceInWeth === undefined || state.ethPrice === undefined) {
+      return '0';
+    }
+    return multiply(state.usdcPriceInWeth, state.ethPrice);
+  },
   savingsMonthStatsOptions(state): Array<MonthBalanceItem> {
     if (state.isSavingsInfoLoading || state.savingsInfo === undefined) {
       return [];

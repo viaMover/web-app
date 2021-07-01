@@ -29,6 +29,8 @@ export default {
     nativeCurrency: 'usd',
 
     ethPrice: undefined,
+    movePriceInWeth: undefined,
+    usdcPriceInWeth: undefined,
 
     //explorer
     explorer: undefined,

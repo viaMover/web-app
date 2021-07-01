@@ -1,7 +1,7 @@
 import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
-import { GetSavingsApy } from '@/services/mover/apy';
+import { GetSavingsApy } from '@/services/mover/savings';
 
 export default {
   async fetchSavingsAPY({ commit, state }): Promise<void> {

@@ -41,6 +41,8 @@ export type AccountStoreState = {
   nativeCurrency: 'usd';
   // main prices in native currency
   ethPrice: undefined | string;
+  movePriceInWeth: undefined | string;
+  usdcPriceInWeth: undefined | string;
 
   // explorer
   explorer: undefined | Explorer;
