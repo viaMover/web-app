@@ -32,6 +32,7 @@ export default Vue.extend({
   },
   watch: {
     chartData(newVal: Array<{ x: number; y: number }>): void {
+      this.instance?.destroy();
       this.initChart(newVal);
     }
   },

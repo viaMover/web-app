@@ -40,6 +40,8 @@ export default {
   },
   savings: {
     lblSavings: 'Savings',
+    lblNothingInSavings: 'Nothing in @:savings.lblSavings',
+    txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
     lblSavingsEarnedTodaySection: 'You earned {amount} today',
     lblSavingsPrefix: 'Savings',

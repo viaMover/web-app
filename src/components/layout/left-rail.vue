@@ -1,8 +1,8 @@
 <template>
   <div :class="[containerClass]">
-    <a class="logo" href="#">
+    <router-link v-if="showLogo" class="logo" :to="{ name: 'home' }">
       <img alt="logo" src="@/assets/images/logo.svg" />
-    </a>
+    </router-link>
     <div class="sidebar-wrapper">
       <div :class="contentWrapperClass">
         <slot></slot>
@@ -20,6 +20,10 @@ export default Vue.extend({
     containerClass: {
       type: String,
       default: ''
+    },
+    showLogo: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {

@@ -6,5 +6,6 @@ export const asyncSleep = (ms: number): Promise<void> => {
 
 export const dateFromExplicitPair = (
   year: number,
-  month: number
-): dayjs.Dayjs => dayjs(new Date(year, month - 1, 1));
+  month: number,
+  day?: number
+): dayjs.Dayjs => dayjs(new Date(year, month - 1, day ?? 1));

@@ -1,31 +1,31 @@
 <template>
-  <div class="chart">
+  <div v-cloak v-if="!isLoading" class="chart">
     <div class="chart--action-buttons"></div>
     <div class="chart--body">
       <canvas ref="chartCanvas"></canvas>
     </div>
     <div class="chart--info"></div>
   </div>
+  <div v-else class="preload">loading...</div>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
 
-import { Chart, ChartConfiguration } from './bootstrap';
-import { ChartData } from './types';
+import { Chart, ChartConfiguration } from 'chart.js';
+import { ChartData } from '../types';
+import { mapGetters, mapState } from 'vuex';
 
 export default Vue.extend({
-  name: 'SavingsChart',
-  props: {
-    chartData: {
-      type: Object as PropType<ChartData>,
-      required: true
-    }
-  },
+  name: 'DaySpan',
   data() {
     return {
       instance: undefined as Chart | undefined
     };
+  },
+  computed: {
+    ...mapState('account', { isLoading: 'isSavingsReceiptLoading' }),
+    ...mapGetters('account', { chartData: 'savingsLastDayChartData' })
   },
   watch: {
     chartData(newVal: ChartData): void {
@@ -43,32 +43,20 @@ export default Vue.extend({
   methods: {
     getDataset(
       template: ChartData
-    ): ChartConfiguration<'bar', number[], string | number> {
+    ): ChartConfiguration<'line', number[], string | number> {
       return {
-        type: 'bar',
+        type: 'line',
         data: {
           labels: template.labels,
-          datasets: [
-            ...template.datasets.map((item) => {
-              const backgroundColor = new Array(item.data.length).fill(
-                'rgba(60,60,67,0.3)'
-              );
-              // backgroundColor[item.data.length - 1] = 'rgba(245,147,174,1)';
-              backgroundColor[item.data.length - 1] = 'rgba(251, 157, 83, 1)';
-
-              return {
-                ...item,
-                borderRadius: 5,
-                borderWidth: 1,
-                borderColor: backgroundColor,
-                backgroundColor: backgroundColor
-              };
-            })
-          ]
+          datasets: template.datasets.map((item) => ({
+            ...item,
+            cubicInterpolationMode: 'monotone',
+            tension: 0.4
+          }))
         },
         options: {
           interaction: {
-            intersect: true,
+            intersect: false,
             mode: 'index'
           },
           animation: false,
@@ -81,6 +69,10 @@ export default Vue.extend({
           },
           scales: {
             x: {
+              type: 'timeseries',
+              time: {
+                tooltipFormat: 'DD MMMM YYYY HH:mm'
+              },
               grid: {
                 display: false
               },

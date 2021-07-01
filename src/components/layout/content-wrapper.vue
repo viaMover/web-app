@@ -1,12 +1,16 @@
 <template>
   <div :class="[wrapperClass]">
-    <left-rail v-if="hasLeftRail" :container-class="leftRailClass">
+    <left-rail
+      v-if="hasLeftRail"
+      :container-class="leftRailClass"
+      :show-logo="!hasBackButton"
+    >
+      <back-button v-if="hasBackButton" @close="handleClose" />
+      <close-button v-if="hasCloseButton" @close="handleClose" />
       <slot name="left-rail"></slot>
     </left-rail>
 
     <page-container :container-class="pageContainerClass">
-      <close-button v-if="hasCloseButton" @close="handleClose" />
-      <back-button v-if="hasBackButton" @close="handleClose" />
       <slot></slot>
     </page-container>
   </div>

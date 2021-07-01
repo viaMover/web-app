@@ -22,6 +22,7 @@
     "apollo-link-http": "^1.5.17",
     "axios": "^0.21.1",
     "chart.js": "^3.3.2",
+    "chartjs-adapter-dayjs": "^1.0.0",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
     "fuse.js": "^6.4.6",

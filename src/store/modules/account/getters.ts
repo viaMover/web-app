@@ -7,6 +7,7 @@ import { ChartData } from '@/components/charts';
 import { add, fromWei, multiply } from '@/utils/bigmath';
 import { MonthBalanceItem } from '@/services/mover/savings';
 import { dateFromExplicitPair } from '@/utils/time';
+import { buildChartData } from '@/store/modules/account/utils/charts';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {
@@ -33,8 +34,16 @@ export default {
 
     return Object.values(groupsByDay);
   },
-  isWalletConnected(state: AccountStoreState): boolean {
+  isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;
+  },
+  isWalletReady(state, getters): boolean {
+    return (
+      getters.isWalletConnected &&
+      state.provider !== undefined &&
+      !state.isDetecting &&
+      state.savingsInfo !== undefined
+    );
   },
   savingsInfoBalanceNative(state): string {
     if (state.isSavingsInfoLoading) {
@@ -118,13 +127,8 @@ export default {
     }
 
     return state.savingsInfo.last12MonthsBalances
-      .reduce((acc, val) => {
-        if (val.balance === 0) {
-          return acc;
-        }
-
-        return acc.concat(val);
-      }, [] as Array<MonthBalanceItem>)
+      .filter((item) => item.balance !== 0)
+      .slice()
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
   savingsInfoChartData(state): ChartData {
@@ -135,21 +139,65 @@ export default {
       };
     }
 
-    const labels: Array<string> = [];
-    const data: Array<number> = [];
-    state.savingsInfo.last12MonthsBalances.forEach((item) => {
-      labels.push(
-        dateFromExplicitPair(item.year, item.month)
-          .format('MMM, YY')
-          .toUpperCase()
-      );
-
-      data.push(fromWei(item.balance, 6) as unknown as number);
-    });
-
+    const data = buildChartData(state.savingsInfo.last12MonthsBalances, 'all');
     return {
-      labels,
-      datasets: [{ data }]
-    } as ChartData;
+      ...data,
+      labels: data.labels.map((l) => dayjs(l).format('MMM, YY'))
+    };
+  },
+  savingsMonthChartData(state): ChartData {
+    if (state.savingsReceipt === undefined || state.isSavingsReceiptLoading) {
+      return {
+        datasets: [],
+        labels: []
+      };
+    }
+
+    return buildChartData(state.savingsReceipt.hourlyBalances, 'all');
+  },
+  savingsLastWeekChartData(state): ChartData {
+    if (state.savingsReceipt === undefined || state.isSavingsReceiptLoading) {
+      return {
+        datasets: [],
+        labels: []
+      };
+    }
+
+    return buildChartData(state.savingsReceipt.hourlyBalances, 'week');
+  },
+  savingsLastDayChartData(state): ChartData {
+    if (state.savingsReceipt === undefined || state.isSavingsReceiptLoading) {
+      return {
+        datasets: [],
+        labels: []
+      };
+    }
+
+    return buildChartData(state.savingsReceipt.hourlyBalances, 'day');
+  },
+  hasActiveSavings(state): boolean {
+    if (state.isSavingsInfoLoading) {
+      return true;
+    }
+
+    if (state.savingsInfo === undefined) {
+      return false;
+    }
+
+    // obvious check
+    if (
+      state.savingsInfo.currentBalance !== 0 ||
+      state.savingsInfo.earnedTotal !== 0 ||
+      state.savingsInfo.last12MonthsBalances.some((item) => item.balance !== 0)
+    ) {
+      return true;
+    }
+
+    //implicit check (last resort)
+    return (
+      state.savingsReceipt !== undefined &&
+      (state.savingsReceipt.totalDeposits !== 0 ||
+        state.savingsReceipt.totalWithdrawals !== 0)
+    );
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

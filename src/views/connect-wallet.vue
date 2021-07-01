@@ -43,7 +43,7 @@ import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
 import { InitCallbacks } from '@/web3/callbacks';
 
 export default Vue.extend({
-  name: 'ImportWallet',
+  name: 'ConnectWallet',
   computed: {
     ...mapState('account', ['detectedProvider', 'addresses']),
     ...mapGetters('account', ['isWalletConnected']),

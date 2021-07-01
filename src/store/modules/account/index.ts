@@ -49,7 +49,7 @@ export default {
     savingsInfo: undefined,
     savingsInfoError: undefined,
 
-    isSavingsRecepitLoading: false,
+    isSavingsReceiptLoading: false,
     savingsReceipt: undefined,
     savingsReceiptError: undefined,
 

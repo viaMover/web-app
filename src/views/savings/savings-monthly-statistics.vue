@@ -1,7 +1,7 @@
 <template>
   <secondary-page :title="$t('savings.lblSavings')">
     <h2>{{ pageTitle }}</h2>
-    <savings-monthly-chart :page-date="pageDate" />
+    <savings-monthly-chart-wrapper :page-date="pageDate" />
     <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
@@ -15,7 +15,7 @@ import { SecondaryPage } from '@/components/layout';
 import { GetSavingsReceiptPayload } from '@/store/modules/account/actions/charts';
 
 import {
-  SavingsMonthlyChart,
+  SavingsMonthlyChartWrapper,
   SavingsMonthlyStatement
 } from '@/components/savings';
 import { dateFromExplicitPair } from '@/utils/time';
@@ -23,7 +23,7 @@ export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
     SecondaryPage,
-    SavingsMonthlyChart,
+    SavingsMonthlyChartWrapper,
     SavingsMonthlyStatement
   },
   computed: {

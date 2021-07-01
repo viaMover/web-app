@@ -7,7 +7,11 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { createPopper, Instance as Popper, Placement } from '@popperjs/core';
+import {
+  createPopper,
+  Instance as Popper
+} from '@popperjs/core/lib/popper-lite';
+import { Placement } from '@popperjs/core/lib/enums';
 import { subToggle, unsubToggle } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({

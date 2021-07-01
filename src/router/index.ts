@@ -14,7 +14,10 @@ const routes: Array<RouteConfig> = [
     path: '/connect-wallet',
     name: 'connect-wallet',
     component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue')
+      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue'),
+    meta: {
+      skipPreloadScreen: true
+    }
   },
   {
     path: '/release-radar',
@@ -35,6 +38,14 @@ const routes: Array<RouteConfig> = [
         /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
       ),
     children: [
+      {
+        path: 'empty',
+        name: 'savings-empty',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings" */ '@/views/savings/savings-empty.vue'
+          )
+      },
       {
         path: 'month-statistics/:year/:month',
         name: 'savings-month-stats',
@@ -234,6 +245,16 @@ const routes: Array<RouteConfig> = [
     name: 'transaction',
     component: () =>
       import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
+  },
+  {
+    path: '/404',
+    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'not-found-route'
+    }
   }
 ];
 

@@ -1,8 +1,8 @@
 <template>
   <main id="app">
     <wallet />
-    <preload v-show="isDetecting" />
-    <router-view v-cloak v-show="!isDetecting" />
+    <preload v-show="showPreload" />
+    <router-view v-cloak v-show="!showPreload" />
   </main>
 </template>
 
@@ -10,7 +10,7 @@
 import '@/styles/_common.less';
 
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import Wallet from '@/components/wallet/wallet.vue';
 import Preload from '@/views/preload.vue';
@@ -22,7 +22,10 @@ export default Vue.extend({
     Wallet
   },
   computed: {
-    ...mapState('account', ['isDetecting'])
+    ...mapGetters('account', ['isWalletReady']),
+    showPreload(): boolean {
+      return !this.isWalletReady && !this.$route.meta.skipPreloadScreen;
+    }
   },
   mounted() {
     this.setI18n(this.$i18n);

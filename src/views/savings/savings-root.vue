@@ -1,8 +1,8 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
-    has-close-button
+    has-back-button
     has-left-rail
+    wrapper-class="general-desktop"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -32,11 +32,6 @@ export default Vue.extend({
     SavingsOverview,
     SavingsStats,
     SavingsEstimation
-  },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    }
   },
   methods: {
     handleClose(): void {

@@ -119,7 +119,7 @@ export default {
     state.savingsInfo = info;
   },
   setIsSavingsReceiptLoading(state, isLoading: boolean): void {
-    state.isSavingsRecepitLoading = isLoading;
+    state.isSavingsReceiptLoading = isLoading;
   },
   setSavingsReceiptError(state, error: string | undefined): void {
     state.savingsReceiptError = error;

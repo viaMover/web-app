@@ -16,7 +16,7 @@
     </template>
 
     <h2>{{ $t('savings.lblManageSavings') }}</h2>
-    <savings-yearly-chart />
+    <savings-yearly-chart-wrapper />
     <savings-statements />
   </secondary-page>
 </template>
@@ -26,15 +26,41 @@ import Vue from 'vue';
 
 import { SecondaryPage } from '@/components/layout';
 import { HeadingNavButton } from '@/components/buttons';
-import { SavingsYearlyChart, SavingsStatements } from '@/components/savings';
+import {
+  SavingsYearlyChartWrapper,
+  SavingsStatements
+} from '@/components/savings';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsManage',
   components: {
     SecondaryPage,
     HeadingNavButton,
-    SavingsYearlyChart,
+    SavingsYearlyChartWrapper,
     SavingsStatements
+  },
+  computed: {
+    ...mapGetters('account', ['hasActiveSavings'])
+  },
+  watch: {
+    hasActiveSavings(newVal: boolean) {
+      if (!newVal) {
+        this.replaceInactiveSavingsRoute();
+      }
+    }
+  },
+  beforeMount() {
+    if (!this.hasActiveSavings) {
+      this.replaceInactiveSavingsRoute();
+    }
+  },
+  methods: {
+    replaceInactiveSavingsRoute(): void {
+      this.$router.replace({
+        name: 'savings-empty'
+      });
+    }
   }
 });
 </script>
