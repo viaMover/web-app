@@ -42,7 +42,10 @@ export const getEthPrice = async (
         return { isError: true, error: 'RateReached' };
       }
 
-      return { isError: true, error: `Service error: ${resp.message}` };
+      return {
+        isError: true,
+        error: `Service error:  ${JSON.stringify(resp)}`
+      };
     }
 
     return {

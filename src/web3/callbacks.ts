@@ -4,6 +4,8 @@ export const InitCallbacks = async (
   provider: any,
   addresses: string[]
 ): Promise<ProviderWithCallbacks> => {
+  console.info('Creating callbacks');
+
   const chainChangedHandler = () => {
     console.log('Provider - chain has been chainged! Reloading page...');
     window.location.reload();

@@ -48,6 +48,7 @@ export default {
   ): Promise<void> {
     try {
       const web3Inst = new Web3(payload.provider);
+      (web3Inst.eth as any).maxListenersWarningThreshold = 200;
       commit('setProvider', {
         providerBeforeClose: payload.providerBeforeCloseCb,
         providerName: payload.providerName,
