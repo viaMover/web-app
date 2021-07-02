@@ -96,7 +96,7 @@ export const getTreasuryBalance = async (
   return ret;
 };
 
-const GetTreasuryBonus = async (
+export const GetTreasuryBonus = async (
   accountAddress: string,
   network: Network,
   web3: Web3
@@ -144,7 +144,7 @@ const GetTreasuryBonus = async (
   }
 };
 
-const getTreasuryAPY = async (
+export const getTreasuryAPY = async (
   usdcNativePrice: string,
   moveNativePrice: string,
   accountAddress: string,

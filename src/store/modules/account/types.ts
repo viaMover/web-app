@@ -63,4 +63,10 @@ export type AccountStoreState = {
 
   savingsAPY: string | undefined;
   savingsDPY: string | undefined;
+
+  // Treasury
+  treasuryBalanceMove: string | undefined;
+  treasuryBalanceLP: string | undefined;
+  treasuryBonus: string | undefined;
+  treasuryAPY: string | undefined;
 };
