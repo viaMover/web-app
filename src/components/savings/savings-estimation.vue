@@ -6,19 +6,19 @@
         <span class="title">{{
           $t('savings.lblEstimatedEarningsTomorrow')
         }}</span>
-        <span class="value">{{ estimatedEarningsTomorrow }}</span>
+        <span class="value">{{ estimatedEarningsTomorrowNative }}</span>
       </div>
       <div class="item">
         <span class="title">{{
           $t('savings.lblEstimatedEarningsNextMonth')
         }}</span>
-        <span class="value">{{ estimatedEarningsNextMonth }}%</span>
+        <span class="value">{{ estimatedEarningsNextMonthNative }}</span>
       </div>
       <div class="item">
         <span class="title">{{
           $t('savings.lblEstimatedEarningsAnnually')
         }}</span>
-        <span class="value">{{ estimatedEarningsAnnually }}%</span>
+        <span class="value">{{ estimatedEarningsAnnuallyNative }}</span>
       </div>
     </div>
   </div>
@@ -26,15 +26,59 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsEstimation',
-  data() {
-    return {
-      estimatedEarningsTomorrow: 0,
-      estimatedEarningsNextMonth: 0,
-      estimatedEarningsAnnually: 0
-    };
+  computed: {
+    ...mapState('account', [
+      'isSavingsInfoLoading',
+      'savingsAPY',
+      'savingsDPY'
+    ]),
+    ...mapGetters('account', ['savingsInfoBalanceNative']),
+    estimatedEarningsTomorrowNative(): string {
+      if (this.isSavingsInfoLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsDPY === undefined) {
+        return '0';
+      }
+
+      return new BigNumber(this.savingsInfoBalanceNative)
+        .multipliedBy(new BigNumber(this.savingsDPY).dividedBy(100))
+        .toFixed(2);
+    },
+    estimatedEarningsNextMonthNative(): string {
+      if (this.isSavingsInfoLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsDPY === undefined) {
+        return '0';
+      }
+
+      return new BigNumber(this.savingsInfoBalanceNative)
+        .multipliedBy(
+          new BigNumber(this.savingsDPY).dividedBy(100).multipliedBy(30)
+        )
+        .toFixed(2);
+    },
+    estimatedEarningsAnnuallyNative(): string {
+      if (this.isSavingsInfoLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsDPY === undefined) {
+        return '0';
+      }
+
+      return new BigNumber(this.savingsInfoBalanceNative)
+        .multipliedBy(new BigNumber(this.savingsAPY).dividedBy(100))
+        .toFixed(2);
+    }
   }
 });
 </script>

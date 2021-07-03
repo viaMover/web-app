@@ -1753,6 +1753,39 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/chart.js@*":
+  version "2.9.33"
+  resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.33.tgz#59c6de80b8134379156f4ba7b96c0928a721c1ab"
+  integrity sha512-vB6ZFx1cA91aiCoVpreLQwCQHS/Cj+9YtjBTwFlTjKXyY0douXV2KV4+fluxdI+grDZ6hTCQeg2HY/aQ9NeLHA==
+  dependencies:
+    moment "^2.10.2"
+
+"@types/chartjs-plugin-crosshair@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/chartjs-plugin-crosshair/-/chartjs-plugin-crosshair-1.1.0.tgz#d5fe4a4a649141019d189925b922e9951fb5b3be"
+  integrity sha512-8ixNaGyj8xnURFPKARj6bDLogPlQgyXPCDUQiavLCZvwpnFfpcAwPUVBGwbNq1Lr6qKNHbTELVIKAzXDsRS2zA==
+  dependencies:
+    "@types/chart.js" "*"
+
+"@types/color-convert@*":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/color-convert/-/color-convert-2.0.0.tgz#8f5ee6b9e863dcbee5703f5a517ffb13d3ea4e22"
+  integrity sha512-m7GG7IKKGuJUXvkZ1qqG3ChccdIM/qBBo913z+Xft0nKCX4hAU/IxKwZBU4cpRZ7GS5kV4vOblUkILtSShCPXQ==
+  dependencies:
+    "@types/color-name" "*"
+
+"@types/color-name@*":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
+  integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
+
+"@types/color@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/color/-/color-3.0.1.tgz#2900490ed04da8116c5058cd5dba3572d5a25071"
+  integrity sha512-oeUWVaAwI+xINDUx+3F2vJkl/vVB03VChFF/Gl3iQCdbcakjuoJyMOba+3BXRtnBhxZ7uBYqQBi9EpLnvSoztA==
+  dependencies:
+    "@types/color-convert" "*"
+
 "@types/connect-history-api-fallback@*":
   version "1.3.4"
   resolved "https://registry.npm.taobao.org/@types/connect-history-api-fallback/download/@types/connect-history-api-fallback-1.3.4.tgz?cache=0&sync_timestamp=1615910664204&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fconnect-history-api-fallback%2Fdownload%2F%40types%2Fconnect-history-api-fallback-1.3.4.tgz#8c0f0e6e5d8252b699f5a662f51bdf82fd9d8bb8"
@@ -4046,15 +4079,45 @@ chardet@^0.7.0:
   resolved "https://registry.npm.taobao.org/chardet/download/chardet-0.7.0.tgz?cache=0&sync_timestamp=1601032487499&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchardet%2Fdownload%2Fchardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha1-kAlISfCTfy7twkJdDSip5fDLrZ4=
 
+chart.js@^2.9.3:
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.4.tgz#0827f9563faffb2dc5c06562f8eb10337d5b9684"
+  integrity sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A==
+  dependencies:
+    chartjs-color "^2.1.0"
+    moment "^2.10.2"
+
 chart.js@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.3.2.tgz#667f3a0b6371b9719d8949c04a5bcbaec0d8c615"
-  integrity sha512-H0hSO7xqTIrwxoACqnSoNromEMfXvfuVnrbuSt2TuXfBDDofbnto4zuZlRtRvC73/b37q3wGAWZyUU41QPvNbA==
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.4.0.tgz#4fb2a750225fcc1b387221422f5d4260b55b4579"
+  integrity sha512-mJsRm2apQm5mwz2OgYqGNG4erZh/qljcRZkWSa0kLkFr3UC3e1wKRMgnIh6WdhUrNu0w/JT9PkjLyylqEqHXEQ==
 
 chartjs-adapter-dayjs@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/chartjs-adapter-dayjs/-/chartjs-adapter-dayjs-1.0.0.tgz#794cafb11d3715a565daae4ef99525f9ed2d763f"
   integrity sha512-EnbVqTJGFKLpg1TROLdCEufrzbmIa2oeLGx8O2Wdjw2EoMudoOo9+YFu+6CM0Z0hQ/v3yq/e/Y6efQMu22n8Jg==
+
+chartjs-color-string@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/chartjs-color-string/-/chartjs-color-string-0.6.0.tgz#1df096621c0e70720a64f4135ea171d051402f71"
+  integrity sha512-TIB5OKn1hPJvO7JcteW4WY/63v6KwEdt6udfnDE9iCAZgy+V4SrbSxoIbTw/xkUIapjEI4ExGtD0+6D3KyFd7A==
+  dependencies:
+    color-name "^1.0.0"
+
+chartjs-color@^2.1.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/chartjs-color/-/chartjs-color-2.4.1.tgz#6118bba202fe1ea79dd7f7c0f9da93467296c3b0"
+  integrity sha512-haqOg1+Yebys/Ts/9bLo/BqUcONQOdr/hoEr2LLTRl6C5LXctUdHxsCYfvQVg5JIxITrfCNUDr4ntqmQk9+/0w==
+  dependencies:
+    chartjs-color-string "^0.6.0"
+    color-convert "^1.9.3"
+
+chartjs-plugin-crosshair@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/chartjs-plugin-crosshair/-/chartjs-plugin-crosshair-1.1.6.tgz#3874c3114a5c2ea5d5569a200ef0b32425107ed2"
+  integrity sha512-faqHKnZzhNYh2ahIKaxTWB9ZX5afRJkQ+7jsZ8u0Z+PE4YPcs1jNCCKwWINWacYaryh6ih/OT6pLmMnkNMusHQ==
+  dependencies:
+    chart.js "^2.9.3"
 
 check-types@^8.0.3:
   version "8.0.3"
@@ -4299,7 +4362,7 @@ collection-visit@^1.0.0:
     map-visit "^1.0.0"
     object-visit "^1.0.0"
 
-color-convert@^1.9.0, color-convert@^1.9.1:
+color-convert@^1.9.0, color-convert@^1.9.1, color-convert@^1.9.3:
   version "1.9.3"
   resolved "https://registry.npm.taobao.org/color-convert/download/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
   integrity sha1-u3GFBpDh8TZWfeYp0tVHHe2kweg=
@@ -4331,10 +4394,10 @@ color-string@^1.5.4:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
-color@^3.0.0:
+color@^3.0.0, color@^3.1.3:
   version "3.1.3"
-  resolved "https://registry.npm.taobao.org/color/download/color-3.1.3.tgz#ca67fb4e7b97d611dcde39eceed422067d91596e"
-  integrity sha1-ymf7TnuX1hHc3jns7tQiBn2RWW4=
+  resolved "https://registry.yarnpkg.com/color/-/color-3.1.3.tgz#ca67fb4e7b97d611dcde39eceed422067d91596e"
+  integrity sha512-xgXAcTHa2HeFCGLE9Xs/R82hujGtu9Jd9x4NW3T34+OMs7VoPsjwzRczKHvTAHeJwWFwX5j15+MgAppE8ztObQ==
   dependencies:
     color-convert "^1.9.1"
     color-string "^1.5.4"
@@ -9821,6 +9884,11 @@ mock-fs@^4.1.0:
   version "4.14.0"
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
   integrity sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==
+
+moment@^2.10.2:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
+  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
 move-concurrently@^1.0.1:
   version "1.0.1"

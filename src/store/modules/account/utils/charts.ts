@@ -1,14 +1,15 @@
 import { HourlyBalancesItem, MonthBalanceItem } from '@/services/mover/savings';
 import dayjs from 'dayjs';
-import { ChartData } from '@/components/charts';
 import { fromWei } from '@/utils/bigmath';
+import { ChartData, ChartType } from 'chart.js';
+import { dateFromExplicitPair } from '@/utils/time';
 
-type FilterPeriod = 'all' | 'month' | 'week' | 'day';
+type FilterPeriod = 'month' | 'week' | 'day';
 const filterByPeriod = (
   list: Array<HourlyBalancesItem | MonthBalanceItem>,
-  period: FilterPeriod = 'all'
+  period: FilterPeriod
 ): Array<HourlyBalancesItem | MonthBalanceItem> => {
-  if (period === 'all' || list.length === 0) {
+  if (period === 'month' || list.length === 0) {
     return list;
   }
 
@@ -21,31 +22,49 @@ const filterByPeriod = (
     );
 };
 
-export const buildChartData = (
+const DECIMATION_PERIOD = 12;
+
+export const buildBalancesChartData = (
   list: Array<HourlyBalancesItem | MonthBalanceItem>,
+  chartType: ChartType,
   filterPeriod: FilterPeriod
-): ChartData => {
-  const labels: Array<string> = [];
-  const data: Array<number> = [];
-  filterByPeriod(list, filterPeriod).forEach((item) => {
-    if (item.balance === 0) {
-      return;
+): ChartData<'line' | 'bar', Array<number>, string> => {
+  return filterByPeriod(list, filterPeriod).reduce(
+    (acc, val) => {
+      if (val.balance === 0) {
+        return acc;
+      }
+
+      if (
+        'hour' in val &&
+        val.hour % DECIMATION_PERIOD !== 0 &&
+        ['month', 'week'].includes(filterPeriod)
+      ) {
+        return acc;
+      }
+
+      return {
+        labels: acc.labels.concat(
+          chartType === 'bar'
+            ? dateFromExplicitPair(val.year, val.month).format('MMM, YY')
+            : dayjs.unix(val.snapshotTimestamp).toISOString()
+        ),
+        datasets: [
+          {
+            data: acc.datasets[0].data.concat(
+              Number.parseFloat(fromWei(val.balance, 6))
+            )
+          }
+        ]
+      };
+    },
+    {
+      labels: new Array<string>(),
+      datasets: [
+        {
+          data: new Array<number>()
+        }
+      ]
     }
-
-    if (
-      'hour' in item &&
-      item.hour % 3 !== 0 &&
-      ['all', 'month'].includes(filterPeriod)
-    ) {
-      return;
-    }
-
-    labels.push(dayjs.unix(item.snapshotTimestamp).toISOString());
-    data.push(Number.parseFloat(fromWei(item.balance, 6)));
-  });
-
-  return {
-    labels,
-    datasets: [{ data }]
-  } as ChartData;
+  );
 };

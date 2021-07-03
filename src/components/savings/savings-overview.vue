@@ -26,21 +26,26 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
+import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsOverview',
-  data() {
-    return {
-      currentVariableAPY: 0,
-      monthAverageAPY: 0
-    };
-  },
   computed: {
+    ...mapState('account', {
+      apy: 'savingsAPY',
+      dpy: 'savingsDPY'
+    }),
     ...mapGetters('account', {
       depositedAssets: 'savingsInfoBalanceNative',
       totalAssetsUnderManagement: 'savingsInfoTotalPoolBalanceNative'
-    })
+    }),
+    currentVariableAPY(): string {
+      return new BigNumber(this.apy).toFixed(2);
+    },
+    monthAverageAPY(): string {
+      return new BigNumber(this.dpy as string).multipliedBy(30, 10).toFixed(2);
+    }
   }
 });
 </script>

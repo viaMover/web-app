@@ -1,13 +1,11 @@
 import { GetterTree } from 'vuex';
+import dayjs from 'dayjs';
+
 import { AccountStoreState, TransactionGroup } from './types';
 import { RootStoreState } from '@/store/types';
-import dayjs from 'dayjs';
 import { Transaction } from '@/wallet/types';
-import { ChartData } from '@/components/charts';
 import { add, fromWei, multiply } from '@/utils/bigmath';
 import { MonthBalanceItem } from '@/services/mover/savings';
-import { dateFromExplicitPair } from '@/utils/time';
-import { buildChartData } from '@/store/modules/account/utils/charts';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {
@@ -130,50 +128,6 @@ export default {
       .filter((item) => item.balance !== 0)
       .slice()
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
-  },
-  savingsInfoChartData(state): ChartData {
-    if (state.savingsInfo === undefined || state.isSavingsInfoLoading) {
-      return {
-        datasets: [],
-        labels: []
-      };
-    }
-
-    const data = buildChartData(state.savingsInfo.last12MonthsBalances, 'all');
-    return {
-      ...data,
-      labels: data.labels.map((l) => dayjs(l).format('MMM, YY'))
-    };
-  },
-  savingsMonthChartData(state): ChartData {
-    if (state.savingsReceipt === undefined || state.isSavingsReceiptLoading) {
-      return {
-        datasets: [],
-        labels: []
-      };
-    }
-
-    return buildChartData(state.savingsReceipt.hourlyBalances, 'all');
-  },
-  savingsLastWeekChartData(state): ChartData {
-    if (state.savingsReceipt === undefined || state.isSavingsReceiptLoading) {
-      return {
-        datasets: [],
-        labels: []
-      };
-    }
-
-    return buildChartData(state.savingsReceipt.hourlyBalances, 'week');
-  },
-  savingsLastDayChartData(state): ChartData {
-    if (state.savingsReceipt === undefined || state.isSavingsReceiptLoading) {
-      return {
-        datasets: [],
-        labels: []
-      };
-    }
-
-    return buildChartData(state.savingsReceipt.hourlyBalances, 'day');
   },
   hasActiveSavings(state): boolean {
     if (state.isSavingsInfoLoading) {
