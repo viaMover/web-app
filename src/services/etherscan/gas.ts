@@ -45,7 +45,7 @@ export const getGasPrices = async (
         return { isError: true, error: 'RateReached' };
       }
 
-      return { isError: true, error: `Service error: ${resp.message}` };
+      return { isError: true, error: `Service error: ${JSON.stringify(resp)}` };
     }
 
     const fastGasSpeed = await getGasSpeedWithoutErr(
@@ -110,7 +110,10 @@ export const getGasSpeed = async (
         return { isError: true, error: 'RateReached' };
       }
 
-      return { isError: true, error: `Service error: ${resp.message}` };
+      return {
+        isError: true,
+        error: `Service error:  ${JSON.stringify(resp)}`
+      };
     }
 
     return {

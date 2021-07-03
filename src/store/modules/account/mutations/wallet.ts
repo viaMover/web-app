@@ -1,4 +1,4 @@
-import { SortAndDedupedTransactions } from './utils/transactions';
+import { SortAndDedupedTransactions } from '../utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
 import {
@@ -6,9 +6,9 @@ import {
   AccountData,
   ProviderData,
   ChartPair
-} from './types';
+} from '../types';
 import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
-import { SortAndDedupedTokens } from './utils/tokens';
+import { SortAndDedupedTokens } from '../utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
 import { SavingsInfo, SavingsReceipt } from '@/services/mover';
 

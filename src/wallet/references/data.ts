@@ -1,4 +1,4 @@
-import { SmallToken, SmallTokenInfo } from '@/wallet/types';
+import { SmallTokenInfo } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
@@ -175,6 +175,14 @@ const getMoveAssetData = (network: Network): SmallTokenInfo => {
   };
 };
 
+const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
+  return {
+    address: SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network),
+    decimals: 18,
+    symbol: 'SLP'
+  };
+};
+
 const getUSDCAssetData = (network: Network): SmallTokenInfo => {
   return {
     address: USDC_TOKEN_ADDRESS(network),
@@ -185,6 +193,7 @@ const getUSDCAssetData = (network: Network): SmallTokenInfo => {
 
 export {
   getMoveAssetData,
+  getMoveWethLPAssetData,
   getUSDCAssetData,
   isTokenValidForTreasuryDeposit,
   HOLY_PASSAGE_ADDRESS,

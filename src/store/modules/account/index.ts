@@ -1,6 +1,4 @@
 import walletActions from './actions/wallet';
-import mutations from './mutations';
-import getters from './getters';
 import { Module } from 'vuex';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
@@ -8,6 +6,10 @@ import gasActions from './actions/gas';
 import chartsActions from './actions/charts';
 import utilityActions from './actions/utility';
 import savingsActions from './actions/savings';
+import walletMutations from './mutations/wallet';
+import treasuryMutations from './mutations/treasury';
+import walletGetters from './getters/wallet';
+import treasuryGetters from './getters/treasury';
 
 export default {
   namespaced: true,
@@ -54,7 +56,12 @@ export default {
     savingsReceiptError: undefined,
 
     savingsAPY: undefined,
-    savingsDPY: undefined
+    savingsDPY: undefined,
+
+    treasuryBalanceMove: undefined,
+    treasuryBalanceLP: undefined,
+    treasuryBonus: undefined,
+    treasuryAPY: undefined
   },
   actions: {
     ...walletActions,
@@ -63,6 +70,12 @@ export default {
     ...utilityActions,
     ...savingsActions
   },
-  getters,
-  mutations
+  getters: {
+    ...walletGetters,
+    ...treasuryGetters
+  },
+  mutations: {
+    ...walletMutations,
+    ...treasuryMutations
+  }
 } as Module<AccountStoreState, RootStoreState>;

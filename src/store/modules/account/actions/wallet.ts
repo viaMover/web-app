@@ -1,3 +1,8 @@
+import {
+  getTreasuryBalance,
+  GetTreasuryBonus,
+  getTreasuryAPY
+} from './../../../../services/mover/treasury';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -43,6 +48,7 @@ export default {
   ): Promise<void> {
     try {
       const web3Inst = new Web3(payload.provider);
+      (web3Inst.eth as any).maxListenersWarningThreshold = 200;
       commit('setProvider', {
         providerBeforeClose: payload.providerBeforeCloseCb,
         providerName: payload.providerName,
@@ -60,7 +66,7 @@ export default {
   },
 
   async refreshWallet(
-    { dispatch, commit, state },
+    { dispatch, commit, state, getters },
     payload: RefreshWalletPayload
   ): Promise<void> {
     if (state.provider === undefined) {
@@ -201,6 +207,37 @@ export default {
     ]);
     commit('setMovePriceInWeth', moveInWethPrice);
     commit('setUsdcPriceInWeth', usdcInWethPrice);
+
+    const getTreasuryBalancesPromise = getTreasuryBalance(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTreasuryBonusPromise = GetTreasuryBonus(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTreasuryAPYPromise = getTreasuryAPY(
+      getters.usdcNativePrice,
+      getters.moveNativePrice,
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const [treasuryBalances, treasuryBonus, treasuryAPY] = await Promise.all([
+      getTreasuryBalancesPromise,
+      getTreasuryBonusPromise,
+      getTreasuryAPYPromise
+    ]);
+
+    commit('setTreasuryBalanceMove', treasuryBalances.MoveBalance);
+    commit('setTreasuryBalanceLP', treasuryBalances.LPBalance);
+    commit('setTreasuryBonus', treasuryBonus);
+    commit('setTreasuryAPY', treasuryAPY);
 
     await dispatch('fetchSavingsInfo');
     await dispatch('fetchSavingsAPY');

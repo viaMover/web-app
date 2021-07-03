@@ -1,7 +1,7 @@
 import { GetterTree } from 'vuex';
 import dayjs from 'dayjs';
 
-import { AccountStoreState, TransactionGroup } from './types';
+import { AccountStoreState, TransactionGroup } from '../types';
 import { RootStoreState } from '@/store/types';
 import { Transaction } from '@/wallet/types';
 import { add, fromWei, multiply } from '@/utils/bigmath';
