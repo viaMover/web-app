@@ -1,5 +1,5 @@
 <template>
-  <div :class="[wrapperClass]">
+  <div class="info__wrapper">
     <left-rail
       v-if="hasLeftRail"
       :container-class="leftRailClass"

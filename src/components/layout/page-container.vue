@@ -1,5 +1,5 @@
 <template>
-  <div :class="[containerClass]">
+  <div class="info__wrapper-menu" :class="[containerClass]">
     <div class="g-wrapper">
       <div :class="[contentWrapperClass]">
         <slot></slot>

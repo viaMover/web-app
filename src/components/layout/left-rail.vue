@@ -1,5 +1,5 @@
 <template>
-  <div :class="[containerClass]">
+  <div class="info__wrapper-sidebar" :class="[containerClass]">
     <router-link v-if="showLogo" class="logo" :to="{ name: 'home' }">
       <img alt="logo" src="@/assets/images/logo.svg" />
     </router-link>
