@@ -73,19 +73,19 @@ $(document).ready(function() {
 		let bg = $('.swaps__popup-bg');
 
 		button.on('click', function() { 
-			popup.addClass('swaps__popup-active'); 
-			bg.addClass('swaps__popup-bg-active');
-			close.addClass('swaps__popup-close-active');
+			popup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
 		})
 		close.on('click', function() { 
-			popup.removeClass('swaps__popup-active'); 
-			bg.removeClass('swaps__popup-bg-active');
-			close.removeClass('swaps__popup-close-active');
+			popup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
 		})
 		bg.on('click', function() { 
-			popup.removeClass('swaps__popup-active'); 
-			bg.removeClass('swaps__popup-bg-active');
-			close.removeClass('swaps__popup-close-active');
+			popup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
 		})
 	}
 	swapsPopup();
@@ -116,74 +116,325 @@ $(document).ready(function() {
 	}
 	toggleSwaps();
 
-	function hideByClickEscButton() {
-		let swapsPopup = $('.swaps__popup');
-		let transactionPopup = $('.transaction__popup'); 
-		let bg = $('.swaps__popup-bg');
-		let close = $('.swaps__popup-close');
-
-		$(window).on('keydown', function(e) {
-			if ( e.keyCode == 27 ) {
-				swapsPopup.removeClass('swaps__popup-active'); 
-				transactionPopup.removeClass('transaction__popup-active'); 
-				bg.removeClass('swaps__popup-bg-active');
-				close.removeClass('swaps__popup-close-active');
-			}
-		});
-	}
-	hideByClickEscButton();
-
-	function toggleSwapDetails() {
-		let button = $('.swap-details-active');
-		let container = $('.swap-details__content');
+	function toggleDetails() {
+		let button = $('.details');
+		let container = $('.details__content');
 		button.on('click', () => {
-			container.toggleClass('swap-details__content-active');
+			container.toggleClass('details__content-active');
 		});
 	}
-	toggleSwapDetails();
+	toggleDetails();
 
 	function SwapsSlider() {
-		new Swiper('.swaps__wrapper-info-footer-right', {
+		new Swiper('.popup-slider', {
 			grabCursor: true,
 			allowTouchMove: true,
 			slidesPerView: 1,
 			pagination: {
-				el: '.swaps__wrapper-info-footer-right .swiper-pagination',
+				el: '.popup-slider .swiper-pagination',
 				type: 'bullets',
 				clickable: true,
 			},
 			navigation: {
-				nextEl: '.swaps__wrapper-info-footer-right .swiper-slide',
+				nextEl: '.popup-slider .swiper-slide',
 			},
 		});
 	}
 	SwapsSlider();
 
 	function transactionWaitingPopup() {
-		let transactionPopup = $('.transaction__popup'); 
-		let close = $('.swaps__popup-close');
+		let transactionPopup = $('.transaction-result__popup'); 
+		let close = $('.transaction__popup-close');
 		let button = $('.swaps__wrapper-info-button .choose');
-		let bg = $('.swaps__popup-bg');
-		let swapsPopup = $('.swaps__popup');
+		let swapsPopup = $('.transaction__popup');
+		let bg = $('.popup-bg');
 
 		button.on('click', function() { 
-			transactionPopup.addClass('transaction__popup-active'); 
-			bg.addClass('swaps__popup-bg-active');
-			close.addClass('swaps__popup-close-active');
-			swapsPopup.removeClass('swaps__popup-active');
+			transactionPopup.addClass('transaction-result__popup-active');
+			close.addClass('transaction__popup-close-active');
+			swapsPopup.removeClass('transaction__popup-active');
 		})
 		close.on('click', function() { 
-			transactionPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('swaps__popup-bg-active');
-			close.removeClass('swaps__popup-close-active');
-			swapsPopup.removeClass('swaps__popup-active');
+			transactionPopup.removeClass('transaction-result__popup-active');
+			close.removeClass('transaction__popup-close-active');
+			swapsPopup.removeClass('transaction__popup-active');
 		})
 		bg.on('click', function() { 
-			transactionPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('swaps__popup-bg-active');
-			close.removeClass('swaps__popup-close-active');
+			transactionPopup.removeClass('transaction-result__popup-active');
+			close.removeClass('transaction__popup-close-active');
 		})
 	}
 	transactionWaitingPopup();
 
+	function burderMenu() {
+		let popup = $('.burger-menu__popup'); 
+		let button = $('.burger-menu');
+		let bg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			popup.addClass('burger-menu__popup-active'); 
+			bg.addClass('burger-menu__popup-bg-active');
+		})
+		bg.on('click', function() { 
+			popup.removeClass('burger-menu__popup-active'); 
+			bg.removeClass('burger-menu__popup-bg-active');
+		})
+	}
+	burderMenu();
+
+	function depositPopup() {
+		let depositPopup = $('.deposit__popup'); 
+		let close = $('.transaction__popup-close');
+		let button = $('.savings-deposit');
+		let bg = $('.deposit__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			depositPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			depositPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			depositPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	depositPopup();
+	
+	function withdrawPopup() {
+		let withdrawPopup = $('.withdraw__popup'); 
+		let close = $('.transaction__popup-close');
+		let button = $('.savings-withdraw');
+		let bg = $('.withdraw__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			withdrawPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			withdrawPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			withdrawPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	withdrawPopup();
+
+	function increaseBoostPopup() {
+		let increasePopup = $('.increase-boost__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.increase-boost');
+		let bg = $('.increase-boost__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			increasePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			increasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			increasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	increaseBoostPopup();
+
+	function decreaseBoostPopup() {
+		let decreasePopup = $('.decrease-boost__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.decrease-boost');
+		let bg = $('.decrease-boost__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			decreasePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			decreasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			decreasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	decreaseBoostPopup();
+
+	function claimAndBurnPopup() {
+		let claimAndBurnPopup = $('.claim-and-burn__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.claim-and-burn');
+		let bg = $('.claim-and-burn__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			claimAndBurnPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			claimAndBurnPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			claimAndBurnPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	claimAndBurnPopup();
+
+	function managePowercardPopup() {
+		let managePowercardPopup = $('.manage-powercard__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.manage-powercard');
+		let bg = $('.manage-powercard__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			managePowercardPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			managePowercardPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			managePowercardPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	managePowercardPopup();
+
+	function votePopup() {
+		let votePopup = $('.vote__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.vote-button');
+		let bg = $('.vote__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			votePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			votePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			votePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	votePopup();
+
+
+	function delegateVotingPowerPopup() {
+		let delegatePopup = $('.delegate-voting-power__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.delegate-voting-power');
+		let bg = $('.delegate-voting-power__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			delegatePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			delegatePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			delegatePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	delegateVotingPowerPopup();
+
+	function hideByClickEscButton() {
+		let transactionPopup = $('.transaction__popup');
+		let transactionResultPopup = $('.transaction-result__popup'); 
+		let burgerPopup = $('.burger-menu__popup');
+		let bg = $('.popup-bg');
+		let burgerBg = $('.burger-menu__popup-bg');
+		let transactionClose = $('.transaction__popup-close');
+
+		$(window).on('keydown', function(e) {
+			if ( e.keyCode == 27 ) {
+				transactionPopup.removeClass('transaction__popup-active'); 
+				transactionResultPopup.removeClass('transaction-result__popup-active'); 
+				burgerPopup.removeClass('burger-menu__popup-active');
+				bg.removeClass('popup-bg-active');
+				burgerBg.removeClass('burger-menu__popup-bg-active');
+				transactionClose.removeClass('transaction__popup-close-active');
+			}
+		});
+	}
+	hideByClickEscButton();
+
+	function textareaSize() {
+		$('.create-a-proposal-wrapper-statements form textarea').on('keyup change drop paste focusin focusout',function(){
+			$(this)
+			.attr('rows','1')
+			.css('height','auto')
+			.css('height',$(this)[0].scrollHeight+'px');
+		}).focus();
+	}
+	textareaSize();
 });

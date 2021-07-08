@@ -11,7 +11,7 @@
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
   </head>
   <body>
-    <main><a class="back-link" href="#"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <main><a class="back-link button-active" href="#"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1.6109 9.11046L9.49999 15.4995" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M9.49994 2.50142L1.61085 8.89051" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg></a>
@@ -20,7 +20,7 @@
           <div class="top-movers__wrapper">
             <form class="search-form" action="#">
               <input type="search" name="search" placeholder="Search any token on Ethereum"/>
-              <button type="submit">🔍</button>
+              <button class="button-active" type="submit">🔍</button>
             </form>
             <div class="top-movers__wrapper-title">
               <div class="top-movers__wrapper-title-icon"><span>🔥</span></div>
@@ -38,9 +38,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="clickable-row" data-href="#">
+                <tr class="clickable-row" data-href="/release-radar-asset.html">
                   <td class="asset"> 
-                    <div class="icon getShadow"><img src="images/coin-icon2.jpg"/></div>
+                    <div class="icon getShadow"><img src="images/coin-icon2.jpg" alt="coin"/></div>
                     <div class="info">
                       <p>Mover</p><span>MOVE</span>
                     </div>
@@ -51,9 +51,9 @@
                   <td class="down">-3.25%</td>
                   <td>$1.77M</td>
                 </tr>
-                <tr class="clickable-row" data-href="#">
+                <tr class="clickable-row" data-href="/release-radar-asset.html">
                   <td class="asset"> 
-                    <div class="icon getShadow"><img src="images/rune-icon.png"/></div>
+                    <div class="icon getShadow"><img src="images/rune-icon.png" alt="coin"/></div>
                     <div class="info">
                       <p>THORChain</p><span>RUNE</span>
                     </div>
@@ -64,9 +64,9 @@
                   <td class="down">-3.25%</td>
                   <td>$3.2B</td>
                 </tr>
-                <tr class="clickable-row" data-href="#">
+                <tr class="clickable-row" data-href="/release-radar-asset.html">
                   <td class="asset"> 
-                    <div class="icon getShadow"><img src="images/coin-icon4.png"/></div>
+                    <div class="icon getShadow"><img src="images/coin-icon4.png" alt="coin"/></div>
                     <div class="info">
                       <p>AAVE</p><span>AAVE</span>
                     </div>
@@ -77,9 +77,9 @@
                   <td class="down">-3.25%</td>
                   <td>$1.7M</td>
                 </tr>
-                <tr class="clickable-row" data-href="#">
+                <tr class="clickable-row" data-href="/release-radar-asset.html">
                   <td class="asset"> 
-                    <div class="icon getShadow"><img src="images/coin-icon5.png"/></div>
+                    <div class="icon getShadow"><img src="images/coin-icon5.png" alt="coin"/></div>
                     <div class="info">
                       <p>Uniswap</p><span>UNI</span>
                     </div>
@@ -96,182 +96,6 @@
         </div>
       </div>
     </main>
-    <div class="swaps__popup-bg"></div>
-    <div class="swaps__popup-close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M12.8334 2.83411C13.2936 2.37387 13.2936 1.62768 12.8334 1.16744C12.3731 0.707206 11.6269 0.707206 11.1667 1.16744L7.00004 5.33411L2.83338 1.16744C2.37314 0.707206 1.62695 0.707206 1.16671 1.16744C0.706474 1.62768 0.706474 2.37387 1.16671 2.83411L5.33338 7.00078L1.16671 11.1674C0.706474 11.6277 0.706474 12.3739 1.16671 12.8341C1.62695 13.2943 2.37314 13.2943 2.83338 12.8341L7.00004 8.66744L11.1667 12.8341C11.6269 13.2943 12.3731 13.2943 12.8334 12.8341C13.2936 12.3739 13.2936 11.6277 12.8334 11.1674L8.66671 7.00078L12.8334 2.83411Z" fill="black"/>
-</svg>
-    </div>
-    <div class="swaps__popup">
-      <div class="swaps__wrapper">
-        <div class="swaps__wrapper-info">
-          <h3 class="swaps__wrapper-info-title">Swaps</h3>
-          <div class="swaps__wrapper-info-items swaps-empty">
-            <div class="swaps__wrapper-info-items-item"> 
-              <div class="swaps__wrapper-info-items-item-left">
-                <div class="icon getShadow"><img src="images/coin-icon3.jpg"/></div><span>0.00</span>
-                <p>≈$0.00</p>
-              </div>
-              <div class="swaps__wrapper-info-items-item-right">
-                <button class="currency" type="button"><span>ETH</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9 1L5 5L1 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-                </button>
-                <button class="use" type="button">
-                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="16" height="16" fill="url(#pattern0)"/>
-<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
-<rect width="16" height="16" fill="url(#pattern1)"/>
-</mask>
-<g mask="url(#mask0)">
-<rect width="16" height="16" fill="#687EE3"/>
-</g>
-<defs>
-<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image0" transform="scale(0.0138889)"/>
-</pattern>
-<pattern id="pattern1" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image0" transform="scale(0.0138889)"/>
-</pattern>
-<image id="image0" width="72" height="72" xlink:href="data:image/png;base64,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"/>
-</defs>
-</svg><span>Use Max</span>
-                </button>
-              </div>
-            </div>
-            <div class="swaps__wrapper-info-items-item"> 
-              <div class="swaps__wrapper-info-items-item-left">
-                <div class="icon getShadow"></div><span>—</span>
-                <p>—</p>
-              </div>
-              <div class="swaps__wrapper-info-items-item-right">
-                <button class="currency" type="button"><span>Choose Token</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9 1L5 5L1 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-                </button>
-                <p>—</p>
-              </div>
-            </div>
-          </div>
-          <div class="swaps__wrapper-info-buttons">
-            <button class="flip" type="button"><img src="images/flip.png"/><span>Flip</span></button>
-            <button class="swap-details disabled" type="button"><img src="images/swap-details.png"/><span>Swap Details</span></button>
-            <div class="swap-details__content">
-              <div class="swap-details__content-item"> 
-                <p class="description">Price impact</p>
-                <p class="info up">0.31%</p>
-              </div>
-              <div class="swap-details__content-item"> 
-                <p class="description">Minimum received</p>
-                <p class="info">1.2731 AAVE</p>
-              </div>
-              <div class="swap-details__content-item"> 
-                <p class="description">Rate</p>
-                <p class="info">1 AAVE = 0.00036 ETH</p>
-              </div>
-              <div class="swap-details__content-item"> 
-                <p class="description">Smart Treasury cover</p>
-                <p class="info">$18.27</p>
-              </div>
-              <div class="swap-details__content-item"> 
-                <p class="description">Swapping via</p>
-                <p class="info">Sushi <span>🍣</span></p>
-              </div>
-              <div class="swap-details__content-item"> 
-                <p class="description">Slippage</p>
-                <p class="info rate">1.00%</p>
-              </div>
-            </div>
-          </div>
-          <div class="swaps__wrapper-info-button">
-            <button class="choose" type="button">Choose Token</button>
-          </div>
-          <div class="swaps__wrapper-info-footer">
-            <div class="swaps__wrapper-info-footer-left"><span>$0.00</span>
-              <p>Network fee</p>
-            </div>
-            <div class="swaps__wrapper-info-footer-right swiper-container">
-              <div class="swiper-pagination"></div>
-              <div class="swiper-wrapper">
-                <div class="swiper-slide"> 
-                  <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
-                </div>
-                <div class="swiper-slide"> 
-                  <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
-                </div>
-                <div class="swiper-slide"> 
-                  <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
-                </div>
-                <div class="swiper-slide"> 
-                  <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="swaps__wrapper-search">
-          <h3>Search</h3>
-          <div class="swaps__wrapper-search-form">
-            <form class="search-form" action="#">
-              <input type="search" name="search" placeholder="Search any token on Ethereum"/>
-              <button type="submit">🔍</button>
-            </form>
-          </div>
-          <div class="swaps__wrapper-search-items">
-            <div class="favorite items-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect opacity="0.01" width="14" height="14" fill="#D8D8D8"/>
-<path d="M6.99997 1L8.85402 4.62109L13 5.20176L9.99991 8.02044L10.7082 12L6.99997 10.1213L3.29179 12L4.00012 8.02044L1 5.20176L5.14601 4.62109L6.99997 1Z" fill="#FFB00B" stroke="#FFB00B" stroke-width="1.34047" stroke-linecap="round" stroke-linejoin="round"/>
-</svg><span>Favorite</span>
-            </div>
-            <div class="swaps__wrapper-search-items-item">
-              <div class="icon getShadow"><img src="images/coin-icon2.jpg"/></div>
-              <div class="info">
-                <p>Mover</p><span>MOVE</span>
-              </div>
-            </div>
-            <div class="verified items-title"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M14 7.32812C14 7.81758 13.8824 8.27148 13.6473 8.68711C13.4121 9.10273 13.0977 9.42812 12.7012 9.65508C12.7121 9.72891 12.7176 9.84375 12.7176 9.99961C12.7176 10.7406 12.4688 11.3695 11.9766 11.8891C11.4816 12.4113 10.8855 12.6711 10.1883 12.6711C9.87656 12.6711 9.57852 12.6137 9.29688 12.4988C9.07812 12.9473 8.76367 13.3082 8.35078 13.5844C7.94063 13.8633 7.48945 14 7 14C6.49961 14 6.0457 13.866 5.64102 13.5926C5.23359 13.3219 4.92188 12.9582 4.70312 12.4988C4.42148 12.6137 4.12617 12.6711 3.81172 12.6711C3.11445 12.6711 2.51562 12.4113 2.01523 11.8891C1.51484 11.3695 1.26602 10.7379 1.26602 9.99961C1.26602 9.91758 1.27695 9.80273 1.29609 9.65508C0.899609 9.42539 0.585156 9.10273 0.35 8.68711C0.117578 8.27148 0 7.81758 0 7.32812C0 6.80859 0.13125 6.33008 0.391016 5.89805C0.650781 5.46602 1.00078 5.14609 1.43828 4.93828C1.32344 4.62656 1.26602 4.31211 1.26602 4.00039C1.26602 3.26211 1.51484 2.63047 2.01523 2.11094C2.51562 1.59141 3.11445 1.32891 3.81172 1.32891C4.12344 1.32891 4.42148 1.38633 4.70312 1.50117C4.92188 1.05273 5.23633 0.691797 5.64922 0.415625C6.05937 0.139453 6.51055 0 7 0C7.48945 0 7.94063 0.139453 8.35078 0.412891C8.76094 0.689062 9.07812 1.05 9.29688 1.49844C9.57852 1.38359 9.87383 1.32617 10.1883 1.32617C10.8855 1.32617 11.4816 1.58594 11.9766 2.1082C12.4715 2.63047 12.7176 3.25938 12.7176 3.99766C12.7176 4.34219 12.6656 4.65391 12.5617 4.93555C12.9992 5.14336 13.3492 5.46328 13.609 5.89531C13.8687 6.33008 14 6.80859 14 7.32812Z" fill="#003623"/>
-<path d="M6.97273 9.4363L10.1728 5.10779C10.2546 4.99294 10.2788 4.86716 10.2515 4.73318C10.2213 4.59919 10.1456 4.49255 10.0184 4.42146C9.89126 4.34763 9.752 4.32302 9.60365 4.34216C9.45227 4.36404 9.33117 4.42966 9.24035 4.54451L6.42172 8.37263L5.12291 7.20232C5.00786 7.09841 4.87465 7.04919 4.7263 7.05466C4.57493 7.06013 4.44474 7.10935 4.3297 7.20232C4.22676 7.29529 4.17529 7.41286 4.17529 7.55505C4.17529 7.69451 4.22676 7.81208 4.3297 7.90779L6.11291 9.51833L6.20071 9.58122C6.30364 9.64411 6.40961 9.67419 6.51254 9.67419C6.71539 9.67146 6.86979 9.5949 6.97273 9.4363Z" fill="#CBF851"/>
-</svg><span>Mover Verified</span>
-            </div>
-            <div class="swaps__wrapper-search-items-item">
-              <div class="icon getShadow"><img src="images/sushi.png"/></div>
-              <div class="info">
-                <p>Sushi</p><span>Sushi</span>
-              </div>
-            </div>
-            <div class="swaps__wrapper-search-items-item">
-              <div class="icon getShadow"><img src="images/rune-icon.png"/></div>
-              <div class="info">
-                <p>THORChain</p><span>RUNE</span>
-              </div>
-            </div>
-            <div class="swaps__wrapper-search-items-item">
-              <div class="icon getShadow"><img src="images/coin-icon4.png"/></div>
-              <div class="info">
-                <p>AAVE</p><span>AAVE</span>
-              </div>
-            </div>
-            <div class="swaps__wrapper-search-items-item">
-              <div class="icon getShadow"><img src="images/coin-icon5.png"/></div>
-              <div class="info">
-                <p>Uniswap</p><span>UNI</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="transaction__popup">
-      <div class="transaction__popup-wrapper">
-        <div class="transaction__popup-wrapper-gif">
-          <video src="videos/TransactionWalletWaiting.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
-        </div>
-        <div class="transaction__popup-wrapper-status">
-          <h2>Waiting for confirmation</h2>
-          <p>Confirm this transaction in your wallet</p>
-        </div>
-      </div>
-    </div>
     <script src="js/libs.min.js"></script>
     <script src="js/app.js"></script>
   </body>
