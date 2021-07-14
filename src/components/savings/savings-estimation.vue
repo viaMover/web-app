@@ -1,27 +1,18 @@
 <template>
-  <div class="overview savings-overview">
-    <h4>{{ $t('savings.lblSavingsEstimation') }}</h4>
-    <div class="info info-bordered">
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsTomorrow')
-        }}</span>
-        <span class="value">{{ estimatedEarningsTomorrowNative }}</span>
-      </div>
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsNextMonth')
-        }}</span>
-        <span class="value">{{ estimatedEarningsNextMonthNative }}</span>
-      </div>
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsAnnually')
-        }}</span>
-        <span class="value">{{ estimatedEarningsAnnuallyNative }}</span>
-      </div>
-    </div>
-  </div>
+  <left-rail-section :section-name="$t('savings.lblSavingsEstimation')">
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsTomorrow')"
+      :value="estimatedEarningsTomorrowNative"
+    />
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsNextMonth')"
+      :value="estimatedEarningsNextMonthNative"
+    />
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsAnnually')"
+      :value="estimatedEarningsAnnuallyNative"
+    />
+  </left-rail-section>
 </template>
 
 <script lang="ts">
@@ -29,8 +20,11 @@ import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 import BigNumber from 'bignumber.js';
 
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+
 export default Vue.extend({
   name: 'SavingsEstimation',
+  components: { LeftRailSection, LeftRailSectionItem },
   computed: {
     ...mapState('account', [
       'isSavingsInfoLoading',

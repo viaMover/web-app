@@ -1,22 +1,13 @@
 <template>
   <secondary-page has-heading-buttons :title="$t('treasury.lblSmartTreasury')">
     <template v-slot:heading-buttons>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="treasury-deposit"
-      >
+      <heading-nav-button navigate-to-name="treasury-deposit">
         {{ $t('treasury.btnDeposit.emoji') }}
       </heading-nav-button>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="treasury-decrease-boost"
-      >
+      <heading-nav-button navigate-to-name="treasury-decrease-boost">
         {{ $t('treasury.btnWithdraw.emoji') }}
       </heading-nav-button>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="treasury-claim-and-burn"
-      >
+      <heading-nav-button navigate-to-name="treasury-claim-and-burn">
         {{ $t('treasury.btnClaimAndBurn.emoji') }}
       </heading-nav-button>
     </template>

@@ -1,5 +1,8 @@
 <template>
-  <action-button button-class="back-link" @button-click="handleClick">
+  <action-button
+    button-class="button back-link button-active"
+    @button-click="handleClick"
+  >
     <img alt="back link icon" src="@/assets/images/back-link.svg" />
   </action-button>
 </template>

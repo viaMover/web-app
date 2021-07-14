@@ -49,7 +49,7 @@ export default Vue.extend({
   computed: {
     ...mapState('account', ['tokens']),
     buttonClass(): string {
-      return 'primary';
+      return 'button';
     }
   },
   methods: {

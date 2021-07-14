@@ -1,5 +1,5 @@
 <template>
-  <centered-modal-window :modal-id="modalId">
+  <centered-modal-window :modal-class="modalClass" :modal-id="modalId">
     <div class="search-bar">
       <label for="token-search">{{ $t('search.lblSearchBar') }}</label>
       <input
@@ -64,6 +64,7 @@ export default Vue.extend({
   data() {
     return {
       modalId: Modal.SearchToken,
+      modalClass: 'search__popover',
       searchTerm: '',
       searchTermDebounced: '',
       debounce: undefined as number | undefined,

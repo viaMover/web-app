@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-group-wrapper">
+  <div class="chart-group-wrapper" :class="wrapperClass">
     <div v-if="isLoading" class="preload">loading...</div>
     <div v-show="!isLoading" class="chart">
       <div class="chart--action-buttons"></div>
@@ -35,6 +35,10 @@ export default Vue.extend({
     isLoading: {
       type: Boolean,
       required: true
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
     }
   },
   data() {

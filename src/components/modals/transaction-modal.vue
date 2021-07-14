@@ -1,5 +1,5 @@
 <template>
-  <centered-modal-window v-cloak :modal-id="modalId">
+  <centered-modal-window v-cloak :modal-class="modalClass" :modal-id="modalId">
     <div v-if="state === 'waiting'">🕓</div>
     <div v-else-if="state === 'pending'">🐌</div>
     <div v-else-if="state === 'processed'">👌</div>
@@ -42,7 +42,8 @@ export default Vue.extend({
     return {
       modalId: Modal.Transaction,
       hash: '',
-      state: 'waiting' as TransactionStatus
+      state: 'waiting' as TransactionStatus,
+      modalClass: 'transaction__popup'
     };
   },
   computed: {

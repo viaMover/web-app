@@ -2,8 +2,8 @@
 <template>
   <div class="swaps__wrapper-info-items-item">
     <div class="swaps__wrapper-info-items-item-left">
-      <div class="icon getShadow">
-        <img v-if="iconSrc" :alt="iconAlt" :src="iconSrc" />
+      <div v-if="iconSrc" class="icon">
+        <img v-get-shadow :alt="iconAlt" :src="iconSrc" />
       </div>
       <price-input-field
         :amount="amount"

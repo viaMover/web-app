@@ -1,6 +1,9 @@
 <template>
-  <secondary-page :title="$t('savings.lblSavings')">
-    <h2>{{ pageTitle }}</h2>
+  <secondary-page hide-title :title="$t('savings.lblSavings')">
+    <div class="savings-statements__wrapper-title">
+      <h2>{{ pageTitle }}</h2>
+      <p>{{ pageSubtitle }}</p>
+    </div>
     <savings-monthly-chart-wrapper :page-date="pageDate" />
     <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
@@ -39,6 +42,12 @@ export default Vue.extend({
     },
     pageTitle(): string {
       return this.pageDate.format('MMMM YYYY');
+    },
+    pageSubtitle(): string {
+      const left = this.pageDate.format('MMM DD');
+      const right = this.pageDate.format('MMM DD, YYYY');
+
+      return `${left} - ${right}`;
     }
   },
   async mounted() {

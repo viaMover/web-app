@@ -1,13 +1,11 @@
 <template>
-  <div class="savings-statement__wrapper">
+  <div class="savings__menu-wrapper-statements">
     <h2>{{ $t('savings.lblSavingsStatements') }}</h2>
-    <div class="info info-bordered">
-      <savings-statement-item
-        v-for="item in statements"
-        :key="item.snapshotTimestamp"
-        :item="item"
-      />
-    </div>
+    <savings-statement-item
+      v-for="item in statements"
+      :key="item.snapshotTimestamp"
+      :item="item"
+    />
   </div>
 </template>
 

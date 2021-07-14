@@ -1,12 +1,12 @@
 <template>
   <div class="info__wrapper-sidebar" :class="[containerClass]">
-    <router-link v-if="showLogo" class="logo" :to="{ name: 'home' }">
-      <img alt="logo" src="@/assets/images/logo.svg" />
-    </router-link>
     <div class="sidebar-wrapper">
-      <div :class="contentWrapperClass">
+      <div :class="[contentWrapperClass, innerWrapperClass]">
         <slot></slot>
       </div>
+      <router-link v-if="showLogo" class="logo" :to="{ name: 'home' }">
+        <img alt="logo" src="@/assets/images/logo.svg" />
+      </router-link>
     </div>
   </div>
 </template>
@@ -19,11 +19,15 @@ export default Vue.extend({
   props: {
     containerClass: {
       type: String,
-      default: ''
+      required: true
     },
     showLogo: {
       type: Boolean,
-      default: true
+      required: true
+    },
+    innerWrapperClass: {
+      type: String,
+      required: true
     }
   },
   computed: {

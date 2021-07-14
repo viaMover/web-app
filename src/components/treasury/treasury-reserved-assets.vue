@@ -1,25 +1,27 @@
 <template>
-  <div class="overview treasury-overview">
-    <h4>{{ $t('treasury.lblReservedAssets') }}</h4>
-    <div class="info info-bordered">
-      <div v-for="asset in assets" :key="asset.name" class="item">
-        <span class="title">{{ asset.name }}</span>
-        <span class="value">
-          {{ asset.amount }}
-          <template v-if="asset.displaySymbol">
-            &nbsp;{{ asset.symbol }}
-          </template>
-        </span>
-      </div>
-    </div>
-  </div>
+  <left-rail-section :section-name="$t('treasury.lblReservedAssets')">
+    <left-rail-section-item
+      v-for="asset in assets"
+      :key="asset.name"
+      :description="asset.name"
+    >
+      {{ asset.amount }}
+      <template v-if="asset.displaySymbol"> &nbsp;{{ asset.symbol }} </template>
+    </left-rail-section-item>
+  </left-rail-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+
 export default Vue.extend({
   name: 'TreasuryReservedAssets',
+  components: {
+    LeftRailSection,
+    LeftRailSectionItem
+  },
   data() {
     return {
       assets: [

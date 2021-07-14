@@ -60,7 +60,7 @@ export default Vue.extend({
   },
   computed: {
     buttonClass(): string {
-      return 'primary';
+      return 'button';
     },
     isPayoutEstimationReady(): boolean {
       return this.payoutEstimation !== null;

@@ -2,6 +2,7 @@
   <centered-modal-window
     v-cloak
     :header-label="$t('swaps.lblSwaps')"
+    :modal-class="modalClass"
     modal-id="swap-modal"
   >
     <swap-form @tx-created="handleTxCreated"></swap-form>
@@ -25,7 +26,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      modalId: Modal.Swap
+      modalId: Modal.Swap,
+      modalClass: 'swaps__popup'
     };
   },
   methods: {

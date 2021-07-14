@@ -3,7 +3,7 @@
     <div class="image">💰</div>
     <h2>{{ $t('savings.lblNothingInSavings') }}</h2>
     <p>{{ $t('savings.txtNothingInSavings') }}</p>
-    <action-button button-class="black-link" @button-click="toggleDeposit">{{
+    <action-button @button-click="toggleDeposit">{{
       $t('savings.btnDeposit.emoji')
     }}</action-button>
   </secondary-page>

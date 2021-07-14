@@ -1,38 +1,41 @@
 <template>
-  <div class="overview treasury-overview">
-    <h4>{{ $t('treasury.lblTreasuryOverview') }}</h4>
-    <div class="info info-bordered">
-      <div class="item">
-        <span class="title">{{ $t('treasury.lblReservedAssetsValue') }}</span>
-        <span class="value">{{ reservedAssetsValue }}</span>
-      </div>
-      <div class="item">
-        <span class="title">{{ $t('treasury.lblCurrentBoost') }}</span>
-        <span class="value">{{ currentBoost }}%</span>
-      </div>
-      <div class="item">
-        <span class="title">{{ $t('treasury.lblMaximumBoost') }}</span>
-        <span class="value">{{ maximumBoost }}%</span>
-      </div>
-      <div class="item">
-        <span class="title">{{ $t('treasury.lblSmartTreasurySize') }}</span>
-        <span class="value">{{ smartTreasurySize }}</span>
-      </div>
-    </div>
-  </div>
+  <left-rail-section :section-name="$t('treasury.lblTreasuryOverview')">
+    <left-rail-section-item
+      :description="$t('treasury.lblReservedAssetsValue')"
+      :value="reservedAssetsValue"
+    />
+    <left-rail-section-item
+      :description="$t('treasury.lblCurrentBoost')"
+      :value="currentBoost"
+    />
+    <left-rail-section-item
+      :description="$t('treasury.lblMaximumBoost')"
+      :value="maximumBoost"
+    />
+    <left-rail-section-item
+      :description="$t('treasury.lblSmartTreasurySize')"
+      :value="smartTreasurySize"
+    />
+  </left-rail-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+
 export default Vue.extend({
   name: 'TreasuryOverview',
+  components: {
+    LeftRailSection,
+    LeftRailSectionItem
+  },
   data() {
     return {
-      reservedAssetsValue: 0,
-      currentBoost: 0,
-      maximumBoost: 0,
-      smartTreasurySize: 0
+      reservedAssetsValue: '0',
+      currentBoost: '0x',
+      maximumBoost: '0x',
+      smartTreasurySize: '0'
     };
   }
 });

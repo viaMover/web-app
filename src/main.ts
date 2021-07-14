@@ -4,6 +4,7 @@ import App from './app.vue';
 import router from './router';
 import store from './store';
 import i18n from './i18n';
+import { getShadowDirective } from './directives/get-shadow';
 
 import * as dayjs from './dayjs';
 
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
+Vue.directive('get-shadow', getShadowDirective);
 
 dayjs.init();
 

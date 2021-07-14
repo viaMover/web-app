@@ -21,7 +21,7 @@ export default Vue.extend({
     buttonClass: {
       type: String,
       required: false,
-      default: ''
+      default: 'button'
     }
   },
   methods: {

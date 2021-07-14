@@ -1,13 +1,26 @@
 <template>
-  <div class="item">
-    <div class="description">
-      <span>{{ headerText }}</span>
-      <span v-if="!isInProgress">{{ itemText }}</span>
-      <span v-else>{{ $t('savings.lblInProgress') }}</span>
+  <div class="savings__menu-wrapper-statements-item">
+    <div class="item__info">
+      <div class="loading">
+        <div class="hold left">
+          <div class="fill"></div>
+        </div>
+        <div class="hold right">
+          <div class="fill"></div>
+        </div>
+      </div>
+      <div class="item__info-icon">
+        <span>{{ $t('savings.icon') }}</span>
+      </div>
+      <div class="item__info-label">
+        <p>{{ headerText }}</p>
+        <span v-if="!isInProgress">{{ itemText }}</span>
+        <span v-else>{{ $t('savings.lblInProgress') }}</span>
+      </div>
     </div>
-    <div v-if="!isInProgress" class="link">
+    <div v-if="!isInProgress" class="item__link">
       <router-link
-        class="black-link"
+        class="button-active"
         :to="{
           name: 'savings-month-stats',
           params: { year: item.year, month: item.month }

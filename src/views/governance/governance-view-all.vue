@@ -15,10 +15,7 @@
       :title="$t('governance.lblGovernance')"
     >
       <template v-if="isCreateProposalAvailable" v-slot:heading-buttons>
-        <heading-nav-button
-          button-class="transparent"
-          navigate-to-name="governance-create"
-        >
+        <heading-nav-button navigate-to-name="governance-create">
           {{ $t('governance.btnCreateAProposal.emoji') }}
         </heading-nav-button>
       </template>

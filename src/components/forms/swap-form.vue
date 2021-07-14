@@ -158,7 +158,7 @@ export default Vue.extend({
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
     buttonClass(): string {
-      return 'swap';
+      return 'button swap';
     },
     isSwapInfoAvailable(): boolean {
       return !!this.input.amount;

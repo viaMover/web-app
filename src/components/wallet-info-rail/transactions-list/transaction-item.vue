@@ -1,8 +1,8 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-info-item">
     <div class="label">
-      <div class="label-icon getShadow">
-        <img :alt="transaction.symbol" :src="tokenImageSrc" />
+      <div class="label-icon">
+        <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
       </div>
       <div class="label-info">
         <p>{{ transaction.heading }}</p>
@@ -10,9 +10,7 @@
       </div>
     </div>
     <div class="volume">
-      <span class="operation">{{
-        `${true ? '-' : '+'} ${transaction.value || 0}`
-      }}</span>
+      <span>{{ `${true ? '-' : '+'} ${transaction.value || 0}` }}</span>
     </div>
   </div>
 </template>

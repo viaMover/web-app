@@ -248,7 +248,12 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/404',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
+    name: 'not-found-route',
+    component: () =>
+      import(/* webpackChunkName: "home" */ '@/views/view-404.vue'),
+    meta: {
+      skipPreloadScreen: true
+    }
   },
   {
     path: '*',
@@ -271,9 +276,25 @@ router.beforeEach((to, from, next) => {
     .catch(() => next(false));
 });
 
+router.beforeResolve((to, from, next) => {
+  if (!to.meta.pageTitleTranslationKey) {
+    document.title = router.app.$t('lblPageTitleDefault') as string;
+    next();
+    return;
+  }
+
+  if (!router.app.$te(to.meta.pageTitleTranslationKey)) {
+    next();
+    return;
+  }
+
+  document.title = router.app.$t(to.meta.pageTitleTranslationKey) as string;
+  next();
+});
+
 // global 'require connected wallet' guard
 router.beforeResolve((to, from, next) => {
-  if (to.name === 'connect-wallet') {
+  if (['connect-wallet', 'not-found-route'].includes(to.name ?? '')) {
     next();
     return;
   }

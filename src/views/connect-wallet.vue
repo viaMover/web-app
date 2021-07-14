@@ -1,34 +1,30 @@
 <template>
-  <main>
-    <a class="logo" href="#">
-      <img alt="logo" src="@/assets/images/logo.svg" />
-    </a>
-    <div class="general-no-wallet-desktop">
-      <div class="g-wrapper">
-        <div class="general-no-wallet-desktop__wrapper">
-          <div class="general-no-wallet-desktop__wrapper-gif">
-            <video
-              autoplay="autoplay"
-              data-keepplaying="data-keepplaying"
-              loop="loop"
-              muted="muted"
-              src="@/assets/videos/welcome.webm"
-            ></video>
-          </div>
-          <h1>{{ $t('lblConnectWallet') }}</h1>
-          <p>
-            {{ $t('txtConnectWallet') }}
-          </p>
-          <a class="black-link" href="#" @click.prevent="connectMetaMask">
-            {{ metaMaskBtnText }}
-          </a>
-          <a class="black-link" href="#" @click.prevent="connectWalletConnect">
-            WalletConnect
-          </a>
-        </div>
+  <content-wrapper
+    page-container-class="general-no-wallet-desktop"
+    wrapper-class="general-no-wallet-desktop"
+  >
+    <div class="general-no-wallet-desktop__wrapper">
+      <div class="general-no-wallet-desktop__wrapper-gif">
+        <video
+          autoplay="autoplay"
+          data-keepplaying="data-keepplaying"
+          loop="loop"
+          muted="muted"
+          src="@/assets/videos/welcome.webm"
+        ></video>
       </div>
+      <h1>{{ $t('lblConnectWallet') }}</h1>
+      <p>
+        {{ $t('txtConnectWallet') }}
+      </p>
+      <a class="black-link" href="#" @click.prevent="connectMetaMask">
+        {{ metaMaskBtnText }}
+      </a>
+      <a class="black-link" href="#" @click.prevent="connectWalletConnect">
+        WalletConnect
+      </a>
     </div>
-  </main>
+  </content-wrapper>
 </template>
 
 <script lang="ts">
@@ -42,8 +38,13 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
 import { InitCallbacks } from '@/web3/callbacks';
 
+import { ContentWrapper } from '@/components/layout';
+
 export default Vue.extend({
   name: 'ConnectWallet',
+  components: {
+    ContentWrapper
+  },
   computed: {
     ...mapState('account', ['detectedProvider', 'addresses']),
     ...mapGetters('account', ['isWalletConnected']),

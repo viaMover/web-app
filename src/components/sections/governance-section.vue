@@ -13,6 +13,14 @@
     <template v-slot:bottom>
       <div v-if="lastProposal !== null" class="vote">
         <div class="vote__info">
+          <div class="loading">
+            <div class="hold left">
+              <div class="fill"></div>
+            </div>
+            <div class="hold right">
+              <div class="fill"></div>
+            </div>
+          </div>
           <div class="vote__info-icon"><span>🗳</span></div>
           <div class="vote__info-label">
             <p>{{ lastProposal.name }}</p>
@@ -31,7 +39,7 @@
           </router-link>
         </div>
       </div>
-      <div class="vote__link-all">
+      <div class="vote__link-all button-active">
         <router-link :to="{ name: 'governance-view-all' }">
           {{ $t('governance.btnSeeAll.simple') }}
         </router-link>

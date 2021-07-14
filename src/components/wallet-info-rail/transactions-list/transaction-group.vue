@@ -1,13 +1,11 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-info">
     <h3>{{ headingText }}</h3>
-    <div class="list">
-      <transaction-item
-        v-for="tx in transactions"
-        :key="tx.hash"
-        :transaction="tx"
-      ></transaction-item>
-    </div>
+    <transaction-item
+      v-for="tx in transactions"
+      :key="tx.hash"
+      :transaction="tx"
+    ></transaction-item>
   </div>
 </template>
 

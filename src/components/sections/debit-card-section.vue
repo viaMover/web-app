@@ -1,29 +1,21 @@
 <template>
   <heading-section
-    class="general-desktop__menu-wrapper-item"
-    has-expand-button
+    v-show="isInfoVisible"
+    class="general-desktop__menu-wrapper-order"
     :name="$t('debitCard.lblDebitCard')"
-    navigate-to-name="debit-card"
   >
-    <template v-slot:heading>
-      {{ $t('debitCard.lblDebitCard') }}
-    </template>
-
-    <div v-show="isInfoVisible" class="order">
-      <div class="order__info">
-        <div class="order__info-description">
-          <h2>{{ $t('debitCard.lblDebitCardHeading') }}</h2>
-          <p>{{ $t('debitCard.txtDebitCard') }}</p>
-        </div>
-        <div class="order__info-icon"><span>💳</span></div>
+    <div class="order__info">
+      <div class="order__info-description">
+        <h2>{{ $t('debitCard.lblDebitCardHeading') }}</h2>
+        <p>{{ $t('debitCard.txtDebitCard') }}</p>
       </div>
-
-      <div class="order__buttons">
-        <action-button class="black-link">
-          {{ $t('debitCard.btnOrderDebitCard') }}
-        </action-button>
-        <close-button @close="toggleInfo"></close-button>
-      </div>
+      <div class="order__info-icon"><span>💳</span></div>
+    </div>
+    <div class="order__buttons">
+      <action-button class="black-link">
+        {{ $t('debitCard.btnOrderDebitCard') }}
+      </action-button>
+      <close-button @close="toggleInfo"></close-button>
     </div>
   </heading-section>
 </template>

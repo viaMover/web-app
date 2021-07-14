@@ -1,21 +1,26 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('savings.lblSavings')">
-    <template v-slot:heading-buttons>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="savings-deposit"
+  <secondary-page has-heading-buttons>
+    <template v-slot:title>
+      <secondary-page-title
+        :icon="$t('savings.icon')"
+        :title="$t('savings.lblSavings')"
+        wrapper-class="savings__menu-wrapper-title"
       >
-        {{ $t('savings.btnDeposit.emoji') }}
-      </heading-nav-button>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="savings-withdraw"
-      >
-        {{ $t('savings.btnWithdraw.emoji') }}
-      </heading-nav-button>
+        <template v-slot:context-menu>
+          <context-button :popover-parent-id="popoverParentId">
+            <context-button-item
+              navigate-to-name="home"
+              :text="$t('savings.btnDeposit.emoji')"
+            />
+            <context-button-item
+              navigate-to-name="savings-withdraw"
+              :text="$t('savings.btnWithdraw.emoji')"
+            />
+          </context-button>
+        </template>
+      </secondary-page-title>
     </template>
 
-    <h2>{{ $t('savings.lblManageSavings') }}</h2>
     <savings-yearly-chart-wrapper />
     <savings-statements />
   </secondary-page>
@@ -23,22 +28,29 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
-import { SecondaryPage } from '@/components/layout';
-import { HeadingNavButton } from '@/components/buttons';
+import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import {
   SavingsYearlyChartWrapper,
   SavingsStatements
 } from '@/components/savings';
-import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsManage',
   components: {
+    ContextButton,
+    ContextButtonItem,
+    SecondaryPageTitle,
     SecondaryPage,
-    HeadingNavButton,
     SavingsYearlyChartWrapper,
     SavingsStatements
+  },
+  data() {
+    return {
+      popoverParentId: 'savings-manage-action-buttons'
+    };
   },
   computed: {
     ...mapGetters('account', ['hasActiveSavings'])

@@ -2,7 +2,8 @@
   <content-wrapper
     has-back-button
     has-left-rail
-    wrapper-class="general-desktop"
+    left-rail-inner-wrapper-class="page-sidebar-wrapper"
+    wrapper-class="savings"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -24,6 +25,8 @@ import {
   SavingsStats,
   SavingsEstimation
 } from '@/components/savings';
+
+import '@/styles/_savings.less';
 
 export default Vue.extend({
   name: 'SavingsRoot',

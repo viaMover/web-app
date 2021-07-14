@@ -1,36 +1,28 @@
 <template>
-  <div class="info info-bordered">
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblBalance', { month: monthName }) }}
-      </div>
-      <div class="value">{{ balanceNative }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblDeposits', { month: monthName }) }}
-      </div>
-      <div class="value">{{ depositsNative }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblWithdrawals', { month: monthName }) }}
-      </div>
-      <div class="value">{{ withdrawalsNative }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblSavedFees') }}
-      </div>
-      <div class="value">{{ savedFeesNative }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblPayoutsToTreasury') }}
-      </div>
-      <div class="value">{{ payoutsToTreasuryNative }}</div>
-    </div>
-  </div>
+  <statement-list wrapper-class="savings-statements__wrapper-list">
+    <statement-list-item
+      :description="$t('savings.statement.lblBalance', { month: monthName })"
+      :value="balanceNative"
+    />
+    <statement-list-item
+      :description="$t('savings.statement.lblDeposits', { month: monthName })"
+      :value="depositsNative"
+    />
+    <statement-list-item
+      :description="
+        $t('savings.statement.lblWithdrawals', { month: monthName })
+      "
+      :value="withdrawalsNative"
+    />
+    <statement-list-item
+      :description="$t('savings.statement.lblSavedFees')"
+      :value="savedFeesNative"
+    />
+    <statement-list-item
+      :description="$t('savings.statement.lblPayoutsToTreasury')"
+      :value="payoutsToTreasuryNative"
+    />
+  </statement-list>
 </template>
 
 <script lang="ts">
@@ -40,8 +32,14 @@ import { mapState } from 'vuex';
 import { SavingsReceipt } from '@/services/mover';
 import { fromWei } from '@/utils/bigmath';
 
+import { StatementList, StatementListItem } from '@/components/statement-list';
+
 export default Vue.extend({
   name: 'SavingsMonthStatements',
+  components: {
+    StatementList,
+    StatementListItem
+  },
   props: {
     pageDate: {
       type: Object as PropType<dayjs.Dayjs>,

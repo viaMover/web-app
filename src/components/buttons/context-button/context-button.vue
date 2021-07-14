@@ -1,14 +1,15 @@
 <template>
-  <action-button
-    button-class="context-button"
-    :data-popover-parent-id="popoverParentId"
-    @button-click="togglePopover"
-  >
-    <img alt="context button icon" src="@/assets/images/context-button.svg" />
+  <div class="button burger-menu">
+    <action-button
+      :data-popover-parent-id="popoverParentId"
+      @button-click="togglePopover"
+    >
+      <img alt="context button icon" src="@/assets/images/context-button.svg" />
+    </action-button>
     <popover :parent-id="popoverParentId" :popover-id="popoverId">
       <slot></slot>
     </popover>
-  </action-button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,8 +19,10 @@ import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Popover } from '@/components/modals';
 import ActionButton from '@/components/buttons/action-button.vue';
 
+import '@/styles/_burger.less';
+
 export default Vue.extend({
-  name: 'context-button',
+  name: 'ContextButton',
   components: { ActionButton, Popover },
   props: {
     popoverParentId: {
