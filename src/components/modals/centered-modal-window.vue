@@ -8,25 +8,29 @@
     >
       <toggle-action
         v-cloak
-        class="ui dimmer"
+        class="popup-bg popup-bg-active"
+        :class="dimmerClass"
         :toggle-group="modalId"
         :toggle-id="modalId"
-      />
+      >
+        <div class="button-active" :class="closeButtonClass">
+          <img alt="close icon" src="@/assets/images/cross.svg" />
+        </div>
+      </toggle-action>
     </toggle-target>
 
     <toggle-target
       v-cloak
-      class="ui center modal"
-      :class="{ tiny: isTiny }"
+      class="modal__popup modal__wrapper"
       :open-by-default="isActive"
       :toggle-group="modalId"
       :toggle-id="modalId"
     >
-      <div class="content">
-        <div class="ui header">
-          <span v-if="headerLabel">
+      <div class="modal__wrapper-info">
+        <div>
+          <h3 v-if="headerLabel" class="modal__wrapper-info-title">
             {{ headerLabel }}
-          </span>
+          </h3>
           <span v-else>&nbsp;</span>
           <div class="right floated icon">
             <toggle-action :toggle-group="modalId" :toggle-id="modalId">
@@ -60,9 +64,9 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
-    isTiny: {
-      type: Boolean,
-      default: true
+    modalClass: {
+      type: String,
+      required: true
     },
     headerLabel: {
       type: String,
@@ -72,38 +76,14 @@ export default Vue.extend({
       type: String,
       default: ''
     }
+  },
+  computed: {
+    closeButtonClass(): string {
+      return `${this.modalClass}-close`;
+    },
+    dimmerClass(): string {
+      return `${this.modalClass}-bg`;
+    }
   }
 });
 </script>
-
-<style scoped lang="less">
-.ui.dimmer {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow-y: hidden;
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-}
-
-.ui.modal {
-  position: fixed;
-  left: auto;
-  top: 50%;
-  text-align: left;
-  overflow-y: auto;
-  transform-origin: 50% 0;
-
-  &.center {
-    top: 20%;
-  }
-}
-
-.content {
-  background-color: white;
-  padding: 1rem;
-  min-width: 50vw;
-  min-height: 50vh;
-}
-</style>

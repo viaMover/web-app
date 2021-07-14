@@ -15,7 +15,7 @@ type EtherScanEthPriceData = {
   ethbtc_timestamp: string;
 };
 
-export const geEthPrice = async (
+export const getEthPrice = async (
   network = Network.mainnet
 ): Promise<Result<string, string>> => {
   const endpoint = apiEndpoints.get(network);
@@ -42,7 +42,10 @@ export const geEthPrice = async (
         return { isError: true, error: 'RateReached' };
       }
 
-      return { isError: true, error: `Service error: ${resp.message}` };
+      return {
+        isError: true,
+        error: `Service error:  ${JSON.stringify(resp)}`
+      };
     }
 
     return {

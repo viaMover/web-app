@@ -1,8 +1,9 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
-    has-close-button
+    has-back-button
     has-left-rail
+    left-rail-inner-wrapper-class="page-sidebar-wrapper"
+    wrapper-class="savings"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -25,6 +26,8 @@ import {
   SavingsEstimation
 } from '@/components/savings';
 
+import '@/styles/_savings.less';
+
 export default Vue.extend({
   name: 'SavingsRoot',
   components: {
@@ -32,11 +35,6 @@ export default Vue.extend({
     SavingsOverview,
     SavingsStats,
     SavingsEstimation
-  },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    }
   },
   methods: {
     handleClose(): void {

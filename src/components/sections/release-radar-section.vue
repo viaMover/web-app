@@ -1,6 +1,7 @@
 <template>
   <heading-section
     class="links__item"
+    container-class="links__item-info"
     has-expand-button
     :name="$t('releaseRadar.lblReleaseRadar')"
     navigate-to-name="release-radar"

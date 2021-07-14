@@ -15,10 +15,10 @@
       :title="$t('governance.lblProposal')"
     >
       <template v-if="isEnoughVotingPower" v-slot:heading-buttons>
-        <action-button button-class="transparent" @button-click="vote(true)">
+        <action-button @button-click="vote(true)">
           {{ $t('governance.btnVoteFor.emoji') }}
         </action-button>
-        <action-button button-class="transparent" @button-click="vote(false)">
+        <action-button @button-click="vote(false)">
           {{ $t('governance.btnVoteAgainst.emoji') }}
         </action-button>
       </template>

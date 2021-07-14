@@ -1,13 +1,33 @@
 <template>
-  <div ref="popper" class="popover" :class="{ active: isVisible }">
-    <slot></slot>
-    <div v-if="hasArrow" class="arrow" data-popper-arrow />
+  <div>
+    <div
+      class="burger-menu__popup-bg"
+      :class="{ 'burger-menu__popup-bg-active': isVisible }"
+      @click.prevent="toggle"
+    />
+    <div
+      ref="popper"
+      class="burger-menu__popup"
+      :class="{ 'burger-menu__popup-active': isVisible }"
+    >
+      <div class="burger-menu__wrapper">
+        <div class="burger-menu__wrapper-info">
+          <ul>
+            <slot></slot>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { createPopper, Instance as Popper, Placement } from '@popperjs/core';
+import {
+  createPopper,
+  Instance as Popper
+} from '@popperjs/core/lib/popper-lite';
+import { Placement } from '@popperjs/core/lib/enums';
 import { subToggle, unsubToggle } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
@@ -21,13 +41,9 @@ export default Vue.extend({
       type: String,
       required: true
     },
-    hasArrow: {
-      type: Boolean,
-      default: false
-    },
     placement: {
       type: String as PropType<Placement>,
-      default: 'bottom'
+      default: 'bottom-end'
     }
   },
   data() {
@@ -38,7 +54,7 @@ export default Vue.extend({
   },
   mounted() {
     const parentEl = document.querySelector(
-      `[data-popover-parent-id=${this.parentId}]`
+      `[data-popover-parent-id="${this.parentId}"]`
     );
     if (!parentEl) {
       return;
@@ -47,7 +63,15 @@ export default Vue.extend({
     const thisElem = this.$refs.popper as HTMLElement;
 
     this.popperInstance = createPopper(parentEl, thisElem, {
-      placement: this.placement as Placement
+      placement: this.placement as Placement,
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [10, 20]
+          }
+        }
+      ]
     });
 
     subToggle(this.popoverId, this.toggle);
@@ -65,53 +89,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style lang="less" scoped>
-.popover {
-  background: #333;
-  color: white;
-  font-weight: bold;
-  padding: 4px 8px;
-  font-size: 13px;
-  border-radius: 4px;
-  display: none;
-
-  .arrow,
-  .arrow::before {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: inherit;
-  }
-
-  .arrow {
-    visibility: hidden;
-  }
-
-  .arrow::before {
-    visibility: visible;
-    content: '';
-    transform: rotate(45deg);
-  }
-
-  &[data-popper-placement^='top'] > .arrow {
-    bottom: -4px;
-  }
-
-  &[data-popper-placement^='bottom'] > .arrow {
-    top: -4px;
-  }
-
-  &[data-popper-placement^='left'] > .arrow {
-    right: -4px;
-  }
-
-  &[data-popper-placement^='right'] > .arrow {
-    left: -4px;
-  }
-
-  &.active {
-    display: block;
-  }
-}
-</style>

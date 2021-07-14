@@ -1,4 +1,4 @@
-import { SortAndDedupedTransactions } from './utils/transactions';
+import { SortAndDedupedTransactions } from '../utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
 import {
@@ -6,14 +6,21 @@ import {
   AccountData,
   ProviderData,
   ChartPair
-} from './types';
+} from '../types';
 import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
-import { SortAndDedupedTokens } from './utils/tokens';
+import { SortAndDedupedTokens } from '../utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
+import { SavingsInfo, SavingsReceipt } from '@/services/mover';
 
 export default {
   setEthPrice(state, ethPrice: string): void {
     state.ethPrice = ethPrice;
+  },
+  setMovePriceInWeth(state, movePriceInWeth: string): void {
+    state.movePriceInWeth = movePriceInWeth;
+  },
+  setUsdcPriceInWeth(state, usdcPriceInWeth: string): void {
+    state.usdcPriceInWeth = usdcPriceInWeth;
   },
   setExplorer(state, explorer: Explorer): void {
     state.explorer = explorer;
@@ -101,5 +108,29 @@ export default {
   },
   toggleIsDebitCardSectionVisible(state): void {
     state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
+  },
+  setIsSavingsInfoLoading(state, isLoading: boolean): void {
+    state.isSavingsInfoLoading = isLoading;
+  },
+  setSavingsInfoError(state, error: string | undefined): void {
+    state.savingsInfoError = error;
+  },
+  setSavingsInfo(state, info: SavingsInfo | undefined): void {
+    state.savingsInfo = info;
+  },
+  setIsSavingsReceiptLoading(state, isLoading: boolean): void {
+    state.isSavingsReceiptLoading = isLoading;
+  },
+  setSavingsReceiptError(state, error: string | undefined): void {
+    state.savingsReceiptError = error;
+  },
+  setSavingsReceipt(state, receipt: SavingsReceipt): void {
+    state.savingsReceipt = receipt;
+  },
+  setSavingsAPY(state, apy: string): void {
+    state.savingsAPY = apy;
+  },
+  setSavingsDPY(state, dpy: string): void {
+    state.savingsDPY = dpy;
   }
 } as MutationTree<AccountStoreState>;

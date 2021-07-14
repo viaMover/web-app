@@ -558,7 +558,7 @@ $(document).ready(function() {
 		})
 	}
 	redeemPopup();
-
+  
 	function hideByClickEscButton() {
 		let transactionPopup = $('.transaction__popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 

@@ -1,32 +1,17 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-user">
     <div class="user user1"><span class="icon">🦁</span></div>
-    <button type="button">
+    <button class="button-active" type="button">
       <span>{{ currentAddressText }}</span>
       <img
         :alt="$t('txtChangeWalletAlt')"
         src="@/assets/images/arrow-down.svg"
       />
     </button>
-    <!-- <div class="input">
-      <label for="wallet_address">{{ $t('lblWallet') }}</label>
-      <select
-        id="wallet_address"
-        :value="currentAddress"
-        @change="handleAddressChanged"
-      >
-        <option disabled :value="null">{{ $t('lblConnectWallet') }}</option>
-        <option
-          v-for="address in accountAddresses"
-          :key="address"
-          :value="address"
-        >
-          {{ address }}
-        </option>
-      </select>
-    </div> -->
-    <button class="status" @click.prevent="disconnectWallet">
-      {{ $t('lblDisconnect') }}
+    <button @click.prevent="disconnectWallet">
+      <span class="status">
+        {{ $t('lblDisconnect') }}
+      </span>
     </button>
   </div>
 </template>

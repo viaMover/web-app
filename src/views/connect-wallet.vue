@@ -1,34 +1,30 @@
 <template>
-  <main>
-    <a class="logo" href="#">
-      <img alt="logo" src="@/assets/images/logo.svg" />
-    </a>
-    <div class="general-no-wallet-desktop">
-      <div class="g-wrapper">
-        <div class="general-no-wallet-desktop__wrapper">
-          <div class="general-no-wallet-desktop__wrapper-gif">
-            <video
-              autoplay="autoplay"
-              data-keepplaying="data-keepplaying"
-              loop="loop"
-              muted="muted"
-              src="@/assets/videos/welcome.webm"
-            ></video>
-          </div>
-          <h1>{{ $t('lblConnectWallet') }}</h1>
-          <p>
-            {{ $t('txtConnectWallet') }}
-          </p>
-          <a class="black-link" href="#" @click.prevent="connectMetaMask">
-            {{ metaMaskBtnText }}
-          </a>
-          <a class="black-link" href="#" @click.prevent="connectWalletConnect">
-            WalletConnect
-          </a>
-        </div>
+  <content-wrapper
+    page-container-class="general-no-wallet-desktop"
+    wrapper-class="general-no-wallet-desktop"
+  >
+    <div class="general-no-wallet-desktop__wrapper">
+      <div class="general-no-wallet-desktop__wrapper-gif">
+        <video
+          autoplay="autoplay"
+          data-keepplaying="data-keepplaying"
+          loop="loop"
+          muted="muted"
+          src="@/assets/videos/welcome.webm"
+        ></video>
       </div>
+      <h1>{{ $t('lblConnectWallet') }}</h1>
+      <p>
+        {{ $t('txtConnectWallet') }}
+      </p>
+      <a class="black-link" href="#" @click.prevent="connectMetaMask">
+        {{ metaMaskBtnText }}
+      </a>
+      <a class="black-link" href="#" @click.prevent="connectWalletConnect">
+        WalletConnect
+      </a>
     </div>
-  </main>
+  </content-wrapper>
 </template>
 
 <script lang="ts">
@@ -42,10 +38,15 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
 import { InitCallbacks } from '@/web3/callbacks';
 
+import { ContentWrapper } from '@/components/layout';
+
 export default Vue.extend({
-  name: 'ImportWallet',
+  name: 'ConnectWallet',
+  components: {
+    ContentWrapper
+  },
   computed: {
-    ...mapState('account', ['detectedProvider']),
+    ...mapState('account', ['detectedProvider', 'addresses']),
     ...mapGetters('account', ['isWalletConnected']),
     metaMaskBtnText(): string {
       return this.detectedProvider ? 'Connect MetaMask' : 'Install MetaMask';
@@ -76,7 +77,7 @@ export default Vue.extend({
         infuraId: 'eac548bd478143d09d2c090d09251bf1'
       });
       await provider.enable();
-      const providerWithCb = await InitCallbacks(provider);
+      const providerWithCb = await InitCallbacks(provider, this.addresses);
       //  Enable session (triggers QR Code modal)
       this.initWallet({
         provider: providerWithCb.provider,
@@ -87,7 +88,10 @@ export default Vue.extend({
     },
     async connectMetaMask(): Promise<void> {
       if (this.detectedProvider) {
-        const providerWithCb = await InitCallbacks(this.detectedProvider);
+        const providerWithCb = await InitCallbacks(
+          this.detectedProvider,
+          this.addresses
+        );
         this.initWallet({
           provider: providerWithCb.provider,
           providerName: 'MetaMask',

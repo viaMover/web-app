@@ -5,13 +5,13 @@
     </template>
 
     <header-balance />
+    <debit-card-section />
     <div class="general-desktop__menu-wrapper-item">
       <div class="general-desktop__menu-wrapper-item-links">
         <release-radar-section />
         <swaps-section />
       </div>
     </div>
-    <debit-card-section />
     <savings-section />
     <treasury-section />
     <governance-section />

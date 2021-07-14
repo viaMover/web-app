@@ -1,3 +1,4 @@
+import Web3 from 'web3';
 import { GetGasErrors } from '@/wallet/gas';
 import { Result, isError } from './../responses';
 import { Network } from '@/utils/networkTypes';
@@ -44,7 +45,7 @@ export const getGasPrices = async (
         return { isError: true, error: 'RateReached' };
       }
 
-      return { isError: true, error: `Service error: ${resp.message}` };
+      return { isError: true, error: `Service error: ${JSON.stringify(resp)}` };
     }
 
     const fastGasSpeed = await getGasSpeedWithoutErr(
@@ -109,7 +110,10 @@ export const getGasSpeed = async (
         return { isError: true, error: 'RateReached' };
       }
 
-      return { isError: true, error: `Service error: ${resp.message}` };
+      return {
+        isError: true,
+        error: `Service error:  ${JSON.stringify(resp)}`
+      };
     }
 
     return {
@@ -122,10 +126,11 @@ export const getGasSpeed = async (
 };
 
 export const getGasSpeedWithoutErr = async (
-  gasPrice: string,
+  gasPriceInGwei: string,
   network = Network.mainnet
 ): Promise<number> => {
-  const res = await getGasSpeed(gasPrice, network);
+  const gasPriceInWei = Web3.utils.toWei(gasPriceInGwei, 'Gwei');
+  const res = await getGasSpeed(gasPriceInWei, network);
   if (isError<number, GetGasErrors>(res)) {
     console.log(res.error);
     return 0;

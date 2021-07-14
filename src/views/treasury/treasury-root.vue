@@ -3,6 +3,7 @@
     :has-back-button="hasBackButton"
     has-close-button
     has-left-rail
+    left-rail-inner-wrapper-class="page-sidebar-wrapper"
     @close="handleClose"
   >
     <template v-slot:left-rail>

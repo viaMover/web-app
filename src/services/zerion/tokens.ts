@@ -13,7 +13,7 @@ export const mapZerionTokens = (
       logo: t.asset.icon_url,
       name: t.asset.name,
       symbol: t.asset.symbol,
-      priceUSD: t.asset.price?.value ?? '0'
+      priceUSD: t.asset.price?.value ? String(t.asset.price?.value) : '0'
     } as TokenWithBalance;
   });
 

@@ -1,3 +1,4 @@
+import { SavingsInfo, SavingsReceipt } from '@/services/mover';
 import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
@@ -40,6 +41,8 @@ export type AccountStoreState = {
   nativeCurrency: 'usd';
   // main prices in native currency
   ethPrice: undefined | string;
+  movePriceInWeth: undefined | string;
+  usdcPriceInWeth: undefined | string;
 
   // explorer
   explorer: undefined | Explorer;
@@ -49,4 +52,21 @@ export type AccountStoreState = {
   gasPrices: GasData | undefined;
   gasUpdating: boolean;
   isDebitCardSectionVisible: boolean;
+
+  isSavingsInfoLoading: boolean;
+  savingsInfo: SavingsInfo | undefined;
+  savingsInfoError: string | undefined;
+
+  isSavingsReceiptLoading: boolean;
+  savingsReceipt: SavingsReceipt | undefined;
+  savingsReceiptError: string | undefined;
+
+  savingsAPY: string | undefined;
+  savingsDPY: string | undefined;
+
+  // Treasury
+  treasuryBalanceMove: string | undefined;
+  treasuryBalanceLP: string | undefined;
+  treasuryBonus: string | undefined;
+  treasuryAPY: string | undefined;
 };

@@ -1,79 +1,118 @@
 <template>
-  <div class="info info-bordered">
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblBalance', { month: monthName }) }}
-      </div>
-      <div class="value">{{ balance }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblDeposits', { month: monthName }) }}
-      </div>
-      <div class="value">{{ deposits }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblWithdrawals', { month: monthName }) }}
-      </div>
-      <div class="value">{{ withdrawals }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblSavedFees') }}
-      </div>
-      <div class="value">{{ savedFees }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('savings.statement.lblPayoutsToTreasury') }}
-      </div>
-      <div class="value">{{ payoutsToTreasury }}</div>
-    </div>
-  </div>
+  <statement-list wrapper-class="savings-statements__wrapper-list">
+    <statement-list-item
+      :description="$t('savings.statement.lblBalance', { month: monthName })"
+      :value="balanceNative"
+    />
+    <statement-list-item
+      :description="$t('savings.statement.lblDeposits', { month: monthName })"
+      :value="depositsNative"
+    />
+    <statement-list-item
+      :description="
+        $t('savings.statement.lblWithdrawals', { month: monthName })
+      "
+      :value="withdrawalsNative"
+    />
+    <statement-list-item
+      :description="$t('savings.statement.lblSavedFees')"
+      :value="savedFeesNative"
+    />
+    <statement-list-item
+      :description="$t('savings.statement.lblPayoutsToTreasury')"
+      :value="payoutsToTreasuryNative"
+    />
+  </statement-list>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import dayjs from 'dayjs';
+import { mapState } from 'vuex';
+import { SavingsReceipt } from '@/services/mover';
+import { fromWei } from '@/utils/bigmath';
+
+import { StatementList, StatementListItem } from '@/components/statement-list';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',
-  data() {
-    return {
-      balance: 0,
-      deposits: 0,
-      withdrawals: 0,
-      savedFees: 0,
-      payoutsToTreasury: 0
-    };
+  components: {
+    StatementList,
+    StatementListItem
   },
-  computed: {
-    monthName(): string {
-      try {
-        const tsFrom = Number(this.$route.query.tsFrom);
-
-        return dayjs.unix(tsFrom).format('MMMM');
-      } catch {
-        return '';
-      }
+  props: {
+    pageDate: {
+      type: Object as PropType<dayjs.Dayjs>,
+      required: true
     }
   },
-  methods: {
-    formatItemHeader(timestamp: number): string {
-      return dayjs.unix(timestamp).format('MMMM YYYY');
+  computed: {
+    ...mapState('account', ['savingsReceipt', 'isSavingsReceiptLoading']),
+    monthName(): string {
+      return this.pageDate.format('MMMM');
     },
-    formatItemRanges(timestampFrom: number, timestampTo: number): string {
-      const dateFrom = dayjs.unix(timestampFrom);
-      const dateTo = dayjs.unix(timestampTo);
-
-      if (dateFrom.year() !== dateTo.year()) {
-        return `${dateFrom.format('MMM DD, YYYY')} – ${dateTo.format(
-          'MMM DD, YYYY'
-        )}`;
+    balanceNative(): string {
+      if (this.isSavingsReceiptLoading) {
+        return 'loading...';
       }
 
-      return `${dateFrom.format('MMM DD')} – ${dateTo.format('MMM DD, YYYY')}`;
+      if (this.savingsReceipt === undefined) {
+        return '0';
+      }
+
+      const { endOfMonthBalance } = this.savingsReceipt as SavingsReceipt;
+
+      return fromWei(endOfMonthBalance, 6);
+    },
+    depositsNative(): string {
+      if (this.isSavingsReceiptLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsReceipt === undefined) {
+        return '0';
+      }
+
+      const { totalDeposits } = this.savingsReceipt as SavingsReceipt;
+
+      return fromWei(totalDeposits, 6);
+    },
+    withdrawalsNative(): string {
+      if (this.isSavingsReceiptLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsReceipt === undefined) {
+        return '0';
+      }
+
+      const { totalWithdrawals } = this.savingsReceipt as SavingsReceipt;
+
+      return fromWei(-totalWithdrawals, 6);
+    },
+    savedFeesNative(): string {
+      if (this.isSavingsReceiptLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsReceipt === undefined) {
+        return '0';
+      }
+
+      // TODO: compute
+      return '0';
+    },
+    payoutsToTreasuryNative(): string {
+      if (this.isSavingsReceiptLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsReceipt === undefined) {
+        return '0';
+      }
+
+      // TODO: compute
+      return '0';
     }
   }
 });

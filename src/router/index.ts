@@ -14,7 +14,10 @@ const routes: Array<RouteConfig> = [
     path: '/connect-wallet',
     name: 'connect-wallet',
     component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue')
+      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue'),
+    meta: {
+      skipPreloadScreen: true
+    }
   },
   {
     path: '/release-radar',
@@ -36,7 +39,15 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        path: 'month-statistics',
+        path: 'empty',
+        name: 'savings-empty',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings" */ '@/views/savings/savings-empty.vue'
+          )
+      },
+      {
+        path: 'month-statistics/:year/:month',
         name: 'savings-month-stats',
         component: () =>
           import(
@@ -234,6 +245,21 @@ const routes: Array<RouteConfig> = [
     name: 'transaction',
     component: () =>
       import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
+  },
+  {
+    path: '/404',
+    name: 'not-found-route',
+    component: () =>
+      import(/* webpackChunkName: "home" */ '@/views/view-404.vue'),
+    meta: {
+      skipPreloadScreen: true
+    }
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'not-found-route'
+    }
   }
 ];
 
@@ -250,9 +276,25 @@ router.beforeEach((to, from, next) => {
     .catch(() => next(false));
 });
 
+router.beforeResolve((to, from, next) => {
+  if (!to.meta.pageTitleTranslationKey) {
+    document.title = router.app.$t('lblPageTitleDefault') as string;
+    next();
+    return;
+  }
+
+  if (!router.app.$te(to.meta.pageTitleTranslationKey)) {
+    next();
+    return;
+  }
+
+  document.title = router.app.$t(to.meta.pageTitleTranslationKey) as string;
+  next();
+});
+
 // global 'require connected wallet' guard
 router.beforeResolve((to, from, next) => {
-  if (to.name === 'connect-wallet') {
+  if (['connect-wallet', 'not-found-route'].includes(to.name ?? '')) {
     next();
     return;
   }

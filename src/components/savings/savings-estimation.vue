@@ -1,40 +1,78 @@
 <template>
-  <div class="overview savings-overview">
-    <h4>{{ $t('savings.lblSavingsEstimation') }}</h4>
-    <div class="info info-bordered">
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsTomorrow')
-        }}</span>
-        <span class="value">{{ estimatedEarningsTomorrow }}</span>
-      </div>
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsNextMonth')
-        }}</span>
-        <span class="value">{{ estimatedEarningsNextMonth }}%</span>
-      </div>
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsAnnually')
-        }}</span>
-        <span class="value">{{ estimatedEarningsAnnually }}%</span>
-      </div>
-    </div>
-  </div>
+  <left-rail-section :section-name="$t('savings.lblSavingsEstimation')">
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsTomorrow')"
+      :value="estimatedEarningsTomorrowNative"
+    />
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsNextMonth')"
+      :value="estimatedEarningsNextMonthNative"
+    />
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsAnnually')"
+      :value="estimatedEarningsAnnuallyNative"
+    />
+  </left-rail-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+import BigNumber from 'bignumber.js';
+
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
 export default Vue.extend({
   name: 'SavingsEstimation',
-  data() {
-    return {
-      estimatedEarningsTomorrow: 0,
-      estimatedEarningsNextMonth: 0,
-      estimatedEarningsAnnually: 0
-    };
+  components: { LeftRailSection, LeftRailSectionItem },
+  computed: {
+    ...mapState('account', [
+      'isSavingsInfoLoading',
+      'savingsAPY',
+      'savingsDPY'
+    ]),
+    ...mapGetters('account', ['savingsInfoBalanceNative']),
+    estimatedEarningsTomorrowNative(): string {
+      if (this.isSavingsInfoLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsDPY === undefined) {
+        return '0';
+      }
+
+      return new BigNumber(this.savingsInfoBalanceNative)
+        .multipliedBy(new BigNumber(this.savingsDPY).dividedBy(100))
+        .toFixed(2);
+    },
+    estimatedEarningsNextMonthNative(): string {
+      if (this.isSavingsInfoLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsDPY === undefined) {
+        return '0';
+      }
+
+      return new BigNumber(this.savingsInfoBalanceNative)
+        .multipliedBy(
+          new BigNumber(this.savingsDPY).dividedBy(100).multipliedBy(30)
+        )
+        .toFixed(2);
+    },
+    estimatedEarningsAnnuallyNative(): string {
+      if (this.isSavingsInfoLoading) {
+        return 'loading...';
+      }
+
+      if (this.savingsDPY === undefined) {
+        return '0';
+      }
+
+      return new BigNumber(this.savingsInfoBalanceNative)
+        .multipliedBy(new BigNumber(this.savingsAPY).dividedBy(100))
+        .toFixed(2);
+    }
   }
 });
 </script>

@@ -1,12 +1,17 @@
 <template>
-  <div :class="[wrapperClass]">
-    <left-rail v-if="hasLeftRail" :container-class="leftRailClass">
+  <div class="info__wrapper">
+    <left-rail
+      v-if="hasLeftRail"
+      :container-class="leftRailClass"
+      :inner-wrapper-class="leftRailInnerWrapperClass"
+      :show-logo="!hasBackButton"
+    >
       <slot name="left-rail"></slot>
+      <back-button v-if="hasBackButton" @close="handleClose" />
+      <close-button v-if="hasCloseButton" @close="handleClose" />
     </left-rail>
 
-    <page-container :container-class="pageContainerClass">
-      <close-button v-if="hasCloseButton" @close="handleClose" />
-      <back-button v-if="hasBackButton" @close="handleClose" />
+    <page-container :container-class="pageContainerClassDerived">
       <slot></slot>
     </page-container>
   </div>
@@ -15,7 +20,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import LeftRail from './left-rail.vue';
+import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
 import { BackButton, CloseButton } from '@/components/buttons';
 
@@ -43,14 +48,26 @@ export default Vue.extend({
     wrapperClass: {
       type: String,
       default: ''
+    },
+    leftRailInnerWrapperClass: {
+      type: String,
+      default: ''
+    },
+    pageContainerClass: {
+      type: String,
+      default: ''
     }
   },
   computed: {
     leftRailClass(): string {
       return this.wrapperClass + '__sidebar';
     },
-    pageContainerClass(): string {
-      return this.wrapperClass + '__menu';
+    pageContainerClassDerived(): string {
+      if (!this.pageContainerClass) {
+        return this.wrapperClass + '__menu';
+      }
+
+      return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
     }
   },
   methods: {

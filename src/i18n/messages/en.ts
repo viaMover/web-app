@@ -1,4 +1,5 @@
 export default {
+  lblPageTitleDefault: 'Mover App',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
   headingBalance: 'Your wallet balance',
@@ -12,14 +13,14 @@ export default {
   lblConnectWalletTransactionHistory: '@:lblConnectWallet to see history',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
-    lblReleaseRadarNewTokensToday: '{amount} new tokens today'
+    lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
   },
   swaps: {
     lblSwaps: 'Swaps',
     lblSwapFrom: '@:swaps.lblSwapPrefix from',
     lblSwapPrefix: 'Swap',
     lblSwapTo: '@:swaps.lblSwapPrefix to',
-    lblChooseToken: 'Choose Token ▼',
+    lblChooseToken: 'Choose Token',
     lblMinimumReceived: 'Minimum received',
     lblRate: 'Rate',
     lblEstimatedNetworkFee: 'Estimated network fee',
@@ -39,18 +40,23 @@ export default {
     btnOrderDebitCard: 'Order the card'
   },
   savings: {
+    icon: '💰',
     lblSavings: 'Savings',
+    lblNothingInSavings: 'Nothing in @:savings.lblSavings',
+    txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
     lblSavingsEarnedTodaySection: 'You earned {amount} today',
     lblSavingsPrefix: 'Savings',
+    lblSavingsBalance: '@:savings.lblSavingsPrefix Balance',
+    lblSavingsStatements: '@:savings.lblSavingsPrefix Statements',
     lblManageSavings: 'Manage @:savings.lblSavingsPrefix',
-    lblSavingsOverview: '@:savings.lblSavingsPrefix overview',
+    lblSavingsOverview: '@:savings.lblSavingsPrefix Overview',
     lblDepositedAssets: 'Deposited assets',
     lblCurrentVariableAPY: 'Current variable APY',
     lbl30DayAverageAPY: '30-day average APY',
     lblTotalAssetsUnderManagement: 'Total assets under management',
     lblSavingsStats: '@:savings.lblSavingsPrefix Stats',
-    lblSavingsEarnedToday: 'Earned today',
+    lblEarnedToday: 'Earned today',
     lblEarnedThisMonth: 'Earned this month',
     lblEarnedInTotal: 'Earned in total',
     lblSavingsEstimation: '@:savings.lblSavingsPrefix Estimation',
@@ -70,8 +76,8 @@ export default {
     },
     lblEarnedRelativeMonthlyChange: '{amount} earned this month',
     lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
-    lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
-      '{amount} earned in {date}',
+    lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
+      'Yield earned in {date}',
     lblInProgress: 'In progress',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
@@ -111,6 +117,7 @@ export default {
     btnEnterAmount: 'Enter amount'
   },
   treasury: {
+    icon: '🐽',
     lblTreasuryHeader: '{amount} @:treasury.lblTreasuryBonuses',
     lblSmartTreasury: 'Smart Treasury',
     lblTreasuryEarnedToday: '@:treasury.lblTreasury brought you {amount} today',
@@ -376,7 +383,7 @@ export default {
   asset: {
     txtAlt: '{name} icon',
     txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: '➕ Use Max'
+    lblSelectMax: 'Use Max'
   },
   transaction: {
     lblState: {

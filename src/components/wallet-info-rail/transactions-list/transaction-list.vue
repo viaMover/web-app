@@ -10,13 +10,6 @@
       :heading-text="formatDate(txGroup.timeStamp)"
       :transactions="txGroup.transactions"
     />
-    <!-- component with dummy data -->
-    <transaction-group
-      v-for="txGroup in dummyTransactionData"
-      :key="txGroup.date"
-      :heading-text="formatDate(txGroup.timeStamp)"
-      :transactions="txGroup.transactions"
-    />
   </div>
 </template>
 

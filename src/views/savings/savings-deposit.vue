@@ -1,5 +1,5 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('savings.lblSavings')">
+  <secondary-page :title="$t('savings.lblSavings')">
     <h2>{{ $t('savings.deposit.lblDepositInSavings') }}</h2>
     <div class="description">
       {{ $t('savings.deposit.txtDepositDescription') }}

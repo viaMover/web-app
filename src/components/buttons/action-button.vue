@@ -1,10 +1,10 @@
 <template>
-  <div :class="[buttonClass]" @click.prevent.stop="handleClick">
+  <button :class="[buttonClass]" @click.prevent.stop="handleClick">
     <template v-if="text">
       {{ text }}
     </template>
     <slot></slot>
-  </div>
+  </button>
 </template>
 
 <script lang="ts">
@@ -21,7 +21,7 @@ export default Vue.extend({
     buttonClass: {
       type: String,
       required: false,
-      default: ''
+      default: 'button'
     }
   },
   methods: {
