@@ -1,9 +1,9 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
-    has-close-button
+    has-back-button
     has-left-rail
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
+    wrapper-class="smart-treasury"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -26,6 +26,8 @@ import {
   TreasuryReservedAssets
 } from '@/components/treasury';
 
+import '@/styles/_treasury.less';
+
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
@@ -33,11 +35,6 @@ export default Vue.extend({
     TreasuryOverview,
     TreasuryStats,
     TreasuryReservedAssets
-  },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    }
   },
   methods: {
     handleClose(): void {

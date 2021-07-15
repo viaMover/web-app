@@ -1,6 +1,7 @@
 <template>
   <heading-section
-    class="links__item"
+    :class="ownClass"
+    :container-class="innerContainerClass"
     has-expand-button
     :name="$t('swaps.lblSwaps')"
     use-click-event
@@ -26,6 +27,16 @@ export default Vue.extend({
   name: 'SwapsSection',
   components: {
     HeadingSection
+  },
+  props: {
+    ownClass: {
+      type: String,
+      default: 'links__item'
+    },
+    innerContainerClass: {
+      type: String,
+      default: 'link__item-info'
+    }
   },
   methods: {
     handleClick(): void {

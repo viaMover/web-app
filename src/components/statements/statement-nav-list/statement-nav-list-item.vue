@@ -1,5 +1,5 @@
 <template>
-  <div class="savings__menu-wrapper-statements-item">
+  <div>
     <div class="item__info">
       <div class="loading">
         <div class="hold left">
@@ -10,23 +10,23 @@
         </div>
       </div>
       <div class="item__info-icon">
-        <span>{{ $t('savings.icon') }}</span>
+        <span>{{ icon }}</span>
       </div>
       <div class="item__info-label">
         <p>{{ headerText }}</p>
         <span v-if="!isInProgress">{{ itemText }}</span>
-        <span v-else>{{ $t('savings.lblInProgress') }}</span>
+        <span v-else>{{ inProgressText }}</span>
       </div>
     </div>
     <div v-if="!isInProgress" class="item__link">
       <router-link
         class="button-active"
         :to="{
-          name: 'savings-month-stats',
+          name: navigateToName,
           params: { year: item.year, month: item.month }
         }"
       >
-        {{ $t('savings.btnView.simple') }}
+        {{ buttonText }}
       </router-link>
     </div>
   </div>
@@ -34,16 +34,30 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import dayjs from 'dayjs';
-
 import { MonthBalanceItem } from '@/services/mover/savings';
+import dayjs from 'dayjs';
 import { dateFromExplicitPair } from '@/utils/time';
 
 export default Vue.extend({
-  name: 'SavingsStatementItem',
+  name: 'StatementNavListItem',
   props: {
     item: {
       type: Object as PropType<MonthBalanceItem>,
+      required: true
+    },
+    icon: {
+      type: String,
+      required: true
+    },
+    navigateToName: {
+      type: String,
+      required: true
+    },
+    buttonText: {
+      type: String,
+      required: true
+    },
+    inProgressText: {
       required: true
     }
   },
@@ -63,7 +77,7 @@ export default Vue.extend({
     },
     itemText(): string {
       const dateFrom = dateFromExplicitPair(this.item.year, this.item.month);
-      const dateTo = dateFrom.add(1, 'month');
+      const dateTo = dateFrom.endOf('month');
 
       if (dateFrom.year() !== dateTo.year()) {
         return `${dateFrom.format('MMM DD, YYYY')} – ${dateTo.format(
