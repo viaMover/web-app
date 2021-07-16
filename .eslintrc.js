@@ -133,6 +133,9 @@ module.exports = {
       }
     ],
     'vue/html-indent': 'error',
+    'vue/component-definition-name-casing': ['error', 'PascalCase'],
+    'vue/attribute-hyphenation': ['error', 'always'],
+    'vue/padding-line-between-blocks': ['error', 'always'],
     'vue/max-len': [
       'error',
       {
