@@ -1,4 +1,3 @@
-import { ChartTypes } from './charts';
 import { sameAddress } from './../../utils/address';
 import { mapZerionTokens } from './tokens';
 import {

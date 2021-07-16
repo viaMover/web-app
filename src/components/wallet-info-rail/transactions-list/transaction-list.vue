@@ -19,7 +19,6 @@ import dayjs from 'dayjs';
 
 import TransactionGroup from './transaction-group.vue';
 import { mapGetters } from 'vuex';
-import { dummyTransactionData } from './dummy-data';
 
 export default Vue.extend({
   name: 'TransactionList',
@@ -31,11 +30,6 @@ export default Vue.extend({
       type: String,
       required: false
     }
-  },
-  data: function () {
-    return {
-      dummyTransactionData
-    };
   },
   computed: {
     ...mapGetters('account', {
