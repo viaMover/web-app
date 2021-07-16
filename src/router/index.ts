@@ -22,9 +22,20 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/release-radar',
-    name: 'release-radar',
     component: () =>
-      import(/* webpackChunkName: "release-radar" */ '@/views/home.vue'),
+      import(
+        /* webpackChunkName: "release-radar" */ '@/views/release-radar/release-radar-root.vue'
+      ),
+    children: [
+      {
+        path: '',
+        name: 'release-radar-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "release-radar" */ '@/views/release-radar/release-radar-view-all.vue'
+          )
+      }
+    ],
     beforeEnter: checkFeatureFlag('isReleaseRadarEnabled')
   },
   {
