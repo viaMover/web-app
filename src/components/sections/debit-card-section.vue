@@ -2,6 +2,7 @@
   <heading-section
     v-show="isInfoVisible"
     class="general-desktop__menu-wrapper-order"
+    container-class="hellow"
     :name="$t('debitCard.lblDebitCard')"
   >
     <div class="order__info">

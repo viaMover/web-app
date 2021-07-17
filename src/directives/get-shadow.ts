@@ -12,13 +12,19 @@ export const getShadowDirective = {
         return;
       }
 
-      new Vibrant(target.currentSrc, {
-        useWorker: false
+      new Vibrant(target, {
+        useWorker: true
       })
         .getPalette()
         .then((p) => {
           const color = p.Vibrant?.rgb.join(',');
           target.style.boxShadow = `0px 0px 16px rgb(${color})`;
+        })
+        .catch(() => {
+          // to prevent ERR::FAILED because of CORS absence
+          // or canvas preventing from accessing because of
+          // CORS taint
+          target.style.boxShadow = `0px 0px 16px rgb(0 0 0 / 50%)`;
         });
     });
   }

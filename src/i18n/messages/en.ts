@@ -122,6 +122,7 @@ export default {
     lblSmartTreasury: 'Smart Treasury',
     lblTreasuryEarnedToday: '@:treasury.lblTreasury brought you {amount} today',
     lblTreasuryBonuses: 'Treasury Bonuses',
+    lblTreasuryBonusBalance: '@:treasury.lblSmartTreasury Bonus Balance',
     lblTreasury: 'Treasury',
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',

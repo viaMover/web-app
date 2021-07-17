@@ -2,7 +2,7 @@ import {
   getTreasuryBalance,
   GetTreasuryBonus,
   getTreasuryAPY
-} from './../../../../services/mover/treasury';
+} from '@/services/mover/treasury';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -10,7 +10,8 @@ import {
   AccountStoreState,
   AccountData,
   ProviderNames,
-  ProviderData
+  ProviderData,
+  Avatar
 } from './../types';
 import { Network } from '@/utils/networkTypes';
 import { provider } from 'web3-core';
@@ -24,6 +25,8 @@ import {
   getMOVEPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/mover/tokensPrices';
+import { getAvatarFromPersist, setAvatarToPersist } from '@/settings';
+import sample from 'lodash-es/sample';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -40,6 +43,42 @@ export type InitWalletPayload = {
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
+  },
+  async loadAvatar({ commit, state }): Promise<void> {
+    if (state.currentAddress === undefined) {
+      commit('setAvatar', sample<Avatar>(state.avatars));
+      return;
+    }
+
+    const persistedValue = await getAvatarFromPersist(state.currentAddress);
+    if (persistedValue !== undefined) {
+      commit('setAvatar', persistedValue);
+      return;
+    }
+
+    const newAvatar = sample<Avatar>(state.avatars);
+    if (newAvatar === undefined) {
+      return;
+    }
+
+    commit('setAvatar', newAvatar);
+    await setAvatarToPersist(state.currentAddress, newAvatar);
+  },
+  async toggleAvatar({ commit, state }): Promise<void> {
+    const prevIdx =
+      state.avatars.findIndex((av) => av.symbol === state.avatar?.symbol) ?? -1;
+
+    const newAvatar = state.avatars[(prevIdx + 1) % state.avatars.length];
+    if (newAvatar === undefined) {
+      return;
+    }
+
+    commit('setAvatar', newAvatar);
+    if (state.currentAddress === undefined) {
+      return;
+    }
+
+    await setAvatarToPersist(state.currentAddress, newAvatar);
   },
 
   async initWallet(
@@ -96,6 +135,7 @@ export default {
       balance: balance,
       networkId: chainId
     } as AccountData);
+    dispatch('loadAvatar');
 
     if (!state.currentAddress || !state.networkInfo) {
       console.info("can't refresh wallet due to empty address");

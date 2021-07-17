@@ -3,7 +3,7 @@
     <h3>{{ headingText }}</h3>
     <transaction-item
       v-for="tx in transactions"
-      :key="tx.hash"
+      :key="tx.uniqHash"
       :transaction="tx"
     ></transaction-item>
   </div>

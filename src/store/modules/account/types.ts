@@ -25,7 +25,14 @@ export type ProviderData = {
   providerBeforeClose: () => void;
 };
 
+export type Avatar = {
+  symbol: string;
+  className: string;
+};
+
 export type AccountStoreState = {
+  avatar: Avatar | undefined;
+  avatars: Array<Avatar>;
   addresses: Array<string>;
   balance: undefined | string;
   networkInfo: undefined | NetworkInfo;

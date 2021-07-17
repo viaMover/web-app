@@ -1,6 +1,6 @@
 <template>
   <div class="chart-group-wrapper">
-    <div v-if="isLoading" class="preload">loading...</div>
+    <div v-if="isLoading" class="loader">loading...</div>
     <div v-show="!isLoading" class="chart">
       <div class="chart--action-buttons">
         <action-button

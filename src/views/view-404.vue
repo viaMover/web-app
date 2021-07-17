@@ -1,8 +1,8 @@
 <template>
   <main>
-    <a class="logo" href="#">
+    <router-link class="logo" :to="{ name: 'home' }">
       <img alt="logo" src="@/assets/images/logo.svg" />
-    </a>
+    </router-link>
     <div class="general-no-wallet-desktop">
       <div class="g-wrapper">
         <div class="general-no-wallet-desktop__wrapper">

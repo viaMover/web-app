@@ -30,7 +30,7 @@ import HeadingSection from './heading-section.vue';
 import { NftAssetCardMini } from '@/components/nft/';
 
 export default Vue.extend({
-  name: 'NftsSection',
+  name: 'NftDropsSection',
   components: {
     HeadingSection,
     NftAssetCardMini

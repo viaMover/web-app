@@ -69,7 +69,9 @@ export const getMOVEPriceInWETH = async (
     return MovePriceInWETH;
   } catch (error) {
     throw new Error(
-      `error get MOVE price in WETH from SUSHISWAP MOVE-WETH pool: ${error}`
+      `error get MOVE price in WETH from SUSHISWAP MOVE-WETH pool: ${JSON.stringify(
+        error
+      )}`
     );
   }
 };
@@ -104,7 +106,7 @@ export const getUSDCPriceInWETH = async (
   );
 
   try {
-    console.log('get MOVE-ETH price...');
+    console.log('get USDC-ETH price...');
     const transactionParams = {
       from: accountAddress
     } as TransactionsParams;
@@ -135,7 +137,9 @@ export const getUSDCPriceInWETH = async (
     return UsdcPriceInWETH;
   } catch (error) {
     throw new Error(
-      `error get USDC price in WETH from UNISWAP USDC-WETH pool: ${error}`
+      `error get USDC price in WETH from UNISWAP USDC-WETH pool: ${JSON.stringify(
+        error
+      )}`
     );
   }
 };

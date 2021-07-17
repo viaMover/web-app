@@ -22,7 +22,14 @@
     </template>
 
     <savings-yearly-chart-wrapper />
-    <savings-statements />
+    <statement-nav-list
+      :button-text="$t('savings.btnView.simple')"
+      icon="💰"
+      :in-progress-text="$t('savings.lblInProgress')"
+      :items="savingsMonthStatsOptions"
+      navigate-to-name="savings-month-stats"
+      wrapper-class="savings__menu-wrapper-statements"
+    />
   </secondary-page>
 </template>
 
@@ -32,10 +39,8 @@ import { mapGetters } from 'vuex';
 
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
-import {
-  SavingsYearlyChartWrapper,
-  SavingsStatements
-} from '@/components/savings';
+import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { SavingsYearlyChartWrapper } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsManage',
@@ -45,7 +50,7 @@ export default Vue.extend({
     SecondaryPageTitle,
     SecondaryPage,
     SavingsYearlyChartWrapper,
-    SavingsStatements
+    StatementNavList
   },
   data() {
     return {
@@ -53,7 +58,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', ['hasActiveSavings'])
+    ...mapGetters('account', ['hasActiveSavings', 'savingsMonthStatsOptions'])
   },
   watch: {
     hasActiveSavings(newVal: boolean) {

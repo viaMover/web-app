@@ -1,10 +1,6 @@
 <template>
   <div>
-    <wallet-header
-      :addresses="addresses"
-      :current-address="currentAddress"
-      @selected-address-changed="handleSelectedAddressChanged"
-    />
+    <wallet-header @selected-address-changed="handleSelectedAddressChanged" />
     <transaction-list :address="currentAddress" />
   </div>
 </template>

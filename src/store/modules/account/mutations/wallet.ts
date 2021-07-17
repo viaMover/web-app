@@ -5,7 +5,8 @@ import {
   AccountStoreState,
   AccountData,
   ProviderData,
-  ChartPair
+  ChartPair,
+  Avatar
 } from '../types';
 import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
 import { SortAndDedupedTokens } from '../utils/tokens';
@@ -132,5 +133,8 @@ export default {
   },
   setSavingsDPY(state, dpy: string): void {
     state.savingsDPY = dpy;
+  },
+  setAvatar(state, avatar: Avatar): void {
+    state.avatar = avatar;
   }
 } as MutationTree<AccountStoreState>;

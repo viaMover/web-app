@@ -14,7 +14,7 @@ export default {
         res: Record<number, TransactionGroup>,
         tx: Transaction
       ): Record<number, TransactionGroup> => {
-        const groupKey = dayjs.unix(tx.timeStamp).startOf('day').unix();
+        const groupKey = dayjs.unix(tx.timestamp).startOf('day').unix();
         if (res[groupKey] !== undefined) {
           const retVal = { ...res[groupKey] };
           retVal.transactions.push(tx);
@@ -29,8 +29,7 @@ export default {
       },
       {}
     );
-
-    return Object.values(groupsByDay);
+    return Object.values(groupsByDay).reverse();
   },
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;

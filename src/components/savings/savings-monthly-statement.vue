@@ -32,7 +32,10 @@ import { mapState } from 'vuex';
 import { SavingsReceipt } from '@/services/mover';
 import { fromWei } from '@/utils/bigmath';
 
-import { StatementList, StatementListItem } from '@/components/statement-list';
+import {
+  StatementList,
+  StatementListItem
+} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',

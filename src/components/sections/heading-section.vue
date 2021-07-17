@@ -43,7 +43,7 @@ export default Vue.extend({
     },
     containerClass: {
       type: String,
-      default: 'links__item-info'
+      required: true
     }
   },
   methods: {

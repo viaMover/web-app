@@ -1,6 +1,6 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-user">
-    <div class="user user1"><span class="icon">🦁</span></div>
+    <wallet-header-avatar />
     <button class="button-active" type="button">
       <span>{{ currentAddressText }}</span>
       <img
@@ -20,8 +20,13 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Vue from 'vue';
 
+import WalletHeaderAvatar from './wallet-header-avatar.vue';
+
 export default Vue.extend({
   name: 'WalletHeader',
+  components: {
+    WalletHeaderAvatar
+  },
   computed: {
     ...mapState('account', ['currentAddress']),
     currentAddressText(): string {

@@ -1,25 +1,34 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-info-item">
-    <div class="label">
-      <div class="label-icon">
+    <div class="label transaction-label" @click="onClick">
+      <div v-if="isLPToken" class="label-icon">
+        <div class="label-icon-left">
+          <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
+        </div>
+        <div class="label-icon-right">
+          <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
+        </div>
+      </div>
+      <div v-else-if="tokenImageSrc !== ''" class="label-icon">
         <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
       </div>
       <div class="label-info">
-        <p>{{ transaction.heading }}</p>
-        <span>{{ transaction.amount }}</span>
+        <p>{{ head }}</p>
+        <span>{{ subhead }}</span>
       </div>
     </div>
     <div class="volume">
-      <span>{{ `${true ? '-' : '+'} ${transaction.value || 0}` }}</span>
+      <span>{{ balanceChange }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState } from 'vuex';
 
-import { Transaction, Token } from '@/wallet/types';
+import { Transaction, TransactionTypes } from '@/wallet/types';
+import { fromWei, multiply } from '@/utils/bigmath';
+import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -30,14 +39,87 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapState('account', ['allTokens']),
+    head(): string {
+      if (this.transaction.type === TransactionTypes.swapERC20) {
+        return 'Swap';
+      }
+      if (this.transaction.type === TransactionTypes.transferERC20) {
+        if (this.transaction.asset.direction === 'in') {
+          return 'Receive';
+        }
+        if (this.transaction.asset.direction === 'out') {
+          return 'Send';
+        }
+        if (this.transaction.asset.direction === 'self') {
+          return 'Self';
+        }
+      }
+      if (this.transaction.type === TransactionTypes.approvalERC20) {
+        return 'Approve';
+      }
+      return 'Unknown';
+    },
+    subhead(): string {
+      if (
+        this.transaction.type === TransactionTypes.transferERC20 ||
+        this.transaction.type === TransactionTypes.swapERC20
+      ) {
+        const change = fromWei(
+          this.transaction.asset.change,
+          this.transaction.asset.decimals
+        );
+        return `${new BigNumber(change).toFormat(4)} ${
+          this.transaction.asset.symbol
+        }`;
+      }
+      if (this.transaction.type === TransactionTypes.approvalERC20) {
+        return this.transaction.asset.symbol;
+      }
+      return 'Unknown';
+    },
+    balanceChange(): string {
+      if (
+        this.transaction.type === TransactionTypes.transferERC20 ||
+        this.transaction.type === TransactionTypes.swapERC20
+      ) {
+        const change = fromWei(
+          this.transaction.asset.change,
+          this.transaction.asset.decimals
+        );
+
+        const changeNative = multiply(change, this.transaction.asset.price);
+        let symb = '+';
+        if (this.transaction.asset.direction === 'out') {
+          symb = '-';
+        }
+        if (this.transaction.asset.direction === 'self') {
+          return `$0.00`;
+        }
+        console.log('1312312', changeNative);
+        return `${symb}$${new BigNumber(changeNative).toFormat(4)}`;
+      }
+      if (this.transaction.type === TransactionTypes.approvalERC20) {
+        return '$0.00';
+      }
+      return '';
+    },
     tokenImageSrc(): string {
-      return (
-        (this.allTokens as Array<Token>).find(
-          (t) =>
-            t.address.toLowerCase() === this.transaction.symbol?.toLowerCase()
-        )?.logo ?? ''
-      );
+      if (
+        this.transaction.type === TransactionTypes.swapERC20 ||
+        this.transaction.type === TransactionTypes.transferERC20 ||
+        this.transaction.type === TransactionTypes.approvalERC20
+      ) {
+        return this.transaction.asset.iconURL;
+      }
+      return '';
+    },
+    isLPToken(): boolean {
+      return false;
+    }
+  },
+  methods: {
+    onClick(): void {
+      window.open(`https://etherscan.io/tx/${this.transaction.hash}`, '_blank');
     }
   }
 });

@@ -4,7 +4,7 @@
     container-class="links__item-info"
     has-expand-button
     :name="$t('releaseRadar.lblReleaseRadar')"
-    navigate-to-name="release-radar"
+    navigate-to-name="release-radar-view-all"
   >
     <template v-slot:heading>
       {{ $t('releaseRadar.lblReleaseRadar') }}

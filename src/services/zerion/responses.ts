@@ -19,11 +19,28 @@ export type ZerionAssetWithBalance = {
   quantity: string;
 };
 
+export type ZerionChange = {
+  address_from: string;
+  address_to: string;
+  asset: {
+    asset_code: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    icon_url: string;
+    price: {
+      value: number;
+    };
+  };
+  direction: 'in' | 'out' | 'self';
+  price: number;
+  value: number;
+};
+
 export type ZerionTransaction = {
   address_from: string;
   address_to: string;
   block_number: number;
-  changes: Array<unknown>;
   contract: null;
   direction: 'in' | 'out';
   fee: {
@@ -32,18 +49,40 @@ export type ZerionTransaction = {
   };
   hash: string;
   id: string;
-  meta: {
-    action?: string;
-    amount?: number;
-    spender?: string;
-    asset?: ZerionAsset;
-  };
   mined_at: number;
   nonce: number;
   protocol: null | string;
   status: string;
-  type: string;
-};
+} & (
+  | {
+      type: 'trade';
+      changes: ZerionChange[];
+    }
+  | {
+      type: 'send';
+      changes: ZerionChange[];
+    }
+  | {
+      type: 'authorize';
+      meta: {
+        action: string;
+        asset: {
+          asset_code: string;
+          decimals: number;
+          icon_url: string;
+          name: string;
+          symbol: string;
+        };
+      };
+    }
+  | {
+      type: 'receive';
+      changes: ZerionChange[];
+    }
+  | {
+      type: 'execution';
+    }
+);
 
 export type ZerionTransactionsReceived = {
   meta: {

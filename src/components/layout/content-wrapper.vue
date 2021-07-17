@@ -1,5 +1,5 @@
 <template>
-  <div class="info__wrapper">
+  <div :class="baseClass">
     <left-rail
       v-if="hasLeftRail"
       :container-class="leftRailClass"
@@ -10,6 +10,10 @@
       <back-button v-if="hasBackButton" @close="handleClose" />
       <close-button v-if="hasCloseButton" @close="handleClose" />
     </left-rail>
+    <template v-else>
+      <back-button v-if="hasBackButton" @close="handleClose" />
+      <close-button v-if="hasCloseButton" @close="handleClose" />
+    </template>
 
     <page-container :container-class="pageContainerClassDerived">
       <slot></slot>
@@ -44,6 +48,10 @@ export default Vue.extend({
     hasBackButton: {
       type: Boolean,
       default: false
+    },
+    baseClass: {
+      type: String,
+      default: 'info__wrapper'
     },
     wrapperClass: {
       type: String,

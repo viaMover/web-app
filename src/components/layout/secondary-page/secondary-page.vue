@@ -17,14 +17,6 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'SecondaryPage',
   props: {
-    hasHeadingButtons: {
-      type: Boolean,
-      default: false
-    },
-    collapseHeadingButtons: {
-      type: Boolean,
-      default: true
-    },
     title: {
       type: String,
       default: ''
