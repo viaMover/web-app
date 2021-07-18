@@ -39,7 +39,7 @@ export const getTransferData = async (
     const resp = (await axios.get<zeroXResponse | zeroXErrorResponse>(url))
       .data;
 
-    console.info('response:', url);
+    console.info('response:', resp);
 
     if (isErrorResponse(resp)) {
       throw new Error(resp.reason);

@@ -31,7 +31,7 @@
       </button>
       <button
         class="swap-details"
-        :class="{ disable: !isSwapInfoAvailable }"
+        :class="{ disabled: !isSwapInfoAvailable }"
         type="button"
         @click="expandSwapInfo"
       >
@@ -50,9 +50,9 @@
           <p class="description">Rate</p>
           <p class="info">1 AAVE = 0.00036 ETH</p>
         </div>
-        <div class="swap-details__content-item">
+        <div v-if="useSubsidized" class="swap-details__content-item">
           <p class="description">Smart Treasury cover</p>
-          <p class="info">$18.27</p>
+          <p class="info">{{ swapNativePrice }}</p>
         </div>
         <div class="swap-details__content-item">
           <p class="description">Swapping via</p>
@@ -60,7 +60,7 @@
         </div>
         <div class="swap-details__content-item">
           <p class="description">Slippage</p>
-          <p class="info rate">1.00%</p>
+          <p class="info rate">{{ formatedSlippage }}%</p>
         </div>
       </div>
     </div>
@@ -73,6 +73,7 @@
       />
     </div>
     <gas-selector
+      :approve-gas-limit="approveGasLimit"
       :avaialble-gas-modes="availableGasModes"
       :txn-gas-limit="allGasLimit"
       @selected-gas-changed="handleSelectedGasChanged"
@@ -101,13 +102,14 @@ import {
   add,
   divide,
   fromWei,
-  lessThanOrEqual,
   multiply,
   notZero,
   toWei
 } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
+import Web3 from 'web3';
+import { formatPercents } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -137,6 +139,7 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
+      slippage: '1',
       selectedGasPrice: '0',
       useSubsidized: false,
       swapGasLimit: '0',
@@ -152,7 +155,8 @@ export default Vue.extend({
       'currentAddress',
       'provider',
       'gasPrices',
-      'tokens'
+      'tokens',
+      'ethPrice'
     ]),
     swapAvaialble(): boolean {
       return (
@@ -181,8 +185,27 @@ export default Vue.extend({
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high', 'treasury'];
     },
+    formatedSlippage(): string {
+      return formatPercents(this.slippage);
+    },
     allGasLimit(): string {
+      console.log(
+        'all gas limit: ',
+        add(this.approveGasLimit, this.swapGasLimit)
+      );
       return add(this.approveGasLimit, this.swapGasLimit);
+    },
+    swapNativePrice(): string {
+      const selectedGasPriceInWEI = Web3.utils.toWei(
+        this.selectedGasPrice,
+        'Gwei'
+      );
+      const swapPriceInWEI = multiply(selectedGasPriceInWEI, this.swapGasLimit);
+
+      const swapPriceInEth = Web3.utils.fromWei(swapPriceInWEI, 'ether');
+      const swapPriceNative = multiply(swapPriceInEth, this.ethPrice);
+
+      return `$${swapPriceNative}`;
     },
     maxInputAmount(): string {
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
@@ -195,7 +218,7 @@ export default Vue.extend({
       }
     },
     isSwapInfoAvailable(): boolean {
-      return !!this.input.amount;
+      return !!this.transferData;
     },
     excludedOutputTokens(): Array<Token> {
       if (this.input.asset === undefined) {

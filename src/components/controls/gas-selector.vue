@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { multiply } from '@/utils/bigmath';
+import { add, multiply } from '@/utils/bigmath';
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import Web3 from 'web3';
@@ -69,6 +69,10 @@ export default Vue.extend({
     avaialbleGasModes: {
       type: Array as PropType<Array<GasMode>>,
       required: true
+    },
+    approveGasLimit: {
+      type: String,
+      default: '0'
     },
     txnGasLimit: {
       type: String,
@@ -142,7 +146,15 @@ export default Vue.extend({
         'Gwei'
       );
 
-      const txnPriceInWEI = multiply(selectedGasPriceInWEI, this.txnGasLimit);
+      let txnPriceInWEI = '0';
+      if (this.selectedGasMode === 'treasury') {
+        txnPriceInWEI = multiply(selectedGasPriceInWEI, this.approveGasLimit);
+      } else {
+        txnPriceInWEI = multiply(
+          selectedGasPriceInWEI,
+          add(this.txnGasLimit, this.approveGasLimit)
+        );
+      }
       const txnPriceInEth = Web3.utils.fromWei(txnPriceInWEI, 'ether');
       const txnPriceNative = multiply(txnPriceInEth, this.ethPrice);
 
