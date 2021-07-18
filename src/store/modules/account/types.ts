@@ -17,10 +17,11 @@ export type AccountData = {
   networkId: number | undefined;
 };
 
-export type ProviderNames = 'MetaMask' | 'WalletConnect' | null;
+export type ProviderNames = 'MetaMask' | 'WalletConnect';
 
 export type ProviderData = {
   web3: Web3;
+  pureProvider: any;
   providerName: ProviderNames;
   providerBeforeClose: () => void;
 };

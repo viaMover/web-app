@@ -76,8 +76,9 @@ export default {
     state.provider = {
       providerName: payload.providerName,
       web3: payload.web3,
-      providerBeforeClose: payload.providerBeforeClose
-    } as ProviderData;
+      providerBeforeClose: payload.providerBeforeClose,
+      pureProvider: payload.pureProvider
+    };
   },
   setAccountData(state, ad: AccountData): void {
     state.addresses = ad.addresses;

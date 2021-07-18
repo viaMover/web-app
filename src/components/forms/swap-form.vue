@@ -73,8 +73,8 @@
       </action-button>
     </div>
     <gas-selector
-      :avaialbleGasModes="availableGasModes"
-      :txnGasLimit="allGasLimit"
+      :avaialble-gas-modes="availableGasModes"
+      :txn-gas-limit="allGasLimit"
       @selected-gas-changed="handleSelectedGasChanged"
     />
   </form>
