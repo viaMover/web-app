@@ -2,7 +2,16 @@ import { Network } from './../../utils/networkTypes';
 import { Result } from './../responses';
 import { zeroXResponse, zeroXErrorResponse, isErrorResponse } from './response';
 import axios from 'axios';
+import { CustomError } from 'ts-custom-error';
 
+export class ZeroXSwapError extends CustomError {
+  public publicMessage: string;
+
+  constructor(internalMessage: string, publicMessage?: string) {
+    super(internalMessage);
+    this.publicMessage = publicMessage ?? internalMessage;
+  }
+}
 export type TransferData = {
   data: string;
   allowanceTarget: string;
@@ -51,7 +60,10 @@ export const getTransferData = async (
         err.response.data.validationErrors &&
         err.response.data.validationErrors.length > 0
       ) {
-        throw new Error(err.response.data.validationErrors[0].reason);
+        throw new ZeroXSwapError(
+          err.response.data,
+          err.response.data.validationErrors[0].reason
+        );
       }
     }
     throw new Error(err);

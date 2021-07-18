@@ -8,7 +8,8 @@
 
 <script lang="ts">
 import '@/styles/_common.less';
-
+import '@/styles/_modal.less';
+import '@/styles/_swap_modal.less';
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 

@@ -1,5 +1,9 @@
 <template>
-  <button :class="[buttonClass]" @click.prevent.stop="handleClick">
+  <button
+    :class="[buttonClass]"
+    :disabled="disabled"
+    @click.prevent.stop="handleClick"
+  >
     <template v-if="text">
       {{ text }}
     </template>
@@ -22,6 +26,10 @@ export default Vue.extend({
       type: String,
       required: false,
       default: 'button'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

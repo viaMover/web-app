@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="!isLoading"
-    class="swaps__wrapper-info-footer"
+    class="modal-wrapper-info-footer"
     @click="toggleGasPrice"
   >
-    <div class="swaps__wrapper-info-footer-left">
+    <div class="modal-wrapper-info-footer-left">
       <span>{{ networkFee }}</span>
       <p>{{ $t('gas.lblNetworkFee') }}</p>
     </div>
-    <div class="swaps__wrapper-info-footer-right">
+    <div class="modal-wrapper-info-footer-right">
       <div class="swiper-pagination-bullets">
         <span
           v-for="mode in avaialbleGasModes"
