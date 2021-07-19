@@ -27,6 +27,7 @@ import {
 } from '@/services/mover/tokensPrices';
 import { getAvatarFromPersist, setAvatarToPersist } from '@/settings';
 import sample from 'lodash-es/sample';
+import Cookies from 'js-cookie';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -39,6 +40,8 @@ export type InitWalletPayload = {
   providerBeforeCloseCb: () => void;
   injected: boolean;
 };
+
+export const COOKIE_LAST_PROVIDER = 'move_last_provider';
 
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
@@ -91,13 +94,16 @@ export default {
       commit('setProvider', {
         providerBeforeClose: payload.providerBeforeCloseCb,
         providerName: payload.providerName,
-        web3: web3Inst
+        web3: web3Inst,
+        pureProvider: payload.provider
       } as ProviderData);
 
       dispatch('refreshWallet', {
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
+
+      Cookies.set(COOKIE_LAST_PROVIDER, payload.providerName);
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
@@ -302,10 +308,18 @@ export default {
     //
   },
 
-  disconnectWallet({ commit, state }): void {
+  async disconnectWallet({ commit, state }): Promise<void> {
     if (state.provider) {
       state.provider.providerBeforeClose();
+      if (
+        state.provider.pureProvider &&
+        state.provider.pureProvider.disconnect
+      ) {
+        console.log('disconnecting provider...');
+        await state.provider.pureProvider.disconnect();
+      }
     }
     commit('clearWalletData');
+    Cookies.remove(COOKIE_LAST_PROVIDER, { path: '' });
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

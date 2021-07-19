@@ -55,8 +55,8 @@ export default Vue.extend({
       this.refreshWallet();
       this.$emit('selected-address-changed', address);
     },
-    disconnectWallet(): void {
-      this.clearWalletState();
+    async disconnectWallet(): Promise<void> {
+      await this.clearWalletState();
       window.location.reload();
     }
   }

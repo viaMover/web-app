@@ -1,24 +1,31 @@
 /* eslint-disable max-len */
 <template>
-  <div class="swaps__wrapper-info-items-item">
-    <div class="swaps__wrapper-info-items-item-left">
+  <div class="modal-wrapper-info-items-item">
+    <div class="modal-wrapper-info-items-item-left">
       <div v-if="iconSrc" class="icon">
         <img v-get-shadow :alt="iconAlt" :src="iconSrc" />
       </div>
+      <div v-else class="icon"></div>
       <price-input-field
         :amount="amount"
+        :disabled="disabledInput"
         :field-id="`${fieldRole}-selected-amount`"
+        :input-class="'input-top'"
         :max-amount="maxAmount"
+        :placeholder="placeholder"
         @update-amount="handleUpdateAmount"
       />
-      <native-price-input-field
+      <price-input-field
         :amount="nativeAmount"
+        :disabled="disabledInput"
         :field-id="`${fieldRole}-selected-native-amount`"
-        text-prefix="≈"
+        :input-class="'input-bottom'"
+        :placeholder="placeholder"
+        text-prefix="≈$"
         @update-amount="handleUpdateNativeAmount"
       />
     </div>
-    <div class="swaps__wrapper-info-items-item-right">
+    <div class="modal-wrapper-info-items-item-right">
       <button
         class="currency"
         type="button"
@@ -45,7 +52,6 @@
 import Vue, { PropType } from 'vue';
 
 import PriceInputField from './price-input-field.vue';
-import NativePriceInputField from './native-price-input-field.vue';
 import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals';
 import { TokenWithBalance } from '@/wallet/types';
@@ -53,8 +59,7 @@ import { TokenWithBalance } from '@/wallet/types';
 export default Vue.extend({
   name: 'AssetField',
   components: {
-    PriceInputField,
-    NativePriceInputField
+    PriceInputField
   },
   props: {
     asset: {
@@ -91,6 +96,12 @@ export default Vue.extend({
     }
   },
   computed: {
+    placeholder(): string {
+      return this.asset == null ? '—' : '0.00';
+    },
+    disabledInput(): boolean {
+      return this.asset == null;
+    },
     iconSrc(): string {
       return this.asset == null ? '' : this.asset.logo;
     },
