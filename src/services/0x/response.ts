@@ -5,6 +5,12 @@ export type zeroXResponse = {
   value: string;
   buyAmount: string;
   sellAmount: string;
+  sources: {
+    name: string;
+    proportion: string;
+  }[];
+  sellTokenToEthRate: string;
+  buyTokenToEthRate: string;
 };
 
 export type zeroXErrorResponse = {
