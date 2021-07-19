@@ -66,6 +66,16 @@ $(document).ready(function() {
 	}
 	shadow();
 
+	function orderClose() {
+		let block = $('.general-desktop__menu-wrapper-order'); 
+		let button = $('.order__buttons .close-button');
+
+		button.on('click', function() { 
+			block.addClass('general-desktop__menu-wrapper-order-active');
+		})
+	}
+	orderClose();
+
 	function swapsPopup() {
 		let popup = $('.swaps__popup'); 
 		let close = $('.swaps__popup-close');
@@ -157,11 +167,13 @@ $(document).ready(function() {
 		close.on('click', function() { 
 			transactionPopup.removeClass('transaction-result__popup-active');
 			close.removeClass('transaction__popup-close-active');
+			bg.removeClass('popup-bg-active');
 			swapsPopup.removeClass('transaction__popup-active');
 		})
 		bg.on('click', function() { 
 			transactionPopup.removeClass('transaction-result__popup-active');
 			close.removeClass('transaction__popup-close-active');
+			bg.removeClass('popup-bg-active');
 		})
 	}
 	transactionWaitingPopup();
@@ -407,10 +419,152 @@ $(document).ready(function() {
 	}
 	delegateVotingPowerPopup();
 
+	function NFTDropsPopup() {
+		let NFTDropsPopup = $('.nft-drops__popup'); 
+		let close = $('.nft-drops__popup-close');
+		let button = $('.general-desktop__menu-wrapper-item .nft-drops');
+
+		button.on('click', function() { 
+			NFTDropsPopup.addClass('nft-drops__popup-active');
+			close.addClass('transaction__popup-close-active');
+		})
+		close.on('click', function() { 
+			NFTDropsPopup.removeClass('nft-drops__popup-active'); 
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	NFTDropsPopup();
+
+	function nibbleShopPopup() {
+		let nibbleShopPopup = $('.nibble-shop__popup'); 
+		let close = $('.nibble-shop__popup-close');
+		let button = $('.general-desktop__menu-wrapper-item .nibble-shop');
+
+		button.on('click', function() { 
+			nibbleShopPopup.addClass('nibble-shop__popup-active');
+			close.addClass('transaction__popup-close-active');
+		})
+		close.on('click', function() { 
+			nibbleShopPopup.removeClass('nibble-shop__popup-active'); 
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	nibbleShopPopup();
+
+	function noAccessPopup() {
+		let popup = $('.no-access__popup'); 
+		let close = $('.no-access__popup-close');
+		let button = $('.general-desktop__menu-wrapper-item .shop__items .shop__items-item');
+		let bg = $('.no-access__popup-bg');
+
+		button.on('click', function() { 
+			popup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+		})
+		close.on('click', function() { 
+			popup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			popup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	noAccessPopup();
+
+	function buyPopup() {
+		let buyPopup = $('.product-item-buy__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.product-item-buy');
+		let bg = $('.product-item-buy__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			buyPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			buyPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			buyPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	buyPopup();
+
+	function sellPopup() {
+		let sellPopup = $('.product-item-sell__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.product-item-sell');
+		let bg = $('.product-item-sell__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			sellPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			sellPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			sellPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	sellPopup();
+
+	function redeemPopup() {
+		let redeemPopup = $('.product-item-redeem__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.product-item-redeem');
+		let bg = $('.product-item-redeem__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			redeemPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			redeemPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			redeemPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	redeemPopup();
+  
 	function hideByClickEscButton() {
 		let transactionPopup = $('.transaction__popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
 		let burgerPopup = $('.burger-menu__popup');
+		let NFTDropsPopup = $('.nft-drops__popup');
+		let nibbleShopPopup = $('.nibble-shop__popup');
 		let bg = $('.popup-bg');
 		let burgerBg = $('.burger-menu__popup-bg');
 		let transactionClose = $('.transaction__popup-close');
@@ -420,6 +574,8 @@ $(document).ready(function() {
 				transactionPopup.removeClass('transaction__popup-active'); 
 				transactionResultPopup.removeClass('transaction-result__popup-active'); 
 				burgerPopup.removeClass('burger-menu__popup-active');
+				NFTDropsPopup.removeClass('nft-drops__popup-active');
+				nibbleShopPopup.removeClass('nibble-shop__popup-active');
 				bg.removeClass('popup-bg-active');
 				burgerBg.removeClass('burger-menu__popup-bg-active');
 				transactionClose.removeClass('transaction__popup-close-active');
