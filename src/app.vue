@@ -7,14 +7,16 @@
 </template>
 
 <script lang="ts">
-import '@/styles/_common.less';
-import '@/styles/_modal.less';
-import '@/styles/_swap_modal.less';
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
 import Wallet from '@/components/wallet/wallet.vue';
 import Preload from '@/views/preload.vue';
+
+import '@/styles/_common.less';
+import '@/styles/_modal.less';
+import '@/styles/_swap_modal.less';
+import '@/styles/_search_modal.less';
 
 export default Vue.extend({
   name: 'App',

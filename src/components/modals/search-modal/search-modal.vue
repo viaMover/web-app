@@ -1,30 +1,45 @@
 <template>
-  <centered-modal-window :modal-class="modalClass" :modal-id="modalId">
-    <div class="search-bar">
-      <label for="token-search">{{ $t('search.lblSearchBar') }}</label>
-      <input
-        id="token-search"
-        v-model.trim="searchTerm"
-        name="token-search"
-        :placeholder="$t('search.lblSearchBarPlaceholder')"
-        type="text"
-      />
+  <centered-modal-window
+    :header-label="$t('search.lblSearch')"
+    :modal-class="modalClass"
+    :modal-id="modalId"
+  >
+    <div class="swaps__wrapper-search-form">
+      <form class="search-form" @submit.prevent.stop="">
+        <input
+          v-model.trim="searchTerm"
+          name="token-search"
+          :placeholder="$t('search.lblSearchBarPlaceholder')"
+          type="search"
+        />
+        <button class="button-active" type="button" @click.prevent.stop="">
+          🔍
+        </button>
+      </form>
     </div>
 
-    <div class="search-results">
+    <div ref="resultsTop" class="swaps__wrapper-search-items">
       <search-modal-token-list
         has-header
+        header-class="favorite"
         :items="tokenGroups.favorite"
         @select="handleSelect"
       >
-        <template v-slot:header>{{ $t('search.lblFavorite') }}</template>
+        <template v-slot:header>
+          <img alt="favorite icon" src="@/assets/images/favorite-icon.svg" />
+          {{ $t('search.lblFavorite') }}
+        </template>
       </search-modal-token-list>
       <search-modal-token-list
         has-header
+        header-class="verified"
         :items="tokenGroups.verified"
         @select="handleSelect"
       >
-        <template v-slot:header>{{ $t('search.lblVerified') }}</template>
+        <template v-slot:header>
+          <img alt="verified icon" src="@/assets/images/verified-icon.svg" />
+          {{ $t('search.lblVerified') }}
+        </template>
       </search-modal-token-list>
       <search-modal-token-list
         :items="tokenGroups.rest"
@@ -64,7 +79,7 @@ export default Vue.extend({
   data() {
     return {
       modalId: Modal.SearchToken,
-      modalClass: 'search__popover',
+      modalClass: 'swaps__wrapper transaction__popup-wrapper',
       searchTerm: '',
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
@@ -119,6 +134,16 @@ export default Vue.extend({
       window.clearTimeout(this.debounce);
       this.debounce = window.setTimeout(() => {
         this.searchTermDebounced = newVal;
+
+        this.$nextTick().then(() => {
+          if (!this.$refs.resultsTop) {
+            return;
+          }
+
+          this.$refs.resultsTop.scroll({
+            top: 0
+          });
+        });
       }, this.debounceTimeout);
     },
     useWalletTokens(newVal: boolean, oldVal: boolean): void {

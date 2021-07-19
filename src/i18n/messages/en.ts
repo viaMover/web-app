@@ -407,10 +407,11 @@ export default {
     }
   },
   search: {
+    lblSearch: 'Search',
     lblSearchBar: 'Search tokens',
     lblSearchBarPlaceholder: 'Search any token on Ethereum',
-    lblFavorite: '⭐ Favorite',
-    lblVerified: '✔ Verified'
+    lblFavorite: 'Favorite',
+    lblVerified: 'Verified'
   },
   gas: {
     lblNetworkFee: 'Network fee',
