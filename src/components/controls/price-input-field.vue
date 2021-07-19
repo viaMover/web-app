@@ -1,9 +1,10 @@
 <template>
   <input
     :id="fieldId"
-    class="amount"
+    :class="inputClass"
     :max="maxAmount"
     min="0"
+    :placeholder="placeholder"
     type="number"
     :value="amount"
     @input="updateAmount($event.target.value)"
@@ -35,6 +36,14 @@ export default Vue.extend({
     maxAmount: {
       type: String,
       required: false
+    },
+    inputClass: {
+      type: String,
+      required: false
+    },
+    placeholder: {
+      type: String,
+      default: ''
     }
   },
   methods: {

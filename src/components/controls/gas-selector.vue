@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="!isLoading"
-    class="swaps__wrapper-info-footer"
+    class="modal-wrapper-info-footer"
     @click="toggleGasPrice"
   >
-    <div class="swaps__wrapper-info-footer-left">
+    <div class="modal-wrapper-info-footer-left">
       <span>{{ networkFee }}</span>
       <p>{{ $t('gas.lblNetworkFee') }}</p>
     </div>
-    <div class="swaps__wrapper-info-footer-right">
+    <div class="modal-wrapper-info-footer-right">
       <div class="swiper-pagination-bullets">
         <span
           v-for="mode in avaialbleGasModes"
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { multiply } from '@/utils/bigmath';
+import { add, multiply } from '@/utils/bigmath';
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import Web3 from 'web3';
@@ -69,6 +69,10 @@ export default Vue.extend({
     avaialbleGasModes: {
       type: Array as PropType<Array<GasMode>>,
       required: true
+    },
+    approveGasLimit: {
+      type: String,
+      default: '0'
     },
     txnGasLimit: {
       type: String,
@@ -142,7 +146,15 @@ export default Vue.extend({
         'Gwei'
       );
 
-      const txnPriceInWEI = multiply(selectedGasPriceInWEI, this.txnGasLimit);
+      let txnPriceInWEI = '0';
+      if (this.selectedGasMode === 'treasury') {
+        txnPriceInWEI = multiply(selectedGasPriceInWEI, this.approveGasLimit);
+      } else {
+        txnPriceInWEI = multiply(
+          selectedGasPriceInWEI,
+          add(this.txnGasLimit, this.approveGasLimit)
+        );
+      }
       const txnPriceInEth = Web3.utils.fromWei(txnPriceInWEI, 'ether');
       const txnPriceNative = multiply(txnPriceInEth, this.ethPrice);
 

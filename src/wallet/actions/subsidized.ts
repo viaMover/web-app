@@ -5,7 +5,6 @@ import { Network } from '@/utils/networkTypes';
 import axios from 'axios';
 import { fromWei, multiply } from '@/utils/bigmath';
 import { CustomError } from 'ts-custom-error';
-import { createLogger } from 'vuex';
 
 export class SubsidizedRequestError extends CustomError {
   public publicMessage: string;

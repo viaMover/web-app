@@ -8,3 +8,6 @@
 *.jpg binary
 *.jpeg binary
 *.jpe binary
+*.webm binary
+*.gif binary
+*.mp4 binary
