@@ -49,11 +49,33 @@ export default Vue.extend({
   },
   data() {
     return {
-      popoverParentId: 'treasury-action-buttons'
+      popoverParentId: 'treasury-manage-action-buttons'
     };
   },
   computed: {
-    ...mapGetters('account', ['savingsMonthStatsOptions'])
+    ...mapGetters('account', ['savingsMonthStatsOptions']),
+    hasActiveTreasury(): boolean {
+      return false;
+    }
+  },
+  watch: {
+    hasActiveTreasury(newVal: boolean) {
+      if (!newVal) {
+        this.replaceInactiveTreasuryRoute();
+      }
+    }
+  },
+  beforeMount() {
+    if (!this.hasActiveTreasury) {
+      this.replaceInactiveTreasuryRoute();
+    }
+  },
+  methods: {
+    replaceInactiveTreasuryRoute(): void {
+      this.$router.replace({
+        name: 'treasury-empty'
+      });
+    }
   }
 });
 </script>

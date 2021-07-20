@@ -1,27 +1,27 @@
 <template>
-  <secondary-page :title="$t('savings.lblSavings')">
+  <secondary-page :title="$t('treasury.lblTreasury')">
     <template v-slot:title>
       <secondary-page-title
-        :icon="$t('savings.icon')"
-        :title="$t('savings.lblSavings')"
-        wrapper-class="savings__menu-wrapper-title"
+        :icon="$t('treasury.icon')"
+        :title="$t('treasury.lblTreasury')"
+        wrapper-class="smart-treasury__menu-wrapper-title"
       >
         <template v-slot:context-menu>
           <context-button :popover-parent-id="popoverParentId">
-            <context-button-item :text="$t('savings.btnDeposit.emoji')" />
+            <context-button-item :text="$t('treasury.btnDeposit.emoji')" />
           </context-button>
         </template>
       </secondary-page-title>
     </template>
-    <div class="savings__menu-wrapper-empty">
-      <span class="icon">💰</span>
-      <h2>{{ $t('savings.lblNothingInSavings') }}</h2>
-      <p>{{ $t('savings.txtNothingInSavings') }}</p>
+    <div class="smart-treasury__menu-wrapper-empty">
+      <span class="icon">🐷</span>
+      <h2>{{ $t('treasury.lblNothingInTreasury') }}</h2>
+      <p>{{ $t('treasury.txtNothingInTreasury') }}</p>
       <action-button
         button-class="black-link button-active"
         @button-click="toggleDeposit"
       >
-        {{ $t('savings.btnDeposit.emoji') }}
+        {{ $t('treasury.btnDeposit.emoji') }}
       </action-button>
     </div>
   </secondary-page>
@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
 
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
@@ -42,7 +41,7 @@ import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
 import { Modal } from '@/components/modals';
 
 export default Vue.extend({
-  name: 'SavingsEmpty',
+  name: 'TreasuryEmpty',
   components: {
     SecondaryPage,
     SecondaryPageTitle,
@@ -52,32 +51,34 @@ export default Vue.extend({
   },
   data() {
     return {
-      popoverParentId: 'savings-empty-action-buttons'
+      popoverParentId: 'treasury-empty-action-buttons'
     };
   },
   computed: {
-    ...mapGetters('account', ['hasActiveSavings'])
+    hasActiveTreasury(): boolean {
+      return false;
+    }
   },
   watch: {
-    hasActiveSavings(newVal: boolean) {
+    hasActiveTreasury(newVal: boolean) {
       if (newVal) {
-        this.replaceActiveSavingsRoute();
+        this.replaceActiveTreasuryRoute();
       }
     }
   },
   beforeMount() {
-    if (this.hasActiveSavings) {
-      this.replaceActiveSavingsRoute();
+    if (this.hasActiveTreasury) {
+      this.replaceActiveTreasuryRoute();
     }
   },
   methods: {
-    replaceActiveSavingsRoute(): void {
+    replaceActiveTreasuryRoute(): void {
       this.$router.replace({
-        name: 'savings-manage'
+        name: 'treasury-manage'
       });
     },
     toggleDeposit(): void {
-      toggleSingleItem(Modal.SavingsDeposit);
+      toggleSingleItem(Modal.TreasuryDeposit);
     }
   }
 });

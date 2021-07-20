@@ -78,7 +78,7 @@ export default Vue.extend({
       date = dayjs();
     }
 
-    this.fetchMonthlyStats({
+    await this.fetchMonthlyStats({
       year: date.get('year'),
       month: date.get('month') + 1
     } as GetSavingsReceiptPayload);

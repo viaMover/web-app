@@ -8,14 +8,8 @@
       >
         <template v-slot:context-menu>
           <context-button :popover-parent-id="popoverParentId">
-            <context-button-item
-              navigate-to-name="home"
-              :text="$t('savings.btnDeposit.emoji')"
-            />
-            <context-button-item
-              navigate-to-name="savings-withdraw"
-              :text="$t('savings.btnWithdraw.emoji')"
-            />
+            <context-button-item :text="$t('savings.btnDeposit.emoji')" />
+            <context-button-item :text="$t('savings.btnWithdraw.emoji')" />
           </context-button>
         </template>
       </secondary-page-title>
