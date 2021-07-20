@@ -241,14 +241,25 @@
                 <label>To: 
                   <input type="text" name="text" placeholder="ENS or Address (0x…)"/>
                 </label>
+                <!--
+                <label>FROM: 
+                	<input type="text" name="text" placeholder="ENS or Address (0x…)"/>
+                </label>
+                -->
               </form>
             </div>
             <div class="delegate-voting-power__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
               <div class="delegate-voting-power__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
                 <p class="description">Delegate voting power</p><span class="value">11,814,184</span>
               </div>
+              <!-- 
+              <div class="delegate-voting-power__wrapper-info-statistics-item"> 
+              	<p class="description">Return voting power</p><span class="value">11,814,184</span>
+              </div>
+              -->
             </div>
             <div class="delegate-voting-power__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
               <div class="details__content">
                 <div class="details__content-item"> 
@@ -278,7 +289,9 @@
               </div>
             </div>
             <div class="delegate-voting-power__wrapper-info-button transaction__popup-wrapper-info-button">
+              <!-- <button class="button-active action" type="button">📈 Increase Boost</button>-->
               <button class="button-active action" type="button">🤖 Return voting power</button>
+              <!-- <button class="button-active enter" type="button">Enter Address</button>-->
             </div>
             <div class="delegate-voting-power__wrapper-info-footer transaction__popup-wrapper-info-footer">
               <div class="delegate-voting-power__wrapper-info-footer-left transaction__popup-wrapper-info-footer-left"><span>$0.00</span>

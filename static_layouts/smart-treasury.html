@@ -88,13 +88,19 @@
               <h3>Treasury Overview</h3>
               <ul>
                 <li>
-                  <p class="description">Reserved assets value</p><span class="value">$0.00</span>
+                  <p class="description">Boost reserved value</p><span class="value">$0.00</span>
                 </li>
                 <li>
-                  <p class="description">Current boost</p><span class="value">0x</span>
+                  <p class="description">Staked value</p><span class="value">0x</span>
                 </li>
                 <li>
-                  <p class="description">Maximum boost</p><span class="value">3.5x</span>
+                  <p class="description">APY</p><span class="value">100%</span>
+                </li>
+                <li>
+                  <p class="description">Current boost</p><span class="value">0.00x</span>
+                </li>
+                <li>
+                  <p class="description">Maximum boost</p><span class="value">0.00x</span>
                 </li>
                 <li>
                   <p class="description">Smart Treasury Size</p><span class="value">$129,192,104.11</span>
@@ -138,6 +144,14 @@
                 </li>
               </ul>
             </div>
+            <div class="page-sidebar-wrapper-item">
+              <h3>Staked Assets</h3>
+              <ul>
+                <li> 
+                  <p class="description">MOBO</p><span class="value">0 MOBO</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -159,6 +173,12 @@
                 </button>
               </div>
             </div>
+            <!--
+            <div class="smart-treasury__menu-wrapper-empty"><span class="icon">🐷</span>
+            	<h2>Nothing in the Smart Treasury</h2>
+            	<p>Looks like you don’t have Treasury boost, yet</p><a class="black-link button-active" href="#">📈 Increase Boost</a>
+            </div>
+            -->
             <div class="smart-treasury__menu-wrapper-balance"><span class="balance">$349.18</span>
               <p>Smart Treasury Bonus Balance</p>
             </div>
@@ -240,6 +260,8 @@
               <div class="burger-menu__wrapper">
                 <div class="burger-menu__wrapper-info">
                   <ul>
+                    <li class="stake"><a href="#">🥩 Stake</a></li>
+                    <li class="unstake"><a href="#">🍽 Unstake</a></li>
                     <li class="claim-and-burn"><a href="#">🔥 Claim & Burn</a></li>
                     <li class="increase-boost"><a href="#">📈 Increase Boost</a></li>
                     <li class="decrease-boost"><a href="#">📉 Decrease Boost</a></li>
@@ -247,6 +269,188 @@
                   </ul>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="popup-bg unstake__popup-bg"></div>
+      <div class="burger__popup-close button-active transaction__popup-close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.8334 2.83411C13.2936 2.37387 13.2936 1.62768 12.8334 1.16744C12.3731 0.707206 11.6269 0.707206 11.1667 1.16744L7.00004 5.33411L2.83338 1.16744C2.37314 0.707206 1.62695 0.707206 1.16671 1.16744C0.706474 1.62768 0.706474 2.37387 1.16671 2.83411L5.33338 7.00078L1.16671 11.1674C0.706474 11.6277 0.706474 12.3739 1.16671 12.8341C1.62695 13.2943 2.37314 13.2943 2.83338 12.8341L7.00004 8.66744L11.1667 12.8341C11.6269 13.2943 12.3731 13.2943 12.8334 12.8341C13.2936 12.3739 13.2936 11.6277 12.8334 11.1674L8.66671 7.00078L12.8334 2.83411Z" fill="black"/>
+</svg>
+      </div>
+      <div class="unstake__popup transaction__popup">
+        <div class="unstake__wrapper transaction__popup-wrapper">
+          <div class="unstake__wrapper-info transaction__popup-wrapper-info">
+            <h3 class="transaction__popup-wrapper-info-title">Unstake</h3>
+            <div class="unstake__wrapper-info-items transaction__popup-wrapper-info-items">
+              <form class="unstake__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
+                <div class="unstake__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
+                  <div class="icon getShadow"><img src="images/xMove-coin.png" alt="coin"/></div>
+                  <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
+                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                </div>
+                <div class="unstake__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
+                  <button class="button-active currency" type="button"><span>xMOVE</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 1L5 5L1 1" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                  </button>
+                  <button class="button-active use" type="button">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="#FF9F00" height="12px" viewBox="0 0 426.66667 426.66667" width="12px"><path d="m410.667969 229.332031h-394.667969c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h394.667969c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"/><path d="m213.332031 426.667969c-8.832031 0-16-7.167969-16-16v-394.667969c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v394.667969c0 8.832031-7.167969 16-16 16zm0 0"/></svg><span>Use Max</span></button>
+                </div>
+              </form>
+            </div>
+            <div class="unstake__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
+              <div class="unstake__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
+                <p class="description">Estimated annual earnings</p><span class="bold">+$364.45</span>
+              </div>
+            </div>
+            <div class="unstake__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
+              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
+              <div class="details__content">
+                <div class="details__content-item"> 
+                  <p class="description">Price impact</p>
+                  <p class="info up">0.31%</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Minimum received</p>
+                  <p class="info">1.2731 AAVE</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Rate</p>
+                  <p class="info">1 AAVE = 0.00036 ETH</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Smart Treasury cover</p>
+                  <p class="info">$18.27</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Swapping via</p>
+                  <p class="info">Sushi <span>🍣</span></p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Slippage</p>
+                  <p class="info rate">1.00%</p>
+                </div>
+              </div>
+            </div>
+            <div class="unstake__wrapper-info-button transaction__popup-wrapper-info-button">
+              <button class="button-active action" type="button">🍽 Unstake</button>
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
+            </div>
+            <div class="unstake__wrapper-info-footer transaction__popup-wrapper-info-footer">
+              <div class="unstake__wrapper-info-footer-left transaction__popup-wrapper-info-footer-left"><span>$0.00</span>
+                <p>Network fee</p>
+              </div>
+              <div class="unstake__wrapper-info-footer-right swiper-container popup-slider transaction__popup-wrapper-info-footer-right">
+                <div class="swiper-pagination"></div>
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                </div>
+              </div>
+              <div class="unstake__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>You can withdraw the entire or partial balance. Available balance consists of principal amount you staked together with the accumulated rewards.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="popup-bg stake__popup-bg"></div>
+      <div class="burger__popup-close button-active transaction__popup-close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.8334 2.83411C13.2936 2.37387 13.2936 1.62768 12.8334 1.16744C12.3731 0.707206 11.6269 0.707206 11.1667 1.16744L7.00004 5.33411L2.83338 1.16744C2.37314 0.707206 1.62695 0.707206 1.16671 1.16744C0.706474 1.62768 0.706474 2.37387 1.16671 2.83411L5.33338 7.00078L1.16671 11.1674C0.706474 11.6277 0.706474 12.3739 1.16671 12.8341C1.62695 13.2943 2.37314 13.2943 2.83338 12.8341L7.00004 8.66744L11.1667 12.8341C11.6269 13.2943 12.3731 13.2943 12.8334 12.8341C13.2936 12.3739 13.2936 11.6277 12.8334 11.1674L8.66671 7.00078L12.8334 2.83411Z" fill="black"/>
+</svg>
+      </div>
+      <div class="stake__popup transaction__popup">
+        <div class="stake__wrapper transaction__popup-wrapper">
+          <div class="stake__wrapper-info transaction__popup-wrapper-info">
+            <h3 class="transaction__popup-wrapper-info-title">Stake</h3>
+            <div class="stake__wrapper-info-items transaction__popup-wrapper-info-items">
+              <form class="stake__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
+                <div class="stake__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
+                  <div class="icon getShadow"><img src="images/xMove-coin.png" alt="coin"/></div>
+                  <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
+                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                </div>
+                <div class="stake__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
+                  <button class="button-active currency" type="button"><span>xMOVE</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 1L5 5L1 1" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                  </button>
+                  <button class="button-active use" type="button">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="#FF9F00" height="12px" viewBox="0 0 426.66667 426.66667" width="12px"><path d="m410.667969 229.332031h-394.667969c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h394.667969c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"/><path d="m213.332031 426.667969c-8.832031 0-16-7.167969-16-16v-394.667969c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v394.667969c0 8.832031-7.167969 16-16 16zm0 0"/></svg><span>Use Max</span></button>
+                </div>
+              </form>
+            </div>
+            <div class="stake__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
+              <div class="stake__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
+                <p class="description">Estimated annual earnings</p><span class="bold">+$364.45</span>
+              </div>
+            </div>
+            <div class="stake__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
+              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
+              <div class="details__content">
+                <div class="details__content-item"> 
+                  <p class="description">Price impact</p>
+                  <p class="info up">0.31%</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Minimum received</p>
+                  <p class="info">1.2731 AAVE</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Rate</p>
+                  <p class="info">1 AAVE = 0.00036 ETH</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Smart Treasury cover</p>
+                  <p class="info">$18.27</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Swapping via</p>
+                  <p class="info">Sushi <span>🍣</span></p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Slippage</p>
+                  <p class="info rate">1.00%</p>
+                </div>
+              </div>
+            </div>
+            <div class="stake__wrapper-info-button transaction__popup-wrapper-info-button">
+              <button class="button-active action" type="button">🥩 Stake</button>
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
+            </div>
+            <div class="stake__wrapper-info-footer transaction__popup-wrapper-info-footer">
+              <div class="stake__wrapper-info-footer-left transaction__popup-wrapper-info-footer-left"><span>$0.00</span>
+                <p>Network fee</p>
+              </div>
+              <div class="stake__wrapper-info-footer-right swiper-container popup-slider transaction__popup-wrapper-info-footer-right">
+                <div class="swiper-pagination"></div>
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                  <div class="swiper-slide"> 
+                    <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
+                  </div>
+                </div>
+              </div>
+              <div class="stake__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>Staking allows you to earn <span class="icon getShadow"><img src="images/xMove-coin.png" alt="coin"></span> xMOVE passively via auto-compounding.</p></div>
             </div>
           </div>
         </div>
@@ -276,6 +480,20 @@
                      <svg xmlns="http://www.w3.org/2000/svg" fill="#687ee3" height="12px" viewBox="0 0 426.66667 426.66667" width="12px"><path d="m410.667969 229.332031h-394.667969c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h394.667969c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"/><path d="m213.332031 426.667969c-8.832031 0-16-7.167969-16-16v-394.667969c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v394.667969c0 8.832031-7.167969 16-16 16zm0 0"/></svg><span>Use Max</span></button>
                 </div>
               </form>
+              <!--
+              <form class="claim-and-burn__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
+              	<div class="claim-and-burn__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
+              	<div class="icon getShadow"></div>
+              	<input class="input-top" type="number" name="nubmer" placeholder="—" disabled="disabled"/>
+              	<input class="input-bottom" type="number" name="nubmer" placeholder="—" disabled="disabled"/>
+              	</div>
+              	<div class="claim-and-burn__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
+              	<button class="button-active currency" type="button"><span>Choose Token</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 1L5 5L1 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              	</button>
+              	<p>—</p>
+              	</div>
+              </form>
+              -->
             </div>
             <div class="claim-and-burn__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
               <div class="claim-and-burn__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
@@ -286,6 +504,7 @@
               </div>
             </div>
             <div class="claim-and-burn__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
               <div class="details__content">
                 <div class="details__content-item"> 
@@ -316,6 +535,8 @@
             </div>
             <div class="claim-and-burn__wrapper-info-button transaction__popup-wrapper-info-button">
               <button class="button-active choose" type="button">Choose Token</button>
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
+              <!-- <button class="button-active action" type="button">🔥 Claim & Burn</button>-->
             </div>
             <div class="claim-and-burn__wrapper-info-footer transaction__popup-wrapper-info-footer">
               <div class="claim-and-burn__wrapper-info-footer-left transaction__popup-wrapper-info-footer-left"><span>$0.00</span>
@@ -368,6 +589,20 @@
                      <svg xmlns="http://www.w3.org/2000/svg" fill="#687ee3" height="12px" viewBox="0 0 426.66667 426.66667" width="12px"><path d="m410.667969 229.332031h-394.667969c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h394.667969c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"/><path d="m213.332031 426.667969c-8.832031 0-16-7.167969-16-16v-394.667969c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v394.667969c0 8.832031-7.167969 16-16 16zm0 0"/></svg><span>Use Max</span></button>
                 </div>
               </form>
+              <!--
+              <form class="increase-boost__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
+              	<div class="increase-boost__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
+              	<div class="icon getShadow"></div>
+              	<input class="input-top" type="number" name="nubmer" placeholder="—" disabled="disabled"/>
+              	<input class="input-bottom" type="number" name="nubmer" placeholder="—" disabled="disabled"/>
+              	</div>
+              	<div class="increase-boost__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
+              	<button class="button-active currency" type="button"><span>Choose Token</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 1L5 5L1 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              	</button>
+              	<p>—</p>
+              	</div>
+              </form>
+              -->
             </div>
             <div class="increase-boost__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
               <div class="increase-boost__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
@@ -375,6 +610,7 @@
               </div>
             </div>
             <div class="increase-boost__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
               <div class="details__content">
                 <div class="details__content-item"> 
@@ -404,6 +640,8 @@
               </div>
             </div>
             <div class="increase-boost__wrapper-info-button transaction__popup-wrapper-info-button">
+              <!-- <button class="button-active choose" type="button">Choose Token</button>-->
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
               <button class="button-active action" type="button">📈 Increase Boost</button>
             </div>
             <div class="increase-boost__wrapper-info-footer transaction__popup-wrapper-info-footer">
@@ -457,6 +695,20 @@
                      <svg xmlns="http://www.w3.org/2000/svg" fill="#687ee3" height="12px" viewBox="0 0 426.66667 426.66667" width="12px"><path d="m410.667969 229.332031h-394.667969c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h394.667969c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"/><path d="m213.332031 426.667969c-8.832031 0-16-7.167969-16-16v-394.667969c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v394.667969c0 8.832031-7.167969 16-16 16zm0 0"/></svg><span>Use Max</span></button>
                 </div>
               </form>
+              <!--
+              <form class="decrease-boost__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
+              	<div class="decrease-boost__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
+              	<div class="icon getShadow"></div>
+              	<input class="input-top" type="number" name="nubmer" placeholder="—" disabled="disabled"/>
+              	<input class="input-bottom" type="number" name="nubmer" placeholder="—" disabled="disabled"/>
+              	</div>
+              	<div class="decrease-boost__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
+              	<button class="button-active currency" type="button"><span>Choose Token</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 1L5 5L1 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              	</button>
+              	<p>—</p>
+              	</div>
+              </form>
+              -->
             </div>
             <div class="decrease-boost__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
               <div class="decrease-boost__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
@@ -464,6 +716,7 @@
               </div>
             </div>
             <div class="decrease-boost__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
               <div class="details__content">
                 <div class="details__content-item"> 
@@ -493,6 +746,8 @@
               </div>
             </div>
             <div class="decrease-boost__wrapper-info-button transaction__popup-wrapper-info-button">
+              <!-- <button class="button-active choose" type="button">Choose Token</button>-->
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
               <button class="button-active action" type="button">📈 Increase Boost</button>
             </div>
             <div class="decrease-boost__wrapper-info-footer transaction__popup-wrapper-info-footer">
@@ -543,15 +798,53 @@
                 <div class="icon__info-image"><img src="images/Bitmap.png" alt="Bitmap"/></div>
               </div>
             </div>
+            <div class="manage-powercard__wrapper-info-icon active">
+              <div class="icon__info">
+                <div class="loading">
+                  <div class="hold left">
+                    <div class="fill"></div>
+                  </div>
+                  <div class="hold right">
+                    <div class="fill"></div>
+                  </div>
+                </div>
+                <div class="icon__info-image"><img src="images/Bitmap.png" alt="Bitmap"/></div>
+              </div>
+            </div>
+            <div class="manage-powercard__wrapper-info-icon active-reverse">
+              <div class="icon__info">
+                <div class="loading">
+                  <div class="hold left">
+                    <div class="fill"></div>
+                  </div>
+                  <div class="hold right">
+                    <div class="fill"></div>
+                  </div>
+                </div>
+                <div class="icon__info-image"><img src="images/Bitmap.png" alt="Bitmap"/></div>
+              </div>
+            </div>
+            <!-- not-active-->
             <div class="manage-powercard__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
               <div class="manage-powercard__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item"> 
-                <p class="description">Powercard status</p><span class="value">Not Active</span>
+                <p class="description">Powercard status</p>
+                <!-- not-active--><span class="value">Not Active</span>
+                <!-- active-->
+                <!-- <span class="value">Active</span>-->
               </div>
               <div class="manage-powercard__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item"> 
-                <p class="description">Remaining boost time</p><span class="value">N/A</span>
+                <p class="description">Remaining boost time</p>
+                <!-- not-active--><span class="value">N/A</span>
+                <!-- active-->
+                <!-- <span class="value">14 days</span>-->
+                <!-- active-reverse-->
+                <!-- <span class="value">54 days</span>-->
               </div>
               <div class="manage-powercard__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
-                <p class="description">Powercard boost multiplier</p><span class="value">0x</span>
+                <p class="description">Powercard boost multiplier</p>
+                <!-- not-active--><span class="value">0x</span>
+                <!-- active-->
+                <!-- <span class="value">2x</span>-->
               </div>
             </div>
             <div class="manage-powercard__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
@@ -584,6 +877,7 @@
               </div>
             </div>
             <div class="manage-powercard__wrapper-info-button transaction__popup-wrapper-info-button">
+              <!-- <button class="button-active deposit" type="button">🎖 Deposit Powercard</button>-->
               <button class="button-active action" type="button">🎖 Withdraw Powercard</button>
             </div>
             <div class="manage-powercard__wrapper-info-footer transaction__popup-wrapper-info-footer">
