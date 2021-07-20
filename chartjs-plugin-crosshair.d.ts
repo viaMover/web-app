@@ -1,10 +1,10 @@
-import {
-  Chart,
-  ChartEvent,
-  InteractionModeFunction,
-  InteractionOptions,
-  Plugin
-} from 'chart.js';
+// Type definitions for chartjs-plugin-crosshair 1.1
+// Project: https://chartjs-plugin-crosshair.netlify.com, https://github.com/viaMover/web-app
+// Definitions by: Dan Manastireanu <https://github.com/danmana>, Andrew Gergert <https://github.com/sinu5oid>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped, https://github.com/viaMover/web-app
+// TypeScript Version: 3.2
+
+import { InteractionModeFunction, Plugin } from 'chart.js';
 
 declare module 'chart.js' {
   interface ChartPluginsOptions {
@@ -71,6 +71,7 @@ export interface CallbackOptions {
   afterZoom?: ((start: number, end: number) => void) | undefined;
 }
 
+/** since version 1.2.0 **/
 declare module 'chartjs-plugin-crosshair' {
   export const Interpolate = InteractionModeFunction;
 
