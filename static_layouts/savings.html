@@ -124,6 +124,7 @@
                 <li> 
                   <p class="description">Est. earnings next month</p><span class="value">$0.00</span>
                 </li>
+                <li> 
                   <p class="description">Estimated earnings annualy</p><span class="value">$0.00</span>
                 </li>
               </ul>
@@ -149,6 +150,12 @@
                 </button>
               </div>
             </div>
+            <!--
+            <div class="savings__menu-wrapper-empty"><span class="icon">💰</span>
+            	<h2>Nothing in Savings</h2>
+            	<p>Looks like you don’t have any savings, yet</p><a class="black-link button-active" href="#">💰 Deposit in Savings</a>
+            </div>
+            -->
             <div class="savings__menu-wrapper-balance"><span class="balance">$2,984.48</span>
               <p>Savings Balance</p>
             </div>
@@ -277,6 +284,7 @@
               </div>
             </div>
             <div class="deposit__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Deposit Details"/><span>Deposit Details</span></button>
               <div class="details__content">
                 <div class="details__content-item"> 
@@ -299,13 +307,14 @@
                   <p class="description">Swapping via</p>
                   <p class="info">Sushi <span>🍣</span></p>
                 </div>
-                <div class="details__content-item">
+                <div class="details__content-item"> 
                   <p class="description">Slippage</p>
                   <p class="info rate">1.00%</p>
                 </div>
               </div>
             </div>
             <div class="deposit__wrapper-info-button transaction__popup-wrapper-info-button">
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
               <button class="button-active action" type="button">💰 Deposit</button>
             </div>
             <div class="deposit__wrapper-info-footer transaction__popup-wrapper-info-footer">
@@ -315,16 +324,16 @@
               <div class="deposit__wrapper-info-footer-right swiper-container popup-slider transaction__popup-wrapper-info-footer-right">
                 <div class="swiper-pagination"></div>
                 <div class="swiper-wrapper">
-                  <div class="swiper-slide">
+                  <div class="swiper-slide"> 
                     <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
                   </div>
-                  <div class="swiper-slide">
+                  <div class="swiper-slide"> 
                     <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
                   </div>
-                  <div class="swiper-slide">
+                  <div class="swiper-slide"> 
                     <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
                   </div>
-                  <div class="swiper-slide">
+                  <div class="swiper-slide"> 
                     <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
                   </div>
                 </div>
@@ -368,6 +377,7 @@
               </div>
             </div>
             <div class="withdraw__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="thdraw Details"/><span>Withdraw Details</span></button>
               <div class="details__content">
                 <div class="details__content-item"> 
@@ -390,13 +400,14 @@
                   <p class="description">Swapping via</p>
                   <p class="info">Sushi <span>🍣</span></p>
                 </div>
-                <div class="details__content-item">
+                <div class="details__content-item"> 
                   <p class="description">Slippage</p>
                   <p class="info rate">1.00%</p>
                 </div>
               </div>
             </div>
             <div class="withdraw__wrapper-info-button transaction__popup-wrapper-info-button">
+              <!-- <button class="button-active enter" type="button">Enter amount</button>-->
               <button class="button-active action" type="button">🚪 Withdraw</button>
             </div>
             <div class="withdraw__wrapper-info-footer transaction__popup-wrapper-info-footer">
@@ -415,7 +426,7 @@
                   <div class="swiper-slide"> 
                     <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
                   </div>
-                  <div class="swiper-slide">
+                  <div class="swiper-slide"> 
                     <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
                   </div>
                 </div>

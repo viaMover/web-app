@@ -306,6 +306,62 @@ $(document).ready(function() {
 	}
 	decreaseBoostPopup();
 
+	function stakePopup() {
+		let stakePopup = $('.stake__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.stake');
+		let bg = $('.stake__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			stakePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			stakePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			stakePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	stakePopup();
+
+	function unstakePopup() {
+		let unstakePopup = $('.unstake__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.unstake');
+		let bg = $('.unstake__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			unstakePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			unstakePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			unstakePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	unstakePopup();
+
 	function claimAndBurnPopup() {
 		let claimAndBurnPopup = $('.claim-and-burn__popup'); 
 		let close = $('.burger__popup-close');
@@ -558,7 +614,91 @@ $(document).ready(function() {
 		})
 	}
 	redeemPopup();
-  
+
+	function purchaseBondsPopup() {
+		let increasePopup = $('.purchase-bonds__popup'); 
+		let close = $('.purchase-bonds__popup-close');
+		let button = $('.purchase-bonds');
+		let bg = $('.purchase-bonds__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			increasePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			increasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			increasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	purchaseBondsPopup();
+
+	function claimBondsPopup() {
+		let claimBondsPopup = $('.claim-bonds__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.claim-bonds');
+		let bg = $('.claim-bonds__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			claimBondsPopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			claimBondsPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			claimBondsPopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	claimBondsPopup();
+
+	function claimAndRepurchasePopup() {
+		let claimAndRepurchasePopup = $('.claim-and-repurchase__popup'); 
+		let close = $('.burger__popup-close');
+		let button = $('.claim-and-repurchase');
+		let bg = $('.claim-and-repurchase__popup-bg');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			claimAndRepurchasePopup.addClass('transaction__popup-active'); 
+			bg.addClass('popup-bg-active');
+			close.addClass('transaction__popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			claimAndRepurchasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+		bg.on('click', function() { 
+			claimAndRepurchasePopup.removeClass('transaction__popup-active'); 
+			bg.removeClass('popup-bg-active');
+			close.removeClass('transaction__popup-close-active');
+		})
+	}
+	claimAndRepurchasePopup();
+
 	function hideByClickEscButton() {
 		let transactionPopup = $('.transaction__popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
