@@ -117,7 +117,7 @@ export default {
     btnEnterAmount: 'Enter amount'
   },
   treasury: {
-    icon: '🐽',
+    icon: '🐷',
     lblTreasuryHeader: '{amount} @:treasury.lblTreasuryBonuses',
     lblSmartTreasury: 'Smart Treasury',
     lblTreasuryEarnedToday: '@:treasury.lblTreasury brought you {amount} today',

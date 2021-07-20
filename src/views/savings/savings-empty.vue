@@ -15,8 +15,8 @@
     </template>
     <div class="savings__menu-wrapper-empty">
       <span class="icon">💰</span>
-      <h2>Nothing in Savings</h2>
-      <p>Looks like you don’t have any savings, yet</p>
+      <h2>{{ $t('savings.lblNothingInSavings') }}</h2>
+      <p>{{ $t('savings.txtNothingInSavings') }}</p>
       <action-button
         button-class="black-link button-active"
         @button-click="toggleDeposit"
