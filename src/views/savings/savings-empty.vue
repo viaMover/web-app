@@ -73,7 +73,7 @@ export default Vue.extend({
   methods: {
     replaceActiveSavingsRoute(): void {
       this.$router.replace({
-        name: 'savingsManage'
+        name: 'savings-manage'
       });
     },
     toggleDeposit(): void {
