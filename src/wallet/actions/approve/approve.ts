@@ -11,7 +11,8 @@ export const approve = async (
   spenderAddress: string,
   gasLimit: string,
   gasPrice: string,
-  web3: Web3
+  web3: Web3,
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     const tokenContract = new web3.eth.Contract(
@@ -30,6 +31,7 @@ export const approve = async (
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Approve txn hash: ${hash}`);
+          changeStepToProcess();
         })
         .once('receipt', (receipt: any) => {
           console.log(`Approve txn receipt: ${receipt}`);

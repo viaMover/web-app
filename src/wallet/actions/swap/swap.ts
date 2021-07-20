@@ -25,12 +25,13 @@ export const swapCompound = async (
   swapGasLimit: string,
   approveGasLimit: string,
   gasPriceInGwei: string,
-  useSubsidized: boolean
+  useSubsidized: boolean,
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
   try {
-    executeTransactionWithApprove(
+    await executeTransactionWithApprove(
       inputAsset,
       contractAddress,
       inputAmount,
@@ -47,7 +48,8 @@ export const swapCompound = async (
             transferData,
             network,
             web3,
-            accountAddress
+            accountAddress,
+            changeStepToProcess
           );
         } else {
           await swap(
@@ -59,14 +61,16 @@ export const swapCompound = async (
             web3,
             accountAddress,
             swapGasLimit,
-            gasPriceInGwei
+            gasPriceInGwei,
+            changeStepToProcess
           );
         }
-      }
+      },
+      changeStepToProcess
     );
   } catch (err) {
     console.error(`Can't swap: ${err}`);
-    return;
+    throw err;
   }
 };
 
@@ -79,7 +83,8 @@ export const swap = async (
   web3: Web3,
   accountAddress: string,
   gasLimit: string,
-  gasPriceInGwei: string
+  gasPriceInGwei: string,
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   console.log('Executing swap...');
 
@@ -166,6 +171,7 @@ export const swap = async (
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Swap txn hash: ${hash}`);
+          changeStepToProcess();
         })
         .once('receipt', (receipt: any) => {
           console.log(`Swap txn receipt: ${receipt}`);
@@ -178,5 +184,6 @@ export const swap = async (
     });
   } catch (error) {
     console.error(`can't execute swap due to: ${error}`);
+    throw error;
   }
 };

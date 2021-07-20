@@ -1,11 +1,11 @@
 <template>
   <centered-modal-window
     v-cloak
-    :header-label="$t('swaps.lblSwaps')"
+    :header-label="header"
     :modal-class="modalClass"
     modal-id="swap-modal"
   >
-    <swap-form @tx-created="handleTxCreated"></swap-form>
+    <swap-form @tx-process="handleTxProcess"></swap-form>
   </centered-modal-window>
 </template>
 
@@ -15,7 +15,6 @@ import Vue from 'vue';
 import CenteredModalWindow from './centered-modal-window.vue';
 import { SwapForm } from '@/components/forms';
 
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals/modalTypes';
 
 export default Vue.extend({
@@ -27,18 +26,18 @@ export default Vue.extend({
   data() {
     return {
       modalId: Modal.Swap,
-      modalClass: 'swaps__popup'
+      modalClass: 'swaps__popup',
+      processing: false
     };
   },
+  computed: {
+    header(): string {
+      return this.processing ? '' : this.$t('swaps.lblSwaps').toString();
+    }
+  },
   methods: {
-    handleTxCreated(txHash: Promise<string>): void {
-      toggleSingleItem(this.modalId);
-      toggleSingleItem(
-        Modal.Transaction,
-        new Promise<string>((resolve) =>
-          window.setTimeout(() => resolve(txHash), 5000)
-        )
-      );
+    handleTxProcess(processing: boolean): void {
+      this.processing = processing;
     }
   }
 });

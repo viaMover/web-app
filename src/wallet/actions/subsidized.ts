@@ -110,7 +110,8 @@ export const sendSubsidizedRequest = async (
   action: string,
   accountAddress: string,
   network: Network,
-  web3: Web3
+  web3: Web3,
+  changeStepToProcess: () => Promise<void>
 ): Promise<SubsidizedTxData> => {
   const url = getNetwork(network)?.subsidizedUrl;
   if (url === undefined) {
@@ -118,6 +119,8 @@ export const sendSubsidizedRequest = async (
   }
 
   const signature = await web3.eth.sign(action, accountAddress);
+
+  changeStepToProcess();
 
   try {
     console.log('Senging subsidizing request to ', url);

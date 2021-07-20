@@ -1,5 +1,6 @@
 <template>
-  <form>
+  <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
+  <form v-else>
     <div class="modal-wrapper-info-items">
       <asset-field
         :amount="input.amount"
@@ -92,7 +93,8 @@ import { TokenWithBalance, Token } from '@/wallet/types';
 import {
   AssetField,
   GasSelector,
-  SlippageSelector
+  SlippageSelector,
+  FormLoader
 } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
@@ -118,6 +120,7 @@ import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
 import Web3 from 'web3';
 import { Slippage } from '../controls/slippage-selector.vue';
+import { Step } from '../controls/form-loader.vue';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -125,10 +128,12 @@ export default Vue.extend({
     AssetField,
     ActionButton,
     GasSelector,
-    SlippageSelector
+    SlippageSelector,
+    FormLoader
   },
   data() {
     return {
+      loaderStep: undefined as Step | undefined,
       swapInfoExpanded: false,
       info: {
         minimumReceived: 0,
@@ -310,20 +315,30 @@ export default Vue.extend({
         );
         return;
       }
-      await swapCompound(
-        this.input.asset,
-        this.output.asset,
-        this.input.amount,
-        this.transferData,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress,
-        this.swapGasLimit,
-        this.approveGasLimit,
-        this.selectedGasPrice,
-        this.useSubsidized
-      );
-      //this.$emit('tx-created', 'transaction-hash');
+
+      this.$emit('tx-process', true);
+      this.loaderStep = 'Confirm';
+      try {
+        await swapCompound(
+          this.input.asset,
+          this.output.asset,
+          this.input.amount,
+          this.transferData,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress,
+          this.swapGasLimit,
+          this.approveGasLimit,
+          this.selectedGasPrice,
+          this.useSubsidized,
+          async () => {
+            this.loaderStep = 'Process';
+          }
+        );
+        this.loaderStep = 'Success';
+      } catch (err) {
+        this.loaderStep = 'Reverted';
+      }
     },
     async flipAssets(): Promise<void> {
       this.loading = true;

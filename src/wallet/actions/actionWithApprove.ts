@@ -11,7 +11,8 @@ export const executeTransactionWithApprove = async (
   web3: Web3,
   gasLimit: string,
   gasPriceInGwei: string,
-  action: () => Promise<void>
+  action: () => Promise<void>,
+  changeStepToProcess: () => Promise<void>
 ) => {
   if (lessThanOrEqual(gasPriceInGwei, '0')) {
     throw new Error("can't execute transaction with zero gas price");
@@ -27,7 +28,8 @@ export const executeTransactionWithApprove = async (
         contractAddress,
         gasLimit,
         gasPriceInGwei,
-        web3
+        web3,
+        changeStepToProcess
       );
     }
   } catch (err) {

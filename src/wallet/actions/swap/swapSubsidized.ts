@@ -24,7 +24,8 @@ export const swapSubsidized = async (
   transferData: TransferData,
   network: Network,
   web3: Web3,
-  accountAddress: string
+  accountAddress: string,
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   console.log('Executing SUBSUDIZED swap...');
 
@@ -53,7 +54,8 @@ export const swapSubsidized = async (
       actionString,
       accountAddress,
       network,
-      web3
+      web3,
+      changeStepToProcess
     );
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
