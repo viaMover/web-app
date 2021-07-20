@@ -86,6 +86,14 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
+        path: 'empty',
+        name: 'treasury-empty',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-empty.vue'
+          )
+      },
+      {
         path: 'month-statistics/:year/:month',
         name: 'treasury-month-stats',
         component: () =>
