@@ -200,10 +200,17 @@ export default Vue.extend({
         return '';
       }
 
-      const rate = divide(
+      let rate = divide(
         this.transferData.sellTokenToEthRate,
         this.transferData.buyTokenToEthRate
       );
+
+      if (!notZero(rate)) {
+        rate = divide(
+          fromWei(this.transferData.sellAmount, this.input.asset.decimals),
+          fromWei(this.transferData.buyAmount, this.output.asset.decimals)
+        );
+      }
 
       return `1 ${this.output.asset.symbol} = ${rate} ${this.input.asset.symbol}`;
     },
@@ -411,7 +418,11 @@ export default Vue.extend({
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
           this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
         }
+        this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -465,7 +476,11 @@ export default Vue.extend({
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
           this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
         }
+        this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -520,7 +535,11 @@ export default Vue.extend({
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
           this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
         }
+        this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -574,8 +593,12 @@ export default Vue.extend({
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
           this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
         }
-        console.error(`can't calc data: ${err}`);
+        this.transferData = undefined;
+
         return;
       } finally {
         this.loading = false;
@@ -639,8 +662,12 @@ export default Vue.extend({
         );
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
-          this.error = err.publicMessage;
+          this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
         }
+        this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
