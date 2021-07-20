@@ -1,11 +1,29 @@
 <template>
   <secondary-page :title="$t('savings.lblSavings')">
-    <div class="image">💰</div>
-    <h2>{{ $t('savings.lblNothingInSavings') }}</h2>
-    <p>{{ $t('savings.txtNothingInSavings') }}</p>
-    <action-button @button-click="toggleDeposit">{{
-      $t('savings.btnDeposit.emoji')
-    }}</action-button>
+    <template v-slot:title>
+      <secondary-page-title
+        :icon="$t('savings.icon')"
+        :title="$t('savings.lblSavings')"
+        wrapper-class="savings__menu-wrapper-title"
+      >
+        <template v-slot:context-menu>
+          <context-button :popover-parent-id="popoverParentId">
+            <context-button-item :text="$t('savings.btnDeposit.emoji')" />
+          </context-button>
+        </template>
+      </secondary-page-title>
+    </template>
+    <div class="savings__menu-wrapper-empty">
+      <span class="icon">💰</span>
+      <h2>Nothing in Savings</h2>
+      <p>Looks like you don’t have any savings, yet</p>
+      <action-button
+        button-class="black-link button-active"
+        @button-click="toggleDeposit"
+      >
+        {{ $t('savings.btnDeposit.emoji') }}
+      </action-button>
+    </div>
   </secondary-page>
 </template>
 
@@ -15,15 +33,27 @@ import { mapGetters } from 'vuex';
 
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
-import { ActionButton } from '@/components/buttons';
-import { SecondaryPage } from '../../components/layout';
+import {
+  ActionButton,
+  ContextButton,
+  ContextButtonItem
+} from '@/components/buttons';
+import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
 import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
   components: {
     SecondaryPage,
+    SecondaryPageTitle,
+    ContextButton,
+    ContextButtonItem,
     ActionButton
+  },
+  data() {
+    return {
+      popoverParentId: 'savings-empty-action-buttons'
+    };
   },
   computed: {
     ...mapGetters('account', ['hasActiveSavings'])
