@@ -25,8 +25,8 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import Color from 'color';
 
 import { buildBalancesChartData } from '@/store/modules/account/utils/charts';
-import verticalLinePlugin from '@/components/charts/plugins/vertical-line';
 import { HourlyBalancesItem } from '@/services/mover/savings';
+
 import { ActionButton } from '@/components/buttons';
 
 const enum Scope {
