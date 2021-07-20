@@ -118,7 +118,6 @@ export default Vue.extend({
             mode: 'index'
           },
           animation: false,
-          normalized: true,
           responsive: true,
           plugins: {
             legend: {
@@ -128,24 +127,6 @@ export default Vue.extend({
               samples: 150,
               algorithm: 'min-max',
               enabled: true
-            },
-            crosshair: {
-              line: {
-                color: '#F66', // crosshair line color
-                width: 1 // crosshair line width
-              },
-              sync: {
-                enabled: false, // enable trace line syncing with other charts
-                group: 1, // chart group
-                suppressTooltips: false // suppress tooltips when showing a synced tracer
-              },
-              zoom: {
-                enabled: false, // enable zooming
-                zoomboxBackgroundColor: 'rgba(66,133,244,0.2)', // background color of zoom box
-                zoomboxBorderColor: '#48F', // border color of zoom box
-                zoomButtonText: 'Reset Zoom', // reset zoom button text
-                zoomButtonClass: 'reset-zoom' // reset zoom button class
-              }
             }
           },
           elements: {
@@ -182,13 +163,7 @@ export default Vue.extend({
               display: false
             }
           }
-        } as ChartOptions<'line'>,
-        plugins: [
-          verticalLinePlugin({
-            lineWidth: 1,
-            strokeColor: this.strokeColor
-          })
-        ]
+        } as ChartOptions<'line'>
       });
     }
   }

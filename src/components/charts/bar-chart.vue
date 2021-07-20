@@ -86,7 +86,6 @@ export default Vue.extend({
             mode: 'index'
           },
           animation: false,
-          normalized: true,
           responsive: true,
           plugins: {
             legend: {
@@ -103,7 +102,6 @@ export default Vue.extend({
           },
           scales: {
             x: {
-              // type: 'time',
               time: {
                 tooltipFormat: 'DD MMMM YYYY HH:mm'
               },
