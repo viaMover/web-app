@@ -127,6 +127,16 @@ export default Vue.extend({
               samples: 150,
               algorithm: 'min-max',
               enabled: true
+            },
+            crosshair: {
+              line: {
+                color: this.accentColor,
+                thickness: 1,
+                dashPattern: [15, 5]
+              },
+              snap: {
+                enabled: true
+              }
             }
           },
           elements: {
@@ -147,7 +157,7 @@ export default Vue.extend({
           },
           scales: {
             x: {
-              type: 'timeseries',
+              type: 'time',
               time: {
                 tooltipFormat: 'DD MMMM YYYY HH:mm'
               },
