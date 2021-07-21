@@ -1,11 +1,15 @@
 <template>
-  <content-wrapper has-close-button @close="handleClose">
-    <div class="image">
-      <img :alt="$t('NFTs.txtLogoAlt')" src="/src/assets/nft.png" />
+  <content-wrapper
+    base-class="nft-drops__wrapper"
+    has-close-button
+    @close="handleClose"
+  >
+    <div class="nft-drops__wrapper-info-title">
+      <img :alt="$t('NFTs.txtLogoAlt')" src="@/assets/images/NFT-Drops.png" />
     </div>
-    <div class="list nft-list">
+    <ul class="nft-drops__wrapper-info-items">
       <nft-asset-card v-for="nft in assets" :id="nft.id" :key="nft.id" />
-    </div>
+    </ul>
   </content-wrapper>
 </template>
 

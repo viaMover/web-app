@@ -1,20 +1,19 @@
 <template>
-  <div class="card card-nft">
+  <li class="nft-drops__wrapper-info-items-item">
     <img
       :alt="$t('NFTs.txtAssetAlt', { name: asset.nft.name })"
-      class="image"
       :src="asset.nft.imageSrc"
     />
-    <div class="container container-text">
-      <h5>{{ asset.nft.name }}</h5>
-      <div class="description">
+    <div class="nft-drops__wrapper-info-items-item-content">
+      <h3>{{ asset.nft.name }}</h3>
+      <p>
         {{ asset.nft.description }}
-      </div>
+      </p>
     </div>
-    <router-link class="button" :class="[buttonClass]" :to="routeTo">
+    <router-link class="button-active" :class="[buttonClass]" :to="routeTo">
       {{ $t('NFTs.btnGet.simple') }}
     </router-link>
-  </div>
+  </li>
 </template>
 
 <script lang="ts">

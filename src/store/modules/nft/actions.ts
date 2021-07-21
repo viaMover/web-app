@@ -42,7 +42,7 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.sweetAndSour.description'
             ) as string) ?? '',
-          imageSrc: require('@/assets/images/drops-img1.png')
+          imageSrc: require('@/assets/images/sweet-and-sour-bg.png')
         },
         totalNumber: 0,
         totalClaimed: 0
@@ -55,7 +55,7 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.unexpectedMove.description'
             ) as string) ?? '',
-          imageSrc: require('@/assets/images/drops-img2.png')
+          imageSrc: require('@/assets/images/unexpected-move-bg.png')
         },
         totalNumber: 0,
         totalClaimed: 0
