@@ -20,6 +20,7 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsStats',
@@ -29,14 +30,26 @@ export default Vue.extend({
   },
   data() {
     return {
-      earnedToday: '0'
+      earnedToday: '$0'
     };
   },
   computed: {
     ...mapGetters('account', {
-      earnedThisMonth: 'savingsInfoEarnedThisMonthNative',
-      earnedTotal: 'savingsInfoEarnedTotalNative'
-    })
+      savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
+      savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative'
+    }),
+    earnedThisMonth(): string {
+      const earnedThisMonth = new BigNumber(
+        this.savingsInfoEarnedThisMonthNative
+      ).toFormat(2);
+      return `$${earnedThisMonth}`;
+    },
+    earnedTotal(): string {
+      const earnedTotal = new BigNumber(
+        this.savingsInfoEarnedTotalNative
+      ).toFormat(2);
+      return `$${earnedTotal}`;
+    }
   }
 });
 </script>

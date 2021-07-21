@@ -230,7 +230,9 @@ export default {
     // TODO: works only for USD
     const ethPriceInUSDResult = await getEthPrice(state.networkInfo.network);
     if (ethPriceInUSDResult.isError) {
-      console.log(`can't load eth price: ${ethPriceInUSDResult}`);
+      console.log(
+        `can't load eth price: ${JSON.stringify(ethPriceInUSDResult)}`
+      );
     } else {
       commit('setEthPrice', ethPriceInUSDResult.result);
     }

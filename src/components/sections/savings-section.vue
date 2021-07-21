@@ -7,7 +7,11 @@
     navigate-to-name="savings-manage"
   >
     <template v-slot:heading>
-      {{ $t('savings.lblSavingsHeader', { amount: savingsBalanceNative }) }}
+      {{
+        $t('savings.lblSavingsHeader', {
+          amount: savingsBalanceNative
+        })
+      }}
     </template>
 
     <p>
@@ -25,6 +29,7 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import HeadingSection from './heading-section.vue';
+import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsSection',
@@ -38,8 +43,12 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', {
-      savingsBalanceNative: 'savingsInfoBalanceNative'
-    })
+      savingsInfoBalanceNative: 'savingsInfoBalanceNative'
+    }),
+    savingsBalanceNative(): string {
+      const balance = new BigNumber(this.savingsInfoBalanceNative).toFormat(2);
+      return `$${balance}`;
+    }
   }
 });
 </script>

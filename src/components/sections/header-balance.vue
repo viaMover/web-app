@@ -3,7 +3,7 @@
     class="general-desktop__menu-wrapper-balance"
     :name="$t('lblBalance')"
   >
-    <span>{{ formattedBalance }}</span>
+    <span>{{ balanceNative }}</span>
     <p>{{ $t('headingBalance') }}</p>
   </section>
 </template>
@@ -18,9 +18,9 @@ export default Vue.extend({
   name: 'HeaderBalance',
   computed: {
     ...mapGetters('account', ['entireBalance']),
-    formattedBalance(): string {
-      // todo: should be $, rounded to 2 decimal places
-      return new BigNumber(this.entireBalance).toFixed(6);
+    balanceNative(): string {
+      const balance = new BigNumber(this.entireBalance).toFixed(2);
+      return `$${balance}`;
     }
   }
 });

@@ -5,6 +5,10 @@
       <p>{{ $t('savings.lblSavingsBalance') }}</p>
     </div>
     <div class="savings__menu-wrapper-graph">
+      <bar-chart
+        :chart-data-source="savingsInfo ? savingsInfo.last12MonthsBalances : []"
+        :is-loading="isSavingsInfoLoading"
+      />
       <p>
         {{
           $t('savings.lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix', {
@@ -13,10 +17,6 @@
         }}
         <b>{{ earnedLastMonth }}</b>
       </p>
-      <bar-chart
-        :chart-data-source="savingsInfo ? savingsInfo.last12MonthsBalances : []"
-        :is-loading="isSavingsInfoLoading"
-      />
     </div>
   </div>
 </template>
@@ -27,6 +27,7 @@ import { mapGetters, mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 import { BarChart } from '@/components/charts';
+import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsYearlyChartWrapper',
@@ -38,10 +39,20 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', {
-      savingsBalance: 'savingsInfoBalanceNative',
-      earnedLastMonth: 'savingsInfoEarnedThisMonthNative'
+      savingsInfoBalanceNative: 'savingsInfoBalanceNative',
+      savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative'
     }),
-    ...mapState('account', ['savingsInfo', 'isSavingsInfoLoading'])
+    ...mapState('account', ['savingsInfo', 'isSavingsInfoLoading']),
+    savingsBalance(): string {
+      const value = new BigNumber(this.savingsInfoBalanceNative).toFormat(2);
+      return `$${value}`;
+    },
+    earnedLastMonth(): string {
+      const value = new BigNumber(
+        this.savingsInfoEarnedThisMonthNative
+      ).toFormat(2);
+      return `$${value}`;
+    }
   }
 });
 </script>

@@ -5,6 +5,20 @@
       :value="balanceNative"
     />
     <statement-list-item
+      :description="
+        $t('savings.statement.lblTotalEarnedInMonth', { month: monthName })
+      "
+      :value="totalEarned"
+    />
+    <statement-list-item
+      :description="
+        $t('savings.statement.lblAverageDailyEarningsInMonth', {
+          month: monthName
+        })
+      "
+      :value="averageDailyEarnings"
+    />
+    <statement-list-item
       :description="$t('savings.statement.lblDeposits', { month: monthName })"
       :value="depositsNative"
     />
@@ -28,14 +42,15 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import dayjs from 'dayjs';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { SavingsReceipt } from '@/services/mover';
-import { fromWei } from '@/utils/bigmath';
+import { fromWei, multiply } from '@/utils/bigmath';
 
 import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
+import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',
@@ -50,72 +65,51 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapState('account', ['savingsReceipt', 'isSavingsReceiptLoading']),
+    ...mapGetters('account', [
+      'savingsEndOfMonthBalanceNative',
+      'savingsMonthTotalDepositsNative',
+      'savingsMonthTotalWithdrawalsNative',
+      'savingsMonthEarnedNative',
+      'savingsMonthAverageEarnedNative'
+    ]),
     monthName(): string {
       return this.pageDate.format('MMMM');
     },
     balanceNative(): string {
-      if (this.isSavingsReceiptLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsReceipt === undefined) {
-        return '0';
-      }
-
-      const { endOfMonthBalance } = this.savingsReceipt as SavingsReceipt;
-
-      return fromWei(endOfMonthBalance, 6);
+      const value = new BigNumber(this.savingsEndOfMonthBalanceNative).toFormat(
+        2
+      );
+      return `$${value}`;
     },
     depositsNative(): string {
-      if (this.isSavingsReceiptLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsReceipt === undefined) {
-        return '0';
-      }
-
-      const { totalDeposits } = this.savingsReceipt as SavingsReceipt;
-
-      return fromWei(totalDeposits, 6);
+      const value = new BigNumber(
+        this.savingsMonthTotalDepositsNative
+      ).toFormat(2);
+      return `+$${value}`;
     },
     withdrawalsNative(): string {
-      if (this.isSavingsReceiptLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsReceipt === undefined) {
-        return '0';
-      }
-
-      const { totalWithdrawals } = this.savingsReceipt as SavingsReceipt;
-
-      return fromWei(-totalWithdrawals, 6);
+      const value = new BigNumber(
+        this.savingsMonthTotalWithdrawalsNative
+      ).toFormat(2);
+      return `-$${value}`;
     },
     savedFeesNative(): string {
-      if (this.isSavingsReceiptLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsReceipt === undefined) {
-        return '0';
-      }
-
       // TODO: compute
-      return '0';
+      return '$0';
     },
     payoutsToTreasuryNative(): string {
-      if (this.isSavingsReceiptLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsReceipt === undefined) {
-        return '0';
-      }
-
       // TODO: compute
-      return '0';
+      return '$0';
+    },
+    totalEarned(): string {
+      const value = new BigNumber(this.savingsMonthEarnedNative).toFormat(2);
+      return `+$${value}`;
+    },
+    averageDailyEarnings(): string {
+      const value = new BigNumber(
+        this.savingsMonthAverageEarnedNative
+      ).toFormat(2);
+      return `+$${value}`;
     }
   }
 });

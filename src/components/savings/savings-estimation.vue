@@ -3,14 +3,17 @@
     <left-rail-section-item
       :description="$t('savings.lblEstimatedEarningsTomorrow')"
       :value="estimatedEarningsTomorrowNative"
+      value-class="estimation"
     />
     <left-rail-section-item
       :description="$t('savings.lblEstimatedEarningsNextMonth')"
       :value="estimatedEarningsNextMonthNative"
+      value-class="estimation"
     />
     <left-rail-section-item
       :description="$t('savings.lblEstimatedEarningsAnnually')"
       :value="estimatedEarningsAnnuallyNative"
+      value-class="estimation"
     />
   </left-rail-section>
 </template>
@@ -26,53 +29,31 @@ export default Vue.extend({
   name: 'SavingsEstimation',
   components: { LeftRailSection, LeftRailSectionItem },
   computed: {
-    ...mapState('account', [
-      'isSavingsInfoLoading',
-      'savingsAPY',
-      'savingsDPY'
+    ...mapGetters('account', [
+      'savingsInfoBalanceNative',
+      'savingsEstimatedEarningsTomorrowNative',
+      'savingsEstimatedEarningsNextMonthNative',
+      'savingsEstimatedEarningsAnnuallyNative'
     ]),
-    ...mapGetters('account', ['savingsInfoBalanceNative']),
     estimatedEarningsTomorrowNative(): string {
-      if (this.isSavingsInfoLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsDPY === undefined) {
-        return '0';
-      }
-
-      return new BigNumber(this.savingsInfoBalanceNative)
-        .multipliedBy(new BigNumber(this.savingsDPY).dividedBy(100))
-        .toFixed(2);
+      const value = new BigNumber(
+        this.savingsEstimatedEarningsTomorrowNative
+      ).toFormat(2);
+      return `$${value}`;
     },
     estimatedEarningsNextMonthNative(): string {
-      if (this.isSavingsInfoLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsDPY === undefined) {
-        return '0';
-      }
-
-      return new BigNumber(this.savingsInfoBalanceNative)
-        .multipliedBy(
-          new BigNumber(this.savingsDPY).dividedBy(100).multipliedBy(30)
-        )
-        .toFixed(2);
+      const value = new BigNumber(
+        this.savingsEstimatedEarningsNextMonthNative
+      ).toFormat(2);
+      return `$${value}`;
     },
     estimatedEarningsAnnuallyNative(): string {
-      if (this.isSavingsInfoLoading) {
-        return 'loading...';
-      }
-
-      if (this.savingsDPY === undefined) {
-        return '0';
-      }
-
-      return new BigNumber(this.savingsInfoBalanceNative)
-        .multipliedBy(new BigNumber(this.savingsAPY).dividedBy(100))
-        .toFixed(2);
+      const value = new BigNumber(
+        this.savingsEstimatedEarningsAnnuallyNative
+      ).toFormat(2);
+      return `$${value}`;
     }
   }
 });
 </script>
+e

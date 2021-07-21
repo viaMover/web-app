@@ -85,7 +85,9 @@ export default {
       lblDeposits: '{month} deposits',
       lblWithdrawals: '{month} withdrawals',
       lblSavedFees: 'Saved fees',
-      lblPayoutsToTreasury: 'Payouts to @:treasury.lblTreasury'
+      lblPayoutsToTreasury: 'Payouts to @:treasury.lblTreasury',
+      lblTotalEarnedInMonth: 'Total earned in {month}',
+      lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}'
     },
     deposit: {
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
