@@ -3,6 +3,7 @@ import { AbiItem } from 'web3-utils';
 import { Network } from '@/utils/networkTypes';
 import {
   getMoveAssetData,
+  getMoveWethLPAssetData,
   getUSDCAssetData,
   SMART_TREASURY_ABI,
   SMART_TREASURY_ADDRESS
@@ -302,5 +303,69 @@ export const getExitingAmount = async (
     return exitingAmount;
   } catch (error) {
     throw new Error(`error get smart treasury exiting amount: ${error}`);
+  }
+};
+
+export const getTotalStakedMove = async (
+  network: Network,
+  web3: Web3
+): Promise<string> => {
+  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractABI = SMART_TREASURY_ABI;
+
+  const smartTreasury = new web3.eth.Contract(
+    contractABI as AbiItem[],
+    contractAddress
+  );
+
+  try {
+    const totalStakedMoveInWeiResponse = await smartTreasury.methods
+      .totalStakedMove()
+      .call();
+    const totalStakedMoveInWei = totalStakedMoveInWeiResponse.toString();
+
+    const moveAsset = getMoveAssetData(network);
+    const totalStakedMove = fromWei(totalStakedMoveInWei, moveAsset.decimals);
+
+    console.log('totalStakedMove', totalStakedMove);
+    return totalStakedMove;
+  } catch (error) {
+    throw new Error(
+      `failed to get smart treasury total staked move amount: ${error}`
+    );
+  }
+};
+
+export const getTotalStakedMoveEthLP = async (
+  network: Network,
+  web3: Web3
+): Promise<string> => {
+  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractABI = SMART_TREASURY_ABI;
+
+  const smartTreasury = new web3.eth.Contract(
+    contractABI as AbiItem[],
+    contractAddress
+  );
+
+  try {
+    const totalStakedMoveEthLPInWeiResponse = await smartTreasury.methods
+      .totalStakedMoveEthLP()
+      .call();
+    const totalStakedMoveEthLPInWei =
+      totalStakedMoveEthLPInWeiResponse.toString();
+
+    const moveEthLPAsset = getMoveWethLPAssetData(network);
+    const totalStakedMove = fromWei(
+      totalStakedMoveEthLPInWei,
+      moveEthLPAsset.decimals
+    );
+
+    console.log('totalStakedMoveEthLP', totalStakedMove);
+    return totalStakedMove;
+  } catch (error) {
+    throw new Error(
+      `failed to get smart treasury total staked move-eth lp amount: ${error}`
+    );
   }
 };

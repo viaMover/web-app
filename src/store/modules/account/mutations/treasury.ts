@@ -13,5 +13,11 @@ export default {
   },
   setTreasuryAPY(state, apy: string): void {
     state.treasuryAPY = apy;
+  },
+  setTreasuryTotalStakedMove(state, totalStakedMove: string): void {
+    state.treasuryTotalStakedMove = totalStakedMove;
+  },
+  setTreasuryTotalStakedMoveEthLP(state, totalStakedMoveEthLP: string): void {
+    state.treasuryTotalStakedMoveEthLP = totalStakedMoveEthLP;
   }
 } as MutationTree<AccountStoreState>;

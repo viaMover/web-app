@@ -77,4 +77,6 @@ export type AccountStoreState = {
   treasuryBalanceLP: string | undefined;
   treasuryBonus: string | undefined;
   treasuryAPY: string | undefined;
+  treasuryTotalStakedMove: string | undefined;
+  treasuryTotalStakedMoveEthLP: string | undefined;
 };

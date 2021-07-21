@@ -1,7 +1,9 @@
 import {
   getTreasuryBalance,
   GetTreasuryBonus,
-  getTreasuryAPY
+  getTreasuryAPY,
+  getTotalStakedMove,
+  getTotalStakedMoveEthLP
 } from '@/services/mover/treasury';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
@@ -85,7 +87,7 @@ export default {
   },
 
   async initWallet(
-    { commit, state, dispatch },
+    { commit, dispatch },
     payload: InitWalletPayload
   ): Promise<void> {
     try {
@@ -276,16 +278,36 @@ export default {
       state.provider.web3
     );
 
-    const [treasuryBalances, treasuryBonus, treasuryAPY] = await Promise.all([
+    const getTotalStakedMovePromise = getTotalStakedMove(
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const [
+      treasuryBalances,
+      treasuryBonus,
+      treasuryAPY,
+      treasuryTotalStakedMove,
+      treasuryTotalStakedMoveEthLP
+    ] = await Promise.all([
       getTreasuryBalancesPromise,
       getTreasuryBonusPromise,
-      getTreasuryAPYPromise
+      getTreasuryAPYPromise,
+      getTotalStakedMovePromise,
+      getTotalStakedMoveEthLPPromise
     ]);
 
     commit('setTreasuryBalanceMove', treasuryBalances.MoveBalance);
     commit('setTreasuryBalanceLP', treasuryBalances.LPBalance);
     commit('setTreasuryBonus', treasuryBonus);
     commit('setTreasuryAPY', treasuryAPY);
+    commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
+    commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
 
     await dispatch('fetchSavingsInfo');
     await dispatch('fetchSavingsAPY');
