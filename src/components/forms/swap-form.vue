@@ -1,88 +1,97 @@
 <template>
-  <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
-  <form v-else>
-    <div class="modal-wrapper-info-items">
-      <asset-field
-        :amount="input.amount"
-        :asset="input.asset"
-        field-role="input"
-        :label="$t('swaps.lblSwapFrom')"
-        :max-amount="maxInputAmount"
-        :native-amount="input.nativeAmount"
-        use-wallet-tokens
-        @update-amount="handleUpdateInputAmount"
-        @update-asset="handleUpdateInputAsset"
-        @update-native-amount="handleUpdateInputNativeAmount"
-      />
-      <asset-field
-        :amount="output.amount"
-        :asset="output.asset"
-        :exclude-tokens="excludedOutputTokens"
-        field-role="output"
-        :label="$t('swaps.lblSwapTo')"
-        :native-amount="output.nativeAmount"
-        @update-amount="handleUpdateOutputAmount"
-        @update-asset="handleUpdateOutputAsset"
-        @update-native-amount="handleUpdateOutputNativeAmount"
-      />
+  <div class="modal__wrapper-info">
+    <div>
+      <h3 v-if="headerLabel" class="modal__wrapper-info-title">
+        {{ headerLabel }}
+      </h3>
+      <span v-else>&nbsp;</span>
     </div>
-    <div class="modal-wrapper-info-buttons">
-      <button class="flip" type="button" @click="flipAssets">
-        <img src="@/assets/images/flip.png" /><span>Flip</span>
-      </button>
-      <button
-        class="swap-details"
-        :class="{ disabled: !isSwapInfoAvailable }"
-        type="button"
-        @click="expandSwapInfo"
-      >
-        <img src="@/assets/images/swap-details.png" /><span>Swap Details</span>
-      </button>
-      <div v-if="showInfo" class="swap-details__content">
-        <div class="swap-details__content-item">
-          <p class="description">Price impact</p>
-          <p class="info up">???%</p>
-        </div>
-        <div class="swap-details__content-item">
-          <p class="description">Minimum received</p>
-          <p class="info">{{ minimalReceived }}</p>
-        </div>
-        <div class="swap-details__content-item">
-          <p class="description">Rate</p>
-          <p class="info">{{ rateString }}</p>
-        </div>
-        <div v-if="useSubsidized" class="swap-details__content-item">
-          <p class="description">Smart Treasury cover</p>
-          <p class="info">{{ swapNativePrice }}</p>
-        </div>
-        <div class="swap-details__content-item">
-          <p class="description">Swapping via</p>
-          <p class="info">{{ swappingVia }}</p>
-        </div>
-        <div class="swap-details__content-item">
-          <p class="description">Slippage</p>
-          <slippage-selector
-            :slippage="slippage"
-            @selected-slippage-changed="handleSelectedSlippageChanged"
-          />
+    <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
+    <form v-else>
+      <div class="modal-wrapper-info-items">
+        <asset-field
+          :amount="input.amount"
+          :asset="input.asset"
+          field-role="input"
+          :label="$t('swaps.lblSwapFrom')"
+          :max-amount="maxInputAmount"
+          :native-amount="input.nativeAmount"
+          use-wallet-tokens
+          @update-amount="handleUpdateInputAmount"
+          @update-asset="handleUpdateInputAsset"
+          @update-native-amount="handleUpdateInputNativeAmount"
+        />
+        <asset-field
+          :amount="output.amount"
+          :asset="output.asset"
+          :exclude-tokens="excludedOutputTokens"
+          field-role="output"
+          :label="$t('swaps.lblSwapTo')"
+          :native-amount="output.nativeAmount"
+          @update-amount="handleUpdateOutputAmount"
+          @update-asset="handleUpdateOutputAsset"
+          @update-native-amount="handleUpdateOutputNativeAmount"
+        />
+      </div>
+      <div class="modal-wrapper-info-buttons">
+        <button class="flip" type="button" @click="flipAssets">
+          <img src="@/assets/images/flip.png" /><span>Flip</span>
+        </button>
+        <button
+          class="swap-details"
+          :class="{ disabled: !isSwapInfoAvailable }"
+          type="button"
+          @click="expandSwapInfo"
+        >
+          <img src="@/assets/images/swap-details.png" />
+          <span>Swap Details</span>
+        </button>
+        <div v-if="showInfo" class="swap-details__content">
+          <div class="swap-details__content-item">
+            <p class="description">Price impact</p>
+            <p class="info up">???%</p>
+          </div>
+          <div class="swap-details__content-item">
+            <p class="description">Minimum received</p>
+            <p class="info">{{ minimalReceived }}</p>
+          </div>
+          <div class="swap-details__content-item">
+            <p class="description">Rate</p>
+            <p class="info">{{ rateString }}</p>
+          </div>
+          <div v-if="useSubsidized" class="swap-details__content-item">
+            <p class="description">Smart Treasury cover</p>
+            <p class="info">{{ swapNativePrice }}</p>
+          </div>
+          <div class="swap-details__content-item">
+            <p class="description">Swapping via</p>
+            <p class="info">{{ swappingVia }}</p>
+          </div>
+          <div class="swap-details__content-item">
+            <p class="description">Slippage</p>
+            <slippage-selector
+              :slippage="slippage"
+              @selected-slippage-changed="handleSelectedSlippageChanged"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <div class="modal-wrapper-info-button">
-      <action-button
-        :button-class="buttonClass"
-        :disabled="!swapAvaialble"
-        :text="actionButtonText"
-        @button-click="handleExecuteSwap"
+      <div class="modal-wrapper-info-button">
+        <action-button
+          :button-class="buttonClass"
+          :disabled="!swapAvaialble"
+          :text="actionButtonText"
+          @button-click="handleExecuteSwap"
+        />
+      </div>
+      <gas-selector
+        :approve-gas-limit="approveGasLimit"
+        :avaialble-gas-modes="availableGasModes"
+        :txn-gas-limit="allGasLimit"
+        @selected-gas-changed="handleSelectedGasChanged"
       />
-    </div>
-    <gas-selector
-      :approve-gas-limit="approveGasLimit"
-      :avaialble-gas-modes="availableGasModes"
-      :txn-gas-limit="allGasLimit"
-      @selected-gas-changed="handleSelectedGasChanged"
-    />
-  </form>
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -172,6 +181,9 @@ export default Vue.extend({
       'tokens',
       'ethPrice'
     ]),
+    headerLabel(): string | undefined {
+      return this.loaderStep ? undefined : 'Swap';
+    },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
         return 'Choose Token';
@@ -316,7 +328,6 @@ export default Vue.extend({
         return;
       }
 
-      this.$emit('tx-process', true);
       this.loaderStep = 'Confirm';
       try {
         await swapCompound(
