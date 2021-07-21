@@ -16,7 +16,7 @@
           v-for="product in products"
           :id="product.id"
           :key="product.id"
-        ></nibble-shop-product-mini>
+        />
       </div>
     </template>
   </heading-section>

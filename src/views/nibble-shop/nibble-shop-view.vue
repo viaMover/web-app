@@ -11,15 +11,16 @@
 
     <secondary-page has-heading-buttons :title="id">
       <template v-slot:heading-buttons>
-        <router-link :to="{ name: 'nibble-shop-buy', params: { id } }">
-          {{ $t('nibbleShop.btnBuy.emoji') }}
-        </router-link>
-        <router-link :to="{ name: 'nibble-shop-sell', params: { id } }">
-          {{ $t('nibbleShop.btnSell.emoji') }}
-        </router-link>
-        <router-link :to="{ name: 'nibble-shop-redeem', params: { id } }">
-          {{ $t('nibbleShop.btnRedeem.emoji') }}
-        </router-link>
+        {{ /* Here should be secondary page title buttons */ }}
+        <!--        <router-link :to="{ name: 'nibble-shop-buy', params: { id } }">-->
+        <!--          {{ $t('nibbleShop.btnBuy.emoji') }}-->
+        <!--        </router-link>-->
+        <!--        <router-link :to="{ name: 'nibble-shop-sell', params: { id } }">-->
+        <!--          {{ $t('nibbleShop.btnSell.emoji') }}-->
+        <!--        </router-link>-->
+        <!--        <router-link :to="{ name: 'nibble-shop-redeem', params: { id } }">-->
+        <!--          {{ $t('nibbleShop.btnRedeem.emoji') }}-->
+        <!--        </router-link>-->
       </template>
       <h2>{{ product.title }}</h2>
       <img

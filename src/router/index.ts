@@ -161,30 +161,6 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
-        path: 'buy/:id',
-        name: 'nibble-shop-buy',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-buy.vue'
-          )
-      },
-      {
-        path: 'sell/:id',
-        name: 'nibble-shop-sell',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-sell.vue'
-          )
-      },
-      {
-        path: 'redeem/:id',
-        name: 'nibble-shop-redeem',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
-          )
-      },
-      {
         path: 'no-nft',
         name: 'nibble-shop-no-nft',
         component: () =>
