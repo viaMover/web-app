@@ -53,7 +53,7 @@ export default Vue.extend({
     },
     modalClass: {
       type: String,
-      required: true
+      default: ''
     },
     backLabel: {
       type: String,

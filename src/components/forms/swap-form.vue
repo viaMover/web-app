@@ -38,36 +38,36 @@
           <img src="@/assets/images/flip.png" /><span>Flip</span>
         </button>
         <button
-          class="swap-details"
-          :class="{ disabled: !isSwapInfoAvailable }"
+          class="tx-details"
+          :class="{ disabled: !isInfoAvailable }"
           type="button"
-          @click="expandSwapInfo"
+          @click="expandInfo"
         >
           <img src="@/assets/images/swap-details.png" />
           <span>Swap Details</span>
         </button>
-        <div v-if="showInfo" class="swap-details__content">
-          <div class="swap-details__content-item">
+        <div v-if="showInfo" class="tx-details__content">
+          <div class="tx-details__content-item">
             <p class="description">Price impact</p>
             <p class="info up">???%</p>
           </div>
-          <div class="swap-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Minimum received</p>
             <p class="info">{{ minimalReceived }}</p>
           </div>
-          <div class="swap-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Rate</p>
             <p class="info">{{ rateString }}</p>
           </div>
-          <div v-if="useSubsidized" class="swap-details__content-item">
+          <div v-if="useSubsidized" class="tx-details__content-item">
             <p class="description">Smart Treasury cover</p>
             <p class="info">{{ swapNativePrice }}</p>
           </div>
-          <div class="swap-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Swapping via</p>
             <p class="info">{{ swappingVia }}</p>
           </div>
-          <div class="swap-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Slippage</p>
             <slippage-selector
               :slippage="slippage"
@@ -79,7 +79,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
-          :disabled="!swapAvaialble"
+          :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteSwap"
         />
@@ -97,7 +97,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance, Token } from '@/wallet/types';
+import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
 
 import {
   AssetField,
@@ -143,15 +143,7 @@ export default Vue.extend({
   data() {
     return {
       loaderStep: undefined as Step | undefined,
-      swapInfoExpanded: false,
-      info: {
-        minimumReceived: 0,
-        rate: 0,
-        estimatedNetworkFee: 0,
-        smartTreasuryCover: 0,
-        slippage: '1',
-        gasSettings: null
-      },
+      infoExpanded: false,
       input: {
         asset: undefined as TokenWithBalance | undefined,
         amount: '',
@@ -241,7 +233,7 @@ export default Vue.extend({
       );
       return `${minReceived} ${this.output.asset.symbol}`;
     },
-    swapAvaialble(): boolean {
+    actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
     },
     actionButtonText(): string {
@@ -280,14 +272,11 @@ export default Vue.extend({
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
     buttonClass(): string {
-      if (this.swapAvaialble) {
+      if (this.actionAvaialble) {
         return 'button active';
       } else {
         return 'button inactive';
       }
-    },
-    isSwapInfoAvailable(): boolean {
-      return !!this.transferData;
     },
     excludedOutputTokens(): Array<Token> {
       if (this.input.asset === undefined) {
@@ -296,16 +285,19 @@ export default Vue.extend({
 
       return [this.input.asset];
     },
+    isInfoAvailable(): boolean {
+      return !this.loading && !!this.transferData;
+    },
     showInfo(): boolean {
-      return this.swapInfoExpanded && !this.loading && !!this.transferData;
+      return this.infoExpanded && !this.loading && !!this.transferData;
     }
   },
   mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
   },
   methods: {
-    expandSwapInfo(): void {
-      this.swapInfoExpanded = !this.swapInfoExpanded;
+    expandInfo(): void {
+      this.infoExpanded = !this.infoExpanded;
     },
     async handleExecuteSwap(): Promise<void> {
       //
@@ -705,8 +697,8 @@ export default Vue.extend({
       this.selectedGasPrice = String(newGas.price);
     },
     async calcData(
-      inputAsset: Token,
-      outputAsset: Token,
+      inputAsset: SmallToken,
+      outputAsset: SmallToken,
       amount: string,
       isInput: boolean,
       slippage: string
