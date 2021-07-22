@@ -1,3 +1,4 @@
+import { SmallTokenInfoWithIcon } from './../types';
 import { SmallTokenInfo } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
@@ -183,11 +184,13 @@ const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
   };
 };
 
-const getUSDCAssetData = (network: Network): SmallTokenInfo => {
+const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
     address: USDC_TOKEN_ADDRESS(network),
     decimals: 6,
-    symbol: 'USDC'
+    symbol: 'USDC',
+    iconURL:
+      'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
   };
 };
 

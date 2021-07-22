@@ -31,11 +31,11 @@ export enum TransactionTypes {
 
 export type TransactionStatus = 'confirmed' | 'failed';
 
-export type TransactionTokenInfo = SmallTokenInfo & {
+export type SmallTokenInfoWithIcon = SmallTokenInfo & {
   iconURL: string;
 };
 
-export type Erc20Change = TransactionTokenInfo & {
+export type Erc20Change = SmallTokenInfoWithIcon & {
   change: string;
   price: string;
   direction: 'out' | 'in' | 'self';
@@ -71,7 +71,7 @@ export type TransactionTransferERC20 = TransactionCommonData & {
 
 export type TransactionApprovalERC20 = TransactionCommonData & {
   type: TransactionTypes.approvalERC20;
-  asset: TransactionTokenInfo;
+  asset: SmallTokenInfoWithIcon;
 };
 
 export type TransactionContractExecution = TransactionCommonData & {

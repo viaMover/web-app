@@ -15,7 +15,7 @@ import Preload from '@/views/preload.vue';
 
 import '@/styles/_common.less';
 import '@/styles/_modal.less';
-import '@/styles/_swap_modal.less';
+import '@/styles/_execute_modal.less';
 import '@/styles/_search_modal.less';
 
 export default Vue.extend({

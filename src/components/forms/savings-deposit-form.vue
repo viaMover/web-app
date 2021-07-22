@@ -35,7 +35,12 @@
         <div v-if="showInfo" class="tx-details__content">
           <div class="tx-details__content-item">
             <p class="description">Swapping for</p>
-            <p class="info up">{{ swappingForString }}</p>
+            <div class="value">
+              <div class="icon getShadow">
+                <img alt="coin" :src="outputUSDCAsset.iconURL" />
+              </div>
+              <span>{{ swappingForString }}</span>
+            </div>
           </div>
           <div class="tx-details__content-item">
             <p class="description">Estimated annual earnings</p>
@@ -64,7 +69,12 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance, SmallTokenInfo, SmallToken } from '@/wallet/types';
+import {
+  TokenWithBalance,
+  SmallTokenInfo,
+  SmallToken,
+  SmallTokenInfoWithIcon
+} from '@/wallet/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
@@ -124,7 +134,7 @@ export default Vue.extend({
       'tokens',
       'ethPrice'
     ]),
-    outputUSDCAsset(): SmallTokenInfo {
+    outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
     headerLabel(): string | undefined {
