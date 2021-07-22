@@ -42,7 +42,16 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.sweetAndSour.description'
             ) as string) ?? '',
-          imageSrc: require('@/assets/images/sweet-and-sour-bg.png')
+          imageSrc: require('@/assets/images/sweet-and-sour-bg.png'),
+          imageScaleH: '112%',
+          imageScaleV: '46%',
+          previewImageSrc: require('@/assets/images/drops-img1.png'),
+          background: '#0a0a0a',
+          titleColor: '#fff',
+          textColor: 'rgba(255, 255, 255, 0.6)',
+          btnBackgroundColor: '#fff',
+          btnTextColor: '#000',
+          imageSize: '69%'
         },
         totalNumber: 0,
         totalClaimed: 0
@@ -55,7 +64,16 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.unexpectedMove.description'
             ) as string) ?? '',
-          imageSrc: require('@/assets/images/unexpected-move-bg.png')
+          imageSrc: require('@/assets/images/unexpected-move-bg.png'),
+          imageScaleH: '',
+          imageScaleV: 'bottom',
+          previewImageSrc: require('@/assets/images/drops-img2.png'),
+          background: '#e4e4e4',
+          titleColor: '#000',
+          textColor: 'rgba(60, 60, 67, 0.6)',
+          imageSize: '100%',
+          btnTextColor: '#fff',
+          btnBackgroundColor: '#000'
         },
         totalNumber: 0,
         totalClaimed: 0

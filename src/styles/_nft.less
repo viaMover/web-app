@@ -1,37 +1,62 @@
-.nft-drops__popup {
+.nft-drops {
   position: fixed;
   width: 100%;
   height: 100%;
-  z-index: -1;
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
-  opacity: 0;
-  visibility: hidden;
   background: #fff;
-}
-
-.nft-drops__popup-active {
   z-index: 19;
   opacity: 1;
   visibility: visible;
   overflow: auto;
 }
 
-.nft-drops__wrapper {
+.nft-drops .button.close-button {
+  z-index: 20;
+  opacity: 1;
+  visibility: visible;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  background: #fcfcfc;
+  -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 20px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.nft-drops__wrapper__menu {
   padding: 100px 0 200px;
 }
 
-.nft-drops__wrapper .g-wrapper {
+.nft-drops__wrapper__menu .g-wrapper {
   margin: 0 auto;
 }
 
-.nft-drops__wrapper-info-title img {
+.nft-drops__wrapper__menu-info-title img {
   width: 100%;
   display: block;
 }
 
-.nft-drops__wrapper-info-items {
+.nft-drops__wrapper__menu-info-items {
   list-style-type: none;
   display: -webkit-box;
   display: -webkit-flex;
@@ -43,7 +68,7 @@
   margin-top: 40px;
 }
 
-.nft-drops__wrapper-info-items-item {
+.nft-drops__wrapper__menu-info-items-item {
   -webkit-flex-basis: 100%;
   -ms-flex-preferred-size: 100%;
   flex-basis: 100%;
@@ -56,54 +81,25 @@
   position: relative;
 }
 
-.nft-drops__wrapper-info-items-item:first-child {
+.nft-drops__wrapper__menu-info-items-item:first-child {
   margin-top: 0;
-  background: #0a0a0a no-repeat;
-  background-size: 69%;
 }
 
-.nft-drops__wrapper-info-items-item:first-child .nft-drops__wrapper-info-items-item-content h3 {
-  color: #fff;
-}
-
-.nft-drops__wrapper-info-items-item:first-child .nft-drops__wrapper-info-items-item-content p {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.nft-drops__wrapper-info-items-item:first-child a {
-  color: #000;
-  background-color: #fff;
-}
-
-.nft-drops__wrapper-info-items-item:last-child {
-  background-color: #e4e4e4;
-  background-size: 100%;
-}
-
-.nft-drops__wrapper-info-items-item:last-child .nft-drops__wrapper-info-items-item-content p {
-  color: rgba(60, 60, 67, 0.6);
-}
-
-.nft-drops__wrapper-info-items-item:last-child a {
-  background-color: #000;
-  color: #fff;
-}
-
-.nft-drops__wrapper-info-items-item-content {
+.nft-drops__wrapper__menu-info-items-item-content {
   max-width: 313px;
 }
 
-.nft-drops__wrapper-info-items-item-content h3 {
+.nft-drops__wrapper__menu-info-items-item-content h3 {
   font-size: 24px;
   line-height: 32px;
   font-family: 'Bold';
 }
 
-.nft-drops__wrapper-info-items-item-content p {
+.nft-drops__wrapper__menu-info-items-item-content p {
   font-family: 'Medium';
 }
 
-.nft-drops__wrapper-info-items-item a {
+.nft-drops__wrapper__menu-info-items-item a {
   display: inline-block;
   position: absolute;
   bottom: 24px;

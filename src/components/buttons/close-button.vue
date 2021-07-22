@@ -1,6 +1,11 @@
 <template>
   <action-button button-class="button close-button" @button-click="handleClick">
-    <img alt="close icon" src="@/assets/images/cross.svg" />
+    <img
+      v-if="isBlack"
+      alt="close icon"
+      src="@/assets/images/black-cross.svg"
+    />
+    <img v-else alt="close icon" src="@/assets/images/cross.svg" />
   </action-button>
 </template>
 
@@ -14,6 +19,12 @@ export default Vue.extend({
   components: {
     ActionButton
   },
+  props: {
+    isBlack: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     handleClick() {
       this.$emit('close');
@@ -21,5 +32,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style scoped></style>

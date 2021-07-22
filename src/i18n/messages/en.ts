@@ -359,14 +359,16 @@ export default {
     txtNFTs: {
       sweetAndSour: {
         description:
-          'This NFT is dropped for all unique addresses that have held HOLY until April 31, 2021. ' +
-          'The Sweet & Sour NFT gives early access to Nibble Shop. ' +
-          'This NFT has no expiry date, and can be exchanged, swapped or sent to other addresses.'
+          'This NFT is dropped for all unique addresses that have held HOLY ' +
+          'until April 31, 2021; and those that participated in the early LP ' +
+          'program bu didn’t migrate. The Sweet & Sour NFT gives early access' +
+          ' to Nibble Shop.'
       },
       unexpectedMove: {
         description:
           'This NFT is dropped for all participants in our Twitter promo. ' +
-          'The Unexpected Move NFT can be exchanged for 1 MOVE token, but only once.'
+          'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
+          'but only once.'
       }
     },
     btnGet: {

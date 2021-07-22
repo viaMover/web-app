@@ -3,6 +3,15 @@ export type NFT = {
   name: string;
   description: string;
   imageSrc: string;
+  imageScaleH: string;
+  imageScaleV: string;
+  imageSize: string;
+  previewImageSrc: string;
+  background: string;
+  titleColor: string;
+  textColor: string;
+  btnBackgroundColor: string;
+  btnTextColor: string;
 };
 
 export type NFTAggregatedInfo = {
