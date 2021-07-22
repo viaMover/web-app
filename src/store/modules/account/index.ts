@@ -65,7 +65,9 @@ export default {
     treasuryBalanceMove: undefined,
     treasuryBalanceLP: undefined,
     treasuryBonus: undefined,
-    treasuryAPY: undefined
+    treasuryAPY: undefined,
+    treasuryTotalStakedMove: undefined,
+    treasuryTotalStakedMoveEthLP: undefined
   },
   actions: {
     ...walletActions,

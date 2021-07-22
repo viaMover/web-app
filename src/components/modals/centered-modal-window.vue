@@ -26,20 +26,7 @@
       :toggle-group="modalId"
       :toggle-id="modalId"
     >
-      <div class="modal__wrapper-info">
-        <div>
-          <h3 v-if="headerLabel" class="modal__wrapper-info-title">
-            {{ headerLabel }}
-          </h3>
-          <span v-else>&nbsp;</span>
-          <div class="right floated icon">
-            <toggle-action :toggle-group="modalId" :toggle-id="modalId">
-              <i class="right floated link remove icon" />
-            </toggle-action>
-          </div>
-        </div>
-        <slot />
-      </div>
+      <slot />
     </toggle-target>
   </div>
 </template>
@@ -67,10 +54,6 @@ export default Vue.extend({
     modalClass: {
       type: String,
       required: true
-    },
-    headerLabel: {
-      type: String,
-      default: ''
     },
     backLabel: {
       type: String,
