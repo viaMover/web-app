@@ -77,6 +77,7 @@ export default Vue.extend({
       });
     },
     handleDepositCick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem('savings-deposit-modal');
     }
   }
