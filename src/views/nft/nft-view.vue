@@ -59,9 +59,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
-import { NFT, NFTAggregatedInfo } from '@/store/modules/nft/types';
+import { NFTAggregatedInfo } from '@/store/modules/nft/types';
 
 import {
   ContentWrapper,
@@ -70,7 +70,6 @@ import {
 } from '@/components/layout';
 import { NftOverview } from '@/components/nft';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
-import router from '@/router';
 
 export default Vue.extend({
   name: 'NftView',
