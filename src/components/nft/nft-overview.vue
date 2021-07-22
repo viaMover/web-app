@@ -1,40 +1,35 @@
 <template>
-  <div v-if="asset" class="overview nft-overview">
-    <h4>{{ $t('NFTs.lblNFTOverview', { name: asset.nft.name }) }}</h4>
-    <div class="info info-bordered">
-      <div class="item">
-        <span class="title">{{ $t('NFTs.lblTotalNumberOfNFTs') }}</span>
-        <span class="value">{{ asset.totalNumber }}</span>
-      </div>
-      <div class="item">
-        <span class="title">{{ $t('NFTs.lblTotalClaimed') }}</span>
-        <span class="value">{{ asset.totalClaimed }}</span>
-      </div>
-    </div>
-  </div>
+  <left-rail-section
+    :section-name="$t('NFTs.lblNFTOverview', { name: item.nft.name })"
+  >
+    <left-rail-section-item
+      :description="$t('NFTs.lblTotalNumberOfNFTs')"
+      :value="item.totalNumber.toString()"
+    />
+    <left-rail-section-item
+      :description="$t('NFTs.lblTotalClaimed')"
+      :value="item.totalClaimed.toString()"
+    />
+  </left-rail-section>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { mapState } from 'vuex';
+import Vue, { PropType } from 'vue';
+
 import { NFTAggregatedInfo } from '@/store/modules/nft/types';
+
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
 export default Vue.extend({
   name: 'NftOverview',
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
+  components: {
+    LeftRailSection,
+    LeftRailSectionItem
   },
-  computed: {
-    ...mapState('nft', { assets: 'NFTs' }),
-    asset(): NFTAggregatedInfo | null {
-      return (
-        (this.assets as Array<NFTAggregatedInfo>).find(
-          (asset: NFTAggregatedInfo) => asset.nft.id === this.id
-        ) || null
-      );
+  props: {
+    item: {
+      type: Object as PropType<NFTAggregatedInfo>,
+      required: true
     }
   }
 });

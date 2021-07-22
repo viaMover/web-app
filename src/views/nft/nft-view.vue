@@ -2,45 +2,75 @@
   <content-wrapper
     v-if="asset"
     has-back-button
-    has-close-button
     has-left-rail
+    page-container-class="nft-drops-product-item"
+    wrapper-class="nft-drops-product-item"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <nft-overview :id="id" />
+      <nft-overview :item="asset" />
     </template>
 
-    <secondary-page :has-heading-buttons="hasHeadingButtons" :title="id">
-      <template v-slot:heading-buttons>
-        <action-button @button-click="handleExecuteClaimAndExchange">
-          {{ $t('NFTs.btnClaimAndExchange.emoji') }}
-        </action-button>
-        <action-button @button-click="handleExecuteExchange">
-          {{ $t('NFTs.btnExchange.emoji') }}
-        </action-button>
-        <action-button @button-click="handleExecuteClaim">
-          {{ $t('NFTs.btnClaim.emoji') }}
-        </action-button>
+    <secondary-page>
+      <template v-slot:title>
+        <secondary-page-title
+          :icon-img-src="asset.nft.page.iconSrc"
+          :title="$t('NFTs.lblNFTDrops')"
+          wrapper-class="nft-drops-product-item-wrapper-title"
+        >
+          <template v-if="hasContextMenu" v-slot:context-menu>
+            <context-button :popover-parent-id="popoverParentId">
+              <context-button-item
+                :text="$t('NFTs.btnClaimAndExchange.emoji')"
+                @click="handleExecuteClaimAndExchange"
+              />
+              <context-button-item
+                :text="$t('NFTs.btnExchange.emoji')"
+                @click="handleExecuteExchange"
+              />
+              <context-button-item
+                :text="$t('NFTs.btnClaim.emoji')"
+                @click="handleExecuteClaim"
+              />
+            </context-button>
+          </template>
+        </secondary-page-title>
       </template>
-      <h2>{{ asset.name }}</h2>
-      <img
-        :alt="$t('NFTs.txtAssetAlt', { name: asset.name })"
-        class="image"
-        :src="asset.imageSrc"
-      />
-      <div class="description">{{ asset.description }}</div>
+      <div class="nft-drops-product-item-wrapper-banner" :style="bannerStyle">
+        <video
+          :alt="$t('NFTs.txtAssetAlt', { name: asset.nft.name })"
+          autoplay
+          class="image"
+          data-keepplaying
+          loop
+          muted
+          :src="asset.nft.page.videoSrc"
+          :style="videoStyle"
+        />
+      </div>
+      <div class="nft-drops-product-item-wrapper-info">
+        <span>{{ asset.nft.id }}</span>
+        <h3>{{ asset.nft.name }}</h3>
+        <p>{{ asset.nft.page.description }}</p>
+      </div>
     </secondary-page>
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapState } from 'vuex';
 
-import { ContentWrapper, SecondaryPage } from '@/components/layout';
+import { NFT, NFTAggregatedInfo } from '@/store/modules/nft/types';
+
+import {
+  ContentWrapper,
+  SecondaryPage,
+  SecondaryPageTitle
+} from '@/components/layout';
 import { NftOverview } from '@/components/nft';
-import { ActionButton } from '@/components/buttons';
-import { mapGetters } from 'vuex';
-import { NFT } from '@/store/modules/nft/types';
+import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import router from '@/router';
 
 export default Vue.extend({
   name: 'NftView',
@@ -48,22 +78,44 @@ export default Vue.extend({
     ContentWrapper,
     SecondaryPage,
     NftOverview,
-    ActionButton
+    ContextButton,
+    ContextButtonItem,
+    SecondaryPageTitle
+  },
+  data() {
+    return {
+      popoverParentId: 'nft-drops-action-buttons'
+    };
   },
   computed: {
-    ...mapGetters('nft', { assets: 'plainNFTs' }),
+    ...mapState('nft', { assets: 'NFTs' }),
     id(): string {
       return this.$route.params.id;
     },
-    hasHeadingButtons(): boolean {
-      return true;
+    hasContextMenu(): boolean {
+      return this.asset !== null;
     },
-    asset(): NFT | null {
+    asset(): NFTAggregatedInfo | null {
       return (
-        (this.assets as Array<NFT>).find(
-          (asset: NFT) => asset.id === this.id
+        (this.assets as Array<NFTAggregatedInfo>).find(
+          (asset: NFTAggregatedInfo) => asset.nft.id === this.id
         ) || null
       );
+    },
+    videoStyle(): Record<string, string> {
+      return {
+        'max-width': this.asset?.nft.page.imageWidth ?? ''
+      };
+    },
+    bannerStyle(): Record<string, string> {
+      return {
+        background: this.asset?.nft.page.imageBackground ?? ''
+      };
+    }
+  },
+  created() {
+    if (this.asset === null) {
+      this.$router.replace({ name: 'not-found-route' });
     }
   },
   methods: {

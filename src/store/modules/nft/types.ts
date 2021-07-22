@@ -7,6 +7,13 @@ export type NFT = {
   imageScaleV: string;
   imageSize: string;
   previewImageSrc: string;
+  page: {
+    description: string;
+    iconSrc: string;
+    videoSrc: string;
+    imageBackground: string;
+    imageWidth: string;
+  };
   background: string;
   titleColor: string;
   textColor: string;
