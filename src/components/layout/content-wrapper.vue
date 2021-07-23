@@ -8,11 +8,19 @@
     >
       <slot name="left-rail"></slot>
       <back-button v-if="hasBackButton" @close="handleClose" />
-      <close-button v-if="hasCloseButton" @close="handleClose" />
+      <close-button
+        v-if="hasCloseButton"
+        :is-black="isBlackCloseButton"
+        @close="handleClose"
+      />
     </left-rail>
     <template v-else>
       <back-button v-if="hasBackButton" @close="handleClose" />
-      <close-button v-if="hasCloseButton" @close="handleClose" />
+      <close-button
+        v-if="hasCloseButton"
+        :is-black="isBlackCloseButton"
+        @close="handleClose"
+      />
     </template>
 
     <page-container :container-class="pageContainerClassDerived">
@@ -64,6 +72,10 @@ export default Vue.extend({
     pageContainerClass: {
       type: String,
       default: ''
+    },
+    isBlackCloseButton: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

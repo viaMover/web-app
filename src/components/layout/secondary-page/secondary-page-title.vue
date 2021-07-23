@@ -2,8 +2,11 @@
   <div :class="wrapperClass">
     <div class="title">
       <slot name="icon">
-        <div class="icon">
+        <div v-if="icon !== ''" class="icon">
           <span>{{ icon }}</span>
+        </div>
+        <div v-else-if="iconImgSrc !== ''" class="icon">
+          <img :alt="iconImgSrc" :src="iconImgSrc" />
         </div>
       </slot>
       <slot name="title">
@@ -25,6 +28,10 @@ export default Vue.extend({
       default: ''
     },
     icon: {
+      type: String,
+      default: ''
+    },
+    iconImgSrc: {
       type: String,
       default: ''
     },

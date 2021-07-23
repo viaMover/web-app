@@ -42,7 +42,26 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.sweetAndSour.description'
             ) as string) ?? '',
-          imageSrc: require('@/assets/images/drops-img1.png')
+          imageScaleH: '112%',
+          imageScaleV: '46%',
+          previewImageSrc: require('@/assets/images/drops-img1.png'),
+          imageSrc: require('@/assets/images/sweet-and-sour-bg.png'),
+          page: {
+            videoSrc: require('@/assets/videos/SweetAndSour.webm'),
+            iconSrc: require('@/assets/images/sweet-and-sour-img.png'),
+            description:
+              (rootState.i18n?.t(
+                'NFTs.txtNFTs.sweetAndSour.pageDescription'
+              ) as string) ?? '',
+            imageBackground: '#0a0a0a',
+            imageWidth: '355px'
+          },
+          background: '#0a0a0a',
+          titleColor: '#fff',
+          textColor: 'rgba(255, 255, 255, 0.6)',
+          btnBackgroundColor: '#fff',
+          btnTextColor: '#000',
+          imageSize: '69%'
         },
         totalNumber: 0,
         totalClaimed: 0
@@ -55,7 +74,26 @@ export default {
             (rootState.i18n?.t(
               'NFTs.txtNFTs.unexpectedMove.description'
             ) as string) ?? '',
-          imageSrc: require('@/assets/images/drops-img2.png')
+          imageScaleH: '',
+          imageScaleV: 'bottom',
+          previewImageSrc: require('@/assets/images/drops-img2.png'),
+          imageSrc: require('@/assets/images/unexpected-move-bg.png'),
+          page: {
+            videoSrc: require('@/assets/videos/UnexpectedMove.webm'),
+            iconSrc: require('@/assets/images/unexpected-move-img.png'),
+            description:
+              (rootState.i18n?.t(
+                'NFTs.txtNFTs.unexpectedMove.pageDescription'
+              ) as string) ?? '',
+            imageBackground: '#01011d',
+            imageWidth: '378px'
+          },
+          background: '#e4e4e4',
+          titleColor: '#000',
+          textColor: 'rgba(60, 60, 67, 0.6)',
+          imageSize: '100%',
+          btnTextColor: '#fff',
+          btnBackgroundColor: '#000'
         },
         totalNumber: 0,
         totalClaimed: 0
