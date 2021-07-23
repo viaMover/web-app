@@ -69,7 +69,7 @@ export default {
         imageSize: '53%',
         imageScaleH: '38%',
         background: '#dbe2e6',
-        title: 'Cap',
+        title: 'CEO of Money',
         price: '$49.99',
         edition: 'Genesis Edition',
         totalTrades: 0,
@@ -80,8 +80,7 @@ export default {
         description: '',
         page: {
           videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png'),
-          title: 'CEO of Money'
+          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
         }
       },
       {
@@ -104,8 +103,7 @@ export default {
         description: '',
         page: {
           videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png'),
-          title: 'CEO of Money'
+          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
         }
       },
       {
@@ -128,8 +126,7 @@ export default {
         description: '',
         page: {
           videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png'),
-          title: 'CEO of Money'
+          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
         }
       },
       {
@@ -152,8 +149,7 @@ export default {
         description: '',
         page: {
           videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png'),
-          title: 'CEO of Money'
+          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
         }
       }
     ];

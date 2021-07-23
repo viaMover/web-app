@@ -18,7 +18,6 @@ export type Asset = {
   page: {
     iconSrc: string;
     videoSrc: string;
-    title: string;
   };
 };
 

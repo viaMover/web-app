@@ -47,7 +47,7 @@
       </div>
       <div class="nibble-shop-product-item-wrapper-info">
         <span>{{ product.id }}</span>
-        <h3>{{ product.page.title }}</h3>
+        <h3>{{ product.title }}</h3>
         <span class="price">{{ product.price }}</span>
         <p>{{ product.description }}</p>
       </div>
