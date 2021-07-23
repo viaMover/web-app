@@ -39,6 +39,7 @@ import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
 import { SavingsYearlyChartWrapper } from '@/components/savings';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'SavingsManage',
@@ -78,7 +79,7 @@ export default Vue.extend({
     },
     handleDepositCick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem('savings-deposit-modal');
+      toggleSingleItem(Modal.SavingsDeposit);
     }
   }
 });

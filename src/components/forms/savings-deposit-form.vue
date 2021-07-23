@@ -98,6 +98,9 @@ import {
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { Step } from '../controls/form-loader.vue';
 import { getUSDCAssetData } from '@/wallet/references/data';
+import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
+import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
+import { formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -132,6 +135,9 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
+      'ethPrice',
+      'savingsAPY',
+      'usdcPriceInWeth',
       'ethPrice'
     ]),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
@@ -162,7 +168,19 @@ export default Vue.extend({
       if (this.transferData === undefined) {
         return '';
       }
-      return '$??';
+
+      const usdcAmount = fromWei(
+        this.transferData.buyAmount,
+        this.outputUSDCAsset.decimals
+      );
+      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const usdcAmountNative = multiply(usdcAmount, usdcNative);
+      const apyNative = multiply(
+        divide(this.savingsAPY, 100),
+        usdcAmountNative
+      );
+
+      return `+$${formatToNative(apyNative)}`;
     },
     swappingForString(): string {
       if (this.transferData === undefined || this.input.asset === undefined) {
@@ -187,7 +205,7 @@ export default Vue.extend({
         return this.error;
       }
 
-      return 'Deposit';
+      return '💰 Deposit';
     },
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high', 'treasury'];
@@ -224,6 +242,12 @@ export default Vue.extend({
       this.infoExpanded = !this.infoExpanded;
     },
     async handleExecuteSwap(): Promise<void> {
+      if (this.transferData === undefined) {
+        console.error(
+          "[deposit-form] can't execute deposit due to empty transfer data"
+        );
+        return;
+      }
       if (this.input.asset === undefined) {
         console.error(
           "[deposit-form] can't execute deposit due to empty input asset"
@@ -233,22 +257,22 @@ export default Vue.extend({
 
       this.loaderStep = 'Confirm';
       try {
-        // await swapCompound(
-        //   this.input.asset,
-        //   this.output.asset,
-        //   this.input.amount,
-        //   this.transferData,
-        //   this.networkInfo.network,
-        //   this.provider.web3,
-        //   this.currentAddress,
-        //   this.swapGasLimit,
-        //   this.approveGasLimit,
-        //   this.selectedGasPrice,
-        //   this.useSubsidized,
-        //   async () => {
-        //     this.loaderStep = 'Process';
-        //   }
-        // );
+        await depositCompound(
+          this.input.asset,
+          this.outputUSDCAsset,
+          this.input.amount,
+          this.transferData,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress,
+          this.depositGasLimit,
+          this.approveGasLimit,
+          this.selectedGasPrice,
+          this.useSubsidized,
+          async () => {
+            this.loaderStep = 'Process';
+          }
+        );
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
@@ -377,23 +401,23 @@ export default Vue.extend({
       inputAsset: SmallToken,
       transferData: TransferData
     ): Promise<void> {
-      // const resp = await estimateSwapCompound(
-      //   inputAsset,
-      //   this.outputUSDCAsset,
-      //   inputAmount,
-      //   transferData,
-      //   this.networkInfo.network,
-      //   this.provider.web3,
-      //   this.currentAddress,
-      //   this.useSubsidized
-      // );
-      // if (resp.error) {
-      //   console.error(resp.error);
-      //   this.transferError = 'Estimate error';
-      //   return;
-      // }
-      // this.depositGasLimit = resp.swapGasLimit;
-      //this.approveGasLimit = resp.approveGasLimit;
+      const resp = await estimateDepositCompound(
+        inputAsset,
+        this.outputUSDCAsset,
+        inputAmount,
+        transferData,
+        this.networkInfo.network,
+        this.provider.web3,
+        this.currentAddress,
+        this.useSubsidized
+      );
+      if (resp.error) {
+        console.error(resp.error);
+        this.transferError = 'Estimate error';
+        return;
+      }
+      this.depositGasLimit = resp.swapGasLimit;
+      this.approveGasLimit = resp.approveGasLimit;
     }
   }
 });

@@ -29,7 +29,7 @@
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
 
     <transaction-modal />
-    <centered-modal-window v-cloak modal-id="swap-modal">
+    <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
     </centered-modal-window>
     <search-modal />
@@ -57,7 +57,8 @@ import { SwapForm } from '@/components/forms';
 import {
   TransactionModal,
   SearchModal,
-  CenteredModalWindow
+  CenteredModalWindow,
+  Modal
 } from '@/components/modals';
 
 import '@/styles/_general.less';
@@ -80,6 +81,11 @@ export default Vue.extend({
     SwapForm,
     SearchModal,
     CenteredModalWindow
+  },
+  data() {
+    return {
+      SwapModalId: Modal.Swap
+    };
   },
   methods: {
     isFeatureEnabled

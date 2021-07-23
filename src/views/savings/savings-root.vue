@@ -14,7 +14,7 @@
 
     <router-view />
 
-    <centered-modal-window v-cloak modal-id="savings-deposit-modal">
+    <centered-modal-window v-cloak :modal-id="SavingsDepositModalId">
       <savings-deposit-form />
     </centered-modal-window>
     <search-modal />
@@ -31,7 +31,7 @@ import {
   SavingsEstimation
 } from '@/components/savings';
 import { SavingsDepositForm } from '@/components/forms';
-import { CenteredModalWindow, SearchModal } from '@/components/modals';
+import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
 
 import '@/styles/_savings.less';
 
@@ -45,6 +45,11 @@ export default Vue.extend({
     SavingsDepositForm,
     CenteredModalWindow,
     SearchModal
+  },
+  data() {
+    return {
+      SavingsDepositModalId: Modal.SavingsDeposit
+    };
   },
   methods: {
     handleClose(): void {
