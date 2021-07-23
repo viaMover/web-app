@@ -117,13 +117,13 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleBuy(): void {
+    handleExecuteClaimAndExchange(): void {
       //
     },
-    handleSell(): void {
+    handleExecuteExchange(): void {
       //
     },
-    handleRedeem(): void {
+    handleExecuteClaim(): void {
       //
     },
     handleClose(): void {
