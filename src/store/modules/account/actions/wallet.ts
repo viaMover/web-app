@@ -27,9 +27,13 @@ import {
   getMOVEPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/mover/tokensPrices';
-import { getAvatarFromPersist, setAvatarToPersist } from '@/settings';
+import {
+  clearLastProviderPersist,
+  getAvatarFromPersist,
+  setAvatarToPersist,
+  setLastProviderToPersist
+} from '@/settings';
 import sample from 'lodash-es/sample';
-import Cookies from 'js-cookie';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -48,6 +52,12 @@ export const COOKIE_LAST_PROVIDER = 'move_last_provider';
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
+  },
+  setDetectedProvider({ commit }, provider: unknown): void {
+    commit('setDetectedProvider', provider);
+  },
+  setIsDetecting({ commit }, isDetecting: boolean): void {
+    commit('setIsDetecting', isDetecting);
   },
   async loadAvatar({ commit, state }): Promise<void> {
     if (state.currentAddress === undefined) {
@@ -105,7 +115,7 @@ export default {
         init: true
       } as RefreshWalletPayload);
 
-      Cookies.set(COOKIE_LAST_PROVIDER, payload.providerName);
+      setLastProviderToPersist(payload.providerName);
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
@@ -344,6 +354,6 @@ export default {
       }
     }
     commit('clearWalletData');
-    Cookies.remove(COOKIE_LAST_PROVIDER, { path: '' });
+    clearLastProviderPersist();
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

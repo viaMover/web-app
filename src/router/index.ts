@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
+import { requireWalletAuth } from '@/router/wallet-auth-guard';
 
 Vue.use(VueRouter);
 
@@ -253,18 +254,6 @@ router.beforeResolve((to, from, next) => {
   next();
 });
 
-// global 'require connected wallet' guard
-router.beforeResolve((to, from, next) => {
-  if (['connect-wallet', 'not-found-route'].includes(to.name ?? '')) {
-    next();
-    return;
-  }
-
-  if (!router.app.$store?.getters['account/isWalletConnected']) {
-    next({ name: 'connect-wallet' });
-  }
-
-  next();
-});
+router.beforeResolve(requireWalletAuth(['connect-wallet', 'not-found-route']));
 
 export default router;
