@@ -64,6 +64,7 @@ export const requireWalletAuth =
         return;
       }
 
+      await store.dispatch('account/setIsDetecting', false);
       next({ name: 'connect-wallet' });
     } catch {
       await store.dispatch('account/setIsDetecting', false);
