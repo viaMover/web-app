@@ -40,7 +40,6 @@
         <video
           :alt="$t('NFTs.txtAssetAlt', { name: asset.nft.name })"
           autoplay
-          class="image"
           data-keepplaying
           loop
           muted

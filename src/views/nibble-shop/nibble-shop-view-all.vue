@@ -1,18 +1,25 @@
 <template>
-  <content-wrapper has-close-button @close="handleClose">
-    <div class="image">
+  <content-wrapper
+    base-class="nibble-shop"
+    has-close-button
+    is-black-close-button
+    page-container-class="nibble-shop__wrapper"
+    wrapper-class="nibble-shop__wrapper"
+    @close="handleClose"
+  >
+    <div class="nibble-shop__wrapper-info-title">
       <img
         :alt="$t('nibbleShop.txtLogoAlt')"
-        src="/src/assets/nibble-shop.png"
+        src="@/assets/images/nibble-shop.png"
       />
     </div>
-    <div class="list product-list">
+    <ul class="nibble-shop__wrapper-info-items">
       <nibble-shop-product
         v-for="product in products"
-        :id="product.id"
         :key="product.id"
+        :item="product"
       />
-    </div>
+    </ul>
   </content-wrapper>
 </template>
 

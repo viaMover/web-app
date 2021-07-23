@@ -14,8 +14,8 @@
       <div class="shop__items">
         <nibble-shop-product-mini
           v-for="product in products"
-          :id="product.id"
           :key="product.id"
+          :item="product"
         />
       </div>
     </template>
