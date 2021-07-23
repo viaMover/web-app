@@ -4,11 +4,11 @@
   >
     <left-rail-section-item
       :description="$t('NFTs.lblTotalNumberOfNFTs')"
-      :value="item.totalNumber.toString()"
+      :value="item.totalNumber"
     />
     <left-rail-section-item
       :description="$t('NFTs.lblTotalClaimed')"
-      :value="item.totalClaimed.toString()"
+      :value="item.totalClaimed"
     />
   </left-rail-section>
 </template>

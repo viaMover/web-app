@@ -7,11 +7,11 @@ export interface Globals {
 }
 
 const values: Globals = {
-  isReleaseRadarEnabled: true,
-  isDebitCardEnabled: true,
-  isGovernanceEnabled: true,
-  isNibbleShopEnabled: true,
-  isNftDropsEnabled: true
+  isReleaseRadarEnabled: false,
+  isDebitCardEnabled: false,
+  isGovernanceEnabled: false,
+  isNibbleShopEnabled: false,
+  isNftDropsEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
