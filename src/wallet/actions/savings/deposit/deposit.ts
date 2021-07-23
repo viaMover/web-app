@@ -1,3 +1,4 @@
+import { sameAddress } from './../../../../utils/address';
 import { approve } from '@/wallet/actions/approve/approve';
 import {
   convertStringToHexWithPrefix,
@@ -22,7 +23,7 @@ export const depositCompound = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
@@ -82,7 +83,7 @@ export const deposit = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
@@ -91,6 +92,13 @@ export const deposit = async (
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   console.log('Executing savings deposit...');
+
+  if (
+    !sameAddress(inputAsset.address, outputAsset.address) &&
+    transferData === undefined
+  ) {
+    throw 'We need transafer data for not USDC token';
+  }
 
   const contractAddress = HOLY_HAND_ADDRESS(network);
   const contractABI = HOLY_HAND_ABI;

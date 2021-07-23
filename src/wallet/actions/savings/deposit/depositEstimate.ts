@@ -35,7 +35,7 @@ export const estimateDepositCompound = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
@@ -113,12 +113,19 @@ export const estimateDeposit = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string
 ): Promise<EstimateResponse> => {
   console.log('Estimating savings deposit...');
+
+  if (
+    !sameAddress(inputAsset.address, outputAsset.address) &&
+    transferData === undefined
+  ) {
+    throw 'We need transafer data for not USDC token';
+  }
 
   const contractAddress = HOLY_HAND_ADDRESS(network);
   const contractABI = HOLY_HAND_ABI;

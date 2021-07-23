@@ -15,7 +15,7 @@ export const depositSubsidized = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,

@@ -53,7 +53,7 @@
           :button-class="buttonClass"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
-          @button-click="handleExecuteSwap"
+          @button-click="handleExecuteDeposit"
         />
       </div>
       <gas-selector
@@ -101,6 +101,7 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import { formatToNative } from '@/utils/format';
+import { sameAddress } from '@/utils/address';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -165,14 +166,23 @@ export default Vue.extend({
       return undefined;
     },
     estimatedAnnualEarning(): string {
-      if (this.transferData === undefined) {
+      if (this.input.asset === undefined) {
         return '';
       }
 
-      const usdcAmount = fromWei(
-        this.transferData.buyAmount,
-        this.outputUSDCAsset.decimals
-      );
+      let usdcAmount = '0';
+
+      if (sameAddress(this.input.asset.address, this.outputUSDCAsset.address)) {
+        usdcAmount = this.input.amount;
+      } else if (this.transferData !== undefined) {
+        usdcAmount = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
+      } else {
+        return '';
+      }
+
       const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
       const usdcAmountNative = multiply(usdcAmount, usdcNative);
       const apyNative = multiply(
@@ -183,14 +193,22 @@ export default Vue.extend({
       return `+$${formatToNative(apyNative)}`;
     },
     swappingForString(): string {
-      if (this.transferData === undefined || this.input.asset === undefined) {
+      if (this.input.asset === undefined) {
         return '';
       }
 
-      const buyedUSDC = fromWei(
-        this.transferData.buyAmount,
-        this.outputUSDCAsset.decimals
-      );
+      let buyedUSDC = '0';
+
+      if (sameAddress(this.input.asset.address, this.outputUSDCAsset.address)) {
+        buyedUSDC = this.input.amount;
+      } else if (this.transferData !== undefined) {
+        buyedUSDC = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
+      } else {
+        return '';
+      }
 
       return `${buyedUSDC} ${this.outputUSDCAsset.symbol}`;
     },
@@ -228,10 +246,20 @@ export default Vue.extend({
       }
     },
     isInfoAvailable(): boolean {
-      return !!this.transferData;
+      return !this.needTransfer || !!this.transferData;
+    },
+    needTransfer(): boolean {
+      if (this.input.asset === undefined) {
+        return true;
+      }
+
+      return !sameAddress(
+        this.input.asset.address,
+        this.outputUSDCAsset.address
+      );
     },
     showInfo(): boolean {
-      return this.infoExpanded && !this.loading && !!this.transferData;
+      return this.infoExpanded && !this.loading && this.isInfoAvailable;
     }
   },
   mounted() {
@@ -241,8 +269,8 @@ export default Vue.extend({
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
-    async handleExecuteSwap(): Promise<void> {
-      if (this.transferData === undefined) {
+    async handleExecuteDeposit(): Promise<void> {
+      if (this.needTransfer && this.transferData === undefined) {
         console.error(
           "[deposit-form] can't execute deposit due to empty transfer data"
         );
@@ -383,8 +411,14 @@ export default Vue.extend({
     async calcData(
       inputAsset: SmallToken,
       amount: string
-    ): Promise<TransferData> {
+    ): Promise<TransferData | undefined> {
       const inputInWei = toWei(amount, inputAsset.decimals);
+
+      if (sameAddress(inputAsset.address, this.outputUSDCAsset.address)) {
+        this.transferData = undefined;
+        return undefined;
+      }
+
       const transferData = await getTransferData(
         this.outputUSDCAsset.address,
         inputAsset.address,
@@ -399,7 +433,7 @@ export default Vue.extend({
     async tryToEstimate(
       inputAmount: string,
       inputAsset: SmallToken,
-      transferData: TransferData
+      transferData: TransferData | undefined
     ): Promise<void> {
       const resp = await estimateDepositCompound(
         inputAsset,
