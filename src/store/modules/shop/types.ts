@@ -1,7 +1,11 @@
 export type Asset = {
   id: string;
   address: string;
+  previewImageSrc: string;
   imageSrc: string;
+  imageSize: string;
+  imageScaleH: string;
+  background: string;
   title: string;
   price: string;
   edition: string;
@@ -11,6 +15,11 @@ export type Asset = {
   remainingQuantity: number;
   availableQuantity: number;
   description: string;
+  page: {
+    iconSrc: string;
+    videoSrc: string;
+    title: string;
+  };
 };
 
 export type ShopStoreState = {

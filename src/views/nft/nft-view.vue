@@ -40,7 +40,6 @@
         <video
           :alt="$t('NFTs.txtAssetAlt', { name: asset.nft.name })"
           autoplay
-          class="image"
           data-keepplaying
           loop
           muted
@@ -118,13 +117,13 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleExecuteClaimAndExchange(): void {
+    handleBuy(): void {
       //
     },
-    handleExecuteExchange(): void {
+    handleSell(): void {
       //
     },
-    handleExecuteClaim(): void {
+    handleRedeem(): void {
       //
     },
     handleClose(): void {
