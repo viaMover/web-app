@@ -1,5 +1,6 @@
 import Vue, { VNode } from 'vue';
 import Web3 from 'web3';
+import intercom from 'intercom-web';
 
 declare global {
   namespace JSX {

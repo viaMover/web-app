@@ -4,6 +4,7 @@ import { InitCallbacks } from '@/web3/callbacks';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { NavigationGuardNext, Route } from 'vue-router';
 import router from '@/router/index';
+import { updateIntercomSession } from '@/router/intercom-utils';
 
 export const requireWalletAuth =
   (excludedRouteNames: Array<string>) =>
@@ -16,6 +17,7 @@ export const requireWalletAuth =
     const store = router.app.$store;
     if (store.getters['account/isWalletConnected']) {
       next();
+      updateIntercomSession(store.state['account/currentAddress']);
       return;
     }
 
@@ -50,7 +52,7 @@ export const requireWalletAuth =
             });
             await wcProvider.enable();
             const providerWithCb = await InitCallbacks(wcProvider, []);
-            await store.dispatch('initWallet', {
+            await store.dispatch('account/initWallet', {
               provider: providerWithCb.provider,
               providerName: 'WalletConnect',
               providerBeforeCloseCb: providerWithCb.onDisconnectCb,
