@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuelidate from 'vuelidate';
+import Skeleton from 'vue-loading-skeleton';
 import App from './app.vue';
 import router from './router';
 import store from './store';
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
+Vue.use(Skeleton);
 Vue.directive('get-shadow', getShadowDirective);
 
 dayjs.init();

@@ -16,11 +16,15 @@
     <release-radar-token-of-the-day />
     <release-radar-live-updates />
     <release-radar-page-section
-      title="Personal lists"
-    ></release-radar-page-section>
+      :is-loading="isLoadingPersonalList"
+      :items="personalList"
+      title="Personal Lists"
+    />
     <release-radar-page-section
-      title="Curated lists"
-    ></release-radar-page-section>
+      :is-loading="isLoadingCuratedList"
+      :items="curatedList"
+      title="Curated Lists"
+    />
   </content-wrapper>
 </template>
 
@@ -29,10 +33,11 @@ import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  ReleaseRadarPageSection,
   ReleaseRadarTokenOfTheDay,
   ReleaseRadarLiveUpdates
 } from '@/components/release-radar';
+import { ReleaseRadarPageSection } from '@/components/release-radar/release-radar-page-section';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'ReleaseRadarViewAll',
@@ -41,6 +46,14 @@ export default Vue.extend({
     ReleaseRadarPageSection,
     ReleaseRadarTokenOfTheDay,
     ReleaseRadarLiveUpdates
+  },
+  computed: {
+    ...mapState('radar', [
+      'personalList',
+      'curatedList',
+      'isLoadingCuratedList',
+      'isLoadingPersonalList'
+    ])
   },
   methods: {
     handleClose(): void {

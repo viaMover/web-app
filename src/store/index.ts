@@ -9,6 +9,7 @@ import account from './modules/account';
 import shop from './modules/shop';
 import nft from './modules/nft';
 import proposal from './modules/proposal';
+import radar from './modules/radar';
 
 Vue.use(Vuex);
 
@@ -23,6 +24,7 @@ export default new Vuex.Store<RootStoreState>({
     account,
     shop,
     nft,
-    proposal
+    proposal,
+    radar
   }
 });

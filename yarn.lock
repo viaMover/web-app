@@ -4824,7 +4824,7 @@ core-js-compat@^3.6.5, core-js-compat@^3.9.0, core-js-compat@^3.9.1:
     browserslist "^4.16.6"
     semver "7.0.0"
 
-core-js@^2.4.0:
+core-js@2, core-js@^2.4.0:
   version "2.6.12"
   resolved "https://registry.nlark.com/core-js/download/core-js-2.6.12.tgz?cache=0&sync_timestamp=1620507965854&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fcore-js%2Fdownload%2Fcore-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha1-2TM9+nsGXjR8xWgiGdb2kIWcwuw=
@@ -14273,6 +14273,13 @@ vue-loader@^15.9.2:
     loader-utils "^1.1.0"
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
+
+vue-loading-skeleton@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/vue-loading-skeleton/-/vue-loading-skeleton-1.1.9.tgz#e38bd157bf3348860fc22c49f1621e61feda7183"
+  integrity sha512-5gMrI9equv0PMVLD5EMa4NTUvqDM3Bq/wiO4NftbEaVNeoGomG/XslB4Ev8Ued+WiE2Y/9HsIx5YXhDXimyqZw==
+  dependencies:
+    core-js "2"
 
 vue-resource@^1.5.2:
   version "1.5.2"
