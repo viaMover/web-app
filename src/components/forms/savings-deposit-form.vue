@@ -1,7 +1,7 @@
 <template>
-  <div class="modal__wrapper-info">
+  <div class="modal-wrapper-info">
     <div>
-      <h3 v-if="headerLabel" class="modal__wrapper-info-title">
+      <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
@@ -66,6 +66,9 @@
         :txn-gas-limit="allGasLimit"
         @selected-gas-changed="handleSelectedGasChanged"
       />
+      <div v-if="showFooter" class="modal-info-footer">
+        <p>{{ infoFooter }}</p>
+      </div>
     </form>
   </div>
 </template>
@@ -75,7 +78,6 @@ import Vue from 'vue';
 
 import {
   TokenWithBalance,
-  SmallTokenInfo,
   SmallToken,
   SmallTokenInfoWithIcon
 } from '@/wallet/types';
@@ -151,6 +153,9 @@ export default Vue.extend({
     },
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Deposit';
+    },
+    showFooter(): boolean {
+      return this.input.asset === undefined || !notZero(this.input.amount);
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
@@ -280,6 +285,9 @@ export default Vue.extend({
     },
     showInfo(): boolean {
       return this.infoExpanded && !this.loading && this.isInfoAvailable;
+    },
+    infoFooter(): string {
+      return 'Once you deposit your assets in savings, Mover is constantly searching for the highest paying option using multiple DeFi protocols. Mover does automatic rebalancing, yield collection, and capital optimization. ';
     }
   },
   mounted() {

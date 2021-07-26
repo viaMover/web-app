@@ -1,7 +1,7 @@
 <template>
-  <div class="modal__wrapper-info">
+  <div class="modal-wrapper-info">
     <div>
-      <h3 v-if="headerLabel" class="modal__wrapper-info-title">
+      <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
@@ -58,6 +58,9 @@
         :txn-gas-limit="allGasLimit"
         @selected-gas-changed="handleSelectedGasChanged"
       />
+      <div v-if="showFooter" class="modal-info-footer">
+        <p>{{ infoFooter }}</p>
+      </div>
     </form>
   </div>
 </template>
@@ -166,6 +169,9 @@ export default Vue.extend({
 
       return `$${formatToNative(apyNative)}`;
     },
+    showFooter(): boolean {
+      return !notZero(this.output.amount);
+    },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
     },
@@ -222,6 +228,9 @@ export default Vue.extend({
       const withdrawPriceNative = multiply(withdrawPriceInEth, this.ethPrice);
 
       return `$${withdrawPriceNative}`;
+    },
+    infoFooter(): string {
+      return 'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.';
     }
   },
   mounted() {

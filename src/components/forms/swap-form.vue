@@ -1,7 +1,7 @@
 <template>
-  <div class="modal__wrapper-info">
+  <div class="modal-wrapper-info">
     <div>
-      <h3 v-if="headerLabel" class="modal__wrapper-info-title">
+      <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
