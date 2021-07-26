@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import axios from 'axios';
 import { Result } from '../responses';
 import { baseUrl } from './consts';
@@ -5,6 +6,7 @@ import { MoverResponse } from './responses';
 import { AbiItem } from 'web3-utils';
 import { Network } from '@/utils/networkTypes';
 import {
+  getUSDCAssetData,
   HOLY_POOL_ABI,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
@@ -144,5 +146,50 @@ export const GetSavingsReceipt = async (
     return { isError: false, result: response.payload };
   } catch (err) {
     return { isError: true, error: err };
+  }
+};
+
+export const getSavingsBalance = async (
+  accountAddress: string,
+  network: Network,
+  web3: Web3
+): Promise<string> => {
+  if (network !== Network.mainnet && network !== Network.kovan) {
+    console.log(
+      'saving balance is disabled for not ethereum mainnet or kovan: ',
+      network
+    );
+    return '0';
+  }
+
+  const contractAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const contractABI = HOLY_POOL_ABI;
+
+  const savings = new web3.eth.Contract(
+    contractABI as AbiItem[],
+    contractAddress
+  );
+
+  try {
+    console.log('get savings USDC balance for user...');
+    const transactionParams = {
+      from: accountAddress
+    } as TransactionsParams;
+
+    const savingsResponse = await savings.methods
+      .getDepositBalance(accountAddress)
+      .call(transactionParams);
+
+    console.log('savings: USDC balance in WEI: ', savingsResponse);
+    const savingsBalanceInWEI = new BigNumber(savingsResponse.toString());
+    const savingsBalance = fromWei(
+      savingsBalanceInWEI,
+      getUSDCAssetData(network).decimals
+    );
+    console.log('savings: USDC BALANCEeBalance: ', savingsBalance);
+
+    return savingsBalance;
+  } catch (error) {
+    throw new Error(`error getting savings USDC balance: ${error}`);
   }
 };

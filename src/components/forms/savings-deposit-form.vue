@@ -46,6 +46,10 @@
             <p class="description">Estimated annual earnings</p>
             <p class="info">{{ estimatedAnnualEarning }}</p>
           </div>
+          <div v-if="useSubsidized" class="tx-details__content-item">
+            <p class="description">Smart Treasury cover</p>
+            <p class="info">{{ depositNativePrice }}</p>
+          </div>
         </div>
       </div>
       <div class="modal-wrapper-info-button">
@@ -102,6 +106,7 @@ import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import { formatToNative } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
+import Web3 from 'web3';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -211,6 +216,21 @@ export default Vue.extend({
       }
 
       return `${buyedUSDC} ${this.outputUSDCAsset.symbol}`;
+    },
+    depositNativePrice(): string {
+      const selectedGasPriceInWEI = Web3.utils.toWei(
+        this.selectedGasPrice,
+        'Gwei'
+      );
+      const depositPriceInWEI = multiply(
+        selectedGasPriceInWEI,
+        this.depositGasLimit
+      );
+
+      const depositPriceInEth = Web3.utils.fromWei(depositPriceInWEI, 'ether');
+      const depositPriceNative = multiply(depositPriceInEth, this.ethPrice);
+
+      return `$${depositPriceNative}`;
     },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
@@ -450,7 +470,7 @@ export default Vue.extend({
         this.transferError = 'Estimate error';
         return;
       }
-      this.depositGasLimit = resp.swapGasLimit;
+      this.depositGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
     }
   }

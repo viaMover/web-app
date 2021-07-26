@@ -741,7 +741,7 @@ export default Vue.extend({
         return;
       }
 
-      this.swapGasLimit = resp.swapGasLimit;
+      this.swapGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
     }
   }

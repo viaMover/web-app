@@ -93,6 +93,10 @@ export default Vue.extend({
     excludeTokens: {
       type: Array as PropType<Array<TokenWithBalance>>,
       default: () => []
+    },
+    disabledSelectCurrency: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -143,10 +147,12 @@ export default Vue.extend({
       this.$emit('update-asset', asset);
     },
     handleOpenSelectModal(): void {
-      toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
-        useWalletTokens: this.useWalletTokens,
-        excludeTokens: this.excludeTokens
-      });
+      if (!this.disabledSelectCurrency) {
+        toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
+          useWalletTokens: this.useWalletTokens,
+          excludeTokens: this.excludeTokens
+        });
+      }
     }
   }
 });

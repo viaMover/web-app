@@ -319,8 +319,9 @@ export default {
     commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
     commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
 
+    await dispatch('fetchSavingsFreshData');
+
     await dispatch('fetchSavingsInfo');
-    await dispatch('fetchSavingsAPY');
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);
     //console.log(res);

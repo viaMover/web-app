@@ -12,7 +12,10 @@
               :text="$t('savings.btnDeposit.emoji')"
               @click="handleDepositCick"
             />
-            <context-button-item :text="$t('savings.btnWithdraw.emoji')" />
+            <context-button-item
+              :text="$t('savings.btnWithdraw.emoji')"
+              @click="handleWithdrawCick"
+            />
           </context-button>
         </template>
       </secondary-page-title>
@@ -80,6 +83,10 @@ export default Vue.extend({
     handleDepositCick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.SavingsDeposit);
+    },
+    handleWithdrawCick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.SavingsWithdraw);
     }
   }
 });

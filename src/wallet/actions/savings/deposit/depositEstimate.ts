@@ -23,7 +23,7 @@ import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
 export type CompoudEstimateResponse = {
   error: boolean;
   approveGasLimit: string;
-  swapGasLimit: string;
+  actionGasLimit: string;
 };
 
 type EstimateResponse = {
@@ -57,7 +57,7 @@ export const estimateDepositCompound = async (
     return {
       error: true,
       approveGasLimit: '0',
-      swapGasLimit: '0'
+      actionGasLimit: '0'
     };
   }
 
@@ -70,24 +70,24 @@ export const estimateDepositCompound = async (
         contractAddress,
         web3
       );
-      if (useSubsidized) {
-        return {
-          error: false,
-          approveGasLimit: approveGasLimit,
-          swapGasLimit: '0'
-        };
-      }
+      // if (useSubsidized) {
+      //   return {
+      //     error: false,
+      //     approveGasLimit: approveGasLimit,
+      //     actionGasLimit: '0'
+      //   };
+      // }
 
       return {
         error: false,
-        swapGasLimit: ethDefaults.basic_holy_swap,
+        actionGasLimit: ethDefaults.basic_holy_savings_deposit,
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
       console.error(`Can't estimate approve: ${err}`);
       return {
         error: true,
-        swapGasLimit: '0',
+        actionGasLimit: '0',
         approveGasLimit: '0'
       };
     }
@@ -104,7 +104,7 @@ export const estimateDepositCompound = async (
     return {
       error: depositEstimate.error,
       approveGasLimit: '0',
-      swapGasLimit: depositEstimate.gasLimit
+      actionGasLimit: depositEstimate.gasLimit
     };
   }
 };
