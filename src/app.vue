@@ -1,7 +1,7 @@
 <template>
   <main id="app">
     <preload v-show="showPreload" />
-    <router-view v-cloak v-show="!showPreload" />
+    <router-view v-cloak v-if="!showPreload" />
   </main>
 </template>
 

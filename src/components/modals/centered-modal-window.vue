@@ -6,16 +6,30 @@
       :toggle-group="modalId"
       :toggle-id="modalId"
     >
+      <div
+        v-if="disableCloseOnBackdrop"
+        class="popup-bg popup-bg-active"
+        :class="dimmerClass"
+      >
+        <close-button
+          class="modal__popup-close modal__popup-close-active"
+          is-black
+          @close="handleClose"
+        />
+      </div>
       <toggle-action
         v-cloak
+        v-else
         class="popup-bg popup-bg-active"
         :class="dimmerClass"
         :toggle-group="modalId"
         :toggle-id="modalId"
       >
-        <div class="button-active" :class="closeButtonClass">
-          <img alt="close icon" src="@/assets/images/cross.svg" />
-        </div>
+        <close-button
+          class="modal__popup-close modal__popup-close-active"
+          is-black
+          @close="handleClose"
+        />
       </toggle-action>
     </toggle-target>
 
@@ -35,10 +49,13 @@
 import Vue from 'vue';
 
 import { ToggleAction, ToggleTarget } from '@/components/toggle';
+import { CloseButton } from '@/components/buttons';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'CenteredModalWindow',
   components: {
+    CloseButton,
     ToggleAction,
     ToggleTarget
   },
@@ -58,14 +75,26 @@ export default Vue.extend({
     backLabel: {
       type: String,
       default: ''
+    },
+    disableCloseOnBackdrop: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
     closeButtonClass(): string {
-      return `${this.modalClass}-close`;
+      return 'transaction__popup-close transaction__popup-close-active';
+
+      // TODO: refactor this
+      // return `${this.modalClass}-close`;
     },
     dimmerClass(): string {
       return `${this.modalClass}-bg`;
+    }
+  },
+  methods: {
+    handleClose(): void {
+      toggleSingleItem(this.modalId);
     }
   }
 });

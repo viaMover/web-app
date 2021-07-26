@@ -34,6 +34,10 @@ import {
   setLastProviderToPersist
 } from '@/settings';
 import sample from 'lodash-es/sample';
+import {
+  bootIntercomSession,
+  disconnectIntercomSession
+} from '@/router/intercom-utils';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -165,6 +169,10 @@ export default {
     }
 
     if (payload.init) {
+      bootIntercomSession(state.currentAddress, {
+        network: state.networkInfo.network
+      });
+
       console.info('getting all tokens...');
       const allTokens = getAllTokens(state.networkInfo.network);
       commit('setAllTokens', allTokens);
@@ -355,6 +363,7 @@ export default {
       }
     }
     commit('clearWalletData');
+    disconnectIntercomSession();
     clearLastProviderPersist();
   }
 } as ActionTree<AccountStoreState, RootStoreState>;
