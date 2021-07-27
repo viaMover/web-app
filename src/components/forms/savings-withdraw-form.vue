@@ -38,9 +38,11 @@
             <p class="description">Estimated lost annual earnings</p>
             <p class="info">{{ estimatedLostAnnualEarning }}</p>
           </div>
-          <div v-if="useSubsidized" class="tx-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Smart Treasury cover</p>
-            <p class="info">{{ withdrawNativePrice }}</p>
+            <div class="value">
+              <span>{{ treasuryCover }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -211,7 +213,7 @@ export default Vue.extend({
     showInfo(): boolean {
       return this.infoExpanded && !this.loading && this.isInfoAvailable;
     },
-    withdrawNativePrice(): string {
+    treasuryCover(): string {
       const selectedGasPriceInWEI = Web3.utils.toWei(
         this.selectedGasPrice,
         'Gwei'
@@ -227,7 +229,11 @@ export default Vue.extend({
       );
       const withdrawPriceNative = multiply(withdrawPriceInEth, this.ethPrice);
 
-      return `$${withdrawPriceNative}`;
+      if (this.useSubsidized) {
+        return `$${formatToNative(withdrawPriceNative)}`;
+      } else {
+        return '$0.00';
+      }
     },
     infoFooter(): string {
       return 'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.';

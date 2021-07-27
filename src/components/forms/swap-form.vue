@@ -65,7 +65,7 @@
           <div class="tx-details__content-item">
             <p class="description">Smart Treasury cover</p>
             <div class="value">
-              <span>{{ swapNativePrice }}</span>
+              <span>{{ treasuryCover }}</span>
             </div>
           </div>
           <div class="tx-details__content-item">
@@ -137,6 +137,7 @@ import { sameAddress } from '@/utils/address';
 import Web3 from 'web3';
 import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '../controls/form-loader.vue';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -228,7 +229,9 @@ export default Vue.extend({
         );
       }
 
-      return `1 ${this.output.asset.symbol} = ${rate} ${this.input.asset.symbol}`;
+      return `1 ${this.output.asset.symbol} = ${formatToDecimals(rate, 8)} ${
+        this.input.asset.symbol
+      }`;
     },
     minimalReceived(): string {
       if (this.transferData === undefined || this.output.asset === undefined) {
@@ -238,7 +241,7 @@ export default Vue.extend({
         this.transferData.buyAmount,
         this.output.asset.decimals
       );
-      return `${minReceived} ${this.output.asset.symbol}`;
+      return `${formatToDecimals(minReceived, 8)} ${this.output.asset.symbol}`;
     },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
@@ -263,7 +266,7 @@ export default Vue.extend({
       );
       return add(this.approveGasLimit, this.swapGasLimit);
     },
-    swapNativePrice(): string {
+    treasuryCover(): string {
       const selectedGasPriceInWEI = Web3.utils.toWei(
         this.selectedGasPrice,
         'Gwei'
@@ -273,7 +276,11 @@ export default Vue.extend({
       const swapPriceInEth = Web3.utils.fromWei(swapPriceInWEI, 'ether');
       const swapPriceNative = multiply(swapPriceInEth, this.ethPrice);
 
-      return `$${swapPriceNative}`;
+      if (this.useSubsidized) {
+        return `$${formatToNative(swapPriceNative)}`;
+      } else {
+        return '$0.00';
+      }
     },
     maxInputAmount(): string {
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
