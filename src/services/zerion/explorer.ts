@@ -1,4 +1,5 @@
-import { sameAddress } from './../../utils/address';
+import { Network } from '@/utils/networkTypes';
+import { sameAddress } from '@/utils/address';
 import { mapZerionTokens } from './tokens';
 import {
   ZerionAssetsReceived,
@@ -23,6 +24,7 @@ export type Explorer = {
 export const InitExplorer = (
   accountAddress: string,
   nativeCurrency: string,
+  network: Network,
   setTransactions: (txns: Array<Transaction>) => void,
   updateTransactions: (txns: Array<Transaction>) => void,
   removeTransactions: (txns: Array<string>) => void,
@@ -90,7 +92,7 @@ export const InitExplorer = (
     messages.ADDRESS_ASSETS.RECEIVED,
     async (message: ZerionAssetsReceived) => {
       console.log(messages.ADDRESS_ASSETS.RECEIVED, message);
-      const tokens = mapZerionTokens(message);
+      const tokens = mapZerionTokens(message, network);
 
       console.log('tokens: ', tokens);
 
@@ -119,7 +121,7 @@ export const InitExplorer = (
     messages.ADDRESS_ASSETS.CHANGED,
     (message: ZerionAssetsReceived) => {
       console.log(messages.ADDRESS_ASSETS.CHANGED, message);
-      const tokens = mapZerionTokens(message);
+      const tokens = mapZerionTokens(message, network);
       updateTokens(tokens);
     }
   );
@@ -127,7 +129,7 @@ export const InitExplorer = (
     messages.ADDRESS_ASSETS.APPENDED,
     (message: ZerionAssetsReceived) => {
       console.log(messages.ADDRESS_ASSETS.APPENDED, message);
-      const tokens = mapZerionTokens(message);
+      const tokens = mapZerionTokens(message, network);
       updateTokens(tokens);
     }
   );
@@ -135,7 +137,7 @@ export const InitExplorer = (
     messages.ADDRESS_ASSETS.REMOVED,
     (message: ZerionAssetsReceived) => {
       console.log(messages.ADDRESS_ASSETS.REMOVED, message);
-      const tokens = mapZerionTokens(message);
+      const tokens = mapZerionTokens(message, network);
       removeTokens(tokens.map((t) => t.address));
     }
   );

@@ -185,6 +185,7 @@ export default {
         const explorer = InitExplorer(
           state.currentAddress,
           'usd',
+          state.networkInfo.network,
           (txns: Array<Transaction>) => {
             commit('setWalletTransactions', txns);
           },

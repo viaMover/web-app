@@ -251,7 +251,7 @@ export default Vue.extend({
         return this.error;
       }
 
-      return 'Swap';
+      return '💸 Swap';
     },
     availableGasModes(): Array<GasMode> {
       return ['treasury', 'low', 'normal', 'high'];
@@ -660,7 +660,6 @@ export default Vue.extend({
     },
     async handleSelectedSlippageChanged(newSlippage: Slippage): Promise<void> {
       this.slippage = newSlippage;
-      //this.transferData = undefined;
 
       if (this.input.asset === undefined || this.output.asset === undefined) {
         return;

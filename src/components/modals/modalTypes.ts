@@ -4,5 +4,7 @@ export enum Modal {
   SearchToken = 'search-token-modal',
   Swap = 'swap-modal',
   Transaction = 'transaction-modal',
-  TreasuryDeposit = 'treasury-deposit-modal'
+  TreasuryIncreaseBoost = 'treasury-increase-boost',
+  TreasuryDecreaseBoost = 'treasury-decrease-boost',
+  TreasuryClaimAndBurn = 'treasury-claim-and-burn'
 }
