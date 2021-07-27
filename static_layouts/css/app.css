@@ -93,7 +93,7 @@ button {
           transform: scale(1.06);
 }
 .g-wrapper {
-  max-width: 780px;
+  width: 780px;
   margin-left: 138px;
   padding: 0 20px;
   position: relative;
