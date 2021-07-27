@@ -1,7 +1,7 @@
 <template>
-  <div class="modal__wrapper-info">
+  <div class="modal-wrapper-info">
     <div>
-      <h3 v-if="headerLabel" class="modal__wrapper-info-title">
+      <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
@@ -46,6 +46,10 @@
             <p class="description">Estimated annual earnings</p>
             <p class="info">{{ estimatedAnnualEarning }}</p>
           </div>
+          <div v-if="useSubsidized" class="tx-details__content-item">
+            <p class="description">Smart Treasury cover</p>
+            <p class="info">{{ depositNativePrice }}</p>
+          </div>
         </div>
       </div>
       <div class="modal-wrapper-info-button">
@@ -53,7 +57,7 @@
           :button-class="buttonClass"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
-          @button-click="handleExecuteSwap"
+          @button-click="handleExecuteDeposit"
         />
       </div>
       <gas-selector
@@ -62,6 +66,9 @@
         :txn-gas-limit="allGasLimit"
         @selected-gas-changed="handleSelectedGasChanged"
       />
+      <div v-if="showFooter" class="modal-info-footer">
+        <p>{{ infoFooter }}</p>
+      </div>
     </form>
   </div>
 </template>
@@ -71,7 +78,6 @@ import Vue from 'vue';
 
 import {
   TokenWithBalance,
-  SmallTokenInfo,
   SmallToken,
   SmallTokenInfoWithIcon
 } from '@/wallet/types';
@@ -98,6 +104,11 @@ import {
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { Step } from '../controls/form-loader.vue';
 import { getUSDCAssetData } from '@/wallet/references/data';
+import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
+import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
+import { formatToNative } from '@/utils/format';
+import { sameAddress } from '@/utils/address';
+import Web3 from 'web3';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -132,6 +143,9 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
+      'ethPrice',
+      'savingsAPY',
+      'usdcPriceInWeth',
       'ethPrice'
     ]),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
@@ -139,6 +153,9 @@ export default Vue.extend({
     },
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Deposit';
+    },
+    showFooter(): boolean {
+      return this.input.asset === undefined || !notZero(this.input.amount);
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
@@ -159,22 +176,66 @@ export default Vue.extend({
       return undefined;
     },
     estimatedAnnualEarning(): string {
-      if (this.transferData === undefined) {
-        return '';
-      }
-      return '$??';
-    },
-    swappingForString(): string {
-      if (this.transferData === undefined || this.input.asset === undefined) {
+      if (this.input.asset === undefined) {
         return '';
       }
 
-      const buyedUSDC = fromWei(
-        this.transferData.buyAmount,
-        this.outputUSDCAsset.decimals
+      let usdcAmount = '0';
+
+      if (sameAddress(this.input.asset.address, this.outputUSDCAsset.address)) {
+        usdcAmount = this.input.amount;
+      } else if (this.transferData !== undefined) {
+        usdcAmount = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
+      } else {
+        return '';
+      }
+
+      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const usdcAmountNative = multiply(usdcAmount, usdcNative);
+      const apyNative = multiply(
+        divide(this.savingsAPY, 100),
+        usdcAmountNative
       );
 
+      return `+$${formatToNative(apyNative)}`;
+    },
+    swappingForString(): string {
+      if (this.input.asset === undefined) {
+        return '';
+      }
+
+      let buyedUSDC = '0';
+
+      if (sameAddress(this.input.asset.address, this.outputUSDCAsset.address)) {
+        buyedUSDC = this.input.amount;
+      } else if (this.transferData !== undefined) {
+        buyedUSDC = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
+      } else {
+        return '';
+      }
+
       return `${buyedUSDC} ${this.outputUSDCAsset.symbol}`;
+    },
+    depositNativePrice(): string {
+      const selectedGasPriceInWEI = Web3.utils.toWei(
+        this.selectedGasPrice,
+        'Gwei'
+      );
+      const depositPriceInWEI = multiply(
+        selectedGasPriceInWEI,
+        this.depositGasLimit
+      );
+
+      const depositPriceInEth = Web3.utils.fromWei(depositPriceInWEI, 'ether');
+      const depositPriceNative = multiply(depositPriceInEth, this.ethPrice);
+
+      return `$${depositPriceNative}`;
     },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
@@ -187,10 +248,10 @@ export default Vue.extend({
         return this.error;
       }
 
-      return 'Deposit';
+      return '💰 Deposit';
     },
     availableGasModes(): Array<GasMode> {
-      return ['low', 'normal', 'high', 'treasury'];
+      return ['treasury', 'low', 'normal', 'high'];
     },
     allGasLimit(): string {
       console.log(
@@ -210,20 +271,43 @@ export default Vue.extend({
       }
     },
     isInfoAvailable(): boolean {
-      return !!this.transferData;
+      return !this.needTransfer || !!this.transferData;
+    },
+    needTransfer(): boolean {
+      if (this.input.asset === undefined) {
+        return true;
+      }
+
+      return !sameAddress(
+        this.input.asset.address,
+        this.outputUSDCAsset.address
+      );
     },
     showInfo(): boolean {
-      return this.infoExpanded && !this.loading && !!this.transferData;
+      return this.infoExpanded && !this.loading && this.isInfoAvailable;
+    },
+    infoFooter(): string {
+      return 'Once you deposit your assets in savings, Mover is constantly searching for the highest paying option using multiple DeFi protocols. Mover does automatic rebalancing, yield collection, and capital optimization. ';
     }
   },
   mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
+    if (eth) {
+      this.input.asset = eth;
+    }
   },
   methods: {
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
-    async handleExecuteSwap(): Promise<void> {
+    async handleExecuteDeposit(): Promise<void> {
+      if (this.needTransfer && this.transferData === undefined) {
+        console.error(
+          "[deposit-form] can't execute deposit due to empty transfer data"
+        );
+        return;
+      }
       if (this.input.asset === undefined) {
         console.error(
           "[deposit-form] can't execute deposit due to empty input asset"
@@ -233,22 +317,22 @@ export default Vue.extend({
 
       this.loaderStep = 'Confirm';
       try {
-        // await swapCompound(
-        //   this.input.asset,
-        //   this.output.asset,
-        //   this.input.amount,
-        //   this.transferData,
-        //   this.networkInfo.network,
-        //   this.provider.web3,
-        //   this.currentAddress,
-        //   this.swapGasLimit,
-        //   this.approveGasLimit,
-        //   this.selectedGasPrice,
-        //   this.useSubsidized,
-        //   async () => {
-        //     this.loaderStep = 'Process';
-        //   }
-        // );
+        await depositCompound(
+          this.input.asset,
+          this.outputUSDCAsset,
+          this.input.amount,
+          this.transferData,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress,
+          this.depositGasLimit,
+          this.approveGasLimit,
+          this.selectedGasPrice,
+          this.useSubsidized,
+          async () => {
+            this.loaderStep = 'Process';
+          }
+        );
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
@@ -359,8 +443,14 @@ export default Vue.extend({
     async calcData(
       inputAsset: SmallToken,
       amount: string
-    ): Promise<TransferData> {
+    ): Promise<TransferData | undefined> {
       const inputInWei = toWei(amount, inputAsset.decimals);
+
+      if (sameAddress(inputAsset.address, this.outputUSDCAsset.address)) {
+        this.transferData = undefined;
+        return undefined;
+      }
+
       const transferData = await getTransferData(
         this.outputUSDCAsset.address,
         inputAsset.address,
@@ -375,25 +465,25 @@ export default Vue.extend({
     async tryToEstimate(
       inputAmount: string,
       inputAsset: SmallToken,
-      transferData: TransferData
+      transferData: TransferData | undefined
     ): Promise<void> {
-      // const resp = await estimateSwapCompound(
-      //   inputAsset,
-      //   this.outputUSDCAsset,
-      //   inputAmount,
-      //   transferData,
-      //   this.networkInfo.network,
-      //   this.provider.web3,
-      //   this.currentAddress,
-      //   this.useSubsidized
-      // );
-      // if (resp.error) {
-      //   console.error(resp.error);
-      //   this.transferError = 'Estimate error';
-      //   return;
-      // }
-      // this.depositGasLimit = resp.swapGasLimit;
-      //this.approveGasLimit = resp.approveGasLimit;
+      const resp = await estimateDepositCompound(
+        inputAsset,
+        this.outputUSDCAsset,
+        inputAmount,
+        transferData,
+        this.networkInfo.network,
+        this.provider.web3,
+        this.currentAddress,
+        this.useSubsidized
+      );
+      if (resp.error) {
+        console.error(resp.error);
+        this.transferError = 'Estimate error';
+        return;
+      }
+      this.depositGasLimit = resp.actionGasLimit;
+      this.approveGasLimit = resp.approveGasLimit;
     }
   }
 });

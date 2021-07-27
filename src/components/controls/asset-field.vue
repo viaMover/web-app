@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 <template>
-  <div class="modal-wrapper-info-items-item">
+  <div
+    class="modal-wrapper-info-items-item"
+    :class="{ 'couple-tokens': hasCoupleTokens }"
+  >
     <div class="modal-wrapper-info-items-item-left">
       <div v-if="iconSrc" class="icon">
         <img v-get-shadow :alt="iconAlt" :src="iconSrc" />
@@ -44,6 +47,9 @@
         <img src="@/assets/images/plus.svg" />
         <span>{{ this.$t('asset.lblSelectMax') }}</span>
       </button>
+      <p v-else-if="showTokenBalance && tokenBalance">
+        Balance: {{ tokenBalance }}
+      </p>
     </div>
   </div>
 </template>
@@ -55,6 +61,9 @@ import PriceInputField from './price-input-field.vue';
 import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals';
 import { TokenWithBalance } from '@/wallet/types';
+import { mapState } from 'vuex';
+import { sameAddress } from '@/utils/address';
+import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'AssetField',
@@ -93,9 +102,26 @@ export default Vue.extend({
     excludeTokens: {
       type: Array as PropType<Array<TokenWithBalance>>,
       default: () => []
+    },
+    disabledSelectCurrency: {
+      type: Boolean,
+      default: false
+    },
+    hasCoupleTokens: {
+      type: Boolean,
+      default: false
+    },
+    showTokenBalance: {
+      type: Boolean,
+      default: false
+    },
+    treasuryOnly: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
+    ...mapState('account', ['tokens']),
     placeholder(): string {
       return this.asset == null ? '—' : '0.00';
     },
@@ -125,6 +151,18 @@ export default Vue.extend({
     },
     showSelectMaxAmountButton(): boolean {
       return this.fieldRole === 'input' && !!this.asset;
+    },
+    tokenBalance(): string {
+      if (this.asset !== undefined) {
+        const token = this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(this.asset.address, t.address)
+        );
+        if (token) {
+          return `${formatToDecimals(token.balance, 4)} ${token.symbol}`;
+        }
+        return '0.0000';
+      }
+      return '';
     }
   },
   methods: {
@@ -143,10 +181,13 @@ export default Vue.extend({
       this.$emit('update-asset', asset);
     },
     handleOpenSelectModal(): void {
-      toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
-        useWalletTokens: this.useWalletTokens,
-        excludeTokens: this.excludeTokens
-      });
+      if (!this.disabledSelectCurrency) {
+        toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
+          useWalletTokens: this.useWalletTokens,
+          excludeTokens: this.excludeTokens,
+          treasuryOnly: this.treasuryOnly
+        });
+      }
     }
   }
 });

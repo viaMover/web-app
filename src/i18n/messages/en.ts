@@ -431,11 +431,10 @@ export default {
   gas: {
     lblNetworkFee: 'Network fee',
     lblSelector: {
-      low: 'Low',
-      normal: 'Normal',
-      high: 'High',
-      custom: 'Custom',
-      treasury: 'Treasury'
+      low: '🐌 Slow',
+      normal: '⏱ Normal',
+      high: '🚀 Fast',
+      treasury: '🐷 Smart Treasury'
     }
   }
 };

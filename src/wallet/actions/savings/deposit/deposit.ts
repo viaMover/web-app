@@ -1,24 +1,28 @@
-import { approve } from './../approve/approve';
+import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
 import { BigNumber } from 'bignumber.js';
-import { multiply, toWei } from './../../../utils/bigmath';
+import { multiply, toWei } from '@/utils/bigmath';
 import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from './../actionWithApprove';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { Network } from '@/utils/networkTypes';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
-import { swapSubsidized } from './swapSubsidized';
+import {
+  HOLY_HAND_ABI,
+  HOLY_HAND_ADDRESS,
+  HOLY_SAVINGS_POOL_ADDRESS
+} from '@/wallet/references/data';
+import { depositSubsidized } from './depositSubsidized';
 
-export const swapCompound = async (
+export const depositCompound = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
@@ -41,7 +45,7 @@ export const swapCompound = async (
       gasPriceInGwei,
       async () => {
         if (useSubsidized) {
-          await swapSubsidized(
+          await depositSubsidized(
             inputAsset,
             outputAsset,
             inputAmount,
@@ -52,7 +56,7 @@ export const swapCompound = async (
             changeStepToProcess
           );
         } else {
-          await swap(
+          await deposit(
             inputAsset,
             outputAsset,
             inputAmount,
@@ -69,16 +73,16 @@ export const swapCompound = async (
       changeStepToProcess
     );
   } catch (err) {
-    console.error(`Can't swap: ${err}`);
+    console.error(`Can't savings deposit: ${err}`);
     throw err;
   }
 };
 
-export const swap = async (
+export const deposit = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
@@ -86,10 +90,19 @@ export const swap = async (
   gasPriceInGwei: string,
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
-  console.log('Executing swap...');
+  console.log('Executing savings deposit...');
+
+  if (
+    !sameAddress(inputAsset.address, outputAsset.address) &&
+    transferData === undefined
+  ) {
+    throw 'We need transafer data for not USDC token';
+  }
 
   const contractAddress = HOLY_HAND_ADDRESS(network);
   const contractABI = HOLY_HAND_ABI;
+
+  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
 
   try {
     const holyHand = new web3.eth.Contract(
@@ -114,7 +127,7 @@ export const swap = async (
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    console.log('[swap] input amount in WEI:', inputAmountInWEI);
+    console.log('[savings deposit] input amount in WEI:', inputAmountInWEI);
 
     let bytesData: number[] = [];
     let expectedMinimumReceived = '0';
@@ -124,12 +137,18 @@ export const swap = async (
         multiply(transferData.buyAmount, '0.85')
       ).toFixed(0);
 
-      console.log('[swap] expected minimum received:', expectedMinimumReceived);
+      console.log(
+        '[savings deposit] expected minimum received:',
+        expectedMinimumReceived
+      );
 
       const valueBytes = Web3.utils.hexToBytes(
         Web3.utils.padLeft(convertStringToHexWithPrefix(transferData.value), 64)
       );
-      console.log('[swap] valueBytes:', Web3.utils.bytesToHex(valueBytes));
+      console.log(
+        '[savings deposit] valueBytes:',
+        Web3.utils.bytesToHex(valueBytes)
+      );
 
       bytesData = Array.prototype.concat(
         Web3.utils.hexToBytes(transferData.to),
@@ -138,10 +157,13 @@ export const swap = async (
         Web3.utils.hexToBytes(transferData.data)
       );
 
-      console.log('[swap] bytesData:', Web3.utils.bytesToHex(bytesData));
+      console.log(
+        '[savings deposit] bytesData:',
+        Web3.utils.bytesToHex(bytesData)
+      );
     }
 
-    console.log('[swap] transactionParams:', transactionParams);
+    console.log('[savings deposit] transactionParams:', transactionParams);
 
     let inputCurrencyAddress = inputAsset.address;
     if (inputAsset.address === 'eth') {
@@ -153,34 +175,40 @@ export const swap = async (
       outputCurrencyAddress = getPureEthAddress();
     }
 
-    console.log('[swap] inputCurrencyAddress:', inputCurrencyAddress);
-    console.log('[swap] outputCurrencyAddress:', outputCurrencyAddress);
+    console.log(
+      '[savings deposit] inputCurrencyAddress:',
+      inputCurrencyAddress
+    );
+    console.log(
+      '[savings deposit] outputCurrencyAddress:',
+      outputCurrencyAddress
+    );
 
     await new Promise<void>((resolve, reject) => {
       holyHand.methods
-        .executeSwap(
+        .depositToPool(
+          poolAddress,
           inputCurrencyAddress,
-          outputCurrencyAddress,
           inputAmountInWEI,
           expectedMinimumReceived,
           bytesData
         )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
-          console.log(`Swap txn hash: ${hash}`);
+          console.log(`Savings deposit txn hash: ${hash}`);
           changeStepToProcess();
         })
         .once('receipt', (receipt: any) => {
-          console.log(`Swap txn receipt: ${receipt}`);
+          console.log(`Savings deposit txn receipt: ${receipt}`);
           resolve();
         })
         .once('error', (error: Error) => {
-          console.log(`Swap txn error: ${error}`);
+          console.log(`Savings deposit txn error: ${error}`);
           reject(error);
         });
     });
   } catch (error) {
-    console.error(`can't execute swap due to: ${error}`);
+    console.error(`can't execute savings deposit due to: ${error}`);
     throw error;
   }
 };

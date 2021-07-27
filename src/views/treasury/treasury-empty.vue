@@ -78,7 +78,7 @@ export default Vue.extend({
       });
     },
     toggleDeposit(): void {
-      toggleSingleItem(Modal.TreasuryDeposit);
+      toggleSingleItem(Modal.TreasuryIncreaseBoost);
     }
   }
 });

@@ -1,8 +1,7 @@
 <template>
   <main id="app">
-    <wallet />
     <preload v-show="showPreload" />
-    <router-view v-cloak v-show="!showPreload" />
+    <router-view v-cloak v-if="!showPreload" />
   </main>
 </template>
 
@@ -10,7 +9,6 @@
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
-import Wallet from '@/components/wallet/wallet.vue';
 import Preload from '@/views/preload.vue';
 
 import '@/styles/_common.less';
@@ -21,8 +19,7 @@ import '@/styles/_search_modal.less';
 export default Vue.extend({
   name: 'App',
   components: {
-    Preload,
-    Wallet
+    Preload
   },
   computed: {
     ...mapGetters('account', ['isWalletReady']),

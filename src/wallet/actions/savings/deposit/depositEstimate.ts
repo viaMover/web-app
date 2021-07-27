@@ -1,5 +1,5 @@
-import { sameAddress } from './../../../utils/address';
-import { needApprove } from '../approve/needApprove';
+import { sameAddress } from '@/utils/address';
+import { needApprove } from '@/wallet/actions/approve/needApprove';
 import { toWei, floorDivide, add } from '@/utils/bigmath';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
@@ -12,9 +12,13 @@ import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import { multiply } from '@/utils/bigmath';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import {
+  HOLY_HAND_ABI,
+  HOLY_HAND_ADDRESS,
+  HOLY_SAVINGS_POOL_ADDRESS
+} from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
-import { estimateApprove } from '../approve/approveEstimate';
+import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
 
 export type CompoudEstimateResponse = {
   error: boolean;
@@ -27,11 +31,11 @@ type EstimateResponse = {
   gasLimit: string;
 };
 
-export const estimateSwapCompound = async (
+export const estimateDepositCompound = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
@@ -76,7 +80,7 @@ export const estimateSwapCompound = async (
 
       return {
         error: false,
-        actionGasLimit: ethDefaults.basic_holy_swap,
+        actionGasLimit: ethDefaults.basic_holy_savings_deposit,
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
@@ -88,7 +92,7 @@ export const estimateSwapCompound = async (
       };
     }
   } else {
-    const swapEstimate = await estimateSwap(
+    const depositEstimate = await estimateDeposit(
       inputAsset,
       outputAsset,
       inputAmount,
@@ -98,26 +102,35 @@ export const estimateSwapCompound = async (
       accountAddress
     );
     return {
-      error: swapEstimate.error,
+      error: depositEstimate.error,
       approveGasLimit: '0',
-      actionGasLimit: swapEstimate.gasLimit
+      actionGasLimit: depositEstimate.gasLimit
     };
   }
 };
 
-export const estimateSwap = async (
+export const estimateDeposit = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string
 ): Promise<EstimateResponse> => {
-  console.log('Estimating swap...');
+  console.log('Estimating savings deposit...');
+
+  if (
+    !sameAddress(inputAsset.address, outputAsset.address) &&
+    transferData === undefined
+  ) {
+    throw 'We need transafer data for not USDC token';
+  }
 
   const contractAddress = HOLY_HAND_ADDRESS(network);
   const contractABI = HOLY_HAND_ABI;
+
+  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
 
   try {
     const holyHand = new web3.eth.Contract(
@@ -138,7 +151,10 @@ export const estimateSwap = async (
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    console.log('[swap estimation] input amount in WEI:', inputAmountInWEI);
+    console.log(
+      '[savings deposit estimation] input amount in WEI:',
+      inputAmountInWEI
+    );
 
     let bytesData = [];
     let expectedMinimumReceived = '0';
@@ -149,7 +165,7 @@ export const estimateSwap = async (
       ).toFixed(0);
 
       console.log(
-        '[swap estimation] expected minimum received:',
+        '[savings deposit estimation] expected minimum received:',
         expectedMinimumReceived
       );
 
@@ -157,7 +173,7 @@ export const estimateSwap = async (
         Web3.utils.padLeft(convertStringToHexWithPrefix(transferData.value), 64)
       );
       console.log(
-        '[swap estimation] valueBytes:',
+        '[savings deposit estimation] valueBytes:',
         Web3.utils.bytesToHex(valueBytes)
       );
 
@@ -169,12 +185,15 @@ export const estimateSwap = async (
       );
 
       console.log(
-        '[swap estimation] bytesData:',
+        '[savings deposit estimation] bytesData:',
         Web3.utils.bytesToHex(bytesData)
       );
     }
 
-    console.log('[swap estimation] transactionParams:', transactionParams);
+    console.log(
+      '[savings deposit estimation] transactionParams:',
+      transactionParams
+    );
 
     let inputCurrencyAddress = inputAsset.address;
     if (inputAsset.address === 'eth') {
@@ -187,18 +206,18 @@ export const estimateSwap = async (
     }
 
     console.log(
-      '[swap estimation] inputCurrencyAddress:',
+      '[savings deposit estimation] inputCurrencyAddress:',
       inputCurrencyAddress
     );
     console.log(
-      '[swap estimation] outputCurrencyAddress:',
+      '[savings deposit estimation] outputCurrencyAddress:',
       outputCurrencyAddress
     );
 
     const gasLimitObj = await holyHand.methods
-      .executeSwap(
+      .depositToPool(
+        poolAddress,
         inputCurrencyAddress,
-        outputCurrencyAddress,
         inputAmountInWEI,
         expectedMinimumReceived,
         bytesData
@@ -207,10 +226,12 @@ export const estimateSwap = async (
 
     if (gasLimitObj) {
       const gasLimit = gasLimitObj.toString();
-      console.log('[swap estimation] gas estimation by web3: ' + gasLimit);
+      console.log(
+        '[savings deposit estimation] gas estimation by web3: ' + gasLimit
+      );
       const gasLimitWithBuffer = floorDivide(multiply(gasLimit, '120'), '100');
       console.log(
-        '[swap estimation] gas estimation by web3 (with additional 20% as buffer): ' +
+        '[savings deposit estimation] gas estimation by web3 (with additional 20% as buffer): ' +
           gasLimitWithBuffer
       );
       return { error: false, gasLimit: gasLimitWithBuffer };
@@ -218,7 +239,7 @@ export const estimateSwap = async (
       throw new Error('empty gas limit');
     }
   } catch (error) {
-    console.error(`can't estimate swap due to: ${error}`);
+    console.error(`can't estimate savings deposit due to: ${error}`);
     return {
       error: true,
       gasLimit: '0'

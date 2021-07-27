@@ -27,9 +27,17 @@ import {
   getMOVEPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/mover/tokensPrices';
-import { getAvatarFromPersist, setAvatarToPersist } from '@/settings';
+import {
+  clearLastProviderPersist,
+  getAvatarFromPersist,
+  setAvatarToPersist,
+  setLastProviderToPersist
+} from '@/settings';
 import sample from 'lodash-es/sample';
-import Cookies from 'js-cookie';
+import {
+  bootIntercomSession,
+  disconnectIntercomSession
+} from '@/router/intercom-utils';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -48,6 +56,12 @@ export const COOKIE_LAST_PROVIDER = 'move_last_provider';
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
+  },
+  setDetectedProvider({ commit }, provider: unknown): void {
+    commit('setDetectedProvider', provider);
+  },
+  setIsDetecting({ commit }, isDetecting: boolean): void {
+    commit('setIsDetecting', isDetecting);
   },
   async loadAvatar({ commit, state }): Promise<void> {
     if (state.currentAddress === undefined) {
@@ -105,7 +119,7 @@ export default {
         init: true
       } as RefreshWalletPayload);
 
-      Cookies.set(COOKIE_LAST_PROVIDER, payload.providerName);
+      setLastProviderToPersist(payload.providerName);
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
@@ -155,6 +169,10 @@ export default {
     }
 
     if (payload.init) {
+      bootIntercomSession(state.currentAddress, {
+        network: state.networkInfo.network
+      });
+
       console.info('getting all tokens...');
       const allTokens = getAllTokens(state.networkInfo.network);
       commit('setAllTokens', allTokens);
@@ -167,6 +185,7 @@ export default {
         const explorer = InitExplorer(
           state.currentAddress,
           'usd',
+          state.networkInfo.network,
           (txns: Array<Transaction>) => {
             commit('setWalletTransactions', txns);
           },
@@ -309,8 +328,9 @@ export default {
     commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
     commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
 
+    await dispatch('fetchSavingsFreshData');
+
     await dispatch('fetchSavingsInfo');
-    await dispatch('fetchSavingsAPY');
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);
     //console.log(res);
@@ -344,6 +364,7 @@ export default {
       }
     }
     commit('clearWalletData');
-    Cookies.remove(COOKIE_LAST_PROVIDER, { path: '' });
+    disconnectIntercomSession();
+    clearLastProviderPersist();
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

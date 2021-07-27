@@ -1,10 +1,10 @@
 import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
-import { GetSavingsApy } from '@/services/mover/savings';
+import { GetSavingsApy, getSavingsBalance } from '@/services/mover/savings';
 
 export default {
-  async fetchSavingsAPY({ commit, state }): Promise<void> {
+  async fetchSavingsFreshData({ commit, state }): Promise<void> {
     if (state.currentAddress === undefined) {
       return;
     }
@@ -17,21 +17,34 @@ export default {
       return;
     }
 
-    let apy = undefined;
-    let dpy = undefined;
+    const apy = undefined;
+    const dpy = undefined;
     try {
-      const response = await GetSavingsApy(
+      const getSavingsApyPromise = GetSavingsApy(
         state.currentAddress,
-        state.networkInfo?.network,
-        state.provider?.web3
+        state.networkInfo.network,
+        state.provider.web3
       );
-      apy = response.apy;
-      dpy = response.dpy;
-    } catch (err) {
-      console.error(`can't get apy: ${err}`);
-    }
 
-    commit('setSavingsAPY', apy);
-    commit('setSavingsDPY', dpy);
+      const getSavingsBalancePromise = getSavingsBalance(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+
+      const [savingsAPY, savingsBalance] = await Promise.all([
+        getSavingsApyPromise,
+        getSavingsBalancePromise
+      ]);
+
+      commit('setSavingsAPY', savingsAPY.apy);
+      commit('setSavingsDPY', savingsAPY.dpy);
+      commit('setSavingsBalance', savingsBalance);
+    } catch (err) {
+      console.error(`can't get savings fresh data: ${err}`);
+      commit('setSavingsAPY', '0');
+      commit('setSavingsDPY', '0');
+      commit('setSavingsBalance', '0');
+    }
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

@@ -41,14 +41,19 @@
 
 .modal-wrapper-info-items-item:last-child {
   padding: 28px 16px 16px;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px 8px 8px 8px;
 }
 
 .modal-wrapper-info-items-item:first-child {
   z-index: 5;
 }
 
-.modal-wrapper-info-items-item:first-child::after {
+.modal-wrapper-info-items-item.couple-tokens:last-child {
+  padding: 28px 16px 16px;
+  border-radius: 0px 0px 8px 8px;
+}
+
+.modal-wrapper-info-items-item.couple-tokens:first-child::after {
   content: '';
   position: absolute;
   left: 10px;
@@ -59,7 +64,7 @@
   background: #fcfcfc;
 }
 
-.modal-wrapper-info-items-item:first-child::before {
+.modal-wrapper-info-items-item.couple-tokens:first-child::before {
   position: absolute;
   content: '';
   width: 21px;
@@ -167,6 +172,7 @@
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+  margin-left: auto;
 }
 
 .modal-wrapper-info-items-item-right button.currency span {
@@ -214,6 +220,13 @@
   display: block;
   width: 16px;
   height: 16px;
+}
+
+.modal-info-footer .icon img {
+  border-radius: 50%;
+  display: block;
+  width: 22px;
+  height: 22px;
 }
 
 .modal-wrapper-info-buttons {
@@ -618,4 +631,43 @@
 .transaction-result__popup-wrapper.success,
 .transaction-result__popup-wrapper.failed {
   background-color: #fff;
+}
+.modal-wrapper-info .modal-info-footer p {
+  color: rgba(60,60,67,0.6);
+  font-family: 'Regular';
+  margin-top: 24px;
+}
+.modal-wrapper-info .modal-info-footer .icon {
+  margin: 0 3px;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  position: relative;
+  top: 6px;
+}
+.modal-wrapper-info .modal-info-footer .icon img {
+  border-radius: 50%;
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+.modal-wrapper-info .modal-info-footer .icon-wrapper {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  position: relative;
+  top: 6px;
+  left: 6px;
+}
+.modal-wrapper-info .modal-info-footer .icon-wrapper img {
+  border-radius: 50%;
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+.modal-wrapper-info .modal-info-footer .icon-wrapper .icon-right {
+  position: relative;
+  left: -11px;
 }

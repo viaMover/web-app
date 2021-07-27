@@ -8,6 +8,7 @@ import utilityActions from './actions/utility';
 import savingsActions from './actions/savings';
 import walletMutations from './mutations/wallet';
 import treasuryMutations from './mutations/treasury';
+import savingsMutations from './mutations/savings';
 import walletGetters from './getters/wallet';
 import treasuryGetters from './getters/treasury';
 
@@ -59,6 +60,7 @@ export default {
     savingsReceipt: undefined,
     savingsReceiptError: undefined,
 
+    savingsBalance: undefined,
     savingsAPY: undefined,
     savingsDPY: undefined,
 
@@ -82,6 +84,7 @@ export default {
   },
   mutations: {
     ...walletMutations,
-    ...treasuryMutations
+    ...treasuryMutations,
+    ...savingsMutations
   }
 } as Module<AccountStoreState, RootStoreState>;

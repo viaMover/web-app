@@ -69,6 +69,7 @@ import { Modal } from '../modalTypes';
 import CenteredModalWindow from '../centered-modal-window.vue';
 import SearchModalTokenList from './search-modal-token-list.vue';
 import { Token } from '@/wallet/types';
+import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
 
 export default Vue.extend({
   name: 'SearchModal',
@@ -86,11 +87,16 @@ export default Vue.extend({
       debounceTimeout: 500,
       searcher: null as Fuse<Token> | null,
       useWalletTokens: false,
-      excludedTokens: [] as Array<Token>
+      excludedTokens: [] as Array<Token>,
+      treasuryOnly: false as boolean
     };
   },
   computed: {
-    ...mapState('account', { allTokens: 'allTokens', walletTokens: 'tokens' }),
+    ...mapState('account', {
+      allTokens: 'allTokens',
+      walletTokens: 'tokens',
+      networkInfo: 'networkInfo'
+    }),
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
@@ -102,6 +108,12 @@ export default Vue.extend({
         tokens = this.searcher
           .search(this.searchTermDebounced)
           .map((result) => result.item);
+      }
+
+      if (this.treasuryOnly) {
+        tokens = tokens.filter((t) =>
+          isTokenValidForTreasuryDeposit(t.address, this.networkInfo.network)
+        );
       }
 
       if (this.excludedTokenAddresses.length > 0) {
@@ -185,10 +197,12 @@ export default Vue.extend({
       payload: TogglePayload<{
         useWalletTokens: boolean;
         excludeTokens: Array<Token>;
+        treasuryOnly: boolean;
       }>
     ): void {
       this.useWalletTokens = !!payload.payload?.useWalletTokens;
       this.excludedTokens = payload.payload?.excludeTokens ?? [];
+      this.treasuryOnly = !!payload.payload?.treasuryOnly;
     }
   }
 });

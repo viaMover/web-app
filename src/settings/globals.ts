@@ -4,6 +4,7 @@ export interface Globals {
   isGovernanceEnabled: boolean;
   isNibbleShopEnabled: boolean;
   isNftDropsEnabled: boolean;
+  isIntercomEnabled: boolean;
 }
 
 const values: Globals = {
@@ -11,7 +12,8 @@ const values: Globals = {
   isDebitCardEnabled: false,
   isGovernanceEnabled: false,
   isNibbleShopEnabled: false,
-  isNftDropsEnabled: false
+  isNftDropsEnabled: false,
+  isIntercomEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>

@@ -1,50 +1,42 @@
-import { BigNumber } from 'bignumber.js';
-import { multiply, toWei } from '@/utils/bigmath';
+import { toWei } from '@/utils/bigmath';
+import { createSavingsDepositActionString } from '@/wallet/actions/subsidized';
 import { Network } from '@/utils/networkTypes';
 import { SmallToken } from '@/wallet/types';
 import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import {
   ACTION,
-  createSwapActionString,
   sendSubsidizedRequest,
   SubsidizedRequestError
-} from '../subsidized';
+} from '@/wallet/actions/subsidized';
+import { HOLY_SAVINGS_POOL_ADDRESS } from '@/wallet/references/data';
 
-export const swapSubsidized = async (
+export const depositSubsidized = async (
   inputAsset: SmallToken,
   outputAsset: SmallToken,
   inputAmount: string,
-  transferData: TransferData,
+  transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
   accountAddress: string,
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
-  console.log('Executing SUBSUDIZED swap...');
-
-  const expectedMinimumReceived = new BigNumber(
-    multiply(transferData.buyAmount, '0.85')
-  ).toFixed(0);
-
-  console.log(
-    '[subsidized swap] expected minimum received:',
-    expectedMinimumReceived
-  );
+  console.log('Executing SUBSUDIZED savings deposit...');
 
   const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-  const actionString = createSwapActionString(
+  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+
+  const actionString = createSavingsDepositActionString(
     accountAddress,
+    poolAddress,
     inputAsset.address,
-    outputAsset.address,
-    inputAmountInWEI,
-    expectedMinimumReceived
+    inputAmountInWEI
   );
 
   try {
     const subsidizedResponse = await sendSubsidizedRequest(
-      ACTION.SWAP,
+      ACTION.SAVINGS_DEPOSIT,
       actionString,
       accountAddress,
       network,
