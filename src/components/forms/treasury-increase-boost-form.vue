@@ -16,6 +16,7 @@
           :label="$t('swaps.lblSwapFrom')"
           :max-amount="maxInputAmount"
           :native-amount="input.nativeAmount"
+          treasury-only
           use-wallet-tokens
           @update-amount="handleUpdateInputAmount"
           @update-asset="handleUpdateInputAsset"
@@ -30,25 +31,20 @@
           @click="expandInfo"
         >
           <img src="@/assets/images/swap-details.png" />
-          <span>Deposit Details</span>
+          <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
           <div class="tx-details__content-item">
-            <p class="description">Swapping for</p>
+            <p class="description">New smart treasury boost</p>
             <div class="value">
-              <div class="icon getShadow">
-                <img alt="coin" :src="outputUSDCAsset.iconURL" />
-              </div>
-              <span>{{ swappingForString }}</span>
+              <span>{{ newBoost }}</span>
             </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Estimated annual earnings</p>
-            <p class="info">{{ estimatedAnnualEarning }}</p>
           </div>
           <div v-if="useSubsidized" class="tx-details__content-item">
             <p class="description">Smart Treasury cover</p>
-            <p class="info">{{ depositNativePrice }}</p>
+            <div class="value">
+              <span>{{ depositNativePrice }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -105,39 +101,25 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import {
-  TokenWithBalance,
-  SmallToken,
-  SmallTokenInfoWithIcon
-} from '@/wallet/types';
+import { TokenWithBalance, SmallToken } from '@/wallet/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
 import { mapState } from 'vuex';
-import {
-  add,
-  divide,
-  fromWei,
-  greaterThan,
-  multiply,
-  notZero,
-  toWei
-} from '@/utils/bigmath';
+import { add, divide, greaterThan, multiply, notZero } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { Step } from '../controls/form-loader.vue';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
-import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
-import { formatToNative } from '@/utils/format';
+import {
+  getMoveAssetData,
+  getMoveWethLPAssetData
+} from '@/wallet/references/data';
+import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
+import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { sameAddress } from '@/utils/address';
 import Web3 from 'web3';
+import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -160,7 +142,6 @@ export default Vue.extend({
       useSubsidized: false,
       depositGasLimit: '0',
       approveGasLimit: '0',
-      transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       loading: false
     };
@@ -175,11 +156,10 @@ export default Vue.extend({
       'ethPrice',
       'savingsAPY',
       'usdcPriceInWeth',
-      'ethPrice'
+      'ethPrice',
+      'treasuryBalanceMove',
+      'treasuryBalanceLP'
     ]),
-    outputUSDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
-    },
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Increase Boost';
     },
@@ -204,52 +184,47 @@ export default Vue.extend({
       }
       return undefined;
     },
-    estimatedAnnualEarning(): string {
+    newBoost(): string {
       if (this.input.asset === undefined) {
         return '';
       }
 
-      let usdcAmount = '0';
+      const move = getMoveAssetData(this.networkInfo.network);
+      const slp = getMoveWethLPAssetData(this.networkInfo.network);
 
-      if (sameAddress(this.input.asset.address, this.outputUSDCAsset.address)) {
-        usdcAmount = this.input.amount;
-      } else if (this.transferData !== undefined) {
-        usdcAmount = fromWei(
-          this.transferData.buyAmount,
-          this.outputUSDCAsset.decimals
-        );
-      } else {
-        return '';
+      const walletAmount = this.input.asset.balance;
+      let amountTreasury = '0';
+      let boostWeight = '1';
+      if (sameAddress(this.input.asset.address, move.address)) {
+        amountTreasury = this.treasuryBalanceMove;
+        boostWeight = '1';
+      } else if (sameAddress(this.input.asset.address, slp.address)) {
+        amountTreasury = this.treasuryBalanceLP;
+        boostWeight = '2.5';
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(usdcAmount, usdcNative);
-      const apyNative = multiply(
-        divide(this.savingsAPY, 100),
-        usdcAmountNative
+      let inputedAmount = this.input.amount || '0';
+      if (greaterThan(inputedAmount, walletAmount)) {
+        inputedAmount = walletAmount;
+      }
+
+      console.log('amountTreasury:', amountTreasury);
+      console.log('inputedAmount:', inputedAmount);
+
+      console.log('sum: ', add(walletAmount, inputedAmount));
+
+      let futureBoost = multiply(
+        divide(
+          add(amountTreasury, inputedAmount),
+          add(amountTreasury, walletAmount)
+        ),
+        boostWeight
       );
 
-      return `+$${formatToNative(apyNative)}`;
-    },
-    swappingForString(): string {
-      if (this.input.asset === undefined) {
-        return '';
+      if (isNaN(+futureBoost)) {
+        futureBoost = '0';
       }
-
-      let buyedUSDC = '0';
-
-      if (sameAddress(this.input.asset.address, this.outputUSDCAsset.address)) {
-        buyedUSDC = this.input.amount;
-      } else if (this.transferData !== undefined) {
-        buyedUSDC = fromWei(
-          this.transferData.buyAmount,
-          this.outputUSDCAsset.decimals
-        );
-      } else {
-        return '';
-      }
-
-      return `${buyedUSDC} ${this.outputUSDCAsset.symbol}`;
+      return `${formatToDecimals(futureBoost, 1)}x`;
     },
     depositNativePrice(): string {
       const selectedGasPriceInWEI = Web3.utils.toWei(
@@ -280,7 +255,7 @@ export default Vue.extend({
       return '💰 Deposit';
     },
     availableGasModes(): Array<GasMode> {
-      return ['treasury', 'low', 'normal', 'high'];
+      return ['low', 'normal', 'high'];
     },
     allGasLimit(): string {
       console.log(
@@ -300,27 +275,19 @@ export default Vue.extend({
       }
     },
     isInfoAvailable(): boolean {
-      return !this.needTransfer || !!this.transferData;
-    },
-    needTransfer(): boolean {
-      if (this.input.asset === undefined) {
-        return true;
-      }
-
-      return !sameAddress(
-        this.input.asset.address,
-        this.outputUSDCAsset.address
-      );
+      return this.input.asset !== undefined && notZero(this.input.amount);
     },
     showInfo(): boolean {
-      return this.infoExpanded && !this.loading && this.isInfoAvailable;
+      return this.infoExpanded && this.isInfoAvailable;
     }
   },
   mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.input.asset = eth;
+    const move = this.tokens.find((t: TokenWithBalance) =>
+      sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
+    );
+    if (move) {
+      this.input.asset = move;
     }
   },
   methods: {
@@ -328,15 +295,15 @@ export default Vue.extend({
       this.infoExpanded = !this.infoExpanded;
     },
     async handleExecuteDeposit(): Promise<void> {
-      if (this.needTransfer && this.transferData === undefined) {
-        console.error(
-          "[deposit-form] can't execute deposit due to empty transfer data"
-        );
-        return;
-      }
       if (this.input.asset === undefined) {
         console.error(
           "[deposit-form] can't execute deposit due to empty input asset"
+        );
+        return;
+      }
+      if (!notZero(this.input.amount)) {
+        console.error(
+          "[deposit-form] can't execute deposit due to zero amount"
         );
         return;
       }
@@ -345,16 +312,13 @@ export default Vue.extend({
       try {
         await depositCompound(
           this.input.asset,
-          this.outputUSDCAsset,
           this.input.amount,
-          this.transferData,
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
           this.depositGasLimit,
           this.approveGasLimit,
           this.selectedGasPrice,
-          this.useSubsidized,
           async () => {
             this.loaderStep = 'Process';
           }
@@ -383,24 +347,10 @@ export default Vue.extend({
           this.input.amount
         );
 
-        const transferData = await this.calcData(
-          this.input.asset,
-          this.input.amount
-        );
-
-        await this.tryToEstimate(
-          this.input.amount,
-          this.input.asset,
-          transferData
-        );
+        await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = err.publicMessage;
-        } else {
-          console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
-        }
-        this.transferData = undefined;
+        console.error(`can't calc data: ${err}`);
+        this.transferError = 'Estimate error';
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -426,24 +376,10 @@ export default Vue.extend({
           this.input.asset.priceUSD
         );
 
-        const transferData = await this.calcData(
-          this.input.asset,
-          this.input.amount
-        );
-
-        await this.tryToEstimate(
-          this.input.amount,
-          this.input.asset,
-          transferData
-        );
+        await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = err.publicMessage;
-        } else {
-          console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
-        }
-        this.transferData = undefined;
+        console.error(`can't calc data: ${err}`);
+        this.transferError = 'Estimate error';
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -460,48 +396,21 @@ export default Vue.extend({
       this.input.nativeAmount = '';
 
       this.depositGasLimit = '0';
-      this.transferData = undefined;
     },
     handleSelectedGasChanged(newGas: GasModeData): void {
       this.useSubsidized = newGas.mode === 'treasury';
       this.selectedGasPrice = String(newGas.price);
     },
-    async calcData(
-      inputAsset: SmallToken,
-      amount: string
-    ): Promise<TransferData | undefined> {
-      const inputInWei = toWei(amount, inputAsset.decimals);
-
-      if (sameAddress(inputAsset.address, this.outputUSDCAsset.address)) {
-        this.transferData = undefined;
-        return undefined;
-      }
-
-      const transferData = await getTransferData(
-        this.outputUSDCAsset.address,
-        inputAsset.address,
-        inputInWei,
-        true,
-        '0.01',
-        this.networkInfo.network
-      );
-      this.transferData = transferData;
-      return transferData;
-    },
     async tryToEstimate(
       inputAmount: string,
-      inputAsset: SmallToken,
-      transferData: TransferData | undefined
+      inputAsset: SmallToken
     ): Promise<void> {
       const resp = await estimateDepositCompound(
         inputAsset,
-        this.outputUSDCAsset,
         inputAmount,
-        transferData,
         this.networkInfo.network,
         this.provider.web3,
-        this.currentAddress,
-        this.useSubsidized
+        this.currentAddress
       );
       if (resp.error) {
         console.error(resp.error);

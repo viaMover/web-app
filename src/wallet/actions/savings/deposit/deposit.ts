@@ -1,5 +1,4 @@
-import { sameAddress } from './../../../../utils/address';
-import { approve } from '@/wallet/actions/approve/approve';
+import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress

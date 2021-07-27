@@ -114,6 +114,10 @@ export default Vue.extend({
     showTokenBalance: {
       type: Boolean,
       default: false
+    },
+    treasuryOnly: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -180,7 +184,8 @@ export default Vue.extend({
       if (!this.disabledSelectCurrency) {
         toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
           useWalletTokens: this.useWalletTokens,
-          excludeTokens: this.excludeTokens
+          excludeTokens: this.excludeTokens,
+          treasuryOnly: this.treasuryOnly
         });
       }
     }
