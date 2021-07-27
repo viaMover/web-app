@@ -1,8 +1,19 @@
 import Vibrant from 'node-vibrant/lib/bundle';
+import { DirectiveBinding } from 'vue/types/options';
 
 export const getShadowDirective = {
-  bind(el: HTMLElement): void {
+  bind(el: HTMLElement, binding: DirectiveBinding): void {
+    if (binding.value !== undefined) {
+      el.style.boxShadow = `0px 0px 16px ${binding.value}`;
+      return;
+    }
+
     el.addEventListener('load', () => {
+      if (binding.value !== undefined) {
+        el.style.boxShadow = `0px 0px 16px ${binding.modifiers.color}`;
+        return;
+      }
+
       if (!('src' in el)) {
         return;
       }
@@ -27,5 +38,17 @@ export const getShadowDirective = {
           target.style.boxShadow = `0px 0px 16px rgb(0 0 0 / 50%)`;
         });
     });
+  },
+  update(el: HTMLElement, binding: DirectiveBinding): void {
+    if (binding.value !== undefined && binding.oldValue !== binding.value) {
+      el.style.boxShadow = `0px 0px 16px ${binding.value}`;
+      return;
+    }
+  },
+  inserted(el: HTMLElement, binding: DirectiveBinding): void {
+    if (binding.value !== undefined) {
+      el.style.boxShadow = `0px 0px 16px ${binding.value}`;
+      return;
+    }
   }
 };

@@ -1,0 +1,21 @@
+{
+  "name": "token-list",
+  "version": "1.0.0",
+  "description": "A tool to generate token list for viaMover/web-app",
+  "main": "index.js",
+  "repository": "github.com/viaMover/web-app.git",
+  "author": "Paul Anokhin",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "node-color-log": "^5.3.1",
+    "node-vibrant": "^3.2.1-alpha.1",
+    "path": "^0.12.7",
+    "simple-git": "^2.41.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

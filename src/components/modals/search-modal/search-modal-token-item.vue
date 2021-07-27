@@ -1,7 +1,7 @@
 <template>
   <div class="swaps__wrapper-search-items-item" @click="handleSelect">
     <div class="icon">
-      <img v-get-shadow :alt="item.symbol" :src="item.logo" />
+      <img v-get-shadow="item.color" :alt="item.symbol" :src="item.logo" />
     </div>
     <div class="info">
       <p>{{ item.name }}</p>
