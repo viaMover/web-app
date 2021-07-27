@@ -4,17 +4,17 @@
       circle
       class="skeleton-icon"
       :count="4"
-      :height="'80px'"
+      height="80px"
       :loading="isLoading"
-      :tag="'div'"
-      :width="'80px'"
+      tag="div"
+      width="80px"
     />
     <PuSkeleton
       class="skeleton-title"
       :count="4"
       :loading="isLoading"
-      :tag="'div'"
-      :width="'80px'"
+      tag="div"
+      width="80px"
     />
     <swiper
       v-if="!isLoading"
