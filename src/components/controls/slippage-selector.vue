@@ -1,5 +1,5 @@
 <template>
-  <p class="info rate slippage" @click="toggleSlippage">
+  <p class="info rate slippage button-active" @click="toggleSlippage">
     {{ formatedSlippage }}
   </p>
 </template>
