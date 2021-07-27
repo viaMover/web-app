@@ -37,6 +37,7 @@
 
 <script lang="ts">
 import { add, multiply } from '@/utils/bigmath';
+import { formatToNative } from '@/utils/format';
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import Web3 from 'web3';
@@ -158,7 +159,7 @@ export default Vue.extend({
       const txnPriceInEth = Web3.utils.fromWei(txnPriceInWEI, 'ether');
       const txnPriceNative = multiply(txnPriceInEth, this.ethPrice);
 
-      return `${this.nativeCurrencySymbol}${txnPriceNative}`;
+      return `${this.nativeCurrencySymbol}${formatToNative(txnPriceNative)}`;
     },
     estimatedTimeValue(): string {
       if (this.selectedGasData === undefined) {
@@ -186,49 +187,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style lang="less">
-.gas-selector {
-  margin-top: 1rem;
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-
-  .network-fee {
-    flex-basis: 20%;
-    flex-grow: 1;
-  }
-
-  .select-group {
-    flex-shrink: 1;
-    flex-grow: 0;
-
-    .indicators {
-      display: flex;
-      flex-flow: row nowrap;
-      flex: 0 0 100%;
-      justify-content: center;
-      align-items: center;
-
-      .option {
-        line-height: 0.5rem;
-        padding: 0.25rem;
-        background-color: #b1b1b1;
-        border-radius: 0.25rem;
-        display: inline-block;
-        margin-right: 0.25rem;
-        transition: padding 0.5s ease, background-color 0.5s ease;
-
-        &:last-child {
-          margin-right: 0;
-        }
-
-        &.active {
-          background-color: #2c3e50;
-          padding: 0.25rem 0.75rem;
-        }
-      }
-    }
-  }
-}
-</style>

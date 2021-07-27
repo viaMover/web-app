@@ -251,7 +251,7 @@ export default Vue.extend({
       return '💰 Deposit';
     },
     availableGasModes(): Array<GasMode> {
-      return ['low', 'normal', 'high', 'treasury'];
+      return ['treasury', 'low', 'normal', 'high'];
     },
     allGasLimit(): string {
       console.log(
@@ -292,6 +292,10 @@ export default Vue.extend({
   },
   mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
+    if (eth) {
+      this.input.asset = eth;
+    }
   },
   methods: {
     expandInfo(): void {

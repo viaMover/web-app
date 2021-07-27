@@ -7,3 +7,7 @@ export const formatPercents = (percents: string): string => {
 export const formatToNative = (amount: string): string => {
   return new BigNumber(amount).toFixed(2);
 };
+
+export const formatToDecimals = (amount: string, decimals: number): string => {
+  return new BigNumber(amount).toFixed(decimals);
+};

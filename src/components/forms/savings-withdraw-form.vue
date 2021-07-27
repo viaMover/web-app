@@ -186,7 +186,7 @@ export default Vue.extend({
       return '🚪 Withdraw';
     },
     availableGasModes(): Array<GasMode> {
-      return ['low', 'normal', 'high', 'treasury'];
+      return ['treasury', 'low', 'normal', 'high'];
     },
     allGasLimit(): string {
       console.log(

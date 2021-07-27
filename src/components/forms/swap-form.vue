@@ -13,6 +13,7 @@
           :amount="input.amount"
           :asset="input.asset"
           field-role="input"
+          has-couple-tokens
           :label="$t('swaps.lblSwapFrom')"
           :max-amount="maxInputAmount"
           :native-amount="input.nativeAmount"
@@ -26,8 +27,10 @@
           :asset="output.asset"
           :exclude-tokens="excludedOutputTokens"
           field-role="output"
+          has-couple-tokens
           :label="$t('swaps.lblSwapTo')"
           :native-amount="output.nativeAmount"
+          show-token-balance
           @update-amount="handleUpdateOutputAmount"
           @update-asset="handleUpdateOutputAsset"
           @update-native-amount="handleUpdateOutputNativeAmount"
@@ -48,24 +51,28 @@
         </button>
         <div v-if="showInfo" class="tx-details__content">
           <div class="tx-details__content-item">
-            <p class="description">Price impact</p>
-            <p class="info up">???%</p>
-          </div>
-          <div class="tx-details__content-item">
             <p class="description">Minimum received</p>
-            <p class="info">{{ minimalReceived }}</p>
+            <div class="value">
+              <span>{{ minimalReceived }}</span>
+            </div>
           </div>
           <div class="tx-details__content-item">
             <p class="description">Rate</p>
-            <p class="info">{{ rateString }}</p>
+            <div class="value">
+              <span>{{ rateString }}</span>
+            </div>
           </div>
-          <div v-if="useSubsidized" class="tx-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Smart Treasury cover</p>
-            <p class="info">{{ swapNativePrice }}</p>
+            <div class="value">
+              <span>{{ swapNativePrice }}</span>
+            </div>
           </div>
           <div class="tx-details__content-item">
             <p class="description">Swapping via</p>
-            <p class="info">{{ swappingVia }}</p>
+            <div class="value">
+              <span>{{ swappingVia }}</span>
+            </div>
           </div>
           <div class="tx-details__content-item">
             <p class="description">Slippage</p>
@@ -247,7 +254,7 @@ export default Vue.extend({
       return 'Swap';
     },
     availableGasModes(): Array<GasMode> {
-      return ['low', 'normal', 'high', 'treasury'];
+      return ['treasury', 'low', 'normal', 'high'];
     },
     allGasLimit(): string {
       console.log(
@@ -294,6 +301,10 @@ export default Vue.extend({
   },
   mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
+    if (eth) {
+      this.input.asset = eth;
+    }
   },
   methods: {
     expandInfo(): void {
@@ -354,18 +365,18 @@ export default Vue.extend({
 
         if (inputAsset !== undefined) {
           this.output.asset = inputAsset;
-          this.output.amount = '0';
-          this.output.nativeAmount = '0';
+          this.output.amount = '';
+          this.output.nativeAmount = '';
         } else {
           this.output.asset = undefined;
-          this.output.amount = '0';
-          this.output.nativeAmount = '0';
+          this.output.amount = '';
+          this.output.nativeAmount = '';
         }
 
         if (outputAsset !== undefined) {
           this.input.asset = { ...outputAsset, balance: '0' };
-          this.input.amount = '0';
-          this.input.nativeAmount = '0';
+          this.input.amount = '';
+          this.input.nativeAmount = '';
 
           const assetInWallet: TokenWithBalance = this.tokens.find(
             (t: TokenWithBalance) => sameAddress(t.address, outputAsset.address)
@@ -378,8 +389,8 @@ export default Vue.extend({
           }
         } else {
           this.input.asset = undefined;
-          this.input.amount = '0';
-          this.input.nativeAmount = '0';
+          this.input.amount = '';
+          this.input.nativeAmount = '';
         }
 
         this.swapGasLimit = '0';
@@ -649,7 +660,7 @@ export default Vue.extend({
     },
     async handleSelectedSlippageChanged(newSlippage: Slippage): Promise<void> {
       this.slippage = newSlippage;
-      this.transferData = undefined;
+      //this.transferData = undefined;
 
       if (this.input.asset === undefined || this.output.asset === undefined) {
         return;
