@@ -26,7 +26,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { ReleaseRadarPageSection } from '@/components/release-radar/release-radar-page-section';
+import ReleaseRadarPageSection from '@/components/release-radar/release-radar-page-section.vue';
 
 export default Vue.extend({
   name: 'ReleaseRadarTokenOfTheDay',

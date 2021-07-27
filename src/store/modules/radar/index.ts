@@ -11,10 +11,10 @@ export default {
   state: {
     isLoadingCuratedList: false,
     isLoadingPersonalList: false,
-    loadingPersonalListPromise: null,
-    loadingCuratedListPromise: null,
-    personalList: [],
-    curatedList: []
+    loadingPersonalListPromise: undefined,
+    loadingCuratedListPromise: undefined,
+    personalList: undefined,
+    curatedList: undefined
   },
   actions,
   getters,

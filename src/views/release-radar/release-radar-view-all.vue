@@ -17,12 +17,12 @@
     </form>
     <release-radar-token-of-the-day />
     <release-radar-live-updates />
-    <release-radar-page-section
+    <release-radar-swipe-section
       :is-loading="isLoadingPersonalList"
       :items="personalList"
       :title="$t('radar.lblPersonalLists')"
     />
-    <release-radar-page-section
+    <release-radar-swipe-section
       :is-loading="isLoadingCuratedList"
       :items="curatedList"
       :title="$t('radar.lblCuratedLists')"
@@ -32,30 +32,26 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
+  ReleaseRadarSwipeSection,
   ReleaseRadarTokenOfTheDay,
   ReleaseRadarLiveUpdates
 } from '@/components/release-radar';
-import { ReleaseRadarPageSection } from '@/components/release-radar/release-radar-page-section';
 
 export default Vue.extend({
   name: 'ReleaseRadarViewAll',
   components: {
+    ReleaseRadarSwipeSection,
     ContentWrapper,
-    ReleaseRadarPageSection,
     ReleaseRadarTokenOfTheDay,
     ReleaseRadarLiveUpdates
   },
   computed: {
-    ...mapState('radar', [
-      'personalList',
-      'curatedList',
-      'isLoadingCuratedList',
-      'isLoadingPersonalList'
-    ])
+    ...mapGetters('radar', ['personalList', 'curatedList']),
+    ...mapState('radar', ['isLoadingCuratedList', 'isLoadingPersonalList'])
   },
   methods: {
     handleClose(): void {

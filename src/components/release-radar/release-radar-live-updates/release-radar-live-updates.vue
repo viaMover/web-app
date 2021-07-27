@@ -49,7 +49,7 @@
 import Vue from 'vue';
 
 import { Swiper } from '@/components/swiper';
-import { ReleaseRadarPageSection } from '@/components/release-radar/release-radar-page-section';
+import ReleaseRadarPageSection from '@/components/release-radar/release-radar-page-section.vue';
 import ReleaseRadarLiveUpdatesItem from './release-radar-live-updates-item.vue';
 
 export default Vue.extend({

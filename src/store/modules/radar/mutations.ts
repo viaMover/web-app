@@ -10,20 +10,20 @@ export default {
   },
   setLoadingPersonalListPromise(
     state,
-    loadingPromise: Promise<Array<Asset>>
+    loadingPromise: Promise<Array<Asset>> | undefined
   ): void {
     state.loadingPersonalListPromise = loadingPromise;
   },
   setLoadingCuratedListPromise(
     state,
-    loadingPromise: Promise<Array<Asset>>
+    loadingPromise: Promise<Array<Asset>> | undefined
   ): void {
     state.loadingCuratedListPromise = loadingPromise;
   },
-  setPersonalList(state, list: Array<Asset>): void {
+  setPersonalList(state, list: Array<Asset> | undefined): void {
     state.personalList = list;
   },
-  setCuratedList(state, list: Array<Asset>): void {
+  setCuratedList(state, list: Array<Asset> | undefined): void {
     state.curatedList = list;
   }
 } as MutationTree<RadarStoreState>;

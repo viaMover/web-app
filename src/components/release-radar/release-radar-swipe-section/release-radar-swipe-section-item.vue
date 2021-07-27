@@ -25,7 +25,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'ReleaseRadarPageSectionItem',
+  name: 'ReleaseRadarSwipeSectionItem',
   props: {
     text: {
       type: String,
@@ -37,7 +37,7 @@ export default Vue.extend({
     },
     isBlackBorder: {
       type: Boolean,
-      default: true
+      default: false
     }
   }
 });

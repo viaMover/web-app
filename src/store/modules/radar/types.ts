@@ -8,8 +8,8 @@ export type Asset = {
 export type RadarStoreState = {
   isLoadingPersonalList: boolean;
   isLoadingCuratedList: boolean;
-  loadingPersonalListPromise: Promise<Array<Asset>> | null;
-  loadingCuratedListPromise: Promise<Array<Asset>> | null;
-  personalList: Array<Asset>;
-  curatedList: Array<Asset>;
+  loadingPersonalListPromise: Promise<Array<Asset>> | undefined;
+  loadingCuratedListPromise: Promise<Array<Asset>> | undefined;
+  personalList: Array<Asset> | undefined;
+  curatedList: Array<Asset> | undefined;
 };

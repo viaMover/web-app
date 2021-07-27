@@ -6,12 +6,12 @@ export default {
   async loadPersonalList({ state, commit }): Promise<Array<Asset>> {
     if (
       state.isLoadingPersonalList &&
-      state.loadingPersonalListPromise !== null
+      state.loadingPersonalListPromise !== undefined
     ) {
       return state.loadingPersonalListPromise;
     }
 
-    if (!state.isLoadingPersonalList && state.personalList.length > 0) {
+    if (!state.isLoadingPersonalList && state.personalList !== undefined) {
       return Promise.resolve(state.personalList);
     }
 
@@ -58,23 +58,25 @@ export default {
       }
     ];
 
-    setTimeout(() => {
-      commit('setLoadingPersonalListPromise', Promise.resolve(localEntries));
-      commit('setPersonalList', localEntries);
-      commit('setLoadingPersonalListPromise', null);
-      commit('setIsLoadingPersonalList', false);
-    }, 1000);
-    return localEntries;
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        commit('setLoadingPersonalListPromise', Promise.resolve(localEntries));
+        commit('setPersonalList', localEntries);
+        commit('setLoadingPersonalListPromise', undefined);
+        commit('setIsLoadingPersonalList', false);
+      }, 1000);
+      resolve(localEntries);
+    });
   },
   async loadCuratedList({ state, commit }): Promise<Array<Asset>> {
     if (
       state.isLoadingCuratedList &&
-      state.loadingCuratedListPromise !== null
+      state.loadingCuratedListPromise !== undefined
     ) {
       return state.loadingCuratedListPromise;
     }
 
-    if (!state.isLoadingCuratedList && state.curatedList.length > 0) {
+    if (!state.isLoadingCuratedList && state.curatedList !== undefined) {
       return Promise.resolve(state.curatedList);
     }
 
@@ -109,12 +111,14 @@ export default {
       }
     ];
 
-    setTimeout(() => {
-      commit('setLoadingCuratedListPromise', Promise.resolve(localEntries));
-      commit('setCuratedList', localEntries);
-      commit('setLoadingCuratedListPromise', null);
-      commit('setIsLoadingCuratedList', false);
-    }, 1500);
-    return localEntries;
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        commit('setLoadingCuratedListPromise', Promise.resolve(localEntries));
+        commit('setCuratedList', localEntries);
+        commit('setLoadingCuratedListPromise', undefined);
+        commit('setIsLoadingCuratedList', false);
+        resolve(localEntries);
+      }, 1500);
+    });
   }
 } as ActionTree<RadarStoreState, RootStoreState>;
