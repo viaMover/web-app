@@ -434,7 +434,7 @@ export default {
     lblPersonalLists: 'Personal Lists',
     lblCuratedLists: 'Curated Lists',
     lblRune: 'RUNE',
-    txtRuneAlt: 'coin',
+    txtRuneAlt: '{name} coin icon',
     txtRadar: {
       runeDescription:
         'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +

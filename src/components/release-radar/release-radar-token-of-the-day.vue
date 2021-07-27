@@ -10,7 +10,7 @@
         </div>
         <div class="token__info-coin getShadow">
           <img
-            :alt="$t('radar.txtRuneAlt')"
+            :alt="$t('radar.txtRuneAlt', { name: 'Rune' })"
             class="button-active"
             src="@/assets/images/rune-icon.png"
           />

@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { RootStoreState } from './types';
 
 import actions from './actions';
 import mutations from './mutations';
@@ -10,6 +9,7 @@ import shop from './modules/shop';
 import nft from './modules/nft';
 import proposal from './modules/proposal';
 import radar from './modules/radar';
+import { RootStoreState } from './types';
 
 Vue.use(Vuex);
 
