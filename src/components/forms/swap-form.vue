@@ -181,7 +181,7 @@ export default Vue.extend({
       'ethPrice'
     ]),
     headerLabel(): string | undefined {
-      return this.loaderStep ? undefined : 'Swap';
+      return this.loaderStep ? undefined : 'Swaps';
     },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
