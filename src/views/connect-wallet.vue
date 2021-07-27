@@ -3,6 +3,9 @@
     page-container-class="general-no-wallet-desktop"
     wrapper-class="general-no-wallet-desktop"
   >
+    <a class="logo" href="https://viamover.com">
+      <img alt="logo" src="@/assets/images/logo.svg" />
+    </a>
     <div class="general-no-wallet-desktop__wrapper">
       <div class="general-no-wallet-desktop__wrapper-gif">
         <video
