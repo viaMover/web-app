@@ -51,6 +51,7 @@ export type AccountStoreState = {
   ethPrice: undefined | string;
   movePriceInWeth: undefined | string;
   usdcPriceInWeth: undefined | string;
+  slpPriceInWeth: undefined | string;
 
   // explorer
   explorer: undefined | Explorer;

@@ -23,6 +23,9 @@ export default {
   setUsdcPriceInWeth(state, usdcPriceInWeth: string): void {
     state.usdcPriceInWeth = usdcPriceInWeth;
   },
+  setSLPPriceInWETH(state, slpPriceInWeth: string): void {
+    state.slpPriceInWeth = slpPriceInWeth;
+  },
   setExplorer(state, explorer: Explorer): void {
     state.explorer = explorer;
   },

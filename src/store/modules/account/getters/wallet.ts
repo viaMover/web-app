@@ -248,6 +248,12 @@ export default {
     }
     return multiply(state.usdcPriceInWeth, state.ethPrice);
   },
+  slpNativePrice(state): string {
+    if (state.slpPriceInWeth === undefined || state.ethPrice === undefined) {
+      return '0';
+    }
+    return multiply(state.slpPriceInWeth, state.ethPrice);
+  },
   savingsMonthStatsOptions(state): Array<MonthBalanceItem> {
     if (state.isSavingsInfoLoading || state.savingsInfo === undefined) {
       return [];
