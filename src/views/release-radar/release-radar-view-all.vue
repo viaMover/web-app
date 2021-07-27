@@ -7,29 +7,32 @@
   >
     <form action="#" class="search-form">
       <input
-        name="search"
-        placeholder="Search any token on Ethereum"
+        :name="$t('search.lblSearch')"
+        :placeholder="$t('search.lblSearchBarPlaceholder')"
         type="search"
       />
-      <button class="button-active" type="submit">🔍</button>
+      <button class="button-active" type="submit">
+        {{ $t('radar.btnSearch.emoji') }}
+      </button>
     </form>
     <release-radar-token-of-the-day />
     <release-radar-live-updates />
     <release-radar-page-section
       :is-loading="isLoadingPersonalList"
       :items="personalList"
-      title="Personal Lists"
+      :title="$t('radar.lblPersonalLists')"
     />
     <release-radar-page-section
       :is-loading="isLoadingCuratedList"
       :items="curatedList"
-      title="Curated Lists"
+      :title="$t('radar.lblCuratedLists')"
     />
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
@@ -37,7 +40,6 @@ import {
   ReleaseRadarLiveUpdates
 } from '@/components/release-radar';
 import { ReleaseRadarPageSection } from '@/components/release-radar/release-radar-page-section';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'ReleaseRadarViewAll',

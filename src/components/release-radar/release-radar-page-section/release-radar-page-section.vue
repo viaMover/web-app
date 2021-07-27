@@ -47,6 +47,7 @@ import Vue, { PropType } from 'vue';
 
 import { Swiper } from '@/components/swiper';
 import ReleaseRadarPageSectionItem from './release-radar-page-section-item.vue';
+
 import { Asset } from '@/store/modules/radar/types';
 
 export default Vue.extend({

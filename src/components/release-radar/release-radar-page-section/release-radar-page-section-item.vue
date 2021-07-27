@@ -8,7 +8,11 @@
           'transparent-border': !isBlackBorder
         }"
       >
-        <img alt="icon" class="button-active" :src="image" />
+        <img
+          :alt="$t('asset.txtAlt', { name: text })"
+          class="button-active"
+          :src="image"
+        />
       </div>
       <div class="swiper-lists__item-title">
         <p>{{ text }}</p>

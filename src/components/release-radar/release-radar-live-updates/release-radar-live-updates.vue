@@ -2,7 +2,7 @@
   <release-radar-page-section>
     <template v-slot:title>
       <div class="release-radar-desktop__menu-wrapper-item-title">
-        <h2>Live updates</h2>
+        <h2>{{ $t('radar.liveUpdates.lblLiveUpdates') }}</h2>
       </div>
     </template>
 
@@ -19,27 +19,27 @@
       <release-radar-live-updates-item
         icon="🔥"
         navigate-to-name="home"
-        title="Top movers"
+        :title="$t('radar.liveUpdates.lblTopMovers')"
       />
       <release-radar-live-updates-item
         icon="💩"
         navigate-to-name="home"
-        title="Top losers"
+        :title="$t('radar.liveUpdates.lblTopLosers')"
       />
       <release-radar-live-updates-item
         icon="🐵"
         navigate-to-name="home"
-        title="New tokens"
+        :title="$t('radar.liveUpdates.lblNewTokens')"
       />
       <release-radar-live-updates-item
         icon="🎢"
         navigate-to-name="home"
-        title="DeFi"
+        :title="$t('radar.liveUpdates.lblDeFi')"
       />
       <release-radar-live-updates-item
         icon="💵"
         navigate-to-name="home"
-        title="Stablecoins"
+        :title="$t('radar.liveUpdates.lblStablecoins')"
       />
     </swiper>
   </release-radar-page-section>
