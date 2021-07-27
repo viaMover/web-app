@@ -48,7 +48,6 @@ import {
 import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { Modal } from '@/components/modals';
 import SearchModal from '@/components/modals/search-modal/search-modal.vue';
-import { TokenWithBalance } from '@/wallet/types';
 
 export default Vue.extend({
   name: 'ReleaseRadarViewAll',
