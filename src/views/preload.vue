@@ -1,74 +1,75 @@
 <template>
-  <div class="preload">
-    <div class="preload-wrapper">
-      <div class="preload-wrapper__sidebar">
-        <a class="logo" href="#">
+  <PuSkeletonTheme color="#dcdcdc">
+    <content-wrapper
+      base-class="preload-wrapper"
+      has-left-rail
+      page-container-class="preload-wrapper__menu"
+      wrapper-class="preload-wrapper"
+    >
+      <template v-slot:left-rail>
+        <a class="logo" href="https://viamover.com">
           <img alt="logo" src="@/assets/images/logo.svg" />
         </a>
-        <div class="sidebar-wrapper">
-          <div class="preload-wrapper__sidebar-wrapper">
-            <div class="preload-wrapper__sidebar-wrapper-user">
-              <div class="user-icon"></div>
-              <div class="user-button"></div>
-              <div class="user-status"></div>
-            </div>
-            <div class="preload-wrapper__sidebar-wrapper-items">
-              <div class="items-item">
-                <div class="items-item__title"></div>
-                <div class="items-item__text"></div>
-                <div class="items-item__description"></div>
-                <div class="items-item__text"></div>
-                <div class="items-item__description"></div>
-              </div>
-              <div class="items-item">
-                <div class="items-item__title"></div>
-                <div class="items-item__text"></div>
-                <div class="items-item__description"></div>
-                <div class="items-item__text"></div>
-                <div class="items-item__description"></div>
-              </div>
-            </div>
+        <div class="preload-wrapper__sidebar-wrapper-user">
+          <PuSkeleton circle class="user-icon" tag="div" />
+          <PuSkeleton class="user-button" tag="div" />
+          <PuSkeleton class="user-status" tag="div" />
+        </div>
+        <div class="preload-wrapper__sidebar-wrapper-items">
+          <div class="items-item">
+            <PuSkeleton class="items-item__title" tag="div" />
+            <PuSkeleton class="items-item__text" tag="div" />
+            <PuSkeleton class="items-item__description" tag="div" />
+            <PuSkeleton class="items-item__text" tag="div" />
+            <PuSkeleton class="items-item__description" tag="div" />
+          </div>
+          <div class="items-item">
+            <PuSkeleton class="items-item__title" tag="div" />
+            <PuSkeleton class="items-item__text" tag="div" />
+            <PuSkeleton class="items-item__description" tag="div" />
+            <PuSkeleton class="items-item__text" tag="div" />
+            <PuSkeleton class="items-item__description" tag="div" />
+          </div>
+        </div>
+      </template>
+
+      <div class="preload-wrapper__menu-wrapper-item">
+        <div class="preload-wrapper__menu-wrapper-item-top">
+          <PuSkeleton class="title" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+        </div>
+      </div>
+      <div class="preload-wrapper__menu-wrapper-item">
+        <div class="preload-wrapper__menu-wrapper-item-center">
+          <div class="item">
+            <PuSkeleton class="item__title" tag="div" />
+            <PuSkeleton class="item__description" tag="div" />
+          </div>
+          <div class="item">
+            <PuSkeleton class="item__title" tag="div" />
+            <PuSkeleton class="item__description" tag="div" />
           </div>
         </div>
       </div>
-      <div class="preload-wrapper__menu">
-        <div class="g-wrapper">
-          <div class="preload-wrapper__menu-wrapper">
-            <div class="preload-wrapper__menu-wrapper-item">
-              <div class="preload-wrapper__menu-wrapper-item-top">
-                <div class="title"></div>
-                <div class="description"></div>
-              </div>
-            </div>
-            <div class="preload-wrapper__menu-wrapper-item">
-              <div class="preload-wrapper__menu-wrapper-item-center">
-                <div class="item">
-                  <div class="item__title"></div>
-                  <div class="item__description"></div>
-                </div>
-                <div class="item">
-                  <div class="item__title"></div>
-                  <div class="item__description"></div>
-                </div>
-              </div>
-            </div>
-            <div class="preload-wrapper__menu-wrapper-item">
-              <div class="preload-wrapper__menu-wrapper-item-bottom">
-                <div class="title"></div>
-                <div class="description"></div>
-              </div>
-            </div>
-          </div>
+      <div class="preload-wrapper__menu-wrapper-item">
+        <div class="preload-wrapper__menu-wrapper-item-bottom">
+          <PuSkeleton class="title" tag="div" />
+          <PuSkeleton class="description" tag="div" />
         </div>
       </div>
-    </div>
-  </div>
+    </content-wrapper>
+  </PuSkeletonTheme>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import ContentWrapper from '@/components/layout/content-wrapper.vue';
+
 export default Vue.extend({
-  name: 'Preload'
+  name: 'Preload',
+  components: {
+    ContentWrapper
+  }
 });
 </script>
