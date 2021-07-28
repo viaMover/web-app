@@ -1,15 +1,18 @@
-import { getPureEthAddress } from '@/utils/address';
+import { getPureEthAddress, sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { AbiItem } from 'web3-utils';
 import { Network } from '@/utils/networkTypes';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import Web3 from 'web3';
 import {
+  getMoveAssetData,
+  getMoveWethLPAssetData,
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS
+  HOLY_SAVINGS_POOL_ADDRESS,
+  SMART_TREASURY_ABI,
+  SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
-import { withdrawSubsidized } from './withdrawSubsidized';
 
 export const withdrawCompound = async (
   outputAsset: SmallToken,
@@ -19,35 +22,21 @@ export const withdrawCompound = async (
   accountAddress: string,
   actionGasLimit: string,
   gasPriceInGwei: string,
-  useSubsidized: boolean,
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
-
   try {
-    if (useSubsidized) {
-      await withdrawSubsidized(
-        outputAsset,
-        outputAmount,
-        network,
-        web3,
-        accountAddress,
-        changeStepToProcess
-      );
-    } else {
-      await withdraw(
-        outputAsset,
-        outputAmount,
-        network,
-        web3,
-        accountAddress,
-        actionGasLimit,
-        gasPriceInGwei,
-        changeStepToProcess
-      );
-    }
+    await withdraw(
+      outputAsset,
+      outputAmount,
+      network,
+      web3,
+      accountAddress,
+      actionGasLimit,
+      gasPriceInGwei,
+      changeStepToProcess
+    );
   } catch (err) {
-    console.error(`Can't savings withdraw: ${err}`);
+    console.error(`Can't treasury withdraw: ${err}`);
     throw err;
   }
 };
@@ -62,12 +51,13 @@ export const withdraw = async (
   gasPriceInGwei: string,
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
-  console.log('Executing savings withdraw...');
+  console.log('Executing treasury withdraw...');
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
-  const contractABI = HOLY_HAND_ABI;
+  const move = getMoveAssetData(network);
+  const slp = getMoveWethLPAssetData(network);
 
-  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractABI = SMART_TREASURY_ABI;
 
   try {
     const holyHand = new web3.eth.Contract(
@@ -85,39 +75,38 @@ export const withdraw = async (
 
     const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);
 
-    console.log('[savings withdraw] output amount in WEI:', outputAmountInWEI);
+    console.log('[treasury withdraw] output amount in WEI:', outputAmountInWEI);
+    console.log('[treasury deposit] transactionParams:', transactionParams);
 
-    console.log('[savings deposit] transactionParams:', transactionParams);
-
-    let outputCurrencyAddress = outputAsset.address;
-    if (outputAsset.address === 'eth') {
-      outputCurrencyAddress = getPureEthAddress();
+    let withdrawFunc: any;
+    if (sameAddress(outputAsset.address, move.address)) {
+      withdrawFunc = holyHand.methods.withdraw(outputAmountInWEI, '0');
+    } else if (sameAddress(outputAsset.address, slp.address)) {
+      withdrawFunc = holyHand.methods.withdraw('0', outputAmountInWEI);
+    } else {
+      throw new Error(
+        `wrong token in treasury withdraw: ${outputAsset.address} ${outputAsset.symbol}`
+      );
     }
 
-    console.log(
-      '[savings withdraw] outputCurrencyAddress:',
-      outputCurrencyAddress
-    );
-
     await new Promise<void>((resolve, reject) => {
-      holyHand.methods
-        .withdrawFromPool(poolAddress, outputAmountInWEI)
+      withdrawFunc
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
-          console.log(`Savings withdraw txn hash: ${hash}`);
+          console.log(`Treasury withdraw txn hash: ${hash}`);
           changeStepToProcess();
         })
         .once('receipt', (receipt: any) => {
-          console.log(`Savings withdraw txn receipt: ${receipt}`);
+          console.log(`Treasury withdraw txn receipt: ${receipt}`);
           resolve();
         })
         .once('error', (error: Error) => {
-          console.log(`Savings withdraw txn error: ${error}`);
+          console.log(`Treasury withdraw txn error: ${error}`);
           reject(error);
         });
     });
   } catch (error) {
-    console.error(`can't execute savings withdraw due to: ${error}`);
+    console.error(`can't execute treasury withdraw due to: ${error}`);
     throw error;
   }
 };

@@ -88,7 +88,8 @@ export default Vue.extend({
       searcher: null as Fuse<Token> | null,
       useWalletTokens: false,
       excludedTokens: [] as Array<Token>,
-      treasuryOnly: false as boolean
+      treasuryOnly: false as boolean,
+      forceTokenArray: [] as Array<Token>
     };
   },
   computed: {
@@ -97,13 +98,19 @@ export default Vue.extend({
       walletTokens: 'tokens',
       networkInfo: 'networkInfo'
     }),
+    tokenSource(): Array<Token> {
+      if (this.forceTokenArray.length > 0) {
+        return this.forceTokenArray;
+      }
+      return this.useWalletTokens ? this.walletTokens : this.allTokens;
+    },
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
     filteredTokens(): Array<Token> {
       let tokens: Array<Token>;
       if (!this.searcher || this.searchTermDebounced === '') {
-        tokens = this.useWalletTokens ? this.walletTokens : this.allTokens;
+        tokens = this.tokenSource;
       } else {
         tokens = this.searcher
           .search(this.searchTermDebounced)
@@ -180,13 +187,10 @@ export default Vue.extend({
   },
   methods: {
     initSearcher(): void {
-      this.searcher = new Fuse<Token>(
-        this.useWalletTokens ? this.walletTokens : this.allTokens,
-        {
-          keys: ['name', 'symbol', 'address'],
-          isCaseSensitive: false
-        }
-      );
+      this.searcher = new Fuse<Token>(this.tokenSource, {
+        keys: ['name', 'symbol', 'address'],
+        isCaseSensitive: false
+      });
     },
     handleSelect(token: Token): void {
       sendResult<Token>(this.modalId, token);
@@ -198,11 +202,13 @@ export default Vue.extend({
         useWalletTokens: boolean;
         excludeTokens: Array<Token>;
         treasuryOnly: boolean;
+        forceTokenArray: Array<Token>;
       }>
     ): void {
       this.useWalletTokens = !!payload.payload?.useWalletTokens;
       this.excludedTokens = payload.payload?.excludeTokens ?? [];
       this.treasuryOnly = !!payload.payload?.treasuryOnly;
+      this.forceTokenArray = payload.payload?.forceTokenArray ?? [];
     }
   }
 });

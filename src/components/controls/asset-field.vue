@@ -102,6 +102,10 @@ export default Vue.extend({
       type: Array as PropType<Array<TokenWithBalance>>,
       default: () => []
     },
+    forceTokenArray: {
+      type: Array as PropType<Array<TokenWithBalance>>,
+      default: () => []
+    },
     disabledSelectCurrency: {
       type: Boolean,
       default: false
@@ -184,7 +188,8 @@ export default Vue.extend({
         toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
           useWalletTokens: this.useWalletTokens,
           excludeTokens: this.excludeTokens,
-          treasuryOnly: this.treasuryOnly
+          treasuryOnly: this.treasuryOnly,
+          forceTokenArray: this.forceTokenArray
         });
       }
     }

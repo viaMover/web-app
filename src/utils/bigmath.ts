@@ -5,6 +5,9 @@ type BigNumberish = number | string | BigNumber;
 export const add = (numberOne: BigNumberish, numberTwo: BigNumberish): string =>
   new BigNumber(numberOne).plus(numberTwo).toFixed();
 
+export const sub = (numberOne: BigNumberish, numberTwo: BigNumberish): string =>
+  new BigNumber(numberOne).minus(numberTwo).toFixed();
+
 export const multiply = (x: BigNumberish, y: BigNumberish): string =>
   new BigNumber(x).times(y).toFixed();
 

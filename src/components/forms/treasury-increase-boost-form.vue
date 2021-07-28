@@ -40,12 +40,6 @@
               <span>{{ newBoost }}</span>
             </div>
           </div>
-          <div v-if="useSubsidized" class="tx-details__content-item">
-            <p class="description">Smart Treasury cover</p>
-            <div class="value">
-              <span>{{ depositNativePrice }}</span>
-            </div>
-          </div>
         </div>
       </div>
       <div class="modal-wrapper-info-button">
@@ -118,11 +112,10 @@ import {
 import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { sameAddress } from '@/utils/address';
-import Web3 from 'web3';
 import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
-  name: 'SavingsDepositForm',
+  name: 'TreasuryIncreaseBoostForm',
   components: {
     AssetField,
     ActionButton,
@@ -139,7 +132,6 @@ export default Vue.extend({
         nativeAmount: ''
       },
       selectedGasPrice: '0',
-      useSubsidized: false,
       depositGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
@@ -208,11 +200,6 @@ export default Vue.extend({
         inputedAmount = walletAmount;
       }
 
-      console.log('amountTreasury:', amountTreasury);
-      console.log('inputedAmount:', inputedAmount);
-
-      console.log('sum: ', add(walletAmount, inputedAmount));
-
       let futureBoost = multiply(
         divide(
           add(amountTreasury, inputedAmount),
@@ -225,21 +212,6 @@ export default Vue.extend({
         futureBoost = '0';
       }
       return `${formatToDecimals(futureBoost, 1)}x`;
-    },
-    depositNativePrice(): string {
-      const selectedGasPriceInWEI = Web3.utils.toWei(
-        this.selectedGasPrice,
-        'Gwei'
-      );
-      const depositPriceInWEI = multiply(
-        selectedGasPriceInWEI,
-        this.depositGasLimit
-      );
-
-      const depositPriceInEth = Web3.utils.fromWei(depositPriceInWEI, 'ether');
-      const depositPriceNative = multiply(depositPriceInEth, this.ethPrice);
-
-      return `$${depositPriceNative}`;
     },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
@@ -398,7 +370,6 @@ export default Vue.extend({
       this.depositGasLimit = '0';
     },
     handleSelectedGasChanged(newGas: GasModeData): void {
-      this.useSubsidized = newGas.mode === 'treasury';
       this.selectedGasPrice = String(newGas.price);
     },
     async tryToEstimate(
