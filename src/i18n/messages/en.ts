@@ -463,5 +463,9 @@ export default {
       high: '🚀 Fast',
       treasury: '🐷 Smart Treasury'
     }
+  },
+  dates: {
+    sameDay: '[Today]',
+    lastDay: '[Yesterday]'
   }
 };
