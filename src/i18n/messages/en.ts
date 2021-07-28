@@ -10,7 +10,7 @@ export default {
   txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
   lblDisconnect: 'Disconnect',
-  lblConnectWalletTransactionHistory: '@:lblConnectWallet to see history',
+  lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
@@ -463,5 +463,9 @@ export default {
       high: '🚀 Fast',
       treasury: '🐷 Smart Treasury'
     }
+  },
+  dates: {
+    sameDay: '[Today]',
+    lastDay: '[Yesterday]'
   }
 };

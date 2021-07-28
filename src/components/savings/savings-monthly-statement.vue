@@ -41,16 +41,14 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
-import { mapGetters, mapState } from 'vuex';
-import { SavingsReceipt } from '@/services/mover';
-import { fromWei, multiply } from '@/utils/bigmath';
 
 import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
-import { BigNumber } from 'bignumber.js';
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',
@@ -76,22 +74,15 @@ export default Vue.extend({
       return this.pageDate.format('MMMM');
     },
     balanceNative(): string {
-      const value = new BigNumber(this.savingsEndOfMonthBalanceNative).toFormat(
-        2
-      );
-      return `$${value}`;
+      return `$${formatToNative(this.savingsEndOfMonthBalanceNative)}`;
     },
     depositsNative(): string {
-      const value = new BigNumber(
-        this.savingsMonthTotalDepositsNative
-      ).toFormat(2);
-      return `+$${value}`;
+      const value = formatToNative(this.savingsMonthTotalDepositsNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     withdrawalsNative(): string {
-      const value = new BigNumber(
-        this.savingsMonthTotalWithdrawalsNative
-      ).toFormat(2);
-      return `-$${value}`;
+      const value = formatToNative(this.savingsMonthTotalWithdrawalsNative);
+      return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     savedFeesNative(): string {
       // TODO: compute
@@ -102,14 +93,12 @@ export default Vue.extend({
       return '$0';
     },
     totalEarned(): string {
-      const value = new BigNumber(this.savingsMonthEarnedNative).toFormat(2);
-      return `+$${value}`;
+      const value = formatToNative(this.savingsMonthEarnedNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     averageDailyEarnings(): string {
-      const value = new BigNumber(
-        this.savingsMonthAverageEarnedNative
-      ).toFormat(2);
-      return `+$${value}`;
+      const value = formatToNative(this.savingsMonthAverageEarnedNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   }
 });

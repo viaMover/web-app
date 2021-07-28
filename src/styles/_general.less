@@ -1,10 +1,14 @@
 .general-no-wallet-desktop {
-  background-color: #fff;
+  background-color: #fafafc;
   height: 100vh;
 }
 
 .general-no-wallet-desktop .g-wrapper {
   margin: 0 auto;
+}
+
+.general-no-wallet-desktop .g-wrapper .logo {
+  position: fixed;
 }
 
 .general-no-wallet-desktop__wrapper {
@@ -42,6 +46,22 @@
 .general-no-wallet-desktop__wrapper a {
   max-width: 163px;
   margin-top: 40px;
+}
+
+.general-desktop__sidebar-wrapper {
+  font-family: 'Regular';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.general-desktop__sidebar-wrapper .transactions-list .empty-state {
+  font-family: 'Medium';
+  margin-top: 40px;
+  font-size: 16px;
+  line-height: 24px;
+  color: rgba(60, 60, 67, 0.6);
 }
 
 .general-desktop__sidebar-wrapper-user .user {
@@ -248,6 +268,11 @@
   line-height: 24px;
   display: block;
   margin-right: 14px;
+  color: #000;
+}
+
+.general-desktop__sidebar-wrapper-user .status-button {
+  margin-top: 0;
 }
 
 .general-desktop__sidebar-wrapper-user .status {

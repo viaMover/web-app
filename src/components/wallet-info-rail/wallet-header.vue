@@ -8,7 +8,10 @@
         src="@/assets/images/arrow-down.svg"
       />
     </button>
-    <button @click.prevent="disconnectWallet">
+    <button
+      class="status-button button-active"
+      @click.prevent="disconnectWallet"
+    >
       <span class="status">
         {{ $t('lblDisconnect') }}
       </span>

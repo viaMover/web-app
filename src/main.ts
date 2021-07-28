@@ -8,6 +8,7 @@ import i18n from './i18n';
 import { getShadowDirective } from './directives/get-shadow';
 
 import * as dayjs from './dayjs';
+import * as bignumber from './bignumber';
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -25,6 +26,7 @@ Vue.use(Skeleton);
 Vue.directive('get-shadow', getShadowDirective);
 
 dayjs.init();
+bignumber.init();
 
 new Vue({
   router,

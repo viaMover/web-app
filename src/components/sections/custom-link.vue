@@ -8,7 +8,7 @@
     custom
     :to="{ name: navigateToName }"
   >
-    <div class="link-icon" @click.prevent="navigate(route)">
+    <div class="link-icon button-active" @click.prevent="navigate(route)">
       <img alt="navigation link icon" src="@/assets/images/link-icon.png" />
     </div>
   </router-link>

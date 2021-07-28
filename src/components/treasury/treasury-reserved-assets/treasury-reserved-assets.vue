@@ -13,15 +13,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
-import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 import { ReservedAsset } from '@/components/treasury/treasury-reserved-assets/types';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
-import { mapState } from 'vuex';
-import { BigNumber } from 'bignumber.js';
+import { formatToDecimals } from '@/utils/format';
+
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
 export default Vue.extend({
   name: 'TreasuryReservedAssets',
@@ -37,11 +38,11 @@ export default Vue.extend({
     ]),
     formattedMoveAmountNative(): string {
       const moveAmountNative = this.treasuryTotalStakedMove ?? '0';
-      return new BigNumber(moveAmountNative).toFormat(4);
+      return formatToDecimals(moveAmountNative, 4);
     },
     formattedMoveEthLPAmountNative(): string {
       const moveEthLPAmountNative = this.treasuryTotalStakedMoveEthLP ?? '0';
-      return new BigNumber(moveEthLPAmountNative).toFormat(4);
+      return formatToDecimals(moveEthLPAmountNative, 4);
     },
     assets(): Array<ReservedAsset> {
       if (this.networkInfo === undefined) {

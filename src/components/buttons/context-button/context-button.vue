@@ -1,6 +1,7 @@
 <template>
   <div class="button burger-menu">
     <action-button
+      button-class="button-active"
       :data-popover-parent-id="popoverParentId"
       @button-click="togglePopover"
     >

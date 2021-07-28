@@ -25,7 +25,7 @@
       </div>
       <div class="modal-wrapper-info-buttons">
         <button
-          class="tx-details"
+          class="tx-details button-active"
           :class="{ disabled: !isInfoAvailable }"
           type="button"
           @click="expandInfo"
