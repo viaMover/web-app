@@ -31,6 +31,7 @@
       <button
         class="currency button-active"
         :class="buttonClass"
+        :style="buttonStyle"
         type="button"
         @click.prevent.stop="handleOpenSelectModal"
       >
@@ -146,6 +147,15 @@ export default Vue.extend({
       return {
         empty: this.asset == null
       };
+    },
+    buttonStyle(): Record<string, string> {
+      let style = {} as Record<string, string>;
+      if (this.asset != null && this.asset.color !== undefined) {
+        style['background-color'] = this.asset.color;
+        style['box-shadow'] = '0 0 16px ' + this.asset.color;
+        style['-webkit-box-shadow'] = '0 0 16px ' + this.asset.color;
+      }
+      return style;
     },
     openSelectModalText(): string {
       if (this.asset == null) {
