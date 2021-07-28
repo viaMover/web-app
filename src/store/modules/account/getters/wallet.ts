@@ -157,7 +157,7 @@ export default {
 
     return multiply(balanceInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthEarnedNative(state, getters): string {
+  savingsMonthEarnedNative(state): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
@@ -168,7 +168,7 @@ export default {
 
     return '0';
   },
-  savingsMonthAverageEarnedNative(state, getters): string {
+  savingsMonthAverageEarnedNative(state): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
@@ -288,5 +288,31 @@ export default {
       (state.savingsReceipt.totalDeposits !== 0 ||
         state.savingsReceipt.totalWithdrawals !== 0)
     );
+  },
+  tokenColorMap(state): Record<string, string> {
+    const allTokensWithColor = state.allTokens.filter((token) => !!token.color);
+    const walletTokens = state.tokens;
+
+    return [...allTokensWithColor, ...walletTokens].reduce((acc, token) => {
+      if (token.color === undefined) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [token.address.toLowerCase()]: token.color
+      };
+    }, {});
+  },
+  getTokenColor(state, getters): (address?: string) => string | undefined {
+    const tokenColorMap: Record<string, string> = getters.tokenColorMap;
+
+    return (address?: string) => {
+      if (address === undefined) {
+        return '';
+      }
+
+      return tokenColorMap[address.toLowerCase()];
+    };
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

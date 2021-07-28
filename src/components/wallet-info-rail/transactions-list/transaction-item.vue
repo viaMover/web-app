@@ -1,17 +1,11 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-info-item">
     <div class="label transaction-label" @click="onClick">
-      <div v-if="isLPToken" class="label-icon">
-        <div class="label-icon-left">
-          <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
-        </div>
-        <div class="label-icon-right">
-          <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
-        </div>
-      </div>
-      <div v-else-if="tokenImageSrc !== ''" class="label-icon">
-        <img v-get-shadow :alt="transaction.symbol" :src="tokenImageSrc" />
-      </div>
+      <token-image
+        :address="tokenAddress"
+        :src="tokenImageSrc"
+        :symbol="tokenSymbol"
+      />
       <div class="label-info">
         <p>{{ head }}</p>
         <span>{{ subhead }}</span>
@@ -34,8 +28,13 @@ import {
   getSignIfNeeded
 } from '@/utils/format';
 
+import { TokenImage } from '@/components/tokens';
+
 export default Vue.extend({
   name: 'TransactionItem',
+  components: {
+    TokenImage
+  },
   props: {
     transaction: {
       type: Object as PropType<Transaction>,
@@ -106,6 +105,26 @@ export default Vue.extend({
       }
       if (this.transaction.type === TransactionTypes.approvalERC20) {
         return '$0.00';
+      }
+      return '';
+    },
+    tokenAddress(): string {
+      if (
+        this.transaction.type === TransactionTypes.swapERC20 ||
+        this.transaction.type === TransactionTypes.transferERC20 ||
+        this.transaction.type === TransactionTypes.approvalERC20
+      ) {
+        return this.transaction.asset.address;
+      }
+      return '';
+    },
+    tokenSymbol(): string {
+      if (
+        this.transaction.type === TransactionTypes.swapERC20 ||
+        this.transaction.type === TransactionTypes.transferERC20 ||
+        this.transaction.type === TransactionTypes.approvalERC20
+      ) {
+        return this.transaction.asset.symbol;
       }
       return '';
     },

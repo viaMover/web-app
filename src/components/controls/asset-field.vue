@@ -4,10 +4,12 @@
     :class="{ 'couple-tokens': hasCoupleTokens }"
   >
     <div class="modal-wrapper-info-items-item-left">
-      <div v-if="iconSrc" class="icon">
-        <img v-get-shadow="asset.color" :alt="iconAlt" :src="iconSrc" />
-      </div>
-      <div v-else class="icon"></div>
+      <token-image
+        :address="asset ? asset.address : ''"
+        :src="iconSrc"
+        :symbol="asset ? asset.symbol : ''"
+        wrapper-class="icon"
+      />
       <price-input-field
         :amount="amount"
         :disabled="disabledInput"
@@ -34,7 +36,10 @@
         @click.prevent.stop="handleOpenSelectModal"
       >
         <span>{{ openSelectModalText }}</span>
-        <img src="@/assets/images/button-arrow-down.svg" />
+        <img
+          alt="arrow down icon"
+          src="@/assets/images/button-arrow-down.svg"
+        />
       </button>
 
       <button
@@ -43,7 +48,7 @@
         type="button"
         @click="handleSelectMaxAmount"
       >
-        <img src="@/assets/images/plus.svg" />
+        <img alt="plus icon" src="@/assets/images/plus.svg" />
         <span>{{ this.$t('asset.lblSelectMax') }}</span>
       </button>
       <p v-else-if="showTokenBalance && tokenBalance">
@@ -55,18 +60,21 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-
-import PriceInputField from './price-input-field.vue';
-import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
-import { Modal } from '@/components/modals';
-import { TokenWithBalance } from '@/wallet/types';
 import { mapState } from 'vuex';
+
+import { TokenWithBalance } from '@/wallet/types';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
+
+import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
+import { TokenImage } from '@/components/tokens';
+import { Modal } from '@/components/modals';
+import PriceInputField from './price-input-field.vue';
 
 export default Vue.extend({
   name: 'AssetField',
   components: {
+    TokenImage,
     PriceInputField
   },
   props: {

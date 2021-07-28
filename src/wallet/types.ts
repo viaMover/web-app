@@ -15,6 +15,8 @@ export type Token = {
   logo: string;
   isFavorite: boolean;
   isVerified: boolean;
+
+  // @deprecated use getAssetColor() store function instead
   color?: string;
 };
 
