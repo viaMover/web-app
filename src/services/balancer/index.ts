@@ -34,12 +34,11 @@ export const getWalletTokens = async (
       from: currentAddress
     } as TransactionsParams);
 
-  const result = tokensToCheck.map(
+  return tokensToCheck.map(
     (t, ind) =>
       ({
         address: t.address,
         balance: fromWei(balances[ind], t.decimals),
-        color: t.color,
         decimals: t.decimals,
         isFavorite: t.isFavorite,
         isVerified: t.isVerified,
@@ -49,6 +48,4 @@ export const getWalletTokens = async (
         symbol: t.symbol
       } as TokenWithBalance)
   );
-
-  return result;
 };

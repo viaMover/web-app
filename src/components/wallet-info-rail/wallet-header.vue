@@ -32,10 +32,11 @@ export default Vue.extend({
     currentAddressText(): string {
       if (this.currentAddress) {
         const val = this.currentAddress as string;
-        const cutSize = 3;
+        const cutSize = 4;
+        const prefixSize = 2; // 0x...
 
         return [
-          ...val.slice(0, cutSize + 2),
+          ...val.slice(0, cutSize + prefixSize - 1),
           '...',
           ...val.slice(val.length - cutSize, val.length)
         ].join('');
