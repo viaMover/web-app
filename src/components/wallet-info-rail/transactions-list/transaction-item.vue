@@ -28,7 +28,7 @@ import Vue, { PropType } from 'vue';
 
 import { Transaction, TransactionTypes } from '@/wallet/types';
 import { fromWei, multiply } from '@/utils/bigmath';
-import BigNumber from 'bignumber.js';
+import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -68,7 +68,7 @@ export default Vue.extend({
           this.transaction.asset.change,
           this.transaction.asset.decimals
         );
-        return `${new BigNumber(change).toFormat(4)} ${
+        return `${formatToDecimals(change, 4)} ${
           this.transaction.asset.symbol
         }`;
       }
@@ -96,7 +96,7 @@ export default Vue.extend({
           return `$0.00`;
         }
         console.log('1312312', changeNative);
-        return `${symb}$${new BigNumber(changeNative).toFormat(4)}`;
+        return `${symb}$${formatToDecimals(changeNative, 4)}`;
       }
       if (this.transaction.type === TransactionTypes.approvalERC20) {
         return '$0.00';

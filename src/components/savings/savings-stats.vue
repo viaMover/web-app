@@ -19,8 +19,9 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
+
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
-import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsStats',
@@ -39,16 +40,12 @@ export default Vue.extend({
       savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative'
     }),
     earnedThisMonth(): string {
-      const earnedThisMonth = new BigNumber(
-        this.savingsInfoEarnedThisMonthNative
-      ).toFormat(2);
-      return `$${earnedThisMonth}`;
+      const value = formatToNative(this.savingsInfoEarnedThisMonthNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedTotal(): string {
-      const earnedTotal = new BigNumber(
-        this.savingsInfoEarnedTotalNative
-      ).toFormat(2);
-      return `$${earnedTotal}`;
+      const value = formatToNative(this.savingsInfoEarnedTotalNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   }
 });

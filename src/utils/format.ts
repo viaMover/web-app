@@ -1,13 +1,23 @@
 import BigNumber from 'bignumber.js';
 
-export const formatPercents = (percents: string): string => {
-  return new BigNumber(percents).toFixed(2);
+export const formatPercents = (percents: BigNumber.Value): string => {
+  return new BigNumber(percents).toFormat(2);
 };
 
-export const formatToNative = (amount: string): string => {
-  return new BigNumber(amount).toFixed(2);
+export const formatToNative = (amount: BigNumber.Value): string => {
+  return formatToDecimals(amount, 2);
 };
 
-export const formatToDecimals = (amount: string, decimals: number): string => {
-  return new BigNumber(amount).toFixed(decimals);
+export const formatToDecimals = (
+  amount: BigNumber.Value,
+  decimals: number
+): string => {
+  return new BigNumber(amount).toFormat(decimals);
+};
+
+export const getSignIfNeeded = (
+  amount: BigNumber.Value,
+  candidate: string
+): string => {
+  return new BigNumber(amount).isZero() ? '' : candidate;
 };

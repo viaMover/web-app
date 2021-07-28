@@ -28,8 +28,9 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
+import { formatToNative } from '@/utils/format';
+
 import HeadingSection from './heading-section.vue';
-import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SavingsSection',
@@ -46,8 +47,7 @@ export default Vue.extend({
       savingsInfoBalanceNative: 'savingsInfoBalanceNative'
     }),
     savingsBalanceNative(): string {
-      const balance = new BigNumber(this.savingsInfoBalanceNative).toFormat(2);
-      return `$${balance}`;
+      return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     }
   }
 });
