@@ -27,7 +27,7 @@ import { mapGetters, mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 import { BarChart } from '@/components/charts';
-import { BigNumber } from 'bignumber.js';
+import { formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsYearlyChartWrapper',
@@ -44,14 +44,10 @@ export default Vue.extend({
     }),
     ...mapState('account', ['savingsInfo', 'isSavingsInfoLoading']),
     savingsBalance(): string {
-      const value = new BigNumber(this.savingsInfoBalanceNative).toFormat(2);
-      return `$${value}`;
+      return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     },
     earnedLastMonth(): string {
-      const value = new BigNumber(
-        this.savingsInfoEarnedThisMonthNative
-      ).toFormat(2);
-      return `$${value}`;
+      return `$${formatToNative(this.savingsInfoEarnedThisMonthNative)}`;
     }
   }
 });

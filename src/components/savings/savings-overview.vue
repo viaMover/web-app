@@ -22,10 +22,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
-import BigNumber from 'bignumber.js';
+
+import { formatPercents, formatToNative } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
-import { getUSDCAssetData } from '@/wallet/references/data';
 
 export default Vue.extend({
   name: 'SavingsOverview',
@@ -43,20 +43,16 @@ export default Vue.extend({
       savingsInfoTotalPoolBalanceNative: 'savingsInfoTotalPoolBalanceNative'
     }),
     formattedDepositedAssets(): string {
-      return `${new BigNumber(this.savingsInfoBalanceUSDC).toFormat(2)} USDC`;
+      return `${formatToNative(this.savingsInfoBalanceUSDC)} USDC`;
     },
     currentVariableAPY(): string {
-      const apy = new BigNumber(this.apy).toFixed(2);
-      return `${apy}%`;
+      return `${formatPercents(this.apy)}%`;
     },
     monthAverageAPY(): string {
       return this.currentVariableAPY; // TODO: get an average APY?
     },
     totalAssetsUnderManagement(): string {
-      const value = new BigNumber(
-        this.savingsInfoTotalPoolBalanceNative
-      ).toFormat(2);
-      return `$${value}`;
+      return `$${formatToNative(this.savingsInfoTotalPoolBalanceNative)}`;
     }
   }
 });

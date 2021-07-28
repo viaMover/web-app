@@ -9,12 +9,23 @@ import { updateIntercomSession } from '@/router/intercom-utils';
 export const requireWalletAuth =
   (excludedRouteNames: Array<string>) =>
   async (to: Route, from: Route, next: NavigationGuardNext): Promise<void> => {
+    const store = router.app.$store;
+
     if (excludedRouteNames.includes(to.name ?? '')) {
+      try {
+        await store.dispatch('account/setIsDetecting', true);
+
+        const ethProvider = await detectEthereumProvider({
+          mustBeMetaMask: true
+        });
+        await store.dispatch('account/setDetectedProvider', ethProvider);
+      } finally {
+        await store.dispatch('account/setIsDetecting', false);
+      }
       next();
       return;
     }
 
-    const store = router.app.$store;
     if (store.getters['account/isWalletConnected']) {
       next();
       updateIntercomSession(store.state['account/currentAddress']);

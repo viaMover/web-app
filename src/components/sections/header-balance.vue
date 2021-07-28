@@ -12,15 +12,14 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import BigNumber from 'bignumber.js';
+import { formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'HeaderBalance',
   computed: {
     ...mapGetters('account', ['entireBalance']),
     balanceNative(): string {
-      const balance = new BigNumber(this.entireBalance).toFixed(2);
-      return `$${balance}`;
+      return `$${formatToNative(this.entireBalance)}`;
     }
   }
 });

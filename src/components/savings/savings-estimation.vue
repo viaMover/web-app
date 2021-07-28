@@ -20,8 +20,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
-import BigNumber from 'bignumber.js';
+import { mapGetters } from 'vuex';
+
+import { formatToNative } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
@@ -36,22 +37,13 @@ export default Vue.extend({
       'savingsEstimatedEarningsAnnuallyNative'
     ]),
     estimatedEarningsTomorrowNative(): string {
-      const value = new BigNumber(
-        this.savingsEstimatedEarningsTomorrowNative
-      ).toFormat(2);
-      return `$${value}`;
+      return `$${formatToNative(this.savingsEstimatedEarningsTomorrowNative)}`;
     },
     estimatedEarningsNextMonthNative(): string {
-      const value = new BigNumber(
-        this.savingsEstimatedEarningsNextMonthNative
-      ).toFormat(2);
-      return `$${value}`;
+      return `$${formatToNative(this.savingsEstimatedEarningsNextMonthNative)}`;
     },
     estimatedEarningsAnnuallyNative(): string {
-      const value = new BigNumber(
-        this.savingsEstimatedEarningsAnnuallyNative
-      ).toFormat(2);
-      return `$${value}`;
+      return `$${formatToNative(this.savingsEstimatedEarningsAnnuallyNative)}`;
     }
   }
 });
