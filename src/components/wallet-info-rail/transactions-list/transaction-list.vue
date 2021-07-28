@@ -41,9 +41,12 @@ export default Vue.extend({
       const date = dayjs.unix(timestamp);
 
       if (dayjs().diff(date, 'days') <= 2) {
-        return date.calendar();
+        return date.calendar(undefined, {
+          sameDay: this.$t('dates.sameDay'),
+          lastDay: this.$t('dates.lastDay')
+        });
       }
-      return date.format('DD MMMM YY');
+      return date.format('DD MMMM');
     }
   }
 });
