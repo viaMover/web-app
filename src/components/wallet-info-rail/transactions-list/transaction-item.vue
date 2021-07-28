@@ -28,7 +28,11 @@ import Vue, { PropType } from 'vue';
 
 import { Transaction, TransactionTypes } from '@/wallet/types';
 import { fromWei, multiply } from '@/utils/bigmath';
-import { formatToDecimals } from '@/utils/format';
+import {
+  formatToDecimals,
+  formatToNative,
+  getSignIfNeeded
+} from '@/utils/format';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -88,15 +92,17 @@ export default Vue.extend({
         );
 
         const changeNative = multiply(change, this.transaction.asset.price);
-        let symb = '+';
+        let sign = '+';
         if (this.transaction.asset.direction === 'out') {
-          symb = '-';
+          sign = '-';
         }
         if (this.transaction.asset.direction === 'self') {
           return `$0.00`;
         }
         console.log('1312312', changeNative);
-        return `${symb}$${formatToDecimals(changeNative, 4)}`;
+        return `${getSignIfNeeded(changeNative, sign)}$${formatToNative(
+          changeNative
+        )}`;
       }
       if (this.transaction.type === TransactionTypes.approvalERC20) {
         return '$0.00';
