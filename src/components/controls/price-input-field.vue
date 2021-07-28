@@ -1,14 +1,17 @@
 <template>
-  <input
-    :id="fieldId"
-    :class="inputClass"
-    :max="maxAmount"
-    min="0"
-    :placeholder="placeholder"
-    type="number"
-    :value="amount"
-    @input="updateAmount($event.target.value)"
-  />
+  <div>
+    <span v-if="textPrefix !== ''">{{ textPrefix }}</span>
+    <input
+      :id="fieldId"
+      :class="inputClass"
+      :max="maxAmount"
+      min="0"
+      :placeholder="placeholder"
+      type="number"
+      :value="amount"
+      @input="updateAmount($event.target.value)"
+    />
+  </div>
 </template>
 
 <script lang="ts">

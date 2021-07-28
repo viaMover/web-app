@@ -46,7 +46,9 @@
         @click="handleSelectMaxAmount"
       >
         <img src="@/assets/images/plus.svg" />
-        <span>{{ this.$t('asset.lblSelectMax') }}</span>
+        <span :style="spanMaxAmoutStyle">
+          {{ this.$t('asset.lblSelectMax') }}
+        </span>
       </button>
       <p v-else-if="showTokenBalance && tokenBalance">
         Balance: {{ tokenBalance }}
@@ -154,6 +156,13 @@ export default Vue.extend({
         style['background-color'] = this.asset.color;
         style['box-shadow'] = '0 0 16px ' + this.asset.color;
         style['-webkit-box-shadow'] = '0 0 16px ' + this.asset.color;
+      }
+      return style;
+    },
+    spanMaxAmoutStyle(): Record<string, string> {
+      let style = {} as Record<string, string>;
+      if (this.asset != null && this.asset.color !== undefined) {
+        style['color'] = this.asset.color;
       }
       return style;
     },

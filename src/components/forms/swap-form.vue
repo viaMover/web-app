@@ -16,7 +16,7 @@
           has-couple-tokens
           :label="$t('swaps.lblSwapFrom')"
           :max-amount="maxInputAmount"
-          :native-amount="input.nativeAmount"
+          :native-amount="formatToNative(input.nativeAmount)"
           use-wallet-tokens
           @update-amount="handleUpdateInputAmount"
           @update-asset="handleUpdateInputAsset"
@@ -29,7 +29,7 @@
           field-role="output"
           has-couple-tokens
           :label="$t('swaps.lblSwapTo')"
-          :native-amount="output.nativeAmount"
+          :native-amount="formatToNative(output.nativeAmount)"
           show-token-balance
           @update-amount="handleUpdateOutputAmount"
           @update-asset="handleUpdateOutputAsset"
@@ -138,6 +138,7 @@ import Web3 from 'web3';
 import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '../controls/form-loader.vue';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -314,6 +315,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    formatToNative(value: BigNumber.Value): BigNumber.Value {
+      return formatToNative(value);
+    },
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
