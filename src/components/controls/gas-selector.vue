@@ -174,6 +174,11 @@ export default Vue.extend({
       return '~';
     }
   },
+  mounted() {
+    if (this.selectedGasData !== undefined) {
+      this.$emit('selected-gas-changed', this.selectedGasData);
+    }
+  },
   methods: {
     toggleGasPrice() {
       this.selectedGasModeIndex =

@@ -39,6 +39,7 @@ export const getWalletTokens = async (
       ({
         address: t.address,
         balance: fromWei(balances[ind], t.decimals),
+        color: t.color,
         decimals: t.decimals,
         isFavorite: t.isFavorite,
         isVerified: t.isVerified,

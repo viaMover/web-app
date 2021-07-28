@@ -25,6 +25,7 @@ import { getAllTokens } from '@/wallet/allTokens';
 import { getEthPrice } from '@/services/etherscan/ethPrice';
 import {
   getMOVEPriceInWETH,
+  getSLPPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/mover/tokensPrices';
 import {
@@ -38,6 +39,7 @@ import {
   bootIntercomSession,
   disconnectIntercomSession
 } from '@/router/intercom-utils';
+import { multiply } from '@/utils/bigmath';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -276,6 +278,15 @@ export default {
     ]);
     commit('setMovePriceInWeth', moveInWethPrice);
     commit('setUsdcPriceInWeth', usdcInWethPrice);
+
+    const slpPriceInWETH = await getSLPPriceInWETH(
+      state.movePriceInWeth ?? '0',
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    commit('setSLPPriceInWETH', slpPriceInWETH);
 
     const getTreasuryBalancesPromise = getTreasuryBalance(
       state.currentAddress,

@@ -46,9 +46,11 @@
             <p class="description">Estimated annual earnings</p>
             <p class="info">{{ estimatedAnnualEarning }}</p>
           </div>
-          <div v-if="useSubsidized" class="tx-details__content-item">
+          <div class="tx-details__content-item">
             <p class="description">Smart Treasury cover</p>
-            <p class="info">{{ depositNativePrice }}</p>
+            <div class="value">
+              <span>{{ treasuryCover }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -222,7 +224,7 @@ export default Vue.extend({
 
       return `${buyedUSDC} ${this.outputUSDCAsset.symbol}`;
     },
-    depositNativePrice(): string {
+    treasuryCover(): string {
       const selectedGasPriceInWEI = Web3.utils.toWei(
         this.selectedGasPrice,
         'Gwei'
@@ -235,7 +237,11 @@ export default Vue.extend({
       const depositPriceInEth = Web3.utils.fromWei(depositPriceInWEI, 'ether');
       const depositPriceNative = multiply(depositPriceInEth, this.ethPrice);
 
-      return `$${depositPriceNative}`;
+      if (this.useSubsidized) {
+        return `$${formatToNative(depositPriceNative)}`;
+      } else {
+        return '$0.00';
+      }
     },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;

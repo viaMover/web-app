@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint",
     "lint:css": "stylelint src/styles/*.less --syntax less",
     "spell": "cspell src/**/*.{js,ts,vue}",
+    "postinstall": "cd tools/token_list && yarn install --frozen-lockfile",
     "tokens:list:generate": "node ./tools/token_list/index.js"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "vue-apollo": "^3.0.7",
     "vue-clickaway": "^2.2.2",
     "vue-i18n": "^8.24.4",
+    "vue-loading-skeleton": "^1.1.9",
     "vue-resource": "^1.5.2",
     "vue-router": "^3.2.0",
     "vuelidate": "^0.7.6",

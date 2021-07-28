@@ -15,6 +15,7 @@ export type Token = {
   logo: string;
   isFavorite: boolean;
   isVerified: boolean;
+  color?: string;
 };
 
 export type TokenWithBalance = Token & {

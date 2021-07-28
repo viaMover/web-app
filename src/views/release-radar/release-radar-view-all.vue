@@ -5,48 +5,75 @@
     wrapper-class="release-radar-desktop"
     @close="handleClose"
   >
-    <form action="#" class="search-form">
+    <form
+      class="search-form"
+      @click.capture.stop.prevent="handleOpenSelectModal"
+    >
       <input
-        name="search"
-        placeholder="Search any token on Ethereum"
+        :name="$t('search.lblSearch')"
+        :placeholder="$t('search.lblSearchBarPlaceholder')"
+        readonly
         type="search"
       />
-      <button class="button-active" type="submit">🔍</button>
+      <button class="button-active" type="submit">
+        {{ $t('radar.btnSearch.emoji') }}
+      </button>
     </form>
     <release-radar-token-of-the-day />
     <release-radar-live-updates />
-    <release-radar-page-section
-      title="Personal lists"
-    ></release-radar-page-section>
-    <release-radar-page-section
-      title="Curated lists"
-    ></release-radar-page-section>
+    <release-radar-swipe-section
+      :is-loading="isLoadingPersonalList"
+      :items="personalList"
+      :title="$t('radar.lblPersonalLists')"
+    />
+    <release-radar-swipe-section
+      :is-loading="isLoadingCuratedList"
+      :items="curatedList"
+      :title="$t('radar.lblCuratedLists')"
+    />
+    <search-modal />
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  ReleaseRadarPageSection,
+  ReleaseRadarSwipeSection,
   ReleaseRadarTokenOfTheDay,
   ReleaseRadarLiveUpdates
 } from '@/components/release-radar';
+import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals';
+import SearchModal from '@/components/modals/search-modal/search-modal.vue';
 
 export default Vue.extend({
   name: 'ReleaseRadarViewAll',
   components: {
+    SearchModal,
+    ReleaseRadarSwipeSection,
     ContentWrapper,
-    ReleaseRadarPageSection,
     ReleaseRadarTokenOfTheDay,
     ReleaseRadarLiveUpdates
+  },
+  computed: {
+    ...mapGetters('radar', ['personalList', 'curatedList']),
+    ...mapState('radar', ['isLoadingCuratedList', 'isLoadingPersonalList'])
   },
   methods: {
     handleClose(): void {
       this.$router.push({
         name: 'home'
       });
+    },
+    handleSearchResult(): void {
+      //TODO replace this after create details page
+      // this.$router.push({ name: '<page>', props: { id: assetId }})
+    },
+    handleOpenSelectModal(): void {
+      toggleThenWaitForResult(Modal.SearchToken, this.handleSearchResult, {});
     }
   }
 });

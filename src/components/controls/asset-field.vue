@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 <template>
   <div
     class="modal-wrapper-info-items-item"
@@ -6,7 +5,7 @@
   >
     <div class="modal-wrapper-info-items-item-left">
       <div v-if="iconSrc" class="icon">
-        <img v-get-shadow :alt="iconAlt" :src="iconSrc" />
+        <img v-get-shadow="asset.color" :alt="iconAlt" :src="iconSrc" />
       </div>
       <div v-else class="icon"></div>
       <price-input-field

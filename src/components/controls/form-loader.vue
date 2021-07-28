@@ -70,8 +70,8 @@ export default Vue.extend({
         },
         {
           id: 'Process',
-          title: 'Your transaction in processing',
-          subtitle: 'Waiting for transaction to be confirm'
+          title: 'Your transaction is processing',
+          subtitle: 'Waiting for transaction to be confirmed'
         },
         {
           id: 'Success',

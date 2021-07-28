@@ -1,5 +1,6 @@
-import walletActions from './actions/wallet';
 import { Module } from 'vuex';
+
+import walletActions from './actions/wallet';
 import { AccountStoreState, Avatar } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 import gasActions from './actions/gas';
@@ -38,6 +39,7 @@ export default {
     ethPrice: undefined,
     movePriceInWeth: undefined,
     usdcPriceInWeth: undefined,
+    slpPriceInWeth: undefined,
 
     //explorer
     explorer: undefined,
