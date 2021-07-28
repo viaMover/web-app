@@ -30,6 +30,7 @@
     <div class="modal-wrapper-info-items-item-right">
       <button
         class="currency button-active"
+        :class="buttonClass"
         type="button"
         @click.prevent.stop="handleOpenSelectModal"
       >
@@ -140,6 +141,11 @@ export default Vue.extend({
               name: this.asset.name
             })
       ) as string;
+    },
+    buttonClass(): Record<string, boolean> {
+      return {
+        empty: this.asset == null
+      };
     },
     openSelectModalText(): string {
       if (this.asset == null) {
