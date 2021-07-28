@@ -291,9 +291,8 @@ export default {
   },
   tokenColorMap(state): Record<string, string> {
     const allTokensWithColor = state.allTokens.filter((token) => !!token.color);
-    const walletTokens = state.tokens;
 
-    return [...allTokensWithColor, ...walletTokens].reduce((acc, token) => {
+    return allTokensWithColor.reduce((acc, token) => {
       if (token.color === undefined) {
         return acc;
       }
