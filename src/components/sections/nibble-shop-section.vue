@@ -15,6 +15,7 @@
         <nibble-shop-product-mini
           v-for="product in products"
           :key="product.id"
+          class="button-active"
           :item="product"
         />
       </div>

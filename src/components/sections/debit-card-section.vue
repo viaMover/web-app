@@ -13,7 +13,7 @@
       <div class="order__info-icon"><span>💳</span></div>
     </div>
     <div class="order__buttons">
-      <action-button class="black-link">
+      <action-button class="black-link button-active">
         {{ $t('debitCard.btnOrderDebitCard') }}
       </action-button>
       <close-button @close="toggleInfo"></close-button>
