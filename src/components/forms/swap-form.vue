@@ -37,11 +37,11 @@
         />
       </div>
       <div class="modal-wrapper-info-buttons">
-        <button class="flip" type="button" @click="flipAssets">
+        <button class="flip button-active" type="button" @click="flipAssets">
           <img src="@/assets/images/flip.png" /><span>Flip</span>
         </button>
         <button
-          class="tx-details"
+          class="tx-details button-active"
           :class="{ disabled: !isInfoAvailable }"
           type="button"
           @click="expandInfo"
@@ -287,9 +287,9 @@ export default Vue.extend({
     },
     buttonClass(): string {
       if (this.actionAvaialble) {
-        return 'button active';
+        return 'button active button-active';
       } else {
-        return 'button inactive';
+        return 'button inactive button-active';
       }
     },
     excludedOutputTokens(): Array<Token> {

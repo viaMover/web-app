@@ -4,7 +4,11 @@
       <div :class="[contentWrapperClass, innerWrapperClass]">
         <slot></slot>
       </div>
-      <router-link v-if="showLogo" class="logo" :to="{ name: 'home' }">
+      <router-link
+        v-if="showLogo"
+        class="logo button-active"
+        :to="{ name: 'home' }"
+      >
         <img alt="logo" src="@/assets/images/logo.svg" />
       </router-link>
     </div>

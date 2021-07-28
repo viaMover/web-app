@@ -29,7 +29,7 @@
     </div>
     <div class="modal-wrapper-info-items-item-right">
       <button
-        class="currency"
+        class="currency button-active"
         type="button"
         @click.prevent.stop="handleOpenSelectModal"
       >
@@ -39,7 +39,7 @@
 
       <button
         v-if="showSelectMaxAmountButton"
-        class="use"
+        class="use button-active"
         type="button"
         @click="handleSelectMaxAmount"
       >

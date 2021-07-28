@@ -16,6 +16,7 @@
           v-for="nft in list"
           :id="nft.id"
           :key="nft.id"
+          class="button-active"
         ></nft-asset-card-mini>
       </div>
     </template>

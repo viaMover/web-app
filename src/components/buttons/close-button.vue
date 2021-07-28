@@ -1,5 +1,8 @@
 <template>
-  <action-button button-class="button close-button" @button-click="handleClick">
+  <action-button
+    button-class="button close-button button-active"
+    @button-click="handleClick"
+  >
     <img
       v-if="isBlack"
       alt="close icon"

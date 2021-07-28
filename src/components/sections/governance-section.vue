@@ -33,7 +33,7 @@
           <router-link
             :to="{ name: 'governance-view', params: { id: lastProposal.id } }"
           >
-            <action-button class="black-link">
+            <action-button class="black-link button-active">
               {{ $t('governance.btnVote.simple') }}
             </action-button>
           </router-link>
