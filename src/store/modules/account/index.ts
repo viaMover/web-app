@@ -25,6 +25,8 @@ export default {
     currentAddress: undefined,
     transactions: [],
     tokens: [],
+    tokensSearcher: undefined,
+    tokenColorMap: undefined,
     provider: undefined,
     detectedProvider: undefined,
     isDetecting: false,
@@ -50,6 +52,7 @@ export default {
     // eslint-disable-next-line
     providerBeforeClose: () => {},
     allTokens: [],
+    allTokensSearcher: undefined,
     refreshError: undefined,
 
     isDebitCardSectionVisible: true,
