@@ -5,7 +5,10 @@
       :data-popover-parent-id="popoverParentId"
       @button-click="togglePopover"
     >
-      <img alt="context button icon" src="@/assets/images/context-button.svg" />
+      <img
+        :alt="$t('icon.txtContextButtonAlt')"
+        src="@/assets/images/context-button.svg"
+      />
     </action-button>
     <popover :parent-id="popoverParentId" :popover-id="popoverId">
       <slot></slot>

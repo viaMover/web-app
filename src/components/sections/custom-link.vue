@@ -1,6 +1,9 @@
 <template>
   <div v-if="useClickEvent" class="link-icon" @click.prevent="handleClick">
-    <img alt="navigation link icon" src="@/assets/images/link-icon.png" />
+    <img
+      :alt="$t('icon.txtNavigationLinkAlt')"
+      src="@/assets/images/link-icon.png"
+    />
   </div>
   <router-link
     v-else
@@ -9,7 +12,10 @@
     :to="{ name: navigateToName }"
   >
     <div class="link-icon button-active" @click.prevent="navigate(route)">
-      <img alt="navigation link icon" src="@/assets/images/link-icon.png" />
+      <img
+        :alt="$t('icon.txtNavigationLinkAlt')"
+        src="@/assets/images/link-icon.png"
+      />
     </div>
   </router-link>
 </template>

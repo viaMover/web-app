@@ -9,7 +9,7 @@
         class="logo button-active"
         :to="{ name: 'home' }"
       >
-        <img alt="logo" src="@/assets/images/logo.svg" />
+        <img :alt="$t('icon.txtLogoAlt')" src="@/assets/images/logo.svg" />
       </router-link>
     </div>
   </div>

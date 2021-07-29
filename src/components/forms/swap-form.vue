@@ -39,7 +39,7 @@
       <div class="modal-wrapper-info-buttons">
         <button class="flip button-active" type="button" @click="flipAssets">
           <img
-            :alt="$t('icons.txtFlipAssetsIconAlt')"
+            :alt="$t('icon.txtFlipAssetsIconAlt')"
             src="@/assets/images/flip.png"
           />
           <span>Flip</span>
@@ -50,7 +50,10 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <img
+            :alt="$t('icon.txtSwapDetailsIconAlt')"
+            src="@/assets/images/swap-details.png"
+          />
           <span>Swap Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">

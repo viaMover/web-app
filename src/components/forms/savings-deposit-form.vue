@@ -29,7 +29,10 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <img
+            :alt="$t('icon.swapDetailsIconAlt')"
+            src="@/assets/images/swap-details.png"
+          />
           <span>Deposit Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -37,7 +40,10 @@
             <p class="description">Swapping for</p>
             <div class="value">
               <div class="icon getShadow">
-                <img alt="coin" :src="outputUSDCAsset.iconURL" />
+                <img
+                  :alt="$t('asset.txtAlt', { name: outputUSDCAsset.symbol })"
+                  :src="outputUSDCAsset.iconURL"
+                />
               </div>
               <span>{{ swappingForString }}</span>
             </div>

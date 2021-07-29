@@ -476,6 +476,7 @@ export default {
     txtContextButtonAlt: 'open menu',
     txtLogoAlt: 'Mover logo',
     txtSelectAssetButtonAlt: 'select asset',
-    txtNavigationLinkAlt: 'navigation link'
+    txtNavigationLinkAlt: 'navigation link',
+    txtSwapDetailsIconAlt: 'swap details'
   }
 };
