@@ -7,6 +7,7 @@
       :max="maxAmount"
       min="0"
       :placeholder="placeholder"
+      :step="step"
       type="number"
       :value="amount"
       @input="updateAmount($event.target.value)"
@@ -47,6 +48,10 @@ export default Vue.extend({
     placeholder: {
       type: String,
       default: ''
+    },
+    step: {
+      type: String,
+      required: true
     }
   },
   computed: {

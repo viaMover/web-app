@@ -17,6 +17,7 @@
         :input-class="'input-top'"
         :max-amount="maxAmount"
         :placeholder="placeholder"
+        :step="inputStep"
         @update-amount="handleUpdateAmount"
       />
       <price-input-field
@@ -25,6 +26,7 @@
         :field-id="`${fieldRole}-selected-native-amount`"
         :input-class="'input-bottom'"
         :placeholder="placeholder"
+        :step="nativeInputStep"
         :text-prefix="textPrefix"
         @update-amount="handleUpdateNativeAmount"
       />
@@ -39,7 +41,7 @@
       >
         <span>{{ openSelectModalText }}</span>
         <img
-          alt="arrow down icon"
+          :alt="$t('icon.txtSelectAssetButtonAlt')"
           src="@/assets/images/button-arrow-down.svg"
         />
       </button>
@@ -52,11 +54,11 @@
       >
         <plus-icon :stroke="plusColor" />
         <span :style="spanMaxAmoutStyle">
-          {{ this.$t('asset.lblSelectMax') }}
+          {{ $t('asset.lblSelectMax') }}
         </span>
       </button>
       <p v-else-if="showTokenBalance && tokenBalance">
-        Balance: {{ tokenBalance }}
+        {{ $t('asset.lblBalance') }}: {{ tokenBalance }}
       </p>
     </div>
   </div>
@@ -75,6 +77,7 @@ import { TokenImage } from '@/components/tokens';
 import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
 import PlusIcon from '@/components/controls/plus-icon.vue';
+import { BigNumber } from 'bignumber.js';
 
 export default Vue.extend({
   name: 'AssetField',
@@ -215,6 +218,16 @@ export default Vue.extend({
         return '0.0000';
       }
       return '';
+    },
+    inputStep(): string {
+      if (this.asset == null) {
+        return new BigNumber(10).pow(-18).toString(10);
+      }
+
+      return new BigNumber(10).pow(-this.asset.decimals).toString(10);
+    },
+    nativeInputStep(): string {
+      return new BigNumber(10).pow(-6).toString(10);
     }
   },
   methods: {

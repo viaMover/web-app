@@ -399,7 +399,8 @@ export default {
   asset: {
     txtAlt: '{name} icon',
     txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: 'Use Max'
+    lblSelectMax: 'Use Max',
+    lblBalance: 'Balance'
   },
   transaction: {
     lblState: {
@@ -467,5 +468,14 @@ export default {
   dates: {
     sameDay: '[Today]',
     lastDay: '[Yesterday]'
+  },
+  icon: {
+    txtFlipAssetsIconAlt: 'flip',
+    txtBackLinkIconAlt: 'back',
+    txtCloseIconAlt: 'close',
+    txtContextButtonAlt: 'open menu',
+    txtLogoAlt: 'Mover logo',
+    txtSelectAssetButtonAlt: 'select asset',
+    txtNavigationLinkAlt: 'navigation link'
   }
 };

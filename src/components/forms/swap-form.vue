@@ -16,7 +16,7 @@
           has-couple-tokens
           :label="$t('swaps.lblSwapFrom')"
           :max-amount="maxInputAmount"
-          :native-amount="formatToNative(input.nativeAmount)"
+          :native-amount="input.nativeAmount"
           use-wallet-tokens
           @update-amount="handleUpdateInputAmount"
           @update-asset="handleUpdateInputAsset"
@@ -29,7 +29,7 @@
           field-role="output"
           has-couple-tokens
           :label="$t('swaps.lblSwapTo')"
-          :native-amount="formatToNative(output.nativeAmount)"
+          :native-amount="output.nativeAmount"
           show-token-balance
           @update-amount="handleUpdateOutputAmount"
           @update-asset="handleUpdateOutputAsset"
@@ -38,7 +38,11 @@
       </div>
       <div class="modal-wrapper-info-buttons">
         <button class="flip button-active" type="button" @click="flipAssets">
-          <img src="@/assets/images/flip.png" /><span>Flip</span>
+          <img
+            :alt="$t('icons.txtFlipAssetsIconAlt')"
+            src="@/assets/images/flip.png"
+          />
+          <span>Flip</span>
         </button>
         <button
           class="tx-details button-active"
@@ -427,9 +431,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = multiply(
-          this.input.asset.priceUSD,
-          this.input.amount
+        this.input.nativeAmount = formatToNative(
+          multiply(this.input.asset.priceUSD, this.input.amount)
         );
 
         const transferData = await this.calcData(
@@ -444,9 +447,8 @@ export default Vue.extend({
           transferData.buyAmount,
           this.output.asset.decimals
         );
-        this.output.nativeAmount = multiply(
-          this.output.asset.priceUSD,
-          this.output.amount
+        this.output.nativeAmount = formatToNative(
+          multiply(this.output.asset.priceUSD, this.output.amount)
         );
 
         await this.tryToEstimate(
@@ -544,9 +546,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = multiply(
-          this.output.asset.priceUSD,
-          this.output.amount
+        this.output.nativeAmount = formatToNative(
+          multiply(this.output.asset.priceUSD, this.output.amount)
         );
 
         const transferData = await this.calcData(
@@ -561,9 +562,8 @@ export default Vue.extend({
           transferData.sellAmount,
           this.output.asset.decimals
         );
-        this.input.nativeAmount = multiply(
-          this.input.asset.priceUSD,
-          this.input.amount
+        this.input.nativeAmount = formatToNative(
+          multiply(this.input.asset.priceUSD, this.input.amount)
         );
 
         await this.tryToEstimate(
