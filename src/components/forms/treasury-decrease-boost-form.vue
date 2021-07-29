@@ -75,6 +75,7 @@ import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { mapGetters, mapState } from 'vuex';
 import {
   add,
+  convertAmountFromNativeValue,
   divide,
   greaterThan,
   multiply,
@@ -369,7 +370,7 @@ export default Vue.extend({
         return;
       }
 
-      if (!notZero(this.output.amount)) {
+      if (!notZero(this.output.nativeAmount)) {
         this.output.amount = '0';
         return;
       }
@@ -377,9 +378,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.amount = divide(
+        this.output.amount = convertAmountFromNativeValue(
           this.output.nativeAmount,
-          this.output.asset.priceUSD
+          this.output.asset.priceUSD,
+          this.output.asset.decimals
         );
 
         await this.tryToEstimate(this.output.amount, this.output.asset);

@@ -81,7 +81,14 @@ import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
 import { mapGetters, mapState } from 'vuex';
-import { add, divide, greaterThan, multiply, notZero } from '@/utils/bigmath';
+import {
+  add,
+  convertAmountFromNativeValue,
+  divide,
+  greaterThan,
+  multiply,
+  notZero
+} from '@/utils/bigmath';
 import { Step } from '../controls/form-loader.vue';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
@@ -305,7 +312,7 @@ export default Vue.extend({
     async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
       this.output.nativeAmount = amount;
 
-      if (!notZero(this.output.amount)) {
+      if (!notZero(this.output.nativeAmount)) {
         this.output.amount = '0';
         return;
       }
@@ -313,9 +320,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.amount = divide(
+        this.output.amount = convertAmountFromNativeValue(
           this.output.nativeAmount,
-          this.usdcNativePrice
+          this.usdcNativePrice,
+          this.outputUSDCAsset.decimals
         );
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
