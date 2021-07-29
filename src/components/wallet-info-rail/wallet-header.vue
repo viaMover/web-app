@@ -1,21 +1,20 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-user">
     <wallet-header-avatar />
-    <button class="button-active" type="button">
-      <span>{{ currentAddressText }}</span>
-      <img
-        :alt="$t('txtChangeWalletAlt')"
-        src="@/assets/images/arrow-down.svg"
-      />
-    </button>
-    <button
-      class="status-button button-active"
-      @click.prevent="disconnectWallet"
-    >
-      <span class="status">
-        {{ $t('lblDisconnect') }}
-      </span>
-    </button>
+    <div class="button-active" @click.prevent="disconnectWallet">
+      <button type="button">
+        <span>{{ currentAddressText }}</span>
+        <img
+          :alt="$t('txtChangeWalletAlt')"
+          src="@/assets/images/arrow-down.svg"
+        />
+      </button>
+      <button class="status-button">
+        <span class="status">
+          {{ $t('lblDisconnect') }}
+        </span>
+      </button>
+    </div>
   </div>
 </template>
 
