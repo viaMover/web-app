@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span v-if="textPrefix !== ''">{{ textPrefix }}</span>
+    <span v-if="hasSpan" :style="spanStyle">{{ textPrefix }}</span>
     <input
       :id="fieldId"
       :class="inputClass"
@@ -47,6 +47,20 @@ export default Vue.extend({
     placeholder: {
       type: String,
       default: ''
+    }
+  },
+  computed: {
+    hasSpan(): boolean {
+      return this.textPrefix !== '';
+    },
+    spanStyle(): Record<string, string> {
+      const style = {} as Record<string, string>;
+      if (this.amount === 'NaN' || this.amount === '') {
+        style['color'] = 'rgba(60, 60, 67, 0.6)';
+      } else {
+        style['color'] = '#000';
+      }
+      return style;
     }
   },
   methods: {

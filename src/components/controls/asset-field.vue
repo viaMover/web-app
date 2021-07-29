@@ -23,7 +23,7 @@
         :field-id="`${fieldRole}-selected-native-amount`"
         :input-class="'input-bottom'"
         :placeholder="placeholder"
-        text-prefix="≈$"
+        :text-prefix="textPrefix"
         @update-amount="handleUpdateNativeAmount"
       />
     </div>
@@ -45,7 +45,7 @@
         type="button"
         @click="handleSelectMaxAmount"
       >
-        <img src="@/assets/images/plus.svg" />
+        <plus-icon :stroke="plusColor" />
         <span :style="spanMaxAmoutStyle">
           {{ this.$t('asset.lblSelectMax') }}
         </span>
@@ -67,10 +67,12 @@ import { TokenWithBalance } from '@/wallet/types';
 import { mapState } from 'vuex';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
+import PlusIcon from '@/components/controls/plus-icon.vue';
 
 export default Vue.extend({
   name: 'AssetField',
   components: {
+    PlusIcon,
     PriceInputField
   },
   props: {
@@ -158,6 +160,20 @@ export default Vue.extend({
         style['-webkit-box-shadow'] = '0 0 16px ' + this.asset.color;
       }
       return style;
+    },
+    plusColor(): string {
+      if (this.asset != null && this.asset.color !== undefined) {
+        return this.asset.color;
+      }
+
+      return '#687ee3';
+    },
+    textPrefix(): string {
+      if (this.placeholder === '—') {
+        return '';
+      }
+
+      return '≈$';
     },
     spanMaxAmoutStyle(): Record<string, string> {
       let style = {} as Record<string, string>;
