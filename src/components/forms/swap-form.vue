@@ -132,6 +132,7 @@ import {
 import { mapState } from 'vuex';
 import {
   add,
+  convertAmountFromNativeValue,
   divide,
   fromWei,
   greaterThan,
@@ -480,7 +481,7 @@ export default Vue.extend({
         return;
       }
 
-      if (!notZero(this.input.amount)) {
+      if (!notZero(this.input.nativeAmount)) {
         this.input.amount = '0';
         this.output.amount = '0';
         this.output.nativeAmount = '0';
@@ -490,9 +491,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.amount = divide(
+        this.input.amount = convertAmountFromNativeValue(
           this.input.nativeAmount,
-          this.input.asset.priceUSD
+          this.input.asset.priceUSD,
+          this.input.asset.decimals
         );
 
         const transferData = await this.calcData(
@@ -563,7 +565,7 @@ export default Vue.extend({
 
         this.input.amount = fromWei(
           transferData.sellAmount,
-          this.output.asset.decimals
+          this.input.asset.decimals
         );
         this.input.nativeAmount = formatToNative(
           multiply(this.input.asset.priceUSD, this.input.amount)
@@ -605,9 +607,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.amount = divide(
+        this.output.amount = convertAmountFromNativeValue(
           this.output.nativeAmount,
-          this.output.asset.priceUSD
+          this.output.asset.priceUSD,
+          this.output.asset.decimals
         );
 
         const transferData = await this.calcData(
@@ -620,7 +623,7 @@ export default Vue.extend({
 
         this.input.amount = fromWei(
           transferData.sellAmount,
-          this.output.asset.decimals
+          this.input.asset.decimals
         );
         this.input.nativeAmount = multiply(
           this.input.asset.priceUSD,

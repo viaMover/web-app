@@ -102,6 +102,7 @@ import {
 import { mapState } from 'vuex';
 import {
   add,
+  convertAmountFromNativeValue,
   divide,
   fromWei,
   greaterThan,
@@ -399,7 +400,7 @@ export default Vue.extend({
         return;
       }
 
-      if (!notZero(this.input.amount)) {
+      if (!notZero(this.input.nativeAmount)) {
         this.input.amount = '0';
         return;
       }
@@ -407,9 +408,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.amount = divide(
+        this.input.amount = convertAmountFromNativeValue(
           this.input.nativeAmount,
-          this.input.asset.priceUSD
+          this.input.asset.priceUSD,
+          this.input.asset.decimals
         );
 
         const transferData = await this.calcData(
