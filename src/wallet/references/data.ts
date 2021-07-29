@@ -169,11 +169,16 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
-const getMoveAssetData = (network: Network): SmallTokenInfoWithIcon => {
+const getMoveAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & {
+  name: string;
+} => {
   return {
     address: MOVE_ADDRESS(network),
     decimals: 18,
     symbol: 'MOVE',
+    name: 'Mover',
     iconURL:
       'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png'
   };
@@ -201,7 +206,7 @@ const getAssetsForTreasury = (
       symbol: move.symbol,
       isFavorite: false,
       isVerified: true,
-      name: 'Mover',
+      name: move.name,
       priceUSD: moveNativePrice,
       logo: move.iconURL
     },
