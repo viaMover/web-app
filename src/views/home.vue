@@ -29,11 +29,7 @@
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
 
     <transaction-modal />
-    <centered-modal-window
-      v-cloak
-      disable-close-on-backdrop
-      :modal-id="SwapModalId"
-    >
+    <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
     </centered-modal-window>
     <search-modal />

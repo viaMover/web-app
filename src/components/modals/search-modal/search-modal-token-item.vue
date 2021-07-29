@@ -1,8 +1,11 @@
 <template>
   <div class="swaps__wrapper-search-items-item" @click="handleSelect">
-    <div class="icon">
-      <img v-get-shadow="item.color" :alt="item.symbol" :src="item.logo" />
-    </div>
+    <token-image
+      :address="item.address"
+      :src="item.logo"
+      :symbol="item.symbol"
+      wrapper-class="icon"
+    />
     <div class="info">
       <p>{{ item.name }}</p>
       <span>{{ item.symbol }}</span>
@@ -14,9 +17,13 @@
 import Vue, { PropType } from 'vue';
 
 import { Token } from '@/wallet/types';
+import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'SearchModalTokenItem',
+  components: {
+    TokenImage
+  },
   props: {
     item: {
       type: Object as PropType<Token>,

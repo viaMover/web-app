@@ -336,11 +336,24 @@
   flex-basis: 18%;
 }
 
-.general-desktop__sidebar-wrapper-info-item .label-icon img {
+.general-desktop__sidebar-wrapper-info-item .label-icon img,
+.general-desktop__sidebar-wrapper-info-item .label-icon .img-stub {
   border-radius: 50%;
   display: block;
   width: 38px;
   height: 38px;
+}
+
+.general-desktop__sidebar-wrapper-info-item .label-icon .img-stub {
+  background-color: #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 50%);
+
+  span {
+    font-size: 10px;
+  }
 }
 
 .general-desktop__sidebar-wrapper-info-item .label-icon-right {

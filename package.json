@@ -41,6 +41,7 @@
     "vue-apollo": "^3.0.7",
     "vue-clickaway": "^2.2.2",
     "vue-i18n": "^8.24.4",
+    "vue-image-fallback": "^1.0.0",
     "vue-loading-skeleton": "^1.1.9",
     "vue-resource": "^1.5.2",
     "vue-router": "^3.2.0",

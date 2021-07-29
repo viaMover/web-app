@@ -1,4 +1,4 @@
-import { SmallTokenInfoWithIcon } from './../types';
+import { SmallTokenInfoWithIcon, Token } from './../types';
 import { SmallTokenInfo } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
@@ -169,11 +169,13 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
-const getMoveAssetData = (network: Network): SmallTokenInfo => {
+const getMoveAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
     address: MOVE_ADDRESS(network),
     decimals: 18,
-    symbol: 'MOVE'
+    symbol: 'MOVE',
+    iconURL:
+      'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png'
   };
 };
 
@@ -183,6 +185,37 @@ const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
     decimals: 18,
     symbol: 'SLP'
   };
+};
+
+const getAssetsForTreasury = (
+  network: Network,
+  moveNativePrice: string,
+  slpNativePrice: string
+): Array<Token> => {
+  const move = getMoveAssetData(network);
+  const slp = getMoveWethLPAssetData(network);
+  return [
+    {
+      address: move.address,
+      decimals: move.decimals,
+      symbol: move.symbol,
+      isFavorite: false,
+      isVerified: true,
+      name: 'Mover',
+      priceUSD: moveNativePrice,
+      logo: move.iconURL
+    },
+    {
+      address: slp.address,
+      decimals: slp.decimals,
+      symbol: slp.symbol,
+      isFavorite: false,
+      isVerified: true,
+      name: 'Sushi MOVE-ETH LP',
+      priceUSD: slpNativePrice,
+      logo: ''
+    }
+  ];
 };
 
 const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
@@ -199,6 +232,7 @@ export {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData,
+  getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
   HOLY_PASSAGE_ADDRESS,
   HOLY_PASSAGE_ABI,

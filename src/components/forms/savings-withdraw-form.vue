@@ -247,6 +247,13 @@ export default Vue.extend({
       this.infoExpanded = !this.infoExpanded;
     },
     async handleExecuteDeposit(): Promise<void> {
+      if (!notZero(this.output.amount)) {
+        console.error(
+          "[withdraw-form] can't execute withdraw due to zero amount"
+        );
+        return;
+      }
+
       this.loaderStep = 'Confirm';
       try {
         await withdrawCompound(

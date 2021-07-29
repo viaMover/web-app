@@ -8,7 +8,14 @@
       >
         <template v-slot:context-menu>
           <context-button :popover-parent-id="popoverParentId">
-            <context-button-item :text="$t('treasury.btnDeposit.emoji')" />
+            <context-button-item
+              :text="$t('treasury.btnDeposit.emoji')"
+              @click="handleDepositCick"
+            />
+            <context-button-item
+              :text="$t('treasury.btnWithdraw.emoji')"
+              @click="handleWithdrawCick"
+            />
           </context-button>
         </template>
       </secondary-page-title>
@@ -79,6 +86,14 @@ export default Vue.extend({
     },
     toggleDeposit(): void {
       toggleSingleItem(Modal.TreasuryIncreaseBoost);
+    },
+    handleDepositCick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.TreasuryIncreaseBoost);
+    },
+    handleWithdrawCick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.TreasuryDecreaseBoost);
     }
   }
 });

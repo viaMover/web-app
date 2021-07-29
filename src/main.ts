@@ -5,7 +5,7 @@ import App from './app.vue';
 import router from './router';
 import store from './store';
 import i18n from './i18n';
-import { getShadowDirective } from './directives/get-shadow';
+import ImageFallback from 'vue-image-fallback';
 
 import * as dayjs from './dayjs';
 import * as bignumber from './bignumber';
@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
 Vue.use(Skeleton);
-Vue.directive('get-shadow', getShadowDirective);
+Vue.use(ImageFallback);
 
 dayjs.init();
 bignumber.init();
