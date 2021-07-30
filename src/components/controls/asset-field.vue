@@ -243,7 +243,7 @@ export default Vue.extend({
     },
     handleSelectMaxAmount(): void {
       if (this.asset?.balance) {
-        this.$emit('update-amount', String(this.asset.balance));
+        this.$emit('update-amount', this.maxAmount);
       }
     },
     handleUpdateNativeAmount(amount: number): void {

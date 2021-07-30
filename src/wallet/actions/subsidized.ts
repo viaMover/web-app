@@ -202,12 +202,14 @@ export const CheckSubsidizedInQueueTx = async (
 };
 
 export const isSubsidizedAllowed = (
-  fastGasPriceWEI: string,
+  fastGasPriceGWEI: string,
   txGasLimit: string,
   ethPrice: string,
   treasuryBonus: string
 ): boolean => {
   console.log('gassless transaction mode available');
+  console.log('fastGasPriceGWEI;', fastGasPriceGWEI);
+  const fastGasPriceWEI = Web3.utils.toWei(fastGasPriceGWEI, 'Gwei');
   console.log('fastGasPriceWEI;', fastGasPriceWEI);
 
   console.log('gasLimit:', txGasLimit);
@@ -229,10 +231,10 @@ export const isSubsidizedAllowed = (
 
   const isDev = process.env.VUE_APP_IS_DEV;
 
-  if (isDev) {
-    console.log('Subsidized allowed for DEV');
-    return true;
-  }
+  //if (isDev) {
+  //  console.log('Subsidized allowed for DEV');
+  //  return true;
+  //}
 
   const gasless =
     greaterThanOrEqual(treasuryBonus, fastTransactionPriceNative) &&
