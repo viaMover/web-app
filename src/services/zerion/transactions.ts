@@ -92,7 +92,7 @@ const parseTradeTransaction = (
               decimals: c.asset.decimals,
               symbol: c.asset.symbol,
               change: String(c.value),
-              iconURL: c.asset.icon_url,
+              iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
               direction: c.direction
             },
@@ -112,7 +112,7 @@ const parseTradeTransaction = (
               decimals: c.asset.decimals,
               symbol: c.asset.symbol,
               change: String(c.value),
-              iconURL: c.asset.icon_url,
+              iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
               direction: c.direction
             },
@@ -139,7 +139,7 @@ const parseTradeTransaction = (
           decimals: c.asset.decimals,
           symbol: c.asset.symbol,
           change: String(c.value),
-          iconURL: c.asset.icon_url,
+          iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
           direction: c.direction
         },
@@ -171,7 +171,7 @@ const parseReceiveTransaction = (
           decimals: c.asset.decimals,
           symbol: c.asset.symbol,
           change: String(c.value),
-          iconURL: c.asset.icon_url,
+          iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
           direction: c.direction
         },
@@ -200,7 +200,7 @@ const parseAuthorizeTransaction = (
         asset: {
           address: tx.meta.asset.asset_code,
           decimals: tx.meta.asset.decimals,
-          iconURL: tx.meta.asset.icon_url,
+          iconURL: tx.meta.asset.icon_url ?? '',
           symbol: tx.meta.asset.symbol
         },
         blockNumber: String(tx.block_number),
@@ -229,7 +229,7 @@ const parseSendTransaction = (
           decimals: c.asset.decimals,
           symbol: c.asset.symbol,
           change: String(c.value),
-          iconURL: c.asset.icon_url,
+          iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
           direction: c.direction
         },
@@ -262,7 +262,7 @@ const tryToParseToUnknown = (
         decimals: c.asset.decimals,
         symbol: c.asset.symbol,
         change: String(c.value),
-        iconURL: c.asset.icon_url,
+        iconURL: c.asset.icon_url ?? '',
         price: String(c.price),
         direction: c.direction
       },

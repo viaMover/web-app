@@ -231,7 +231,7 @@ export default Vue.extend({
         return this.error;
       }
 
-      return '💰 Deposit';
+      return '📈 Increase Boost';
     },
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high'];

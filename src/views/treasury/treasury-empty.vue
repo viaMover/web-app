@@ -10,11 +10,15 @@
           <context-button :popover-parent-id="popoverParentId">
             <context-button-item
               :text="$t('treasury.btnDeposit.emoji')"
-              @click="handleDepositCick"
+              @click="handleDepositClick"
             />
             <context-button-item
               :text="$t('treasury.btnWithdraw.emoji')"
-              @click="handleWithdrawCick"
+              @click="handleWithdrawClick"
+            />
+            <context-button-item
+              :text="$t('treasury.btnClaimAndBurn.emoji')"
+              @click="handleClaimAndBurnClick"
             />
           </context-button>
         </template>
@@ -87,13 +91,17 @@ export default Vue.extend({
     toggleDeposit(): void {
       toggleSingleItem(Modal.TreasuryIncreaseBoost);
     },
-    handleDepositCick(): void {
+    handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.TreasuryIncreaseBoost);
     },
-    handleWithdrawCick(): void {
+    handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.TreasuryDecreaseBoost);
+    },
+    handleClaimAndBurnClick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.TreasuryClaimAndBurn);
     }
   }
 });

@@ -51,7 +51,7 @@
           :button-class="buttonClass"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
-          @button-click="handleExecuteDeposit"
+          @button-click="handleExecuteWithdraw"
         />
       </div>
       <gas-selector
@@ -253,7 +253,7 @@ export default Vue.extend({
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
-    async handleExecuteDeposit(): Promise<void> {
+    async handleExecuteWithdraw(): Promise<void> {
       if (!notZero(this.output.amount)) {
         console.error(
           "[withdraw-form] can't execute withdraw due to zero amount"

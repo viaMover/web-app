@@ -27,7 +27,7 @@ export type ZerionChange = {
     name: string;
     symbol: string;
     decimals: number;
-    icon_url: string;
+    icon_url: string | null;
     price: {
       value: number;
     };
