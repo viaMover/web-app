@@ -139,6 +139,7 @@ import Web3 from 'web3';
 import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '../controls/form-loader.vue';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import ethDefaults from '@/wallet/references/defaults';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -166,7 +167,7 @@ export default Vue.extend({
       slippage: '1',
       selectedGasPrice: '0',
       useSubsidized: false,
-      swapGasLimit: '0',
+      actionGasLimit: ethDefaults.basic_holy_swap,
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
@@ -263,16 +264,19 @@ export default Vue.extend({
     allGasLimit(): string {
       console.log(
         'all gas limit: ',
-        add(this.approveGasLimit, this.swapGasLimit)
+        add(this.approveGasLimit, this.actionGasLimit)
       );
-      return add(this.approveGasLimit, this.swapGasLimit);
+      return add(this.approveGasLimit, this.actionGasLimit);
     },
     treasuryCover(): string {
       const selectedGasPriceInWEI = Web3.utils.toWei(
         this.selectedGasPrice,
         'Gwei'
       );
-      const swapPriceInWEI = multiply(selectedGasPriceInWEI, this.swapGasLimit);
+      const swapPriceInWEI = multiply(
+        selectedGasPriceInWEI,
+        this.actionGasLimit
+      );
 
       const swapPriceInEth = Web3.utils.fromWei(swapPriceInWEI, 'ether');
       const swapPriceNative = multiply(swapPriceInEth, this.ethPrice);
@@ -349,7 +353,7 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.swapGasLimit,
+          this.actionGasLimit,
           this.approveGasLimit,
           this.selectedGasPrice,
           this.useSubsidized,
@@ -401,7 +405,7 @@ export default Vue.extend({
           this.input.nativeAmount = '';
         }
 
-        this.swapGasLimit = '0';
+        this.actionGasLimit = ethDefaults.basic_holy_swap;
         this.approveGasLimit = '0';
       } finally {
         this.loading = false;
@@ -654,7 +658,7 @@ export default Vue.extend({
       this.output.amount = '';
       this.output.nativeAmount = '';
 
-      this.swapGasLimit = '0';
+      this.actionGasLimit = ethDefaults.basic_holy_swap;
       this.transferData = undefined;
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
@@ -665,7 +669,7 @@ export default Vue.extend({
       this.output.amount = '';
       this.output.nativeAmount = '';
 
-      this.swapGasLimit = '0';
+      this.actionGasLimit = ethDefaults.basic_holy_swap;
       this.transferData = undefined;
     },
     async handleSelectedSlippageChanged(newSlippage: Slippage): Promise<void> {
@@ -761,7 +765,7 @@ export default Vue.extend({
         return;
       }
 
-      this.swapGasLimit = resp.actionGasLimit;
+      this.actionGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
     }
   }
