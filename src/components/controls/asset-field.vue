@@ -53,7 +53,7 @@
         @click="handleSelectMaxAmount"
       >
         <plus-icon :stroke="plusIconColor" />
-        <span :style="spanMaxAmoutStyle">
+        <span :style="spanMaxAmountStyle">
           {{ $t('asset.lblSelectMax') }}
         </span>
       </button>
@@ -66,18 +66,18 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState } from 'vuex';
-
-import { TokenWithBalance } from '@/wallet/types';
-import { sameAddress } from '@/utils/address';
-import { formatToDecimals } from '@/utils/format';
+import { mapGetters, mapState } from 'vuex';
+import { BigNumber } from 'bignumber.js';
 
 import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { TokenImage } from '@/components/tokens';
 import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
-import PlusIcon from '@/components/controls/plus-icon.vue';
-import { BigNumber } from 'bignumber.js';
+import PlusIcon from './plus-icon.vue';
+
+import { TokenWithBalance } from '@/wallet/types';
+import { sameAddress } from '@/utils/address';
+import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'AssetField',
@@ -88,8 +88,8 @@ export default Vue.extend({
   },
   props: {
     asset: {
-      type: Object as PropType<TokenWithBalance>,
-      required: false
+      type: Object as PropType<TokenWithBalance | undefined>,
+      default: undefined
     },
     fieldRole: {
       type: String,
@@ -142,18 +142,19 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', ['tokens']),
+    ...mapGetters('account', ['getTokenColor']),
     placeholder(): string {
-      return this.asset == null ? '—' : '0.00';
+      return this.asset === undefined ? '—' : '0.00';
     },
     disabledInput(): boolean {
-      return this.asset == null;
+      return this.asset === undefined;
     },
     iconSrc(): string {
-      return this.asset == null ? '' : this.asset.logo;
+      return this.asset === undefined ? '' : this.asset.logo;
     },
     iconAlt(): string {
       return (
-        this.asset == null
+        this.asset === undefined
           ? this.$t('asset.txtFallbackAlt', {
               fieldRole: this.fieldRole
             })
@@ -162,32 +163,39 @@ export default Vue.extend({
             })
       ) as string;
     },
+    assetColor(): string | undefined {
+      if (this.asset === undefined) {
+        return undefined;
+      }
+
+      return this.getTokenColor(this.asset.address);
+    },
     buttonStyle(): Record<string, string> {
-      if (!(this.asset != null && this.asset.color !== undefined)) {
+      if (this.assetColor === undefined) {
         return {};
       }
 
       return {
-        'background-color': this.asset.color,
-        'box-shadow': `0 0 16px ${this.asset.color}`,
-        '-webkit-box-shadow': `0 0 16px ${this.asset.color}`
+        'background-color': this.assetColor,
+        'box-shadow': `0 0 16px ${this.assetColor}`,
+        '-webkit-box-shadow': `0 0 16px ${this.assetColor}`
       };
     },
-    spanMaxAmoutStyle(): Record<string, string> {
-      if (!(this.asset != null && this.asset.color !== undefined)) {
+    spanMaxAmountStyle(): Record<string, string> {
+      if (this.assetColor === undefined) {
         return {};
       }
 
       return {
-        color: this.asset.color
+        color: this.assetColor
       };
     },
     plusIconColor(): string {
-      if (!(this.asset != null && this.asset.color !== undefined)) {
+      if (this.assetColor === undefined) {
         return '#687ee3';
       }
 
-      return this.asset.color;
+      return this.assetColor;
     },
     textPrefix(): string {
       if (this.placeholder === '—') {
@@ -197,7 +205,7 @@ export default Vue.extend({
       return '≈$';
     },
     openSelectModalText(): string {
-      if (this.asset == null) {
+      if (this.asset === undefined) {
         return this.$t('swaps.lblChooseToken') as string;
       }
 
@@ -209,7 +217,7 @@ export default Vue.extend({
     tokenBalance(): string {
       if (this.asset !== undefined) {
         const token = this.tokens.find((t: TokenWithBalance) =>
-          sameAddress(this.asset.address, t.address)
+          sameAddress(this.asset?.address ?? undefined, t.address)
         );
         if (token) {
           return `${formatToDecimals(token.balance, 4)} ${token.symbol}`;
@@ -219,7 +227,7 @@ export default Vue.extend({
       return '';
     },
     inputStep(): string {
-      if (this.asset == null) {
+      if (this.asset === undefined) {
         return new BigNumber(10).pow(-18).toString(10);
       }
 

@@ -129,12 +129,6 @@ const SWAP_SOURCES_ICON = {
   OasisDEX: '🏝'
 } as Record<string, string>;
 
-const FORMAT_SWAP_SOURCES = (tokenName: string): string => {
-  return SWAP_SOURCES_ICON[tokenName]
-    ? `${tokenName} ${SWAP_SOURCES_ICON[tokenName]}`
-    : tokenName;
-};
-
 const USDC_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].USDC_TOKEN_ADDRESS
     ? ADDRESSES[network].USDC_TOKEN_ADDRESS
@@ -275,12 +269,19 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const formatSwapSources = (swapSource: string): string => {
+  return SWAP_SOURCES_ICON[swapSource]
+    ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
+    : swapSource;
+};
+
 export {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
+  formatSwapSources,
   HOLY_PASSAGE_ADDRESS,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
@@ -299,6 +300,5 @@ export {
   WETH_TOKEN_ADDRESS,
   BALANCE_CHECKER_ADDRESS,
   BALANCE_CHECKER_ABI,
-  ERC20_ABI,
-  FORMAT_SWAP_SOURCES
+  ERC20_ABI
 };

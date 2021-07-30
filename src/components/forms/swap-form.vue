@@ -110,8 +110,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
+import Web3 from 'web3';
+import { mapState } from 'vuex';
 
 import {
   AssetField,
@@ -121,6 +121,8 @@ import {
 } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { Slippage } from '../controls/slippage-selector.vue';
+import { Step } from '../controls/form-loader.vue';
 
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
@@ -129,7 +131,6 @@ import {
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
-import { mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
@@ -140,14 +141,11 @@ import {
   notZero,
   toWei
 } from '@/utils/bigmath';
+import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatSwapSources } from '@/wallet/references/data';
+import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
-import Web3 from 'web3';
-import { Slippage } from '../controls/slippage-selector.vue';
-import { Step } from '../controls/form-loader.vue';
-import { formatToDecimals, formatToNative } from '@/utils/format';
-import BigNumber from 'bignumber.js';
-import { FORMAT_SWAP_SOURCES } from '@/wallet/references/data';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -216,7 +214,7 @@ export default Vue.extend({
       if (this.transferData === undefined) {
         return '';
       }
-      return FORMAT_SWAP_SOURCES(this.transferData.swappingVia);
+      return formatSwapSources(this.transferData.swappingVia);
     },
     rateString(): string {
       if (
@@ -324,7 +322,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    formatToNative,
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },

@@ -59,13 +59,11 @@ export default Vue.extend({
       return this.textPrefix !== '';
     },
     spanStyle(): Record<string, string> {
-      const style = {} as Record<string, string>;
-      if (this.amount === 'NaN' || this.amount === '') {
-        style['color'] = 'rgba(60, 60, 67, 0.6)';
-      } else {
-        style['color'] = '#000';
-      }
-      return style;
+      const color =
+        this.amount === 'NaN' || this.amount === ''
+          ? 'rgba(60, 60, 67, 0.6)'
+          : '#000';
+      return { color };
     }
   },
   methods: {
