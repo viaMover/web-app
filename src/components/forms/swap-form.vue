@@ -113,17 +113,6 @@ import Vue from 'vue';
 import Web3 from 'web3';
 import { mapState } from 'vuex';
 
-import {
-  AssetField,
-  GasSelector,
-  SlippageSelector,
-  FormLoader
-} from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-import { Slippage } from '../controls/slippage-selector.vue';
-import { Step } from '../controls/form-loader.vue';
-
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
 import {
@@ -146,6 +135,17 @@ import { formatSwapSources } from '@/wallet/references/data';
 import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
+
+import {
+  AssetField,
+  GasSelector,
+  SlippageSelector,
+  FormLoader
+} from '@/components/controls';
+import { ActionButton } from '@/components/buttons';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { Slippage } from '../controls/slippage-selector.vue';
+import { Step } from '../controls/form-loader.vue';
 
 export default Vue.extend({
   name: 'SwapForm',

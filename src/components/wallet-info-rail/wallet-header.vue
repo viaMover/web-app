@@ -19,8 +19,8 @@
 </template>
 
 <script lang="ts">
-import { mapActions, mapMutations, mapState } from 'vuex';
 import Vue from 'vue';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 import WalletHeaderAvatar from './wallet-header-avatar.vue';
 

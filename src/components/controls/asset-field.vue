@@ -69,15 +69,15 @@ import Vue, { PropType } from 'vue';
 import { mapGetters, mapState } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 
+import { TokenWithBalance } from '@/wallet/types';
+import { sameAddress } from '@/utils/address';
+import { formatToDecimals } from '@/utils/format';
+
 import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { TokenImage } from '@/components/tokens';
 import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
 import PlusIcon from './plus-icon.vue';
-
-import { TokenWithBalance } from '@/wallet/types';
-import { sameAddress } from '@/utils/address';
-import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'AssetField',
