@@ -3,7 +3,10 @@
     button-class="button back-link button-active"
     @button-click="handleClick"
   >
-    <img alt="back link icon" src="@/assets/images/back-link.svg" />
+    <img
+      :alt="$t('icon.txtBackLinkIconAlt')"
+      src="@/assets/images/back-link.svg"
+    />
   </action-button>
 </template>
 

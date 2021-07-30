@@ -6,7 +6,7 @@
           <span>{{ icon }}</span>
         </div>
         <div v-else-if="iconImgSrc !== ''" class="icon">
-          <img :alt="iconImgSrc" :src="iconImgSrc" />
+          <img :alt="title ? title : iconImgSrc" :src="iconImgSrc" />
         </div>
       </slot>
       <slot name="title">

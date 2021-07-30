@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 import { AccountStoreState, TransactionGroup } from '../types';
 import { RootStoreState } from '@/store/types';
-import { Transaction } from '@/wallet/types';
+import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 import { add, divide, fromWei, multiply } from '@/utils/bigmath';
 import { MonthBalanceItem } from '@/services/mover/savings';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -289,29 +289,58 @@ export default {
         state.savingsReceipt.totalWithdrawals !== 0)
     );
   },
-  tokenColorMap(state): Record<string, string> {
-    const allTokensWithColor = state.allTokens.filter((token) => !!token.color);
-
-    return allTokensWithColor.reduce((acc, token) => {
-      if (token.color === undefined) {
-        return acc;
+  getTokenColor(state): (address?: string) => string | undefined {
+    return (address?: string) => {
+      if (state.tokenColorMap === undefined) {
+        return '';
       }
 
-      return {
-        ...acc,
-        [token.address.toLowerCase()]: token.color
-      };
-    }, {});
-  },
-  getTokenColor(state, getters): (address?: string) => string | undefined {
-    const tokenColorMap: Record<string, string> = getters.tokenColorMap;
-
-    return (address?: string) => {
       if (address === undefined) {
         return '';
       }
 
-      return tokenColorMap[address.toLowerCase()];
+      return state.tokenColorMap[address.toLowerCase()];
+    };
+  },
+  searchInAllTokens(state): (searchTerm: string) => Array<Token> {
+    return (searchTerm: string) => {
+      const searchTermProcessed = searchTerm.trim().toLowerCase();
+      if (searchTermProcessed === '') {
+        return state.allTokens.slice(0, 100);
+      }
+
+      if (state.allTokensSearcher === undefined) {
+        return state.allTokens
+          .filter(
+            (t) =>
+              t.symbol.toLowerCase().includes(searchTermProcessed) ||
+              t.name.toLowerCase().includes(searchTermProcessed)
+          )
+          .slice(0, 100);
+      }
+
+      return state.allTokensSearcher
+        .search(searchTerm, { limit: 50 })
+        .map((res) => res.item);
+    };
+  },
+  searchInWalletTokens(state): (searchTerm: string) => Array<TokenWithBalance> {
+    return (searchTerm: string) => {
+      const searchTermProcessed = searchTerm.trim().toLowerCase();
+
+      if (searchTermProcessed === '') {
+        return state.tokens;
+      }
+
+      if (state.tokensSearcher === undefined) {
+        return state.tokens.filter(
+          (t) =>
+            t.symbol.toLowerCase().includes(searchTermProcessed) ||
+            t.name.toLowerCase().includes(searchTermProcessed)
+        );
+      }
+
+      return state.tokensSearcher.search(searchTerm).map((res) => res.item);
     };
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

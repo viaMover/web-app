@@ -19,41 +19,15 @@
     </div>
 
     <div ref="resultsTop" class="swaps__wrapper-search-items">
-      <search-modal-token-list
-        has-header
-        header-class="favorite"
-        :items="tokenGroups.favorite"
-        @select="handleSelect"
-      >
-        <template v-slot:header>
-          <img alt="favorite icon" src="@/assets/images/favorite-icon.svg" />
-          {{ $t('search.lblFavorite') }}
-        </template>
-      </search-modal-token-list>
-      <search-modal-token-list
-        has-header
-        header-class="verified"
-        :items="tokenGroups.verified"
-        @select="handleSelect"
-      >
-        <template v-slot:header>
-          <img alt="verified icon" src="@/assets/images/verified-icon.svg" />
-          {{ $t('search.lblVerified') }}
-        </template>
-      </search-modal-token-list>
-      <search-modal-token-list
-        :items="tokenGroups.rest"
-        @select="handleSelect"
-      />
+      <search-modal-token-list :items="filteredTokens" @select="handleSelect" />
     </div>
   </centered-modal-window>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import Fuse from 'fuse.js';
-import partition from 'lodash-es/partition';
 import filter from 'lodash-es/filter';
 
 import {
@@ -63,7 +37,6 @@ import {
   toggleSingleItem,
   unsubToggle
 } from '@/components/toggle/toggle-root';
-import { TokenGroups } from './types';
 import { Modal } from '../modalTypes';
 
 import CenteredModalWindow from '../centered-modal-window.vue';
@@ -85,7 +58,7 @@ export default Vue.extend({
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
       debounceTimeout: 500,
-      searcher: null as Fuse<Token> | null,
+      forcedTokenArraySearcher: undefined as Fuse<Token> | undefined,
       useWalletTokens: false,
       excludedTokens: [] as Array<Token>,
       treasuryOnly: false as boolean,
@@ -94,28 +67,27 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', {
-      allTokens: 'allTokens',
-      walletTokens: 'tokens',
       networkInfo: 'networkInfo'
     }),
-    tokenSource(): Array<Token> {
-      if (this.forceTokenArray.length > 0) {
-        return this.forceTokenArray;
-      }
-      return this.useWalletTokens ? this.walletTokens : this.allTokens;
-    },
+    ...mapGetters('account', {
+      searchInAllTokens: 'searchInAllTokens',
+      searchInWalletTokens: 'searchInWalletTokens'
+    }),
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
     filteredTokens(): Array<Token> {
-      let tokens: Array<Token>;
-      if (!this.searcher || this.searchTermDebounced === '') {
-        tokens = this.tokenSource;
+      console.time('searcher');
+      let searcher: (searchTerm: string) => Array<Token>;
+      if (this.forceTokenArray.length > 0) {
+        searcher = this.searchInForcedTokenArray;
+      } else if (this.useWalletTokens) {
+        searcher = this.searchInWalletTokens;
       } else {
-        tokens = this.searcher
-          .search(this.searchTermDebounced)
-          .map((result) => result.item);
+        searcher = this.searchInAllTokens;
       }
+
+      let tokens: Array<Token> = searcher(this.searchTermDebounced);
 
       if (this.treasuryOnly) {
         tokens = tokens.filter((t) =>
@@ -133,19 +105,8 @@ export default Vue.extend({
         );
       }
 
-      return tokens.slice(0, 100);
-    },
-    tokenGroups(): TokenGroups {
-      const tokens = this.filteredTokens.slice();
-
-      const [favorite, other] = partition(tokens, (t) => t.isFavorite);
-      const [verified, rest] = partition(other, (t) => t.isVerified);
-
-      return {
-        favorite,
-        verified,
-        rest
-      };
+      console.timeEnd('searcher');
+      return tokens;
     }
   },
   watch: {
@@ -165,15 +126,12 @@ export default Vue.extend({
         });
       }, this.debounceTimeout);
     },
-    useWalletTokens(newVal: boolean, oldVal: boolean): void {
-      if (newVal !== oldVal) {
-        this.initSearcher();
+    forceTokenArray(newVal: Array<Token>, oldVal: Array<Token>) {
+      if (newVal === oldVal) {
+        return;
       }
-    },
-    allTokens(newVal: Array<Token>, oldVal: Array<Token>): void {
-      if (newVal !== oldVal) {
-        this.initSearcher();
-      }
+
+      this.initSearcher();
     }
   },
   beforeMount() {
@@ -181,14 +139,14 @@ export default Vue.extend({
     this.initSearcher();
   },
   beforeDestroy() {
-    this.searcher = null;
+    this.forcedTokenArraySearcher = undefined;
     window.clearTimeout(this.debounce);
     unsubToggle(this.modalId, this.handleToggle);
   },
   methods: {
     initSearcher(): void {
-      this.searcher = new Fuse<Token>(this.tokenSource, {
-        keys: ['name', 'symbol', 'address'],
+      this.forcedTokenArraySearcher = new Fuse<Token>(this.forceTokenArray, {
+        keys: ['name', 'symbol'],
         isCaseSensitive: false
       });
     },
@@ -196,6 +154,13 @@ export default Vue.extend({
       sendResult<Token>(this.modalId, token);
       this.searchTerm = '';
       toggleSingleItem(this.modalId);
+    },
+    searchInForcedTokenArray(searchTerm: string): Array<Token> {
+      return (
+        this.forcedTokenArraySearcher
+          ?.search(searchTerm, { limit: 100 })
+          .map((res) => res.item) || this.forceTokenArray
+      );
     },
     handleToggle(
       payload: TogglePayload<{

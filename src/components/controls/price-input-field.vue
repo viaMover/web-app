@@ -1,14 +1,18 @@
 <template>
-  <input
-    :id="fieldId"
-    :class="inputClass"
-    :max="maxAmount"
-    min="0"
-    :placeholder="placeholder"
-    type="number"
-    :value="amount"
-    @input="updateAmount($event.target.value)"
-  />
+  <div>
+    <span v-if="hasPrefix" :style="spanStyle">{{ textPrefix }}</span>
+    <input
+      :id="fieldId"
+      :class="inputClass"
+      :max="maxAmount"
+      min="0"
+      :placeholder="placeholder"
+      :step="step"
+      type="number"
+      :value="amount"
+      @input="updateAmount($event.target.value)"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -44,6 +48,22 @@ export default Vue.extend({
     placeholder: {
       type: String,
       default: ''
+    },
+    step: {
+      type: String,
+      required: true
+    }
+  },
+  computed: {
+    hasPrefix(): boolean {
+      return this.textPrefix !== '';
+    },
+    spanStyle(): Record<string, string> {
+      const color =
+        this.amount === 'NaN' || this.amount === ''
+          ? 'rgba(60, 60, 67, 0.6)'
+          : '#000';
+      return { color };
     }
   },
   methods: {

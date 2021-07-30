@@ -2,16 +2,17 @@ import { SortAndDedupedTransactions } from '../utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
 import {
-  AccountStoreState,
   AccountData,
-  ProviderData,
+  AccountStoreState,
+  Avatar,
   ChartPair,
-  Avatar
+  ProviderData
 } from '../types';
-import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
+import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 import { SortAndDedupedTokens } from '../utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
 import { SavingsInfo, SavingsReceipt } from '@/services/mover';
+import Fuse from 'fuse.js';
 
 export default {
   setEthPrice(state, ethPrice: string): void {
@@ -36,8 +37,21 @@ export default {
     state.currentAddress = address;
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
-    const orderedDedupedResults = SortAndDedupedTokens(tokens);
-    state.tokens = orderedDedupedResults;
+    state.tokens = SortAndDedupedTokens(tokens);
+
+    const searchOptions = {
+      keys: [
+        {
+          name: 'name',
+          weight: 1
+        },
+        {
+          name: 'symbol',
+          weight: 2.5
+        }
+      ]
+    };
+    state.tokensSearcher = new Fuse(state.tokens, searchOptions);
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];
@@ -51,6 +65,31 @@ export default {
   },
   setAllTokens(state, tokens: Array<Token>): void {
     state.allTokens = tokens;
+    const searchOptions = {
+      keys: [
+        {
+          name: 'name',
+          weight: 1
+        },
+        {
+          name: 'symbol',
+          weight: 2.5
+        }
+      ]
+    };
+    const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
+
+    state.allTokensSearcher = new Fuse(state.allTokens, searchOptions, index);
+    state.tokenColorMap = state.allTokens.reduce((acc, token) => {
+      if (token.color === undefined) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [token.address.toLowerCase()]: token.color
+      };
+    }, {});
   },
   setWalletTransactions(state, transactions: Array<Transaction>): void {
     const orderedDedupedResults = SortAndDedupedTransactions(transactions);
