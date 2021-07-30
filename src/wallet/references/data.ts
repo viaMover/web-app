@@ -93,6 +93,48 @@ const ADDRESSES = {
   }
 };
 
+const SWAP_SOURCES_ICON = {
+  '0x': '',
+  //Uniswap: '',
+  Uniswap_V2: '🦄',
+  //Eth2Dai: '',
+  'Kyber Network': '',
+  Curve: '🧮',
+  Balancer: '⚖',
+  Balancer_V2: '⚖',
+  Bancor: '🕳',
+  mStable: '',
+  Mooniswap: '🌑',
+  Swerve: '',
+  SnowSwap: '❄',
+  SushiSwap: '🍣',
+  'Shell Protocol': '🐚',
+  //MultiHop: '',
+  DODO: '🐣',
+  //DODO_V2: '🐣',
+  CREAM: '🍦',
+  //LiquidityProvider: '',
+  CryptoCom: '🪙',
+  Linkswap: '',
+  //Lido: '',
+  MakerPsm: '',
+  KyberDMM: '',
+  Smoothy: '',
+  Component: '',
+  Saddle: '',
+  xSigma: '',
+  Uniswap_V3: '🦄',
+  //Curve_V2: '🧮',
+  ShibaSwap: '🐕',
+  OasisDEX: '🏝'
+} as Record<string, string>;
+
+const FORMAT_SWAP_SOURCES = (tokenName: string): string => {
+  return SWAP_SOURCES_ICON[tokenName]
+    ? `${tokenName} ${SWAP_SOURCES_ICON[tokenName]}`
+    : tokenName;
+};
+
 const USDC_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].USDC_TOKEN_ADDRESS
     ? ADDRESSES[network].USDC_TOKEN_ADDRESS
@@ -252,5 +294,6 @@ export {
   WETH_TOKEN_ADDRESS,
   BALANCE_CHECKER_ADDRESS,
   BALANCE_CHECKER_ABI,
-  ERC20_ABI
+  ERC20_ABI,
+  FORMAT_SWAP_SOURCES
 };

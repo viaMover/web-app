@@ -147,6 +147,7 @@ import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '../controls/form-loader.vue';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import BigNumber from 'bignumber.js';
+import { FORMAT_SWAP_SOURCES } from '@/wallet/references/data';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -215,7 +216,7 @@ export default Vue.extend({
       if (this.transferData === undefined) {
         return '';
       }
-      return this.transferData.swappingVia;
+      return FORMAT_SWAP_SOURCES(this.transferData.swappingVia);
     },
     rateString(): string {
       if (
