@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-export const sameAddress = (addr1: string, addr2: string): boolean => {
+export const sameAddress = (addr1?: string, addr2?: string): boolean => {
   if (addr1 === undefined || addr2 === undefined) {
     return false;
   }

@@ -38,7 +38,11 @@
       </div>
       <div class="modal-wrapper-info-buttons">
         <button class="flip button-active" type="button" @click="flipAssets">
-          <img src="@/assets/images/flip.png" /><span>Flip</span>
+          <img
+            :alt="$t('icon.txtFlipAssetsIconAlt')"
+            src="@/assets/images/flip.png"
+          />
+          <span>Flip</span>
         </button>
         <button
           class="tx-details button-active"
@@ -46,7 +50,10 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <img
+            :alt="$t('icon.txtSwapDetailsIconAlt')"
+            src="@/assets/images/swap-details.png"
+          />
           <span>Swap Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -103,17 +110,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
-
-import {
-  AssetField,
-  GasSelector,
-  SlippageSelector,
-  FormLoader
-} from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import Web3 from 'web3';
+import { mapState } from 'vuex';
 
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
@@ -122,7 +120,6 @@ import {
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
-import { mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
@@ -133,12 +130,22 @@ import {
   notZero,
   toWei
 } from '@/utils/bigmath';
+import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatSwapSources } from '@/wallet/references/data';
+import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
-import Web3 from 'web3';
+
+import {
+  AssetField,
+  GasSelector,
+  SlippageSelector,
+  FormLoader
+} from '@/components/controls';
+import { ActionButton } from '@/components/buttons';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '../controls/form-loader.vue';
-import { formatToDecimals, formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -207,7 +214,7 @@ export default Vue.extend({
       if (this.transferData === undefined) {
         return '';
       }
-      return this.transferData.swappingVia;
+      return formatSwapSources(this.transferData.swappingVia);
     },
     rateString(): string {
       if (
@@ -424,9 +431,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = multiply(
-          this.input.asset.priceUSD,
-          this.input.amount
+        this.input.nativeAmount = formatToNative(
+          multiply(this.input.asset.priceUSD, this.input.amount)
         );
 
         const transferData = await this.calcData(
@@ -441,9 +447,8 @@ export default Vue.extend({
           transferData.buyAmount,
           this.output.asset.decimals
         );
-        this.output.nativeAmount = multiply(
-          this.output.asset.priceUSD,
-          this.output.amount
+        this.output.nativeAmount = formatToNative(
+          multiply(this.output.asset.priceUSD, this.output.amount)
         );
 
         await this.tryToEstimate(
@@ -542,9 +547,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = multiply(
-          this.output.asset.priceUSD,
-          this.output.amount
+        this.output.nativeAmount = formatToNative(
+          multiply(this.output.asset.priceUSD, this.output.amount)
         );
 
         const transferData = await this.calcData(
@@ -559,9 +563,8 @@ export default Vue.extend({
           transferData.sellAmount,
           this.input.asset.decimals
         );
-        this.input.nativeAmount = multiply(
-          this.input.asset.priceUSD,
-          this.input.amount
+        this.input.nativeAmount = formatToNative(
+          multiply(this.input.asset.priceUSD, this.input.amount)
         );
 
         await this.tryToEstimate(

@@ -326,13 +326,13 @@ export default {
   },
   searchInWalletTokens(state): (searchTerm: string) => Array<TokenWithBalance> {
     return (searchTerm: string) => {
+      const searchTermProcessed = searchTerm.trim().toLowerCase();
+
+      if (searchTermProcessed === '') {
+        return state.tokens;
+      }
+
       if (state.tokensSearcher === undefined) {
-        const searchTermProcessed = searchTerm.trim().toLowerCase();
-
-        if (searchTermProcessed === '') {
-          return state.tokens;
-        }
-
         return state.tokens.filter(
           (t) =>
             t.symbol.toLowerCase().includes(searchTermProcessed) ||

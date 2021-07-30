@@ -1,7 +1,7 @@
 <template>
   <main>
     <router-link class="logo" :to="{ name: 'home' }">
-      <img alt="logo" src="@/assets/images/logo.svg" />
+      <img :alt="$t('icon.txtLogoAlt')" src="@/assets/images/logo.svg" />
     </router-link>
     <div class="general-no-wallet-desktop">
       <div class="g-wrapper">

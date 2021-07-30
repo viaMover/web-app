@@ -28,6 +28,7 @@
       :in-progress-text="$t('savings.lblInProgress')"
       :items="savingsMonthStatsOptions"
       navigate-to-name="savings-month-stats"
+      :title="$t('savings.lblSavingsStatements')"
       wrapper-class="savings__menu-wrapper-statements"
     />
   </secondary-page>
