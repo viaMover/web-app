@@ -34,7 +34,7 @@
     <div class="modal-wrapper-info-items-item-right">
       <button
         class="currency button-active"
-        :class="buttonClass"
+        :class="{ empty: asset == null }"
         :style="buttonStyle"
         type="button"
         @click.prevent.stop="handleOpenSelectModal"
@@ -52,7 +52,7 @@
         type="button"
         @click="handleSelectMaxAmount"
       >
-        <plus-icon :stroke="plusColor" />
+        <plus-icon :stroke="plusIconColor" />
         <span :style="spanMaxAmoutStyle">
           {{ $t('asset.lblSelectMax') }}
         </span>
@@ -162,26 +162,32 @@ export default Vue.extend({
             })
       ) as string;
     },
-    buttonClass(): Record<string, boolean> {
-      return {
-        empty: this.asset == null
-      };
-    },
     buttonStyle(): Record<string, string> {
-      let style = {} as Record<string, string>;
-      if (this.asset != null && this.asset.color !== undefined) {
-        style['background-color'] = this.asset.color;
-        style['box-shadow'] = '0 0 16px ' + this.asset.color;
-        style['-webkit-box-shadow'] = '0 0 16px ' + this.asset.color;
-      }
-      return style;
-    },
-    plusColor(): string {
-      if (this.asset != null && this.asset.color !== undefined) {
-        return this.asset.color;
+      if (!(this.asset != null && this.asset.color !== undefined)) {
+        return {};
       }
 
-      return '#687ee3';
+      return {
+        'background-color': this.asset.color,
+        'box-shadow': `0 0 16px ${this.asset.color}`,
+        '-webkit-box-shadow': `0 0 16px ${this.asset.color}`
+      };
+    },
+    spanMaxAmoutStyle(): Record<string, string> {
+      if (!(this.asset != null && this.asset.color !== undefined)) {
+        return {};
+      }
+
+      return {
+        color: this.asset.color
+      };
+    },
+    plusIconColor(): string {
+      if (!(this.asset != null && this.asset.color !== undefined)) {
+        return '#687ee3';
+      }
+
+      return this.asset.color;
     },
     textPrefix(): string {
       if (this.placeholder === '—') {
@@ -189,13 +195,6 @@ export default Vue.extend({
       }
 
       return '≈$';
-    },
-    spanMaxAmoutStyle(): Record<string, string> {
-      let style = {} as Record<string, string>;
-      if (this.asset != null && this.asset.color !== undefined) {
-        style['color'] = this.asset.color;
-      }
-      return style;
     },
     openSelectModalText(): string {
       if (this.asset == null) {

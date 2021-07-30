@@ -324,9 +324,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    formatToNative(value: BigNumber.Value): BigNumber.Value {
-      return formatToNative(value);
-    },
+    formatToNative,
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },

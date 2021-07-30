@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span v-if="hasSpan" :style="spanStyle">{{ textPrefix }}</span>
+    <span v-if="hasPrefix" :style="spanStyle">{{ textPrefix }}</span>
     <input
       :id="fieldId"
       :class="inputClass"
@@ -55,7 +55,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    hasSpan(): boolean {
+    hasPrefix(): boolean {
       return this.textPrefix !== '';
     },
     spanStyle(): Record<string, string> {

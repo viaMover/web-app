@@ -9,7 +9,7 @@
           src="@/assets/images/arrow-down.svg"
         />
       </button>
-      <button class="status-button">
+      <button class="status-button" type="button">
         <span class="status">
           {{ $t('lblDisconnect') }}
         </span>
