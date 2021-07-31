@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { ReservedAsset } from '@/components/treasury/treasury-reserved-assets/types';
 import {
@@ -36,12 +36,16 @@ export default Vue.extend({
       'treasuryTotalStakedMove',
       'treasuryTotalStakedMoveEthLP'
     ]),
-    formattedMoveAmountNative(): string {
-      const moveAmountNative = this.treasuryTotalStakedMove ?? '0';
+    ...mapGetters('account', {
+      treasuryStakedMove: 'treasuryStakedMove',
+      treasuryStakedMoveLP: 'treasuryStakedMoveLP'
+    }),
+    formattedMoveAmount(): string {
+      const moveAmountNative = this.treasuryStakedMove;
       return formatToDecimals(moveAmountNative, 4);
     },
-    formattedMoveEthLPAmountNative(): string {
-      const moveEthLPAmountNative = this.treasuryTotalStakedMoveEthLP ?? '0';
+    formattedMoveEthLPAmount(): string {
+      const moveEthLPAmountNative = this.treasuryStakedMoveLP;
       return formatToDecimals(moveEthLPAmountNative, 4);
     },
     assets(): Array<ReservedAsset> {
@@ -59,13 +63,13 @@ export default Vue.extend({
           name: 'MOVE',
           symbol: moveAsset.symbol,
           displaySymbol: true,
-          amount: this.formattedMoveAmountNative
+          amount: this.formattedMoveAmount
         },
         {
           name: 'MOVE-ETH LP',
           symbol: moveEthLPAsset.symbol,
           displaySymbol: true,
-          amount: this.formattedMoveEthLPAmountNative
+          amount: this.formattedMoveEthLPAmount
         },
         {
           name: 'The Powercard',

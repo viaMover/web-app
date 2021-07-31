@@ -164,38 +164,50 @@ export default {
   treasuryEarnedThisMonthNative(state, getters): string {
     return multiply(getters.treasuryEarnedThisMonth, getters.usdcNativePrice);
   },
-  treasuryStakedBalance(state): string {
+  treasuryStakedMove(state): string {
     let balanceMove = '0';
-    let balanceMoveLP = '0';
+
     if (state.treasuryBalanceMove) {
       balanceMove = state.treasuryBalanceMove;
     }
+
+    if (
+      balanceMove == '0' &&
+      !state.isTreasuryInfoLoading &&
+      state.treasuryInfo !== undefined &&
+      state.networkInfo !== undefined
+    ) {
+      balanceMove = fromWei(
+        state.treasuryInfo.currentStakedMove,
+        getUSDCAssetData(state.networkInfo.network).decimals
+      );
+    }
+
+    return balanceMove;
+  },
+  treasuryStakedMoveLP(state): string {
+    let balanceMoveLP = '0';
 
     if (state.treasuryBalanceLP) {
       balanceMoveLP = state.treasuryBalanceLP;
     }
 
     if (
+      balanceMoveLP == '0' &&
       !state.isTreasuryInfoLoading &&
       state.treasuryInfo !== undefined &&
       state.networkInfo !== undefined
     ) {
-      if (balanceMove == '0') {
-        balanceMove = fromWei(
-          state.treasuryInfo.currentStakedMove,
-          getUSDCAssetData(state.networkInfo.network).decimals
-        );
-      }
-
-      if (balanceMoveLP == '0') {
-        balanceMoveLP = fromWei(
-          state.treasuryInfo.currentStakedMoveLP,
-          getUSDCAssetData(state.networkInfo.network).decimals
-        );
-      }
+      balanceMoveLP = fromWei(
+        state.treasuryInfo.currentStakedMoveLP,
+        getUSDCAssetData(state.networkInfo.network).decimals
+      );
     }
 
-    return add(balanceMove, balanceMoveLP);
+    return balanceMoveLP;
+  },
+  treasuryStakedBalance(state, getters): string {
+    return add(getters.treasuryStakedMove, getters.treasuryStakedMoveLP);
   },
   treasuryStakedBalanceNative(state, getters): string {
     return multiply(getters.treasuryStakedBalance, getters.usdcNativePrice);

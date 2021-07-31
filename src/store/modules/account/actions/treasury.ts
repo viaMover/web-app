@@ -5,6 +5,13 @@ import { AccountStoreState } from '@/store/modules/account/types';
 
 import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
+import {
+  getTotalStakedMove,
+  getTotalStakedMoveEthLP,
+  getTreasuryAPY,
+  getTreasuryBalance,
+  getTreasuryBonus
+} from '@/services/chain';
 
 export type TreasuryGetReceiptPayload = {
   year: number;
@@ -12,6 +19,66 @@ export type TreasuryGetReceiptPayload = {
 };
 
 export default {
+  async fetchTreasuryFreshData({ commit, state, getters }): Promise<void> {
+    if (
+      state.currentAddress === undefined ||
+      state.networkInfo === undefined ||
+      state.provider === undefined
+    ) {
+      return;
+    }
+
+    const getTreasuryBalancesPromise = getTreasuryBalance(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTreasuryBonusPromise = getTreasuryBonus(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTreasuryAPYPromise = getTreasuryAPY(
+      getters.usdcNativePrice,
+      getters.moveNativePrice,
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTotalStakedMovePromise = getTotalStakedMove(
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const [
+      treasuryBalances,
+      treasuryBonus,
+      treasuryAPY,
+      treasuryTotalStakedMove,
+      treasuryTotalStakedMoveEthLP
+    ] = await Promise.all([
+      getTreasuryBalancesPromise,
+      getTreasuryBonusPromise,
+      getTreasuryAPYPromise,
+      getTotalStakedMovePromise,
+      getTotalStakedMoveEthLPPromise
+    ]);
+
+    commit('setTreasuryBalanceMove', treasuryBalances.MoveBalance);
+    commit('setTreasuryBalanceLP', treasuryBalances.LPBalance);
+    commit('setTreasuryBonus', treasuryBonus);
+    commit('setTreasuryAPY', treasuryAPY);
+    commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
+    commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
+  },
   async fetchTreasuryInfo({ commit, state }): Promise<void> {
     if (state.currentAddress === undefined) {
       return;

@@ -9,3 +9,9 @@ export {
   getTreasuryBalance,
   getTreasuryBonus
 } from './treasury/treasury';
+
+export {
+  getMOVEPriceInWETH,
+  getSLPPriceInWETH,
+  getUSDCPriceInWETH
+} from './token-prices/token-prices';
