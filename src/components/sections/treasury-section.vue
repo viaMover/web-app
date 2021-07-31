@@ -7,7 +7,7 @@
     navigate-to-name="treasury-manage"
   >
     <template v-slot:heading>
-      {{ $t('treasury.lblTreasuryHeader', { amount: '$864.17' }) }}
+      {{ $t('treasury.lblTreasuryHeader', { amount: treasuryBonus }) }}
     </template>
 
     <p>
@@ -18,6 +18,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
+import { formatToNative } from '@/utils/format';
 
 import HeadingSection from './heading-section.vue';
 
@@ -25,6 +28,12 @@ export default Vue.extend({
   name: 'TreasurySection',
   components: {
     HeadingSection
+  },
+  computed: {
+    ...mapGetters('account', { treasuryBonusNative: 'treasuryBonusNative' }),
+    treasuryBonus(): string {
+      return `$${formatToNative(this.treasuryBonusNative)}`;
+    }
   }
 });
 </script>

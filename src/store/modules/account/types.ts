@@ -1,9 +1,16 @@
-import { SavingsInfo, SavingsReceipt } from '@/services/mover';
-import { Explorer } from '@/services/zerion/explorer';
-import { NetworkInfo } from '@/utils/networkTypes';
-import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
 import Web3 from 'web3';
 import Fuse from 'fuse.js';
+
+import { NetworkInfo } from '@/utils/networkTypes';
+import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
+
+import { Explorer } from '@/services/zerion/explorer';
+import {
+  SavingsInfo,
+  SavingsReceipt,
+  TreasuryInfo,
+  TreasuryReceipt
+} from '@/services/mover';
 
 export type ChartPair = [number, number];
 
@@ -85,4 +92,12 @@ export type AccountStoreState = {
   treasuryAPY: string | undefined;
   treasuryTotalStakedMove: string | undefined;
   treasuryTotalStakedMoveEthLP: string | undefined;
+
+  isTreasuryInfoLoading: boolean;
+  treasuryInfo: TreasuryInfo | undefined;
+  treasuryInfoError: string | undefined;
+
+  isTreasuryReceiptLoading: boolean;
+  treasuryReceipt: TreasuryReceipt | undefined;
+  treasuryReceiptError: string | undefined;
 };

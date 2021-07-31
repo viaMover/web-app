@@ -21,7 +21,7 @@
       :button-text="$t('treasury.btnView.simple')"
       icon="💰"
       :in-progress-text="$t('treasury.lblInProgress')"
-      :items="savingsMonthStatsOptions"
+      :items="treasuryMonthStatsOptions"
       navigate-to-name="treasury-month-stats"
       wrapper-class="smart-treasury__menu-wrapper-statements"
     />
@@ -53,29 +53,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', ['savingsMonthStatsOptions']),
-    hasActiveTreasury(): boolean {
-      return false;
-    }
-  },
-  watch: {
-    hasActiveTreasury(newVal: boolean) {
-      if (!newVal) {
-        this.replaceInactiveTreasuryRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (!this.hasActiveTreasury) {
-      this.replaceInactiveTreasuryRoute();
-    }
-  },
-  methods: {
-    replaceInactiveTreasuryRoute(): void {
-      this.$router.replace({
-        name: 'treasury-empty'
-      });
-    }
+    ...mapGetters('account', {
+      treasuryMonthStatsOptions: 'treasuryMonthStatsOptions'
+    })
   }
 });
 </script>

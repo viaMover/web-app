@@ -66,7 +66,7 @@
             <img
               alt="coin"
               src="@/assets/images/coin-icon2.jpg"
-              style="box-shadow: rgb(182, 222, 49) 0px 0px 16px"
+              :style="coinImageStyle"
             />
           </span>
           MOVE tokens for a larger portion of the Smart Treasury. You will burn
@@ -102,7 +102,7 @@ import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/cla
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
-import { getExitingAmount } from '@/services/mover/treasury';
+import { getExitingAmount } from '@/services/chain';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostForm',
@@ -236,6 +236,11 @@ export default Vue.extend({
     },
     showInfo(): boolean {
       return this.infoExpanded && this.isInfoAvailable;
+    },
+    coinImageStyle(): Record<string, string> {
+      return {
+        'box-shadow': 'rgb(182, 222, 49) 0px 0px 16px'
+      };
     }
   },
   mounted() {

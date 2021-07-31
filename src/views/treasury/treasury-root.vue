@@ -43,6 +43,7 @@ import {
 } from '@/components/forms';
 import '@/styles/_treasury.less';
 import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
+import { mapGetters } from 'vuex';
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
@@ -63,9 +64,32 @@ export default Vue.extend({
       TreasuryClaimAndBurnModalId: Modal.TreasuryClaimAndBurn
     };
   },
+  computed: {
+    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),
+    isReplaceRouteNeeded(): boolean {
+      return this.$route.name !== 'treasury-empty' && !this.hasActiveTreasury;
+    }
+  },
+  watch: {
+    isReplaceRouteNeeded(newVal: boolean) {
+      if (!newVal) {
+        this.replaceInactiveTreasuryRoute();
+      }
+    }
+  },
+  beforeMount() {
+    if (this.isReplaceRouteNeeded) {
+      this.replaceInactiveTreasuryRoute();
+    }
+  },
   methods: {
     handleClose(): void {
       this.$router.back();
+    },
+    replaceInactiveTreasuryRoute(): void {
+      this.$router.replace({
+        name: 'treasury-empty'
+      });
     }
   }
 });

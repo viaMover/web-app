@@ -1,6 +1,8 @@
-import { SortAndDedupedTransactions } from '../utils/transactions';
-import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
+import Fuse from 'fuse.js';
+
+import { sortAndDeduplicateTransactions } from '../utils/transactions';
+import { getNetworkByChainId } from '@/utils/networkTypes';
 import {
   AccountData,
   AccountStoreState,
@@ -9,10 +11,8 @@ import {
   ProviderData
 } from '../types';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
-import { SortAndDedupedTokens } from '../utils/tokens';
+import { sortAndDeduplicateTokens } from '../utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
-import { SavingsInfo, SavingsReceipt } from '@/services/mover';
-import Fuse from 'fuse.js';
 
 export default {
   setEthPrice(state, ethPrice: string): void {
@@ -37,7 +37,7 @@ export default {
     state.currentAddress = address;
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
-    state.tokens = SortAndDedupedTokens(tokens);
+    state.tokens = sortAndDeduplicateTokens(tokens);
 
     const searchOptions = {
       keys: [
@@ -55,8 +55,7 @@ export default {
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];
-    const orderedDedupedResults = SortAndDedupedTokens(allTokens);
-    state.tokens = orderedDedupedResults;
+    state.tokens = sortAndDeduplicateTokens(allTokens);
   },
   removeWalletTokens(state, removeHashes: Array<string>): void {
     state.tokens = state.tokens.filter(
@@ -92,13 +91,11 @@ export default {
     }, {});
   },
   setWalletTransactions(state, transactions: Array<Transaction>): void {
-    const orderedDedupedResults = SortAndDedupedTransactions(transactions);
-    state.transactions = orderedDedupedResults;
+    state.transactions = sortAndDeduplicateTransactions(transactions);
   },
   updateWalletTransactions(state, newTransactions: Array<Transaction>): void {
     const allTransactions = [...newTransactions, ...state.transactions];
-    const orderedDedupedResults = SortAndDedupedTransactions(allTransactions);
-    state.transactions = orderedDedupedResults;
+    state.transactions = sortAndDeduplicateTransactions(allTransactions);
   },
   removeWalletTransaction(state, removeHashes: Array<string>): void {
     state.transactions = state.transactions.filter(
@@ -149,27 +146,6 @@ export default {
   },
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
-  },
-  toggleIsDebitCardSectionVisible(state): void {
-    state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
-  },
-  setIsSavingsInfoLoading(state, isLoading: boolean): void {
-    state.isSavingsInfoLoading = isLoading;
-  },
-  setSavingsInfoError(state, error: string | undefined): void {
-    state.savingsInfoError = error;
-  },
-  setSavingsInfo(state, info: SavingsInfo | undefined): void {
-    state.savingsInfo = info;
-  },
-  setIsSavingsReceiptLoading(state, isLoading: boolean): void {
-    state.isSavingsReceiptLoading = isLoading;
-  },
-  setSavingsReceiptError(state, error: string | undefined): void {
-    state.savingsReceiptError = error;
-  },
-  setSavingsReceipt(state, receipt: SavingsReceipt): void {
-    state.savingsReceipt = receipt;
   },
   setAvatar(state, avatar: Avatar): void {
     state.avatar = avatar;

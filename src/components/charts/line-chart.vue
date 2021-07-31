@@ -25,7 +25,10 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import Color from 'color';
 
 import { buildBalancesChartData } from '@/store/modules/account/utils/charts';
-import { HourlyBalancesItem } from '@/services/mover/savings';
+import {
+  SavingsHourlyBalancesItem,
+  TreasuryHourlyBalancesItem
+} from '@/services/mover';
 
 import { ActionButton } from '@/components/buttons';
 
@@ -44,7 +47,9 @@ export default Vue.extend({
       default: 'rgba(251, 157, 83, 0.8)'
     },
     chartDataSource: {
-      type: Array as PropType<Array<HourlyBalancesItem>>,
+      type: Array as PropType<
+        Array<SavingsHourlyBalancesItem | TreasuryHourlyBalancesItem>
+      >,
       required: true
     },
     isLoading: {

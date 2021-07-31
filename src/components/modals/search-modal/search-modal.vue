@@ -77,7 +77,6 @@ export default Vue.extend({
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
     filteredTokens(): Array<Token> {
-      console.time('searcher');
       let searcher: (searchTerm: string) => Array<Token>;
       if (this.forceTokenArray.length > 0) {
         searcher = this.searchInForcedTokenArray;
@@ -105,7 +104,6 @@ export default Vue.extend({
         );
       }
 
-      console.timeEnd('searcher');
       return tokens;
     }
   },

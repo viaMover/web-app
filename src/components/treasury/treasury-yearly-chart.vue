@@ -20,8 +20,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { BarChart } from '@/components/charts';
+import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
+
+import { formatToNative } from '@/utils/format';
+
+import { BarChart } from '@/components/charts';
 
 export default Vue.extend({
   name: 'TreasuryYearlyChart',
@@ -30,11 +34,21 @@ export default Vue.extend({
   },
   data() {
     return {
-      bonusBalance: '0',
-      earnedThisMonth: 2984.49,
       earnedRelativeMonthlyChange: 30.37,
       monthName: dayjs().format('MMMM')
     };
+  },
+  computed: {
+    ...mapGetters('account', {
+      treasuryBonusNative: 'treasuryBonusNative',
+      treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative'
+    }),
+    bonusBalance(): string {
+      return `$${formatToNative(this.treasuryBonusNative)}`;
+    },
+    earnedThisMonth(): string {
+      return `$${formatToNative(this.treasuryEarnedThisMonthNative)}`;
+    }
   }
 });
 </script>

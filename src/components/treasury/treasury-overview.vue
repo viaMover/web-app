@@ -21,6 +21,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
+import { formatToNative } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
@@ -30,13 +33,25 @@ export default Vue.extend({
     LeftRailSection,
     LeftRailSectionItem
   },
-  data() {
-    return {
-      reservedAssetsValue: '0',
-      currentBoost: '0x',
-      maximumBoost: '0x',
-      smartTreasurySize: '0'
-    };
+  computed: {
+    ...mapGetters('account', {
+      treasuryStakedBalanceNative: 'treasuryStakedBalanceNative',
+      treasuryBoost: 'treasuryBoost',
+      treasuryTotalStakedBalanceNative: 'treasuryTotalStakedBalanceNative'
+    }),
+    reservedAssetsValue(): string {
+      return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
+    },
+    currentBoost(): string {
+      return `${this.treasuryBoost}x`;
+    },
+    maximumBoost(): string {
+      // TODO: compute if needed
+      return '2.5x';
+    },
+    smartTreasurySize(): string {
+      return `$${formatToNative(this.treasuryTotalStakedBalanceNative)}`;
+    }
   }
 });
 </script>

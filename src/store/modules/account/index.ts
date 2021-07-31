@@ -1,17 +1,23 @@
 import { Module } from 'vuex';
 
-import walletActions from './actions/wallet';
 import { AccountStoreState, Avatar } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
-import gasActions from './actions/gas';
+
 import chartsActions from './actions/charts';
-import utilityActions from './actions/utility';
+import gasActions from './actions/gas';
 import savingsActions from './actions/savings';
-import walletMutations from './mutations/wallet';
-import treasuryMutations from './mutations/treasury';
-import savingsMutations from './mutations/savings';
-import walletGetters from './getters/wallet';
+import treasuryActions from './actions/treasury';
+import utilityActions from './actions/utility';
+import walletActions from './actions/wallet';
+
+import savingsGetters from './getters/savings';
 import treasuryGetters from './getters/treasury';
+import walletGetters from './getters/wallet';
+
+import savingsMutations from './mutations/savings';
+import treasuryMutations from './mutations/treasury';
+import utilityMutations from './mutations/utility';
+import walletMutations from './mutations/wallet';
 
 import allAvatars from '@/../data/avatars.json';
 
@@ -74,22 +80,33 @@ export default {
     treasuryBonus: undefined,
     treasuryAPY: undefined,
     treasuryTotalStakedMove: undefined,
-    treasuryTotalStakedMoveEthLP: undefined
+    treasuryTotalStakedMoveEthLP: undefined,
+
+    isTreasuryInfoLoading: false,
+    treasuryInfo: undefined,
+    treasuryInfoError: undefined,
+
+    isTreasuryReceiptLoading: false,
+    treasuryReceipt: undefined,
+    treasuryReceiptError: undefined
   },
   actions: {
-    ...walletActions,
-    ...gasActions,
     ...chartsActions,
+    ...gasActions,
+    ...savingsActions,
+    ...treasuryActions,
     ...utilityActions,
-    ...savingsActions
+    ...walletActions
   },
   getters: {
-    ...walletGetters,
-    ...treasuryGetters
+    ...savingsGetters,
+    ...treasuryGetters,
+    ...walletGetters
   },
   mutations: {
-    ...walletMutations,
+    ...savingsMutations,
     ...treasuryMutations,
-    ...savingsMutations
+    ...utilityMutations,
+    ...walletMutations
   }
 } as Module<AccountStoreState, RootStoreState>;

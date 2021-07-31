@@ -1,4 +1,8 @@
+import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { add, divide, fromWei, multiply } from '@/utils/bigmath';
+
 import { Network } from '@/utils/networkTypes';
 import {
   ERC20_ABI,
@@ -9,9 +13,7 @@ import {
   USDC_TOKEN_ADDRESS,
   WETH_TOKEN_ADDRESS
 } from '@/wallet/references/data';
-import Web3 from 'web3';
 import { TransactionsParams } from '@/wallet/types';
-import { add, divide, fromWei, multiply } from '@/utils/bigmath';
 
 export const getMOVEPriceInWETH = async (
   accountAddress: string,

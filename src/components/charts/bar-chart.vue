@@ -14,8 +14,12 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Chart, ChartData, ChartOptions } from 'chart.js';
+
 import { buildBalancesChartData } from '@/store/modules/account/utils/charts';
-import { MonthBalanceItem } from '@/services/mover/savings';
+import {
+  SavingsMonthBalanceItem,
+  TreasuryMonthBonusesItem
+} from '@/services/mover';
 
 export default Vue.extend({
   name: 'BarChart',
@@ -29,7 +33,9 @@ export default Vue.extend({
       default: 'rgba(251, 157, 83, 1)'
     },
     chartDataSource: {
-      type: Array as PropType<Array<MonthBalanceItem>>,
+      type: Array as PropType<
+        Array<SavingsMonthBalanceItem | TreasuryMonthBonusesItem>
+      >,
       required: true
     },
     isLoading: {

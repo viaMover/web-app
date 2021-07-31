@@ -1,14 +1,25 @@
-import { HourlyBalancesItem, MonthBalanceItem } from '@/services/mover/savings';
 import dayjs from 'dayjs';
-import { fromWei } from '@/utils/bigmath';
 import { ChartData, ChartType } from 'chart.js';
+
+import {
+  SavingsHourlyBalancesItem,
+  SavingsMonthBalanceItem,
+  TreasuryHourlyBalancesItem,
+  TreasuryMonthBonusesItem
+} from '@/services/mover';
+import { fromWei } from '@/utils/bigmath';
 import { dateFromExplicitPair } from '@/utils/time';
 
 type FilterPeriod = 'month' | 'week' | 'day';
+type TItem =
+  | TreasuryHourlyBalancesItem
+  | SavingsHourlyBalancesItem
+  | TreasuryMonthBonusesItem
+  | SavingsMonthBalanceItem;
 const filterByPeriod = (
-  list: Array<HourlyBalancesItem | MonthBalanceItem>,
+  list: Array<TItem>,
   period: FilterPeriod
-): Array<HourlyBalancesItem | MonthBalanceItem> => {
+): Array<TItem> => {
   if (period === 'month' || list.length === 0) {
     return list;
   }
@@ -25,13 +36,29 @@ const filterByPeriod = (
 const DECIMATION_PERIOD = 12;
 
 export const buildBalancesChartData = (
-  list: Array<HourlyBalancesItem | MonthBalanceItem>,
+  list: Array<TItem>,
   chartType: ChartType,
   filterPeriod: FilterPeriod
 ): ChartData<'line' | 'bar', Array<number>, string> => {
   return filterByPeriod(list, filterPeriod).reduce(
     (acc, val) => {
-      if (val.balance === 0) {
+      let valSource: number;
+      switch (val.type) {
+        case 'savings_hourly_balance_item':
+          valSource = val.balance;
+          break;
+        case 'savings_month_balance_item':
+          valSource = val.balance;
+          break;
+        case 'treasury_hourly_balance_item':
+          valSource = val.bonusEarned;
+          break;
+        case 'treasury_month_bonuses_item':
+          valSource = val.bonusesEarned;
+          break;
+      }
+
+      if (valSource === 0) {
         return acc;
       }
 
@@ -52,7 +79,7 @@ export const buildBalancesChartData = (
         datasets: [
           {
             data: acc.datasets[0].data.concat(
-              Number.parseFloat(fromWei(val.balance, 6))
+              Number.parseFloat(fromWei(valSource, 6))
             )
           }
         ]

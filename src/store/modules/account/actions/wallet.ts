@@ -1,10 +1,10 @@
 import {
   getTreasuryBalance,
-  GetTreasuryBonus,
+  getTreasuryBonus,
   getTreasuryAPY,
   getTotalStakedMove,
   getTotalStakedMoveEthLP
-} from '@/services/mover/treasury';
+} from '@/services/chain/index';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -27,7 +27,7 @@ import {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
   getUSDCPriceInWETH
-} from '@/services/mover/tokensPrices';
+} from '@/services/chain/token-prices/token-prices';
 import {
   clearLastProviderPersist,
   getAvatarFromPersist,
@@ -39,7 +39,6 @@ import {
   bootIntercomSession,
   disconnectIntercomSession
 } from '@/router/intercom-utils';
-import { multiply } from '@/utils/bigmath';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -52,8 +51,6 @@ export type InitWalletPayload = {
   providerBeforeCloseCb: () => void;
   injected: boolean;
 };
-
-export const COOKIE_LAST_PROVIDER = 'move_last_provider';
 
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
@@ -294,7 +291,7 @@ export default {
       state.provider.web3
     );
 
-    const getTreasuryBonusPromise = GetTreasuryBonus(
+    const getTreasuryBonusPromise = getTreasuryBonus(
       state.currentAddress,
       state.networkInfo.network,
       state.provider.web3
@@ -341,7 +338,9 @@ export default {
 
     await dispatch('fetchSavingsFreshData');
 
-    await dispatch('fetchSavingsInfo');
+    const savingsInfoPromise = dispatch('fetchSavingsInfo');
+    const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
+    await Promise.all([savingsInfoPromise, treasuryInfoPromise]);
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);
     //console.log(res);

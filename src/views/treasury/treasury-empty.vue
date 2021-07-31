@@ -50,6 +50,7 @@ import {
 } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
 import { Modal } from '@/components/modals';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'TreasuryEmpty',
@@ -66,9 +67,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    hasActiveTreasury(): boolean {
-      return false;
-    }
+    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' })
   },
   watch: {
     hasActiveTreasury(newVal: boolean) {

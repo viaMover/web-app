@@ -37,6 +37,7 @@ import { SavingsDepositForm, SavingsWithdrawForm } from '@/components/forms';
 import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
 
 import '@/styles/_savings.less';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsRoot',
@@ -56,9 +57,35 @@ export default Vue.extend({
       SavingsWithdrawModalId: Modal.SavingsWithdraw
     };
   },
+  computed: {
+    ...mapGetters('account', {
+      hasActiveSavings: 'hasActiveSavings',
+      savingsMonthStatsOptions: 'savingsMonthStatsOptions'
+    }),
+    isReplaceRouteNeeded(): boolean {
+      return this.$route.name !== 'savings-empty' && !this.hasActiveSavings;
+    }
+  },
+  watch: {
+    isReplaceRouteNeeded(newVal: boolean) {
+      if (newVal) {
+        this.replaceInactiveSavingsRoute();
+      }
+    }
+  },
+  beforeMount() {
+    if (this.isReplaceRouteNeeded) {
+      this.replaceInactiveSavingsRoute();
+    }
+  },
   methods: {
     handleClose(): void {
       this.$router.back();
+    },
+    replaceInactiveSavingsRoute(): void {
+      this.$router.replace({
+        name: 'savings-empty'
+      });
     }
   }
 });
