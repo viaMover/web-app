@@ -35,13 +35,21 @@ const filterByPeriod = (
 
 const DECIMATION_PERIOD = 12;
 
+export type ChartDataItem = {
+  x: string;
+  y: number;
+  meta: TItem;
+};
+
 export const buildBalancesChartData = (
   list: Array<TItem>,
   chartType: ChartType,
-  filterPeriod: FilterPeriod
-): ChartData<'line' | 'bar', Array<number>, string> => {
+  filterPeriod: FilterPeriod,
+  accentedColor: string,
+  defaultColor: string
+): ChartData<'line' | 'bar', Array<ChartDataItem>, string> => {
   return filterByPeriod(list, filterPeriod).reduce(
-    (acc, val) => {
+    (acc, val, idx, arr) => {
       let valSource: number;
       switch (val.type) {
         case 'savings_hourly_balance_item':
@@ -70,16 +78,27 @@ export const buildBalancesChartData = (
         return acc;
       }
 
+      const label =
+        chartType === 'bar'
+          ? dateFromExplicitPair(val.year, val.month)
+              .format('MMM, YY')
+              .toUpperCase()
+          : dayjs.unix(val.snapshotTimestamp).toISOString();
+
       return {
-        labels: acc.labels.concat(
-          chartType === 'bar'
-            ? dateFromExplicitPair(val.year, val.month).format('MMM, YY')
-            : dayjs.unix(val.snapshotTimestamp).toISOString()
-        ),
+        labels: acc.labels.concat(label),
         datasets: [
           {
-            data: acc.datasets[0].data.concat(
-              Number.parseFloat(fromWei(valSource, 6))
+            data: acc.datasets[0].data.concat({
+              x: label,
+              y: Number.parseFloat(fromWei(valSource, 6)),
+              meta: val
+            }),
+            backgroundColor: acc.datasets[0].backgroundColor.concat(
+              idx === arr.length - 1 ? accentedColor : defaultColor
+            ),
+            borderColor: acc.datasets[0].borderColor.concat(
+              idx === arr.length - 1 ? accentedColor : defaultColor
             )
           }
         ]
@@ -89,7 +108,9 @@ export const buildBalancesChartData = (
       labels: new Array<string>(),
       datasets: [
         {
-          data: new Array<number>()
+          data: new Array<ChartDataItem>(),
+          backgroundColor: new Array<string>(),
+          borderColor: new Array<string>()
         }
       ]
     }

@@ -74,7 +74,7 @@ export default {
     btnView: {
       simple: 'View'
     },
-    lblEarnedRelativeMonthlyChange: '{amount} earned this month',
+    lblEarnedRelativeMonthlyChange: 'Yield earned this month',
     lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
     lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
       'Yield earned in {date}',
@@ -158,12 +158,11 @@ export default {
     btnView: {
       simple: 'View'
     },
-    lblEarnedRelativeMonthlyChange:
-      '{amount} bonuses from @:treasury.lblTreasuryPrefix this month',
+    lblEarnedRelativeMonthlyChange: 'Treasury rewards earned this month',
     lblEarnedRelativeMonthlyChangeExtended:
       '{amount} bonuses from @:treasury.lblTreasuryPrefix on {date}',
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
-      '{amount} bonuses from @:treasury.lblTreasuryPrefix in {month}',
+      'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',

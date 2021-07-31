@@ -1,13 +1,14 @@
 <template>
   <div class="">
-    <div class="savings__menu-wrapper-balance">
-      <span class="balance">{{ savingsBalance }}</span>
-      <p>{{ $t('savings.lblSavingsBalance') }}</p>
+    <div class="smart-treasury__menu-wrapper-balance">
+      <span class="balance">{{ bonusBalance }}</span>
+      <p>{{ $t('treasury.lblTreasuryBonusBalance') }}</p>
     </div>
-    <div class="savings__menu-wrapper-graph">
+    <div class="smart-treasury__menu-wrapper-graph">
       <bar-chart
+        accent-color="#F593AE"
         :chart-data-source="chartDataSource"
-        :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
+        :is-loading="isTreasuryInfoLoading || treasuryInfo === undefined"
         @item-selected="handleItemSelected"
       />
       <p>
@@ -23,44 +24,50 @@ import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 import dayjs from 'dayjs';
 
-import { BarChart } from '@/components/charts';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
-import { SavingsMonthBalanceItem } from '@/services/mover';
+
+import { BarChart } from '@/components/charts';
+import { TreasuryMonthBonusesItem } from '@/services/mover';
 import { dateFromExplicitPair } from '@/utils/time';
-import { fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
+import { fromWei, multiply } from '@/utils/bigmath';
 
 export default Vue.extend({
-  name: 'SavingsYearlyChartWrapper',
-  components: { BarChart },
+  name: 'TreasuryYearlyChart',
+  components: {
+    BarChart
+  },
   data() {
     return {
       monthName: dayjs().format('MMMM'),
-      selectedItem: undefined as SavingsMonthBalanceItem | undefined
+      selectedItem: undefined as TreasuryMonthBonusesItem | undefined
     };
   },
   computed: {
     ...mapState('account', {
-      savingsInfo: 'savingsInfo',
-      isSavingsInfoLoading: 'isSavingsInfoLoading',
+      isTreasuryInfoLoading: 'isTreasuryInfoLoading',
+      treasuryInfo: 'treasuryInfo',
       networkInfo: 'networkInfo'
     }),
     ...mapGetters('account', {
-      savingsInfoBalanceNative: 'savingsInfoBalanceNative',
-      savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
+      treasuryBonusNative: 'treasuryBonusNative',
+      treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
       usdcNativePrice: 'usdcNativePrice'
     }),
-    savingsBalance(): string {
-      return `$${formatToNative(this.savingsInfoBalanceNative)}`;
+    bonusBalance(): string {
+      return `$${formatToNative(this.treasuryBonusNative)}`;
     },
-    chartDataSource(): Array<SavingsMonthBalanceItem> {
-      return this.savingsInfo !== undefined
-        ? this.savingsInfo.last12MonthsBalances
+    earnedThisMonth(): string {
+      return `$${formatToNative(this.treasuryEarnedThisMonthNative)}`;
+    },
+    chartDataSource(): Array<TreasuryMonthBonusesItem> {
+      return this.treasuryInfo !== undefined
+        ? this.treasuryInfo.last12MonthsBonuses
         : [];
     },
     selectedItemPrefix(): string {
       if (this.selectedItem === undefined) {
-        return this.$t('savings.lblEarnedRelativeMonthlyChange') as string;
+        return this.$t('treasury.lblEarnedRelativeMonthlyChange') as string;
       }
 
       const now = dayjs();
@@ -68,11 +75,11 @@ export default Vue.extend({
         this.selectedItem.month - 1 == now.get('month') &&
         this.selectedItem.year == now.get('year')
       ) {
-        return this.$t('savings.lblEarnedRelativeMonthlyChange') as string;
+        return this.$t('treasury.lblEarnedRelativeMonthlyChange') as string;
       }
 
       return this.$t(
-        'savings.lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix',
+        'treasury.lblEarnedRelativeMonthlyChangeExtendedMonthOnly',
         {
           date: dateFromExplicitPair(
             this.selectedItem.year,
@@ -83,9 +90,7 @@ export default Vue.extend({
     },
     selectedItemValue(): string {
       if (this.selectedItem === undefined) {
-        return this.formatSelectedItemValue(
-          this.savingsInfoEarnedThisMonthNative
-        );
+        return this.formatSelectedItemValue(this.treasuryEarnedThisMonthNative);
       }
 
       const now = dayjs();
@@ -93,15 +98,13 @@ export default Vue.extend({
         this.selectedItem.month - 1 == now.get('month') &&
         this.selectedItem.year == now.get('year')
       ) {
-        return this.formatSelectedItemValue(
-          this.savingsInfoEarnedThisMonthNative
-        );
+        return this.formatSelectedItemValue(this.treasuryEarnedThisMonthNative);
       }
 
       return this.formatSelectedItemValue(
         multiply(
           fromWei(
-            this.selectedItem.balance,
+            this.selectedItem.bonusesEarned,
             getUSDCAssetData(this.networkInfo.network).decimals
           ),
           this.usdcNativePrice
@@ -110,7 +113,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleItemSelected(item: SavingsMonthBalanceItem): void {
+    handleItemSelected(item: TreasuryMonthBonusesItem): void {
       this.selectedItem = item;
     },
     formatSelectedItemValue(value: string | number): string {

@@ -1,6 +1,15 @@
 <template>
   <div class="chart-group-wrapper" :class="wrapperClass">
-    <div v-if="isLoading" class="loader">loading...</div>
+    <PuSkeletonTheme color="#dcdcdc">
+      <PuSkeleton
+        v-if="isLoading"
+        class="pu-skeleton"
+        height="140px"
+        :loading="true"
+        tag="div"
+        width="100%"
+      />
+    </PuSkeletonTheme>
     <div v-show="!isLoading" class="chart">
       <div class="chart--action-buttons"></div>
       <div class="chart--body">
@@ -13,9 +22,18 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { Chart, ChartData, ChartOptions } from 'chart.js';
+import {
+  Chart,
+  ChartData,
+  ChartOptions,
+  ChartEvent,
+  ActiveElement
+} from 'chart.js';
 
-import { buildBalancesChartData } from '@/store/modules/account/utils/charts';
+import {
+  buildBalancesChartData,
+  ChartDataItem
+} from '@/store/modules/account/utils/charts';
 import {
   SavingsMonthBalanceItem,
   TreasuryMonthBonusesItem
@@ -55,19 +73,23 @@ export default Vue.extend({
     };
   },
   computed: {
-    chartData(): ChartData<'bar', Array<number>, string> {
+    chartData(): ChartData<'bar', Array<ChartDataItem>, string> {
       return buildBalancesChartData(
         this.chartDataSource,
         'bar',
-        'month'
-      ) as ChartData<'bar', Array<number>, string>;
+        'month',
+        this.accentColor,
+        this.defaultColor
+      ) as ChartData<'bar', Array<ChartDataItem>, string>;
     }
   },
   watch: {
-    chartData(newVal: ChartData<'bar', Array<number>, string>) {
+    chartData(newVal: ChartData<'bar', Array<ChartDataItem>, string>) {
       if (this.chartInstance === undefined) {
         return;
       }
+
+      this.$emit('item-selected', undefined);
 
       this.chartInstance.data.labels = newVal.labels;
       this.chartInstance.data.datasets = newVal.datasets;
@@ -81,29 +103,60 @@ export default Vue.extend({
     this.chartInstance?.destroy();
   },
   methods: {
+    onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart): void {
+      if (elements.length < 1) {
+        return;
+      }
+
+      const item = chart.getDatasetMeta(elements[0].datasetIndex)._dataset.data[
+        elements[0].index
+      ]?.meta;
+      if (item === undefined) {
+        return;
+      }
+
+      const datasetLength =
+        chart.config.data.datasets[elements[0].datasetIndex].data.length;
+
+      const backgroundColors = new Array(datasetLength).fill(this.defaultColor);
+      backgroundColors[elements[0].index] = this.accentColor;
+
+      chart.config.data.datasets[elements[0].datasetIndex].backgroundColor =
+        backgroundColors;
+      chart.config.data.datasets[elements[0].datasetIndex].borderColor =
+        backgroundColors;
+      chart.update();
+
+      this.$emit('item-selected', item);
+    },
     initChart(): void {
       const el = this.$refs.chartCanvas as HTMLCanvasElement;
-      this.chartInstance = new Chart<'bar', Array<number>, string>(el, {
+      this.chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
         type: 'bar',
         data: this.chartData,
         options: {
+          events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
           interaction: {
             intersect: false,
             mode: 'index'
           },
-          animation: false,
-          responsive: true,
+          animation: true,
+          onClick: this.onClick,
+          responsive: false,
           plugins: {
             legend: {
               display: false
+            },
+            tooltip: {
+              enabled: false
             }
           },
           elements: {
             bar: {
               borderRadius: 5,
               borderWidth: 1,
-              borderColor: this.accentColor,
-              backgroundColor: this.accentColor
+              borderColor: this.defaultColor,
+              backgroundColor: this.defaultColor
             }
           },
           scales: {

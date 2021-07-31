@@ -16,7 +16,7 @@
       </secondary-page-title>
     </template>
 
-    <treasury-yearly-chart />
+    <treasury-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('treasury.btnView.simple')"
       icon="💰"
@@ -35,7 +35,7 @@ import { mapGetters } from 'vuex';
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
-import { TreasuryYearlyChart } from '@/components/treasury';
+import { TreasuryYearlyChartWrapper } from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryManage',
@@ -44,7 +44,7 @@ export default Vue.extend({
     SecondaryPageTitle,
     ContextButton,
     ContextButtonItem,
-    TreasuryYearlyChart,
+    TreasuryYearlyChartWrapper,
     StatementNavList
   },
   data() {

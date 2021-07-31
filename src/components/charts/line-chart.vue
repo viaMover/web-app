@@ -24,7 +24,10 @@ import Vue, { PropType } from 'vue';
 import { Chart, ChartData, ChartOptions } from 'chart.js';
 import Color from 'color';
 
-import { buildBalancesChartData } from '@/store/modules/account/utils/charts';
+import {
+  buildBalancesChartData,
+  ChartDataItem
+} from '@/store/modules/account/utils/charts';
 import {
   SavingsHourlyBalancesItem,
   TreasuryHourlyBalancesItem
@@ -42,6 +45,10 @@ export default Vue.extend({
   name: 'LineChart',
   components: { ActionButton },
   props: {
+    defaultColor: {
+      type: String,
+      default: 'rgba(60,60,67,0.3)'
+    },
     accentColor: {
       type: String,
       default: 'rgba(251, 157, 83, 0.8)'
@@ -67,21 +74,39 @@ export default Vue.extend({
     };
   },
   computed: {
-    chartData(): ChartData<'line', Array<number>, string> {
+    chartData(): ChartData<'line', Array<ChartDataItem>, string> {
       let data;
       switch (this.scope) {
         case Scope.day:
-          data = buildBalancesChartData(this.chartDataSource, 'line', 'day');
+          data = buildBalancesChartData(
+            this.chartDataSource,
+            'line',
+            'day',
+            this.accentColor,
+            this.defaultColor
+          );
           break;
         case Scope.week:
-          data = buildBalancesChartData(this.chartDataSource, 'line', 'week');
+          data = buildBalancesChartData(
+            this.chartDataSource,
+            'line',
+            'week',
+            this.accentColor,
+            this.defaultColor
+          );
           break;
         case Scope.month:
         default:
-          data = buildBalancesChartData(this.chartDataSource, 'line', 'month');
+          data = buildBalancesChartData(
+            this.chartDataSource,
+            'line',
+            'month',
+            this.accentColor,
+            this.defaultColor
+          );
       }
 
-      return data as ChartData<'line', Array<number>, string>;
+      return data as ChartData<'line', Array<ChartDataItem>, string>;
     },
     backgroundColor(): string {
       return Color(this.accentColor).fade(0.5).hsl().string();

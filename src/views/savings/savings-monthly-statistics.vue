@@ -4,7 +4,10 @@
       <h2>{{ pageTitle }}</h2>
       <p>{{ pageSubtitle }}</p>
     </div>
-    <savings-monthly-chart-wrapper :page-date="pageDate" />
+    <savings-monthly-chart-wrapper
+      v-if="isFeatureEnabled('isSavingsMonthlyChartEnabled')"
+      :page-date="pageDate"
+    />
     <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
@@ -22,6 +25,7 @@ import {
   SavingsMonthlyStatement
 } from '@/components/savings';
 import { dateFromExplicitPair } from '@/utils/time';
+import { isFeatureEnabled } from '@/settings';
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
@@ -57,7 +61,8 @@ export default Vue.extend({
     } as SavingsGetReceiptPayload);
   },
   methods: {
-    ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' })
+    ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' }),
+    isFeatureEnabled
   },
   async beforeRouteUpdate(to, from, next) {
     if (
