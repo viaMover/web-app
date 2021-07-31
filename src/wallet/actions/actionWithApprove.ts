@@ -1,8 +1,10 @@
-import { lessThan, lessThanOrEqual } from './../../utils/bigmath';
+import Web3 from 'web3';
+
+import { lessThanOrEqual } from '@/utils/bigmath';
 import { approve } from './approve/approve';
 import { needApprove } from './approve/needApprove';
 import { SmallToken } from '@/wallet/types';
-import Web3 from 'web3';
+
 export const executeTransactionWithApprove = async (
   token: SmallToken,
   contractAddress: string,
@@ -13,7 +15,7 @@ export const executeTransactionWithApprove = async (
   gasPriceInGwei: string,
   action: () => Promise<void>,
   changeStepToProcess: () => Promise<void>
-) => {
+): Promise<void | never> => {
   if (lessThanOrEqual(gasPriceInGwei, '0')) {
     throw new Error("can't execute transaction with zero gas price");
   }

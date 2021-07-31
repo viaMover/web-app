@@ -1,6 +1,5 @@
-import { sameAddress } from './../../../utils/address';
 import { needApprove } from '../approve/needApprove';
-import { toWei, floorDivide, add } from '@/utils/bigmath';
+import { toWei, floorDivide } from '@/utils/bigmath';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import { BigNumber } from 'bignumber.js';

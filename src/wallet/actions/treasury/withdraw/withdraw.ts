@@ -1,15 +1,13 @@
-import { getPureEthAddress, sameAddress } from '@/utils/address';
-import { toWei } from '@/utils/bigmath';
+import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { sameAddress } from '@/utils/address';
+import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS,
   SMART_TREASURY_ABI,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
