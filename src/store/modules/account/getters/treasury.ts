@@ -21,6 +21,12 @@ import {
 import { TreasuryMonthBonusesItem } from '@/services/mover';
 
 export default {
+  treasuryBonusNative(state, getters): string {
+    if (state.treasuryBonus === undefined) {
+      return '0';
+    }
+    return multiply(state.treasuryBonus, getters.usdcNativePrice);
+  },
   treasuryBoost(state): string {
     if (
       state.treasuryBalanceMove === undefined ||

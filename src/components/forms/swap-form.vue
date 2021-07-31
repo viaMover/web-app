@@ -111,7 +111,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Web3 from 'web3';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
@@ -126,8 +126,10 @@ import {
   divide,
   fromWei,
   greaterThan,
+  isZero,
   multiply,
   notZero,
+  sub,
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
@@ -146,6 +148,8 @@ import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '../controls/form-loader.vue';
+import ethDefaults from '@/wallet/references/defaults';
+import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
 export default Vue.extend({
   name: 'SwapForm',
@@ -173,7 +177,8 @@ export default Vue.extend({
       slippage: '1',
       selectedGasPrice: '0',
       useSubsidized: false,
-      swapGasLimit: '0',
+      subsidizedAvaialbe: false,
+      actionGasLimit: ethDefaults.basic_holy_swap,
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
@@ -189,6 +194,7 @@ export default Vue.extend({
       'tokens',
       'ethPrice'
     ]),
+    ...mapGetters('account', ['treasuryBonusNative']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },
@@ -201,7 +207,7 @@ export default Vue.extend({
         return 'Enter Amount';
       }
 
-      if (greaterThan(this.input.amount, this.input.asset.balance)) {
+      if (greaterThan(this.input.amount, this.maxInputAmount)) {
         return 'Inssuficient Balance';
       }
 
@@ -241,6 +247,9 @@ export default Vue.extend({
         this.input.asset.symbol
       }`;
     },
+    selectedGasPriceInWEI(): string {
+      return Web3.utils.toWei(this.selectedGasPrice, 'Gwei');
+    },
     minimalReceived(): string {
       if (this.transferData === undefined || this.output.asset === undefined) {
         return '';
@@ -265,21 +274,24 @@ export default Vue.extend({
       return '💸 Swap';
     },
     availableGasModes(): Array<GasMode> {
-      return ['treasury', 'low', 'normal', 'high'];
+      if (this.subsidizedAvaialbe) {
+        return ['treasury', 'low', 'normal', 'high'];
+      } else {
+        return ['low', 'normal', 'high'];
+      }
     },
     allGasLimit(): string {
       console.log(
         'all gas limit: ',
-        add(this.approveGasLimit, this.swapGasLimit)
+        add(this.approveGasLimit, this.actionGasLimit)
       );
-      return add(this.approveGasLimit, this.swapGasLimit);
+      return add(this.approveGasLimit, this.actionGasLimit);
     },
     treasuryCover(): string {
-      const selectedGasPriceInWEI = Web3.utils.toWei(
-        this.selectedGasPrice,
-        'Gwei'
+      const swapPriceInWEI = multiply(
+        this.selectedGasPriceInWEI,
+        this.actionGasLimit
       );
-      const swapPriceInWEI = multiply(selectedGasPriceInWEI, this.swapGasLimit);
 
       const swapPriceInEth = Web3.utils.fromWei(swapPriceInWEI, 'ether');
       const swapPriceNative = multiply(swapPriceInEth, this.ethPrice);
@@ -291,7 +303,32 @@ export default Vue.extend({
       }
     },
     maxInputAmount(): string {
-      return this.input.asset !== undefined ? this.input.asset.balance : '0';
+      if (this.input.asset === undefined) {
+        return '0';
+      }
+      console.log(this.input.asset.address);
+      if (this.input.asset.address === 'eth') {
+        console.log(
+          '!!!!!!!!!!!!selectedGasPriceInWEI',
+          this.selectedGasPriceInWEI
+        );
+
+        console.log('!!!!!!!!!!!!approveGasLimit', this.approveGasLimit);
+        console.log('!!!!!!!!!!!!actionGasLimit', this.actionGasLimit);
+
+        console.log('!!!!!!!!!!!!allGasLimit', this.allGasLimit);
+
+        const txnPriceInWeth = multiply(
+          this.allGasLimit,
+          this.selectedGasPriceInWEI
+        );
+        const txnPriceInEth = fromWei(txnPriceInWeth, 18);
+        console.log('!!!!!!!!!!!!txnPriceInEth', txnPriceInEth);
+        const remaining = sub(this.input.asset.balance, txnPriceInEth);
+        console.log('!!!!!!!!!!!!remaining', remaining);
+        return greaterThan(remaining, 0) ? remaining : '0';
+      }
+      return this.input.asset.balance;
     },
     buttonClass(): string {
       if (this.actionAvaialble) {
@@ -320,6 +357,7 @@ export default Vue.extend({
     if (eth) {
       this.input.asset = eth;
     }
+    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {
@@ -356,7 +394,7 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.swapGasLimit,
+          this.actionGasLimit,
           this.approveGasLimit,
           this.selectedGasPrice,
           this.useSubsidized,
@@ -408,7 +446,7 @@ export default Vue.extend({
           this.input.nativeAmount = '';
         }
 
-        this.swapGasLimit = '0';
+        this.actionGasLimit = ethDefaults.basic_holy_swap;
         this.approveGasLimit = '0';
       } finally {
         this.loading = false;
@@ -657,7 +695,7 @@ export default Vue.extend({
       this.output.amount = '';
       this.output.nativeAmount = '';
 
-      this.swapGasLimit = '0';
+      this.actionGasLimit = ethDefaults.basic_holy_swap;
       this.transferData = undefined;
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
@@ -668,7 +706,7 @@ export default Vue.extend({
       this.output.amount = '';
       this.output.nativeAmount = '';
 
-      this.swapGasLimit = '0';
+      this.actionGasLimit = ethDefaults.basic_holy_swap;
       this.transferData = undefined;
     },
     async handleSelectedSlippageChanged(newSlippage: Slippage): Promise<void> {
@@ -718,6 +756,7 @@ export default Vue.extend({
     handleSelectedGasChanged(newGas: GasModeData): void {
       this.useSubsidized = newGas.mode === 'treasury';
       this.selectedGasPrice = String(newGas.price);
+      this.checkSubsidizedAvailability();
     },
     async calcData(
       inputAsset: SmallToken,
@@ -764,8 +803,27 @@ export default Vue.extend({
         return;
       }
 
-      this.swapGasLimit = resp.actionGasLimit;
+      this.actionGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
+
+      this.checkSubsidizedAvailability();
+    },
+    checkSubsidizedAvailability(): void {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we don't allow subsidized transaction"
+        );
+        this.subsidizedAvaialbe = false;
+        return;
+      }
+      this.subsidizedAvaialbe = isSubsidizedAllowed(
+        gasPrice,
+        this.actionGasLimit,
+        this.ethPrice,
+        this.treasuryBonusNative
+      );
     }
   }
 });

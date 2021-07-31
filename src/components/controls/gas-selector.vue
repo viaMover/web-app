@@ -42,7 +42,7 @@ import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import Web3 from 'web3';
 
-export type GasMode = 'high' | 'low' | 'normal' | 'custom' | 'treasury';
+export type GasMode = 'high' | 'low' | 'normal' | 'treasury';
 export type GasModeData = {
   mode: GasMode;
   price: string;
@@ -50,7 +50,7 @@ export type GasModeData = {
 };
 
 export type GasPrice = {
-  type: 'high' | 'low' | 'normal' | 'custom' | 'treasury';
+  type: 'high' | 'low' | 'normal' | 'treasury';
   amount: number;
   txFee: {
     native: {
@@ -83,7 +83,8 @@ export default Vue.extend({
   data() {
     return {
       selectedGasModeIndex: 0,
-      isLoading: false
+      isLoading: false,
+      clicked: false
     };
   },
   computed: {
@@ -174,13 +175,58 @@ export default Vue.extend({
       return '~';
     }
   },
+  watch: {
+    avaialbleGasModes: function (
+      newVal: Array<GasMode>,
+      oldVal: Array<GasMode>
+    ) {
+      console.log('avaialbleGasModes changed: ', newVal, ' | was: ', oldVal);
+      if (
+        newVal.find((v) => v === 'treasury') !== undefined &&
+        oldVal.find((v) => v === 'treasury') === undefined &&
+        !this.clicked
+      ) {
+        this.changeGasPriceToTreasury();
+        return;
+      }
+      const oldMode = oldVal[this.selectedGasModeIndex];
+      const newInd = newVal.findIndex((m) => oldMode === m);
+      if (newInd === -1) {
+        this.selectedGasModeIndex = 0;
+      } else {
+        this.selectedGasModeIndex = newInd;
+      }
+      this.$nextTick(() => {
+        if (this.selectedGasData !== undefined) {
+          this.$emit('selected-gas-changed', this.selectedGasData);
+        }
+      });
+    }
+  },
   mounted() {
     if (this.selectedGasData !== undefined) {
       this.$emit('selected-gas-changed', this.selectedGasData);
     }
   },
   methods: {
+    changeGasPriceToTreasury() {
+      const treasuryModeIndex = this.avaialbleGasModes.findIndex(
+        (m) => m === 'treasury'
+      );
+      if (treasuryModeIndex === -1) {
+        return;
+      }
+      this.selectedGasModeIndex = treasuryModeIndex;
+      this.$nextTick(() => {
+        if (this.selectedGasData !== undefined) {
+          this.$emit('selected-gas-changed', this.selectedGasData);
+        }
+      });
+    },
     toggleGasPrice() {
+      if (!this.clicked) {
+        this.clicked = true;
+      }
       this.selectedGasModeIndex =
         (this.selectedGasModeIndex + 1) % this.avaialbleGasModes.length;
       this.$nextTick(() => {

@@ -102,7 +102,7 @@ import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/cla
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
-import { getExitingAmount } from '@/services/chain';
+import { getExitingAmount, getMaxBurn } from '@/services/chain';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostForm',
@@ -126,6 +126,7 @@ export default Vue.extend({
       actionGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
+      maxBurnedAmount: undefined as undefined | string,
       loading: false
     };
   },
@@ -243,13 +244,27 @@ export default Vue.extend({
       };
     }
   },
-  mounted() {
+  async mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
     const move = this.tokens.find((t: TokenWithBalance) =>
       sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
     );
     if (move) {
       this.input.asset = move;
+    }
+
+    this.loading = true;
+
+    try {
+      this.maxBurnedAmount = await getMaxBurn(
+        this.currentAddress,
+        this.networkInfo.network,
+        this.provider.web3
+      );
+    } catch (err) {
+      console.log(`can't load max burn: ${JSON.stringify(err)}`);
+    } finally {
+      this.loading = false;
     }
   },
   methods: {
@@ -307,6 +322,16 @@ export default Vue.extend({
           this.input.amount
         );
 
+        if (this.maxBurnedAmount === undefined) {
+          this.transferError = 'Burn conditions error';
+          return;
+        }
+
+        if (greaterThan(this.input.amount, this.maxBurnedAmount)) {
+          this.transferError = 'Burn limit reached';
+          return;
+        }
+
         this.claimingFor = await getExitingAmount(
           this.currentAddress,
           this.input.amount,
@@ -317,7 +342,7 @@ export default Vue.extend({
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
         console.error(`can't calc data: ${err}`);
-        this.transferError = 'Estimate error';
+        this.transferError = 'Estimatiom Error';
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -343,6 +368,16 @@ export default Vue.extend({
           this.input.asset.priceUSD,
           this.input.asset.decimals
         );
+
+        if (this.maxBurnedAmount === undefined) {
+          this.transferError = 'Burn conditions error';
+          return;
+        }
+
+        if (greaterThan(this.input.amount, this.maxBurnedAmount)) {
+          this.transferError = 'Burn limit reached';
+          return;
+        }
 
         this.claimingFor = await getExitingAmount(
           this.currentAddress,
