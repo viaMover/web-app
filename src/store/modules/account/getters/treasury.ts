@@ -137,13 +137,6 @@ export default {
 
     return false;
   },
-  treasuryBonusNative(state, getters): string {
-    if (state.treasuryBonus === undefined) {
-      return '0';
-    }
-
-    return multiply(state.treasuryBonus, getters.usdcNativePrice);
-  },
   treasuryMonthStatsOptions(state): Array<TreasuryMonthBonusesItem> {
     if (state.isTreasuryInfoLoading || state.treasuryInfo === undefined) {
       return [];
