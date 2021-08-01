@@ -1,7 +1,7 @@
-![](https://cdn-images-1.medium.com/max/2400/1*vracOoyrcYj_K_KHat12Hw.png)
+![](https://cdn-images-1.medium.com/max/2400/1*4Us0nQ8Xbh0swwN26Q9zgg.png)
 ## Mover — One place for DeFi and Crypto.
 
-Mover makes the internet economy easy and available to everyone. The app abstracts blockchain complexity so that you can finally get great financial service with all DeFi benefits. You can earn highest and safest yield on your digital assets with our automatic portfolio management system. You can also send, receive and swap 30000+ digital assets on Ethereum.  
+Mover makes the internet economy easy and available to everyone. The app abstracts blockchain complexity so that you can finally get great financial service with all DeFi benefits. You can earn highest and safest yield on your digital assets with our automatic portfolio management system. You can also send, receive and swap 30,000+ digital assets on Ethereum.  
 
 ## What can you do?
 
