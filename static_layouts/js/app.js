@@ -16,16 +16,6 @@ $(document).ready(function() {
 	}
 	preload();
 
-	function orderClose() {
-		let order = $('.general-desktop__menu-wrapper-item .order'); 
-		let button = $('.order__buttons .close-button');
-
-		button.on('click', function() { 
-			order.addClass('order-close'); 
-		})
-	}
-	orderClose();
-
 	function liveUpdatesSlider() {
 		new Swiper('.live-updates', {
 			grabCursor: true,
@@ -58,10 +48,16 @@ $(document).ready(function() {
 		const colorThief = new ColorThief();
 		
 		for (let i = 0; i < img.length; i++) {
-			img[i].addEventListener('load', function() {
+			if (img[i].complete) {
 				let shadow = colorThief.getColor(img[i]);
 				img[i].style.boxShadow = '0px 0px 16px' + ' rgb(' + shadow + ')';
-			});
+			} 
+			else {
+				img[i].addEventListener('load', function() {
+					let shadow = colorThief.getColor(img[i]);
+					img[i].style.boxShadow = '0px 0px 16px' + ' rgb(' + shadow + ')';
+				});
+			}
 		}
 	}
 	shadow();
@@ -75,6 +71,16 @@ $(document).ready(function() {
 		})
 	}
 	orderClose();
+
+	function saveClose() {
+		let block = $('.general-desktop__menu-wrapper-save'); 
+		let button = $('.save__buttons .close-button');
+
+		button.on('click', function() { 
+			block.addClass('general-desktop__menu-wrapper-save-active');
+		})
+	}
+	saveClose();
 
 	function swapsPopup() {
 		let popup = $('.swaps__popup'); 

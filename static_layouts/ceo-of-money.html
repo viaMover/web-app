@@ -115,7 +115,11 @@
           <div class="ceo-of-money__menu-wrapper product-item__wrapper">
             <div class="ceo-of-money__menu-wrapper-title product-item__wrapper-title">
               <div class="title">
-                <div class="icon getShadow"><img src="images/ceo-of-money-icon.png" alt="Unexpected Move"/></div>
+                <div class="icon">
+                  <picture>
+                    <source type="image/webp" srcset="images/CEO1_Little.webp, images/CEO1_Little@2x.webp 2x"/><img src="images/CEO1_Little.png" srcset="images/CEO1_Little.png, images/CEO1_Little@2x.png 2x" alt=""/>
+                  </picture>
+                </div>
                 <h2>Nibble Shop</h2>
               </div>
               <div class="button button-active burger-menu">
@@ -162,9 +166,13 @@
             <div class="product-item-buy__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="product-item-buy__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="product-item-buy__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/coin-icon3.jpg" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture><img src="images/ETH.png" srcset="images/ETH.png, images/ETH@2x.png 2x" alt=""/></picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="product-item-buy__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>ETH</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -178,7 +186,7 @@
               <!--
               <form class="product-item-buy__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
               	<div class="product-item-buy__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-              		<div class="icon getShadow"><img src="images/coin-icon3.jpg" alt="coin"/></div>
+              		<div class="icon getShadow"><picture><img src="images/ETH.png" srcset="images/ETH.png, images/ETH@2x.png 2x" alt=""></picture></div>
               		<input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
               		<input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
               	</div>
@@ -191,7 +199,11 @@
             </div>
             <div class="product-item-buy__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Buy<br> Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Buy<br> Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
@@ -261,9 +273,15 @@
             <div class="product-item-sell__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="product-item-sell__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="product-item-sell__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/ceo-of-money-icon.png" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture>
+                      <source type="image/webp" srcset="images/CEO1_Little.webp, images/CEO1_Little@2x.webp 2x"/><img src="images/CEO1_Little.png" srcset="images/CEO1_Little.png, images/CEO1_Little@2x.png 2x" alt=""/>
+                    </picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="product-item-sell__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>CEO1</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -276,7 +294,11 @@
             </div>
             <div class="product-item-sell__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Sell Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Sell Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
@@ -346,9 +368,15 @@
             <div class="product-item-redeem__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="product-item-redeem__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="product-item-redeem__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/ceo-of-money-icon.png" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture>
+                      <source type="image/webp" srcset="images/CEO1_Little.webp, images/CEO1_Little@2x.webp 2x"/><img src="images/CEO1_Little.png" srcset="images/CEO1_Little.png, images/CEO1_Little@2x.png 2x" alt=""/>
+                    </picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="product-item-redeem__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>CEO1</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -383,7 +411,11 @@
             </div>
             <div class="product-item-redeem__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Redeem Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Redeem Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>

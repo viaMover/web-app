@@ -318,9 +318,13 @@
             <div class="purchase-bonds__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="purchase-bonds__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="purchase-bonds__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/coin-icon3.jpg" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture><img src="images/ETH.png" srcset="images/ETH.png, images/ETH@2x.png 2x" alt=""/></picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="purchase-bonds__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>ETH</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -336,7 +340,9 @@
               <div class="purchase-bonds__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
                 <p class="description">Swapping for</p>
                 <div class="value">
-                  <div class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"/></div><span>2,378.18 USDC</span>
+                  <div class="icon getShadow">
+                    <picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""/></picture>
+                  </div><span>2,378.18 USDC</span>
                 </div>
               </div>
               <div class="purchase-bonds__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
@@ -345,7 +351,11 @@
             </div>
             <div class="purchase-bonds__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Transaction Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
@@ -398,7 +408,7 @@
                   </div>
                 </div>
               </div>
-              <div class="purchase-bonds__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>There are two types of bonds: <span class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"></span> USDC and <span class="icon-wrapper getShadow"><span class="icon-left getShadow"><img src="images/xMove-coin.png" alt="coin"></span><span class="icon-right getShadow"><img src="images/coin-icon1.png" alt="coin" style="box-shadow: rgb(100, 124, 236) 0px 0px 16px;"></span></span> xMOVE-USDC LP bonds. Both types of bonds provide you a discount on xMOVE tokens. Bonds are vested for approximately 5 days with a linear unlock.</p></div>
+              <div class="purchase-bonds__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>There are two types of bonds: <span class="icon getShadow"><picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""></picture></span> USDC and <span class="icon-wrapper getShadow"><span class="icon-left getShadow"><picture><img src="images/xMOVE.png" srcset="images/xMOVE.png, images/xMOVE@2x.png 2x" alt=""></picture></span><span class="icon-right getShadow"><picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""></picture></span></span> xMOVE-USDC LP bonds. Both types of bonds provide you a discount on xMOVE tokens. Bonds are vested for approximately 5 days with a linear unlock.</p></div>
             </div>
           </div>
         </div>
@@ -415,9 +425,13 @@
             <div class="claim-bonds__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="claim-bonds__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="claim-bonds__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/xMove-coin.png" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture><img src="images/xMOVE.png" srcset="images/xMOVE.png, images/xMOVE@2x.png 2x" alt=""/></picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="claim-bonds__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>xMOVE</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -431,7 +445,11 @@
             </div>
             <div class="claim-bonds__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Transaction Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
@@ -484,7 +502,7 @@
                   </div>
                 </div>
               </div>
-              <div class="claim-bonds__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>There are two types of bonds: <span class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"></span> USDC and <span class="icon-wrapper getShadow"><span class="icon-left getShadow"><img src="images/xMove-coin.png" alt="coin"></span><span class="icon-right getShadow"><img src="images/coin-icon1.png" alt="coin" style="box-shadow: rgb(100, 124, 236) 0px 0px 16px;"></span></span> xMOVE-USDC LP bonds. Both types of bonds provide you a discount on xMOVE tokens. Bonds are vested for approximately 5 days with a linear unlock.</p></div>
+              <div class="claim-bonds__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>There are two types of bonds: <span class="icon getShadow"><picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""></picture></span> USDC and <span class="icon-wrapper getShadow"><span class="icon-left getShadow"><picture><img src="images/xMOVE.png" srcset="images/xMOVE.png, images/xMOVE@2x.png 2x" alt=""></picture></span><span class="icon-right getShadow"><picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""></picture></span></span> xMOVE-USDC LP bonds. Both types of bonds provide you a discount on xMOVE tokens. Bonds are vested for approximately 5 days with a linear unlock.</p></div>
             </div>
           </div>
         </div>
@@ -501,9 +519,13 @@
             <div class="claim-and-repurchase__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="claim-and-repurchase__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="claim-and-repurchase__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/xMove-coin.png" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture><img src="images/xMOVE.png" srcset="images/xMOVE.png, images/xMOVE@2x.png 2x" alt=""/></picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="claim-and-repurchase__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>xMOVE</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -519,7 +541,9 @@
               <div class="claim-and-repurchase__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
                 <p class="description">Swapping for</p>
                 <div class="value">
-                  <div class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"/></div><span>2,378.18 USDC</span>
+                  <div class="icon getShadow">
+                    <picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""/></picture>
+                  </div><span>2,378.18 USDC</span>
                 </div>
               </div>
               <div class="claim-and-repurchase__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
@@ -528,7 +552,11 @@
             </div>
             <div class="claim-and-repurchase__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Redeem Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Redeem Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
@@ -581,7 +609,7 @@
                   </div>
                 </div>
               </div>
-              <div class="claim-and-repurchase__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>There are two types of bonds: <span class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"></span> USDC and <span class="icon-wrapper getShadow"><span class="icon-left getShadow"><img src="images/xMove-coin.png" alt="coin"></span><span class="icon-right getShadow"><img src="images/coin-icon1.png" alt="coin" style="box-shadow: rgb(100, 124, 236) 0px 0px 16px;"></span></span> xMOVE-USDC LP bonds. Both types of bonds provide you a discount on xMOVE tokens. Bonds are vested for approximately 5 days with a linear unlock.</p></div>
+              <div class="claim-and-repurchase__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>There are two types of bonds: <span class="icon getShadow"><picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""></picture></span> USDC and <span class="icon-wrapper getShadow"><span class="icon-left getShadow"><picture><img src="images/xMOVE.png" srcset="images/xMOVE.png, images/xMOVE@2x.png 2x" alt=""></picture></span><span class="icon-right getShadow"><picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""></picture></span></span> xMOVE-USDC LP bonds. Both types of bonds provide you a discount on xMOVE tokens. Bonds are vested for approximately 5 days with a linear unlock.</p></div>
             </div>
           </div>
         </div>

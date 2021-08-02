@@ -258,9 +258,13 @@
             <div class="deposit__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="deposit__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="deposit__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/coin-icon3.jpg" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture><img src="images/ETH.png" srcset="images/ETH.png, images/ETH@2x.png 2x" alt=""/></picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="deposit__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>ETH</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -276,7 +280,9 @@
               <div class="deposit__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
                 <p class="description">Swapping for</p>
                 <div class="value">
-                  <div class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"/></div><span>2,378.18 USDC</span>
+                  <div class="icon getShadow">
+                    <picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""/></picture>
+                  </div><span>2,378.18 USDC</span>
                 </div>
               </div>
               <div class="deposit__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
@@ -285,7 +291,11 @@
             </div>
             <div class="deposit__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Deposit Details"/><span>Deposit Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Deposit Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
@@ -357,9 +367,13 @@
             <div class="withdraw__wrapper-info-items transaction__popup-wrapper-info-items">
               <form class="withdraw__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
                 <div class="withdraw__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon getShadow"><img src="images/coin-icon1.png" alt="coin"/></div>
+                  <div class="icon getShadow">
+                    <picture><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""/></picture>
+                  </div>
                   <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <input class="input-bottom" type="number" name="nubmer" placeholder="≈$0.00"/>
+                  <div class="input-bottom"><span class="disabled">≈$</span>
+                    <input type="number" name="nubmer" placeholder="0.00"/>
+                  </div>
                 </div>
                 <div class="withdraw__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
                   <button class="button-active currency" type="button"><span>USDC</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -378,7 +392,11 @@
             </div>
             <div class="withdraw__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="thdraw Details"/><span>Withdraw Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Withdraw Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>

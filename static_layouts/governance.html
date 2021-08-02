@@ -260,7 +260,11 @@
             </div>
             <div class="delegate-voting-power__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
-              <button class="button-active details disabled" type="button"><img src="images/swap-details.png" alt="Transaction Details"/><span>Transaction Details</span></button>
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Transaction Details</span>
+              </button>
               <div class="details__content">
                 <div class="details__content-item"> 
                   <p class="description">Price impact</p>
