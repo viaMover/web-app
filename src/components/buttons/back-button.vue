@@ -1,9 +1,9 @@
 <template>
   <action-button
-    button-class="close round-icon floating left"
+    button-class="button back-link button-active"
     @button-click="handleClick"
   >
-    &lt;
+    <img alt="back link icon" src="@/assets/images/back-link.svg" />
   </action-button>
 </template>
 

@@ -1,40 +1,51 @@
 <template>
-  <div class="overview savings-overview">
-    <h4>{{ $t('savings.lblSavingsEstimation') }}</h4>
-    <div class="info info-bordered">
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsTomorrow')
-        }}</span>
-        <span class="value">{{ estimatedEarningsTomorrow }}</span>
-      </div>
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsNextMonth')
-        }}</span>
-        <span class="value">{{ estimatedEarningsNextMonth }}%</span>
-      </div>
-      <div class="item">
-        <span class="title">{{
-          $t('savings.lblEstimatedEarningsAnnually')
-        }}</span>
-        <span class="value">{{ estimatedEarningsAnnually }}%</span>
-      </div>
-    </div>
-  </div>
+  <left-rail-section :section-name="$t('savings.lblSavingsEstimation')">
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsTomorrow')"
+      :value="estimatedEarningsTomorrowNative"
+      value-class="estimation"
+    />
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsNextMonth')"
+      :value="estimatedEarningsNextMonthNative"
+      value-class="estimation"
+    />
+    <left-rail-section-item
+      :description="$t('savings.lblEstimatedEarningsAnnually')"
+      :value="estimatedEarningsAnnuallyNative"
+      value-class="estimation"
+    />
+  </left-rail-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
+import { formatToNative } from '@/utils/format';
+
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
 export default Vue.extend({
   name: 'SavingsEstimation',
-  data() {
-    return {
-      estimatedEarningsTomorrow: 0,
-      estimatedEarningsNextMonth: 0,
-      estimatedEarningsAnnually: 0
-    };
+  components: { LeftRailSection, LeftRailSectionItem },
+  computed: {
+    ...mapGetters('account', [
+      'savingsInfoBalanceNative',
+      'savingsEstimatedEarningsTomorrowNative',
+      'savingsEstimatedEarningsNextMonthNative',
+      'savingsEstimatedEarningsAnnuallyNative'
+    ]),
+    estimatedEarningsTomorrowNative(): string {
+      return `$${formatToNative(this.savingsEstimatedEarningsTomorrowNative)}`;
+    },
+    estimatedEarningsNextMonthNative(): string {
+      return `$${formatToNative(this.savingsEstimatedEarningsNextMonthNative)}`;
+    },
+    estimatedEarningsAnnuallyNative(): string {
+      return `$${formatToNative(this.savingsEstimatedEarningsAnnuallyNative)}`;
+    }
   }
 });
 </script>
+e

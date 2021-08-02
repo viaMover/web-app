@@ -1,38 +1,87 @@
 <template>
-  <secondary-page :title="$t('savings.lblSavings')">
-    <h2>{{ pageTitle }}</h2>
-    <savings-monthly-chart />
-    <savings-monthly-statement />
+  <secondary-page hide-title :title="$t('savings.lblSavings')">
+    <div class="savings-statements__wrapper-title">
+      <h2>{{ pageTitle }}</h2>
+      <p>{{ pageSubtitle }}</p>
+    </div>
+    <savings-monthly-chart-wrapper :page-date="pageDate" />
+    <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions } from 'vuex';
 import dayjs from 'dayjs';
 
 import { SecondaryPage } from '@/components/layout';
+import { GetSavingsReceiptPayload } from '@/store/modules/account/actions/charts';
+
 import {
-  SavingsMonthlyChart,
+  SavingsMonthlyChartWrapper,
   SavingsMonthlyStatement
 } from '@/components/savings';
-
+import { dateFromExplicitPair } from '@/utils/time';
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
     SecondaryPage,
-    SavingsMonthlyChart,
+    SavingsMonthlyChartWrapper,
     SavingsMonthlyStatement
   },
   computed: {
-    pageTitle(): string {
+    pageDate(): dayjs.Dayjs {
       try {
-        const tsFrom = Number(this.$route.query.tsFrom);
-
-        return dayjs.unix(tsFrom).format('MMMM YYYY');
+        return dateFromExplicitPair(
+          Number(this.$route.params.year),
+          Number(this.$route.params.month)
+        );
       } catch {
-        return this.$t('swaps.statement.lblMonthStatisticFallback') as string;
+        return dayjs().startOf('month');
       }
+    },
+    pageTitle(): string {
+      return this.pageDate.format('MMMM YYYY');
+    },
+    pageSubtitle(): string {
+      const left = this.pageDate.format('MMM DD');
+      const right = this.pageDate.format('MMM DD, YYYY');
+
+      return `${left} - ${right}`;
     }
+  },
+  async mounted() {
+    await this.fetchMonthlyStats({
+      year: this.pageDate.get('year'),
+      month: this.pageDate.get('month') + 1
+    } as GetSavingsReceiptPayload);
+  },
+  methods: {
+    ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' })
+  },
+  async beforeRouteUpdate(to, from, next) {
+    if (
+      from.params.year === to.params.year &&
+      from.params.month === to.params.month
+    ) {
+      next();
+      return;
+    }
+
+    let date: dayjs.Dayjs;
+    try {
+      date = dateFromExplicitPair(
+        Number(this.$route.params.year),
+        Number(this.$route.params.month)
+      );
+    } catch {
+      date = dayjs();
+    }
+
+    await this.fetchMonthlyStats({
+      year: date.get('year'),
+      month: date.get('month') + 1
+    } as GetSavingsReceiptPayload);
   }
 });
 </script>

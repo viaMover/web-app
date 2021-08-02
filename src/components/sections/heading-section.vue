@@ -1,37 +1,29 @@
 <template>
-  <section class="section" :name="name">
-    <div class="labels">
-      <h2 class="heading-row">
-        <slot class="heading-row--text" name="heading"></slot>
+  <section :name="name">
+    <div :class="containerClass">
+      <h2>
+        <slot name="heading"></slot>
       </h2>
-      <template v-if="hasExpandButton">
-        <router-link
-          v-if="navigateToName"
-          class="expand-button"
-          :to="{ name: navigateToName }"
-        >
-          <img src="@/assets/images/arrows.svg" />
-        </router-link>
-        <div
-          v-else-if="useClickEvent"
-          class="expand-button"
-          @click="handleClick"
-        >
-          <img src="@/assets/images/arrows.svg" />
-        </div>
-      </template>
-    </div>
-    <div class="heading-body">
+      <custom-link
+        v-if="hasExpandButton"
+        :navigate-to-name="navigateToName"
+        :use-click-event="useClickEvent"
+        @navigation-click="handleClick"
+      />
       <slot></slot>
     </div>
+    <slot name="bottom"></slot>
   </section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import CustomLink from './custom-link.vue';
+
 export default Vue.extend({
   name: 'HeadingSection',
+  components: { CustomLink },
   props: {
     hasExpandButton: {
       type: Boolean,
@@ -48,6 +40,10 @@ export default Vue.extend({
     useClickEvent: {
       type: Boolean,
       default: false
+    },
+    containerClass: {
+      type: String,
+      required: true
     }
   },
   methods: {

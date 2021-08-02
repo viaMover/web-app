@@ -1,4 +1,10 @@
-import { GetTokensPrice } from '@/services/thegraph/api';
+import {
+  getTreasuryBalance,
+  GetTreasuryBonus,
+  getTreasuryAPY,
+  getTotalStakedMove,
+  getTotalStakedMoveEthLP
+} from '@/services/mover/treasury';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -6,7 +12,8 @@ import {
   AccountStoreState,
   AccountData,
   ProviderNames,
-  ProviderData
+  ProviderData,
+  Avatar
 } from './../types';
 import { Network } from '@/utils/networkTypes';
 import { provider } from 'web3-core';
@@ -15,6 +22,24 @@ import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { getWalletTokens } from '@/services/balancer';
 import { getAllTokens } from '@/wallet/allTokens';
+import { getEthPrice } from '@/services/etherscan/ethPrice';
+import {
+  getMOVEPriceInWETH,
+  getSLPPriceInWETH,
+  getUSDCPriceInWETH
+} from '@/services/mover/tokensPrices';
+import {
+  clearLastProviderPersist,
+  getAvatarFromPersist,
+  setAvatarToPersist,
+  setLastProviderToPersist
+} from '@/settings';
+import sample from 'lodash-es/sample';
+import {
+  bootIntercomSession,
+  disconnectIntercomSession
+} from '@/router/intercom-utils';
+import { multiply } from '@/utils/bigmath';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -28,27 +53,75 @@ export type InitWalletPayload = {
   injected: boolean;
 };
 
+export const COOKIE_LAST_PROVIDER = 'move_last_provider';
+
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
   },
+  setDetectedProvider({ commit }, provider: unknown): void {
+    commit('setDetectedProvider', provider);
+  },
+  setIsDetecting({ commit }, isDetecting: boolean): void {
+    commit('setIsDetecting', isDetecting);
+  },
+  async loadAvatar({ commit, state }): Promise<void> {
+    if (state.currentAddress === undefined) {
+      commit('setAvatar', sample<Avatar>(state.avatars));
+      return;
+    }
+
+    const persistedValue = await getAvatarFromPersist(state.currentAddress);
+    if (persistedValue !== undefined) {
+      commit('setAvatar', persistedValue);
+      return;
+    }
+
+    const newAvatar = sample<Avatar>(state.avatars);
+    if (newAvatar === undefined) {
+      return;
+    }
+
+    commit('setAvatar', newAvatar);
+    await setAvatarToPersist(state.currentAddress, newAvatar);
+  },
+  async toggleAvatar({ commit, state }): Promise<void> {
+    const prevIdx =
+      state.avatars.findIndex((av) => av.symbol === state.avatar?.symbol) ?? -1;
+
+    const newAvatar = state.avatars[(prevIdx + 1) % state.avatars.length];
+    if (newAvatar === undefined) {
+      return;
+    }
+
+    commit('setAvatar', newAvatar);
+    if (state.currentAddress === undefined) {
+      return;
+    }
+
+    await setAvatarToPersist(state.currentAddress, newAvatar);
+  },
 
   async initWallet(
-    { commit, state, dispatch },
+    { commit, dispatch },
     payload: InitWalletPayload
   ): Promise<void> {
     try {
       const web3Inst = new Web3(payload.provider);
+      (web3Inst.eth as any).maxListenersWarningThreshold = 200;
       commit('setProvider', {
         providerBeforeClose: payload.providerBeforeCloseCb,
         providerName: payload.providerName,
-        web3: web3Inst
+        web3: web3Inst,
+        pureProvider: payload.provider
       } as ProviderData);
 
       dispatch('refreshWallet', {
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
+
+      setLastProviderToPersist(payload.providerName);
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
@@ -56,7 +129,7 @@ export default {
   },
 
   async refreshWallet(
-    { commit, state },
+    { dispatch, commit, state, getters },
     payload: RefreshWalletPayload
   ): Promise<void> {
     if (state.provider === undefined) {
@@ -86,6 +159,7 @@ export default {
       balance: balance,
       networkId: chainId
     } as AccountData);
+    dispatch('loadAvatar');
 
     if (!state.currentAddress || !state.networkInfo) {
       console.info("can't refresh wallet due to empty address");
@@ -97,6 +171,10 @@ export default {
     }
 
     if (payload.init) {
+      bootIntercomSession(state.currentAddress, {
+        network: state.networkInfo.network
+      });
+
       console.info('getting all tokens...');
       const allTokens = getAllTokens(state.networkInfo.network);
       commit('setAllTokens', allTokens);
@@ -106,9 +184,10 @@ export default {
     if (state.networkInfo.network === Network.mainnet) {
       if (payload.init) {
         console.log('Starting Zerion...');
-        InitExplorer(
+        const explorer = InitExplorer(
           state.currentAddress,
           'usd',
+          state.networkInfo.network,
           (txns: Array<Transaction>) => {
             commit('setWalletTransactions', txns);
           },
@@ -126,8 +205,12 @@ export default {
           },
           (tokens: Array<string>) => {
             commit('removeWalletTokens', tokens);
+          },
+          (chartData: Record<string, [number, number][]>) => {
+            commit('setChartData', chartData);
           }
         );
+        commit('setExplorer', explorer);
       }
 
       //
@@ -166,6 +249,100 @@ export default {
       commit('setWalletTokens', tokensWithAmount);
     }
 
+    console.info('refresh eth price...');
+    // TODO: works only for USD
+    const ethPriceInUSDResult = await getEthPrice(state.networkInfo.network);
+    if (ethPriceInUSDResult.isError) {
+      console.log(
+        `can't load eth price: ${JSON.stringify(ethPriceInUSDResult)}`
+      );
+    } else {
+      commit('setEthPrice', ethPriceInUSDResult.result);
+    }
+
+    const getMovePriceInWethPromise = getMOVEPriceInWETH(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
+      getMovePriceInWethPromise,
+      getUSDCPriceInWETHPromise
+    ]);
+    commit('setMovePriceInWeth', moveInWethPrice);
+    commit('setUsdcPriceInWeth', usdcInWethPrice);
+
+    const slpPriceInWETH = await getSLPPriceInWETH(
+      state.movePriceInWeth ?? '0',
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    commit('setSLPPriceInWETH', slpPriceInWETH);
+
+    const getTreasuryBalancesPromise = getTreasuryBalance(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTreasuryBonusPromise = GetTreasuryBonus(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTreasuryAPYPromise = getTreasuryAPY(
+      getters.usdcNativePrice,
+      getters.moveNativePrice,
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTotalStakedMovePromise = getTotalStakedMove(
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    const [
+      treasuryBalances,
+      treasuryBonus,
+      treasuryAPY,
+      treasuryTotalStakedMove,
+      treasuryTotalStakedMoveEthLP
+    ] = await Promise.all([
+      getTreasuryBalancesPromise,
+      getTreasuryBonusPromise,
+      getTreasuryAPYPromise,
+      getTotalStakedMovePromise,
+      getTotalStakedMoveEthLPPromise
+    ]);
+
+    commit('setTreasuryBalanceMove', treasuryBalances.MoveBalance);
+    commit('setTreasuryBalanceLP', treasuryBalances.LPBalance);
+    commit('setTreasuryBonus', treasuryBonus);
+    commit('setTreasuryAPY', treasuryAPY);
+    commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
+    commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
+
+    await dispatch('fetchSavingsFreshData');
+
+    await dispatch('fetchSavingsInfo');
+
     //const res = await GetTokensPrice([state.allTokens[0].address]);
     //console.log(res);
     //
@@ -186,10 +363,19 @@ export default {
     //
   },
 
-  disconnectWallet({ commit, state }): void {
+  async disconnectWallet({ commit, state }): Promise<void> {
     if (state.provider) {
       state.provider.providerBeforeClose();
+      if (
+        state.provider.pureProvider &&
+        state.provider.pureProvider.disconnect
+      ) {
+        console.log('disconnecting provider...');
+        await state.provider.pureProvider.disconnect();
+      }
     }
     commit('clearWalletData');
+    disconnectIntercomSession();
+    clearLastProviderPersist();
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

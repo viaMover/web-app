@@ -1,96 +1,157 @@
 <template>
-  <form class="swap form">
-    <asset-field
-      :amount="input.amount"
-      :asset="input.asset"
-      field-role="input"
-      :label="$t('swaps.lblSwapFrom')"
-      :max-amount="maxInputAmount"
-      :native-amount="input.nativeAmount"
-      use-wallet-tokens
-      @update-amount="handleUpdateInputAmount"
-      @update-asset="handleUpdateInputAsset"
-      @update-native-amount="handleUpdateInputNativeAmount"
-    />
-    <asset-field
-      :amount="output.amount"
-      :asset="output.asset"
-      :exclude-tokens="excludedOutputTokens"
-      field-role="output"
-      :label="$t('swaps.lblSwapTo')"
-      :native-amount="output.nativeAmount"
-      @update-amount="handleUpdateOutputAmount"
-      @update-asset="handleUpdateOutputAsset"
-      @update-native-amount="handleUpdateOutputNativeAmount"
-    />
-    <div v-if="isSwapInfoAvailable" class="swap-info">
-      <div class="swap-info-item">
-        <span class="title">{{ $t('swaps.lblMinimumReceived') }}</span>
-        <span class="value">{{ info.minimumReceived }}</span>
-      </div>
-      <div class="swap-info-item">
-        <span class="title">{{ $t('swaps.lblRate') }}</span>
-        <span class="value">{{ info.rate }}</span>
-      </div>
-      <div class="swap-info-item">
-        <span class="title">{{ $t('swaps.lblEstimatedNetworkFee') }}</span>
-        <span class="value">{{ info.estimatedNetworkFee }}</span>
-      </div>
-      <div class="swap-info-item">
-        <span class="title">{{ $t('swaps.lblSmartTreasuryCover') }}</span>
-        <span class="value">{{ info.smartTreasuryCover }}</span>
-      </div>
-      <div class="swap-info-item">
-        <span class="title">{{ $t('swaps.lblSlippage') }}</span>
-        <span class="value">{{ info.slippage }}</span>
-      </div>
-      <div class="swap-info-item">
-        <span class="title">{{ $t('swaps.lblGasSettings') }}</span>
-        <span class="value">{{ info.gasSettings }}</span>
-      </div>
+  <div class="modal-wrapper-info">
+    <div>
+      <h3 v-if="headerLabel" class="modal-wrapper-info-title">
+        {{ headerLabel }}
+      </h3>
+      <span v-else>&nbsp;</span>
     </div>
-    <action-button
-      :button-class="buttonClass"
-      @button-click="handleExecuteSwap"
-    >
-      {{ $t('swaps.btnSwap.simple') }}
-    </action-button>
-    <gas-selector @selected-gas-changed="handleSelectedGasChanged" />
-  </form>
+    <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
+    <form v-else>
+      <div class="modal-wrapper-info-items">
+        <asset-field
+          :amount="input.amount"
+          :asset="input.asset"
+          field-role="input"
+          has-couple-tokens
+          :label="$t('swaps.lblSwapFrom')"
+          :max-amount="maxInputAmount"
+          :native-amount="input.nativeAmount"
+          use-wallet-tokens
+          @update-amount="handleUpdateInputAmount"
+          @update-asset="handleUpdateInputAsset"
+          @update-native-amount="handleUpdateInputNativeAmount"
+        />
+        <asset-field
+          :amount="output.amount"
+          :asset="output.asset"
+          :exclude-tokens="excludedOutputTokens"
+          field-role="output"
+          has-couple-tokens
+          :label="$t('swaps.lblSwapTo')"
+          :native-amount="output.nativeAmount"
+          show-token-balance
+          @update-amount="handleUpdateOutputAmount"
+          @update-asset="handleUpdateOutputAsset"
+          @update-native-amount="handleUpdateOutputNativeAmount"
+        />
+      </div>
+      <div class="modal-wrapper-info-buttons">
+        <button class="flip button-active" type="button" @click="flipAssets">
+          <img src="@/assets/images/flip.png" /><span>Flip</span>
+        </button>
+        <button
+          class="tx-details button-active"
+          :class="{ disabled: !isInfoAvailable }"
+          type="button"
+          @click="expandInfo"
+        >
+          <img src="@/assets/images/swap-details.png" />
+          <span>Swap Details</span>
+        </button>
+        <div v-if="showInfo" class="tx-details__content">
+          <div class="tx-details__content-item">
+            <p class="description">Minimum received</p>
+            <div class="value">
+              <span>{{ minimalReceived }}</span>
+            </div>
+          </div>
+          <div class="tx-details__content-item">
+            <p class="description">Rate</p>
+            <div class="value">
+              <span>{{ rateString }}</span>
+            </div>
+          </div>
+          <div class="tx-details__content-item">
+            <p class="description">Smart Treasury cover</p>
+            <div class="value">
+              <span>{{ treasuryCover }}</span>
+            </div>
+          </div>
+          <div class="tx-details__content-item">
+            <p class="description">Swapping via</p>
+            <div class="value">
+              <span>{{ swappingVia }}</span>
+            </div>
+          </div>
+          <div class="tx-details__content-item">
+            <p class="description">Slippage</p>
+            <slippage-selector
+              :slippage="slippage"
+              @selected-slippage-changed="handleSelectedSlippageChanged"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-wrapper-info-button">
+        <action-button
+          :button-class="buttonClass"
+          :disabled="!actionAvaialble"
+          :text="actionButtonText"
+          @button-click="handleExecuteSwap"
+        />
+      </div>
+      <gas-selector
+        :approve-gas-limit="approveGasLimit"
+        :avaialble-gas-modes="availableGasModes"
+        :txn-gas-limit="allGasLimit"
+        @selected-gas-changed="handleSelectedGasChanged"
+      />
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance, Token } from '@/wallet/types';
+import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
 
-import { AssetField, GasSelector } from '@/components/controls';
+import {
+  AssetField,
+  GasSelector,
+  SlippageSelector,
+  FormLoader
+} from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
-import { GasPrice } from '@/components/controls/gas-selector.vue';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
-import { estimateSwap } from '@/wallet/actions/swap/estimate';
-import { getTransferData, TransferData } from '@/services/0x/api';
+import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
+import { swapCompound } from '@/wallet/actions/swap/swap';
+import {
+  getTransferData,
+  TransferData,
+  ZeroXSwapError
+} from '@/services/0x/api';
 import { mapState } from 'vuex';
-import { divide, fromWei, multiply, notZero, toWei } from '@/utils/bigmath';
-import { GetTokenPrice, GetTokensPrice } from '@/services/thegraph/api';
+import {
+  add,
+  divide,
+  fromWei,
+  greaterThan,
+  multiply,
+  notZero,
+  toWei
+} from '@/utils/bigmath';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import { sameAddress } from '@/utils/address';
+import Web3 from 'web3';
+import { Slippage } from '../controls/slippage-selector.vue';
+import { Step } from '../controls/form-loader.vue';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SwapForm',
   components: {
     AssetField,
     ActionButton,
-    GasSelector
+    GasSelector,
+    SlippageSelector,
+    FormLoader
   },
   data() {
     return {
-      info: {
-        minimumReceived: 0,
-        rate: 0,
-        estimatedNetworkFee: 0,
-        smartTreasuryCover: 0,
-        slippage: 0,
-        gasSettings: null
-      },
+      loaderStep: undefined as Step | undefined,
+      infoExpanded: false,
       input: {
         asset: undefined as TokenWithBalance | undefined,
         amount: '',
@@ -101,19 +162,135 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
-      selectedGasPrice: 0
+      slippage: '1',
+      selectedGasPrice: '0',
+      useSubsidized: false,
+      swapGasLimit: '0',
+      approveGasLimit: '0',
+      transferData: undefined as TransferData | undefined,
+      transferError: undefined as undefined | string,
+      loading: false
     };
   },
   computed: {
-    ...mapState('account', ['networkInfo', 'currentAddress', 'provider']),
+    ...mapState('account', [
+      'networkInfo',
+      'currentAddress',
+      'provider',
+      'gasPrices',
+      'tokens',
+      'ethPrice'
+    ]),
+    headerLabel(): string | undefined {
+      return this.loaderStep ? undefined : 'Swaps';
+    },
+    error(): string | undefined {
+      if (this.input.asset === undefined || this.output.asset === undefined) {
+        return 'Choose Token';
+      }
+
+      if (!notZero(this.input.amount)) {
+        return 'Enter Amount';
+      }
+
+      if (greaterThan(this.input.amount, this.input.asset.balance)) {
+        return 'Inssuficient Balance';
+      }
+
+      if (this.transferError !== undefined) {
+        return this.transferError;
+      }
+      return undefined;
+    },
+    swappingVia(): string {
+      if (this.transferData === undefined) {
+        return '';
+      }
+      return this.transferData.swappingVia;
+    },
+    rateString(): string {
+      if (
+        this.transferData === undefined ||
+        this.output.asset === undefined ||
+        this.input.asset === undefined
+      ) {
+        return '';
+      }
+
+      let rate = divide(
+        this.transferData.sellTokenToEthRate,
+        this.transferData.buyTokenToEthRate
+      );
+
+      if (!notZero(rate)) {
+        rate = divide(
+          fromWei(this.transferData.sellAmount, this.input.asset.decimals),
+          fromWei(this.transferData.buyAmount, this.output.asset.decimals)
+        );
+      }
+
+      return `1 ${this.output.asset.symbol} = ${formatToDecimals(rate, 8)} ${
+        this.input.asset.symbol
+      }`;
+    },
+    minimalReceived(): string {
+      if (this.transferData === undefined || this.output.asset === undefined) {
+        return '';
+      }
+      const minReceived = fromWei(
+        this.transferData.buyAmount,
+        this.output.asset.decimals
+      );
+      return `${formatToDecimals(minReceived, 8)} ${this.output.asset.symbol}`;
+    },
+    actionAvaialble(): boolean {
+      return this.error === undefined && !this.loading;
+    },
+    actionButtonText(): string {
+      if (this.loading) {
+        return 'Loading';
+      }
+      if (this.error !== undefined) {
+        return this.error;
+      }
+
+      return '💸 Swap';
+    },
+    availableGasModes(): Array<GasMode> {
+      return ['treasury', 'low', 'normal', 'high'];
+    },
+    allGasLimit(): string {
+      console.log(
+        'all gas limit: ',
+        add(this.approveGasLimit, this.swapGasLimit)
+      );
+      return add(this.approveGasLimit, this.swapGasLimit);
+    },
+    treasuryCover(): string {
+      const selectedGasPriceInWEI = Web3.utils.toWei(
+        this.selectedGasPrice,
+        'Gwei'
+      );
+      const swapPriceInWEI = multiply(selectedGasPriceInWEI, this.swapGasLimit);
+
+      const swapPriceInEth = Web3.utils.fromWei(swapPriceInWEI, 'ether');
+      const swapPriceNative = multiply(swapPriceInEth, this.ethPrice);
+
+      if (this.useSubsidized) {
+        return `$${formatToNative(swapPriceNative)}`;
+      } else {
+        return '$0.00';
+      }
+    },
     maxInputAmount(): string {
       return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
     buttonClass(): string {
-      return 'primary';
-    },
-    isSwapInfoAvailable(): boolean {
-      return !!this.input.amount;
+      if (this.actionAvaialble) {
+        return 'button active button-active';
+      } else {
+        return 'button inactive button-active';
+      }
     },
     excludedOutputTokens(): Array<Token> {
       if (this.input.asset === undefined) {
@@ -121,12 +298,114 @@ export default Vue.extend({
       }
 
       return [this.input.asset];
+    },
+    isInfoAvailable(): boolean {
+      return !this.loading && !!this.transferData;
+    },
+    showInfo(): boolean {
+      return this.infoExpanded && !this.loading && !!this.transferData;
+    }
+  },
+  mounted() {
+    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
+    if (eth) {
+      this.input.asset = eth;
     }
   },
   methods: {
-    handleExecuteSwap(): void {
+    expandInfo(): void {
+      this.infoExpanded = !this.infoExpanded;
+    },
+    async handleExecuteSwap(): Promise<void> {
       //
-      this.$emit('tx-created', 'transaction-hash');
+      if (this.transferData === undefined) {
+        console.error(
+          "[swap-form] can't execute swap due to empty transfer data"
+        );
+        return;
+      }
+      if (this.input.asset === undefined) {
+        console.error(
+          "[swap-form] can't execute swap due to empty input asset"
+        );
+        return;
+      }
+      if (this.output.asset === undefined) {
+        console.error(
+          "[swap-form] can't execute swap due to empty output asset"
+        );
+        return;
+      }
+
+      this.loaderStep = 'Confirm';
+      try {
+        await swapCompound(
+          this.input.asset,
+          this.output.asset,
+          this.input.amount,
+          this.transferData,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress,
+          this.swapGasLimit,
+          this.approveGasLimit,
+          this.selectedGasPrice,
+          this.useSubsidized,
+          async () => {
+            this.loaderStep = 'Process';
+          }
+        );
+        this.loaderStep = 'Success';
+      } catch (err) {
+        this.loaderStep = 'Reverted';
+      }
+    },
+    async flipAssets(): Promise<void> {
+      this.loading = true;
+      this.transferData = undefined;
+      this.transferError = undefined;
+
+      try {
+        const inputAsset = this.input.asset;
+        const outputAsset = this.output.asset;
+
+        if (inputAsset !== undefined) {
+          this.output.asset = inputAsset;
+          this.output.amount = '';
+          this.output.nativeAmount = '';
+        } else {
+          this.output.asset = undefined;
+          this.output.amount = '';
+          this.output.nativeAmount = '';
+        }
+
+        if (outputAsset !== undefined) {
+          this.input.asset = { ...outputAsset, balance: '0' };
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+
+          const assetInWallet: TokenWithBalance = this.tokens.find(
+            (t: TokenWithBalance) => sameAddress(t.address, outputAsset.address)
+          );
+
+          if (assetInWallet !== undefined) {
+            this.input.asset.balance = assetInWallet.balance;
+          } else {
+            this.input.asset.balance = '0';
+          }
+        } else {
+          this.input.asset = undefined;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        }
+
+        this.swapGasLimit = '0';
+        this.approveGasLimit = '0';
+      } finally {
+        this.loading = false;
+      }
+      return;
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
       this.input.amount = amount;
@@ -141,18 +420,22 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
+      this.transferError = undefined;
       try {
-        const transferData = await this.calcData(
-          this.input.asset,
-          this.output.asset,
-          this.input.amount,
-          true
-        );
-
         this.input.nativeAmount = multiply(
           this.input.asset.priceUSD,
           this.input.amount
         );
+
+        const transferData = await this.calcData(
+          this.input.asset,
+          this.output.asset,
+          this.input.amount,
+          true,
+          this.slippage
+        );
+
         this.output.amount = fromWei(
           transferData.buyAmount,
           this.output.asset.decimals
@@ -169,8 +452,17 @@ export default Vue.extend({
           transferData
         );
       } catch (err) {
-        console.error("can't calc data:", err);
+        if (err instanceof ZeroXSwapError) {
+          this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
+        }
+        this.transferData = undefined;
+        console.error(`can't calc data: ${err}`);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateInputNativeAmount(amount: string): Promise<void> {
@@ -186,6 +478,8 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
+      this.transferError = undefined;
       try {
         this.input.amount = divide(
           this.input.nativeAmount,
@@ -196,7 +490,8 @@ export default Vue.extend({
           this.input.asset,
           this.output.asset,
           this.input.amount,
-          true
+          true,
+          this.slippage
         );
 
         this.output.amount = fromWei(
@@ -215,8 +510,17 @@ export default Vue.extend({
           transferData
         );
       } catch (err) {
-        console.error("can't calc data:", err);
+        if (err instanceof ZeroXSwapError) {
+          this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
+        }
+        this.transferData = undefined;
+        console.error(`can't calc data: ${err}`);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateOutputAmount(amount: string): Promise<void> {
@@ -233,6 +537,8 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
+      this.transferError = undefined;
       try {
         this.output.nativeAmount = multiply(
           this.output.asset.priceUSD,
@@ -243,7 +549,8 @@ export default Vue.extend({
           this.input.asset,
           this.output.asset,
           this.output.amount,
-          false
+          false,
+          this.slippage
         );
 
         this.input.amount = fromWei(
@@ -262,8 +569,17 @@ export default Vue.extend({
           transferData
         );
       } catch (err) {
-        console.error("can't calc data:", err);
+        if (err instanceof ZeroXSwapError) {
+          this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
+        }
+        this.transferData = undefined;
+        console.error(`can't calc data: ${err}`);
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
@@ -279,6 +595,8 @@ export default Vue.extend({
         return;
       }
 
+      this.loading = true;
+      this.transferError = undefined;
       try {
         this.output.amount = divide(
           this.output.nativeAmount,
@@ -289,7 +607,8 @@ export default Vue.extend({
           this.input.asset,
           this.output.asset,
           this.output.amount,
-          false
+          false,
+          this.slippage
         );
 
         this.input.amount = fromWei(
@@ -308,34 +627,98 @@ export default Vue.extend({
           transferData
         );
       } catch (err) {
-        console.error("can't calc data:", err);
+        if (err instanceof ZeroXSwapError) {
+          this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
+        }
+        this.transferData = undefined;
+
         return;
+      } finally {
+        this.loading = false;
       }
     },
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
-      this.input.asset = { ...asset, priceUSD: price };
-      this.input.amount = '0';
-      this.input.nativeAmount = '0';
-      this.output.amount = '0';
-      this.output.nativeAmount = '0';
+      this.input.asset = asset;
+      if (!price && price !== '0') {
+        this.input.asset.priceUSD = price;
+      }
+      this.input.amount = '';
+      this.input.nativeAmount = '';
+      this.output.amount = '';
+      this.output.nativeAmount = '';
+
+      this.swapGasLimit = '0';
+      this.transferData = undefined;
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.output.asset = { ...asset, priceUSD: price };
-      this.input.amount = '0';
-      this.input.nativeAmount = '0';
-      this.output.amount = '0';
-      this.output.nativeAmount = '0';
+      this.input.amount = '';
+      this.input.nativeAmount = '';
+      this.output.amount = '';
+      this.output.nativeAmount = '';
+
+      this.swapGasLimit = '0';
+      this.transferData = undefined;
     },
-    handleSelectedGasChanged(newGas: GasPrice): void {
-      this.selectedGasPrice = newGas.amount;
+    async handleSelectedSlippageChanged(newSlippage: Slippage): Promise<void> {
+      this.slippage = newSlippage;
+
+      if (this.input.asset === undefined || this.output.asset === undefined) {
+        return;
+      }
+      try {
+        const transferData = await this.calcData(
+          this.input.asset,
+          this.output.asset,
+          this.input.amount,
+          true,
+          this.slippage
+        );
+
+        this.output.amount = fromWei(
+          transferData.buyAmount,
+          this.output.asset.decimals
+        );
+        this.output.nativeAmount = multiply(
+          this.output.asset.priceUSD,
+          this.output.amount
+        );
+
+        await this.tryToEstimate(
+          this.input.amount,
+          this.input.asset,
+          this.output.asset,
+          transferData
+        );
+      } catch (err) {
+        if (err instanceof ZeroXSwapError) {
+          this.transferError = err.publicMessage;
+        } else {
+          console.error(`can't calc data: ${err}`);
+          this.transferError = 'Exchange error';
+        }
+        this.transferData = undefined;
+        console.error(`can't calc data: ${err}`);
+        return;
+      } finally {
+        this.loading = false;
+      }
+    },
+    handleSelectedGasChanged(newGas: GasModeData): void {
+      this.useSubsidized = newGas.mode === 'treasury';
+      this.selectedGasPrice = String(newGas.price);
     },
     async calcData(
-      inputAsset: Token,
-      outputAsset: Token,
+      inputAsset: SmallToken,
+      outputAsset: SmallToken,
       amount: string,
-      isInput: boolean
+      isInput: boolean,
+      slippage: string
     ): Promise<TransferData> {
       const inputInWei = toWei(
         amount,
@@ -346,8 +729,10 @@ export default Vue.extend({
         inputAsset.address,
         inputInWei,
         isInput,
+        slippage,
         this.networkInfo.network
       );
+      this.transferData = transferData;
       return transferData;
     },
     async tryToEstimate(
@@ -356,20 +741,25 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await estimateSwap(
+      const resp = await estimateSwapCompound(
         inputAsset,
         outputAsset,
         inputAmount,
         transferData,
         this.networkInfo.network,
         this.provider.web3,
-        this.currentAddress
+        this.currentAddress,
+        this.useSubsidized
       );
 
       if (resp.error) {
-        console.error("can't esitmate swap");
+        console.error(resp.error);
+        this.transferError = 'Estimate error';
         return;
       }
+
+      this.swapGasLimit = resp.actionGasLimit;
+      this.approveGasLimit = resp.approveGasLimit;
     }
   }
 });

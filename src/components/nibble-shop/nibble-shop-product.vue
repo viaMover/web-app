@@ -1,27 +1,25 @@
 <template>
-  <div v-if="product" class="card product-card">
-    <img
-      :alt="$t('nibbleShop.txtProductAlt', { title: product.title })"
-      class="image"
-      :src="product.imageSrc"
-    />
-    <div class="content">
-      <div class="heading">
-        <h5>{{ product.title }}</h5>
-        <span>{{ product.edition }}</span>
-      </div>
-      <div class="price-container">{{ product.price }}</div>
-      <div class="button-container">
-        <router-link class="button button-primary" :to="routeTo">
-          {{ $t('nibbleShop.btnGet.simple') }}
-        </router-link>
-      </div>
+  <li
+    v-if="item"
+    class="nibble-shop__wrapper-info-items-item"
+    :style="componentStyle"
+  >
+    <div class="nibble-shop__wrapper-info-items-item-content">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.edition }}</p>
     </div>
-  </div>
+    <div class="nibble-shop__wrapper-info-items-item-info">
+      <p>{{ item.availableQuantity }}/{{ item.initialQuantity }} available</p>
+      <span>{{ item.price }}</span>
+    </div>
+    <router-link class="button button-primary button-active" :to="routeTo">
+      {{ $t('nibbleShop.btnGet.simple') }}
+    </router-link>
+  </li>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import { RawLocation } from 'vue-router';
 
@@ -30,8 +28,8 @@ import { Asset } from '@/store/modules/shop/types';
 export default Vue.extend({
   name: 'NibbleShopProduct',
   props: {
-    id: {
-      type: String,
+    item: {
+      type: Object as PropType<Asset>,
       required: true
     }
   },
@@ -40,15 +38,15 @@ export default Vue.extend({
     routeTo(): RawLocation {
       return {
         name: 'nibble-shop-view',
-        params: { id: this.id }
+        params: { id: this.item.id }
       };
     },
-    product(): Asset | null {
-      return (
-        (this.products as Array<Asset>).find(
-          (asset: Asset) => asset.id === this.id
-        ) || null
-      );
+    componentStyle(): Record<string, string> {
+      return {
+        background: `url(${this.item.imageSrc}) no-repeat center ${this.item.imageScaleH}`,
+        'background-color': this.item.background,
+        'background-size': this.item.imageSize
+      };
     }
   }
 });

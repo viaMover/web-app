@@ -1,46 +1,81 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('treasury.lblSmartTreasury')">
-    <template v-slot:heading-buttons>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="treasury-deposit"
+  <secondary-page has-heading-buttons>
+    <template v-slot:title>
+      <secondary-page-title
+        :icon="$t('treasury.icon')"
+        :title="$t('treasury.lblSmartTreasury')"
+        wrapper-class="smart-treasury__menu-wrapper-title"
       >
-        {{ $t('treasury.btnDeposit.emoji') }}
-      </heading-nav-button>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="treasury-decrease-boost"
-      >
-        {{ $t('treasury.btnWithdraw.emoji') }}
-      </heading-nav-button>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="treasury-claim-and-burn"
-      >
-        {{ $t('treasury.btnClaimAndBurn.emoji') }}
-      </heading-nav-button>
+        <template v-slot:context-menu>
+          <context-button :popover-parent-id="popoverParentId">
+            <context-button-item :text="$t('treasury.btnDeposit.emoji')" />
+            <context-button-item :text="$t('treasury.btnWithdraw.emoji')" />
+            <context-button-item :text="$t('treasury.btnClaimAndBurn.emoji')" />
+          </context-button>
+        </template>
+      </secondary-page-title>
     </template>
 
-    <h2>{{ $t('treasury.lblManageTreasury') }}</h2>
     <treasury-yearly-chart />
-    <treasury-statements />
+    <statement-nav-list
+      :button-text="$t('treasury.btnView.simple')"
+      icon="💰"
+      :in-progress-text="$t('treasury.lblInProgress')"
+      :items="savingsMonthStatsOptions"
+      navigate-to-name="treasury-month-stats"
+      wrapper-class="smart-treasury__menu-wrapper-statements"
+    />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
-import { SecondaryPage } from '@/components/layout';
-import { HeadingNavButton } from '@/components/buttons';
-import { TreasuryYearlyChart, TreasuryStatements } from '@/components/treasury';
+import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { TreasuryYearlyChart } from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryManage',
   components: {
     SecondaryPage,
-    HeadingNavButton,
+    SecondaryPageTitle,
+    ContextButton,
+    ContextButtonItem,
     TreasuryYearlyChart,
-    TreasuryStatements
+    StatementNavList
+  },
+  data() {
+    return {
+      popoverParentId: 'treasury-manage-action-buttons'
+    };
+  },
+  computed: {
+    ...mapGetters('account', ['savingsMonthStatsOptions']),
+    hasActiveTreasury(): boolean {
+      return false;
+    }
+  },
+  watch: {
+    hasActiveTreasury(newVal: boolean) {
+      if (!newVal) {
+        this.replaceInactiveTreasuryRoute();
+      }
+    }
+  },
+  beforeMount() {
+    if (!this.hasActiveTreasury) {
+      this.replaceInactiveTreasuryRoute();
+    }
+  },
+  methods: {
+    replaceInactiveTreasuryRoute(): void {
+      this.$router.replace({
+        name: 'treasury-empty'
+      });
+    }
   }
 });
 </script>

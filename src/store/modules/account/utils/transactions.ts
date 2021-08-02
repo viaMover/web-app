@@ -5,12 +5,12 @@ import orderBy from 'lodash-es/orderBy';
 export const SortAndDedupedTransactions = (
   txns: Array<Transaction>
 ): Array<Transaction> => {
-  const dedupedResults = uniqBy<Transaction>(txns, (txn) => txn.hash);
+  const dedupedResults = uniqBy<Transaction>(txns, (txn) => txn.uniqHash);
 
   const orderedDedupedResults = orderBy<Transaction>(
     dedupedResults,
-    ['timeStamp', 'nonce'],
-    ['desc', 'desc']
+    ['timestamp', 'nonce', 'uniqHash'],
+    ['desc', 'desc', 'desc']
   );
 
   return orderedDedupedResults;

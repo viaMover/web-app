@@ -1,34 +1,35 @@
 <template>
-  <div class="card card-nft">
-    <img
-      :alt="$t('NFTs.txtAssetAlt', { name: asset.nft.name })"
-      class="image"
-      :src="asset.nft.imageSrc"
-    />
-    <div class="container container-text">
-      <h5>{{ asset.nft.name }}</h5>
-      <div class="description">
-        {{ asset.nft.description }}
-      </div>
+  <li class="nft-drops__wrapper__menu-info-items-item" :style="componentStyle">
+    <div class="nft-drops__wrapper__menu-info-items-item-content">
+      <h3 :style="titleStyle">
+        {{ item.name }}
+      </h3>
+      <p :style="textStyle">
+        {{ item.description }}
+      </p>
     </div>
-    <router-link class="button" :class="[buttonClass]" :to="routeTo">
+    <router-link
+      class="button-active"
+      :class="[buttonClass]"
+      :style="btnStyle"
+      :to="routeTo"
+    >
       {{ $t('NFTs.btnGet.simple') }}
     </router-link>
-  </div>
+  </li>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { mapState } from 'vuex';
+import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
 
-import { NFTAggregatedInfo } from '@/store/modules/nft/types';
+import { NFT } from '@/store/modules/nft/types';
 
 export default Vue.extend({
   name: 'NftAssetCard',
   props: {
-    id: {
-      type: String,
+    item: {
+      type: Object as PropType<NFT>,
       required: true
     },
     buttonClass: {
@@ -37,18 +38,33 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapState('nft', { assets: 'NFTs' }),
-    asset(): NFTAggregatedInfo | null {
-      return (
-        (this.assets as Array<NFTAggregatedInfo>).find(
-          (asset: NFTAggregatedInfo) => asset.nft.id === this.id
-        ) || null
-      );
+    componentStyle(): Record<string, string> {
+      return {
+        background: `url(${this.item.imageSrc}) no-repeat ${this.item.imageScaleH} ${this.item.imageScaleV}`,
+        'background-color': this.item.background,
+        'background-size': this.item.imageSize
+      };
+    },
+    titleStyle(): Record<string, string> {
+      return {
+        color: this.item.titleColor
+      };
+    },
+    textStyle(): Record<string, string> {
+      return {
+        color: this.item.textColor
+      };
+    },
+    btnStyle(): Record<string, string> {
+      return {
+        color: this.item.btnTextColor,
+        'background-color': this.item.btnBackgroundColor
+      };
     },
     routeTo(): RawLocation {
       return {
         name: 'nft-view',
-        params: { id: this.id }
+        params: { id: this.item.id }
       };
     }
   }

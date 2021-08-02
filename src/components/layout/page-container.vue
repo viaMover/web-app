@@ -1,6 +1,10 @@
 <template>
-  <div class="main">
-    <slot></slot>
+  <div class="info__wrapper-menu" :class="[containerClass]">
+    <div class="g-wrapper">
+      <div :class="[contentWrapperClass]">
+        <slot></slot>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -8,6 +12,17 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'PageContainer'
+  name: 'PageContainer',
+  props: {
+    containerClass: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    contentWrapperClass(): string {
+      return `${this.containerClass}-wrapper`;
+    }
+  }
 });
 </script>

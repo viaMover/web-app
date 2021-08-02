@@ -6,6 +6,8 @@
 import Vue from 'vue';
 import { mapActions } from 'vuex';
 
+import '@/styles/_nft.less';
+
 export default Vue.extend({
   name: 'NftRoot',
   async beforeMount() {

@@ -1,19 +1,17 @@
 <template>
-  <router-link v-if="product" class="card shop" :to="routeTo">
-    <img
-      :alt="$t('nibbleShop.txtProductAlt', { title: product.title })"
-      class="image"
-      :src="product.imageSrc"
-    />
-    <div class="text-container">
-      <div class="title">{{ product.title }}</div>
-      <div class="price">{{ product.price }}</div>
+  <router-link v-if="item" class="shop__items-item" :to="routeTo">
+    <div class="shop__items-item-image">
+      <img
+        :alt="$t('nibbleShop.txtProductAlt', { title: item.title })"
+        :src="item.previewImageSrc"
+      />
     </div>
+    <p>{{ item.title }}</p>
   </router-link>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
 import { mapState } from 'vuex';
 
@@ -22,8 +20,8 @@ import { Asset } from '@/store/modules/shop/types';
 export default Vue.extend({
   name: 'NibbleShopProductMini',
   props: {
-    id: {
-      type: String,
+    item: {
+      type: Object as PropType<Asset>,
       required: true
     }
   },
@@ -32,15 +30,8 @@ export default Vue.extend({
     routeTo(): RawLocation {
       return {
         name: 'nibble-shop-view',
-        params: { id: this.id }
+        params: { id: this.item.id }
       };
-    },
-    product(): Asset | null {
-      return (
-        (this.products as Array<Asset>).find(
-          (asset: Asset) => asset.id === this.id
-        ) || null
-      );
     }
   }
 });

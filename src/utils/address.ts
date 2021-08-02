@@ -6,6 +6,8 @@ export const sameAddress = (addr1: string, addr2: string): boolean => {
   return addr1.toLowerCase() === addr2.toLowerCase();
 };
 
+export const isEth = (addr: string): boolean => addr === 'eth';
+
 export const getPureEthAddress = (): string =>
   '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 

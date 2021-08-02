@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import Home from '@/views/home.vue';
 import { loadLanguageAsync } from '@/i18n';
+import { checkFeatureFlag } from '@/router/feature-flag-guard';
+import { requireWalletAuth } from '@/router/wallet-auth-guard';
 
 Vue.use(VueRouter);
 
@@ -9,24 +10,41 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
+  },
+  {
+    path: '/connect-wallet',
+    name: 'connect-wallet',
+    component: () =>
+      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue'),
+    meta: {
+      skipPreloadScreen: true
+    }
   },
   {
     path: '/release-radar',
-    name: 'release-radar',
     component: () =>
-      import(/* webpackChunkName: "release-radar" */ '@/views/home.vue')
+      import(
+        /* webpackChunkName: "release-radar" */ '@/views/release-radar/release-radar-root.vue'
+      ),
+    children: [
+      {
+        path: '',
+        name: 'release-radar-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "release-radar" */ '@/views/release-radar/release-radar-view-all.vue'
+          )
+      }
+    ],
+    beforeEnter: checkFeatureFlag('isReleaseRadarEnabled')
   },
   {
     path: '/debit-card',
     name: 'debit-card',
     component: () =>
-      import(/* webpackChunkName: "debit-card" */ '@/views/home.vue')
-  },
-  {
-    path: '/swaps',
-    name: 'swaps',
-    component: () => import(/* webpackChunkName: "swaps" */ '@/views/swaps.vue')
+      import(/* webpackChunkName: "debit-card" */ '@/views/home.vue'),
+    beforeEnter: checkFeatureFlag('isDebitCardEnabled')
   },
   {
     path: '/savings',
@@ -36,27 +54,19 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        path: 'month-statistics',
+        path: 'empty',
+        name: 'savings-empty',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings" */ '@/views/savings/savings-empty.vue'
+          )
+      },
+      {
+        path: 'month-statistics/:year/:month',
         name: 'savings-month-stats',
         component: () =>
           import(
             /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
-          )
-      },
-      {
-        path: 'deposit',
-        name: 'savings-deposit',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit.vue'
-          )
-      },
-      {
-        path: 'withdraw',
-        name: 'savings-withdraw',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw.vue'
           )
       },
       {
@@ -77,35 +87,19 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        path: 'month-statistics',
+        path: 'empty',
+        name: 'treasury-empty',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-empty.vue'
+          )
+      },
+      {
+        path: 'month-statistics/:year/:month',
         name: 'treasury-month-stats',
         component: () =>
           import(
             /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
-          )
-      },
-      {
-        path: 'increase-boost',
-        name: 'treasury-deposit',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-boost.vue'
-          )
-      },
-      {
-        path: 'decrease-boost',
-        name: 'treasury-decrease-boost',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-boost.vue'
-          )
-      },
-      {
-        path: 'claim-and-burn',
-        name: 'treasury-claim-and-burn',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn.vue'
           )
       },
       {
@@ -149,7 +143,8 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
           )
       }
-    ]
+    ],
+    beforeEnter: checkFeatureFlag('isGovernanceEnabled')
   },
   {
     path: '/nibble-shop',
@@ -164,30 +159,6 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view.vue'
-          )
-      },
-      {
-        path: 'buy/:id',
-        name: 'nibble-shop-buy',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-buy.vue'
-          )
-      },
-      {
-        path: 'sell/:id',
-        name: 'nibble-shop-sell',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-sell.vue'
-          )
-      },
-      {
-        path: 'redeem/:id',
-        name: 'nibble-shop-redeem',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
           )
       },
       {
@@ -206,7 +177,8 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
           )
       }
-    ]
+    ],
+    beforeEnter: checkFeatureFlag('isNibbleShopEnabled')
   },
   {
     path: '/nft-drops',
@@ -227,13 +199,29 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
           )
       }
-    ]
+    ],
+    beforeEnter: checkFeatureFlag('isNftDropsEnabled')
   },
   {
     path: '/transactions/:txHash',
     name: 'transaction',
     component: () =>
       import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
+  },
+  {
+    path: '/404',
+    name: 'not-found-route',
+    component: () =>
+      import(/* webpackChunkName: "home" */ '@/views/view-404.vue'),
+    meta: {
+      skipPreloadScreen: true
+    }
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'not-found-route'
+    }
   }
 ];
 
@@ -249,5 +237,23 @@ router.beforeEach((to, from, next) => {
     .then(() => next())
     .catch(() => next(false));
 });
+
+router.beforeResolve((to, from, next) => {
+  if (!to.meta.pageTitleTranslationKey) {
+    document.title = router.app.$t('lblPageTitleDefault') as string;
+    next();
+    return;
+  }
+
+  if (!router.app.$te(to.meta.pageTitleTranslationKey)) {
+    next();
+    return;
+  }
+
+  document.title = router.app.$t(to.meta.pageTitleTranslationKey) as string;
+  next();
+});
+
+router.beforeResolve(requireWalletAuth(['connect-wallet', 'not-found-route']));
 
 export default router;

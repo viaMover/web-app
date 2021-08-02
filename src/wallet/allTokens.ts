@@ -5,7 +5,7 @@ import { getTokenLogo } from '@/services/trustwallet/logo';
 import { getTestnetAssets } from './references/testnetAssets';
 
 export const getAllTokens = (network: Network): Array<Token> => {
-  let assets = Array<Token>();
+  let assets: Array<Token>;
   if (network === Network.mainnet) {
     assets = assetList.map(
       (asset) =>
@@ -14,7 +14,8 @@ export const getAllTokens = (network: Network): Array<Token> => {
           decimals: asset.decimals,
           symbol: asset.symbol,
           name: asset.name,
-          logo: getTokenLogo(asset.id)
+          logo: getTokenLogo(asset.id),
+          color: asset.color
         } as Token)
     );
   } else {

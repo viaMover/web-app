@@ -1,6 +1,10 @@
+import { SavingsInfo, SavingsReceipt } from '@/services/mover';
+import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
 import Web3 from 'web3';
+
+export type ChartPair = [number, number];
 
 export type TransactionGroup = {
   timeStamp: number;
@@ -13,15 +17,23 @@ export type AccountData = {
   networkId: number | undefined;
 };
 
-export type ProviderNames = 'MetaMask' | 'WalletConnect' | null;
+export type ProviderNames = 'MetaMask' | 'WalletConnect';
 
 export type ProviderData = {
   web3: Web3;
+  pureProvider: any;
   providerName: ProviderNames;
   providerBeforeClose: () => void;
 };
 
+export type Avatar = {
+  symbol: string;
+  className: string;
+};
+
 export type AccountStoreState = {
+  avatar: Avatar | undefined;
+  avatars: Array<Avatar>;
   addresses: Array<string>;
   balance: undefined | string;
   networkInfo: undefined | NetworkInfo;
@@ -34,6 +46,39 @@ export type AccountStoreState = {
   isDetecting: boolean;
   refreshError: undefined | string;
 
+  nativeCurrency: 'usd';
+  // main prices in native currency
+  ethPrice: undefined | string;
+  movePriceInWeth: undefined | string;
+  usdcPriceInWeth: undefined | string;
+  slpPriceInWeth: undefined | string;
+
+  // explorer
+  explorer: undefined | Explorer;
+  //charts
+  chartData: undefined | Record<string, ChartPair[]>;
+
   gasPrices: GasData | undefined;
   gasUpdating: boolean;
+  isDebitCardSectionVisible: boolean;
+
+  isSavingsInfoLoading: boolean;
+  savingsInfo: SavingsInfo | undefined;
+  savingsInfoError: string | undefined;
+
+  isSavingsReceiptLoading: boolean;
+  savingsReceipt: SavingsReceipt | undefined;
+  savingsReceiptError: string | undefined;
+
+  savingsBalance: string | undefined;
+  savingsAPY: string | undefined;
+  savingsDPY: string | undefined;
+
+  // Treasury
+  treasuryBalanceMove: string | undefined;
+  treasuryBalanceLP: string | undefined;
+  treasuryBonus: string | undefined;
+  treasuryAPY: string | undefined;
+  treasuryTotalStakedMove: string | undefined;
+  treasuryTotalStakedMoveEthLP: string | undefined;
 };

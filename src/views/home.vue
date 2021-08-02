@@ -1,29 +1,44 @@
 <template>
-  <content-wrapper has-left-rail>
+  <content-wrapper has-left-rail wrapper-class="general-desktop">
     <template v-slot:left-rail>
       <wallet-info-rail />
     </template>
 
     <header-balance />
-    <div class="columns">
-      <release-radar-section class="column one of two" />
-      <swaps-section class="column one of two" />
-    </div>
-    <debit-card-section />
+    <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
+
+    <template v-if="isFeatureEnabled('isReleaseRadarEnabled')">
+      <div class="general-desktop__menu-wrapper-item">
+        <div class="general-desktop__menu-wrapper-item-links">
+          <release-radar-section />
+          <swaps-section />
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <swaps-section
+        inner-container-class="general-desktop__menu-wrapper-item-info"
+        own-class="general-desktop__menu-wrapper-item"
+      />
+    </template>
+
     <savings-section />
     <treasury-section />
-    <governance-section />
-    <nibble-shop-section />
-    <nfts-section />
+    <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
+    <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
+    <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
 
     <transaction-modal />
-    <swap-modal />
+    <centered-modal-window v-cloak :modal-id="SwapModalId">
+      <swap-form />
+    </centered-modal-window>
     <search-modal />
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { isFeatureEnabled } from '@/settings';
 
 import { ContentWrapper } from '@/components/layout';
 import { WalletInfoRail } from '@/components/wallet-info-rail';
@@ -35,10 +50,18 @@ import {
   TreasurySection,
   GovernanceSection,
   NibbleShopSection,
-  NftsSection,
+  NftDropsSection,
   HeaderBalance
 } from '@/components/sections';
-import { TransactionModal, SwapModal, SearchModal } from '@/components/modals';
+import { SwapForm } from '@/components/forms';
+import {
+  TransactionModal,
+  SearchModal,
+  CenteredModalWindow,
+  Modal
+} from '@/components/modals';
+
+import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'Home',
@@ -52,11 +75,20 @@ export default Vue.extend({
     TreasurySection,
     GovernanceSection,
     NibbleShopSection,
-    NftsSection,
+    NftDropsSection,
     HeaderBalance,
     TransactionModal,
-    SwapModal,
-    SearchModal
+    SwapForm,
+    SearchModal,
+    CenteredModalWindow
+  },
+  data() {
+    return {
+      SwapModalId: Modal.Swap
+    };
+  },
+  methods: {
+    isFeatureEnabled
   }
 });
 </script>

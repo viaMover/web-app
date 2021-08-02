@@ -1,12 +1,29 @@
 <template>
-  <div class="content-wrapper">
-    <left-rail v-if="hasLeftRail">
+  <div :class="baseClass">
+    <left-rail
+      v-if="hasLeftRail"
+      :container-class="leftRailClass"
+      :inner-wrapper-class="leftRailInnerWrapperClass"
+      :show-logo="!hasBackButton"
+    >
       <slot name="left-rail"></slot>
-    </left-rail>
-
-    <page-container>
-      <close-button v-if="hasCloseButton" @close="handleClose" />
       <back-button v-if="hasBackButton" @close="handleClose" />
+      <close-button
+        v-if="hasCloseButton"
+        :is-black="isBlackCloseButton"
+        @close="handleClose"
+      />
+    </left-rail>
+    <template v-else>
+      <back-button v-if="hasBackButton" @close="handleClose" />
+      <close-button
+        v-if="hasCloseButton"
+        :is-black="isBlackCloseButton"
+        @close="handleClose"
+      />
+    </template>
+
+    <page-container :container-class="pageContainerClassDerived">
       <slot></slot>
     </page-container>
   </div>
@@ -15,7 +32,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import LeftRail from './left-rail.vue';
+import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
 import { BackButton, CloseButton } from '@/components/buttons';
 
@@ -39,6 +56,38 @@ export default Vue.extend({
     hasBackButton: {
       type: Boolean,
       default: false
+    },
+    baseClass: {
+      type: String,
+      default: 'info__wrapper'
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    },
+    leftRailInnerWrapperClass: {
+      type: String,
+      default: ''
+    },
+    pageContainerClass: {
+      type: String,
+      default: ''
+    },
+    isBlackCloseButton: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    leftRailClass(): string {
+      return this.wrapperClass + '__sidebar';
+    },
+    pageContainerClassDerived(): string {
+      if (!this.pageContainerClass) {
+        return this.wrapperClass + '__menu';
+      }
+
+      return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
     }
   },
   methods: {

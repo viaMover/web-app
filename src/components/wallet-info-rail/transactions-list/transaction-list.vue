@@ -10,13 +10,6 @@
       :heading-text="formatDate(txGroup.timeStamp)"
       :transactions="txGroup.transactions"
     />
-    <!-- component with dummy data -->
-    <transaction-group
-      v-for="txGroup in dummyTransactionData"
-      :key="txGroup.date"
-      :heading-text="formatDate(txGroup.timeStamp)"
-      :transactions="txGroup.transactions"
-    />
   </div>
 </template>
 
@@ -26,7 +19,6 @@ import dayjs from 'dayjs';
 
 import TransactionGroup from './transaction-group.vue';
 import { mapGetters } from 'vuex';
-import { dummyTransactionData } from './dummy-data';
 
 export default Vue.extend({
   name: 'TransactionList',
@@ -39,11 +31,6 @@ export default Vue.extend({
       required: false
     }
   },
-  data: function () {
-    return {
-      dummyTransactionData
-    };
-  },
   computed: {
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
@@ -54,9 +41,12 @@ export default Vue.extend({
       const date = dayjs.unix(timestamp);
 
       if (dayjs().diff(date, 'days') <= 2) {
-        return date.calendar();
+        return date.calendar(undefined, {
+          sameDay: this.$t('dates.sameDay'),
+          lastDay: this.$t('dates.lastDay')
+        });
       }
-      return date.format('DD MMMM YY');
+      return date.format('DD MMMM');
     }
   }
 });

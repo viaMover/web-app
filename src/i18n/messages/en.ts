@@ -1,20 +1,26 @@
 export default {
+  lblPageTitleDefault: 'Mover App',
   lblWelcome: 'Welcome',
+  lblBalance: 'Balance',
   headingBalance: 'Your wallet balance',
-  lblConnectWallet: 'Connect a wallet',
+  lblConnectWallet: 'Please connect a wallet',
+  txtConnectWallet:
+    'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
+  btnConnectWallet: 'Connect a wallet',
+  txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
   lblDisconnect: 'Disconnect',
-  lblConnectWalletTransactionHistory: '@:lblConnectWallet to see history',
+  lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
-    lblReleaseRadarNewTokensToday: '{amount} new tokens today'
+    lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
   },
   swaps: {
     lblSwaps: 'Swaps',
     lblSwapFrom: '@:swaps.lblSwapPrefix from',
     lblSwapPrefix: 'Swap',
     lblSwapTo: '@:swaps.lblSwapPrefix to',
-    lblChooseToken: 'Choose Token ▼',
+    lblChooseToken: 'Choose Token',
     lblMinimumReceived: 'Minimum received',
     lblRate: 'Rate',
     lblEstimatedNetworkFee: 'Estimated network fee',
@@ -34,18 +40,23 @@ export default {
     btnOrderDebitCard: 'Order the card'
   },
   savings: {
+    icon: '💰',
     lblSavings: 'Savings',
+    lblNothingInSavings: 'Nothing in @:savings.lblSavings',
+    txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
     lblSavingsEarnedTodaySection: 'You earned {amount} today',
     lblSavingsPrefix: 'Savings',
+    lblSavingsBalance: '@:savings.lblSavingsPrefix Balance',
+    lblSavingsStatements: '@:savings.lblSavingsPrefix Statements',
     lblManageSavings: 'Manage @:savings.lblSavingsPrefix',
-    lblSavingsOverview: '@:savings.lblSavingsPrefix overview',
+    lblSavingsOverview: '@:savings.lblSavingsPrefix Overview',
     lblDepositedAssets: 'Deposited assets',
     lblCurrentVariableAPY: 'Current variable APY',
     lbl30DayAverageAPY: '30-day average APY',
     lblTotalAssetsUnderManagement: 'Total assets under management',
     lblSavingsStats: '@:savings.lblSavingsPrefix Stats',
-    lblSavingsEarnedToday: 'Earned today',
+    lblEarnedToday: 'Earned today',
     lblEarnedThisMonth: 'Earned this month',
     lblEarnedInTotal: 'Earned in total',
     lblSavingsEstimation: '@:savings.lblSavingsPrefix Estimation',
@@ -65,8 +76,8 @@ export default {
     },
     lblEarnedRelativeMonthlyChange: '{amount} earned this month',
     lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
-    lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
-      '{amount} earned in {date}',
+    lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
+      'Yield earned in {date}',
     lblInProgress: 'In progress',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
@@ -74,7 +85,9 @@ export default {
       lblDeposits: '{month} deposits',
       lblWithdrawals: '{month} withdrawals',
       lblSavedFees: 'Saved fees',
-      lblPayoutsToTreasury: 'Payouts to @:treasury.lblTreasury'
+      lblPayoutsToTreasury: 'Payouts to @:treasury.lblTreasury',
+      lblTotalEarnedInMonth: 'Total earned in {month}',
+      lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}'
     },
     deposit: {
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
@@ -106,10 +119,14 @@ export default {
     btnEnterAmount: 'Enter amount'
   },
   treasury: {
+    icon: '🐷',
     lblTreasuryHeader: '{amount} @:treasury.lblTreasuryBonuses',
     lblSmartTreasury: 'Smart Treasury',
+    lblNothingInTreasury: 'Nothing in @:treasury.lblTreasury',
+    txtNothingInTreasury: 'Looks like you don’t have Treasury Boost, yet',
     lblTreasuryEarnedToday: '@:treasury.lblTreasury brought you {amount} today',
     lblTreasuryBonuses: 'Treasury Bonuses',
+    lblTreasuryBonusBalance: '@:treasury.lblSmartTreasury Bonus Balance',
     lblTreasury: 'Treasury',
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',
@@ -342,14 +359,25 @@ export default {
     txtNFTs: {
       sweetAndSour: {
         description:
-          'This NFT is dropped for all unique addresses that have held HOLY until April 31, 2021. ' +
-          'The Sweet & Sour NFT gives early access to Nibble Shop. ' +
-          'This NFT has no expiry date, and can be exchanged, swapped or sent to other addresses.'
+          'This NFT is dropped for all unique addresses that have held HOLY ' +
+          'until April 31, 2021; and those that participated in the early LP ' +
+          'program bu didn’t migrate. The Sweet & Sour NFT gives early access' +
+          ' to Nibble Shop.',
+        pageDescription:
+          'Nothing really to add here. This cap is hand-made ' +
+          'for all the CEOs of all the monies. This is a genesis limited ' +
+          'addition with only 30 ever caps to be made. This item will not ' +
+          'be restocked. One size fits all CEOs.'
       },
       unexpectedMove: {
         description:
           'This NFT is dropped for all participants in our Twitter promo. ' +
-          'The Unexpected Move NFT can be exchanged for 1 MOVE token, but only once.'
+          'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
+          'but only once.',
+        pageDescription:
+          'This NFT is dropped for all participants in our ' +
+          'Twitter promo. The Unexpected Move NFT can be exchanged for 1 ' +
+          'MOVE token, but only once.'
       }
     },
     btnGet: {
@@ -371,7 +399,7 @@ export default {
   asset: {
     txtAlt: '{name} icon',
     txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: '➕ Use Max'
+    lblSelectMax: 'Use Max'
   },
   transaction: {
     lblState: {
@@ -393,20 +421,51 @@ export default {
       }
     }
   },
+  radar: {
+    lblTokenOfTheDay: 'Token of the day',
+    liveUpdates: {
+      lblLiveUpdates: 'Live updates',
+      lblTopMovers: 'Top Movers',
+      lblTopLosers: 'Top losers',
+      lblNewTokens: 'New tokens',
+      lblDeFi: 'DeFi',
+      lblStablecoins: 'Stablecoins'
+    },
+    lblPersonalLists: 'Personal Lists',
+    lblCuratedLists: 'Curated Lists',
+    lblRune: 'RUNE',
+    txtRuneAlt: '{name} coin icon',
+    txtRadar: {
+      runeDescription:
+        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
+        'THORChain allows for native swaps between various blockchains e.g. a ' +
+        'native swap between ETH and BTC.'
+    },
+    btnGet: {
+      simple: 'Get'
+    },
+    btnSearch: {
+      emoji: '🔍'
+    }
+  },
   search: {
+    lblSearch: 'Search',
     lblSearchBar: 'Search tokens',
     lblSearchBarPlaceholder: 'Search any token on Ethereum',
-    lblFavorite: '⭐ Favorite',
-    lblVerified: '✔ Verified'
+    lblFavorite: 'Favorite',
+    lblVerified: 'Verified'
   },
   gas: {
     lblNetworkFee: 'Network fee',
     lblSelector: {
-      low: 'Low',
-      normal: 'Normal',
-      high: 'High',
-      custom: 'Custom',
-      treasury: 'Treasury'
+      low: '🐌 Slow',
+      normal: '⏱ Normal',
+      high: '🚀 Fast',
+      treasury: '🐷 Smart Treasury'
     }
+  },
+  dates: {
+    sameDay: '[Today]',
+    lastDay: '[Yesterday]'
   }
 };

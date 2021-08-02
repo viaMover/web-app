@@ -1,10 +1,12 @@
 <template>
-  <router-view></router-view>
+  <router-view />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions } from 'vuex';
+
+import '@/styles/_nibble.less';
 
 export default Vue.extend({
   name: 'NibbleShopRoot',

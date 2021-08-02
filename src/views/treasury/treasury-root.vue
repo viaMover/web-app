@@ -1,8 +1,9 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
-    has-close-button
+    has-back-button
     has-left-rail
+    left-rail-inner-wrapper-class="page-sidebar-wrapper"
+    wrapper-class="smart-treasury"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -12,6 +13,17 @@
     </template>
 
     <router-view />
+
+    <centered-modal-window v-cloak :modal-id="TreasuryIncreaseBoostModalId">
+      <treasury-increase-boost-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="TreasuryDecreaseBoostModalId">
+      <treasury-decrease-boost-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="TreasuryClaimAndBurnModalId">
+      <treasury-claim-and-burn-form />
+    </centered-modal-window>
+    <search-modal />
   </content-wrapper>
 </template>
 
@@ -24,19 +36,32 @@ import {
   TreasuryStats,
   TreasuryReservedAssets
 } from '@/components/treasury';
-
+import {
+  TreasuryIncreaseBoostForm,
+  TreasuryDecreaseBoostForm,
+  TreasuryClaimAndBurnForm
+} from '@/components/forms';
+import '@/styles/_treasury.less';
+import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
     ContentWrapper,
     TreasuryOverview,
     TreasuryStats,
-    TreasuryReservedAssets
+    TreasuryReservedAssets,
+    TreasuryIncreaseBoostForm,
+    TreasuryDecreaseBoostForm,
+    TreasuryClaimAndBurnForm,
+    CenteredModalWindow,
+    SearchModal
   },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    }
+  data() {
+    return {
+      TreasuryIncreaseBoostModalId: Modal.TreasuryIncreaseBoost,
+      TreasuryDecreaseBoostModalId: Modal.TreasuryDecreaseBoost,
+      TreasuryClaimAndBurnModalId: Modal.TreasuryClaimAndBurn
+    };
   },
   methods: {
     handleClose(): void {

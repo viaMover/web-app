@@ -1,40 +1,93 @@
 <template>
-  <secondary-page has-heading-buttons :title="$t('savings.lblSavings')">
-    <template v-slot:heading-buttons>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="savings-deposit"
+  <secondary-page has-heading-buttons>
+    <template v-slot:title>
+      <secondary-page-title
+        :icon="$t('savings.icon')"
+        :title="$t('savings.lblSavings')"
+        wrapper-class="savings__menu-wrapper-title"
       >
-        {{ $t('savings.btnDeposit.emoji') }}
-      </heading-nav-button>
-      <heading-nav-button
-        button-class="transparent"
-        navigate-to-name="savings-withdraw"
-      >
-        {{ $t('savings.btnWithdraw.emoji') }}
-      </heading-nav-button>
+        <template v-slot:context-menu>
+          <context-button :popover-parent-id="popoverParentId">
+            <context-button-item
+              :text="$t('savings.btnDeposit.emoji')"
+              @click="handleDepositCick"
+            />
+            <context-button-item
+              :text="$t('savings.btnWithdraw.emoji')"
+              @click="handleWithdrawCick"
+            />
+          </context-button>
+        </template>
+      </secondary-page-title>
     </template>
 
-    <h2>{{ $t('savings.lblManageSavings') }}</h2>
-    <savings-yearly-chart />
-    <savings-statements />
+    <savings-yearly-chart-wrapper />
+    <statement-nav-list
+      :button-text="$t('savings.btnView.simple')"
+      icon="💰"
+      :in-progress-text="$t('savings.lblInProgress')"
+      :items="savingsMonthStatsOptions"
+      navigate-to-name="savings-month-stats"
+      wrapper-class="savings__menu-wrapper-statements"
+    />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
-import { SecondaryPage } from '@/components/layout';
-import { HeadingNavButton } from '@/components/buttons';
-import { SavingsYearlyChart, SavingsStatements } from '@/components/savings';
+import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { SavingsYearlyChartWrapper } from '@/components/savings';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'SavingsManage',
   components: {
+    ContextButton,
+    ContextButtonItem,
+    SecondaryPageTitle,
     SecondaryPage,
-    HeadingNavButton,
-    SavingsYearlyChart,
-    SavingsStatements
+    SavingsYearlyChartWrapper,
+    StatementNavList
+  },
+  data() {
+    return {
+      popoverParentId: 'savings-manage-action-buttons'
+    };
+  },
+  computed: {
+    ...mapGetters('account', ['hasActiveSavings', 'savingsMonthStatsOptions'])
+  },
+  watch: {
+    hasActiveSavings(newVal: boolean) {
+      if (!newVal) {
+        this.replaceInactiveSavingsRoute();
+      }
+    }
+  },
+  beforeMount() {
+    if (!this.hasActiveSavings) {
+      this.replaceInactiveSavingsRoute();
+    }
+  },
+  methods: {
+    replaceInactiveSavingsRoute(): void {
+      this.$router.replace({
+        name: 'savings-empty'
+      });
+    },
+    handleDepositCick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.SavingsDeposit);
+    },
+    handleWithdrawCick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.SavingsWithdraw);
+    }
   }
 });
 </script>

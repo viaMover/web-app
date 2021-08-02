@@ -1,46 +1,45 @@
 <template>
   <heading-section
-    class="section debit"
-    has-expand-button
+    v-show="isInfoVisible"
+    class="general-desktop__menu-wrapper-order"
+    container-class="hellow"
     :name="$t('debitCard.lblDebitCard')"
-    navigate-to-name="debit-card"
   >
-    <template v-slot:heading>
-      {{ $t('debitCard.lblDebitCard') }}
-    </template>
-
-    <div class="body">
-      <div>
-        <div>
-          <h3 class="heading">{{ $t('debitCard.lblDebitCardHeading') }}</h3>
-          <p class="content">{{ $t('debitCard.txtDebitCard') }}</p>
-        </div>
-        <div class="emoji right floating">🐐</div>
+    <div class="order__info">
+      <div class="order__info-description">
+        <h2>{{ $t('debitCard.lblDebitCardHeading') }}</h2>
+        <p>{{ $t('debitCard.txtDebitCard') }}</p>
       </div>
-
-      <div class="button-container">
-        <action-button class="button-primary">
-          {{ $t('debitCard.btnOrderDebitCard') }}
-        </action-button>
-        <div class="cross-icon">
-          <img src="@/assets/images/cross.svg" />
-        </div>
-      </div>
+      <div class="order__info-icon"><span>💳</span></div>
+    </div>
+    <div class="order__buttons">
+      <action-button class="black-link button-active">
+        {{ $t('debitCard.btnOrderDebitCard') }}
+      </action-button>
+      <close-button @close="toggleInfo"></close-button>
     </div>
   </heading-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapState } from 'vuex';
 
 import HeadingSection from './heading-section.vue';
-import ActionButton from '../buttons/action-button.vue';
+import { ActionButton, CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'DebitCardSection',
   components: {
     HeadingSection,
-    ActionButton
+    ActionButton,
+    CloseButton
+  },
+  computed: {
+    ...mapState('account', { isInfoVisible: 'isDebitCardSectionVisible' })
+  },
+  methods: {
+    ...mapActions('account', { toggleInfo: 'toggleIsDebitCardSectionVisible' })
   }
 });
 </script>

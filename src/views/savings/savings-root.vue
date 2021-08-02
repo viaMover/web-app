@@ -1,8 +1,9 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
-    has-close-button
+    has-back-button
     has-left-rail
+    left-rail-inner-wrapper-class="page-sidebar-wrapper"
+    wrapper-class="savings"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -12,6 +13,14 @@
     </template>
 
     <router-view />
+
+    <centered-modal-window v-cloak :modal-id="SavingsDepositModalId">
+      <savings-deposit-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="SavingsWithdrawModalId">
+      <savings-withdraw-form />
+    </centered-modal-window>
+    <search-modal />
   </content-wrapper>
 </template>
 
@@ -24,6 +33,10 @@ import {
   SavingsStats,
   SavingsEstimation
 } from '@/components/savings';
+import { SavingsDepositForm, SavingsWithdrawForm } from '@/components/forms';
+import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
+
+import '@/styles/_savings.less';
 
 export default Vue.extend({
   name: 'SavingsRoot',
@@ -31,12 +44,17 @@ export default Vue.extend({
     ContentWrapper,
     SavingsOverview,
     SavingsStats,
-    SavingsEstimation
+    SavingsEstimation,
+    SavingsDepositForm,
+    SavingsWithdrawForm,
+    CenteredModalWindow,
+    SearchModal
   },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    }
+  data() {
+    return {
+      SavingsDepositModalId: Modal.SavingsDeposit,
+      SavingsWithdrawModalId: Modal.SavingsWithdraw
+    };
   },
   methods: {
     handleClose(): void {

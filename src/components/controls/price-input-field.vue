@@ -1,17 +1,14 @@
 <template>
-  <span class="input">
-    <label :for="fieldId">{{ fieldLabel }}</label>
-    {{ textPrefix }}
-    <input
-      :id="fieldId"
-      class="amount"
-      :max="maxAmount"
-      min="0"
-      type="number"
-      :value="amount"
-      @input="updateAmount($event.target.value)"
-    />
-  </span>
+  <input
+    :id="fieldId"
+    :class="inputClass"
+    :max="maxAmount"
+    min="0"
+    :placeholder="placeholder"
+    type="number"
+    :value="amount"
+    @input="updateAmount($event.target.value)"
+  />
 </template>
 
 <script lang="ts">
@@ -39,6 +36,14 @@ export default Vue.extend({
     maxAmount: {
       type: String,
       required: false
+    },
+    inputClass: {
+      type: String,
+      required: false
+    },
+    placeholder: {
+      type: String,
+      default: ''
     }
   },
   methods: {

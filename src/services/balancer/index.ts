@@ -34,7 +34,7 @@ export const getWalletTokens = async (
       from: currentAddress
     } as TransactionsParams);
 
-  const result = tokensToCheck.map(
+  return tokensToCheck.map(
     (t, ind) =>
       ({
         address: t.address,
@@ -48,6 +48,4 @@ export const getWalletTokens = async (
         symbol: t.symbol
       } as TokenWithBalance)
   );
-
-  return result;
 };

@@ -1,6 +1,6 @@
 <template>
-  <div v-if="items.length" class="list">
-    <div v-if="hasHeader" class="header">
+  <div v-show="items.length">
+    <div v-if="hasHeader" class="items-title" :class="headerClass">
       <slot name="header"></slot>
     </div>
     <search-modal-token-item
@@ -15,9 +15,8 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { CoingeckoToken } from '@/services/coingecko/tokens';
-
 import SearchModalTokenItem from './search-modal-token-item.vue';
+import { Token } from '@/wallet/types';
 
 export default Vue.extend({
   name: 'SearchModalTokenList',
@@ -26,30 +25,22 @@ export default Vue.extend({
   },
   props: {
     items: {
-      type: Array as PropType<Array<CoingeckoToken>>,
+      type: Array as PropType<Array<Token>>,
       required: true
     },
     hasHeader: {
       type: Boolean,
       default: false
+    },
+    headerClass: {
+      type: String,
+      default: ''
     }
   },
   methods: {
-    handleSelect(selected: CoingeckoToken): void {
+    handleSelect(selected: Token): void {
       this.$emit('select', selected);
     }
   }
 });
 </script>
-
-<style scoped lang="less">
-.list {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-
-  .header {
-    line-height: 1.5rem;
-    font-weight: bold;
-  }
-}
-</style>
