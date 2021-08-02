@@ -102,7 +102,14 @@ import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
 import { mapState } from 'vuex';
-import { add, divide, greaterThan, multiply, notZero } from '@/utils/bigmath';
+import {
+  add,
+  convertAmountFromNativeValue,
+  divide,
+  greaterThan,
+  multiply,
+  notZero
+} from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { Step } from '../controls/form-loader.vue';
 import {
@@ -224,7 +231,7 @@ export default Vue.extend({
         return this.error;
       }
 
-      return '💰 Deposit';
+      return '📈 Increase Boost';
     },
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high'];
@@ -335,7 +342,7 @@ export default Vue.extend({
         return;
       }
 
-      if (!notZero(this.input.amount)) {
+      if (!notZero(this.input.nativeAmount)) {
         this.input.amount = '0';
         return;
       }
@@ -343,9 +350,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.amount = divide(
+        this.input.amount = convertAmountFromNativeValue(
           this.input.nativeAmount,
-          this.input.asset.priceUSD
+          this.input.asset.priceUSD,
+          this.input.asset.decimals
         );
 
         await this.tryToEstimate(this.input.amount, this.input.asset);

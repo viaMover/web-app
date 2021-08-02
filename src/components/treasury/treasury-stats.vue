@@ -29,8 +29,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
 export default Vue.extend({
   name: 'TreasuryStats',
@@ -38,15 +40,35 @@ export default Vue.extend({
     LeftRailSection,
     LeftRailSectionItem
   },
-  data() {
-    return {
-      earnedToday: '0',
-      earnedThisMonth: '0',
-      earnedInTotal: '0',
-      spentToday: '0',
-      spentThisMonth: '0',
-      spentInTotal: '0'
-    };
+  computed: {
+    ...mapGetters('account', {
+      treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
+      treasuryEarnedTotalNative: 'treasuryEarnedTotalNative'
+    }),
+    earnedToday(): string {
+      const value = '0';
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
+    earnedThisMonth(): string {
+      const value = formatToNative(this.treasuryEarnedThisMonthNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
+    earnedInTotal(): string {
+      const value = formatToNative(this.treasuryEarnedTotalNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
+    spentToday(): string {
+      const value = '0';
+      return `${getSignIfNeeded(value, '-')}$${value}`;
+    },
+    spentThisMonth(): string {
+      const value = '0';
+      return `${getSignIfNeeded(value, '-')}$${value}`;
+    },
+    spentInTotal(): string {
+      const value = '0';
+      return `${getSignIfNeeded(value, '-')}$${value}`;
+    }
   }
 });
 </script>

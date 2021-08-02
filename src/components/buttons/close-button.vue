@@ -5,10 +5,14 @@
   >
     <img
       v-if="isBlack"
-      alt="close icon"
+      :alt="$t('icon.txtCloseIconAlt')"
       src="@/assets/images/black-cross.svg"
     />
-    <img v-else alt="close icon" src="@/assets/images/cross.svg" />
+    <img
+      v-else
+      :alt="$t('icon.txtCloseIconAlt')"
+      src="@/assets/images/cross.svg"
+    />
   </action-button>
 </template>
 

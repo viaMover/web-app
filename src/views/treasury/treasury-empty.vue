@@ -10,11 +10,15 @@
           <context-button :popover-parent-id="popoverParentId">
             <context-button-item
               :text="$t('treasury.btnDeposit.emoji')"
-              @click="handleDepositCick"
+              @click="handleDepositClick"
             />
             <context-button-item
               :text="$t('treasury.btnWithdraw.emoji')"
-              @click="handleWithdrawCick"
+              @click="handleWithdrawClick"
+            />
+            <context-button-item
+              :text="$t('treasury.btnClaimAndBurn.emoji')"
+              @click="handleClaimAndBurnClick"
             />
           </context-button>
         </template>
@@ -46,6 +50,7 @@ import {
 } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
 import { Modal } from '@/components/modals';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'TreasuryEmpty',
@@ -62,9 +67,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    hasActiveTreasury(): boolean {
-      return false;
-    }
+    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' })
   },
   watch: {
     hasActiveTreasury(newVal: boolean) {
@@ -87,13 +90,17 @@ export default Vue.extend({
     toggleDeposit(): void {
       toggleSingleItem(Modal.TreasuryIncreaseBoost);
     },
-    handleDepositCick(): void {
+    handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.TreasuryIncreaseBoost);
     },
-    handleWithdrawCick(): void {
+    handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.TreasuryDecreaseBoost);
+    },
+    handleClaimAndBurnClick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      toggleSingleItem(Modal.TreasuryClaimAndBurn);
     }
   }
 });

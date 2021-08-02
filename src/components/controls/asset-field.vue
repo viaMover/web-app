@@ -17,6 +17,7 @@
         :input-class="'input-top'"
         :max-amount="maxAmount"
         :placeholder="placeholder"
+        :step="inputStep"
         @update-amount="handleUpdateAmount"
       />
       <price-input-field
@@ -25,19 +26,22 @@
         :field-id="`${fieldRole}-selected-native-amount`"
         :input-class="'input-bottom'"
         :placeholder="placeholder"
-        text-prefix="≈$"
+        :step="nativeInputStep"
+        :text-prefix="textPrefix"
         @update-amount="handleUpdateNativeAmount"
       />
     </div>
     <div class="modal-wrapper-info-items-item-right">
       <button
         class="currency button-active"
+        :class="{ empty: asset == null }"
+        :style="buttonStyle"
         type="button"
         @click.prevent.stop="handleOpenSelectModal"
       >
         <span>{{ openSelectModalText }}</span>
         <img
-          alt="arrow down icon"
+          :alt="$t('icon.txtSelectAssetButtonAlt')"
           src="@/assets/images/button-arrow-down.svg"
         />
       </button>
@@ -48,11 +52,13 @@
         type="button"
         @click="handleSelectMaxAmount"
       >
-        <img alt="plus icon" src="@/assets/images/plus.svg" />
-        <span>{{ this.$t('asset.lblSelectMax') }}</span>
+        <plus-icon :stroke="plusIconColor" />
+        <span :style="spanMaxAmountStyle">
+          {{ $t('asset.lblSelectMax') }}
+        </span>
       </button>
       <p v-else-if="showTokenBalance && tokenBalance">
-        Balance: {{ tokenBalance }}
+        {{ $t('asset.lblBalance') }}: {{ tokenBalance }}
       </p>
     </div>
   </div>
@@ -60,7 +66,8 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
+import { BigNumber } from 'bignumber.js';
 
 import { TokenWithBalance } from '@/wallet/types';
 import { sameAddress } from '@/utils/address';
@@ -70,17 +77,19 @@ import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { TokenImage } from '@/components/tokens';
 import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
+import PlusIcon from './plus-icon.vue';
 
 export default Vue.extend({
   name: 'AssetField',
   components: {
     TokenImage,
+    PlusIcon,
     PriceInputField
   },
   props: {
     asset: {
-      type: Object as PropType<TokenWithBalance>,
-      required: false
+      type: Object as PropType<TokenWithBalance | undefined>,
+      default: undefined
     },
     fieldRole: {
       type: String,
@@ -133,18 +142,19 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', ['tokens']),
+    ...mapGetters('account', ['getTokenColor']),
     placeholder(): string {
-      return this.asset == null ? '—' : '0.00';
+      return this.asset === undefined ? '—' : '0.00';
     },
     disabledInput(): boolean {
-      return this.asset == null;
+      return this.asset === undefined;
     },
     iconSrc(): string {
-      return this.asset == null ? '' : this.asset.logo;
+      return this.asset === undefined ? '' : this.asset.logo;
     },
     iconAlt(): string {
       return (
-        this.asset == null
+        this.asset === undefined
           ? this.$t('asset.txtFallbackAlt', {
               fieldRole: this.fieldRole
             })
@@ -153,8 +163,49 @@ export default Vue.extend({
             })
       ) as string;
     },
+    assetColor(): string | undefined {
+      if (this.asset === undefined) {
+        return undefined;
+      }
+
+      return this.getTokenColor(this.asset.address);
+    },
+    buttonStyle(): Record<string, string> {
+      if (this.assetColor === undefined) {
+        return {};
+      }
+
+      return {
+        'background-color': this.assetColor,
+        'box-shadow': `0 0 16px ${this.assetColor}`,
+        '-webkit-box-shadow': `0 0 16px ${this.assetColor}`
+      };
+    },
+    spanMaxAmountStyle(): Record<string, string> {
+      if (this.assetColor === undefined) {
+        return {};
+      }
+
+      return {
+        color: this.assetColor
+      };
+    },
+    plusIconColor(): string {
+      if (this.assetColor === undefined) {
+        return '#687ee3';
+      }
+
+      return this.assetColor;
+    },
+    textPrefix(): string {
+      if (this.placeholder === '—') {
+        return '';
+      }
+
+      return '≈$';
+    },
     openSelectModalText(): string {
-      if (this.asset == null) {
+      if (this.asset === undefined) {
         return this.$t('swaps.lblChooseToken') as string;
       }
 
@@ -166,7 +217,7 @@ export default Vue.extend({
     tokenBalance(): string {
       if (this.asset !== undefined) {
         const token = this.tokens.find((t: TokenWithBalance) =>
-          sameAddress(this.asset.address, t.address)
+          sameAddress(this.asset?.address ?? undefined, t.address)
         );
         if (token) {
           return `${formatToDecimals(token.balance, 4)} ${token.symbol}`;
@@ -174,6 +225,16 @@ export default Vue.extend({
         return '0.0000';
       }
       return '';
+    },
+    inputStep(): string {
+      if (this.asset === undefined) {
+        return new BigNumber(10).pow(-18).toString(10);
+      }
+
+      return new BigNumber(10).pow(-this.asset.decimals).toString(10);
+    },
+    nativeInputStep(): string {
+      return new BigNumber(10).pow(-6).toString(10);
     }
   },
   methods: {
@@ -182,7 +243,7 @@ export default Vue.extend({
     },
     handleSelectMaxAmount(): void {
       if (this.asset?.balance) {
-        this.$emit('update-amount', String(this.asset.balance));
+        this.$emit('update-amount', this.maxAmount);
       }
     },
     handleUpdateNativeAmount(amount: number): void {

@@ -1,3 +1,17 @@
-export { GetSavingsInfo, GetSavingsReceipt } from './savings';
+export { getSavingsInfo, getSavingsReceipt } from './savings/service';
+export type {
+  SavingsInfo,
+  SavingsReceipt,
+  SavingsMonthBalanceItem,
+  SavingsHourlyBalancesItem,
+  SavingsActionHistoryItem
+} from './savings/types';
 
-export type { SavingsInfo, SavingsReceipt } from './savings';
+export { getTreasuryInfo, getTreasuryReceipt } from './treasury/service';
+export type {
+  TreasuryInfo,
+  TreasuryReceipt,
+  TreasuryMonthBonusesItem,
+  TreasuryHourlyBalancesItem,
+  TreasuryActionHistoryItem
+} from './treasury/types';

@@ -1,4 +1,4 @@
-import { toWei, floorDivide, add } from '@/utils/bigmath';
+import { toWei, floorDivide } from '@/utils/bigmath';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import Web3 from 'web3';
@@ -12,7 +12,7 @@ import {
 } from '@/wallet/references/data';
 import { sameAddress } from '@/utils/address';
 
-export type CompoudEstimateResponse = {
+export type CompoundEstimateResponse = {
   error: boolean;
   approveGasLimit: string;
   actionGasLimit: string;
@@ -29,7 +29,7 @@ export const estimateWithdrawCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string
-): Promise<CompoudEstimateResponse> => {
+): Promise<CompoundEstimateResponse> => {
   const withdrawEstimate = await estimateWithdraw(
     outputAsset,
     inputAmount,

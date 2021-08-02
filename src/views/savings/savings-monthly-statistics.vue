@@ -4,7 +4,10 @@
       <h2>{{ pageTitle }}</h2>
       <p>{{ pageSubtitle }}</p>
     </div>
-    <savings-monthly-chart-wrapper :page-date="pageDate" />
+    <savings-monthly-chart-wrapper
+      v-if="isFeatureEnabled('isSavingsMonthlyChartEnabled')"
+      :page-date="pageDate"
+    />
     <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
@@ -15,13 +18,14 @@ import { mapActions } from 'vuex';
 import dayjs from 'dayjs';
 
 import { SecondaryPage } from '@/components/layout';
-import { GetSavingsReceiptPayload } from '@/store/modules/account/actions/charts';
+import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
 
 import {
   SavingsMonthlyChartWrapper,
   SavingsMonthlyStatement
 } from '@/components/savings';
 import { dateFromExplicitPair } from '@/utils/time';
+import { isFeatureEnabled } from '@/settings';
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
@@ -54,10 +58,11 @@ export default Vue.extend({
     await this.fetchMonthlyStats({
       year: this.pageDate.get('year'),
       month: this.pageDate.get('month') + 1
-    } as GetSavingsReceiptPayload);
+    } as SavingsGetReceiptPayload);
   },
   methods: {
-    ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' })
+    ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' }),
+    isFeatureEnabled
   },
   async beforeRouteUpdate(to, from, next) {
     if (
@@ -81,7 +86,7 @@ export default Vue.extend({
     await this.fetchMonthlyStats({
       year: date.get('year'),
       month: date.get('month') + 1
-    } as GetSavingsReceiptPayload);
+    } as SavingsGetReceiptPayload);
   }
 });
 </script>

@@ -47,7 +47,7 @@
           :button-class="buttonClass"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
-          @button-click="handleExecuteDeposit"
+          @button-click="handleExecuteWithdraw"
         />
       </div>
       <gas-selector
@@ -75,6 +75,7 @@ import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { mapGetters, mapState } from 'vuex';
 import {
   add,
+  convertAmountFromNativeValue,
   divide,
   greaterThan,
   multiply,
@@ -232,7 +233,7 @@ export default Vue.extend({
         return this.error;
       }
 
-      return '🚪 Decrease Boost';
+      return '📉 Decrease Boost';
     },
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high'];
@@ -261,7 +262,7 @@ export default Vue.extend({
       return this.infoExpanded && !this.loading && this.isInfoAvailable;
     },
     infoFooter(): string {
-      return 'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.';
+      return 'Decrease the boost will return your reserved assets, but will also decrease your Treasury share and future rewards.';
     }
   },
   mounted() {
@@ -288,7 +289,7 @@ export default Vue.extend({
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
-    async handleExecuteDeposit(): Promise<void> {
+    async handleExecuteWithdraw(): Promise<void> {
       if (this.output.asset === undefined) {
         console.error(
           "[withdraw-form] can't execute withdraw due to empty input asset"
@@ -369,7 +370,7 @@ export default Vue.extend({
         return;
       }
 
-      if (!notZero(this.output.amount)) {
+      if (!notZero(this.output.nativeAmount)) {
         this.output.amount = '0';
         return;
       }
@@ -377,9 +378,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.amount = divide(
+        this.output.amount = convertAmountFromNativeValue(
           this.output.nativeAmount,
-          this.output.asset.priceUSD
+          this.output.asset.priceUSD,
+          this.output.asset.decimals
         );
 
         await this.tryToEstimate(this.output.amount, this.output.asset);

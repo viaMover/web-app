@@ -8,7 +8,7 @@
     >
       <template v-slot:left-rail>
         <a class="logo" href="https://viamover.com">
-          <img alt="logo" src="@/assets/images/logo.svg" />
+          <img :alt="$t('icon.txtLogoAlt')" src="@/assets/images/logo.svg" />
         </a>
         <div class="preload-wrapper__sidebar-wrapper-user">
           <PuSkeleton circle class="user-icon" tag="div" />

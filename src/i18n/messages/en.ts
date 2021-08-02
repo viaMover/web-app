@@ -74,7 +74,7 @@ export default {
     btnView: {
       simple: 'View'
     },
-    lblEarnedRelativeMonthlyChange: '{amount} earned this month',
+    lblEarnedRelativeMonthlyChange: 'Yield earned this month',
     lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
     lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
       'Yield earned in {date}',
@@ -158,12 +158,11 @@ export default {
     btnView: {
       simple: 'View'
     },
-    lblEarnedRelativeMonthlyChange:
-      '{amount} bonuses from @:treasury.lblTreasuryPrefix this month',
+    lblEarnedRelativeMonthlyChange: 'Treasury rewards earned this month',
     lblEarnedRelativeMonthlyChangeExtended:
       '{amount} bonuses from @:treasury.lblTreasuryPrefix on {date}',
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
-      '{amount} bonuses from @:treasury.lblTreasuryPrefix in {month}',
+      'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
@@ -399,7 +398,8 @@ export default {
   asset: {
     txtAlt: '{name} icon',
     txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: 'Use Max'
+    lblSelectMax: 'Use Max',
+    lblBalance: 'Balance'
   },
   transaction: {
     lblState: {
@@ -467,5 +467,15 @@ export default {
   dates: {
     sameDay: '[Today]',
     lastDay: '[Yesterday]'
+  },
+  icon: {
+    txtFlipAssetsIconAlt: 'flip',
+    txtBackLinkIconAlt: 'back',
+    txtCloseIconAlt: 'close',
+    txtContextButtonAlt: 'open menu',
+    txtLogoAlt: 'Mover logo',
+    txtSelectAssetButtonAlt: 'select asset',
+    txtNavigationLinkAlt: 'navigation link',
+    txtSwapDetailsIconAlt: 'swap details'
   }
 };

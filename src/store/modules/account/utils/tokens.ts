@@ -1,10 +1,9 @@
-import { TokenWithBalance } from '@/wallet/types';
 import uniqBy from 'lodash-es/uniqBy';
 
-export const SortAndDedupedTokens = (
+import { TokenWithBalance } from '@/wallet/types';
+
+export const sortAndDeduplicateTokens = (
   tokens: Array<TokenWithBalance>
 ): Array<TokenWithBalance> => {
-  const dedupedResults = uniqBy<TokenWithBalance>(tokens, (t) => t.address);
-
-  return dedupedResults;
+  return uniqBy<TokenWithBalance>(tokens, (t) => t.address);
 };

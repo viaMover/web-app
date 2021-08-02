@@ -34,7 +34,10 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { MonthBalanceItem } from '@/services/mover/savings';
+import {
+  SavingsMonthBalanceItem,
+  TreasuryMonthBonusesItem
+} from '@/services/mover';
 import dayjs from 'dayjs';
 import { dateFromExplicitPair } from '@/utils/time';
 
@@ -42,7 +45,9 @@ export default Vue.extend({
   name: 'StatementNavListItem',
   props: {
     item: {
-      type: Object as PropType<MonthBalanceItem>,
+      type: Object as PropType<
+        SavingsMonthBalanceItem | TreasuryMonthBonusesItem
+      >,
       required: true
     },
     icon: {

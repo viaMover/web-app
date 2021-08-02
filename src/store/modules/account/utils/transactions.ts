@@ -1,17 +1,19 @@
-import { Transaction } from '@/wallet/types';
 import uniqBy from 'lodash-es/uniqBy';
 import orderBy from 'lodash-es/orderBy';
 
-export const SortAndDedupedTransactions = (
+import { Transaction } from '@/wallet/types';
+
+export const sortAndDeduplicateTransactions = (
   txns: Array<Transaction>
 ): Array<Transaction> => {
-  const dedupedResults = uniqBy<Transaction>(txns, (txn) => txn.uniqHash);
+  const deduplicatedTransactions = uniqBy<Transaction>(
+    txns,
+    (txn) => txn.uniqHash
+  );
 
-  const orderedDedupedResults = orderBy<Transaction>(
-    dedupedResults,
+  return orderBy<Transaction>(
+    deduplicatedTransactions,
     ['timestamp', 'nonce', 'uniqHash'],
     ['desc', 'desc', 'desc']
   );
-
-  return orderedDedupedResults;
 };

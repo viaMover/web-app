@@ -93,6 +93,42 @@ const ADDRESSES = {
   }
 };
 
+const SWAP_SOURCES_ICON = {
+  '0x': '',
+  //Uniswap: '',
+  Uniswap_V2: '🦄',
+  //Eth2Dai: '',
+  'Kyber Network': '',
+  Curve: '🧮',
+  Balancer: '⚖',
+  Balancer_V2: '⚖',
+  Bancor: '🕳',
+  mStable: '',
+  Mooniswap: '🌑',
+  Swerve: '',
+  SnowSwap: '❄',
+  SushiSwap: '🍣',
+  'Shell Protocol': '🐚',
+  //MultiHop: '',
+  DODO: '🐣',
+  //DODO_V2: '🐣',
+  CREAM: '🍦',
+  //LiquidityProvider: '',
+  CryptoCom: '🪙',
+  Linkswap: '',
+  //Lido: '',
+  MakerPsm: '',
+  KyberDMM: '',
+  Smoothy: '',
+  Component: '',
+  Saddle: '',
+  xSigma: '',
+  Uniswap_V3: '🦄',
+  //Curve_V2: '🧮',
+  ShibaSwap: '🐕',
+  OasisDEX: '🏝'
+} as Record<string, string>;
+
 const USDC_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].USDC_TOKEN_ADDRESS
     ? ADDRESSES[network].USDC_TOKEN_ADDRESS
@@ -169,11 +205,16 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
-const getMoveAssetData = (network: Network): SmallTokenInfoWithIcon => {
+const getMoveAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & {
+  name: string;
+} => {
   return {
     address: MOVE_ADDRESS(network),
     decimals: 18,
     symbol: 'MOVE',
+    name: 'Mover',
     iconURL:
       'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png'
   };
@@ -201,7 +242,7 @@ const getAssetsForTreasury = (
       symbol: move.symbol,
       isFavorite: false,
       isVerified: true,
-      name: 'Mover',
+      name: move.name,
       priceUSD: moveNativePrice,
       logo: move.iconURL
     },
@@ -228,12 +269,19 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const formatSwapSources = (swapSource: string): string => {
+  return SWAP_SOURCES_ICON[swapSource]
+    ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
+    : swapSource;
+};
+
 export {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
+  formatSwapSources,
   HOLY_PASSAGE_ADDRESS,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,

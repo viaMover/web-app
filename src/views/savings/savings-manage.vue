@@ -10,11 +10,11 @@
           <context-button :popover-parent-id="popoverParentId">
             <context-button-item
               :text="$t('savings.btnDeposit.emoji')"
-              @click="handleDepositCick"
+              @click="handleDepositClick"
             />
             <context-button-item
               :text="$t('savings.btnWithdraw.emoji')"
-              @click="handleWithdrawCick"
+              @click="handleWithdrawClick"
             />
           </context-button>
         </template>
@@ -28,6 +28,7 @@
       :in-progress-text="$t('savings.lblInProgress')"
       :items="savingsMonthStatsOptions"
       navigate-to-name="savings-month-stats"
+      :title="$t('savings.lblSavingsStatements')"
       wrapper-class="savings__menu-wrapper-statements"
     />
   </secondary-page>
@@ -60,31 +61,16 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', ['hasActiveSavings', 'savingsMonthStatsOptions'])
-  },
-  watch: {
-    hasActiveSavings(newVal: boolean) {
-      if (!newVal) {
-        this.replaceInactiveSavingsRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (!this.hasActiveSavings) {
-      this.replaceInactiveSavingsRoute();
-    }
+    ...mapGetters('account', {
+      savingsMonthStatsOptions: 'savingsMonthStatsOptions'
+    })
   },
   methods: {
-    replaceInactiveSavingsRoute(): void {
-      this.$router.replace({
-        name: 'savings-empty'
-      });
-    },
-    handleDepositCick(): void {
+    handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.SavingsDeposit);
     },
-    handleWithdrawCick(): void {
+    handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.SavingsWithdraw);
     }

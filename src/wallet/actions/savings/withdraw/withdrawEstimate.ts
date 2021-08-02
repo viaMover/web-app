@@ -1,7 +1,6 @@
-import { toWei, floorDivide, add } from '@/utils/bigmath';
+import { toWei, floorDivide } from '@/utils/bigmath';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
-import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import { multiply } from '@/utils/bigmath';
@@ -11,7 +10,7 @@ import {
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
 
-export type CompoudEstimateResponse = {
+export type CompoundEstimateResponse = {
   error: boolean;
   approveGasLimit: string;
   actionGasLimit: string;
@@ -28,7 +27,7 @@ export const estimateWithdrawCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string
-): Promise<CompoudEstimateResponse> => {
+): Promise<CompoundEstimateResponse> => {
   const withdrawEstimate = await estimateWithdraw(
     outputAsset,
     inputAmount,

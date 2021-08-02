@@ -16,12 +16,12 @@
       </secondary-page-title>
     </template>
 
-    <treasury-yearly-chart />
+    <treasury-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('treasury.btnView.simple')"
       icon="💰"
       :in-progress-text="$t('treasury.lblInProgress')"
-      :items="savingsMonthStatsOptions"
+      :items="treasuryMonthStatsOptions"
       navigate-to-name="treasury-month-stats"
       wrapper-class="smart-treasury__menu-wrapper-statements"
     />
@@ -35,7 +35,7 @@ import { mapGetters } from 'vuex';
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
-import { TreasuryYearlyChart } from '@/components/treasury';
+import { TreasuryYearlyChartWrapper } from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryManage',
@@ -44,7 +44,7 @@ export default Vue.extend({
     SecondaryPageTitle,
     ContextButton,
     ContextButtonItem,
-    TreasuryYearlyChart,
+    TreasuryYearlyChartWrapper,
     StatementNavList
   },
   data() {
@@ -53,29 +53,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', ['savingsMonthStatsOptions']),
-    hasActiveTreasury(): boolean {
-      return false;
-    }
-  },
-  watch: {
-    hasActiveTreasury(newVal: boolean) {
-      if (!newVal) {
-        this.replaceInactiveTreasuryRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (!this.hasActiveTreasury) {
-      this.replaceInactiveTreasuryRoute();
-    }
-  },
-  methods: {
-    replaceInactiveTreasuryRoute(): void {
-      this.$router.replace({
-        name: 'treasury-empty'
-      });
-    }
+    ...mapGetters('account', {
+      treasuryMonthStatsOptions: 'treasuryMonthStatsOptions'
+    })
   }
 });
 </script>

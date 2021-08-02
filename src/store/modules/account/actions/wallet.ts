@@ -1,10 +1,3 @@
-import {
-  getTreasuryBalance,
-  GetTreasuryBonus,
-  getTreasuryAPY,
-  getTotalStakedMove,
-  getTotalStakedMoveEthLP
-} from '@/services/mover/treasury';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -27,7 +20,7 @@ import {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
   getUSDCPriceInWETH
-} from '@/services/mover/tokensPrices';
+} from '@/services/chain';
 import {
   clearLastProviderPersist,
   getAvatarFromPersist,
@@ -39,7 +32,6 @@ import {
   bootIntercomSession,
   disconnectIntercomSession
 } from '@/router/intercom-utils';
-import { multiply } from '@/utils/bigmath';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -52,8 +44,6 @@ export type InitWalletPayload = {
   providerBeforeCloseCb: () => void;
   injected: boolean;
 };
-
-export const COOKIE_LAST_PROVIDER = 'move_last_provider';
 
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
@@ -129,7 +119,7 @@ export default {
   },
 
   async refreshWallet(
-    { dispatch, commit, state, getters },
+    { dispatch, commit, state },
     payload: RefreshWalletPayload
   ): Promise<void> {
     if (state.provider === undefined) {
@@ -288,60 +278,18 @@ export default {
 
     commit('setSLPPriceInWETH', slpPriceInWETH);
 
-    const getTreasuryBalancesPromise = getTreasuryBalance(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
-    );
+    const savingsFreshData = dispatch('fetchSavingsFreshData');
+    const savingsInfoPromise = dispatch('fetchSavingsInfo');
 
-    const getTreasuryBonusPromise = GetTreasuryBonus(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
-    );
+    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+    const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
 
-    const getTreasuryAPYPromise = getTreasuryAPY(
-      getters.usdcNativePrice,
-      getters.moveNativePrice,
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
-    );
-
-    const getTotalStakedMovePromise = getTotalStakedMove(
-      state.networkInfo.network,
-      state.provider.web3
-    );
-
-    const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
-      state.networkInfo.network,
-      state.provider.web3
-    );
-
-    const [
-      treasuryBalances,
-      treasuryBonus,
-      treasuryAPY,
-      treasuryTotalStakedMove,
-      treasuryTotalStakedMoveEthLP
-    ] = await Promise.all([
-      getTreasuryBalancesPromise,
-      getTreasuryBonusPromise,
-      getTreasuryAPYPromise,
-      getTotalStakedMovePromise,
-      getTotalStakedMoveEthLPPromise
+    await Promise.all([
+      savingsInfoPromise,
+      treasuryInfoPromise,
+      savingsFreshData,
+      treasuryFreshData
     ]);
-
-    commit('setTreasuryBalanceMove', treasuryBalances.MoveBalance);
-    commit('setTreasuryBalanceLP', treasuryBalances.LPBalance);
-    commit('setTreasuryBonus', treasuryBonus);
-    commit('setTreasuryAPY', treasuryAPY);
-    commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
-    commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
-
-    await dispatch('fetchSavingsFreshData');
-
-    await dispatch('fetchSavingsInfo');
 
     //const res = await GetTokensPrice([state.allTokens[0].address]);
     //console.log(res);

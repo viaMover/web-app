@@ -1,5 +1,7 @@
 import { MutationTree } from 'vuex';
+
 import { AccountStoreState } from '../types';
+import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
 
 export default {
   setTreasuryBalanceMove(state, moveBalance: string): void {
@@ -19,5 +21,23 @@ export default {
   },
   setTreasuryTotalStakedMoveEthLP(state, totalStakedMoveEthLP: string): void {
     state.treasuryTotalStakedMoveEthLP = totalStakedMoveEthLP;
+  },
+  setIsTreasuryInfoLoading(state, isLoading: boolean): void {
+    state.isTreasuryInfoLoading = isLoading;
+  },
+  setTreasuryInfoError(state, error: string | undefined): void {
+    state.treasuryInfoError = error;
+  },
+  setTreasuryInfo(state, info: TreasuryInfo | undefined): void {
+    state.treasuryInfo = info;
+  },
+  setIsTreasuryReceiptLoading(state, isLoading: boolean): void {
+    state.isTreasuryReceiptLoading = isLoading;
+  },
+  setTreasuryReceiptError(state, error: string | undefined): void {
+    state.treasuryReceiptError = error;
+  },
+  setTreasuryReceipt(state, receipt: TreasuryReceipt): void {
+    state.treasuryReceipt = receipt;
   }
 } as MutationTree<AccountStoreState>;

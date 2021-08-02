@@ -1,17 +1,18 @@
-import { SortAndDedupedTransactions } from '../utils/transactions';
-import { getNetworkByChainId } from '@/utils/networkTypes';
 import { MutationTree } from 'vuex';
+import Fuse from 'fuse.js';
+
+import { sortAndDeduplicateTransactions } from '../utils/transactions';
+import { getNetworkByChainId } from '@/utils/networkTypes';
 import {
-  AccountStoreState,
   AccountData,
-  ProviderData,
+  AccountStoreState,
+  Avatar,
   ChartPair,
-  Avatar
+  ProviderData
 } from '../types';
-import { Transaction, Token, TokenWithBalance, GasData } from '@/wallet/types';
-import { SortAndDedupedTokens } from '../utils/tokens';
+import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
+import { sortAndDeduplicateTokens } from '../utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
-import { SavingsInfo, SavingsReceipt } from '@/services/mover';
 
 export default {
   setEthPrice(state, ethPrice: string): void {
@@ -36,13 +37,25 @@ export default {
     state.currentAddress = address;
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
-    const orderedDedupedResults = SortAndDedupedTokens(tokens);
-    state.tokens = orderedDedupedResults;
+    state.tokens = sortAndDeduplicateTokens(tokens);
+
+    const searchOptions = {
+      keys: [
+        {
+          name: 'name',
+          weight: 1
+        },
+        {
+          name: 'symbol',
+          weight: 2.5
+        }
+      ]
+    };
+    state.tokensSearcher = new Fuse(state.tokens, searchOptions);
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];
-    const orderedDedupedResults = SortAndDedupedTokens(allTokens);
-    state.tokens = orderedDedupedResults;
+    state.tokens = sortAndDeduplicateTokens(allTokens);
   },
   removeWalletTokens(state, removeHashes: Array<string>): void {
     state.tokens = state.tokens.filter(
@@ -51,15 +64,38 @@ export default {
   },
   setAllTokens(state, tokens: Array<Token>): void {
     state.allTokens = tokens;
+    const searchOptions = {
+      keys: [
+        {
+          name: 'name',
+          weight: 1
+        },
+        {
+          name: 'symbol',
+          weight: 2.5
+        }
+      ]
+    };
+    const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
+
+    state.allTokensSearcher = new Fuse(state.allTokens, searchOptions, index);
+    state.tokenColorMap = state.allTokens.reduce((acc, token) => {
+      if (token.color === undefined) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [token.address.toLowerCase()]: token.color
+      };
+    }, {});
   },
   setWalletTransactions(state, transactions: Array<Transaction>): void {
-    const orderedDedupedResults = SortAndDedupedTransactions(transactions);
-    state.transactions = orderedDedupedResults;
+    state.transactions = sortAndDeduplicateTransactions(transactions);
   },
   updateWalletTransactions(state, newTransactions: Array<Transaction>): void {
     const allTransactions = [...newTransactions, ...state.transactions];
-    const orderedDedupedResults = SortAndDedupedTransactions(allTransactions);
-    state.transactions = orderedDedupedResults;
+    state.transactions = sortAndDeduplicateTransactions(allTransactions);
   },
   removeWalletTransaction(state, removeHashes: Array<string>): void {
     state.transactions = state.transactions.filter(
@@ -110,27 +146,6 @@ export default {
   },
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
-  },
-  toggleIsDebitCardSectionVisible(state): void {
-    state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
-  },
-  setIsSavingsInfoLoading(state, isLoading: boolean): void {
-    state.isSavingsInfoLoading = isLoading;
-  },
-  setSavingsInfoError(state, error: string | undefined): void {
-    state.savingsInfoError = error;
-  },
-  setSavingsInfo(state, info: SavingsInfo | undefined): void {
-    state.savingsInfo = info;
-  },
-  setIsSavingsReceiptLoading(state, isLoading: boolean): void {
-    state.isSavingsReceiptLoading = isLoading;
-  },
-  setSavingsReceiptError(state, error: string | undefined): void {
-    state.savingsReceiptError = error;
-  },
-  setSavingsReceipt(state, receipt: SavingsReceipt): void {
-    state.savingsReceipt = receipt;
   },
   setAvatar(state, avatar: Avatar): void {
     state.avatar = avatar;

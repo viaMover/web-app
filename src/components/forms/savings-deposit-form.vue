@@ -29,7 +29,10 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <img
+            :alt="$t('icon.swapDetailsIconAlt')"
+            src="@/assets/images/swap-details.png"
+          />
           <span>Deposit Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -37,7 +40,10 @@
             <p class="description">Swapping for</p>
             <div class="value">
               <div class="icon getShadow">
-                <img alt="coin" :src="outputUSDCAsset.iconURL" />
+                <img
+                  :alt="$t('asset.txtAlt', { name: outputUSDCAsset.symbol })"
+                  :src="outputUSDCAsset.iconURL"
+                />
               </div>
               <span>{{ swappingForString }}</span>
             </div>
@@ -96,6 +102,7 @@ import {
 import { mapState } from 'vuex';
 import {
   add,
+  convertAmountFromNativeValue,
   divide,
   fromWei,
   greaterThan,
@@ -393,7 +400,7 @@ export default Vue.extend({
         return;
       }
 
-      if (!notZero(this.input.amount)) {
+      if (!notZero(this.input.nativeAmount)) {
         this.input.amount = '0';
         return;
       }
@@ -401,9 +408,10 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.amount = divide(
+        this.input.amount = convertAmountFromNativeValue(
           this.input.nativeAmount,
-          this.input.asset.priceUSD
+          this.input.asset.priceUSD,
+          this.input.asset.decimals
         );
 
         const transferData = await this.calcData(

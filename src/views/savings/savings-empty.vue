@@ -10,7 +10,7 @@
           <context-button :popover-parent-id="popoverParentId">
             <context-button-item
               :text="$t('savings.btnDeposit.emoji')"
-              @click="handleDepositCick"
+              @click="handleDepositClick"
             />
           </context-button>
         </template>
@@ -59,7 +59,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', ['hasActiveSavings'])
+    ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' })
   },
   watch: {
     hasActiveSavings(newVal: boolean) {
@@ -82,7 +82,7 @@ export default Vue.extend({
     toggleDeposit(): void {
       toggleSingleItem(Modal.SavingsDeposit);
     },
-    handleDepositCick(): void {
+    handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.SavingsDeposit);
     }

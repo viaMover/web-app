@@ -39,6 +39,9 @@ export const lessThanOrEqual = (
   numberTwo: BigNumberish
 ): boolean => new BigNumber(numberOne).lte(numberTwo);
 
+export const isZero = (value: BigNumberish): boolean =>
+  new BigNumber(value).isZero();
+
 export const notZero = (numberOne: BigNumberish): boolean =>
   new BigNumber(numberOne).gt('0');
 
@@ -65,4 +68,17 @@ export const isNaN = (num: BigNumberish): boolean => {
 
 export const isFinite = (num: BigNumberish): boolean => {
   return new BigNumber(num).isFinite();
+};
+
+export const convertAmountFromNativeValue = (
+  value: BigNumberish,
+  priceUnit: BigNumberish,
+  decimals = 18
+): string => {
+  if (isZero(priceUnit)) return '0';
+  return new BigNumber(
+    new BigNumber(value)
+      .dividedBy(priceUnit)
+      .toFixed(decimals, BigNumber.ROUND_DOWN)
+  ).toFixed();
 };

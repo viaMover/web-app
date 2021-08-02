@@ -1,5 +1,9 @@
-import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { BigNumber } from 'bignumber.js';
+import { divide, fromWei, isFinite, isNaN, toWei } from '@/utils/bigmath';
+
 import { Network } from '@/utils/networkTypes';
 import {
   getMoveAssetData,
@@ -8,14 +12,9 @@ import {
   SMART_TREASURY_ABI,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
-import Web3 from 'web3';
 import { TransactionsParams } from '@/wallet/types';
-import { divide, isFinite, isNaN, toWei, fromWei } from '@/utils/bigmath';
 
-export type TreasuryBalancesReturn = {
-  MoveBalance: string;
-  LPBalance: string;
-};
+import { TreasuryBalancesReturn } from './types';
 
 export const getTreasuryBalance = async (
   accountAddress: string,
@@ -97,7 +96,7 @@ export const getTreasuryBalance = async (
   return ret;
 };
 
-export const GetTreasuryBonus = async (
+export const getTreasuryBonus = async (
   accountAddress: string,
   network: Network,
   web3: Web3
