@@ -49,7 +49,7 @@ export default Vue.extend({
     },
     pageSubtitle(): string {
       const left = this.pageDate.format('MMM DD');
-      const right = this.pageDate.format('MMM DD, YYYY');
+      const right = this.pageDate.endOf('month').format('MMM DD, YYYY');
 
       return `${left} - ${right}`;
     }

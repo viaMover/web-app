@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 
@@ -52,6 +52,12 @@ export default Vue.extend({
   components: {
     StatementListItem,
     StatementList
+  },
+  props: {
+    pageDate: {
+      type: Object as PropType<dayjs.Dayjs>,
+      required: true
+    }
   },
   data() {
     return {
@@ -99,14 +105,7 @@ export default Vue.extend({
       return `${this.treasuryMonthAverageBoost}x`;
     },
     monthName(): string {
-      try {
-        const year = Number(this.$route.params.year);
-        const month = Number(this.$route.params.month);
-
-        return dayjs(`${year} ${month}`).format('MMMM');
-      } catch {
-        return '';
-      }
+      return this.pageDate.format('MMMM');
     }
   }
 });
