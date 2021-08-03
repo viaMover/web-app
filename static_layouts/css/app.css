@@ -94,7 +94,7 @@ button {
 }
 .g-wrapper {
   width: 780px;
-  margin-left: 138px;
+  margin-left: 107px;
   padding: 0 20px;
   position: relative;
 }
@@ -102,9 +102,9 @@ button {
   max-height: 100vh;
   overflow-x: scroll;
   position: relative;
-  width: 380px;
+  width: 412px;
   margin: 0 auto;
-  padding: 104px 24px;
+  padding: 120px 40px;
   scrollbar-width: none;
 }
 .sidebar-wrapper::-webkit-scrollbar {
@@ -1811,7 +1811,7 @@ body {
 }
 .product-item__wrapper {
   position: relative;
-  padding: 80px 0;
+  padding: 0 0 80px;
 }
 .product-item__wrapper-title {
   display: -webkit-box;
@@ -2578,8 +2578,8 @@ body {
 .back-link {
   position: absolute;
   z-index: 10;
-  top: 24px;
-  left: 24px;
+  top: 40px;
+  left: 40px;
   width: 40px;
   height: 40px;
   border-radius: 20px;
@@ -2648,6 +2648,7 @@ form.search-form button {
 .info__wrapper-menu {
   max-height: 100vh;
   overflow-x: scroll;
+  padding-top: 40px;
   width: 100%;
   background-color: #fafafc;
   scrollbar-width: none;
@@ -3088,7 +3089,7 @@ form.search-form button {
   }
 }
 .general-desktop__menu-wrapper {
-  padding: 104px 0 200px;
+  padding: 0 0 200px;
 }
 .general-desktop__menu-wrapper-balance span {
   font-family: 'Medium';
@@ -3799,7 +3800,7 @@ form.search-form button {
   cursor: pointer;
 }
 .release-radar-asset__menu-wrapper {
-  padding: 80px 0 134px;
+  padding: 0 0 134px;
 }
 .release-radar-asset__menu-wrapper-title {
   display: -webkit-box;
@@ -3904,7 +3905,7 @@ form.search-form button {
 }
 .savings__menu-wrapper {
   position: relative;
-  padding: 80px 0;
+  padding: 0 0 80px;
 }
 .savings__menu-wrapper-title {
   display: -webkit-box;
@@ -4221,7 +4222,7 @@ form.search-form button {
   font-family: 'Bold';
 }
 .savings-statements__wrapper {
-  padding: 80px 0 200px;
+  padding: 0 0 200px;
 }
 .savings-statements__wrapper-title h2 {
   line-height: 32px;
@@ -4271,7 +4272,7 @@ form.search-form button {
 }
 .smart-treasury__menu-wrapper {
   position: relative;
-  padding: 80px 0;
+  padding: 0 0 80px;
 }
 .smart-treasury__menu-wrapper-title {
   display: -webkit-box;
@@ -4588,7 +4589,7 @@ form.search-form button {
   font-family: 'Bold';
 }
 .smart-treasury-statements__wrapper {
-  padding: 80px 0 200px;
+  padding: 0 0 200px;
 }
 .smart-treasury-statements__wrapper-title h2 {
   line-height: 32px;
@@ -4638,7 +4639,7 @@ form.search-form button {
 }
 .governance__menu-wrapper {
   position: relative;
-  padding: 80px 0;
+  padding: 0 0 80px;
 }
 .governance__menu-wrapper-title {
   display: -webkit-box;
@@ -4916,7 +4917,7 @@ form.search-form button {
 }
 .governance-inner__menu-wrapper {
   position: relative;
-  padding: 80px 0;
+  padding: 0 0 80px;
 }
 .governance-inner__menu-wrapper-title {
   display: -webkit-box;
@@ -5115,7 +5116,7 @@ form.search-form button {
 }
 .bonds__menu-wrapper {
   position: relative;
-  padding: 80px 0;
+  padding: 0 0 80px;
 }
 .bonds__menu-wrapper-title {
   display: -webkit-box;
@@ -5432,7 +5433,7 @@ form.search-form button {
   font-family: 'Bold';
 }
 .bonds-statements__wrapper {
-  padding: 80px 0 200px;
+  padding: 0 0 200px;
 }
 .bonds-statements__wrapper-title h2 {
   line-height: 32px;
@@ -5479,4 +5480,29 @@ form.search-form button {
   display: block;
   margin-left: auto;
   font-family: 'Medium';
+}
+.not-found {
+  background-color: #f2f2f2;
+  height: 100vh;
+}
+.not-found .g-wrapper {
+  margin: 0 auto;
+}
+.not-found__wrapper {
+  padding: 168px 0 236px;
+}
+.not-found__wrapper h1 {
+  font-family: 'Regular';
+  font-size: 240px;
+  line-height: 300px;
+  color: #000;
+  text-align: center;
+  font-weight: normal;
+}
+.not-found__wrapper p {
+  font-family: 'Medium';
+  font-size: 24px;
+  line-height: 32px;
+  color: rgba(60,60,67,0.6);
+  text-align: center;
 }
