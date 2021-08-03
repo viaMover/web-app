@@ -179,7 +179,7 @@ export default {
     ) {
       balanceMove = fromWei(
         state.treasuryInfo.currentStakedMove,
-        getUSDCAssetData(state.networkInfo.network).decimals
+        getMoveAssetData(state.networkInfo.network).decimals
       );
     }
 
@@ -200,19 +200,25 @@ export default {
     ) {
       balanceMoveLP = fromWei(
         state.treasuryInfo.currentStakedMoveLP,
-        getUSDCAssetData(state.networkInfo.network).decimals
+        getMoveWethLPAssetData(state.networkInfo.network).decimals
       );
     }
 
     return balanceMoveLP;
   },
-  treasuryStakedBalance(state, getters): string {
-    return add(getters.treasuryStakedMove, getters.treasuryStakedMoveLP);
-  },
   treasuryStakedBalanceNative(state, getters): string {
-    return multiply(getters.treasuryStakedBalance, getters.usdcNativePrice);
+    const stakedMoveNative = multiply(
+      getters.treasuryStakedMove,
+      getters.moveNativePrice
+    );
+    const stakedMoveEthLPNative = multiply(
+      getters.treasuryStakedMoveLP,
+      getters.slpNativePrice
+    );
+
+    return add(stakedMoveNative, stakedMoveEthLPNative);
   },
-  treasuryTotalStakedBalance(state): string {
+  treasuryTotalStakedBalanceNative(state, getters): string {
     let balanceMove = '0';
     let balanceMoveLP = '0';
     if (state.treasuryTotalStakedMove) {
@@ -228,28 +234,25 @@ export default {
       state.treasuryInfo !== undefined &&
       state.networkInfo !== undefined
     ) {
-      if (balanceMove == '0') {
+      if (balanceMove === '0') {
         balanceMove = fromWei(
           state.treasuryInfo.currentTotalStakedMove,
-          getUSDCAssetData(state.networkInfo.network).decimals
+          getMoveAssetData(state.networkInfo.network).decimals
         );
       }
 
-      if (balanceMoveLP == '0') {
+      if (balanceMoveLP === '0') {
         balanceMoveLP = fromWei(
           state.treasuryInfo.currentTotalStakedMoveLP,
-          getUSDCAssetData(state.networkInfo.network).decimals
+          getMoveWethLPAssetData(state.networkInfo.network).decimals
         );
       }
     }
 
-    return add(balanceMove, balanceMoveLP);
-  },
-  treasuryTotalStakedBalanceNative(state, getters): string {
-    return multiply(
-      getters.treasuryTotalStakedBalance,
-      getters.usdcNativePrice
-    );
+    const balanceMoveNative = multiply(balanceMove, getters.moveNativePrice);
+    const balanceMoveLPNative = multiply(balanceMoveLP, getters.slpNativePrice);
+
+    return add(balanceMoveNative, balanceMoveLPNative);
   },
   treasuryEarnedTotal(state): string {
     if (
@@ -267,5 +270,83 @@ export default {
   },
   treasuryEarnedTotalNative(state, getters): string {
     return multiply(getters.treasuryEarnedTotal, getters.usdcNativePrice);
+  },
+  treasuryMonthBalanceNative(state, getters): string {
+    if (
+      state.isTreasuryReceiptLoading ||
+      state.treasuryReceipt === undefined ||
+      state.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const moveBalance = fromWei(
+      state.treasuryReceipt.endOfMonthBalanceMove,
+      getMoveAssetData(state.networkInfo.network).decimals
+    );
+    const moveBalanceNative = multiply(moveBalance, getters.moveNativePrice);
+
+    const moveLPBalance = fromWei(
+      state.treasuryReceipt.endOfMonthBalanceMoveLP,
+      getMoveWethLPAssetData(state.networkInfo.network).decimals
+    );
+    const moveLPBalanceNative = multiply(moveLPBalance, getters.slpNativePrice);
+
+    return add(moveBalanceNative, moveLPBalanceNative);
+  },
+  treasuryMonthDepositedNative(state, getters): string {
+    if (
+      state.isTreasuryReceiptLoading ||
+      state.treasuryReceipt === undefined ||
+      state.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const moveDeposits = fromWei(
+      state.treasuryReceipt.totalDepositsMove,
+      getMoveAssetData(state.networkInfo.network).decimals
+    );
+    const moveDepositsNative = multiply(moveDeposits, getters.moveNativePrice);
+
+    const moveLPDeposits = fromWei(
+      state.treasuryReceipt.totalDepositsMoveLP,
+      getMoveWethLPAssetData(state.networkInfo.network).decimals
+    );
+    const moveLPDepositsNative = multiply(
+      moveLPDeposits,
+      getters.slpNativePrice
+    );
+
+    return add(moveDepositsNative, moveLPDepositsNative);
+  },
+  treasuryMonthWithdrewNative(state, getters): string {
+    if (
+      state.isTreasuryReceiptLoading ||
+      state.treasuryReceipt === undefined ||
+      state.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const moveWithdrawals = fromWei(
+      state.treasuryReceipt.totalWithdrawalsMove,
+      getMoveAssetData(state.networkInfo.network).decimals
+    );
+    const moveWithdrawalsNative = multiply(
+      moveWithdrawals,
+      getters.moveNativePrice
+    );
+
+    const moveLPWithdrawals = fromWei(
+      state.treasuryReceipt.totalWithdrawalsMoveLP,
+      getMoveWethLPAssetData(state.networkInfo.network).decimals
+    );
+    const moveLPWithdrawalsNative = multiply(
+      moveLPWithdrawals,
+      getters.slpNativePrice
+    );
+
+    return add(moveWithdrawalsNative, moveLPWithdrawalsNative);
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

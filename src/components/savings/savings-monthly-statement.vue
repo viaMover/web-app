@@ -44,11 +44,12 @@ import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
+
 import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
-import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',

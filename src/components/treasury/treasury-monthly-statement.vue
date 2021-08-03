@@ -1,79 +1,111 @@
 <template>
-  <div class="info info-bordered">
-    <div class="item">
-      <div class="title">
-        {{ $t('treasury.statement.lblBalance', { month: monthName }) }}
-      </div>
-      <div class="value">{{ balance }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('treasury.statement.lblRewardsUsed') }}
-      </div>
-      <div class="value">{{ rewardsUsed }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('treasury.statement.lblReservedAssets') }}
-      </div>
-      <div class="value">{{ reservedAssets }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('treasury.statement.lblRemovedAssets') }}
-      </div>
-      <div class="value">{{ removedAssets }}</div>
-    </div>
-    <div class="item">
-      <div class="title">
-        {{ $t('treasury.statement.lblAverageBoost') }}
-      </div>
-      <div class="value">{{ averageBoost }}</div>
-    </div>
-  </div>
+  <statement-list wrapper-class="smart-treasury-statements__wrapper-list">
+    <statement-list-item
+      :description="$t('treasury.statement.lblBalance', { month: monthName })"
+      :value="balance"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblRewardsEarned')"
+      :value="rewardsEarned"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblAverageDailyEarnings')"
+      :value="averageDailyEarnings"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblRewardsUsed')"
+      :value="rewardsUsed"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblAverageDailySpendings')"
+      :value="averageDailySpendings"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblReservedAssets')"
+      :value="reservedAssets"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblRemovedAssets')"
+      :value="removedAssets"
+    />
+    <statement-list-item
+      :description="$t('treasury.statement.lblAverageBoost')"
+      :value="averageBoost"
+    />
+  </statement-list>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
+import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
+
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
+
+import {
+  StatementList,
+  StatementListItem
+} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'TreasuryMonthlyStatements',
+  components: {
+    StatementListItem,
+    StatementList
+  },
+  props: {
+    pageDate: {
+      type: Object as PropType<dayjs.Dayjs>,
+      required: true
+    }
+  },
   data() {
     return {
-      balance: 0,
-      rewardsUsed: 0,
-      reservedAssets: 0,
-      removedAssets: 0,
-      averageBoost: 0
+      treasuryMonthRewardsEarned: 0,
+      treasuryMonthAverageDailyEarnings: 0,
+      treasuryMonthRewardsUsed: 0,
+      treasuryMonthAverageDailySpendings: 0,
+      treasuryMonthAverageBoost: 0
     };
   },
   computed: {
-    monthName(): string {
-      try {
-        const tsFrom = Number(this.$route.query.tsFrom);
-
-        return dayjs.unix(tsFrom).format('MMMM');
-      } catch {
-        return '';
-      }
-    }
-  },
-  methods: {
-    formatItemHeader(timestamp: number): string {
-      return dayjs.unix(timestamp).format('MMMM YYYY');
+    ...mapGetters('account', [
+      'treasuryMonthBalanceNative',
+      'treasuryMonthDepositedNative',
+      'treasuryMonthWithdrewNative'
+    ]),
+    balance(): string {
+      return `$${formatToNative(this.treasuryMonthBalanceNative)}`;
     },
-    formatItemRanges(timestampFrom: number, timestampTo: number): string {
-      const dateFrom = dayjs.unix(timestampFrom);
-      const dateTo = dayjs.unix(timestampTo);
-
-      if (dateFrom.year() !== dateTo.year()) {
-        return `${dateFrom.format('MMM DD, YYYY')} – ${dateTo.format(
-          'MMM DD, YYYY'
-        )}`;
-      }
-
-      return `${dateFrom.format('MMM DD')} – ${dateTo.format('MMM DD, YYYY')}`;
+    rewardsEarned(): string {
+      const value = formatToNative(this.treasuryMonthRewardsEarned);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
+    averageDailyEarnings(): string {
+      const value = formatToNative(this.treasuryMonthAverageDailyEarnings);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
+    rewardsUsed(): string {
+      const value = formatToNative(this.treasuryMonthRewardsUsed);
+      return `${getSignIfNeeded(value, '-')}$${value}`;
+    },
+    averageDailySpendings(): string {
+      const value = formatToNative(this.treasuryMonthAverageDailySpendings);
+      return `${getSignIfNeeded(value, '-')}$${value}`;
+    },
+    reservedAssets(): string {
+      const value = formatToNative(this.treasuryMonthDepositedNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
+    removedAssets(): string {
+      const value = formatToNative(this.treasuryMonthWithdrewNative);
+      return `${getSignIfNeeded(value, '-')}$${value}`;
+    },
+    averageBoost(): string {
+      return `${this.treasuryMonthAverageBoost}x`;
+    },
+    monthName(): string {
+      return this.pageDate.format('MMMM');
     }
   }
 });
