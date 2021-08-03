@@ -179,7 +179,7 @@ export default {
     ) {
       balanceMove = fromWei(
         state.treasuryInfo.currentStakedMove,
-        getUSDCAssetData(state.networkInfo.network).decimals
+        getMoveAssetData(state.networkInfo.network).decimals
       );
     }
 
@@ -200,7 +200,7 @@ export default {
     ) {
       balanceMoveLP = fromWei(
         state.treasuryInfo.currentStakedMoveLP,
-        getUSDCAssetData(state.networkInfo.network).decimals
+        getMoveWethLPAssetData(state.networkInfo.network).decimals
       );
     }
 
@@ -231,14 +231,14 @@ export default {
       if (balanceMove == '0') {
         balanceMove = fromWei(
           state.treasuryInfo.currentTotalStakedMove,
-          getUSDCAssetData(state.networkInfo.network).decimals
+          getMoveAssetData(state.networkInfo.network).decimals
         );
       }
 
       if (balanceMoveLP == '0') {
         balanceMoveLP = fromWei(
           state.treasuryInfo.currentTotalStakedMoveLP,
-          getUSDCAssetData(state.networkInfo.network).decimals
+          getMoveWethLPAssetData(state.networkInfo.network).decimals
         );
       }
     }
@@ -279,11 +279,11 @@ export default {
 
     const usdcMoveBalance = fromWei(
       state.treasuryReceipt.endOfMonthBalanceMove,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getMoveAssetData(state.networkInfo.network).decimals
     );
     const usdcMoveEthLPBalance = fromWei(
       state.treasuryReceipt.endOfMonthBalanceMoveLP,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getMoveWethLPAssetData(state.networkInfo.network).decimals
     );
 
     const usdcBalance = add(usdcMoveBalance, usdcMoveEthLPBalance);
@@ -300,11 +300,11 @@ export default {
 
     const usdcMoveDeposits = fromWei(
       state.treasuryReceipt.totalDepositsMove,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getMoveAssetData(state.networkInfo.network).decimals
     );
     const usdcMoveEthLPDeposits = fromWei(
       state.treasuryReceipt.totalDepositsMoveLP,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getMoveWethLPAssetData(state.networkInfo.network).decimals
     );
 
     const usdcDeposits = add(usdcMoveDeposits, usdcMoveEthLPDeposits);
@@ -321,11 +321,11 @@ export default {
 
     const usdcMoveWithdrawals = fromWei(
       state.treasuryReceipt.totalWithdrawalsMove,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getMoveAssetData(state.networkInfo.network).decimals
     );
     const usdcMoveEthLPWithdrawals = fromWei(
       state.treasuryReceipt.totalWithdrawalsMoveLP,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getMoveWethLPAssetData(state.networkInfo.network).decimals
     );
 
     const usdcWithdrawals = add(usdcMoveWithdrawals, usdcMoveEthLPWithdrawals);
