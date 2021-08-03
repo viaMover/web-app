@@ -206,13 +206,19 @@ export default {
 
     return balanceMoveLP;
   },
-  treasuryStakedBalance(state, getters): string {
-    return add(getters.treasuryStakedMove, getters.treasuryStakedMoveLP);
-  },
   treasuryStakedBalanceNative(state, getters): string {
-    return multiply(getters.treasuryStakedBalance, getters.usdcNativePrice);
+    const stakedMoveNative = multiply(
+      getters.treasuryStakedMove,
+      getters.moveNativePrice
+    );
+    const stakedMoveEthLPNative = multiply(
+      getters.treasuryStakedMoveLP,
+      getters.slpNativePrice
+    );
+
+    return add(stakedMoveNative, stakedMoveEthLPNative);
   },
-  treasuryTotalStakedBalance(state): string {
+  treasuryTotalStakedBalanceNative(state, getters): string {
     let balanceMove = '0';
     let balanceMoveLP = '0';
     if (state.treasuryTotalStakedMove) {
@@ -228,14 +234,14 @@ export default {
       state.treasuryInfo !== undefined &&
       state.networkInfo !== undefined
     ) {
-      if (balanceMove == '0') {
+      if (balanceMove === '0') {
         balanceMove = fromWei(
           state.treasuryInfo.currentTotalStakedMove,
           getMoveAssetData(state.networkInfo.network).decimals
         );
       }
 
-      if (balanceMoveLP == '0') {
+      if (balanceMoveLP === '0') {
         balanceMoveLP = fromWei(
           state.treasuryInfo.currentTotalStakedMoveLP,
           getMoveWethLPAssetData(state.networkInfo.network).decimals
@@ -243,13 +249,10 @@ export default {
       }
     }
 
-    return add(balanceMove, balanceMoveLP);
-  },
-  treasuryTotalStakedBalanceNative(state, getters): string {
-    return multiply(
-      getters.treasuryTotalStakedBalance,
-      getters.usdcNativePrice
-    );
+    const balanceMoveNative = multiply(balanceMove, getters.moveNativePrice);
+    const balanceMoveLPNative = multiply(balanceMoveLP, getters.slpNativePrice);
+
+    return add(balanceMoveNative, balanceMoveLPNative);
   },
   treasuryEarnedTotal(state): string {
     if (
@@ -277,17 +280,19 @@ export default {
       return '0';
     }
 
-    const usdcMoveBalance = fromWei(
+    const moveBalance = fromWei(
       state.treasuryReceipt.endOfMonthBalanceMove,
       getMoveAssetData(state.networkInfo.network).decimals
     );
-    const usdcMoveEthLPBalance = fromWei(
+    const moveBalanceNative = multiply(moveBalance, getters.moveNativePrice);
+
+    const moveLPBalance = fromWei(
       state.treasuryReceipt.endOfMonthBalanceMoveLP,
       getMoveWethLPAssetData(state.networkInfo.network).decimals
     );
+    const moveLPBalanceNative = multiply(moveLPBalance, getters.slpNativePrice);
 
-    const usdcBalance = add(usdcMoveBalance, usdcMoveEthLPBalance);
-    return multiply(usdcBalance, getters.usdcNativePrice);
+    return add(moveBalanceNative, moveLPBalanceNative);
   },
   treasuryMonthDepositedNative(state, getters): string {
     if (
@@ -298,17 +303,22 @@ export default {
       return '0';
     }
 
-    const usdcMoveDeposits = fromWei(
+    const moveDeposits = fromWei(
       state.treasuryReceipt.totalDepositsMove,
       getMoveAssetData(state.networkInfo.network).decimals
     );
-    const usdcMoveEthLPDeposits = fromWei(
+    const moveDepositsNative = multiply(moveDeposits, getters.moveNativePrice);
+
+    const moveLPDeposits = fromWei(
       state.treasuryReceipt.totalDepositsMoveLP,
       getMoveWethLPAssetData(state.networkInfo.network).decimals
     );
+    const moveLPDepositsNative = multiply(
+      moveLPDeposits,
+      getters.slpNativePrice
+    );
 
-    const usdcDeposits = add(usdcMoveDeposits, usdcMoveEthLPDeposits);
-    return multiply(usdcDeposits, getters.usdcNativePrice);
+    return add(moveDepositsNative, moveLPDepositsNative);
   },
   treasuryMonthWithdrewNative(state, getters): string {
     if (
@@ -319,16 +329,24 @@ export default {
       return '0';
     }
 
-    const usdcMoveWithdrawals = fromWei(
+    const moveWithdrawals = fromWei(
       state.treasuryReceipt.totalWithdrawalsMove,
       getMoveAssetData(state.networkInfo.network).decimals
     );
-    const usdcMoveEthLPWithdrawals = fromWei(
+    const moveWithdrawalsNative = multiply(
+      moveWithdrawals,
+      getters.moveNativePrice
+    );
+
+    const moveLPWithdrawals = fromWei(
       state.treasuryReceipt.totalWithdrawalsMoveLP,
       getMoveWethLPAssetData(state.networkInfo.network).decimals
     );
+    const moveLPWithdrawalsNative = multiply(
+      moveLPWithdrawals,
+      getters.slpNativePrice
+    );
 
-    const usdcWithdrawals = add(usdcMoveWithdrawals, usdcMoveEthLPWithdrawals);
-    return multiply(usdcWithdrawals, getters.usdcNativePrice);
+    return add(moveWithdrawalsNative, moveLPWithdrawalsNative);
   }
 } as GetterTree<AccountStoreState, RootStoreState>;
