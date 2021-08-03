@@ -7,3 +7,4 @@ export { default as ReleaseRadarSection } from './release-radar-section.vue';
 export { default as SavingsSection } from './savings-section.vue';
 export { default as SwapsSection } from './swaps-section.vue';
 export { default as TreasurySection } from './treasury-section.vue';
+export { default as MenuSection } from './menu-section.vue';

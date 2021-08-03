@@ -7,27 +7,7 @@
     <header-balance />
     <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
 
-    <template v-if="isFeatureEnabled('isReleaseRadarEnabled')">
-      <div class="general-desktop__menu-wrapper-item">
-        <div class="general-desktop__menu-wrapper-item-links">
-          <release-radar-section />
-          <swaps-section />
-        </div>
-      </div>
-    </template>
-    <template v-else>
-      <swaps-section
-        inner-container-class="general-desktop__menu-wrapper-item-info"
-        own-class="general-desktop__menu-wrapper-item"
-      />
-    </template>
-
-    <savings-section />
-    <treasury-section />
-    <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
-    <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
-    <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
-
+    <menu-section />
     <transaction-modal />
     <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
@@ -51,7 +31,8 @@ import {
   GovernanceSection,
   NibbleShopSection,
   NftDropsSection,
-  HeaderBalance
+  HeaderBalance,
+  MenuSection
 } from '@/components/sections';
 import { SwapForm } from '@/components/forms';
 import {
@@ -66,16 +47,10 @@ import '@/styles/_general.less';
 export default Vue.extend({
   name: 'Home',
   components: {
+    MenuSection,
     ContentWrapper,
     WalletInfoRail,
-    ReleaseRadarSection,
-    SwapsSection,
     DebitCardSection,
-    SavingsSection,
-    TreasurySection,
-    GovernanceSection,
-    NibbleShopSection,
-    NftDropsSection,
     HeaderBalance,
     TransactionModal,
     SwapForm,
