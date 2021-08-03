@@ -28,6 +28,7 @@
     <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
 
+    <search-modal-copy />
     <transaction-modal />
     <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
@@ -58,7 +59,8 @@ import {
   TransactionModal,
   SearchModal,
   CenteredModalWindow,
-  Modal
+  Modal,
+  SearchModalCopy
 } from '@/components/modals';
 
 import '@/styles/_general.less';
@@ -80,7 +82,8 @@ export default Vue.extend({
     TransactionModal,
     SwapForm,
     SearchModal,
-    CenteredModalWindow
+    CenteredModalWindow,
+    SearchModalCopy
   },
   data() {
     return {
