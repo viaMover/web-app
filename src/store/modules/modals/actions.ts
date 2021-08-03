@@ -121,7 +121,7 @@ export default {
         if (state.stack.length > 1) {
           commit('setIsStateEntryVisible', {
             id: state.stack[1],
-            isVisible: false
+            isVisible: true
           });
         }
 
