@@ -4,7 +4,7 @@
       <line-chart
         :chart-data-source="savingsReceipt ? savingsReceipt.hourlyBalances : []"
         :is-loading="isSavingsReceiptLoading"
-      ></line-chart>
+      />
     </div>
   </div>
 </template>

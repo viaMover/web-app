@@ -167,7 +167,10 @@ export default {
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
+      lblRewardsEarned: 'Rewards earned',
+      lblAverageDailyEarnings: 'Average daily earnings',
       lblRewardsUsed: 'Rewards used',
+      lblAverageDailySpendings: 'Average daily spendings',
       lblReservedAssets: 'Reserved assets',
       lblRemovedAssets: 'Removed assets',
       lblAverageBoost: 'Average boost'
