@@ -53,11 +53,7 @@ export default Vue.extend({
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
       debounceTimeout: 500,
-      forcedTokenArraySearcher: undefined as Fuse<Token> | undefined,
-      useWalletTokens: false,
-      excludedTokens: [] as Array<Token>,
-      treasuryOnly: false as boolean,
-      forceTokenArray: [] as Array<Token>
+      forcedTokenArraySearcher: undefined as Fuse<Token> | undefined
     };
   },
   computed: {
@@ -71,6 +67,18 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
+    useWalletTokens(): boolean {
+      return this.state[this.modalId].payload?.useWalletTokens ?? false;
+    },
+    excludedTokens(): Array<Token> {
+      return this.state[this.modalId].payload?.excludedTokens ?? [];
+    },
+    treasuryOnly(): boolean {
+      return this.state[this.modalId].payload?.treasuryOnly ?? false;
+    },
+    forceTokenArray(): Array<Token> {
+      return this.state[this.modalId].payload?.forceTokenArray ?? [];
+    },
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
