@@ -267,5 +267,68 @@ export default {
   },
   treasuryEarnedTotalNative(state, getters): string {
     return multiply(getters.treasuryEarnedTotal, getters.usdcNativePrice);
+  },
+  treasuryMonthBalanceNative(state, getters): string {
+    if (
+      state.isTreasuryReceiptLoading ||
+      state.treasuryReceipt === undefined ||
+      state.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const usdcMoveBalance = fromWei(
+      state.treasuryReceipt.endOfMonthBalanceMove,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+    const usdcMoveEthLPBalance = fromWei(
+      state.treasuryReceipt.endOfMonthBalanceMoveLP,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+
+    const usdcBalance = add(usdcMoveBalance, usdcMoveEthLPBalance);
+    return multiply(usdcBalance, getters.usdcNativePrice);
+  },
+  treasuryMonthDepositedNative(state, getters): string {
+    if (
+      state.isTreasuryReceiptLoading ||
+      state.treasuryReceipt === undefined ||
+      state.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const usdcMoveDeposits = fromWei(
+      state.treasuryReceipt.totalDepositsMove,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+    const usdcMoveEthLPDeposits = fromWei(
+      state.treasuryReceipt.totalDepositsMoveLP,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+
+    const usdcDeposits = add(usdcMoveDeposits, usdcMoveEthLPDeposits);
+    return multiply(usdcDeposits, getters.usdcNativePrice);
+  },
+  treasuryMonthWithdrewNative(state, getters): string {
+    if (
+      state.isTreasuryReceiptLoading ||
+      state.treasuryReceipt === undefined ||
+      state.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const usdcMoveWithdrawals = fromWei(
+      state.treasuryReceipt.totalWithdrawalsMove,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+    const usdcMoveEthLPWithdrawals = fromWei(
+      state.treasuryReceipt.totalWithdrawalsMoveLP,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+
+    const usdcWithdrawals = add(usdcMoveWithdrawals, usdcMoveEthLPWithdrawals);
+    return multiply(usdcWithdrawals, getters.usdcNativePrice);
   }
 } as GetterTree<AccountStoreState, RootStoreState>;
