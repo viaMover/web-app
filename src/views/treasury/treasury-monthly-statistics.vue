@@ -16,17 +16,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import dayjs from 'dayjs';
+import { mapActions } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import { dateFromExplicitPair } from '@/utils/time';
+import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
 
 import { SecondaryPage } from '@/components/layout';
 import {
   TreasuryMonthlyChartWrapper,
   TreasuryMonthlyStatement
 } from '@/components/treasury';
-import { mapActions } from 'vuex';
-import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
 
 export default Vue.extend({
   name: 'TreasuryMonthlyStatistics',

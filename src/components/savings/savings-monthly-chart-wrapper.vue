@@ -12,9 +12,9 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import dayjs from 'dayjs';
+import { mapState } from 'vuex';
 
 import { LineChart } from '@/components/charts';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsMonthlyChartWrapper',
