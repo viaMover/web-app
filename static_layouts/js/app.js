@@ -63,7 +63,7 @@ $(document).ready(function() {
 	shadow();
 
 	function orderClose() {
-		let block = $('.general-desktop__menu-wrapper-order'); 
+		let block = $('.general-desktop-new__menu-wrapper-save'); 
 		let button = $('.order__buttons .close-button');
 
 		button.on('click', function() { 
@@ -73,11 +73,11 @@ $(document).ready(function() {
 	orderClose();
 
 	function saveClose() {
-		let block = $('.general-desktop__menu-wrapper-save'); 
+		let block = $('.general-desktop-new__menu-wrapper-save'); 
 		let button = $('.save__buttons .close-button');
 
 		button.on('click', function() { 
-			block.addClass('general-desktop__menu-wrapper-save-active');
+			block.addClass('general-desktop-new__menu-wrapper-save-active');
 		})
 	}
 	saveClose();
@@ -656,6 +656,8 @@ $(document).ready(function() {
 		let bg = $('.claim-bonds__popup-bg');
 		let burger = $('.burger-menu__popup'); 
 		let burgerBg = $('.burger-menu__popup-bg');
+		let balance = $('.balance__popup'); 
+		let balanceBg = $('.balance__popup-bg');
 
 		button.on('click', function() { 
 			claimBondsPopup.addClass('transaction__popup-active'); 
@@ -663,6 +665,8 @@ $(document).ready(function() {
 			close.addClass('transaction__popup-close-active');
 			burger.removeClass('burger-menu__popup-active'); 
 			burgerBg.removeClass('burger-menu__popup-bg-active');
+			balance.removeClass('balance__popup-active'); 
+			balanceBg.removeClass('balance__popup-bg-active');
 		})
 		close.on('click', function() { 
 			claimBondsPopup.removeClass('transaction__popup-active'); 
@@ -704,6 +708,22 @@ $(document).ready(function() {
 		})
 	}
 	claimAndRepurchasePopup();
+
+	function balancePopup() {
+		let popup = $('.balance__popup'); 
+		let button = $('.button-balance');
+		let bg = $('.balance__popup-bg');
+
+		button.on('click', function() { 
+			popup.addClass('balance__popup-active'); 
+			bg.addClass('balance__popup-bg-active');
+		})
+		bg.on('click', function() { 
+			popup.removeClass('balance__popup-active'); 
+			bg.removeClass('balance__popup-bg-active');
+		})
+	}
+	balancePopup();
 
 	function hideByClickEscButton() {
 		let transactionPopup = $('.transaction__popup');
