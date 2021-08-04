@@ -1,7 +1,7 @@
 <template>
   <li :class="wrapperClass">
-    <img :src="icon" />
-    <div>{{ text }}</div>
+    <div class="icon">{{ icon }}</div>
+    <div class="text">{{ text }}</div>
   </li>
 </template>
 
@@ -9,7 +9,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'CardListIconItem',
+  name: 'MenuListIconItem',
   props: {
     icon: {
       type: String,

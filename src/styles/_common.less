@@ -111,9 +111,9 @@ button {
   max-height: 100vh;
   overflow-x: scroll;
   position: relative;
-  width: 380px;
+  width: 412px;
   margin: 0 auto;
-  padding: 104px 24px;
+  padding: 0 40px 24px;
 }
 
 .sidebar-wrapper::-webkit-scrollbar {
@@ -165,7 +165,7 @@ body {
 }
 
 .preload-wrapper__sidebar {
-  width: 380px;
+  width: 412px;
   background: #f6f6f6;
   border-right: 1px solid rgba(60, 60, 67, 0.07);
 }
@@ -462,6 +462,39 @@ body {
   border-right: 1px solid rgba(60, 60, 67, 0.07);
 }
 
+.info__wrapper-sidebar .transaction-search-form {
+  position: relative;
+  width: 332px;
+  height: 40px;
+  margin-top: 41px;
+  margin-left: auto;
+}
+
+.info__wrapper-sidebar .transaction-search-form input {
+  width: 100%;
+  position: relative;
+  background: #fcfcfc;
+  box-shadow: 0 4px 16px #ccc;
+  border-radius: 25px;
+  padding: 8px 51px;
+  font-family: 'Bold';
+  font-size: 14px;
+  line-height: 24px;
+  color: rgba(60, 60, 67, 0.6);
+  border: none;
+}
+
+.info__wrapper-sidebar .transaction-search-form button {
+  position: absolute;
+  top: 8px;
+  left: 24px;
+  background-color: transparent;
+  font-family: 'Roboto-Regular';
+  font-size: 14px;
+  line-height: 24px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
 .popup-bg {
   background: rgba(0, 0, 0, 0.8);
   position: fixed;
@@ -536,10 +569,55 @@ body {
   margin-top: 42px;
 }
 
-.desktop-center-section-list {
-  width: 50%;
+.desktop-center-section-list:first-child {
+  width: 209px;
+  margin-right: 251px;
 }
 
 .desktop-center-section-list-item {
+  font-family: 'Medium';
   display: flex;
+  margin-bottom: 24px;
+}
+
+.desktop-center-section-list-item .text {
+  font-family: 'Medium';
+  display: flex;
+  margin-left: 16px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000;
+}
+
+.desktop-center-section-list-item .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.desktop-center-section-list-item .wrapper {
+  margin-left: 18px;
+}
+
+.desktop-center-section-list-item .title {
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.desktop-center-section-list-item .value {
+  font-family: 'Bold';
+}
+
+.desktop-center-section-list-item .image {
+  width: 54px;
+  height: 40px;
+}
+
+.nav-bar {
+  right: 0;
+  position: absolute;
+}
+
+.nav-bar li {
+  font-family: 'Bold';
+  display: inline;
+  margin-left: 24px;
 }

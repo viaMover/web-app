@@ -288,6 +288,7 @@
 }
 
 .general-desktop__sidebar-wrapper-info h3 {
+  font-family: 'Regular';
   color: rgba(60, 60, 67, 0.6);
   margin-bottom: 24px;
 }
@@ -402,13 +403,46 @@
 }
 
 .general-desktop__menu-wrapper {
-  padding: 104px 0 200px;
+  padding: 40px 0 200px;
 }
 
-.general-desktop__menu-wrapper-balance span {
+.general-desktop__menu-wrapper-balance {
+  display: flex;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.general-desktop__menu-wrapper-balance .balance-wrapper {
+  display: grid;
+  margin-left: 24px;
+}
+
+.general-desktop__menu-wrapper-balance .balance-wrapper-title {
+  display: flex;
+}
+
+.general-desktop__menu-wrapper-balance .balance-wrapper-title .button {
+  background-color: transparent;
+}
+
+.general-desktop__menu-wrapper-balance .balance-wrapper-title .title {
   font-family: 'Medium';
-  font-size: 48px;
-  line-height: 62px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.general-desktop__menu-wrapper-balance .balance-wrapper-title .address {
+  font-family: 'Medium';
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.general-desktop__menu-wrapper-balance .balance-wrapper-title .arrow {
+  font-family: 'Medium';
+  margin-left: 8px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.general-desktop__menu-wrapper-balance .balance {
+  font-family: 'Bold';
 }
 
 .general-desktop__menu-wrapper-balance p {
@@ -417,8 +451,8 @@
 }
 
 .general-desktop__menu-wrapper-balance .user {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -437,8 +471,8 @@
 
 .general-desktop__menu-wrapper-balance .user span {
   font-family: 'Roboto-Regular';
-  font-size: 40px;
-  line-height: 46px;
+  font-size: 24px;
+  line-height: 28.13px;
   display: block;
   user-select: none;
 }
@@ -602,7 +636,7 @@
 }
 
 .general-desktop__menu-wrapper-order {
-  margin-top: 41px;
+  margin-top: 80px;
   background: -webkit-gradient(linear, right top, left top, from(#404040), to(#1d1d1d));
   background: -o-linear-gradient(right, #404040 0%, #1d1d1d 100%);
   background: linear-gradient(270deg, #404040 0%, #1d1d1d 100%);

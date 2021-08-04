@@ -6,8 +6,8 @@
 
     <header-balance />
     <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-
     <menu-section />
+
     <transaction-modal />
     <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
@@ -23,14 +23,7 @@ import { isFeatureEnabled } from '@/settings';
 import { ContentWrapper } from '@/components/layout';
 import { WalletInfoRail } from '@/components/wallet-info-rail';
 import {
-  ReleaseRadarSection,
-  SwapsSection,
   DebitCardSection,
-  SavingsSection,
-  TreasurySection,
-  GovernanceSection,
-  NibbleShopSection,
-  NftDropsSection,
   HeaderBalance,
   MenuSection
 } from '@/components/sections';

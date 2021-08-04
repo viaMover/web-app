@@ -4,7 +4,7 @@
       v-if="hasLeftRail"
       :container-class="leftRailClass"
       :inner-wrapper-class="leftRailInnerWrapperClass"
-      :show-logo="!hasBackButton"
+      :inner-wrapper-style="leftRailStyle"
     >
       <slot name="left-rail"></slot>
       <back-button v-if="hasBackButton" @close="handleClose" />
@@ -88,6 +88,14 @@ export default Vue.extend({
       }
 
       return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
+    },
+    leftRailStyle(): Record<string, string> {
+      if (this.hasBackButton || this.hasCloseButton) {
+        return {
+          'padding-top': '104px'
+        };
+      }
+      return {};
     }
   },
   methods: {

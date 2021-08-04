@@ -40,7 +40,7 @@ export default Vue.extend({
     formatDate(timestamp: number): string {
       const date = dayjs.unix(timestamp);
 
-      if (dayjs().diff(date, 'days') <= 2) {
+      if (dayjs().diff(date, 'days') <= 1) {
         return date.calendar(undefined, {
           sameDay: this.$t('dates.sameDay'),
           lastDay: this.$t('dates.lastDay')

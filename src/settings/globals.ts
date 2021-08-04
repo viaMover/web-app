@@ -2,6 +2,9 @@ export interface Globals {
   isReleaseRadarEnabled: boolean;
   isDebitCardEnabled: boolean;
   isGovernanceEnabled: boolean;
+  isBoundsEnabled: boolean;
+  isCardEnabled: boolean;
+  isMoreEnabled: boolean;
   isNibbleShopEnabled: boolean;
   isNftDropsEnabled: boolean;
   isIntercomEnabled: boolean;
@@ -13,6 +16,9 @@ const values: Globals = {
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
   isGovernanceEnabled: false,
+  isBoundsEnabled: false,
+  isCardEnabled: false,
+  isMoreEnabled: false,
   isNibbleShopEnabled: false,
   isNftDropsEnabled: false,
   isIntercomEnabled: false,

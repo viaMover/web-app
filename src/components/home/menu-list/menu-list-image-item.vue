@@ -1,8 +1,10 @@
 <template>
   <li :class="wrapperClass" :style="itemStyle">
-    <img :src="image" />
-    <div>{{ title }}</div>
-    <div>{{ value }}</div>
+    <img class="image" :src="image" />
+    <div class="wrapper">
+      <div class="title">{{ title }}</div>
+      <div class="value">{{ description }}</div>
+    </div>
   </li>
 </template>
 
@@ -10,7 +12,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'CardListImageItem',
+  name: 'MenuListImageItem',
   props: {
     image: {
       type: String,
@@ -20,7 +22,7 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    value: {
+    description: {
       type: String,
       default: ''
     },

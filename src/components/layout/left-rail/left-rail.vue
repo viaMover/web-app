@@ -1,22 +1,15 @@
 <template>
   <div class="info__wrapper-sidebar" :class="[containerClass]">
-    <div class="sidebar-wrapper">
+    <div class="sidebar-wrapper" :style="innerWrapperStyle">
       <div :class="[contentWrapperClass, innerWrapperClass]">
         <slot></slot>
       </div>
-      <router-link
-        v-if="showLogo"
-        class="logo button-active"
-        :to="{ name: 'home' }"
-      >
-        <img :alt="$t('icon.txtLogoAlt')" src="@/assets/images/logo.svg" />
-      </router-link>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
   name: 'LeftRail',
@@ -25,13 +18,13 @@ export default Vue.extend({
       type: String,
       required: true
     },
-    showLogo: {
-      type: Boolean,
-      required: true
-    },
     innerWrapperClass: {
       type: String,
       required: true
+    },
+    innerWrapperStyle: {
+      type: Object as PropType<Record<string, string>>,
+      default: {}
     }
   },
   computed: {

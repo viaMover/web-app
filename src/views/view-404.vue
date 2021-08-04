@@ -1,22 +1,32 @@
 <template>
-  <main>
-    <router-link class="logo" :to="{ name: 'home' }">
-      <img :alt="$t('icon.txtLogoAlt')" src="@/assets/images/logo.svg" />
-    </router-link>
-    <div class="general-no-wallet-desktop">
-      <div class="g-wrapper">
-        <div class="general-no-wallet-desktop__wrapper">
-          <p>Nothing here, sorry</p>
-        </div>
-      </div>
+  <content-wrapper
+    has-back-button
+    wrapper-class="not-found"
+    @close="handleClose"
+  >
+    <div>
+      <p class="title">404</p>
+      <p>{{ $t('txtNotFound') }}</p>
     </div>
-  </main>
+  </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import ContentWrapper from '@/components/layout/content-wrapper.vue';
+
+import '@/styles/_404.less';
+
 export default Vue.extend({
-  name: 'View404'
+  name: 'View404',
+  components: {
+    ContentWrapper
+  },
+  methods: {
+    handleClose(): void {
+      this.$router.back();
+    }
+  }
 });
 </script>

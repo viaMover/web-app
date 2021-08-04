@@ -6,11 +6,15 @@ export default {
   lblConnectWallet: 'Please connect a wallet',
   txtConnectWallet:
     'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
+  txtNotFound:
+    'Wow, how did you end up here? Seems like even Google isn’t as of help.',
   btnConnectWallet: 'Connect a wallet',
   txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
-  lblDisconnect: 'Disconnect',
+  lblDisconnectEmoji: '🚪',
+  lblDisconnect: '@:lblDisconnectEmoji Disconnect',
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
+  lblMore: 'More',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
@@ -450,6 +454,12 @@ export default {
     btnSearch: {
       emoji: '🔍'
     }
+  },
+  bonds: {
+    lblBonds: 'Bonds'
+  },
+  card: {
+    lblCard: 'Card'
   },
   search: {
     lblSearch: 'Search',
