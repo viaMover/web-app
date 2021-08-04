@@ -73,7 +73,6 @@ import { TokenWithBalance } from '@/wallet/types';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
 
-import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { TokenImage } from '@/components/tokens';
 import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
@@ -262,6 +261,10 @@ export default Vue.extend({
             forceTokenArray: this.forceTokenArray
           }
         });
+
+        if (newAsset === undefined) {
+          return;
+        }
         this.$emit('update-asset', newAsset);
       }
     }
