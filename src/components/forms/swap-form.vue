@@ -306,26 +306,13 @@ export default Vue.extend({
       if (this.input.asset === undefined) {
         return '0';
       }
-      console.log(this.input.asset.address);
       if (this.input.asset.address === 'eth') {
-        console.log(
-          '!!!!!!!!!!!!selectedGasPriceInWEI',
-          this.selectedGasPriceInWEI
-        );
-
-        console.log('!!!!!!!!!!!!approveGasLimit', this.approveGasLimit);
-        console.log('!!!!!!!!!!!!actionGasLimit', this.actionGasLimit);
-
-        console.log('!!!!!!!!!!!!allGasLimit', this.allGasLimit);
-
         const txnPriceInWeth = multiply(
           this.allGasLimit,
           this.selectedGasPriceInWEI
         );
         const txnPriceInEth = fromWei(txnPriceInWeth, 18);
-        console.log('!!!!!!!!!!!!txnPriceInEth', txnPriceInEth);
         const remaining = sub(this.input.asset.balance, txnPriceInEth);
-        console.log('!!!!!!!!!!!!remaining', remaining);
         return greaterThan(remaining, 0) ? remaining : '0';
       }
       return this.input.asset.balance;

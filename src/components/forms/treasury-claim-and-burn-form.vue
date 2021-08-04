@@ -182,7 +182,7 @@ export default Vue.extend({
         return 'Enter Amount';
       }
 
-      if (greaterThan(this.input.amount, this.input.asset.balance)) {
+      if (greaterThan(this.input.amount, this.maxInputAmount)) {
         return 'Inssuficient Balance';
       }
 
