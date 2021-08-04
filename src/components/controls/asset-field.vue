@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 
 import { TokenWithBalance } from '@/wallet/types';
@@ -238,6 +238,7 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleUpdateAmount(amount: number): void {
       this.$emit('update-amount', String(amount));
     },
@@ -249,17 +250,19 @@ export default Vue.extend({
     handleUpdateNativeAmount(amount: number): void {
       this.$emit('update-native-amount', String(amount));
     },
-    handleUpdateAsset(asset: TokenWithBalance): void {
-      this.$emit('update-asset', asset);
-    },
-    handleOpenSelectModal(): void {
+    async handleOpenSelectModal(): Promise<void> {
       if (!this.disabledSelectCurrency) {
-        toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
-          useWalletTokens: this.useWalletTokens,
-          excludeTokens: this.excludeTokens,
-          treasuryOnly: this.treasuryOnly,
-          forceTokenArray: this.forceTokenArray
+        const newAsset = await this.setModalIsDisplayed({
+          id: Modal.SearchToken,
+          value: true,
+          payload: {
+            useWalletTokens: this.useWalletTokens,
+            excludeTokens: this.excludeTokens,
+            treasuryOnly: this.treasuryOnly,
+            forceTokenArray: this.forceTokenArray
+          }
         });
+        this.$emit('update-asset', newAsset);
       }
     }
   }

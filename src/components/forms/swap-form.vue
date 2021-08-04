@@ -1,11 +1,17 @@
 <template>
-  <div class="modal-wrapper-info">
-    <div>
+  <modal
+    close-on-dimmer-click
+    :disable-header-bottom-margin="!headerLabel"
+    has-header
+    :modal-id="modalId"
+    show-close-button
+  >
+    <template v-slot:header>
       <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
-    </div>
+    </template>
     <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
@@ -105,7 +111,7 @@
         @selected-gas-changed="handleSelectedGasChanged"
       />
     </form>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -151,6 +157,9 @@ import { Step } from '../controls/form-loader.vue';
 import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
+import Modal from '@/components/modals/modal.vue';
+import { Modal as ModalTypes } from '@/components/modals';
+
 export default Vue.extend({
   name: 'SwapForm',
   components: {
@@ -158,7 +167,8 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     SlippageSelector,
-    FormLoader
+    FormLoader,
+    Modal
   },
   data() {
     return {
@@ -182,7 +192,8 @@ export default Vue.extend({
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
-      loading: false
+      loading: false,
+      modalId: ModalTypes.Swap
     };
   },
   computed: {

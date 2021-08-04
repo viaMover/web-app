@@ -5,7 +5,7 @@
     has-expand-button
     :name="$t('swaps.lblSwaps')"
     use-click-event
-    @navigation-click="handleClick"
+    @navigation-click="toggleSwapForm"
   >
     <template v-slot:heading>
       {{ $t('swaps.lblSwaps') }}
@@ -22,6 +22,8 @@ import Vue from 'vue';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 import HeadingSection from './heading-section.vue';
+import { mapActions } from 'vuex';
+import { Modal } from '@/store/modules/modals/types';
 
 export default Vue.extend({
   name: 'SwapsSection',
@@ -39,8 +41,9 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleClick(): void {
-      toggleSingleItem('swap-modal');
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
+    toggleSwapForm(): void {
+      this.setModalIsDisplayed({ id: Modal.Swap, value: true });
     }
   }
 });

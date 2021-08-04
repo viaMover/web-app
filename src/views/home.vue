@@ -30,9 +30,9 @@
 
     <search-modal-copy />
     <transaction-modal />
-    <centered-modal-window v-cloak :modal-id="SwapModalId">
-      <swap-form />
-    </centered-modal-window>
+    <!-- <centered-modal-window v-cloak :modal-id="SwapModalId"> -->
+    <swap-form />
+    <!-- </centered-modal-window> -->
     <search-modal />
   </content-wrapper>
 </template>
@@ -64,6 +64,7 @@ import {
 } from '@/components/modals';
 
 import '@/styles/_general.less';
+import { mapActions } from 'vuex';
 
 export default Vue.extend({
   name: 'Home',
@@ -82,7 +83,7 @@ export default Vue.extend({
     TransactionModal,
     SwapForm,
     SearchModal,
-    CenteredModalWindow,
+    // CenteredModalWindow,
     SearchModalCopy
   },
   data() {
