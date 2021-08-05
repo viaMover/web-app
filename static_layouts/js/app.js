@@ -313,29 +313,21 @@ $(document).ready(function() {
 	decreaseBoostPopup();
 
 	function stakePopup() {
-		let stakePopup = $('.stake__popup'); 
-		let close = $('.burger__popup-close');
+		let stakePopup = $('.test__popup'); 
+		let close = $('.test__popup-close');
 		let button = $('.stake');
-		let bg = $('.stake__popup-bg');
 		let burger = $('.burger-menu__popup'); 
 		let burgerBg = $('.burger-menu__popup-bg');
 
 		button.on('click', function() { 
-			stakePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
+			stakePopup.addClass('test__popup-active');
+			close.addClass('test__popup-close-active');
 			burger.removeClass('burger-menu__popup-active'); 
 			burgerBg.removeClass('burger-menu__popup-bg-active');
 		})
 		close.on('click', function() { 
-			stakePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			stakePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
+			stakePopup.removeClass('test__popup-active'); 
+			close.removeClass('test__popup-close-active');
 		})
 	}
 	stakePopup();
@@ -726,25 +718,25 @@ $(document).ready(function() {
 	balancePopup();
 
 	function hideByClickEscButton() {
-		let transactionPopup = $('.transaction__popup');
+		let transactionPopup = $('.test__popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
 		let burgerPopup = $('.burger-menu__popup');
 		let NFTDropsPopup = $('.nft-drops__popup');
 		let nibbleShopPopup = $('.nibble-shop__popup');
 		let bg = $('.popup-bg');
 		let burgerBg = $('.burger-menu__popup-bg');
-		let transactionClose = $('.transaction__popup-close');
+		let transactionClose = $('.test__popup-close');
 
 		$(window).on('keydown', function(e) {
 			if ( e.keyCode == 27 ) {
-				transactionPopup.removeClass('transaction__popup-active'); 
+				transactionPopup.removeClass('test__popup-active'); 
 				transactionResultPopup.removeClass('transaction-result__popup-active'); 
 				burgerPopup.removeClass('burger-menu__popup-active');
 				NFTDropsPopup.removeClass('nft-drops__popup-active');
 				nibbleShopPopup.removeClass('nibble-shop__popup-active');
 				bg.removeClass('popup-bg-active');
 				burgerBg.removeClass('burger-menu__popup-bg-active');
-				transactionClose.removeClass('transaction__popup-close-active');
+				transactionClose.removeClass('test__popup-close-active');
 			}
 		});
 	}
