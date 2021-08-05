@@ -19,7 +19,7 @@ export const networks = new Array<NetworkInfo>(
     chainId: 1,
     network: Network.mainnet,
     explorer: 'https://etherscan.io',
-    subsidizedUrl: 'https://api.viamover.com/api/v1/tx/executeSubsidized'
+    subsidizedUrl: 'https://api.viamover.com/api/v1'
   },
   {
     chainId: 3,
