@@ -230,5 +230,12 @@ export default {
     }
 
     return false;
+  },
+  savingsAvg30DaysAPY(state): string {
+    if (state.savingsInfo === undefined || state.isSavingsInfoLoading) {
+      return '0';
+    }
+
+    return multiply(state.savingsInfo.avg30DaysAPY, 100);
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

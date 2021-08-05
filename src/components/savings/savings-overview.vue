@@ -40,7 +40,8 @@ export default Vue.extend({
     }),
     ...mapGetters('account', {
       savingsInfoBalanceUSDC: 'savingsInfoBalanceUSDC',
-      savingsInfoTotalPoolBalanceNative: 'savingsInfoTotalPoolBalanceNative'
+      savingsInfoTotalPoolBalanceNative: 'savingsInfoTotalPoolBalanceNative',
+      savingsAvg30DaysAPY: 'savingsAvg30DaysAPY'
     }),
     formattedDepositedAssets(): string {
       return `${formatToNative(this.savingsInfoBalanceUSDC)} USDC`;
@@ -49,7 +50,7 @@ export default Vue.extend({
       return `${formatPercents(this.apy)}%`;
     },
     monthAverageAPY(): string {
-      return this.currentVariableAPY; // TODO: get an average APY?
+      return `${formatPercents(this.savingsAvg30DaysAPY)}%`;
     },
     totalAssetsUnderManagement(): string {
       return `$${formatToNative(this.savingsInfoTotalPoolBalanceNative)}`;
