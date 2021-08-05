@@ -1,5 +1,5 @@
 import { Network } from '@/utils/networkTypes';
-import APIKeys from '@/settings/keys';
+import { APIKeys } from '@/settings/keys';
 import { sameAddress } from '@/utils/address';
 import { mapZerionTokens } from './tokens';
 import {

@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import { GetGasErrors } from '@/wallet/gas';
 import { Result, isError } from './../responses';
 import { Network } from '@/utils/networkTypes';
-import APIKeys from '@/settings/keys';
+import { APIKeys } from '@/settings/keys';
 import axios from 'axios';
 import { apiEndpoints } from './endpoints';
 import {
