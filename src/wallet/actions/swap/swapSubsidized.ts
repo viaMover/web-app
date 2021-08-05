@@ -1,7 +1,10 @@
+import store from '@/store/index';
+import { currentTimestamp } from './../../../utils/time';
+import { Transaction } from './../../types';
 import { BigNumber } from 'bignumber.js';
 import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken } from '@/wallet/types';
+import { SmallToken, TransactionTypes } from '@/wallet/types';
 import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import {
@@ -51,9 +54,36 @@ export const swapSubsidized = async (
       web3,
       changeStepToProcess
     );
+
+    const tx: Transaction = {
+      blockNumber: '0',
+      fee: {
+        ethPrice: store.getters['account/ethPrice'],
+        feeInWEI: '0'
+      },
+      hash: subsidizedResponse.txID ?? '',
+      isOffchain: true,
+      nonce: '0',
+      status: 'pending',
+      timestamp: currentTimestamp(),
+      type: TransactionTypes.swapERC20,
+      uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+      asset: {
+        address: inputAsset.address,
+        change: inputAmount,
+        decimals: inputAsset.decimals,
+        direction: 'out',
+        iconURL: '',
+        price: '0',
+        symbol: inputAsset.symbol
+      },
+      subsidizedQueueId: subsidizedResponse.queueID
+    };
+    await store.dispatch('account/addTransaction', tx);
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
+    console.error(`Common error: ${err}`);
   }
 };

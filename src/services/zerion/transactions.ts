@@ -1,8 +1,4 @@
-import {
-  FeeData,
-  TransactionStatus,
-  TransactionUnknown
-} from './../../wallet/types';
+import { FeeData, TransactionStatus, TransactionUnknown } from '@/wallet/types';
 import { ZerionTransaction, ZerionTransactionsReceived } from './responses';
 import find from 'lodash-es/find';
 
@@ -14,6 +10,8 @@ const mapStatus = (status: string): TransactionStatus => {
       return 'confirmed';
     case 'failed':
       return 'failed';
+    case 'pending':
+      return 'pending';
     default:
       console.error(`Unexpected transaction status: ${status}`);
       return 'failed';
@@ -103,7 +101,8 @@ const parseTradeTransaction = (
             timestamp: tx.mined_at,
             type: TransactionTypes.swapERC20,
             fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-            status: mapStatus(tx.status)
+            status: mapStatus(tx.status),
+            isOffchain: false
           };
         } else {
           return {
@@ -125,7 +124,8 @@ const parseTradeTransaction = (
             timestamp: tx.mined_at,
             type: TransactionTypes.transferERC20,
             fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-            status: mapStatus(tx.status)
+            status: mapStatus(tx.status),
+            isOffchain: false
           };
         }
       });
@@ -152,7 +152,8 @@ const parseTradeTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.transferERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false
       }
     ];
   }
@@ -184,7 +185,8 @@ const parseReceiveTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.transferERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false
       }
     ];
   }
@@ -210,7 +212,8 @@ const parseAuthorizeTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.approvalERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false
       }
     ];
   }
@@ -242,7 +245,8 @@ const parseSendTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.transferERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false
       }
     ];
   }
@@ -273,7 +277,8 @@ const tryToParseToUnknown = (
       timestamp: tx.mined_at,
       type: TransactionTypes.unknown,
       fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-      status: mapStatus(tx.status)
+      status: mapStatus(tx.status),
+      isOffchain: false
     }));
   }
 
@@ -287,7 +292,8 @@ const tryToParseToUnknown = (
       timestamp: tx.mined_at,
       type: TransactionTypes.unknown,
       fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-      status: mapStatus(tx.status)
+      status: mapStatus(tx.status),
+      isOffchain: false
     }
   ];
 };

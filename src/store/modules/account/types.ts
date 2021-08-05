@@ -1,3 +1,4 @@
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import Web3 from 'web3';
 import Fuse from 'fuse.js';
 
@@ -66,6 +67,7 @@ export type AccountStoreState = {
 
   // explorer
   explorer: undefined | Explorer;
+  offchainExplorerHanlder: undefined | OffchainExplorerHanler;
   //charts
   chartData: undefined | Record<string, ChartPair[]>;
 

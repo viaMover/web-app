@@ -1,6 +1,6 @@
 import { sameAddress } from '@/utils/address';
 import { needApprove } from '@/wallet/actions/approve/needApprove';
-import { toWei, floorDivide, add } from '@/utils/bigmath';
+import { toWei, floorDivide } from '@/utils/bigmath';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import { BigNumber } from 'bignumber.js';
@@ -38,8 +38,7 @@ export const estimateDepositCompound = async (
   transferData: TransferData | undefined,
   network: Network,
   web3: Web3,
-  accountAddress: string,
-  useSubsidized: boolean
+  accountAddress: string
 ): Promise<CompoudEstimateResponse> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 

@@ -306,7 +306,7 @@ export default Vue.extend({
       if (this.input.asset === undefined) {
         return '0';
       }
-      if (this.input.asset.address === 'eth') {
+      if (this.input.asset.address === 'eth' && !this.useSubsidized) {
         const txnPriceInWeth = multiply(
           this.allGasLimit,
           this.selectedGasPriceInWEI
@@ -780,8 +780,7 @@ export default Vue.extend({
         transferData,
         this.networkInfo.network,
         this.provider.web3,
-        this.currentAddress,
-        this.useSubsidized
+        this.currentAddress
       );
 
       if (resp.error) {

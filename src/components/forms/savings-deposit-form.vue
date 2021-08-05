@@ -510,8 +510,7 @@ export default Vue.extend({
         transferData,
         this.networkInfo.network,
         this.provider.web3,
-        this.currentAddress,
-        this.useSubsidized
+        this.currentAddress
       );
       if (resp.error) {
         console.error(resp.error);
