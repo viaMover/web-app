@@ -1,19 +1,21 @@
 <template>
-  <li :class="wrapperClass" :style="itemStyle">
-    <slot>
-      <emoji-card :corner-color="cornerColor" :emoji="emoji" />
-    </slot>
-    <div class="wrapper">
-      <div class="title">{{ title }}</div>
-      <div class="value">{{ description }}</div>
-    </div>
-  </li>
+  <router-link :to="navigateTo">
+    <li :class="itemClass" :style="itemStyle">
+      <slot>
+        <emoji-card :corner-color="cornerColor" :emoji="emoji" />
+      </slot>
+      <div class="wrapper">
+        <div class="title">{{ title }}</div>
+        <div class="value">{{ description }}</div>
+      </div>
+    </li>
+  </router-link>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import EmojiCard from '@/components/controls/emoji-card.vue';
+import { EmojiCard } from '@/components/controls';
 
 export default Vue.extend({
   name: 'MenuListEmojiCardItem',
@@ -42,12 +44,28 @@ export default Vue.extend({
     disabled: {
       type: Boolean,
       default: false
+    },
+    navigateToName: {
+      type: String,
+      default: ''
     }
   },
   computed: {
     itemStyle(): Record<string, string> {
       return {
         opacity: this.disabled ? '0.5' : '1'
+      };
+    },
+    itemClass(): string {
+      if (this.disabled) {
+        return this.wrapperClass;
+      }
+
+      return `button-active ${this.wrapperClass}`;
+    },
+    navigateTo(): Record<string, string> {
+      return {
+        name: this.navigateToName
       };
     }
   }

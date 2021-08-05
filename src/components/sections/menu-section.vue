@@ -9,15 +9,17 @@
       />
       <menu-list-emoji-card-item
         corner-color="#ff9b00"
-        description="$10,842.11"
+        :description="savingsBalance"
         :emoji="$t('savings.icon')"
+        navigate-to-name="savings-manage"
         :title="$t('savings.lblSavings')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-emoji-card-item
         corner-color="#ff57db"
-        description="$811.07"
+        :description="treasuryBalance"
         :emoji="$t('treasury.icon')"
+        navigate-to-name="treasury-manage"
         :title="$t('treasury.lblSmartTreasury')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -25,6 +27,7 @@
         v-if="isFeatureEnabled('isBoundsEnabled')"
         description="$942,184.11"
         :emoji="$t('bonds.icon')"
+        navigate-to-name="bonds"
         :title="$t('menu.lblBonds')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -32,11 +35,13 @@
     <menu-list wrapper-class="desktop-center-section-list">
       <menu-list-icon-item
         :icon="$t('menu.lblSwapTokenEmoji')"
+        :modal-id="Modal.Swap"
         :text="$t('menu.lblSwapToken')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
         :icon="$t('menu.lblGetMoveEmoji')"
+        :modal-id="Modal.Swap"
         :text="$t('menu.lblGetMove')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -47,11 +52,13 @@
       />
       <menu-list-icon-item
         :icon="$t('menu.lblDepositInSavingsEmoji')"
+        :modal-id="Modal.SavingsDeposit"
         :text="$t('menu.lblDepositInSavings')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
         :icon="$t('menu.lblIncreaseBoostEmoji')"
+        :modal-id="Modal.TreasuryIncreaseBoost"
         :text="$t('menu.lblIncreaseBoost')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -66,8 +73,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
+import { formatToNative } from '@/utils/format';
+import { Modal } from '@/components/modals';
 
 import {
   MenuList,
@@ -81,6 +91,23 @@ export default Vue.extend({
     MenuList,
     MenuListEmojiCardItem,
     MenuListIconItem
+  },
+  data() {
+    return {
+      Modal
+    };
+  },
+  computed: {
+    ...mapGetters('account', [
+      'savingsInfoBalanceNative',
+      'treasuryBonusNative'
+    ]),
+    savingsBalance(): string {
+      return `$${formatToNative(this.savingsInfoBalanceNative)}`;
+    },
+    treasuryBalance(): string {
+      return `$${formatToNative(this.treasuryBonusNative)}`;
+    }
   },
   methods: {
     isFeatureEnabled

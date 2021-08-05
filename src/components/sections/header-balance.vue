@@ -24,30 +24,29 @@
       <span class="balance">{{ balanceNative }}</span>
     </div>
     <nav-bar>
-      <nav-bar-item navigate-to-name="savings-manage">
-        {{ $t('savings.lblSavings') }}
-      </nav-bar-item>
-      <nav-bar-item navigate-to-name="treasury-manage">
-        {{ $t('treasury.lblSmartTreasury') }}
-      </nav-bar-item>
+      <nav-bar-item
+        navigate-to-name="savings-manage"
+        :text="$t('savings.lblSavings')"
+      />
+      <nav-bar-item
+        navigate-to-name="treasury-manage"
+        :text="$t('treasury.lblSmartTreasury')"
+      />
       <nav-bar-item
         v-if="isFeatureEnabled('isBoundsEnabled')"
         navigate-to-name="bonds"
-      >
-        {{ $t('bonds.lblBonds') }}
-      </nav-bar-item>
+        :text="$t('bonds.lblBonds')"
+      />
       <nav-bar-item
         v-if="isFeatureEnabled('isCardEnabled')"
         navigate-to-name="card"
-      >
-        {{ $t('card.lblCard') }}
-      </nav-bar-item>
+        :text="$t('card.lblCard')"
+      />
       <nav-bar-item
         v-if="isFeatureEnabled('isMoreEnabled')"
         navigate-to-name="more"
-      >
-        {{ $t('lblMore') }}
-      </nav-bar-item>
+        :text="$t('lblMore')"
+      />
     </nav-bar>
   </section>
 </template>

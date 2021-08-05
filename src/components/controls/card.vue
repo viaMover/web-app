@@ -10,7 +10,10 @@
       </div>
     </div>
     <div class="card__buttons">
-      <action-button class="black-link button-active">
+      <action-button
+        class="black-link button-active"
+        @button-click="handleBtnClick"
+      >
         {{ btnText }}
       </action-button>
       <close-button
@@ -65,6 +68,9 @@ export default Vue.extend({
   methods: {
     handleCloseBtn(): void {
       this.$emit('close');
+    },
+    handleBtnClick(): void {
+      this.$emit('button-click');
     }
   }
 });

@@ -7,6 +7,7 @@
     is-black-close-btn
     :title="$t('depositCard.lblDepositCardHeading')"
     wrapper-class="general-desktop__menu-wrapper-deposit"
+    @button-click="handleBtnClick"
     @close="toggleInfo"
   />
 </template>
@@ -15,7 +16,10 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import Card from '@/components/controls/card.vue';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals';
+
+import { Card } from '@/components/controls';
 
 export default Vue.extend({
   name: 'DepositCardSection',
@@ -23,10 +27,15 @@ export default Vue.extend({
     Card
   },
   computed: {
-    ...mapState('account', { isInfoVisible: 'isDebitCardSectionVisible' })
+    ...mapState('account', { isInfoVisible: 'isDepositCardSectionVisible' })
   },
   methods: {
-    ...mapActions('account', { toggleInfo: 'toggleIsDebitCardSectionVisible' })
+    ...mapActions('account', {
+      toggleInfo: 'toggleIsDepositCardSectionVisible'
+    }),
+    handleBtnClick(): void {
+      toggleSingleItem(Modal.SavingsDeposit);
+    }
   }
 });
 </script>

@@ -62,6 +62,7 @@ export default {
     refreshError: undefined,
 
     isDebitCardSectionVisible: true,
+    isDepositCardSectionVisible: true,
 
     isSavingsInfoLoading: false,
     savingsInfo: undefined,

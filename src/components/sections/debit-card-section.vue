@@ -6,6 +6,7 @@
     :icon="$t('debitCard.icon')"
     :title="$t('debitCard.lblDebitCardHeading')"
     wrapper-class="general-desktop__menu-wrapper-order"
+    @button-click="handleBtnClick"
     @close="toggleInfo"
   />
 </template>
@@ -14,7 +15,7 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import Card from '@/components/controls/card.vue';
+import { Card } from '@/components/controls';
 
 export default Vue.extend({
   name: 'DebitCardSection',
@@ -25,7 +26,10 @@ export default Vue.extend({
     ...mapState('account', { isInfoVisible: 'isDebitCardSectionVisible' })
   },
   methods: {
-    ...mapActions('account', { toggleInfo: 'toggleIsDebitCardSectionVisible' })
+    ...mapActions('account', { toggleInfo: 'toggleIsDebitCardSectionVisible' }),
+    handleBtnClick(): void {
+      //
+    }
   }
 });
 </script>

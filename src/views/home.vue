@@ -13,6 +13,15 @@
     <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
     </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="SavingsWithdrawModalId">
+      <savings-withdraw-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="SavingsDepositModalId">
+      <savings-deposit-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="TreasuryIncreaseBoostModalId">
+      <treasury-increase-boost-form />
+    </centered-modal-window>
     <search-modal />
   </content-wrapper>
 </template>
@@ -36,12 +45,20 @@ import {
   CenteredModalWindow,
   Modal
 } from '@/components/modals';
+import {
+  TreasuryIncreaseBoostForm,
+  SavingsDepositForm,
+  SavingsWithdrawForm
+} from '@/components/forms';
 
 import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'Home',
   components: {
+    TreasuryIncreaseBoostForm,
+    SavingsDepositForm,
+    SavingsWithdrawForm,
     DepositCardSection,
     DebitCardSection,
     MenuSection,
@@ -55,7 +72,10 @@ export default Vue.extend({
   },
   data() {
     return {
-      SwapModalId: Modal.Swap
+      SwapModalId: Modal.Swap,
+      SavingsWithdrawModalId: Modal.SavingsWithdraw,
+      SavingsDepositModalId: Modal.SavingsDeposit,
+      TreasuryIncreaseBoostModalId: Modal.TreasuryIncreaseBoost
     };
   },
   methods: {

@@ -1,5 +1,5 @@
 <template>
-  <li :class="wrapperClass">
+  <li class="button-active" :class="wrapperClass" @click="handleOpenModal">
     <div class="icon">{{ icon }}</div>
     <div class="text">{{ text }}</div>
   </li>
@@ -7,6 +7,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'MenuListIconItem',
@@ -22,6 +24,17 @@ export default Vue.extend({
     wrapperClass: {
       type: String,
       default: ''
+    },
+    modalId: {
+      type: String,
+      default: ''
+    }
+  },
+  methods: {
+    handleOpenModal(): void {
+      if (this.modalId !== '') {
+        toggleSingleItem(this.modalId);
+      }
     }
   }
 });

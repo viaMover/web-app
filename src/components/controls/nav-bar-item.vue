@@ -1,7 +1,7 @@
 <template>
-  <li>
+  <li class="button-active">
     <router-link :to="navigateTo">
-      <slot></slot>
+      <slot>{{ text }}</slot>
     </router-link>
   </li>
 </template>
@@ -12,6 +12,10 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'NavBarItem',
   props: {
+    text: {
+      type: String,
+      default: ''
+    },
     navigateToName: {
       type: String,
       default: ''
