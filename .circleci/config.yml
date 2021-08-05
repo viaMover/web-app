@@ -57,7 +57,7 @@ workflows:
   commit:
     jobs:
       - build
-      - deploy
+      - deploy:
           filters:
             branches:
               only:
