@@ -22,8 +22,6 @@ export const withdrawCompound = async (
   useSubsidized: boolean,
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
-
   try {
     if (useSubsidized) {
       await withdrawSubsidized(

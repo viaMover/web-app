@@ -106,9 +106,11 @@ import {
   add,
   convertAmountFromNativeValue,
   divide,
+  fromWei,
   greaterThan,
   multiply,
-  notZero
+  notZero,
+  sub
 } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { Step } from '../controls/form-loader.vue';
@@ -120,6 +122,7 @@ import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
+import Web3 from 'web3';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostForm',
@@ -139,7 +142,7 @@ export default Vue.extend({
         nativeAmount: ''
       },
       selectedGasPrice: '0',
-      depositGasLimit: '0',
+      actionGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
       loading: false
@@ -174,7 +177,7 @@ export default Vue.extend({
         return 'Enter Amount';
       }
 
-      if (greaterThan(this.input.amount, this.input.asset.balance)) {
+      if (greaterThan(this.input.amount, this.maxInputAmount)) {
         return 'Inssuficient Balance';
       }
 
@@ -233,18 +236,33 @@ export default Vue.extend({
 
       return '📈 Increase Boost';
     },
+    selectedGasPriceInWEI(): string {
+      return Web3.utils.toWei(this.selectedGasPrice, 'Gwei');
+    },
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high'];
     },
     allGasLimit(): string {
       console.log(
         'all gas limit: ',
-        add(this.approveGasLimit, this.depositGasLimit)
+        add(this.approveGasLimit, this.actionGasLimit)
       );
-      return add(this.approveGasLimit, this.depositGasLimit);
+      return add(this.approveGasLimit, this.actionGasLimit);
     },
     maxInputAmount(): string {
-      return this.input.asset !== undefined ? this.input.asset.balance : '0';
+      if (this.input.asset === undefined) {
+        return '0';
+      }
+      if (this.input.asset.address === 'eth') {
+        const txnPriceInWeth = multiply(
+          this.allGasLimit,
+          this.selectedGasPriceInWEI
+        );
+        const txnPriceInEth = fromWei(txnPriceInWeth, 18);
+        const remaining = sub(this.input.asset.balance, txnPriceInEth);
+        return greaterThan(remaining, 0) ? remaining : '0';
+      }
+      return this.input.asset.balance;
     },
     buttonClass(): string {
       if (this.actionAvaialble) {
@@ -295,7 +313,7 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.depositGasLimit,
+          this.actionGasLimit,
           this.approveGasLimit,
           this.selectedGasPrice,
           async () => {
@@ -375,7 +393,7 @@ export default Vue.extend({
       this.input.amount = '';
       this.input.nativeAmount = '';
 
-      this.depositGasLimit = '0';
+      this.actionGasLimit = '0';
     },
     handleSelectedGasChanged(newGas: GasModeData): void {
       this.selectedGasPrice = String(newGas.price);
@@ -396,7 +414,7 @@ export default Vue.extend({
         this.transferError = 'Estimate error';
         return;
       }
-      this.depositGasLimit = resp.actionGasLimit;
+      this.actionGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
     }
   }

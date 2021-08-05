@@ -113,6 +113,15 @@ export const sendSubsidizedRequest = async (
   web3: Web3,
   changeStepToProcess: () => Promise<void>
 ): Promise<SubsidizedTxData> => {
+  // const t = 1;
+  // if (t) {
+  //   return {
+  //     actionType,
+  //     queueID: '1',
+  //     txID: ''
+  //   };
+  // }
+
   const url = getNetwork(network)?.subsidizedUrl;
   if (url === undefined) {
     throw new Error(`network ${network} doesn't support subsidezed requests`);
@@ -154,7 +163,7 @@ export const sendSubsidizedRequest = async (
       actionType,
       queueID: response.queueID,
       txID: response.txID
-    } as SubsidizedTxData;
+    };
   } catch (error) {
     throw new SubsidizedRequestError(
       `Failed to send subsidized request: ${error}`,

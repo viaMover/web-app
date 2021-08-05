@@ -79,13 +79,14 @@ import {
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
+import Web3 from 'web3';
 import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
   divide,
   greaterThan,
+  isZero,
   multiply,
   notZero
 } from '@/utils/bigmath';
@@ -94,7 +95,7 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
 import { formatToNative } from '@/utils/format';
-import Web3 from 'web3';
+import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
 export default Vue.extend({
   name: 'SavingsWithdrawForm',
@@ -114,7 +115,8 @@ export default Vue.extend({
       },
       selectedGasPrice: '0',
       useSubsidized: false,
-      withdrawGasLimit: '0',
+      subsidizedAvaialbe: false,
+      actionGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
       loading: false
@@ -133,7 +135,7 @@ export default Vue.extend({
       'usdcPriceInWeth',
       'ethPrice'
     ]),
-    ...mapGetters('account', ['usdcNativePrice']),
+    ...mapGetters('account', ['usdcNativePrice', 'treasuryBonusNative']),
     outputUSDCToken(): TokenWithBalance {
       return {
         address: this.outputUSDCAsset.address,
@@ -158,7 +160,7 @@ export default Vue.extend({
         return 'Enter Amount';
       }
 
-      if (greaterThan(this.output.amount, this.savingsBalance)) {
+      if (greaterThan(this.output.amount, this.maxOutputAmount)) {
         return 'Inssuficient Balance';
       }
 
@@ -194,15 +196,22 @@ export default Vue.extend({
 
       return '🚪 Withdraw';
     },
+    selectedGasPriceInWEI(): string {
+      return Web3.utils.toWei(this.selectedGasPrice, 'Gwei');
+    },
     availableGasModes(): Array<GasMode> {
-      return ['treasury', 'low', 'normal', 'high'];
+      if (this.subsidizedAvaialbe) {
+        return ['treasury', 'low', 'normal', 'high'];
+      } else {
+        return ['low', 'normal', 'high'];
+      }
     },
     allGasLimit(): string {
       console.log(
         'all gas limit: ',
-        add(this.approveGasLimit, this.withdrawGasLimit)
+        add(this.approveGasLimit, this.actionGasLimit)
       );
-      return add(this.approveGasLimit, this.withdrawGasLimit);
+      return add(this.approveGasLimit, this.actionGasLimit);
     },
     maxOutputAmount(): string {
       return this.savingsBalance ?? '0';
@@ -221,13 +230,9 @@ export default Vue.extend({
       return this.infoExpanded && !this.loading && this.isInfoAvailable;
     },
     treasuryCover(): string {
-      const selectedGasPriceInWEI = Web3.utils.toWei(
-        this.selectedGasPrice,
-        'Gwei'
-      );
       const withdrawPriceInWEI = multiply(
-        selectedGasPriceInWEI,
-        this.withdrawGasLimit
+        this.selectedGasPriceInWEI,
+        this.actionGasLimit
       );
 
       const withdrawPriceInEth = Web3.utils.fromWei(
@@ -248,6 +253,7 @@ export default Vue.extend({
   },
   mounted() {
     this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {
@@ -269,7 +275,7 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.withdrawGasLimit,
+          this.actionGasLimit,
           this.selectedGasPrice,
           this.useSubsidized,
           async () => {
@@ -339,6 +345,7 @@ export default Vue.extend({
     handleSelectedGasChanged(newGas: GasModeData): void {
       this.useSubsidized = newGas.mode === 'treasury';
       this.selectedGasPrice = String(newGas.price);
+      this.checkSubsidizedAvailability();
     },
     async tryToEstimate(
       outputAmount: string,
@@ -356,8 +363,26 @@ export default Vue.extend({
         this.transferError = 'Estimate error';
         return;
       }
-      this.withdrawGasLimit = resp.actionGasLimit;
+      this.actionGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
+      this.checkSubsidizedAvailability();
+    },
+    checkSubsidizedAvailability(): void {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we don't allow subsidized transaction"
+        );
+        this.subsidizedAvaialbe = false;
+        return;
+      }
+      this.subsidizedAvaialbe = isSubsidizedAllowed(
+        gasPrice,
+        this.actionGasLimit,
+        this.ethPrice,
+        this.treasuryBonusNative
+      );
     }
   }
 });

@@ -1,6 +1,6 @@
 import { sameAddress } from '@/utils/address';
 import { needApprove } from '@/wallet/actions/approve/needApprove';
-import { toWei, floorDivide, add } from '@/utils/bigmath';
+import { toWei, floorDivide } from '@/utils/bigmath';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import Web3 from 'web3';
