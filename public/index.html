@@ -1,21 +1,71 @@
 <!DOCTYPE html>
 <html lang="">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <link rel="shortcut icon" href="<%= BASE_URL %>favicon.ico"/>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+    <link rel="shortcut icon" href="<%= BASE_URL %>favicon.ico" />
+    <link rel="preload" as="script" href="https://widget.intercom.io/widget/z9afldf5" />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Inter-Bold.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Inter-Medium.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Inter-Regular.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Roboto-Regular.woff2"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Inter-Bold.woff"
+      type="font/woff"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Inter-Medium.woff"
+      type="font/woff"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      href="<%= BASE_URL %>fonts/Inter-Regular.woff"
+      type="font/woff"
+      crossorigin="anonymous"
+    />
     <title>Mover App</title>
   </head>
   <body>
     <noscript>
       <strong>
-        We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
-        properly without JavaScript enabled. Please enable it to continue.
+        We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please
+        enable it to continue.
       </strong>
     </noscript>
     <div id="app"></div>
-    <script src='<%= BASE_URL %>intercom-web-init.js'></script>
+    <script src="<%= BASE_URL %>intercom-web-init.js"></script>
   </body>
 </html>

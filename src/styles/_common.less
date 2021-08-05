@@ -1,21 +1,38 @@
 @font-face {
   font-family: 'Regular';
-  src: url('../assets/fonts/Inter-Regular.woff2');
+  font-weight: 400;
+  font-display: auto;
+  /* stylelint-disable-next-line declaration-colon-newline-after */
+  src: local('Inter-Regular'),
+ url('../../public/fonts/Inter-Regular.woff2') format('woff2'),
+    url('../../public/fonts/Inter-Regular.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Bold';
-  src: url('../assets/fonts/Inter-Bold.woff2');
+  font-weight: 700;
+  font-display: auto;
+  /* stylelint-disable-next-line declaration-colon-newline-after */
+  src: local('Inter-Bold'),
+ url('../../public/fonts/Inter-Bold.woff2') format('woff2'),
+    url('../../public/fonts/Inter-Bold.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Medium';
-  src: url('../assets/fonts/Inter-Medium.woff2');
+  font-weight: 500;
+  font-display: auto;
+  /* stylelint-disable-next-line declaration-colon-newline-after */
+  src: local('Inter-Medium'),
+ url('../../public/fonts/Inter-Medium.woff2') format('woff2'),
+    url('../../public/fonts/Inter-Medium.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Roboto-Regular';
-  src: url('../assets/fonts/Roboto-Regular.woff2');
+  font-weight: 400;
+  font-display: auto;
+  src: local('Roboto-Regular'), url('../../public/fonts/Roboto-Regular.woff2') format('woff2');
 }
 
 * {
@@ -56,10 +73,10 @@ input:-ms-input-placeholder {
   color: rgba(60, 60, 67, 0.6);
 }
 
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
   display: none;
   width: 0;
   height: 0;
