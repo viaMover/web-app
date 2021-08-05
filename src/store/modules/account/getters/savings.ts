@@ -115,7 +115,8 @@ export default {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined
+      state.networkInfo === undefined ||
+      state.savingsReceipt.endOfMonthBalance === 0
     ) {
       return '0';
     }
@@ -127,27 +128,37 @@ export default {
 
     return multiply(balanceInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthEarnedNative(state): string {
+  savingsMonthEarnedNative(state, getters): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined
+      state.networkInfo === undefined ||
+      state.savingsReceipt.earnedThisMonth === 0
     ) {
       return '0';
     }
 
-    return '0';
+    const earnedInUSDC = fromWei(
+      state.savingsReceipt.earnedThisMonth,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+    return multiply(earnedInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthAverageEarnedNative(state): string {
+  savingsMonthAverageEarnedNative(state, getters): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined
+      state.networkInfo === undefined ||
+      state.savingsReceipt.avgDailyEarnings === 0
     ) {
       return '0';
     }
 
-    return '0';
+    const earnedInUSDC = fromWei(
+      state.savingsReceipt.avgDailyEarnings,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+    return multiply(earnedInUSDC, getters.usdcNativePrice);
   },
   savingsMonthTotalDepositsNative(state, getters): string {
     if (
@@ -237,5 +248,44 @@ export default {
     }
 
     return multiply(state.savingsInfo.avg30DaysAPY, 100);
+  },
+  savingsMonthPaidToTreasury(state): string {
+    if (
+      state.savingsReceipt === undefined ||
+      state.isSavingsReceiptLoading ||
+      state.networkInfo === undefined ||
+      state.savingsReceipt.paidToTreasury === 0
+    ) {
+      return '0';
+    }
+
+    return fromWei(
+      state.savingsReceipt.paidToTreasury,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+  },
+  savingsMonthPaidToTreasuryNative(state, getters): string {
+    return multiply(
+      getters.savingsMonthPaidToTreasury,
+      getters.usdcNativePrice
+    );
+  },
+  savingsMonthSavedFees(state): string {
+    if (
+      state.savingsReceipt === undefined ||
+      state.isSavingsReceiptLoading ||
+      state.networkInfo === undefined ||
+      state.savingsReceipt.savedFees === 0
+    ) {
+      return '0';
+    }
+
+    return fromWei(
+      state.savingsReceipt.savedFees,
+      getUSDCAssetData(state.networkInfo.network).decimals
+    );
+  },
+  savingsMonthSavedFeesNative(state, getters): string {
+    return multiply(getters.savingsMonthSavedFees, getters.usdcNativePrice);
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

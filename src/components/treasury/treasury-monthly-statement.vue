@@ -6,7 +6,7 @@
     />
     <statement-list-item
       :description="$t('treasury.statement.lblRewardsEarned')"
-      :value="rewardsEarned"
+      :value="earnedThisMonth"
     />
     <statement-list-item
       :description="$t('treasury.statement.lblAverageDailyEarnings')"
@@ -27,10 +27,6 @@
     <statement-list-item
       :description="$t('treasury.statement.lblRemovedAssets')"
       :value="removedAssets"
-    />
-    <statement-list-item
-      :description="$t('treasury.statement.lblAverageBoost')"
-      :value="averageBoost"
     />
   </statement-list>
 </template>
@@ -59,38 +55,33 @@ export default Vue.extend({
       required: true
     }
   },
-  data() {
-    return {
-      treasuryMonthRewardsEarned: 0,
-      treasuryMonthAverageDailyEarnings: 0,
-      treasuryMonthRewardsUsed: 0,
-      treasuryMonthAverageDailySpendings: 0,
-      treasuryMonthAverageBoost: 0
-    };
-  },
   computed: {
     ...mapGetters('account', [
       'treasuryMonthBalanceNative',
       'treasuryMonthDepositedNative',
-      'treasuryMonthWithdrewNative'
+      'treasuryMonthWithdrewNative',
+      'treasuryMonthBonusesUsedNative',
+      'treasuryMonthAvgDailyEarningsNative',
+      'treasuryMonthAvgDailySpendingsNative',
+      'treasuryMonthEarnedThisMonthNative'
     ]),
     balance(): string {
       return `$${formatToNative(this.treasuryMonthBalanceNative)}`;
     },
     rewardsEarned(): string {
-      const value = formatToNative(this.treasuryMonthRewardsEarned);
+      const value = formatToNative(this.treasuryMonthEarnedThisMonthNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     averageDailyEarnings(): string {
-      const value = formatToNative(this.treasuryMonthAverageDailyEarnings);
+      const value = formatToNative(this.treasuryMonthAvgDailyEarningsNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     rewardsUsed(): string {
-      const value = formatToNative(this.treasuryMonthRewardsUsed);
+      const value = formatToNative(this.treasuryMonthBonusesUsedNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     averageDailySpendings(): string {
-      const value = formatToNative(this.treasuryMonthAverageDailySpendings);
+      const value = formatToNative(this.treasuryMonthAvgDailySpendingsNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     reservedAssets(): string {
@@ -100,9 +91,6 @@ export default Vue.extend({
     removedAssets(): string {
       const value = formatToNative(this.treasuryMonthWithdrewNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
-    },
-    averageBoost(): string {
-      return `${this.treasuryMonthAverageBoost}x`;
     },
     monthName(): string {
       return this.pageDate.format('MMMM');
