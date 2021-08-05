@@ -1,58 +1,63 @@
 <template>
   <div class="desktop-center-section">
     <menu-list wrapper-class="desktop-center-section-list">
-      <menu-list-image-item
-        description="Coming soon"
+      <menu-list-emoji-card-item
+        :description="$t('menu.lblComingSoon')"
         disabled
-        title="Beautiful card"
+        :title="$t('menu.lblBeautifulCard')"
         wrapper-class="desktop-center-section-list-item"
       />
-      <menu-list-image-item
+      <menu-list-emoji-card-item
+        corner-color="#ff9b00"
         description="$10,842.11"
-        title="Savings"
+        :emoji="$t('savings.icon')"
+        :title="$t('savings.lblSavings')"
         wrapper-class="desktop-center-section-list-item"
       />
-      <menu-list-image-item
+      <menu-list-emoji-card-item
+        corner-color="#ff57db"
         description="$811.07"
-        title="Smart Treasury"
+        :emoji="$t('treasury.icon')"
+        :title="$t('treasury.lblSmartTreasury')"
         wrapper-class="desktop-center-section-list-item"
       />
-      <menu-list-image-item
+      <menu-list-emoji-card-item
         v-if="isFeatureEnabled('isBoundsEnabled')"
         description="$942,184.11"
-        title="Bonds"
+        :emoji="$t('bonds.icon')"
+        :title="$t('menu.lblBonds')"
         wrapper-class="desktop-center-section-list-item"
       />
     </menu-list>
     <menu-list wrapper-class="desktop-center-section-list">
       <menu-list-icon-item
-        icon="🔄"
-        text="Swap tokens"
+        :icon="$t('menu.lblSwapTokenEmoji')"
+        :text="$t('menu.lblSwapToken')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
-        icon="💸"
-        text="Get MOVE"
+        :icon="$t('menu.lblGetMoveEmoji')"
+        :text="$t('menu.lblGetMove')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
-        icon="💧"
-        text="Provide liquidity for MOVE"
+        :icon="$t('menu.lblProvideLiquidityMoveEmoji')"
+        :text="$t('menu.lblProvideLiquidityMove')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
-        icon="💰"
-        text="Deposit in Savings"
+        :icon="$t('menu.lblDepositInSavingsEmoji')"
+        :text="$t('menu.lblDepositInSavings')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
-        icon="📈"
-        text="Increase boost"
+        :icon="$t('menu.lblIncreaseBoostEmoji')"
+        :text="$t('menu.lblIncreaseBoost')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
-        icon="🏦"
-        text="Purchase Bonds"
+        :icon="$t('menu.lblPurchaseBondsEmoji')"
+        :text="$t('menu.lblPurchaseBonds')"
         wrapper-class="desktop-center-section-list-item"
       />
     </menu-list>
@@ -66,7 +71,7 @@ import { isFeatureEnabled } from '@/settings';
 
 import {
   MenuList,
-  MenuListImageItem,
+  MenuListEmojiCardItem,
   MenuListIconItem
 } from '@/components/home/menu-list';
 
@@ -74,7 +79,7 @@ export default Vue.extend({
   name: 'MenuSection',
   components: {
     MenuList,
-    MenuListImageItem,
+    MenuListEmojiCardItem,
     MenuListIconItem
   },
   methods: {

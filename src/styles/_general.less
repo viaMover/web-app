@@ -410,6 +410,7 @@
   display: flex;
   font-size: 14px;
   line-height: 22px;
+  padding-bottom: 40px;
 }
 
 .general-desktop__menu-wrapper-balance .balance-wrapper {
@@ -636,7 +637,7 @@
 }
 
 .general-desktop__menu-wrapper-order {
-  margin-top: 80px;
+  margin-top: 40px;
   background: -webkit-gradient(linear, right top, left top, from(#404040), to(#1d1d1d));
   background: -o-linear-gradient(right, #404040 0%, #1d1d1d 100%);
   background: linear-gradient(270deg, #404040 0%, #1d1d1d 100%);
@@ -646,7 +647,7 @@
   padding: 24px 24px 28px;
 }
 
-.general-desktop__menu-wrapper-order .order__info {
+.general-desktop__menu-wrapper-order .card__info {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -657,35 +658,35 @@
   justify-content: space-between;
 }
 
-.general-desktop__menu-wrapper-order .order__info-description {
+.general-desktop__menu-wrapper-order .card__info-description {
   -webkit-flex-basis: 88%;
   -ms-flex-preferred-size: 88%;
   flex-basis: 88%;
 }
 
-.general-desktop__menu-wrapper-order .order__info-description h2 {
+.general-desktop__menu-wrapper-order .card__info-description h2 {
   color: #cbf851;
 }
 
-.general-desktop__menu-wrapper-order .order__info-description p {
+.general-desktop__menu-wrapper-order .card__info-description p {
   font-family: 'Medium';
   color: rgba(255, 255, 255, 0.6);
 }
 
-.general-desktop__menu-wrapper-order .order__info-icon {
+.general-desktop__menu-wrapper-order .card__info-icon {
   -webkit-flex-basis: 9.3%;
   -ms-flex-preferred-size: 9.3%;
   flex-basis: 9.3%;
 }
 
-.general-desktop__menu-wrapper-order .order__info-icon span {
+.general-desktop__menu-wrapper-order .card__info-icon span {
   display: block;
   font-family: 'Roboto-Regular';
   font-size: 64px;
   line-height: 75px;
 }
 
-.general-desktop__menu-wrapper-order .order__buttons {
+.general-desktop__menu-wrapper-order .card__buttons {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -693,12 +694,12 @@
   margin-top: 10px;
 }
 
-.general-desktop__menu-wrapper-order .order__buttons .black-link {
+.general-desktop__menu-wrapper-order .card__buttons .black-link {
   color: #000;
   background-color: #cbf851;
 }
 
-.general-desktop__menu-wrapper-order .order__buttons .close-button {
+.general-desktop__menu-wrapper-order .card__buttons .close-button {
   cursor: pointer;
   display: -webkit-box;
   display: -webkit-flex;
@@ -714,6 +715,88 @@
   align-items: center;
   border-radius: 20px;
   background: rgba(241, 241, 241, 0.1);
+  margin-left: 16px;
+  width: 40px;
+  height: 40px;
+}
+
+.general-desktop__menu-wrapper-deposit {
+  margin-top: 40px;
+  background: #fff;
+  -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 24px 24px 28px;
+}
+
+.general-desktop__menu-wrapper-deposit .card__info {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.general-desktop__menu-wrapper-deposit .card__info-description {
+  -webkit-flex-basis: 88%;
+  -ms-flex-preferred-size: 88%;
+  flex-basis: 88%;
+}
+
+.general-desktop__menu-wrapper-deposit .card__info-description h2 {
+  color: #000;
+}
+
+.general-desktop__menu-wrapper-deposit .card__info-description p {
+  font-family: 'Medium';
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.general-desktop__menu-wrapper-deposit .card__info-icon {
+  -webkit-flex-basis: 9.3%;
+  -ms-flex-preferred-size: 9.3%;
+  flex-basis: 9.3%;
+}
+
+.general-desktop__menu-wrapper-deposit .card__info-icon span {
+  display: block;
+  font-family: 'Roboto-Regular';
+  font-size: 64px;
+  line-height: 75px;
+}
+
+.general-desktop__menu-wrapper-deposit .card__buttons {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 10px;
+}
+
+.general-desktop__menu-wrapper-deposit .card__buttons .black-link {
+  color: #fff;
+  background-color: #000;
+}
+
+.general-desktop__menu-wrapper-deposit .card__buttons .close-button {
+  cursor: pointer;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: 20px;
+  background: #f1f1f1;
   margin-left: 16px;
   width: 40px;
   height: 40px;

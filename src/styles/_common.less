@@ -621,3 +621,22 @@ body {
   display: inline;
   margin-left: 24px;
 }
+
+.card {
+  position: relative;
+  width: 54px;
+  height: 40px;
+  color: #fff;
+  background: #fff;
+  background: linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~"0 / 12px 12px", linear-gradient(-135deg, transparent 9px, #fff 0);
+  filter: drop-shadow(0 0 16px #ccc);
+  border-radius: 3px;
+}
+
+.card span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}

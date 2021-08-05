@@ -19,6 +19,23 @@ export default {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
   },
+  menu: {
+    lblSwapTokenEmoji: '🔄',
+    lblSwapToken: 'Swap Token',
+    lblGetMoveEmoji: '💸',
+    lblGetMove: 'Get MOVE',
+    lblProvideLiquidityMoveEmoji: '💧',
+    lblProvideLiquidityMove: 'Provide liquidity for MOVE',
+    lblDepositInSavingsEmoji: '💰',
+    lblDepositInSavings: 'Deposit in Savings',
+    lblIncreaseBoostEmoji: '📈',
+    lblIncreaseBoost: 'Increase boost',
+    lblPurchaseBondsEmoji: '🏦',
+    lblPurchaseBonds: 'Purchase Bonds',
+    lblBeautifulCard: 'Beautiful card',
+    lblComingSoon: 'Coming soon',
+    lblBonds: 'Bonds'
+  },
   swaps: {
     lblSwaps: 'Swaps',
     lblSwapFrom: '@:swaps.lblSwapPrefix from',
@@ -37,11 +54,19 @@ export default {
     }
   },
   debitCard: {
+    icon: '💳',
     lblDebitCard: 'Debit Card',
     lblDebitCardHeading: 'Great news!',
     txtDebitCard:
       'You can now order the Beautiful debit card brought you by Mover and Trastra',
     btnOrderDebitCard: 'Order the card'
+  },
+  depositCard: {
+    icon: '💰',
+    lblDepositCardHeading: 'Save it!',
+    txtDepositCard:
+      'Savings just got better. Enjoy easy higher rates and even less hassle.',
+    btnDepositCard: '@:depositCard.icon Deposit in Savings'
   },
   savings: {
     icon: '💰',
@@ -456,6 +481,7 @@ export default {
     }
   },
   bonds: {
+    icon: '🏦',
     lblBonds: 'Bonds'
   },
   card: {

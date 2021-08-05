@@ -6,6 +6,7 @@
 
     <header-balance />
     <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
+    <deposit-card-section />
     <menu-section />
 
     <transaction-modal />
@@ -25,7 +26,8 @@ import { WalletInfoRail } from '@/components/wallet-info-rail';
 import {
   DebitCardSection,
   HeaderBalance,
-  MenuSection
+  MenuSection,
+  DepositCardSection
 } from '@/components/sections';
 import { SwapForm } from '@/components/forms';
 import {
@@ -40,10 +42,11 @@ import '@/styles/_general.less';
 export default Vue.extend({
   name: 'Home',
   components: {
+    DepositCardSection,
+    DebitCardSection,
     MenuSection,
     ContentWrapper,
     WalletInfoRail,
-    DebitCardSection,
     HeaderBalance,
     TransactionModal,
     SwapForm,

@@ -1,6 +1,8 @@
 <template>
   <li :class="wrapperClass" :style="itemStyle">
-    <img class="image" :src="image" />
+    <slot>
+      <emoji-card :corner-color="cornerColor" :emoji="emoji" />
+    </slot>
     <div class="wrapper">
       <div class="title">{{ title }}</div>
       <div class="value">{{ description }}</div>
@@ -11,12 +13,19 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import EmojiCard from '@/components/controls/emoji-card.vue';
+
 export default Vue.extend({
-  name: 'MenuListImageItem',
+  name: 'MenuListEmojiCardItem',
+  components: { EmojiCard },
   props: {
-    image: {
+    emoji: {
       type: String,
       default: ''
+    },
+    cornerColor: {
+      type: String,
+      default: '#000'
     },
     title: {
       type: String,
