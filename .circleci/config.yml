@@ -48,7 +48,7 @@ jobs:
             mkdir deploy/www
             mv dist/* deploy/www/
             mv deploy/www dist/
-            cp moverwebapp.yaml dist/
+            cp deploy/moverwebapp.yaml dist/
             cd ../dist
             gcloud app deploy --project mcmannaman-208313 moverwebapp.yaml --promote
 
