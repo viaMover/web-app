@@ -50,7 +50,7 @@ jobs:
             mv deploy/www dist/
             cp deploy/moverwebapp.yaml dist/
             cd dist
-            gcloud app deploy --project mcmannaman-208313 moverwebapp.yaml --promote
+            /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp.yaml --promote
 
 workflows:
   version: 2
