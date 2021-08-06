@@ -5,7 +5,7 @@
     @close="handleClose"
   >
     <div>
-      <p class="title">404</p>
+      <h1 class="title">404</h1>
       <p>{{ $t('txtNotFound') }}</p>
     </div>
   </content-wrapper>

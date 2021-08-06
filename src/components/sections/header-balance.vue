@@ -33,7 +33,7 @@
         :text="$t('treasury.lblSmartTreasury')"
       />
       <nav-bar-item
-        v-if="isFeatureEnabled('isBoundsEnabled')"
+        v-if="isFeatureEnabled('isBondsEnabled')"
         navigate-to-name="bonds"
         :text="$t('bonds.lblBonds')"
       />

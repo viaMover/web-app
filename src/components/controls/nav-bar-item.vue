@@ -1,6 +1,6 @@
 <template>
   <li class="button-active">
-    <router-link :to="navigateTo">
+    <router-link :to="{ name: this.navigateToName }">
       <slot>{{ text }}</slot>
     </router-link>
   </li>
@@ -18,12 +18,7 @@ export default Vue.extend({
     },
     navigateToName: {
       type: String,
-      default: ''
-    }
-  },
-  computed: {
-    navigateTo(): Record<string, string> {
-      return { name: this.navigateToName };
+      required: true
     }
   }
 });

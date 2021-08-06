@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="navigateTo">
+  <router-link :to="{ name: this.navigateToName }">
     <li :class="itemClass" :style="itemStyle">
       <slot>
         <emoji-card :corner-color="cornerColor" :emoji="emoji" />
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Route } from 'vue-router';
 
 import { EmojiCard } from '@/components/controls';
 
@@ -47,7 +48,7 @@ export default Vue.extend({
     },
     navigateToName: {
       type: String,
-      default: ''
+      required: true
     }
   },
   computed: {
@@ -62,11 +63,6 @@ export default Vue.extend({
       }
 
       return `button-active ${this.wrapperClass}`;
-    },
-    navigateTo(): Record<string, string> {
-      return {
-        name: this.navigateToName
-      };
     }
   }
 });

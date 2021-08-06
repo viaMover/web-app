@@ -6,9 +6,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'MenuListIconItem',
@@ -26,7 +27,7 @@ export default Vue.extend({
       default: ''
     },
     modalId: {
-      type: String,
+      type: String as PropType<Modal>,
       default: ''
     }
   },

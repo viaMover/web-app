@@ -4,6 +4,7 @@
       <menu-list-emoji-card-item
         :description="$t('menu.lblComingSoon')"
         disabled
+        navigate-to-name="home"
         :title="$t('menu.lblBeautifulCard')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -24,7 +25,7 @@
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-emoji-card-item
-        v-if="isFeatureEnabled('isBoundsEnabled')"
+        v-if="isFeatureEnabled('isBondsEnabled')"
         description="$942,184.11"
         :emoji="$t('bonds.icon')"
         navigate-to-name="bonds"
