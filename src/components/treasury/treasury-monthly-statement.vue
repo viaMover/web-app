@@ -6,7 +6,7 @@
     />
     <statement-list-item
       :description="$t('treasury.statement.lblRewardsEarned')"
-      :value="earnedThisMonth"
+      :value="rewardsEarned"
     />
     <statement-list-item
       :description="$t('treasury.statement.lblAverageDailyEarnings')"
