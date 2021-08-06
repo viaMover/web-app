@@ -7,7 +7,7 @@ import {
   TreasuryHourlyBalancesItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
-import { fromWei } from '@/utils/bigmath';
+import { divide, fromWei, greaterThan, lessThan, sub } from '@/utils/bigmath';
 import { dateFromExplicitPair } from '@/utils/time';
 
 type FilterPeriod = 'month' | 'week' | 'day';
@@ -37,7 +37,7 @@ const DECIMATION_PERIOD = 12;
 
 export type ChartDataItem = {
   x: string;
-  y: number;
+  y: number | string;
   meta: TItem;
 };
 
@@ -48,7 +48,11 @@ export const buildBalancesChartData = (
   accentedColor: string,
   defaultColor: string
 ): ChartData<'line' | 'bar', Array<ChartDataItem>, string> => {
-  return filterByPeriod(list, filterPeriod).reduce(
+  let hasTrimmedLeft = false;
+  let minValue = Infinity;
+  let maxValue = -Infinity;
+
+  const source = filterByPeriod(list, filterPeriod).reduce(
     (acc, val, idx, arr) => {
       let valSource: number;
       switch (val.type) {
@@ -66,8 +70,19 @@ export const buildBalancesChartData = (
           break;
       }
 
-      if (valSource === 0) {
+      if (valSource === 0 && !hasTrimmedLeft) {
         return acc;
+      }
+
+      const yVal = Number.parseFloat(fromWei(valSource, 6));
+
+      hasTrimmedLeft = true;
+      if (lessThan(valSource, minValue)) {
+        minValue = yVal;
+      }
+
+      if (greaterThan(valSource, maxValue)) {
+        maxValue = yVal;
       }
 
       if (
@@ -91,7 +106,7 @@ export const buildBalancesChartData = (
           {
             data: acc.datasets[0].data.concat({
               x: label,
-              y: Number.parseFloat(fromWei(valSource, 6)),
+              y: yVal,
               meta: val
             }),
             backgroundColor: acc.datasets[0].backgroundColor.concat(
@@ -115,4 +130,12 @@ export const buildBalancesChartData = (
       ]
     }
   );
+
+  // pre-normalize items to the range of [0, 1]
+  source.datasets[0].data = source.datasets[0].data.map((dataItem) => ({
+    ...dataItem,
+    y: divide(sub(dataItem.y, minValue), sub(maxValue, minValue))
+  }));
+
+  return source;
 };
