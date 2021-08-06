@@ -9,7 +9,7 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 export default Vue.extend({
-  name: 'WalletHeaderAvatar',
+  name: 'HeaderBalanceAvatar',
   computed: {
     ...mapState('account', { avatar: 'avatar' }),
     userClass(): string {

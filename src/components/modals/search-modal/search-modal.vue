@@ -118,9 +118,7 @@ export default Vue.extend({
             return;
           }
 
-          this.$refs.resultsTop.scroll({
-            top: 0
-          });
+          this.$refs.resultsTop.scrollIntoView();
         });
       }, this.debounceTimeout);
     },

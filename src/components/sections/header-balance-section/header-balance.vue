@@ -3,7 +3,7 @@
     class="general-desktop__menu-wrapper-balance"
     :name="$t('lblBalance')"
   >
-    <wallet-header-avatar />
+    <header-balance-avatar />
     <div class="balance-wrapper">
       <div class="balance-wrapper-title">
         <span class="title">{{ $t('headingBalance') }}</span>
@@ -61,7 +61,7 @@ import { isFeatureEnabled } from '@/settings';
 import { ArrowDownIcon } from '@/components/controls';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { NavBar, NavBarItem } from '@/components/controls';
-import WalletHeaderAvatar from '@/components/wallet-info-rail/wallet-header-avatar.vue';
+import HeaderBalanceAvatar from './header-balance-avatar.vue';
 
 export default Vue.extend({
   name: 'HeaderBalance',
@@ -69,7 +69,7 @@ export default Vue.extend({
     NavBarItem,
     NavBar,
     ArrowDownIcon,
-    WalletHeaderAvatar,
+    HeaderBalanceAvatar,
     ContextButton,
     ContextButtonItem
   },

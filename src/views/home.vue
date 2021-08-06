@@ -1,7 +1,7 @@
 <template>
   <content-wrapper has-left-rail wrapper-class="general-desktop">
     <template v-slot:left-rail>
-      <wallet-info-rail />
+      <transaction-list />
     </template>
 
     <header-balance />
@@ -31,7 +31,7 @@ import Vue from 'vue';
 import { isFeatureEnabled } from '@/settings';
 
 import { ContentWrapper } from '@/components/layout';
-import { WalletInfoRail } from '@/components/wallet-info-rail';
+import { TransactionList } from '@/components/transaction-list';
 import {
   DebitCardSection,
   HeaderBalance,
@@ -63,7 +63,7 @@ export default Vue.extend({
     DebitCardSection,
     MenuSection,
     ContentWrapper,
-    WalletInfoRail,
+    TransactionList,
     HeaderBalance,
     TransactionModal,
     SwapForm,
