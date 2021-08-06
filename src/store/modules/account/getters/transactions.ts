@@ -12,5 +12,15 @@ export default {
     return state.transactions.filter(
       (t) => t.status === 'pending' && t.isOffchain === true
     );
+  },
+  getTransactionByHash(state): (hash: string) => Transaction | undefined {
+    return (hash: string): Transaction | undefined => {
+      return state.transactions.find((t) => t.hash === hash);
+    };
+  },
+  getTransactionByQueueId(state): (queueId: string) => Transaction | undefined {
+    return (queueId: string): Transaction | undefined => {
+      return state.transactions.find((t) => t.subsidizedQueueId === queueId);
+    };
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

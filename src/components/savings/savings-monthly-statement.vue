@@ -69,7 +69,9 @@ export default Vue.extend({
       'savingsMonthTotalDepositsNative',
       'savingsMonthTotalWithdrawalsNative',
       'savingsMonthEarnedNative',
-      'savingsMonthAverageEarnedNative'
+      'savingsMonthAverageEarnedNative',
+      'savingsMonthPaidToTreasuryNative',
+      'savingsMonthSavedFeesNative'
     ]),
     monthName(): string {
       return this.pageDate.format('MMMM');
@@ -86,12 +88,10 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     savedFeesNative(): string {
-      // TODO: compute
-      return '$0';
+      return `$${formatToNative(this.savingsMonthSavedFeesNative)}`;
     },
     payoutsToTreasuryNative(): string {
-      // TODO: compute
-      return '$0';
+      return `$${formatToNative(this.savingsMonthPaidToTreasuryNative)}`;
     },
     totalEarned(): string {
       const value = formatToNative(this.savingsMonthEarnedNative);

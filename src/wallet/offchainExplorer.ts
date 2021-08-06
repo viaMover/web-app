@@ -2,10 +2,12 @@ import { Network } from './../utils/networkTypes';
 import { CheckSubsidizedInQueueTx, QUEUED_STATUS } from './actions/subsidized';
 import { Transaction } from './types';
 import store from '@/store/index';
+import Web3 from 'web3';
 
 export type OffchainExplorerHanler = ReturnType<typeof setTimeout>;
 
 const REFRESH_OFFCHAIN_TRANSACTIONS_FREQUENCY = 10000; // 10 sec
+const REFRESH_OFFCHAIN_RECEIPT_TIMEOUT = 1000;
 
 export const initOffchainExplorer = (network: Network) => {
   const refreshOffchainTxns = async () => {
@@ -39,47 +41,52 @@ export const initOffchainExplorer = (network: Network) => {
             '[offchainExplorer] Checking pending subsidized tx without hash, with queueID: ',
             tx.subsidizedQueueId
           );
-          const subsResp = await CheckSubsidizedInQueueTx(
-            tx.subsidizedQueueId,
-            network
-          );
-          if (subsResp) {
-            if (subsResp.status === QUEUED_STATUS.OK && subsResp.txID) {
-              needUpdate = true;
-              console.log(
-                `[offchainExplorer] Subsidized queued tx without hash (queueId: ${tx.subsidizedQueueId}), completed and now has the hash: `,
-                subsResp.txID
-              );
-              tx.hash = `${subsResp.txID}-0`;
-              tx.isOffchain = false;
-            } else if (subsResp.status === QUEUED_STATUS.DISCARDED) {
-              needUpdate = true;
-              console.log(
-                `[offchainExplorer] Subsidized queued tx without hash (queueId: ${tx.subsidizedQueueId}), discarded!`
-              );
+          try {
+            const subsResp = await CheckSubsidizedInQueueTx(
+              tx.subsidizedQueueId,
+              network
+            );
+            if (subsResp) {
+              if (subsResp.status === QUEUED_STATUS.OK && subsResp.txID) {
+                needUpdate = true;
+                console.log(
+                  `[offchainExplorer] Subsidized queued tx without hash (queueId: ${tx.subsidizedQueueId}), completed and now has the hash: `,
+                  subsResp.txID
+                );
+                tx.hash = `${subsResp.txID}-0`;
+                tx.isOffchain = false;
+                tx.subsidizedQueueId = undefined;
+              } else if (subsResp.status === QUEUED_STATUS.DISCARDED) {
+                needUpdate = true;
+                console.log(
+                  `[offchainExplorer] Subsidized queued tx without hash (queueId: ${tx.subsidizedQueueId}), discarded!`
+                );
 
-              tx.status = 'failed';
+                tx.status = 'failed';
+                tx.subsidizedQueueId = undefined;
+              }
+            } else {
+              throw new Error('Empty response');
             }
-          } else {
+          } catch (err) {
             console.error(
-              '[offchainExplorer] Empty response from `CheckSubsidizedInQueueTx`'
+              `[offchainExplorer] Error response from 'CheckSubsidizedInQueueTx': ${err}`
             );
           }
         }
       })
     );
 
-    if (needUpdate) {
+    if (needUpdate && updatedPendingTransactions.length > 0) {
       console.log(
         `[offchainExplorer] Update the following txns:`,
         updatedPendingTransactions
       );
+      store.commit(
+        'account/updateWalletTransactions',
+        updatedPendingTransactions
+      );
     }
-
-    store.commit(
-      'account/updateWalletTransactions',
-      updatedPendingTransactions
-    );
 
     const offchainTransactionsHandle = setTimeout(
       refreshOffchainTxns,
@@ -101,4 +108,34 @@ export const clearOffchainExplorer = () => {
     clearTimeout(offchainTransactionsHandle);
   }
   store.commit('account/setOffchainExplorerHandler', undefined);
+};
+
+export const waitOffchainTransactionReceipt = (
+  queueId: string | undefined,
+  hash: string | undefined,
+  web3: Web3
+): Promise<unknown> => {
+  if (hash !== undefined) {
+    return web3.eth.getTransactionReceipt(hash);
+  }
+  return new Promise<void>((resolve, reject) => {
+    const checkTxStatus = async () => {
+      const tx: Transaction =
+        store.getters['account/getTransactionByQueueId'](queueId);
+      if (tx != undefined && tx.subsidizedQueueId === undefined) {
+        if (tx.status === 'confirmed' && tx.hash) {
+          try {
+            await web3.eth.getTransactionReceipt(tx.hash);
+          } catch {
+            reject();
+          }
+          resolve();
+        } else if (tx.status === 'failed') {
+          reject();
+        }
+      }
+      setTimeout(checkTxStatus, REFRESH_OFFCHAIN_RECEIPT_TIMEOUT);
+    };
+    checkTxStatus();
+  });
 };

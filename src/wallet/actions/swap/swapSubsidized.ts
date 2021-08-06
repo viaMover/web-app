@@ -1,3 +1,4 @@
+import { waitOffchainTransactionReceipt } from './../../offchainExplorer';
 import store from '@/store/index';
 import { currentTimestamp } from './../../../utils/time';
 import { Transaction } from './../../types';
@@ -80,6 +81,12 @@ export const swapSubsidized = async (
       subsidizedQueueId: subsidizedResponse.queueID
     };
     await store.dispatch('account/addTransaction', tx);
+
+    await waitOffchainTransactionReceipt(
+      subsidizedResponse.queueID,
+      subsidizedResponse.txID,
+      web3
+    );
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
