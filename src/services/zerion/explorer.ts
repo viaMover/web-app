@@ -1,4 +1,5 @@
 import { Network } from '@/utils/networkTypes';
+import { APIKeys } from '@/settings';
 import { sameAddress } from '@/utils/address';
 import { mapZerionTokens } from './tokens';
 import {
@@ -34,9 +35,9 @@ export const InitExplorer = (
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void
 ): Explorer => {
   const io_options = {
-    extraHeaders: { origin: 'http://localhost:3000' },
+    extraHeaders: { origin: APIKeys.ZERION_API_KEY_ORIGIN },
     transports: ['websocket'],
-    query: { api_token: 'Demo.ukEVQp6L5vfgxcz4sBke7XvS873GMYHy' },
+    query: { api_token: APIKeys.ZERION_API_KEY },
     allowEIO3: true
   };
   const addressSocket = io('wss://api-v4.zerion.io/address', io_options);

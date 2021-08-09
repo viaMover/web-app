@@ -34,11 +34,12 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import dayjs from 'dayjs';
+
 import {
   SavingsMonthBalanceItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
-import dayjs from 'dayjs';
 import { dateFromExplicitPair } from '@/utils/time';
 
 export default Vue.extend({

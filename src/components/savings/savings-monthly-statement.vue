@@ -44,11 +44,12 @@ import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
+
 import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
-import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',
@@ -68,7 +69,9 @@ export default Vue.extend({
       'savingsMonthTotalDepositsNative',
       'savingsMonthTotalWithdrawalsNative',
       'savingsMonthEarnedNative',
-      'savingsMonthAverageEarnedNative'
+      'savingsMonthAverageEarnedNative',
+      'savingsMonthPaidToTreasuryNative',
+      'savingsMonthSavedFeesNative'
     ]),
     monthName(): string {
       return this.pageDate.format('MMMM');
@@ -85,12 +88,10 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     savedFeesNative(): string {
-      // TODO: compute
-      return '$0';
+      return `$${formatToNative(this.savingsMonthSavedFeesNative)}`;
     },
     payoutsToTreasuryNative(): string {
-      // TODO: compute
-      return '$0';
+      return `$${formatToNative(this.savingsMonthPaidToTreasuryNative)}`;
     },
     totalEarned(): string {
       const value = formatToNative(this.savingsMonthEarnedNative);

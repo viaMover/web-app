@@ -7,14 +7,18 @@ import chartsActions from './actions/charts';
 import gasActions from './actions/gas';
 import savingsActions from './actions/savings';
 import treasuryActions from './actions/treasury';
+import transactionActions from './actions/transactions';
+
 import utilityActions from './actions/utility';
 import walletActions from './actions/wallet';
 
 import savingsGetters from './getters/savings';
+import transactionsGetters from './getters/transactions';
 import treasuryGetters from './getters/treasury';
 import walletGetters from './getters/wallet';
 
 import savingsMutations from './mutations/savings';
+import transactionMutations from './mutations/transactions';
 import treasuryMutations from './mutations/treasury';
 import utilityMutations from './mutations/utility';
 import walletMutations from './mutations/wallet';
@@ -49,8 +53,9 @@ export default {
     usdcPriceInWeth: undefined,
     slpPriceInWeth: undefined,
 
-    //explorer
+    //explorers
     explorer: undefined,
+    offchainExplorerHanlder: undefined,
 
     //charts
     chartData: undefined,
@@ -95,16 +100,19 @@ export default {
     ...gasActions,
     ...savingsActions,
     ...treasuryActions,
+    ...transactionActions,
     ...utilityActions,
     ...walletActions
   },
   getters: {
     ...savingsGetters,
+    ...transactionsGetters,
     ...treasuryGetters,
     ...walletGetters
   },
   mutations: {
     ...savingsMutations,
+    ...transactionMutations,
     ...treasuryMutations,
     ...utilityMutations,
     ...walletMutations

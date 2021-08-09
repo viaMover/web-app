@@ -129,6 +129,9 @@ export default Vue.extend({
       return '';
     },
     tokenImageSrc(): string {
+      if (this.transaction.status === 'pending') {
+        return 'LOADING';
+      }
       if (
         this.transaction.type === TransactionTypes.swapERC20 ||
         this.transaction.type === TransactionTypes.transferERC20 ||

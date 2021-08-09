@@ -167,7 +167,10 @@ export default {
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
+      lblRewardsEarned: 'Rewards earned',
+      lblAverageDailyEarnings: 'Average daily earnings',
       lblRewardsUsed: 'Rewards used',
+      lblAverageDailySpendings: 'Average daily spendings',
       lblReservedAssets: 'Reserved assets',
       lblRemovedAssets: 'Removed assets',
       lblAverageBoost: 'Average boost'
@@ -453,7 +456,9 @@ export default {
     lblSearchBar: 'Search tokens',
     lblSearchBarPlaceholder: 'Search any token on Ethereum',
     lblFavorite: 'Favorite',
-    lblVerified: 'Verified'
+    lblVerified: 'Verified',
+    lblTokensInTheWallet: 'Tokens in the wallet',
+    lblGlobalSearch: 'Global search'
   },
   gas: {
     lblNetworkFee: 'Network fee',
@@ -476,6 +481,7 @@ export default {
     txtLogoAlt: 'Mover logo',
     txtSelectAssetButtonAlt: 'select asset',
     txtNavigationLinkAlt: 'navigation link',
-    txtSwapDetailsIconAlt: 'swap details'
+    txtSwapDetailsIconAlt: 'swap details',
+    txtTokenInfoAlt: '{name} info on Etherscan'
   }
 };
