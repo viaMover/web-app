@@ -125,7 +125,9 @@ export default {
           });
         }
 
-        commit('popStack');
+        if (state.stack.length === 1 && state.stack[0] === id) {
+          commit('popStack');
+        }
       };
     });
 
