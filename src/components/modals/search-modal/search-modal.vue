@@ -1,9 +1,5 @@
 <template>
-  <centered-modal-window
-    :header-label="$t('search.lblSearch')"
-    :modal-class="modalClass"
-    :modal-id="modalId"
-  >
+  <centered-modal-window :modal-class="modalClass" :modal-id="modalId">
     <div class="swaps__wrapper-search-form">
       <form class="search-form" @submit.prevent.stop="">
         <input
@@ -19,7 +15,25 @@
     </div>
 
     <div ref="resultsTop" class="swaps__wrapper-search-items">
-      <search-modal-token-list :items="filteredTokens" @select="handleSelect" />
+      <search-modal-token-list
+        v-if="forceTokenArray.length > 0"
+        :items="forcedTokens"
+        @select="handleSelect"
+      />
+      <template v-else>
+        <search-modal-token-list
+          :header-text="$t('search.lblTokensInTheWallet')"
+          :items="walletTokens"
+          :show-header="!useWalletTokens && walletTokens.length > 0"
+          @select="handleSelect"
+        />
+        <search-modal-token-list
+          :header-text="$t('search.lblGlobalSearch')"
+          :items="globalTokens"
+          :show-header="!useWalletTokens && globalTokens.length > 0"
+          @select="handleSelect"
+        />
+      </template>
     </div>
   </centered-modal-window>
 </template>
@@ -76,40 +90,40 @@ export default Vue.extend({
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
-    filteredTokens(): Array<Token> {
-      let searcher: (searchTerm: string) => Array<Token>;
+    walletTokens(): Array<Token> {
       if (this.forceTokenArray.length > 0) {
-        searcher = this.searchInForcedTokenArray;
-      } else if (this.useWalletTokens) {
-        searcher = this.searchInWalletTokens;
-      } else {
-        searcher = this.searchInAllTokens;
+        return [];
       }
 
-      let tokens: Array<Token> = searcher(this.searchTermDebounced);
-
-      if (this.treasuryOnly) {
-        tokens = tokens.filter((t) =>
-          isTokenValidForTreasuryDeposit(t.address, this.networkInfo.network)
-        );
+      return this.filterTokens(
+        this.searchInWalletTokens(this.searchTermDebounced)
+      );
+    },
+    globalTokens(): Array<Token> {
+      if (this.useWalletTokens || this.forceTokenArray.length > 0) {
+        return [];
       }
 
-      if (this.excludedTokenAddresses.length > 0) {
-        tokens = filter(
-          tokens,
-          (t) =>
-            !this.excludedTokenAddresses.some(
-              (et) => t.address.toLowerCase() === et
-            )
-        );
+      return this.filterTokens(
+        this.searchInAllTokens(this.searchTermDebounced)
+      );
+    },
+    forcedTokens(): Array<Token> {
+      if (this.useWalletTokens) {
+        return [];
       }
 
-      return tokens;
+      return this.filterTokens(
+        this.searchInForcedTokenArray(this.searchTermDebounced)
+      );
     }
   },
   watch: {
     searchTerm(newVal: string) {
       window.clearTimeout(this.debounce);
+
+      const debounceTimeout = newVal === '' ? 0 : this.debounceTimeout;
+
       this.debounce = window.setTimeout(() => {
         this.searchTermDebounced = newVal;
 
@@ -122,7 +136,7 @@ export default Vue.extend({
             top: 0
           });
         });
-      }, this.debounceTimeout);
+      }, debounceTimeout);
     },
     forceTokenArray(newVal: Array<Token>, oldVal: Array<Token>) {
       if (newVal === oldVal) {
@@ -159,6 +173,27 @@ export default Vue.extend({
           ?.search(searchTerm, { limit: 100 })
           .map((res) => res.item) || this.forceTokenArray
       );
+    },
+    filterTokens(tokens: Array<Token>): Array<Token> {
+      let result = tokens.slice();
+
+      if (this.treasuryOnly) {
+        result = result.filter((t) =>
+          isTokenValidForTreasuryDeposit(t.address, this.networkInfo.network)
+        );
+      }
+
+      if (this.excludedTokenAddresses.length > 0) {
+        result = filter(
+          result,
+          (t) =>
+            !this.excludedTokenAddresses.some(
+              (et) => t.address.toLowerCase() === et
+            )
+        );
+      }
+
+      return result;
     },
     handleToggle(
       payload: TogglePayload<{
