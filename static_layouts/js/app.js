@@ -43,25 +43,6 @@ $(document).ready(function() {
 	}
 	dataHref();
 
-	function shadow() {
-		const img = document.querySelectorAll('.getShadow img');
-		const colorThief = new ColorThief();
-		
-		for (let i = 0; i < img.length; i++) {
-			if (img[i].complete) {
-				let shadow = colorThief.getColor(img[i]);
-				img[i].style.boxShadow = '0px 0px 16px' + ' rgb(' + shadow + ')';
-			} 
-			else {
-				img[i].addEventListener('load', function() {
-					let shadow = colorThief.getColor(img[i]);
-					img[i].style.boxShadow = '0px 0px 16px' + ' rgb(' + shadow + ')';
-				});
-			}
-		}
-	}
-	shadow();
-
 	function orderClose() {
 		let block = $('.general-desktop-new__menu-wrapper-save'); 
 		let button = $('.order__buttons .close-button');
@@ -313,21 +294,21 @@ $(document).ready(function() {
 	decreaseBoostPopup();
 
 	function stakePopup() {
-		let stakePopup = $('.test__popup'); 
-		let close = $('.test__popup-close');
+		let stakePopup = $('.test-popup'); 
+		let close = $('.test-popup__close');
 		let button = $('.stake');
 		let burger = $('.burger-menu__popup'); 
 		let burgerBg = $('.burger-menu__popup-bg');
 
 		button.on('click', function() { 
-			stakePopup.addClass('test__popup-active');
-			close.addClass('test__popup-close-active');
+			stakePopup.addClass('test-popup-active');
+			close.addClass('test-popup__close-active');
 			burger.removeClass('burger-menu__popup-active'); 
 			burgerBg.removeClass('burger-menu__popup-bg-active');
 		})
 		close.on('click', function() { 
-			stakePopup.removeClass('test__popup-active'); 
-			close.removeClass('test__popup-close-active');
+			stakePopup.removeClass('test-popup-active'); 
+			close.removeClass('test-popup__close-active');
 		})
 	}
 	stakePopup();
@@ -718,25 +699,25 @@ $(document).ready(function() {
 	balancePopup();
 
 	function hideByClickEscButton() {
-		let transactionPopup = $('.test__popup');
+		let transactionPopup = $('.test-popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
 		let burgerPopup = $('.burger-menu__popup');
 		let NFTDropsPopup = $('.nft-drops__popup');
 		let nibbleShopPopup = $('.nibble-shop__popup');
 		let bg = $('.popup-bg');
 		let burgerBg = $('.burger-menu__popup-bg');
-		let transactionClose = $('.test__popup-close');
+		let transactionClose = $('.test-popup__close');
 
 		$(window).on('keydown', function(e) {
 			if ( e.keyCode == 27 ) {
-				transactionPopup.removeClass('test__popup-active'); 
+				transactionPopup.removeClass('test-popup-active'); 
 				transactionResultPopup.removeClass('transaction-result__popup-active'); 
 				burgerPopup.removeClass('burger-menu__popup-active');
 				NFTDropsPopup.removeClass('nft-drops__popup-active');
 				nibbleShopPopup.removeClass('nibble-shop__popup-active');
 				bg.removeClass('popup-bg-active');
 				burgerBg.removeClass('burger-menu__popup-bg-active');
-				transactionClose.removeClass('test__popup-close-active');
+				transactionClose.removeClass('test-popup__close-active');
 			}
 		});
 	}
