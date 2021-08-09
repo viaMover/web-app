@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
@@ -66,13 +66,14 @@ export default Vue.extend({
     })
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setModalIsDisplayed({ id: Modal.SavingsDeposit, value: true });
     },
     handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.SavingsWithdraw);
+      this.setModalIsDisplayed({ id: Modal.SavingsWithdraw, value: true });
     }
   }
 });

@@ -14,9 +14,7 @@
 
     <router-view />
 
-    <centered-modal-window v-cloak :modal-id="TreasuryIncreaseBoostModalId">
-      <treasury-increase-boost-form />
-    </centered-modal-window>
+    <treasury-increase-boost-modal />
     <centered-modal-window v-cloak :modal-id="TreasuryDecreaseBoostModalId">
       <treasury-decrease-boost-form />
     </centered-modal-window>
@@ -37,12 +35,16 @@ import {
   TreasuryReservedAssets
 } from '@/components/treasury';
 import {
-  TreasuryIncreaseBoostForm,
   TreasuryDecreaseBoostForm,
   TreasuryClaimAndBurnForm
 } from '@/components/forms';
 import '@/styles/_treasury.less';
-import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
+import {
+  CenteredModalWindow,
+  Modal,
+  SearchModal,
+  TreasuryIncreaseBoostModal
+} from '@/components/modals';
 import { mapGetters } from 'vuex';
 export default Vue.extend({
   name: 'TreasuryRoot',
@@ -51,7 +53,7 @@ export default Vue.extend({
     TreasuryOverview,
     TreasuryStats,
     TreasuryReservedAssets,
-    TreasuryIncreaseBoostForm,
+    TreasuryIncreaseBoostModal,
     TreasuryDecreaseBoostForm,
     TreasuryClaimAndBurnForm,
     CenteredModalWindow,
@@ -59,7 +61,6 @@ export default Vue.extend({
   },
   data() {
     return {
-      TreasuryIncreaseBoostModalId: Modal.TreasuryIncreaseBoost,
       TreasuryDecreaseBoostModalId: Modal.TreasuryDecreaseBoost,
       TreasuryClaimAndBurnModalId: Modal.TreasuryClaimAndBurn
     };
@@ -72,7 +73,7 @@ export default Vue.extend({
   },
   watch: {
     isReplaceRouteNeeded(newVal: boolean) {
-      if (!newVal) {
+      if (newVal) {
         this.replaceInactiveTreasuryRoute();
       }
     }

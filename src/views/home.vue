@@ -28,11 +28,7 @@
     <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
 
-    <search-modal-copy />
-    <transaction-modal />
-    <!-- <centered-modal-window v-cloak :modal-id="SwapModalId"> -->
-    <swap-form />
-    <!-- </centered-modal-window> -->
+    <swap-modal />
     <search-modal />
   </content-wrapper>
 </template>
@@ -54,17 +50,9 @@ import {
   NftDropsSection,
   HeaderBalance
 } from '@/components/sections';
-import { SwapForm } from '@/components/forms';
-import {
-  TransactionModal,
-  SearchModal,
-  CenteredModalWindow,
-  Modal,
-  SearchModalCopy
-} from '@/components/modals';
+import { SearchModal, SwapModal } from '@/components/modals';
 
 import '@/styles/_general.less';
-import { mapActions } from 'vuex';
 
 export default Vue.extend({
   name: 'Home',
@@ -80,16 +68,8 @@ export default Vue.extend({
     NibbleShopSection,
     NftDropsSection,
     HeaderBalance,
-    TransactionModal,
-    SwapForm,
-    SearchModal,
-    // CenteredModalWindow,
-    SearchModalCopy
-  },
-  data() {
-    return {
-      SwapModalId: Modal.Swap
-    };
+    SwapModal,
+    SearchModal
   },
   methods: {
     isFeatureEnabled

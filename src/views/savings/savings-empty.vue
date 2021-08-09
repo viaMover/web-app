@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
@@ -74,17 +74,18 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     replaceActiveSavingsRoute(): void {
       this.$router.replace({
         name: 'savings-manage'
       });
     },
     toggleDeposit(): void {
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setModalIsDisplayed({ id: Modal.SavingsDeposit, value: true });
     },
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setModalIsDisplayed({ id: Modal.SavingsDeposit, value: true });
     }
   }
 });

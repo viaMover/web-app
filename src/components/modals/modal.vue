@@ -152,7 +152,7 @@ export default Vue.extend({
       return this.state[this.modalId].isDisplayed;
     },
     zIndexBase(): number {
-      return this.state[this.modalId].stackDepth * 10;
+      return this.state[this.modalId].stackDepth * 10 + 10;
     },
     isDimmerVisible(): boolean {
       return !this.disableDimmer;

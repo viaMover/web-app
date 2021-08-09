@@ -8,9 +8,18 @@
       >
         <template v-slot:context-menu>
           <context-button :popover-parent-id="popoverParentId">
-            <context-button-item :text="$t('treasury.btnDeposit.emoji')" />
-            <context-button-item :text="$t('treasury.btnWithdraw.emoji')" />
-            <context-button-item :text="$t('treasury.btnClaimAndBurn.emoji')" />
+            <context-button-item
+              :text="$t('treasury.btnDeposit.emoji')"
+              @click="handleIncreaseBoostClick"
+            />
+            <context-button-item
+              :text="$t('treasury.btnWithdraw.emoji')"
+              @click="handleDecreaseBoostClick"
+            />
+            <context-button-item
+              :text="$t('treasury.btnClaimAndBurn.emoji')"
+              @click="handleClaimAndBurnClick"
+            />
           </context-button>
         </template>
       </secondary-page-title>
@@ -30,12 +39,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
 import { TreasuryYearlyChartWrapper } from '@/components/treasury';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 export default Vue.extend({
   name: 'TreasuryManage',
@@ -56,6 +67,30 @@ export default Vue.extend({
     ...mapGetters('account', {
       treasuryMonthStatsOptions: 'treasuryMonthStatsOptions'
     })
+  },
+  methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
+    handleIncreaseBoostClick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      this.setModalIsDisplayed({
+        id: ModalType.TreasuryIncreaseBoost,
+        value: true
+      });
+    },
+    handleDecreaseBoostClick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      this.setModalIsDisplayed({
+        id: ModalType.TreasuryDecreaseBoost,
+        value: true
+      });
+    },
+    handleClaimAndBurnClick(): void {
+      toggleSingleItem(this.popoverParentId + '__popover');
+      this.setModalIsDisplayed({
+        id: ModalType.TreasuryClaimAndBurn,
+        value: true
+      });
+    }
   }
 });
 </script>

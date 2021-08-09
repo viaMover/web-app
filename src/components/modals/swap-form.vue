@@ -158,10 +158,10 @@ import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
 import Modal from '@/components/modals/modal.vue';
-import { Modal as ModalTypes } from '@/components/modals';
+import { Modal as ModalTypes } from '@/store/modules/modals/types';
 
 export default Vue.extend({
-  name: 'SwapForm',
+  name: 'SwapModal',
   components: {
     AssetField,
     ActionButton,
