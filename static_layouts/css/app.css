@@ -2056,50 +2056,16 @@ body {
 .popup-product-item-redeem .popup__content .button .action {
   background-color: #000;
 }
-.purchase-bonds__wrapper-info-items-item-right button.currency {
+.popup-purchase-bonds .popup__content .info__form-right button.currency {
   background: #687ee3;
   -webkit-box-shadow: 0px 0px 16px #687ee3;
           box-shadow: 0px 0px 16px #687ee3;
 }
-.purchase-bonds__wrapper-info-items-item-right button.use span {
+.popup-purchase-bonds .popup__content .info__form-right button.use span {
   color: #687ee3;
 }
-.purchase-bonds__wrapper-info-button .action {
+.popup-purchase-bonds .popup__content .button .action {
   background-color: #000;
-}
-.purchase-bonds__wrapper-info-footer-description .icon {
-  margin: 0 3px;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  position: relative;
-  top: 6px;
-}
-.purchase-bonds__wrapper-info-footer-description .icon img {
-  border-radius: 50%;
-  display: block;
-  width: 22px;
-  height: 22px;
-}
-.purchase-bonds__wrapper-info-footer-description .icon-wrapper {
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  position: relative;
-  top: 6px;
-  left: 6px;
-}
-.purchase-bonds__wrapper-info-footer-description .icon-wrapper img {
-  border-radius: 50%;
-  display: block;
-  width: 22px;
-  height: 22px;
-}
-.purchase-bonds__wrapper-info-footer-description .icon-wrapper .icon-right {
-  position: relative;
-  left: -11px;
 }
 .claim-bonds__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right {
   margin-left: auto;

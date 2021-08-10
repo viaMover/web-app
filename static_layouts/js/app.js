@@ -237,34 +237,6 @@ $(document).ready(function() {
 	}
 	noAccessPopup();
 
-	function purchaseBondsPopup() {
-		let increasePopup = $('.purchase-bonds__popup'); 
-		let close = $('.purchase-bonds__popup-close');
-		let button = $('.purchase-bonds');
-		let bg = $('.purchase-bonds__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			increasePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			increasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			increasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	purchaseBondsPopup();
-
 	function claimBondsPopup() {
 		let claimBondsPopup = $('.claim-bonds__popup'); 
 		let close = $('.burger__popup-close');
@@ -600,6 +572,26 @@ $(document).ready(function() {
 		})
 	}
 	redeemPopup();
+
+	function purchaseBondsPopup() {
+		let increasePopup = $('.popup-purchase-bonds'); 
+		let close = $('.popup__close');
+		let button = $('.purchase-bonds');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			increasePopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			increasePopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	purchaseBondsPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
