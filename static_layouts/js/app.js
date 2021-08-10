@@ -293,34 +293,6 @@ $(document).ready(function() {
 	}
 	decreaseBoostPopup();
 
-	function claimAndBurnPopup() {
-		let claimAndBurnPopup = $('.claim-and-burn__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.claim-and-burn');
-		let bg = $('.claim-and-burn__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			claimAndBurnPopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			claimAndBurnPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			claimAndBurnPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	claimAndBurnPopup();
-
 	function managePowercardPopup() {
 		let managePowercardPopup = $('.manage-powercard__popup'); 
 		let close = $('.burger__popup-close');
@@ -672,23 +644,43 @@ $(document).ready(function() {
 
 	function unstakePopup() {
 		let unstakePopup = $('.popup-unstake'); 
-		let close = $('.burger__popup-close');
+		let close = $('.popup__close');
 		let button = $('.unstake');
 		let burger = $('.burger-menu__popup'); 
 		let burgerBg = $('.burger-menu__popup-bg');
 
 		button.on('click', function() { 
 			unstakePopup.addClass('popup-active'); 
-			close.addClass('popup-close-active');
+			close.addClass('popup__close-active');
 			burger.removeClass('burger-menu__popup-active'); 
 			burgerBg.removeClass('burger-menu__popup-bg-active');
 		})
 		close.on('click', function() { 
 			unstakePopup.removeClass('popup-active'); 
-			close.removeClass('popup-close-active');
+			close.removeClass('popup__close-active');
 		})
 	}
 	unstakePopup();
+
+	function claimAndBurnPopup() {
+		let claimAndBurnPopup = $('.popup-claim-and-burn'); 
+		let close = $('.popup__close');
+		let button = $('.claim-and-burn');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			claimAndBurnPopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			claimAndBurnPopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	claimAndBurnPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
@@ -697,8 +689,6 @@ $(document).ready(function() {
 		let NFTDropsPopup = $('.nft-drops__popup');
 		let nibbleShopPopup = $('.nibble-shop__popup');
 		let burgerBg = $('.burger-menu__popup-bg');
-		let transactionClose = $('.popup__close');
-
 		$(window).on('keydown', function(e) {
 			if ( e.keyCode == 27 ) {
 				popup.removeClass('popup-active'); 
@@ -707,7 +697,6 @@ $(document).ready(function() {
 				NFTDropsPopup.removeClass('nft-drops__popup-active');
 				nibbleShopPopup.removeClass('nibble-shop__popup-active');
 				burgerBg.removeClass('burger-menu__popup-bg-active');
-				transactionClose.removeClass('popup__close-active');
 			}
 		});
 	}
