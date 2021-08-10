@@ -650,38 +650,38 @@
             <div class="statistics__item">
               <p class="description">New Smart Treasury boost</p><span class="value">2.3x</span>
             </div>
-          </div>
-          <div class="statistics__buttons">
-            <!-- To be able to click on the button, remove the .disabled class-->
-            <button class="button-active details disabled" type="button">
-              <picture>
-                <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
-              </picture><span>Transaction Details</span>
-            </button>
-            <div class="details__content">
-              <div class="details__content-item"> 
-                <p class="description">Price impact</p>
-                <p class="info up">0.31%</p>
-              </div>
-              <div class="details__content-item"> 
-                <p class="description">Minimum received</p>
-                <p class="info">1.2731 AAVE</p>
-              </div>
-              <div class="details__content-item"> 
-                <p class="description">Rate</p>
-                <p class="info">1 AAVE = 0.00036 ETH</p>
-              </div>
-              <div class="details__content-item"> 
-                <p class="description">Smart Treasury cover</p>
-                <p class="info">$18.27</p>
-              </div>
-              <div class="details__content-item"> 
-                <p class="description">Swapping via</p>
-                <p class="info">Sushi <span>🍣</span></p>
-              </div>
-              <div class="details__content-item"> 
-                <p class="description">Slippage</p>
-                <p class="info rate">1.00%</p>
+            <div class="statistics__buttons">
+              <!-- To be able to click on the button, remove the .disabled class-->
+              <button class="button-active details disabled" type="button">
+                <picture>
+                  <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
+                </picture><span>Transaction Details</span>
+              </button>
+              <div class="details__content">
+                <div class="details__content-item"> 
+                  <p class="description">Price impact</p>
+                  <p class="info up">0.31%</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Minimum received</p>
+                  <p class="info">1.2731 AAVE</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Rate</p>
+                  <p class="info">1 AAVE = 0.00036 ETH</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Smart Treasury cover</p>
+                  <p class="info">$18.27</p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Swapping via</p>
+                  <p class="info">Sushi <span>🍣</span></p>
+                </div>
+                <div class="details__content-item"> 
+                  <p class="description">Slippage</p>
+                  <p class="info rate">1.00%</p>
+                </div>
               </div>
             </div>
           </div>
@@ -827,94 +827,92 @@
           </div>
         </div>
       </div>
-      <div class="popup-bg manage-powercard__popup-bg"></div>
-      <div class="burger__popup-close button-active transaction__popup-close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="popup popup-manage-powercard">
+        <div class="popup__close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8334 2.83411C13.2936 2.37387 13.2936 1.62768 12.8334 1.16744C12.3731 0.707206 11.6269 0.707206 11.1667 1.16744L7.00004 5.33411L2.83338 1.16744C2.37314 0.707206 1.62695 0.707206 1.16671 1.16744C0.706474 1.62768 0.706474 2.37387 1.16671 2.83411L5.33338 7.00078L1.16671 11.1674C0.706474 11.6277 0.706474 12.3739 1.16671 12.8341C1.62695 13.2943 2.37314 13.2943 2.83338 12.8341L7.00004 8.66744L11.1667 12.8341C11.6269 13.2943 12.3731 13.2943 12.8334 12.8341C13.2936 12.3739 13.2936 11.6277 12.8334 11.1674L8.66671 7.00078L12.8334 2.83411Z" fill="black"/>
 </svg>
-      </div>
-      <div class="manage-powercard__popup transaction__popup">
-        <div class="manage-powercard__wrapper transaction__popup-wrapper">
-          <div class="manage-powercard__wrapper-info transaction__popup-wrapper-info">
-            <h3 class="transaction__popup-wrapper-info-title">Manage Powercard</h3>
-            <div class="manage-powercard__wrapper-info-icon not-active">
-              <div class="icon__info">
-                <div class="loading">
-                  <div class="hold left">
-                    <div class="fill"></div>
-                  </div>
-                  <div class="hold right">
-                    <div class="fill"></div>
-                  </div>
+        </div>
+        <div class="popup__background"></div>
+        <div class="popup__content">
+          <h3 class="title">Manage Powercard</h3>
+          <div class="popup-manage-powercard-icon not-active">
+            <div class="icon__info">
+              <div class="loading">
+                <div class="hold left">
+                  <div class="fill"></div>
                 </div>
-                <div class="icon__info-image">
-                  <picture>
-                    <source type="image/webp" srcset="images/Powercard.webp, images/Powercard@2x.webp 2x"/><img src="images/Powercard.png" srcset="images/Powercard.png, images/Powercard@2x.png 2x" alt=""/>
-                  </picture>
+                <div class="hold right">
+                  <div class="fill"></div>
                 </div>
               </div>
-            </div>
-            <!--
-            <div class="manage-powercard__wrapper-info-icon active">
-            	<div class="icon__info">
-            		<div class="loading">
-            			<div class="hold left">
-            				<div class="fill"></div>
-            			</div>
-            			<div class="hold right">
-            				<div class="fill"></div>
-            			</div>
-            		</div>
-            		<div class="icon__info-image">
-            			<picture>
-            				<source type="image/webp" srcset="images/Powercard.webp, images/Powercard@2x.webp 2x"/><img src="images/Powercard.png" srcset="images/Powercard.png, images/Powercard@2x.png 2x" alt=""/>
-            			</picture>
-            		</div>
-            	</div>
-            </div>
-            -->
-            <!--
-            <div class="manage-powercard__wrapper-info-icon active-reverse">
-            	<div class="icon__info">
-            		<div class="loading">
-            			<div class="hold left">
-            				<div class="fill"></div>
-            			</div>
-            			<div class="hold right">
-            				<div class="fill"></div>
-            			</div>
-            		</div>
-            		<div class="icon__info-image">
-            			<picture>
-            				<source type="image/webp" srcset="images/Powercard.webp, images/Powercard@2x.webp 2x"/><img src="images/Powercard.png" srcset="images/Powercard.png, images/Powercard@2x.png 2x" alt=""/>
-            			</picture>
-            		</div>
-            	</div>
-            </div>
-            -->
-            <!-- not-active-->
-            <div class="manage-powercard__wrapper-info-statistics transaction__popup-wrapper-info-statistics">
-              <div class="manage-powercard__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item"> 
-                <p class="description">Powercard status</p>
-                <!-- not-active--><span class="value">Not Active</span>
-                <!-- active-->
-                <!-- <span class="value">Active</span>-->
-              </div>
-              <div class="manage-powercard__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item"> 
-                <p class="description">Remaining boost time</p>
-                <!-- not-active--><span class="value">N/A</span>
-                <!-- active-->
-                <!-- <span class="value">14 days</span>-->
-                <!-- active-reverse-->
-                <!-- <span class="value">54 days</span>-->
-              </div>
-              <div class="manage-powercard__wrapper-info-statistics-item transaction__popup-wrapper-info-statistics-item">
-                <p class="description">Powercard boost multiplier</p>
-                <!-- not-active--><span class="value">0x</span>
-                <!-- active-->
-                <!-- <span class="value">2x</span>-->
+              <div class="icon__info-image">
+                <picture>
+                  <source type="image/webp" srcset="images/Powercard.webp, images/Powercard@2x.webp 2x"/><img src="images/Powercard.png" srcset="images/Powercard.png, images/Powercard@2x.png 2x" alt=""/>
+                </picture>
               </div>
             </div>
-            <div class="manage-powercard__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+          </div>
+          <!--
+          <div class="popup-manage-powercard-icon active">
+          	<div class="icon__info">
+          		<div class="loading">
+          			<div class="hold left">
+          				<div class="fill"></div>
+          			</div>
+          			<div class="hold right">
+          				<div class="fill"></div>
+          			</div>
+          		</div>
+          		<div class="icon__info-image">
+          			<picture>
+          				<source type="image/webp" srcset="images/Powercard.webp, images/Powercard@2x.webp 2x"/><img src="images/Powercard.png" srcset="images/Powercard.png, images/Powercard@2x.png 2x" alt=""/>
+          			</picture>
+          		</div>
+          	</div>
+          </div>
+          -->
+          <!--
+          <div class="popup-manage-powercard-icon active-reverse">
+          	<div class="icon__info">
+          		<div class="loading">
+          			<div class="hold left">
+          				<div class="fill"></div>
+          			</div>
+          			<div class="hold right">
+          				<div class="fill"></div>
+          			</div>
+          		</div>
+          		<div class="icon__info-image">
+          			<picture>
+          				<source type="image/webp" srcset="images/Powercard.webp, images/Powercard@2x.webp 2x"/><img src="images/Powercard.png" srcset="images/Powercard.png, images/Powercard@2x.png 2x" alt=""/>
+          			</picture>
+          		</div>
+          	</div>
+          </div>
+          -->
+          <!-- not-active-->
+          <div class="statistics">
+            <div class="statistics__item">
+              <p class="description">Powercard status</p>
+              <!-- not-active--><span class="value">Not Active</span>
+              <!-- active-->
+              <!-- <span class="value">Active</span>-->
+            </div>
+            <div class="statistics__item">
+              <p class="description">Remaining boost time</p>
+              <!-- not-active--><span class="value">N/A</span>
+              <!-- active-->
+              <!-- <span class="value">14 days</span>-->
+              <!-- active-reverse-->
+              <!-- <span class="value">54 days</span>-->
+            </div>
+            <div class="statistics__item">
+              <p class="description">Powercard boost multiplier</p>
+              <!-- not-active--><span class="value">0x</span>
+              <!-- active-->
+              <!-- <span class="value">2x</span>-->
+            </div>
+            <div class="statistics__buttons">
               <button class="button-active details" type="button">
                 <picture>
                   <source type="image/webp" srcset="images/Details.webp, images/Details@2x.webp 2x"/><img src="images/Details.png" srcset="images/Details.png, images/Details@2x.png 2x" alt=""/>
@@ -947,29 +945,29 @@
                 </div>
               </div>
             </div>
-            <div class="manage-powercard__wrapper-info-button transaction__popup-wrapper-info-button">
-              <!-- <button class="button-active deposit" type="button">🎖 Deposit Powercard</button>-->
-              <button class="button-active action" type="button">🎖 Withdraw Powercard</button>
+          </div>
+          <div class="button">
+            <!-- <button class="button-active deposit" type="button">🎖 Deposit Powercard</button>-->
+            <button class="button-active action" type="button">🎖 Withdraw Powercard</button>
+          </div>
+          <div class="footer">
+            <div class="footer__left"><span>$27.14</span>
+              <p>Network fee</p>
             </div>
-            <div class="manage-powercard__wrapper-info-footer transaction__popup-wrapper-info-footer">
-              <div class="manage-powercard__wrapper-info-footer-left transaction__popup-wrapper-info-footer-left"><span>$27.14</span>
-                <p>Network fee</p>
-              </div>
-              <div class="manage-powercard__wrapper-info-footer-right swiper-container popup-slider transaction__popup-wrapper-info-footer-right">
-                <div class="swiper-pagination"></div>
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
+            <div class="footer__right swiper-container popup-slider">
+              <div class="swiper-pagination"></div>
+              <div class="swiper-wrapper">
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
+                </div>
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
+                </div>
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
+                </div>
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
                 </div>
               </div>
             </div>

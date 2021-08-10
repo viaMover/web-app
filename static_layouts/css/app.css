@@ -670,7 +670,7 @@ body {
 .popup-claim-and-burn .popup__content .button .action {
   background-color: #000;
 }
-.manage-powercard__wrapper-info-icon {
+.popup-manage-powercard-icon {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -686,12 +686,12 @@ body {
   position: relative;
   margin-top: 22px;
 }
-.manage-powercard__wrapper-info-icon .loading {
+.popup-manage-powercard-icon .loading {
   width: 216px;
   height: 216px;
   position: relative;
 }
-.manage-powercard__wrapper-info-icon .loading:after {
+.popup-manage-powercard-icon .loading:after {
   position: absolute;
   content: '';
   width: 208px;
@@ -702,7 +702,7 @@ body {
   left: 4px;
   z-index: 5;
 }
-.manage-powercard__wrapper-info-icon .icon__info-image {
+.popup-manage-powercard-icon .icon__info-image {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -728,41 +728,41 @@ body {
   width: 200px;
   height: 200px;
 }
-.manage-powercard__wrapper-info-icon .icon__info-image picture {
+.popup-manage-powercard-icon .icon__info-image picture {
   width: 100%;
   height: 100%;
 }
-.manage-powercard__wrapper-info-icon .icon__info-image picture img {
+.popup-manage-powercard-icon .icon__info-image picture img {
   display: block;
   width: 100%;
   height: 100%;
 }
-.manage-powercard__wrapper-info-icon.not-active {
+.popup-manage-powercard-icon.not-active {
   opacity: 0.5;
 }
-.manage-powercard__wrapper-info-icon.not-active .loading {
+.popup-manage-powercard-icon.not-active .loading {
   background-color: #eeeded;
   border-radius: 50%;
 }
-.manage-powercard__wrapper-info-icon.active .loading .hold {
+.popup-manage-powercard-icon.active .loading .hold {
   position: absolute;
   width: 100%;
   height: 100%;
   clip: rect(0px, 216px, 216px, 108px);
   border-radius: 100%;
 }
-.manage-powercard__wrapper-info-icon.active .loading .fill,
-.manage-powercard__wrapper-info-icon.active .loading .dot span {
+.popup-manage-powercard-icon.active .loading .fill,
+.popup-manage-powercard-icon.active .loading .dot span {
   background-color: #000;
 }
-.manage-powercard__wrapper-info-icon.active .loading .fill {
+.popup-manage-powercard-icon.active .loading .fill {
   position: absolute;
   width: 100%;
   height: 100%;
   border-radius: 100%;
   clip: rect(0px, 108px, 216px, 0px);
 }
-.manage-powercard__wrapper-info-icon.active .loading .left .fill {
+.popup-manage-powercard-icon.active .loading .left .fill {
   z-index: 1;
   -webkit-animation: left 1s linear;
   animation: left 1s linear both;
@@ -775,13 +775,13 @@ body {
     -webkit-transform: rotate(180deg);
   }
 }
-.manage-powercard__wrapper-info-icon.active .loading .right {
+.popup-manage-powercard-icon.active .loading .right {
   z-index: 3;
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
       transform: rotate(180deg);
 }
-.manage-powercard__wrapper-info-icon.active .loading .right .fill {
+.popup-manage-powercard-icon.active .loading .right .fill {
   z-index: 3;
   -webkit-animation: right 1s linear;
   animation: right 1s linear both;
@@ -834,25 +834,25 @@ body {
             transform: rotate(180deg);
   }
 }
-.manage-powercard__wrapper-info-icon.active-reverse .loading .hold {
+.popup-manage-powercard-icon.active-reverse .loading .hold {
   position: absolute;
   width: 100%;
   height: 100%;
   clip: rect(0px, 216px, 216px, 108px);
   border-radius: 100%;
 }
-.manage-powercard__wrapper-info-icon.active-reverse .loading .fill,
-.manage-powercard__wrapper-info-icon.active-reverse .loading .dot span {
+.popup-manage-powercard-icon.active-reverse .loading .fill,
+.popup-manage-powercard-icon.active-reverse .loading .dot span {
   background-color: #eeeded;
 }
-.manage-powercard__wrapper-info-icon.active-reverse .loading .fill {
+.popup-manage-powercard-icon.active-reverse .loading .fill {
   position: absolute;
   width: 100%;
   height: 100%;
   border-radius: 100%;
   clip: rect(0px, 108px, 216px, 0px);
 }
-.manage-powercard__wrapper-info-icon.active-reverse .loading .left .fill {
+.popup-manage-powercard-icon.active-reverse .loading .left .fill {
   z-index: 1;
   -webkit-animation: left 1s linear;
   animation: left 1s linear both;
@@ -865,13 +865,13 @@ body {
     -webkit-transform: rotate(180deg);
   }
 }
-.manage-powercard__wrapper-info-icon.active-reverse .loading .right {
+.popup-manage-powercard-icon.active-reverse .loading .right {
   z-index: 3;
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
       transform: rotate(180deg);
 }
-.manage-powercard__wrapper-info-icon.active-reverse .loading .right .fill {
+.popup-manage-powercard-icon.active-reverse .loading .right .fill {
   z-index: 3;
   -webkit-animation: right 1s linear;
   animation: right 1s linear both;
@@ -924,122 +924,9 @@ body {
             transform: rotate(180deg);
   }
 }
-.manage-powercard__wrapper-info-buttons {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
-  -webkit-box-pack: end;
-  -webkit-justify-content: flex-end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
-  margin-top: 24px;
-}
-.manage-powercard__wrapper-info-buttons button.details {
-  background: none;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-.manage-powercard__wrapper-info-buttons button.details span {
-  margin-left: 4px;
-  font-family: 'Bold';
-}
-.manage-powercard__wrapper-info-buttons button.details.disabled {
-  opacity: 0.5;
-  cursor: auto;
-  pointer-events: none;
-}
-.manage-powercard__wrapper-info-buttons button.details.disabled:active {
-  -webkit-transform: none;
-      -ms-transform: none;
-          transform: none;
-}
-.manage-powercard__wrapper-info-buttons .details__content {
-  display: none;
-  -webkit-flex-basis: 100%;
-      -ms-flex-preferred-size: 100%;
-          flex-basis: 100%;
-  margin-top: 24px;
-}
-.manage-powercard__wrapper-info-buttons .details__content-active {
-  display: block;
-}
-.manage-powercard__wrapper-info-buttons .details__content-item {
-  margin-top: 8px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-.manage-powercard__wrapper-info-buttons .details__content-item:first-child {
-  margin-top: 0;
-}
-.manage-powercard__wrapper-info-buttons .details__content-item .description {
-  font-family: 'Regular';
-  font-size: 12px;
-  line-height: 16px;
-  color: rgba(60,60,67,0.6);
-}
-.manage-powercard__wrapper-info-buttons .details__content-item .info {
-  margin-left: auto;
-  font-family: 'Bold';
-  font-size: 12px;
-  line-height: 16px;
-  text-align: right;
-}
-.manage-powercard__wrapper-info-buttons .details__content-item .info.up {
-  color: #07c144;
-}
-.manage-powercard__wrapper-info-buttons .details__content-item .info.rate {
-  color: #000;
-}
-.manage-powercard__wrapper-info-button .action {
+.popup-manage-powercard .button .action,
+.popup-manage-powercard .button .deposit {
   background-color: #000;
-}
-.manage-powercard__wrapper-info-footer {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-}
-.manage-powercard__wrapper-info-footer-left {
-  -webkit-flex-basis: 40%;
-      -ms-flex-preferred-size: 40%;
-          flex-basis: 40%;
-  margin-top: 24px;
-}
-.manage-powercard__wrapper-info-footer-left span {
-  font-family: 'Bold';
-}
-.manage-powercard__wrapper-info-footer-left p {
-  font-family: 'Regular';
-  font-size: 12px;
-  line-height: 18px;
-  color: rgba(60,60,67,0.6);
 }
 .page-sidebar-wrapper {
   padding-top: 80px;
