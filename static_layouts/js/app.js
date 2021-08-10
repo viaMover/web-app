@@ -180,34 +180,6 @@ $(document).ready(function() {
 		})
 	}
 	burderMenu();
-
-	function depositPopup() {
-		let depositPopup = $('.deposit__popup'); 
-		let close = $('.transaction__popup-close');
-		let button = $('.savings-deposit');
-		let bg = $('.deposit__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			depositPopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			depositPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			depositPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	depositPopup();
 	
 	function withdrawPopup() {
 		let withdrawPopup = $('.withdraw__popup'); 
@@ -657,6 +629,27 @@ $(document).ready(function() {
 		})
 	}
 	managePowercardPopup();
+
+	function depositPopup() {
+		let depositPopup = $('.popup-deposit'); 
+		let close = $('.popup__close');
+		let button = $('.savings-deposit');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			depositPopup.addClass('popup-active'); 
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			depositPopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	depositPopup();
+
 	function hideByClickEscButton() {
 		let popup = $('.popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
