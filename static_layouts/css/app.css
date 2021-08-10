@@ -1965,22 +1965,22 @@ body {
   color: rgba(60,60,67,0.6);
   font-family: 'Medium';
 }
-.product-item-buy__wrapper-info-items-item-right button.currency {
+.popup-product-item-buy .popup__content .info__form-right button.currency {
   background: #687ee3;
   -webkit-box-shadow: 0px 0px 16px #687ee3;
           box-shadow: 0px 0px 16px #687ee3;
 }
-.product-item-buy__wrapper-info-items-item-right button.use span {
+.popup-product-item-buy .popup__content .info__form-right button.use span {
   color: #687ee3;
 }
-.product-item-buy__wrapper-info-buttons button.details {
+.popup-product-item-buy .popup__content .statistics__buttons button.details {
   text-align: left;
   -webkit-box-align: start;
   -webkit-align-items: flex-start;
       -ms-flex-align: start;
           align-items: flex-start;
 }
-.product-item-buy__wrapper-info-button .action {
+.popup-product-item-buy .popup__content .button .action {
   background-color: #000;
 }
 .product-item-sell__wrapper-info-items-item-right button.currency {
