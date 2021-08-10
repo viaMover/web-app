@@ -22,6 +22,7 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 import { RawLocation } from 'vue-router';
+import { Properties } from 'csstype';
 
 import { Asset } from '@/store/modules/shop/types';
 
@@ -41,11 +42,11 @@ export default Vue.extend({
         params: { id: this.item.id }
       };
     },
-    componentStyle(): Record<string, string> {
+    componentStyle(): Properties {
       return {
         background: `url(${this.item.imageSrc}) no-repeat center ${this.item.imageScaleH}`,
-        'background-color': this.item.background,
-        'background-size': this.item.imageSize
+        backgroundColor: this.item.background,
+        backgroundSize: this.item.imageSize
       };
     }
   }

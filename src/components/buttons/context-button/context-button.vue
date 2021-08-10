@@ -1,14 +1,16 @@
 <template>
-  <div class="button burger-menu">
+  <div class="button burger-menu" :class="wrapperClass">
     <action-button
-      button-class="button-active"
+      :button-class="actionButtonClass"
       :data-popover-parent-id="popoverParentId"
       @button-click="togglePopover"
     >
-      <img
-        :alt="$t('icon.txtContextButtonAlt')"
-        src="@/assets/images/context-button.svg"
-      />
+      <slot name="button">
+        <img
+          :alt="$t('icon.txtContextButtonAlt')"
+          src="@/assets/images/context-button.svg"
+        />
+      </slot>
     </action-button>
     <popover :parent-id="popoverParentId" :popover-id="popoverId">
       <slot></slot>
@@ -32,11 +34,26 @@ export default Vue.extend({
     popoverParentId: {
       type: String,
       required: true
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    },
+    buttonClass: {
+      type: String,
+      default: ''
     }
   },
   computed: {
     popoverId(): string {
       return this.popoverParentId + '__popover';
+    },
+    actionButtonClass(): string {
+      if (this.buttonClass === '') {
+        return '';
+      }
+
+      return `${this.buttonClass} button-active`;
     }
   },
   methods: {
