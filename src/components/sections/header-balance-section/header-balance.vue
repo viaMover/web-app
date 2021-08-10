@@ -12,7 +12,7 @@
           :popover-parent-id="popoverParentId"
         >
           <template v-slot:button>
-            <arrow-down-icon class="arrow" stroke="#3C3C4399" />
+            <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
           </template>
           <span class="address">{{ currentAddressText }}</span>
           <context-button-item
