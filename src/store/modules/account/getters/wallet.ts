@@ -7,6 +7,7 @@ import { AccountStoreState, TransactionGroup } from '../types';
 import { RootStoreState } from '@/store/types';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {
@@ -66,6 +67,9 @@ export default {
     }
 
     return balance;
+  },
+  ethPrice(state): string {
+    return state.ethPrice ?? '0';
   },
   moveNativePrice(state): string {
     if (state.movePriceInWeth === undefined || state.ethPrice === undefined) {
@@ -138,5 +142,8 @@ export default {
 
       return state.tokensSearcher.search(searchTerm).map((res) => res.item);
     };
+  },
+  getOffchainExplorerHanlder(state): OffchainExplorerHanler | undefined {
+    return state.offchainExplorerHanlder;
   }
 } as GetterTree<AccountStoreState, RootStoreState>;

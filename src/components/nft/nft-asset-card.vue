@@ -22,6 +22,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
+import { Properties } from 'csstype';
 
 import { NFT } from '@/store/modules/nft/types';
 
@@ -38,27 +39,27 @@ export default Vue.extend({
     }
   },
   computed: {
-    componentStyle(): Record<string, string> {
+    componentStyle(): Properties {
       return {
         background: `url(${this.item.imageSrc}) no-repeat ${this.item.imageScaleH} ${this.item.imageScaleV}`,
-        'background-color': this.item.background,
-        'background-size': this.item.imageSize
+        backgroundColor: this.item.background,
+        backgroundSize: this.item.imageSize
       };
     },
-    titleStyle(): Record<string, string> {
+    titleStyle(): Properties {
       return {
         color: this.item.titleColor
       };
     },
-    textStyle(): Record<string, string> {
+    textStyle(): Properties {
       return {
         color: this.item.textColor
       };
     },
-    btnStyle(): Record<string, string> {
+    btnStyle(): Properties {
       return {
         color: this.item.btnTextColor,
-        'background-color': this.item.btnBackgroundColor
+        backgroundColor: this.item.btnBackgroundColor
       };
     },
     routeTo(): RawLocation {

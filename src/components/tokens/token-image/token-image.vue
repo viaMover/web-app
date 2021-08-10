@@ -17,6 +17,8 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
+import { Properties } from 'csstype';
+
 import { IImageFallbackOpts } from '@/components/tokens/token-image/types';
 
 export default Vue.extend({
@@ -65,9 +67,9 @@ export default Vue.extend({
         onError: this.handleError
       };
     },
-    shadowStyles(): Record<string, string> {
+    shadowStyles(): Properties {
       return {
-        'box-shadow': `0px 0px 16px ${this.color}`
+        boxShadow: `0px 0px 16px ${this.color}`
       };
     }
   },

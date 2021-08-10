@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Result } from './../responses';
 import { Network } from '@/utils/networkTypes';
+import { APIKeys } from '@/settings';
 import { apiEndpoints } from './endpoints';
 import {
   EtherScanErrorResponse,
@@ -23,9 +24,7 @@ export const getEthPrice = async (
     return { isError: true, error: 'NoEndpointForNetwork' };
   }
 
-  const apiKey = process.env.VUE_APP_ETHERSCAN_API_KEY;
-
-  const url = `${endpoint}/api?module=stats&action=ethprice&apikey=${apiKey}`;
+  const url = `${endpoint}/api?module=stats&action=ethprice&apikey=${APIKeys.ETHERSCAN_API_KEY}`;
 
   try {
     const resp = (
