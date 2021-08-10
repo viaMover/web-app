@@ -1,12 +1,12 @@
 <template>
   <card
-    :btn-text="$t('debitCard.btnOrderDebitCard')"
+    :button-text="$t('debitCard.btnOrderDebitCard')"
     :description="$t('debitCard.txtDebitCard')"
     :icon="$t('debitCard.icon')"
     :opened="isInfoVisible"
     :title="$t('debitCard.lblDebitCardHeading')"
     wrapper-class="general-desktop__menu-wrapper-order"
-    @button-click="handleBtnClick"
+    @button-click="handleButtonClick"
     @close="toggleInfo"
   />
 </template>
@@ -27,7 +27,7 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('account', { toggleInfo: 'toggleIsDebitCardSectionVisible' }),
-    handleBtnClick(): void {
+    handleButtonClick(): void {
       //
     }
   }

@@ -14,7 +14,7 @@
         class="black-link button-active"
         @button-click="handleButtonClick"
       >
-        {{ btnText }}
+        {{ buttonText }}
       </action-button>
       <close-button
         :is-black="isBlackCloseBtn"
@@ -48,7 +48,7 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    btnText: {
+    buttonText: {
       type: String,
       default: ''
     },

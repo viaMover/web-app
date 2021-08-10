@@ -7,7 +7,7 @@
     :opened="isInfoVisible"
     :title="$t('savingsDepositCard.lblSavingsDepositCardHeading')"
     wrapper-class="general-desktop__menu-wrapper-deposit"
-    @button-click="handleBtnClick"
+    @button-click="handleButtonClick"
     @close="toggleInfo"
   />
 </template>
@@ -33,7 +33,7 @@ export default Vue.extend({
     ...mapActions('account', {
       toggleInfo: 'toggleIsDepositCardSectionVisible'
     }),
-    handleBtnClick(): void {
+    handleButtonClick(): void {
       toggleSingleItem(Modal.SavingsDeposit);
     }
   }
