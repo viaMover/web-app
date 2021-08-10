@@ -293,26 +293,6 @@ $(document).ready(function() {
 	}
 	decreaseBoostPopup();
 
-	function stakePopup() {
-		let stakePopup = $('.test-popup'); 
-		let close = $('.test-popup__close');
-		let button = $('.stake');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			stakePopup.addClass('test-popup-active');
-			close.addClass('test-popup__close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			stakePopup.removeClass('test-popup-active'); 
-			close.removeClass('test-popup__close-active');
-		})
-	}
-	stakePopup();
-
 	function unstakePopup() {
 		let unstakePopup = $('.unstake__popup'); 
 		let close = $('.burger__popup-close');
@@ -698,26 +678,45 @@ $(document).ready(function() {
 	}
 	balancePopup();
 
+	function stakePopup() {
+		let stakePopup = $('.popup-stake'); 
+		let close = $('.popup__close');
+		let button = $('.stake');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			stakePopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			stakePopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	stakePopup();
+
+
 	function hideByClickEscButton() {
-		let transactionPopup = $('.test-popup');
+		let popup = $('.popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
 		let burgerPopup = $('.burger-menu__popup');
 		let NFTDropsPopup = $('.nft-drops__popup');
 		let nibbleShopPopup = $('.nibble-shop__popup');
-		let bg = $('.popup-bg');
 		let burgerBg = $('.burger-menu__popup-bg');
-		let transactionClose = $('.test-popup__close');
+		let transactionClose = $('.popup__close');
 
 		$(window).on('keydown', function(e) {
 			if ( e.keyCode == 27 ) {
-				transactionPopup.removeClass('test-popup-active'); 
+				popup.removeClass('popup-active'); 
 				transactionResultPopup.removeClass('transaction-result__popup-active'); 
 				burgerPopup.removeClass('burger-menu__popup-active');
 				NFTDropsPopup.removeClass('nft-drops__popup-active');
 				nibbleShopPopup.removeClass('nibble-shop__popup-active');
-				bg.removeClass('popup-bg-active');
 				burgerBg.removeClass('burger-menu__popup-bg-active');
-				transactionClose.removeClass('test-popup__close-active');
+				transactionClose.removeClass('popup__close-active');
 			}
 		});
 	}
