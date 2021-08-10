@@ -181,34 +181,6 @@ $(document).ready(function() {
 	}
 	burderMenu();
 
-	function votePopup() {
-		let votePopup = $('.vote__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.vote-button');
-		let bg = $('.vote__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			votePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			votePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			votePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	votePopup();
-
 	function NFTDropsPopup() {
 		let NFTDropsPopup = $('.nft-drops__popup'); 
 		let close = $('.nft-drops__popup-close');
@@ -632,6 +604,26 @@ $(document).ready(function() {
 		})
 	}
 	delegateVotingPowerPopup();
+
+	function votePopup() {
+		let votePopup = $('.popup-vote'); 
+		let close = $('.popup__close');
+		let button = $('.vote-button');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			votePopup.addClass('popup-active'); 
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			votePopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	votePopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');

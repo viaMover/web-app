@@ -975,7 +975,7 @@ body {
     display: none;
   }
 }
-.vote__wrapper-info-items-item-left div.icon {
+.popup-vote .popup__content .info__form-left div.icon {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -995,15 +995,15 @@ body {
   -webkit-box-shadow: 0px 0px 8px #ccc;
           box-shadow: 0px 0px 8px #ccc;
 }
-.vote__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right button.currency {
+.popup-vote .popup__content .info__form-right button.currency {
   background: #ccc;
   -webkit-box-shadow: 0px 0px 16px #ccc;
           box-shadow: 0px 0px 16px #ccc;
 }
-.vote__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right button.currency span {
+.popup-vote .popup__content .info__form-right button.currency span {
   color: #000;
 }
-.vote__wrapper-info-button .action {
+.popup-vote .popup__content .button .action {
   background-color: #000;
 }
 .popup-delegate-voting-power .info {
