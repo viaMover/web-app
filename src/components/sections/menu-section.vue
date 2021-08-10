@@ -41,12 +41,14 @@
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
+        v-if="isFeatureEnabled('isBondsEnabled')"
         :icon="$t('menu.lblGetMoveEmoji')"
         :modal-id="Modal.Swap"
         :text="$t('menu.lblGetMove')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
+        v-if="isFeatureEnabled('isBondsEnabled')"
         :icon="$t('menu.lblProvideLiquidityMoveEmoji')"
         :text="$t('menu.lblProvideLiquidityMove')"
         wrapper-class="desktop-center-section-list-item"
