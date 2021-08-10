@@ -209,35 +209,6 @@ $(document).ready(function() {
 	}
 	votePopup();
 
-
-	function delegateVotingPowerPopup() {
-		let delegatePopup = $('.delegate-voting-power__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.delegate-voting-power');
-		let bg = $('.delegate-voting-power__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			delegatePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			delegatePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			delegatePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	delegateVotingPowerPopup();
-
 	function NFTDropsPopup() {
 		let NFTDropsPopup = $('.nft-drops__popup'); 
 		let close = $('.nft-drops__popup-close');
@@ -641,6 +612,26 @@ $(document).ready(function() {
 		})
 	}
 	withdrawPopup();
+
+	function delegateVotingPowerPopup() {
+		let delegatePopup = $('.popup-delegate-voting-power'); 
+		let close = $('.popup__close');
+		let button = $('.delegate-voting-power');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			delegatePopup.addClass('popup-active'); 
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			delegatePopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	delegateVotingPowerPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
