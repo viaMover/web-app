@@ -237,34 +237,6 @@ $(document).ready(function() {
 	}
 	withdrawPopup();
 
-	function increaseBoostPopup() {
-		let increasePopup = $('.increase-boost__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.increase-boost');
-		let bg = $('.increase-boost__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			increasePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			increasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			increasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	increaseBoostPopup();
-
 	function decreaseBoostPopup() {
 		let decreasePopup = $('.decrease-boost__popup'); 
 		let close = $('.burger__popup-close');
@@ -681,6 +653,26 @@ $(document).ready(function() {
 		})
 	}
 	claimAndBurnPopup();
+
+	function increaseBoostPopup() {
+		let increasePopup = $('.popup-increase-boost'); 
+		let close = $('.popup__close');
+		let button = $('.increase-boost');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			increasePopup.addClass('popup-active'); 
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			increasePopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	increaseBoostPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
