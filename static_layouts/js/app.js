@@ -237,38 +237,6 @@ $(document).ready(function() {
 	}
 	noAccessPopup();
 
-	function claimBondsPopup() {
-		let claimBondsPopup = $('.claim-bonds__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.claim-bonds');
-		let bg = $('.claim-bonds__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-		let balance = $('.balance__popup'); 
-		let balanceBg = $('.balance__popup-bg');
-
-		button.on('click', function() { 
-			claimBondsPopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-			balance.removeClass('balance__popup-active'); 
-			balanceBg.removeClass('balance__popup-bg-active');
-		})
-		close.on('click', function() { 
-			claimBondsPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			claimBondsPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	claimBondsPopup();
-
 	function claimAndRepurchasePopup() {
 		let claimAndRepurchasePopup = $('.claim-and-repurchase__popup'); 
 		let close = $('.burger__popup-close');
@@ -592,6 +560,30 @@ $(document).ready(function() {
 		})
 	}
 	purchaseBondsPopup();
+
+	function claimBondsPopup() {
+		let claimBondsPopup = $('.popup-claim-bonds'); 
+		let close = $('.popup__close');
+		let button = $('.claim-bonds');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+		let balance = $('.balance__popup'); 
+		let balanceBg = $('.balance__popup-bg');
+
+		button.on('click', function() { 
+			claimBondsPopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+			balance.removeClass('balance__popup-active'); 
+			balanceBg.removeClass('balance__popup-bg-active');
+		})
+		close.on('click', function() { 
+			claimBondsPopup.removeClass('popup-active');
+			close.removeClass('popup__close-active');
+		})
+	}
+	claimBondsPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
