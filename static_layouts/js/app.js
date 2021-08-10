@@ -293,34 +293,6 @@ $(document).ready(function() {
 	}
 	decreaseBoostPopup();
 
-	function unstakePopup() {
-		let unstakePopup = $('.unstake__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.unstake');
-		let bg = $('.unstake__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			unstakePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			unstakePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			unstakePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	unstakePopup();
-
 	function claimAndBurnPopup() {
 		let claimAndBurnPopup = $('.claim-and-burn__popup'); 
 		let close = $('.burger__popup-close');
@@ -698,6 +670,25 @@ $(document).ready(function() {
 	}
 	stakePopup();
 
+	function unstakePopup() {
+		let unstakePopup = $('.popup-unstake'); 
+		let close = $('.burger__popup-close');
+		let button = $('.unstake');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			unstakePopup.addClass('popup-active'); 
+			close.addClass('popup-close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			unstakePopup.removeClass('popup-active'); 
+			close.removeClass('popup-close-active');
+		})
+	}
+	unstakePopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
