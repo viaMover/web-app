@@ -237,33 +237,6 @@ $(document).ready(function() {
 	}
 	withdrawPopup();
 
-	function decreaseBoostPopup() {
-		let decreasePopup = $('.decrease-boost__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.decrease-boost');
-		let bg = $('.decrease-boost__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			decreasePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			decreasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			decreasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	decreaseBoostPopup();
 
 	function managePowercardPopup() {
 		let managePowercardPopup = $('.manage-powercard__popup'); 
@@ -673,6 +646,26 @@ $(document).ready(function() {
 		})
 	}
 	increaseBoostPopup();
+
+	function decreaseBoostPopup() {
+		let decreasePopup = $('.popup-decrease-boost'); 
+		let close = $('.popup__close');
+		let button = $('.decrease-boost');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			decreasePopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			decreasePopup.removeClass('popup-active');
+			close.removeClass('popup__close-active');
+		})
+	}
+	decreaseBoostPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
