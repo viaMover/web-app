@@ -24,6 +24,10 @@ export type TreasuryInfo = {
   currentStakedMoveLP: number;
   earnedTotal: number;
   earnedThisMonth: number;
+  earnedToday: number;
+  spentTotal: number;
+  spentThisMonth: number;
+  spentToday: number;
   last12MonthsBonuses: Array<TreasuryMonthBonusesItem>;
   actionHistory: Array<TreasuryActionHistoryItem>;
 };
@@ -49,5 +53,8 @@ export type TreasuryReceipt = {
   totalWithdrawalsMove: number;
   totalDepositsMoveLP: number;
   totalWithdrawalsMoveLP: number;
+  spentThisMonth: number;
+  avgDailyEarnings: number;
+  avgDailySpendings: number;
 };
 export type TreasuryReceiptResponse = MoverResponse<TreasuryReceipt>;

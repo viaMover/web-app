@@ -6,14 +6,35 @@ export default {
   lblConnectWallet: 'Please connect a wallet',
   txtConnectWallet:
     'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
+  txtNotFound:
+    'Wow, how did you end up here? Seems like even Google isn’t as of help.',
   btnConnectWallet: 'Connect a wallet',
   txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
-  lblDisconnect: 'Disconnect',
+  lblDisconnectEmoji: '🚪',
+  lblDisconnect: '@:lblDisconnectEmoji Disconnect',
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
+  lblMore: 'More',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
+  },
+  menu: {
+    lblSwapTokenEmoji: '🔄',
+    lblSwapToken: 'Swap Token',
+    lblGetMoveEmoji: '💸',
+    lblGetMove: 'Get MOVE',
+    lblProvideLiquidityMoveEmoji: '💧',
+    lblProvideLiquidityMove: 'Provide liquidity for MOVE',
+    lblDepositInSavingsEmoji: '💰',
+    lblDepositInSavings: 'Deposit in Savings',
+    lblIncreaseBoostEmoji: '📈',
+    lblIncreaseBoost: 'Increase boost',
+    lblPurchaseBondsEmoji: '🏦',
+    lblPurchaseBonds: 'Purchase Bonds',
+    lblBeautifulCard: 'Beautiful card',
+    lblComingSoon: 'Coming soon',
+    lblBonds: 'Bonds'
   },
   swaps: {
     lblSwaps: 'Swaps',
@@ -33,11 +54,19 @@ export default {
     }
   },
   debitCard: {
+    icon: '💳',
     lblDebitCard: 'Debit Card',
     lblDebitCardHeading: 'Great news!',
     txtDebitCard:
       'You can now order the Beautiful debit card brought you by Mover and Trastra',
     btnOrderDebitCard: 'Order the card'
+  },
+  savingsDepositCard: {
+    icon: '💰',
+    lblSavingsDepositCardHeading: 'Save it!',
+    txtSavingsDepositCard:
+      'Savings just got better. Enjoy easy higher rates and even less hassle.',
+    btnSavingsDepositCard: '@:savingsDepositCard.icon Deposit in Savings'
   },
   savings: {
     icon: '💰',
@@ -451,12 +480,22 @@ export default {
       emoji: '🔍'
     }
   },
+  bonds: {
+    icon: '🏦',
+    lblBonds: 'Bonds'
+  },
+  card: {
+    lblCard: 'Card'
+  },
   search: {
     lblSearch: 'Search',
     lblSearchBar: 'Search tokens',
     lblSearchBarPlaceholder: 'Search any token on Ethereum',
+    lblSearchTransaction: 'Search any transaction',
     lblFavorite: 'Favorite',
-    lblVerified: 'Verified'
+    lblVerified: 'Verified',
+    lblTokensInTheWallet: 'Tokens in the wallet',
+    lblGlobalSearch: 'Global search'
   },
   gas: {
     lblNetworkFee: 'Network fee',
@@ -479,6 +518,7 @@ export default {
     txtLogoAlt: 'Mover logo',
     txtSelectAssetButtonAlt: 'select asset',
     txtNavigationLinkAlt: 'navigation link',
-    txtSwapDetailsIconAlt: 'swap details'
+    txtSwapDetailsIconAlt: 'swap details',
+    txtTokenInfoAlt: '{name} info on Etherscan'
   }
 };

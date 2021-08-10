@@ -59,6 +59,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+import { Properties } from 'csstype';
 
 import { NFTAggregatedInfo } from '@/store/modules/nft/types';
 
@@ -100,12 +101,12 @@ export default Vue.extend({
         ) || null
       );
     },
-    videoStyle(): Record<string, string> {
+    videoStyle(): Properties {
       return {
-        'max-width': this.asset?.nft.page.imageWidth ?? ''
+        maxWidth: this.asset?.nft.page.imageWidth ?? ''
       };
     },
-    bannerStyle(): Record<string, string> {
+    bannerStyle(): Properties {
       return {
         background: this.asset?.nft.page.imageBackground ?? ''
       };
