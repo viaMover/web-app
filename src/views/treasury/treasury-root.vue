@@ -14,19 +14,18 @@
 
     <router-view />
 
-    <treasury-increase-boost-modal />
-    <centered-modal-window v-cloak :modal-id="TreasuryDecreaseBoostModalId">
-      <treasury-decrease-boost-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="TreasuryClaimAndBurnModalId">
-      <treasury-claim-and-burn-form />
-    </centered-modal-window>
-    <search-modal />
+    <template v-slot:modals>
+      <treasury-increase-boost-modal />
+      <treasury-decrease-boost-modal />
+      <treasury-claim-and-burn-modal />
+      <search-modal />
+    </template>
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
@@ -35,17 +34,14 @@ import {
   TreasuryReservedAssets
 } from '@/components/treasury';
 import {
-  TreasuryDecreaseBoostForm,
-  TreasuryClaimAndBurnForm
-} from '@/components/forms';
-import '@/styles/_treasury.less';
-import {
-  CenteredModalWindow,
-  Modal,
   SearchModal,
-  TreasuryIncreaseBoostModal
+  TreasuryIncreaseBoostModal,
+  TreasuryDecreaseBoostModal,
+  TreasuryClaimAndBurnModal
 } from '@/components/modals';
-import { mapGetters } from 'vuex';
+
+import '@/styles/_treasury.less';
+
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
@@ -54,16 +50,9 @@ export default Vue.extend({
     TreasuryStats,
     TreasuryReservedAssets,
     TreasuryIncreaseBoostModal,
-    TreasuryDecreaseBoostForm,
-    TreasuryClaimAndBurnForm,
-    CenteredModalWindow,
+    TreasuryDecreaseBoostModal,
+    TreasuryClaimAndBurnModal,
     SearchModal
-  },
-  data() {
-    return {
-      TreasuryDecreaseBoostModalId: Modal.TreasuryDecreaseBoost,
-      TreasuryClaimAndBurnModalId: Modal.TreasuryClaimAndBurn
-    };
   },
   computed: {
     ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),

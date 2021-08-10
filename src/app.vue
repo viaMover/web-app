@@ -1,7 +1,9 @@
 <template>
   <main id="app">
-    <preload v-show="showPreload" />
-    <router-view v-cloak v-if="!showPreload" />
+    <transition-group appear name="fade">
+      <preload v-show="showPreload" key="preload" />
+      <router-view v-cloak v-if="!showPreload" key="viewport" />
+    </transition-group>
   </main>
 </template>
 

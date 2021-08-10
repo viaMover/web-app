@@ -140,7 +140,7 @@ import {
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { formatSwapSources } from '@/wallet/references/data';
-import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
+import { TokenWithBalance, Token, SmallToken, GasData } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
 
@@ -153,7 +153,7 @@ import {
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Slippage } from '../controls/slippage-selector.vue';
-import { Step } from '../controls/form-loader.vue';
+import { Step } from '@/components/controls/form-loader';
 import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
@@ -349,13 +349,32 @@ export default Vue.extend({
       return this.infoExpanded && !this.loading && !!this.transferData;
     }
   },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.input.asset = eth;
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+        this.checkSubsidizedAvailability();
+      }
+    },
+    tokens(newVal: Array<TokenWithBalance>, oldVal: Array<TokenWithBalance>) {
+      if (
+        oldVal.length === 0 &&
+        newVal.length !== 0 &&
+        this.input.asset === undefined
+      ) {
+        const eth = this.tokens.find(
+          (t: TokenWithBalance) => t.address === 'eth'
+        );
+        if (eth) {
+          this.input.asset = eth;
+          this.checkSubsidizedAvailability();
+        }
+      }
     }
-    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {

@@ -38,12 +38,13 @@
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
+import { Modal as ModalType } from '@/store/modules/modals/types';
+
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
 import { SavingsYearlyChartWrapper } from '@/components/savings';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
-import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'SavingsManage',
@@ -69,11 +70,11 @@ export default Vue.extend({
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({ id: Modal.SavingsDeposit, value: true });
+      this.setModalIsDisplayed({ id: ModalType.SavingsDeposit, value: true });
     },
     handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({ id: Modal.SavingsWithdraw, value: true });
+      this.setModalIsDisplayed({ id: ModalType.SavingsWithdraw, value: true });
     }
   }
 });

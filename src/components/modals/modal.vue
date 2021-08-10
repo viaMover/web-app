@@ -1,56 +1,50 @@
 <template>
-  <div v-if="isDisplayed" v-show="isVisible" class="modal">
-    <transition appear name="fade">
+  <div
+    v-if="isDisplayed"
+    v-show="isVisible"
+    class="modal"
+    :name="modalId"
+    role="menu"
+  >
+    <div
+      v-show="isDimmerVisible"
+      class="modal__dimmer"
+      :class="dimmerHtmlClass"
+      :style="dimmerStyles"
+      @click="handleDimmerClick"
+    />
+    <close-button
+      v-if="showCloseButton"
+      class="modal__close-button"
+      is-black
+      :style="buttonStyles"
+      @close="handleClose"
+    />
+    <div
+      class="modal__body"
+      :class="{ 'no-bottom-padding': disableBodyBottomPadding }"
+      :style="bodyStyles"
+    >
       <div
-        v-show="isDimmerVisible"
-        class="modal__dimmer"
-        :class="dimmerHtmlClass"
-        :style="dimmerStyles"
-        @click="handleDimmerClick"
-      />
-    </transition>
-    <transition-group appear name="pop">
-      <close-button
-        v-if="showCloseButton"
-        key="close-button"
-        class="modal__close-button"
-        is-black
-        :style="buttonStyles"
-        @close="handleClose"
-      />
-      <div
-        key="body"
-        class="modal__body"
-        :class="{ 'no-bottom-padding': disableBodyBottomPadding }"
-        :style="bodyStyles"
+        v-if="isHeaderDisplayed"
+        class="modal__body-header"
+        :class="headerClass"
       >
-        <div
-          v-if="isHeaderDisplayed"
-          key="header"
-          class="modal__body-header"
-          :class="headerClass"
-        >
-          <slot name="header">
-            <h3 class="modal__body-header--default">{{ headerText }}</h3>
-          </slot>
-        </div>
-        <div
-          key="content"
-          class="modal__body-content"
-          :class="contentHtmlClass"
-        >
-          <slot></slot>
-        </div>
-        <div
-          v-if="isFooterDisplayed"
-          key="footer"
-          class="modal__body-footer"
-          :class="footerHtmlClass"
-        >
-          <slot name="footer">{{ footerText }}</slot>
-        </div>
+        <slot name="header">
+          <h3 class="modal__body-header--default">{{ headerText }}</h3>
+        </slot>
       </div>
-    </transition-group>
+      <div class="modal__body-content" :class="contentHtmlClass">
+        <slot></slot>
+      </div>
+      <div
+        v-if="isFooterDisplayed"
+        class="modal__body-footer"
+        :class="footerHtmlClass"
+      >
+        <slot name="footer">{{ footerText }}</slot>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -197,7 +191,11 @@ export default Vue.extend({
   methods: {
     ...mapActions('modals', ['setIsDisplayed']),
     async handleClose(): Promise<void> {
-      await this.setIsDisplayed({ id: this.modalId, value: false });
+      this.$emit('close');
+      await this.setIsDisplayed({
+        id: this.modalId,
+        value: false
+      });
     },
     async handleDimmerClick(): Promise<void> {
       if (!this.closeOnDimmerClick) {
@@ -272,10 +270,10 @@ export default Vue.extend({
       }
 
       &--default {
-        font-family: Regular;
+        font-family: Regular, sans-serif;
         font-size: 16px;
         line-height: 24px;
-        font-weight: 500;
+        font-weight: 400;
         text-align: center;
       }
     }

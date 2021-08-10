@@ -30,7 +30,6 @@ import {
   SavingsEstimation
 } from '@/components/savings';
 import {
-  Modal,
   SearchModal,
   SavingsDepositModal,
   SavingsWithdrawModal

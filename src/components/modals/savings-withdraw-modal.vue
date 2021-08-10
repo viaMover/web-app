@@ -96,7 +96,7 @@ import {
   multiply,
   notZero
 } from '@/utils/bigmath';
-import { Step } from '../controls/form-loader.vue';
+import { Step } from '@/components/controls/form-loader';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';

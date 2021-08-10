@@ -74,6 +74,7 @@ export type AccountStoreState = {
   gasPrices: GasData | undefined;
   gasUpdating: boolean;
   isDebitCardSectionVisible: boolean;
+  isDepositCardSectionVisible: boolean;
 
   isSavingsInfoLoading: boolean;
   savingsInfo: SavingsInfo | undefined;

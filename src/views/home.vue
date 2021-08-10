@@ -1,35 +1,21 @@
 <template>
   <content-wrapper has-left-rail wrapper-class="general-desktop">
     <template v-slot:left-rail>
-      <wallet-info-rail />
+      <transaction-list />
     </template>
 
     <header-balance />
     <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
+    <savings-deposit-card-section />
+    <menu-section />
 
-    <template v-if="isFeatureEnabled('isReleaseRadarEnabled')">
-      <div class="general-desktop__menu-wrapper-item">
-        <div class="general-desktop__menu-wrapper-item-links">
-          <release-radar-section />
-          <swaps-section />
-        </div>
-      </div>
+    <template v-slot:modals>
+      <swap-modal key="swap-modal" />
+      <savings-deposit-modal key="savings-deposit-modal" />
+      <savings-withdraw-modal key="savings-withdraw-modal" />
+      <treasury-increase-boost-modal key="treasury-increase-boost-modal" />
+      <search-modal key="search-modal" />
     </template>
-    <template v-else>
-      <swaps-section
-        inner-container-class="general-desktop__menu-wrapper-item-info"
-        own-class="general-desktop__menu-wrapper-item"
-      />
-    </template>
-
-    <savings-section />
-    <treasury-section />
-    <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
-    <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
-    <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
-
-    <swap-modal />
-    <search-modal />
   </content-wrapper>
 </template>
 
@@ -38,38 +24,37 @@ import Vue from 'vue';
 import { isFeatureEnabled } from '@/settings';
 
 import { ContentWrapper } from '@/components/layout';
-import { WalletInfoRail } from '@/components/wallet-info-rail';
+import { TransactionList } from '@/components/transaction-list';
 import {
-  ReleaseRadarSection,
-  SwapsSection,
   DebitCardSection,
-  SavingsSection,
-  TreasurySection,
-  GovernanceSection,
-  NibbleShopSection,
-  NftDropsSection,
-  HeaderBalance
+  HeaderBalance,
+  MenuSection,
+  SavingsDepositCardSection
 } from '@/components/sections';
-import { SearchModal, SwapModal } from '@/components/modals';
+import {
+  SearchModal,
+  SwapModal,
+  SavingsDepositModal,
+  SavingsWithdrawModal,
+  TreasuryIncreaseBoostModal
+} from '@/components/modals';
 
 import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'Home',
   components: {
-    ContentWrapper,
-    WalletInfoRail,
-    ReleaseRadarSection,
-    SwapsSection,
+    SavingsDepositCardSection,
     DebitCardSection,
-    SavingsSection,
-    TreasurySection,
-    GovernanceSection,
-    NibbleShopSection,
-    NftDropsSection,
+    MenuSection,
+    ContentWrapper,
+    TransactionList,
     HeaderBalance,
     SwapModal,
-    SearchModal
+    SearchModal,
+    SavingsDepositModal,
+    SavingsWithdrawModal,
+    TreasuryIncreaseBoostModal
   },
   methods: {
     isFeatureEnabled

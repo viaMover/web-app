@@ -93,7 +93,8 @@ import Vue from 'vue';
 import {
   TokenWithBalance,
   SmallToken,
-  SmallTokenInfoWithIcon
+  SmallTokenInfoWithIcon,
+  GasData
 } from '@/wallet/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
@@ -120,7 +121,7 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '../controls/form-loader.vue';
+import { Step } from '@/components/controls/form-loader';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
@@ -333,13 +334,17 @@ export default Vue.extend({
       return 'Once you deposit your assets in savings, Mover is constantly searching for the highest paying option using multiple DeFi protocols. Mover does automatic rebalancing, yield collection, and capital optimization. ';
     }
   },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.input.asset = eth;
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+        this.checkSubsidizedAvailability();
+      }
     }
-    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {

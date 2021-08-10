@@ -68,13 +68,14 @@
 import Vue, { PropType } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { BigNumber } from 'bignumber.js';
+import { Properties } from 'csstype';
 
 import { TokenWithBalance } from '@/wallet/types';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import { TokenImage } from '@/components/tokens';
-import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
 import PlusIcon from './plus-icon.vue';
 
@@ -169,18 +170,18 @@ export default Vue.extend({
 
       return this.getTokenColor(this.asset.address);
     },
-    buttonStyle(): Record<string, string> {
+    buttonStyle(): Properties {
       if (this.assetColor === undefined) {
         return {};
       }
 
       return {
-        'background-color': this.assetColor,
-        'box-shadow': `0 0 16px ${this.assetColor}`,
-        '-webkit-box-shadow': `0 0 16px ${this.assetColor}`
+        backgroundColor: this.assetColor,
+        boxShadow: `0 0 16px ${this.assetColor}`,
+        WebkitBoxShadow: `0 0 16px ${this.assetColor}`
       };
     },
-    spanMaxAmountStyle(): Record<string, string> {
+    spanMaxAmountStyle(): Properties {
       if (this.assetColor === undefined) {
         return {};
       }
@@ -252,7 +253,7 @@ export default Vue.extend({
     async handleOpenSelectModal(): Promise<void> {
       if (!this.disabledSelectCurrency) {
         const newAsset = await this.setModalIsDisplayed({
-          id: Modal.SearchToken,
+          id: ModalType.SearchToken,
           value: true,
           payload: {
             useWalletTokens: this.useWalletTokens,

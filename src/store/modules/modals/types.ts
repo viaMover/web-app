@@ -1,6 +1,6 @@
 import { Token } from '@/wallet/types';
 
-export const enum Modal {
+export enum Modal {
   SavingsDeposit = 'savings-deposit-modal',
   SavingsWithdraw = 'savings-withdraw-modal',
   SearchToken = 'search-token-modal',

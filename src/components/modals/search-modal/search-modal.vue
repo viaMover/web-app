@@ -7,6 +7,7 @@
     header-html-class="swaps__wrapper-search-form"
     :modal-id="modalId"
     show-close-button
+    @close="handleSelect(undefined)"
   >
     <template v-slot:header>
       <form class="search-form" @submit.prevent.stop="">
@@ -23,25 +24,28 @@
     </template>
 
     <div ref="resultsTop" class="swaps__wrapper-search-items">
-      <search-modal-token-list
-        v-if="forceTokenArray.length > 0"
-        :items="forcedTokens"
-        @select="handleSelect"
-      />
-      <template v-else>
+      <template v-if="totalResultsLength > 0">
         <search-modal-token-list
-          :header-text="$t('search.lblTokensInTheWallet')"
-          :items="walletTokens"
-          :show-header="!useWalletTokens && walletTokens.length > 0"
+          v-if="forceTokenArray.length > 0"
+          :items="forcedTokens"
           @select="handleSelect"
         />
-        <search-modal-token-list
-          :header-text="$t('search.lblGlobalSearch')"
-          :items="globalTokens"
-          :show-header="!useWalletTokens && globalTokens.length > 0"
-          @select="handleSelect"
-        />
+        <template v-else>
+          <search-modal-token-list
+            :header-text="$t('search.lblTokensInTheWallet')"
+            :items="walletTokens"
+            :show-header="!useWalletTokens && walletTokens.length > 0"
+            @select="handleSelect"
+          />
+          <search-modal-token-list
+            :header-text="$t('search.lblGlobalSearch')"
+            :items="globalTokens"
+            :show-header="!useWalletTokens && globalTokens.length > 0"
+            @select="handleSelect"
+          />
+        </template>
       </template>
+      <div v-else class="nothing-found">Nothing found here!</div>
     </div>
   </modal>
 </template>
@@ -121,12 +125,19 @@ export default Vue.extend({
       );
     },
     forcedTokens(): Array<Token> {
-      if (this.useWalletTokens) {
+      if (this.forceTokenArray.length === 0) {
         return [];
       }
 
       return this.filterTokens(
         this.searchInForcedTokenArray(this.searchTermDebounced)
+      );
+    },
+    totalResultsLength(): number {
+      return (
+        this.forcedTokens.length +
+        this.walletTokens.length +
+        this.globalTokens.length
       );
     }
   },
@@ -144,9 +155,7 @@ export default Vue.extend({
             return;
           }
 
-          this.$refs.resultsTop.scroll({
-            top: 0
-          });
+          this.$refs.resultsTop.scroll({ top: 0 });
         });
       }, debounceTimeout);
     },
@@ -173,17 +182,21 @@ export default Vue.extend({
         isCaseSensitive: false
       });
     },
-    handleSelect(token: Token): void {
+    handleSelect(token: Token | undefined): void {
       this.state[this.modalId].resolver?.(token);
       this.setIsModalDisplayed({ id: this.modalId, value: false });
+      window.clearTimeout(this.debounce);
       this.searchTerm = '';
+      this.searchTermDebounced = '';
     },
     searchInForcedTokenArray(searchTerm: string): Array<Token> {
-      return (
-        this.forcedTokenArraySearcher
-          ?.search(searchTerm, { limit: 100 })
-          .map((res) => res.item) || this.forceTokenArray
-      );
+      if (this.forcedTokenArraySearcher === undefined || searchTerm === '') {
+        return this.forceTokenArray;
+      }
+
+      return this.forcedTokenArraySearcher
+        .search(searchTerm, { limit: 100 })
+        .map((res) => res.item);
     },
     filterTokens(tokens: Array<Token>): Array<Token> {
       let result = tokens.slice();
