@@ -1,4 +1,3 @@
-import { toWei } from '@/utils/bigmath';
 import { MAXUINT256 } from '@/utils/consts';
 import { ERC20_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';

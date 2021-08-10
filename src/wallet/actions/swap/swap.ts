@@ -1,4 +1,3 @@
-import { approve } from './../approve/approve';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress

@@ -1,7 +1,6 @@
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { MutationTree } from 'vuex';
 import Fuse from 'fuse.js';
-
-import { sortAndDeduplicateTransactions } from '../utils/transactions';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import {
   AccountData,
@@ -10,7 +9,7 @@ import {
   ChartPair,
   ProviderData
 } from '../types';
-import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
+import { GasData, Token, TokenWithBalance } from '@/wallet/types';
 import { sortAndDeduplicateTokens } from '../utils/tokens';
 import { Explorer } from '@/services/zerion/explorer';
 
@@ -29,6 +28,12 @@ export default {
   },
   setExplorer(state, explorer: Explorer): void {
     state.explorer = explorer;
+  },
+  setOffchainExplorerHandler(
+    state,
+    oeh: OffchainExplorerHanler | undefined
+  ): void {
+    state.offchainExplorerHanlder = oeh;
   },
   setChartData(state, chartData: Record<string, ChartPair[]>): void {
     state.chartData = chartData;
@@ -89,18 +94,6 @@ export default {
         [token.address.toLowerCase()]: token.color
       };
     }, {});
-  },
-  setWalletTransactions(state, transactions: Array<Transaction>): void {
-    state.transactions = sortAndDeduplicateTransactions(transactions);
-  },
-  updateWalletTransactions(state, newTransactions: Array<Transaction>): void {
-    const allTransactions = [...newTransactions, ...state.transactions];
-    state.transactions = sortAndDeduplicateTransactions(allTransactions);
-  },
-  removeWalletTransaction(state, removeHashes: Array<string>): void {
-    state.transactions = state.transactions.filter(
-      (t: Transaction) => !removeHashes.includes(t.hash)
-    );
   },
   setRefreshEror(state, error): void {
     state.refreshError = error;

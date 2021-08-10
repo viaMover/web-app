@@ -33,8 +33,7 @@ export const estimateSwapCompound = async (
   transferData: TransferData,
   network: Network,
   web3: Web3,
-  accountAddress: string,
-  useSubsidized: boolean
+  accountAddress: string
 ): Promise<CompoudEstimateResponse> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 

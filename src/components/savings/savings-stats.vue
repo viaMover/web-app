@@ -29,16 +29,17 @@ export default Vue.extend({
     LeftRailSection,
     LeftRailSectionItem
   },
-  data() {
-    return {
-      earnedToday: '$0'
-    };
-  },
   computed: {
     ...mapGetters('account', {
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
-      savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative'
+      savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative',
+      savingsEstimatedEarningsTomorrowNative:
+        'savingsEstimatedEarningsTomorrowNative'
     }),
+    earnedToday(): string {
+      const value = formatToNative(this.savingsEstimatedEarningsTomorrowNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
+    },
     earnedThisMonth(): string {
       const value = formatToNative(this.savingsInfoEarnedThisMonthNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;

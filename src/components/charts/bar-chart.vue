@@ -143,16 +143,25 @@ export default Vue.extend({
           animation: true,
           onClick: this.onClick,
           responsive: false,
+          normalized: true,
           plugins: {
             legend: {
               display: false
             },
             tooltip: {
               enabled: false
+            },
+            title: {
+              font: {
+                family: 'Regular',
+                lineHeight: 16,
+                size: 10
+              }
             }
           },
-          elements: {
+          datasets: {
             bar: {
+              minBarLength: 10,
               borderRadius: 5,
               borderWidth: 1,
               borderColor: this.defaultColor,
