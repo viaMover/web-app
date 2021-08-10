@@ -237,34 +237,6 @@ $(document).ready(function() {
 	}
 	noAccessPopup();
 
-	function redeemPopup() {
-		let redeemPopup = $('.product-item-redeem__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.product-item-redeem');
-		let bg = $('.product-item-redeem__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			redeemPopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			redeemPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			redeemPopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	redeemPopup();
-
 	function purchaseBondsPopup() {
 		let increasePopup = $('.purchase-bonds__popup'); 
 		let close = $('.purchase-bonds__popup-close');
@@ -608,6 +580,26 @@ $(document).ready(function() {
 		})
 	}
 	sellPopup();
+
+	function redeemPopup() {
+		let redeemPopup = $('.popup-product-item-redeem'); 
+		let close = $('.popup__close');
+		let button = $('.product-item-redeem');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			redeemPopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			redeemPopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	redeemPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');

@@ -1994,37 +1994,31 @@ body {
 .popup-product-item-sell .popup__content .button .action {
   background-color: #000;
 }
-.product-item-redeem__wrapper {
+.popup-product-item-redeem .popup__content {
   overflow: auto;
   max-height: 486px;
   scrollbar-width: none;
 }
-.product-item-redeem__wrapper::-webkit-scrollbar {
+.popup-product-item-redeem .popup__content::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
-.product-item-redeem__wrapper-info {
-  background-color: #fafafc;
-  -webkit-box-shadow: 0px 4px 16px #000;
-          box-shadow: 0px 4px 16px #000;
-  border-radius: 16px;
-}
-.product-item-redeem__wrapper-info-items-item {
+.popup-product-item-redeem .popup__content .info__form {
   border-radius: 8px 8px 0px 0px;
   -webkit-box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
           box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
   position: relative;
   z-index: 5;
 }
-.product-item-redeem__wrapper-info-items-item-right button.currency {
+.popup-product-item-redeem .popup__content .info__form-right button.currency {
   background: #b9bbbc;
   -webkit-box-shadow: 0px 0px 16px #b9bbbc;
           box-shadow: 0px 0px 16px #b9bbbc;
 }
-.product-item-redeem__wrapper-info-items-item-right button.currency span {
+.popup-product-item-redeem .popup__content .info__form-right button.currency span {
   color: #000;
 }
-.product-item-redeem__wrapper-info-form form {
+.popup-product-item-redeem .popup__content .form form {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -2038,28 +2032,28 @@ body {
   border-radius: 0px 0px 8px 8px;
   padding: 24px 16px;
 }
-.product-item-redeem__wrapper-info-form form label,
-.product-item-redeem__wrapper-info-form form input {
+.popup-product-item-redeem .popup__content .form form label,
+.popup-product-item-redeem .popup__content .form form input {
   font-family: 'Medium';
   font-size: 18px;
   line-height: 28px;
 }
-.product-item-redeem__wrapper-info-form form label {
+.popup-product-item-redeem .popup__content .form form label {
   margin-top: 16px;
   -webkit-flex-basis: 100%;
       -ms-flex-preferred-size: 100%;
           flex-basis: 100%;
   color: rgba(60,60,67,0.6);
 }
-.product-item-redeem__wrapper-info-form form label:first-child {
+.popup-product-item-redeem .popup__content .form form label:first-child {
   margin-top: 0;
 }
-.product-item-redeem__wrapper-info-form form input {
+.popup-product-item-redeem .popup__content .form form input {
   color: #000;
   background: none;
   border: none;
 }
-.product-item-redeem__wrapper-info-button .action {
+.popup-product-item-redeem .popup__content .button .action {
   background-color: #000;
 }
 .purchase-bonds__wrapper-info-items-item-right button.currency {

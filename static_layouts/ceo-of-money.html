@@ -379,60 +379,60 @@
           </div>
         </div>
       </div>
-      <div class="popup-bg product-item-redeem__popup-bg"></div>
-      <div class="burger__popup-close button-active transaction__popup-close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="popup popup-product-item-redeem">
+        <div class="popup__close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8334 2.83411C13.2936 2.37387 13.2936 1.62768 12.8334 1.16744C12.3731 0.707206 11.6269 0.707206 11.1667 1.16744L7.00004 5.33411L2.83338 1.16744C2.37314 0.707206 1.62695 0.707206 1.16671 1.16744C0.706474 1.62768 0.706474 2.37387 1.16671 2.83411L5.33338 7.00078L1.16671 11.1674C0.706474 11.6277 0.706474 12.3739 1.16671 12.8341C1.62695 13.2943 2.37314 13.2943 2.83338 12.8341L7.00004 8.66744L11.1667 12.8341C11.6269 13.2943 12.3731 13.2943 12.8334 12.8341C13.2936 12.3739 13.2936 11.6277 12.8334 11.1674L8.66671 7.00078L12.8334 2.83411Z" fill="black"/>
 </svg>
-      </div>
-      <div class="product-item-redeem__popup transaction__popup">
-        <div class="product-item-redeem__wrapper transaction__popup-wrapper">
-          <div class="product-item-redeem__wrapper-info transaction__popup-wrapper-info">
-            <h3 class="transaction__popup-wrapper-info-title">Redeem</h3>
-            <div class="product-item-redeem__wrapper-info-items transaction__popup-wrapper-info-items">
-              <form class="product-item-redeem__wrapper-info-items-item transaction__popup-wrapper-info-items-item" action="#"> 
-                <div class="product-item-redeem__wrapper-info-items-item-left transaction__popup-wrapper-info-items-item-left">
-                  <div class="icon">
-                    <picture>
-                      <source type="image/webp" srcset="images/CEO1_Little.webp, images/CEO1_Little@2x.webp 2x"/><img src="images/CEO1_Little.png" srcset="images/CEO1_Little.png, images/CEO1_Little@2x.png 2x" alt=""/>
-                    </picture>
-                  </div>
-                  <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
-                  <div class="input-bottom"><span class="disabled">≈$</span>
-                    <input type="number" name="nubmer" placeholder="0.00"/>
-                  </div>
+        </div>
+        <div class="popup__background"></div>
+        <div class="popup__content">
+          <h3 class="title">Redeem</h3>
+          <div class="info">
+            <form class="info__form" action="#"> 
+              <div class="info__form-left">
+                <div class="icon">
+                  <picture>
+                    <source type="image/webp" srcset="images/CEO1_Little.webp, images/CEO1_Little@2x.webp 2x"/><img src="images/CEO1_Little.png" srcset="images/CEO1_Little.png, images/CEO1_Little@2x.png 2x" alt=""/>
+                  </picture>
                 </div>
-                <div class="product-item-redeem__wrapper-info-items-item-right transaction__popup-wrapper-info-items-item-right">
-                  <button class="button-active currency" type="button"><span>CEO1</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <input class="input-top" type="number" name="nubmer" placeholder="0.00"/>
+                <div class="input-bottom"><span class="disabled">≈$</span>
+                  <input type="number" name="nubmer" placeholder="0.00"/>
+                </div>
+              </div>
+              <div class="info__form-right">
+                <button class="button-active currency" type="button"><span>CEO1</span><svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9 1L5 5L1 1" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-                  </button>
-                  <p>Balance: 2 CEO1</p>
-                </div>
-              </form>
-            </div>
-            <div class="product-item-redeem__wrapper-info-form transaction__popup-wrapper-info-form">
-              <form action="#">
-                <label>Full name: 
-                  <input type="text" name="name" placeholder="Antoshi Nakamoto" required="required"/>
-                </label>
-                <label>Email: 
-                  <input type="email" name="email" placeholder="antoshi@nakamoto.net" required="required"/>
-                </label>
-                <label>Country: 
-                  <input type="text" name="country" placeholder="Nakamotoland" required="required"/>
-                </label>
-                <label>Full address: 
-                  <input type="text" name="address" placeholder="House number, Street name" required="required"/>
-                </label>
-                <label>Town or city: 
-                  <input type="text" name="city" placeholder="Antocity" required="required"/>
-                </label>
-                <label>Postal code: 
-                  <input type="number" name="postalCode" placeholder="999 999" required="required"/>
-                </label>
-              </form>
-            </div>
-            <div class="product-item-redeem__wrapper-info-buttons transaction__popup-wrapper-info-buttons">
+                </button>
+                <p>Balance: 2 CEO1</p>
+              </div>
+            </form>
+          </div>
+          <div class="form">
+            <form action="#">
+              <label>Full name: 
+                <input type="text" name="name" placeholder="Antoshi Nakamoto" required="required"/>
+              </label>
+              <label>Email: 
+                <input type="email" name="email" placeholder="antoshi@nakamoto.net" required="required"/>
+              </label>
+              <label>Country: 
+                <input type="text" name="country" placeholder="Nakamotoland" required="required"/>
+              </label>
+              <label>Full address: 
+                <input type="text" name="address" placeholder="House number, Street name" required="required"/>
+              </label>
+              <label>Town or city: 
+                <input type="text" name="city" placeholder="Antocity" required="required"/>
+              </label>
+              <label>Postal code: 
+                <input type="number" name="postalCode" placeholder="999 999" required="required"/>
+              </label>
+            </form>
+          </div>
+          <div class="statistics">
+            <div class="statistics__buttons">
               <!-- To be able to click on the button, remove the .disabled class-->
               <button class="button-active details disabled" type="button">
                 <picture>
@@ -466,32 +466,34 @@
                 </div>
               </div>
             </div>
-            <div class="product-item-redeem__wrapper-info-button transaction__popup-wrapper-info-button">
-              <!-- <button class="button-active enter" type="button">Fill Out Delivery Form</button>-->
-              <button class="button-active action" type="button">📦 Redeem</button>
+          </div>
+          <div class="button">
+            <!-- <button class="button-active enter" type="button">Fill Out Delivery Form</button>-->
+            <button class="button-active action" type="button">📦 Redeem</button>
+          </div>
+          <div class="footer">
+            <div class="footer__left"><span>$0.00</span>
+              <p>Network fee</p>
             </div>
-            <div class="product-item-redeem__wrapper-info-footer transaction__popup-wrapper-info-footer">
-              <div class="product-item-redeem__wrapper-info-footer-left transaction__popup-wrapper-info-footer-left"><span>$0.00</span>
-                <p>Network fee</p>
-              </div>
-              <div class="product-item-redeem__wrapper-info-footer-right swiper-container popup-slider transaction__popup-wrapper-info-footer-right">
-                <div class="swiper-pagination"></div>
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
-                  <div class="swiper-slide"> 
-                    <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
-                  </div>
+            <div class="footer__right swiper-container popup-slider">
+              <div class="swiper-pagination"></div>
+              <div class="swiper-wrapper">
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>🐷</span> Smart Treasury</p><span>73 Gwei ~ 40 sec</span>
+                </div>
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>🐌</span> Slow</p><span>73 Gwei ~ 40 sec</span>
+                </div>
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>⏱</span> Normal</p><span>73 Gwei ~ 40 sec</span>
+                </div>
+                <div class="swiper-slide"> 
+                  <p class="speed"><span>🚀</span> Fast</p><span>73 Gwei ~ 40 sec</span>
                 </div>
               </div>
-              <div class="product-item-redeem__wrapper-info-footer-description transaction__popup-wrapper-info-footer-description"><p>To receive a physical item with free worldwide delivery, you need to fill out the form and redeem a token. The team will contact you shortly via the provided email to confirm delivery.</p></div>
+            </div>
+            <div class="footer__description">
+              <p>To receive a physical item with free worldwide delivery, you need to fill out the form and redeem a token. The team will contact you shortly via the provided email to confirm delivery.</p>
             </div>
           </div>
         </div>
