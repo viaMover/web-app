@@ -237,34 +237,6 @@ $(document).ready(function() {
 	}
 	noAccessPopup();
 
-	function claimAndRepurchasePopup() {
-		let claimAndRepurchasePopup = $('.claim-and-repurchase__popup'); 
-		let close = $('.burger__popup-close');
-		let button = $('.claim-and-repurchase');
-		let bg = $('.claim-and-repurchase__popup-bg');
-		let burger = $('.burger-menu__popup'); 
-		let burgerBg = $('.burger-menu__popup-bg');
-
-		button.on('click', function() { 
-			claimAndRepurchasePopup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-			burger.removeClass('burger-menu__popup-active'); 
-			burgerBg.removeClass('burger-menu__popup-bg-active');
-		})
-		close.on('click', function() { 
-			claimAndRepurchasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			claimAndRepurchasePopup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	claimAndRepurchasePopup();
-
 	function balancePopup() {
 		let popup = $('.balance__popup'); 
 		let button = $('.button-balance');
@@ -584,6 +556,26 @@ $(document).ready(function() {
 		})
 	}
 	claimBondsPopup();
+
+	function claimAndRepurchasePopup() {
+		let claimAndRepurchasePopup = $('.popup-claim-and-repurchase'); 
+		let close = $('.popup__close');
+		let button = $('.claim-and-repurchase');
+		let burger = $('.burger-menu__popup'); 
+		let burgerBg = $('.burger-menu__popup-bg');
+
+		button.on('click', function() { 
+			claimAndRepurchasePopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			burger.removeClass('burger-menu__popup-active'); 
+			burgerBg.removeClass('burger-menu__popup-bg-active');
+		})
+		close.on('click', function() { 
+			claimAndRepurchasePopup.removeClass('popup-active');
+			close.removeClass('popup__close-active');
+		})
+	}
+	claimAndRepurchasePopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
