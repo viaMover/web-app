@@ -1983,15 +1983,15 @@ body {
 .popup-product-item-buy .popup__content .button .action {
   background-color: #000;
 }
-.product-item-sell__wrapper-info-items-item-right button.currency {
+.popup-product-item-sell .popup__content .info__form-right button.currency {
   background: #b9bbbc;
   -webkit-box-shadow: 0px 0px 16px #b9bbbc;
           box-shadow: 0px 0px 16px #b9bbbc;
 }
-.product-item-sell__wrapper-info-items-item-right button.currency span {
+.popup-product-item-sell .popup__content .info__form-right button.currency span {
   color: #000;
 }
-.product-item-sell__wrapper-info-button .action {
+.popup-product-item-sell .popup__content .button .action {
   background-color: #000;
 }
 .product-item-redeem__wrapper {
