@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Route } from 'vue-router';
+import { Properties } from 'csstype';
 
 import { EmojiCard } from '@/components/controls';
 
@@ -52,7 +52,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    itemStyle(): Record<string, string> {
+    itemStyle(): Properties {
       return {
         opacity: this.disabled ? '0.5' : '1'
       };

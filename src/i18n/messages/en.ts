@@ -61,12 +61,12 @@ export default {
       'You can now order the Beautiful debit card brought you by Mover and Trastra',
     btnOrderDebitCard: 'Order the card'
   },
-  depositCard: {
+  savingsDepositCard: {
     icon: '💰',
-    lblDepositCardHeading: 'Save it!',
-    txtDepositCard:
+    lblSavingsDepositCardHeading: 'Save it!',
+    txtSavingsDepositCard:
       'Savings just got better. Enjoy easy higher rates and even less hassle.',
-    btnDepositCard: '@:depositCard.icon Deposit in Savings'
+    btnSavingsDepositCard: '@:savingsDepositCard.icon Deposit in Savings'
   },
   savings: {
     icon: '💰',

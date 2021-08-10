@@ -31,10 +31,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Properties } from 'csstype';
 
+import { BackButton, CloseButton } from '@/components/buttons';
 import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
-import { BackButton, CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'ContentWrapper',
@@ -89,10 +90,10 @@ export default Vue.extend({
 
       return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
     },
-    leftRailStyle(): Record<string, string> {
+    leftRailStyle(): Properties {
       if (this.hasBackButton || this.hasCloseButton) {
         return {
-          'padding-top': '104px'
+          paddingTop: '104px'
         };
       }
       return {};

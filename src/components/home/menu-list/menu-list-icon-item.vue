@@ -1,5 +1,5 @@
 <template>
-  <li class="button-active" :class="wrapperClass" @click="handleOpenModal">
+  <li class="button-active" :class="wrapperClass" @click="handleClick">
     <div class="icon">{{ icon }}</div>
     <div class="text">{{ text }}</div>
   </li>
@@ -32,9 +32,11 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleOpenModal(): void {
+    handleClick(): void {
       if (this.modalId !== '') {
         toggleSingleItem(this.modalId);
+      } else {
+        this.$emit('open-modal');
       }
     }
   }

@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { Properties } from 'csstype';
 
 export default Vue.extend({
   name: 'LeftRail',
@@ -23,8 +24,10 @@ export default Vue.extend({
       required: true
     },
     innerWrapperStyle: {
-      type: Object as PropType<Record<string, string>>,
-      default: {}
+      type: Object as PropType<Properties>,
+      default: () => {
+        return {};
+      }
     }
   },
   computed: {

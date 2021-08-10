@@ -1,11 +1,11 @@
 <template>
   <card
-    :btn-text="$t('depositCard.btnDepositCard')"
-    :closed="!isInfoVisible"
-    :description="$t('depositCard.txtDepositCard')"
-    :icon="$t('depositCard.icon')"
+    :btn-text="$t('savingsDepositCard.btnSavingsDepositCard')"
+    :description="$t('savingsDepositCard.txtSavingsDepositCard')"
+    :icon="$t('savingsDepositCard.icon')"
     is-black-close-btn
-    :title="$t('depositCard.lblDepositCardHeading')"
+    :opened="isInfoVisible"
+    :title="$t('savingsDepositCard.lblSavingsDepositCardHeading')"
     wrapper-class="general-desktop__menu-wrapper-deposit"
     @button-click="handleBtnClick"
     @close="toggleInfo"
@@ -22,7 +22,7 @@ import { Modal } from '@/components/modals';
 import { Card } from '@/components/controls';
 
 export default Vue.extend({
-  name: 'DepositCardSection',
+  name: 'SavingsDepositCardSection',
   components: {
     Card
   },

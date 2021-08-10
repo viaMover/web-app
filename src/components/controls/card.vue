@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!closed" :class="wrapperClass">
+  <div v-if="opened" :class="wrapperClass">
     <div class="card__info">
       <div class="card__info-description">
         <h2>{{ title }}</h2>
@@ -52,9 +52,9 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    closed: {
+    opened: {
       type: Boolean,
-      default: false
+      default: true
     },
     isBlackCloseBtn: {
       type: Boolean,

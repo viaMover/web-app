@@ -6,7 +6,7 @@
 
     <header-balance />
     <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-    <deposit-card-section />
+    <savings-deposit-card-section />
     <menu-section />
 
     <transaction-modal />
@@ -36,7 +36,7 @@ import {
   DebitCardSection,
   HeaderBalance,
   MenuSection,
-  DepositCardSection
+  SavingsDepositCardSection
 } from '@/components/sections';
 import { SwapForm } from '@/components/forms';
 import {
@@ -59,7 +59,7 @@ export default Vue.extend({
     TreasuryIncreaseBoostForm,
     SavingsDepositForm,
     SavingsWithdrawForm,
-    DepositCardSection,
+    SavingsDepositCardSection,
     DebitCardSection,
     MenuSection,
     ContentWrapper,
