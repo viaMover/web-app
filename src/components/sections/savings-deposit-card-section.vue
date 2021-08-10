@@ -1,6 +1,6 @@
 <template>
   <card
-    :btn-text="$t('savingsDepositCard.btnSavingsDepositCard')"
+    :button-text="$t('savingsDepositCard.btnSavingsDepositCard')"
     :description="$t('savingsDepositCard.txtSavingsDepositCard')"
     :icon="$t('savingsDepositCard.icon')"
     is-black-close-btn
