@@ -27,7 +27,8 @@ import {
   ChartData,
   ChartOptions,
   ChartEvent,
-  ActiveElement
+  ActiveElement,
+  ScriptableScaleContext
 } from 'chart.js';
 
 import {
@@ -50,6 +51,10 @@ export default Vue.extend({
       type: String,
       default: 'rgba(251, 157, 83, 1)'
     },
+    tickColor: {
+      type: String,
+      default: 'rgba(60,60,67,0.60)'
+    },
     chartDataSource: {
       type: Array as PropType<
         Array<SavingsMonthBalanceItem | TreasuryMonthBonusesItem>
@@ -69,7 +74,8 @@ export default Vue.extend({
     return {
       chartInstance: undefined as
         | Chart<'bar', Array<number>, string>
-        | undefined
+        | undefined,
+      selectedItem: undefined as undefined | ChartDataItem
     };
   },
   computed: {
@@ -89,6 +95,7 @@ export default Vue.extend({
         return;
       }
 
+      this.selectedItem = undefined;
       this.$emit('item-selected', undefined);
 
       this.chartInstance.data.labels = newVal.labels;
@@ -125,13 +132,19 @@ export default Vue.extend({
         backgroundColors;
       chart.config.data.datasets[elements[0].datasetIndex].borderColor =
         backgroundColors;
+      chart.config.data.datasets[
+        elements[0].datasetIndex
+      ].hoverBackgroundColor = backgroundColors;
+      chart.config.data.datasets[elements[0].datasetIndex].hoverBorderColor =
+        backgroundColors;
       chart.update();
 
+      this.selectedItem = item;
       this.$emit('item-selected', item);
     },
     initChart(): void {
       const el = this.$refs.chartCanvas as HTMLCanvasElement;
-      this.chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
+      const chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
         type: 'bar',
         data: this.chartData,
         options: {
@@ -142,6 +155,7 @@ export default Vue.extend({
           },
           animation: true,
           onClick: this.onClick,
+          maintainAspectRatio: false,
           responsive: false,
           normalized: true,
           plugins: {
@@ -152,20 +166,25 @@ export default Vue.extend({
               enabled: false
             },
             title: {
-              font: {
-                family: 'Regular',
-                lineHeight: 16,
-                size: 10
-              }
+              display: false
             }
           },
           datasets: {
             bar: {
               minBarLength: 10,
-              borderRadius: 5,
+              barThickness: 56,
+              maxBarThickness: 56
+            }
+          },
+          elements: {
+            bar: {
+              borderRadius: 4,
               borderWidth: 1,
               borderColor: this.defaultColor,
-              backgroundColor: this.defaultColor
+              backgroundColor: this.defaultColor,
+              hoverBackgroundColor: this.defaultColor,
+              hoverBorderColor: this.defaultColor,
+              borderSkipped: false
             }
           },
           scales: {
@@ -174,19 +193,54 @@ export default Vue.extend({
                 tooltipFormat: 'DD MMMM YYYY HH:mm'
               },
               grid: {
-                display: false
+                display: false,
+                drawBorder: false
               },
               ticks: {
-                align: 'center'
+                align: 'center',
+                font: {
+                  style: 'normal',
+                  family: 'Medium, sans-serif',
+                  lineHeight: '16px',
+                  size: 10,
+                  weight: 500
+                },
+                color: (ctx: ScriptableScaleContext) => {
+                  const selectedItemIdx =
+                    ctx.chart.data.datasets[0].data.findIndex(
+                      (val) => val.meta === this.selectedItem
+                    );
+                  if (
+                    selectedItemIdx < 0 &&
+                    this.selectedItem === undefined &&
+                    ctx.index === ctx.chart.data.datasets[0].data.length - 1
+                  ) {
+                    return this.accentColor;
+                  }
+
+                  return ctx.index === selectedItemIdx
+                    ? this.accentColor
+                    : this.tickColor;
+                },
+                maxRotation: 0,
+                minRotation: 0,
+                padding: 16
               },
               position: 'bottom'
             },
             y: {
-              display: false
+              display: false,
+              grid: {
+                display: false,
+                drawBorder: false
+              }
             }
           }
         } as ChartOptions<'bar'>
       });
+      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 140);
+
+      this.chartInstance = chartInstance;
     }
   }
 });
