@@ -32,7 +32,7 @@ export enum TransactionTypes {
   unknown = 'unknown'
 }
 
-export type TransactionStatus = 'confirmed' | 'failed';
+export type TransactionStatus = 'confirmed' | 'failed' | 'pending';
 
 export type SmallTokenInfoWithIcon = SmallTokenInfo & {
   iconURL: string;
@@ -58,6 +58,8 @@ export type TransactionCommonData = {
   fee: FeeData;
   status: TransactionStatus;
   type: TransactionTypes;
+  isOffchain: boolean;
+  subsidizedQueueId?: string;
 };
 
 export type TransactionSwapERC20 = TransactionCommonData & {
