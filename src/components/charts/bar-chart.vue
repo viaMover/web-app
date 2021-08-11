@@ -156,6 +156,11 @@ export default Vue.extend({
           },
           animation: true,
           onClick: this.onClick,
+          onHover(event: ChartEvent, chartElements: ActiveElement[]) {
+            event.native.target.style.cursor = chartElements[0]
+              ? 'pointer'
+              : 'default';
+          },
           maintainAspectRatio: false,
           responsive: false,
           normalized: true,
@@ -239,7 +244,7 @@ export default Vue.extend({
           }
         } as ChartOptions<'bar'>
       });
-      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 140);
+      chartInstance.resize(this.chartData.datasets[0].data.length * 100, 140);
 
       this.chartInstance = chartInstance;
     }
