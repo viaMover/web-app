@@ -244,7 +244,7 @@ export default Vue.extend({
           }
         } as ChartOptions<'bar'>
       });
-      chartInstance.resize(this.chartData.datasets[0].data.length * 100, 140);
+      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 140);
 
       this.chartInstance = chartInstance;
     }
