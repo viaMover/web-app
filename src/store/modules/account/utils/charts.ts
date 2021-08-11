@@ -11,7 +11,7 @@ import { divide, fromWei, greaterThan, lessThan, sub } from '@/utils/bigmath';
 import { dateFromExplicitPair } from '@/utils/time';
 
 type FilterPeriod = 'month' | 'week' | 'day';
-type TItem =
+export type TItem =
   | TreasuryHourlyBalancesItem
   | SavingsHourlyBalancesItem
   | TreasuryMonthBonusesItem

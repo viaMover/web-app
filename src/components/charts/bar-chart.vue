@@ -33,7 +33,8 @@ import {
 
 import {
   buildBalancesChartData,
-  ChartDataItem
+  ChartDataItem,
+  TItem
 } from '@/store/modules/account/utils/charts';
 import {
   SavingsMonthBalanceItem,
@@ -75,7 +76,7 @@ export default Vue.extend({
       chartInstance: undefined as
         | Chart<'bar', Array<number>, string>
         | undefined,
-      selectedItem: undefined as undefined | ChartDataItem
+      selectedItem: undefined as undefined | TItem
     };
   },
   computed: {
@@ -208,7 +209,7 @@ export default Vue.extend({
                 color: (ctx: ScriptableScaleContext) => {
                   const selectedItemIdx =
                     ctx.chart.data.datasets[0].data.findIndex(
-                      (val) => val.meta === this.selectedItem
+                      (val: ChartDataItem) => val.meta === this.selectedItem
                     );
                   if (
                     selectedItemIdx < 0 &&
