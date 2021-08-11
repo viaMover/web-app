@@ -115,32 +115,6 @@ $(document).ready(function() {
 	}
 	SwapsSlider();
 
-	function transactionWaitingPopup() {
-		let transactionPopup = $('.transaction-result__popup'); 
-		let close = $('.transaction__popup-close');
-		let button = $('.swaps__wrapper-info-button .choose');
-		let swapsPopup = $('.transaction__popup');
-		let bg = $('.popup-bg');
-
-		button.on('click', function() { 
-			transactionPopup.addClass('transaction-result__popup-active');
-			close.addClass('transaction__popup-close-active');
-			swapsPopup.removeClass('transaction__popup-active');
-		})
-		close.on('click', function() { 
-			transactionPopup.removeClass('transaction-result__popup-active');
-			close.removeClass('transaction__popup-close-active');
-			bg.removeClass('popup-bg-active');
-			swapsPopup.removeClass('transaction__popup-active');
-		})
-		bg.on('click', function() { 
-			transactionPopup.removeClass('transaction-result__popup-active');
-			close.removeClass('transaction__popup-close-active');
-			bg.removeClass('popup-bg-active');
-		})
-	}
-	transactionWaitingPopup();
-
 	function burderMenu() {
 		let popup = $('.burger-menu__popup'); 
 		let button = $('.burger-menu');
@@ -568,6 +542,25 @@ $(document).ready(function() {
 		})
 	}
 	swapsPopup();
+
+	function transactionWaitingPopup() {
+		let transactionPopup = $('.popup-transaction-result'); 
+		let close = $('.popup__close');
+		let button = $('.popup-swaps .choose');
+		let swapsPopup = $('.popup-swaps');
+
+		button.on('click', function() { 
+			transactionPopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+			swapsPopup.removeClass('popup-active');
+		})
+		close.on('click', function() { 
+			transactionPopup.removeClass('popup-active');
+			close.removeClass('popup__close-active');
+			swapsPopup.removeClass('popup-active');
+		})
+	}
+	transactionWaitingPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
