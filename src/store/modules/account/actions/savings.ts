@@ -76,6 +76,19 @@ export default {
       return;
     }
 
+    if (
+      !state.isSavingsReceiptLoading &&
+      state.savingsReceipt !== undefined &&
+      state.savingsReceipt.hourlyBalances.length > 0
+    ) {
+      const { year: loadedYear, month: loadedMonth } =
+        state.savingsReceipt.hourlyBalances[0];
+
+      if (month === loadedMonth && year === loadedYear) {
+        return;
+      }
+    }
+
     commit('setIsSavingsReceiptLoading', true);
     commit('setSavingsReceiptError', undefined);
     commit('setSavingsReceipt', undefined);

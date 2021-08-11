@@ -113,14 +113,25 @@ export const sendSubsidizedRequest = async (
   web3: Web3,
   changeStepToProcess: () => Promise<void>
 ): Promise<SubsidizedTxData> => {
-  const url = getNetwork(network)?.subsidizedUrl;
-  if (url === undefined) {
+  // const t = 1;
+  // if (t) {
+  //   return {
+  //     actionType,
+  //     queueID: '1',
+  //     txID: ''
+  //   };
+  // }
+
+  const baseUrl = getNetwork(network)?.subsidizedUrl;
+  if (baseUrl === undefined) {
     throw new Error(`network ${network} doesn't support subsidezed requests`);
   }
 
   const signature = await web3.eth.sign(action, accountAddress);
 
   changeStepToProcess();
+
+  const url = `${baseUrl}/tx/executeSubsidized`;
 
   try {
     console.log('Senging subsidizing request to ', url);
@@ -154,7 +165,7 @@ export const sendSubsidizedRequest = async (
       actionType,
       queueID: response.queueID,
       txID: response.txID
-    } as SubsidizedTxData;
+    };
   } catch (error) {
     throw new SubsidizedRequestError(
       `Failed to send subsidized request: ${error}`,
@@ -167,10 +178,12 @@ export const CheckSubsidizedInQueueTx = async (
   queueId: string,
   network: Network
 ): Promise<CheckSubsidizedQueuedTxData | undefined> => {
-  const url = getNetwork(network)?.subsidizedUrl;
-  if (url === undefined) {
+  const baseUrl = getNetwork(network)?.subsidizedUrl;
+  if (baseUrl === undefined) {
     throw new Error(`network ${network} doesn't support subsidezed requests`);
   }
+
+  const url = `${baseUrl}/tx/executeStatus/${queueId}`;
 
   try {
     const response = (await axios.get<CheckSubsidizedQueuedResponse>(url)).data;
@@ -231,10 +244,10 @@ export const isSubsidizedAllowed = (
 
   const isDev = process.env.VUE_APP_IS_DEV;
 
-  //if (isDev) {
-  //  console.log('Subsidized allowed for DEV');
-  //  return true;
-  //}
+  if (isDev) {
+    console.log('Subsidized allowed for DEV');
+    return true;
+  }
 
   const gasless =
     greaterThanOrEqual(treasuryBonus, fastTransactionPriceNative) &&

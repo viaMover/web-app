@@ -10,6 +10,8 @@ import ImageFallback from 'vue-image-fallback';
 import * as dayjs from './dayjs';
 import * as bignumber from './bignumber';
 
+import '@/styles/_fonts.less';
+
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.warn = () => {};

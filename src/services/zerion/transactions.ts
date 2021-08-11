@@ -1,12 +1,18 @@
+import { Network } from '@/utils/networkTypes';
 import {
-  FeeData,
-  TransactionStatus,
-  TransactionUnknown
-} from './../../wallet/types';
+  HOLY_HAND_ADDRESS,
+  SMART_TREASURY_ADDRESS
+} from '@/wallet/references/data';
+import { isSubsidizedAddress } from './../../wallet/actions/subsidized';
+import { isSuccess, isError } from './../responses';
+import { TransactionMoveTypeData } from './../mover/transactions/types';
+import { getMoverTransactionsTypes } from './../mover/transactions/service';
+import { FeeData, TransactionStatus, TransactionUnknown } from '@/wallet/types';
 import { ZerionTransaction, ZerionTransactionsReceived } from './responses';
 import find from 'lodash-es/find';
 
 import { Transaction, TransactionTypes } from '@/wallet/types';
+import { sameAddress } from '@/utils/address';
 
 const mapStatus = (status: string): TransactionStatus => {
   switch (status) {
@@ -14,6 +20,8 @@ const mapStatus = (status: string): TransactionStatus => {
       return 'confirmed';
     case 'failed':
       return 'failed';
+    case 'pending':
+      return 'pending';
     default:
       console.error(`Unexpected transaction status: ${status}`);
       return 'failed';
@@ -25,37 +33,83 @@ const feeMap = (fee: { value: number; price: number }): FeeData => ({
   ethPrice: String(fee.price)
 });
 
-export const mapZerionTxns = (
-  data: ZerionTransactionsReceived
-): Array<Transaction> => {
+export const isMoverTransation = (
+  zt: ZerionTransaction,
+  network: Network
+): boolean => {
+  if (
+    isSubsidizedAddress(zt.address_from) ||
+    isSubsidizedAddress(zt.address_to)
+  ) {
+    return true;
+  }
+
+  const HolyHandAddress = HOLY_HAND_ADDRESS(network);
+  if (
+    sameAddress(HolyHandAddress, zt.address_from) ||
+    sameAddress(HolyHandAddress, zt.address_to)
+  ) {
+    return true;
+  }
+
+  const TreasuryAddress = SMART_TREASURY_ADDRESS(network);
+  if (
+    sameAddress(TreasuryAddress, zt.address_from) ||
+    sameAddress(TreasuryAddress, zt.address_to)
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const mapZerionTxns = async (
+  data: ZerionTransactionsReceived,
+  network: Network
+): Promise<Array<Transaction>> => {
   let txns: Transaction[] = [];
 
+  data.payload.transactions = data.payload.transactions.filter((t) =>
+    isMoverTransation(t, network)
+  );
+
+  let moverTypesData: TransactionMoveTypeData[] = [];
+  const moverTypesDataRes = await getMoverTransactionsTypes(
+    data.payload.transactions.map((t) => t.hash)
+  );
+  if (isError<TransactionMoveTypeData[], string>(moverTypesDataRes)) {
+    console.error(
+      `Error from mover transaction service: ${moverTypesDataRes.error}`
+    );
+  } else {
+    moverTypesData = moverTypesDataRes.result;
+  }
   data.payload.transactions.forEach((t) => {
-    const tradeTxns = parseTradeTransaction(t);
+    const tradeTxns = parseTradeTransaction(t, moverTypesData);
     if (tradeTxns !== undefined) {
       txns = txns.concat(tradeTxns);
       return;
     }
 
-    const receiveTxns = parseReceiveTransaction(t);
+    const receiveTxns = parseReceiveTransaction(t, moverTypesData);
     if (receiveTxns !== undefined) {
       txns = txns.concat(receiveTxns);
       return;
     }
 
-    const sendTxns = parseSendTransaction(t);
+    const sendTxns = parseSendTransaction(t, moverTypesData);
     if (sendTxns !== undefined) {
       txns = txns.concat(sendTxns);
       return;
     }
 
-    const authTxns = parseAuthorizeTransaction(t);
+    const authTxns = parseAuthorizeTransaction(t, moverTypesData);
     if (authTxns !== undefined) {
       txns = txns.concat(authTxns);
       return;
     }
 
-    const unknownTxns = tryToParseToUnknown(t);
+    const unknownTxns = tryToParseToUnknown(t, moverTypesData);
     if (unknownTxns !== undefined) {
       //txns = txns.concat(unknownTxns);
       console.log('Unknown txns:');
@@ -70,7 +124,8 @@ export const mapZerionTxns = (
 };
 
 const parseTradeTransaction = (
-  tx: ZerionTransaction
+  tx: ZerionTransaction,
+  moverTypeDate: TransactionMoveTypeData[]
 ): Transaction[] | undefined => {
   if (tx.type === 'trade' && tx.changes.length > 1) {
     return tx.changes
@@ -103,7 +158,11 @@ const parseTradeTransaction = (
             timestamp: tx.mined_at,
             type: TransactionTypes.swapERC20,
             fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-            status: mapStatus(tx.status)
+            status: mapStatus(tx.status),
+            isOffchain: false,
+            moverType:
+              moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ??
+              'unknown'
           };
         } else {
           return {
@@ -125,7 +184,11 @@ const parseTradeTransaction = (
             timestamp: tx.mined_at,
             type: TransactionTypes.transferERC20,
             fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-            status: mapStatus(tx.status)
+            status: mapStatus(tx.status),
+            isOffchain: false,
+            moverType:
+              moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ??
+              'unknown'
           };
         }
       });
@@ -152,7 +215,10 @@ const parseTradeTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.transferERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false,
+        moverType:
+          moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ?? 'unknown'
       }
     ];
   }
@@ -160,7 +226,8 @@ const parseTradeTransaction = (
 };
 
 const parseReceiveTransaction = (
-  tx: ZerionTransaction
+  tx: ZerionTransaction,
+  moverTypeDate: TransactionMoveTypeData[]
 ): Transaction[] | undefined => {
   if (tx.type === 'receive' && tx.changes.length === 1) {
     const c = tx.changes[0];
@@ -184,7 +251,10 @@ const parseReceiveTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.transferERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false,
+        moverType:
+          moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ?? 'unknown'
       }
     ];
   }
@@ -192,7 +262,8 @@ const parseReceiveTransaction = (
 };
 
 const parseAuthorizeTransaction = (
-  tx: ZerionTransaction
+  tx: ZerionTransaction,
+  moverTypeDate: TransactionMoveTypeData[]
 ): Transaction[] | undefined => {
   if (tx.type === 'authorize') {
     return [
@@ -210,7 +281,10 @@ const parseAuthorizeTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.approvalERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false,
+        moverType:
+          moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ?? 'unknown'
       }
     ];
   }
@@ -218,7 +292,8 @@ const parseAuthorizeTransaction = (
 };
 
 const parseSendTransaction = (
-  tx: ZerionTransaction
+  tx: ZerionTransaction,
+  moverTypeDate: TransactionMoveTypeData[]
 ): Transaction[] | undefined => {
   if (tx.type === 'send' && tx.changes.length === 1) {
     const c = tx.changes[0];
@@ -242,7 +317,10 @@ const parseSendTransaction = (
         timestamp: tx.mined_at,
         type: TransactionTypes.transferERC20,
         fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-        status: mapStatus(tx.status)
+        status: mapStatus(tx.status),
+        isOffchain: false,
+        moverType:
+          moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ?? 'unknown'
       }
     ];
   }
@@ -250,7 +328,8 @@ const parseSendTransaction = (
 };
 
 const tryToParseToUnknown = (
-  tx: ZerionTransaction
+  tx: ZerionTransaction,
+  moverTypeDate: TransactionMoveTypeData[]
 ): TransactionUnknown[] | undefined => {
   if (
     (tx.type === 'trade' || tx.type === 'send' || tx.type === 'receive') &&
@@ -273,7 +352,10 @@ const tryToParseToUnknown = (
       timestamp: tx.mined_at,
       type: TransactionTypes.unknown,
       fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-      status: mapStatus(tx.status)
+      status: mapStatus(tx.status),
+      isOffchain: false,
+      moverType:
+        moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ?? 'unknown'
     }));
   }
 
@@ -287,7 +369,10 @@ const tryToParseToUnknown = (
       timestamp: tx.mined_at,
       type: TransactionTypes.unknown,
       fee: tx.fee ? feeMap(tx.fee) : { ethPrice: '0', feeInWEI: '0' },
-      status: mapStatus(tx.status)
+      status: mapStatus(tx.status),
+      isOffchain: false,
+      moverType:
+        moverTypeDate.find((t) => t.txID === tx.hash)?.moverTypes ?? 'unknown'
     }
   ];
 };

@@ -1,36 +1,26 @@
 <template>
   <content-wrapper has-left-rail wrapper-class="general-desktop">
     <template v-slot:left-rail>
-      <wallet-info-rail />
+      <transaction-list />
     </template>
 
     <header-balance />
     <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-
-    <template v-if="isFeatureEnabled('isReleaseRadarEnabled')">
-      <div class="general-desktop__menu-wrapper-item">
-        <div class="general-desktop__menu-wrapper-item-links">
-          <release-radar-section />
-          <swaps-section />
-        </div>
-      </div>
-    </template>
-    <template v-else>
-      <swaps-section
-        inner-container-class="general-desktop__menu-wrapper-item-info"
-        own-class="general-desktop__menu-wrapper-item"
-      />
-    </template>
-
-    <savings-section />
-    <treasury-section />
-    <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
-    <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
-    <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
+    <savings-deposit-card-section />
+    <menu-section />
 
     <transaction-modal />
     <centered-modal-window v-cloak :modal-id="SwapModalId">
       <swap-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="SavingsWithdrawModalId">
+      <savings-withdraw-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="SavingsDepositModalId">
+      <savings-deposit-form />
+    </centered-modal-window>
+    <centered-modal-window v-cloak :modal-id="TreasuryIncreaseBoostModalId">
+      <treasury-increase-boost-form />
     </centered-modal-window>
     <search-modal />
   </content-wrapper>
@@ -41,17 +31,12 @@ import Vue from 'vue';
 import { isFeatureEnabled } from '@/settings';
 
 import { ContentWrapper } from '@/components/layout';
-import { WalletInfoRail } from '@/components/wallet-info-rail';
+import { TransactionList } from '@/components/transaction-list';
 import {
-  ReleaseRadarSection,
-  SwapsSection,
   DebitCardSection,
-  SavingsSection,
-  TreasurySection,
-  GovernanceSection,
-  NibbleShopSection,
-  NftDropsSection,
-  HeaderBalance
+  HeaderBalance,
+  MenuSection,
+  SavingsDepositCardSection
 } from '@/components/sections';
 import { SwapForm } from '@/components/forms';
 import {
@@ -60,22 +45,25 @@ import {
   CenteredModalWindow,
   Modal
 } from '@/components/modals';
+import {
+  TreasuryIncreaseBoostForm,
+  SavingsDepositForm,
+  SavingsWithdrawForm
+} from '@/components/forms';
 
 import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'Home',
   components: {
-    ContentWrapper,
-    WalletInfoRail,
-    ReleaseRadarSection,
-    SwapsSection,
+    TreasuryIncreaseBoostForm,
+    SavingsDepositForm,
+    SavingsWithdrawForm,
+    SavingsDepositCardSection,
     DebitCardSection,
-    SavingsSection,
-    TreasurySection,
-    GovernanceSection,
-    NibbleShopSection,
-    NftDropsSection,
+    MenuSection,
+    ContentWrapper,
+    TransactionList,
     HeaderBalance,
     TransactionModal,
     SwapForm,
@@ -84,7 +72,10 @@ export default Vue.extend({
   },
   data() {
     return {
-      SwapModalId: Modal.Swap
+      SwapModalId: Modal.Swap,
+      SavingsWithdrawModalId: Modal.SavingsWithdraw,
+      SavingsDepositModalId: Modal.SavingsDeposit,
+      TreasuryIncreaseBoostModalId: Modal.TreasuryIncreaseBoost
     };
   },
   methods: {

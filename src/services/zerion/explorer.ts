@@ -1,4 +1,5 @@
 import { Network } from '@/utils/networkTypes';
+import { APIKeys } from '@/settings';
 import { sameAddress } from '@/utils/address';
 import { mapZerionTokens } from './tokens';
 import {
@@ -34,9 +35,9 @@ export const InitExplorer = (
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void
 ): Explorer => {
   const io_options = {
-    extraHeaders: { origin: 'http://localhost:3000' },
+    extraHeaders: { origin: APIKeys.ZERION_API_KEY_ORIGIN },
     transports: ['websocket'],
-    query: { api_token: 'Demo.ukEVQp6L5vfgxcz4sBke7XvS873GMYHy' },
+    query: { api_token: APIKeys.ZERION_API_KEY },
     allowEIO3: true
   };
   const addressSocket = io('wss://api-v4.zerion.io/address', io_options);
@@ -56,33 +57,33 @@ export const InitExplorer = (
   // Transactions
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.RECEIVED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.RECEIVED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       setTransactions(txns);
     }
   );
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.CHANGED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.CHANGED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       updateTransactions(txns);
     }
   );
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.APPENDED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.APPENDED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       updateTransactions(txns);
     }
   );
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.REMOVED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.REMOVED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       removeTransactions(txns.map((t) => t.hash));
     }
   );

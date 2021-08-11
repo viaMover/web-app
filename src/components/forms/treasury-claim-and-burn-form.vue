@@ -80,14 +80,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+import { Properties } from 'csstype';
 
 import { TokenWithBalance, SmallToken } from '@/wallet/types';
-
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
-import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
@@ -96,13 +92,17 @@ import {
   notZero
 } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '../controls/form-loader.vue';
 import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
 import { getExitingAmount, getMaxBurn } from '@/services/chain';
+
+import { AssetField, GasSelector, FormLoader } from '@/components/controls';
+import { ActionButton } from '@/components/buttons';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { Step } from '../controls/form-loader.vue';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostForm',
@@ -182,7 +182,7 @@ export default Vue.extend({
         return 'Enter Amount';
       }
 
-      if (greaterThan(this.input.amount, this.input.asset.balance)) {
+      if (greaterThan(this.input.amount, this.maxInputAmount)) {
         return 'Inssuficient Balance';
       }
 
@@ -238,9 +238,9 @@ export default Vue.extend({
     showInfo(): boolean {
       return this.infoExpanded && this.isInfoAvailable;
     },
-    coinImageStyle(): Record<string, string> {
+    coinImageStyle(): Properties {
       return {
-        'box-shadow': 'rgb(182, 222, 49) 0px 0px 16px'
+        boxShadow: 'rgb(182, 222, 49) 0px 0px 16px'
       };
     }
   },
