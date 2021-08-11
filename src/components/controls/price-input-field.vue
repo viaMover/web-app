@@ -17,6 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Properties } from 'csstype';
 
 export default Vue.extend({
   name: 'PriceInputField',
@@ -58,7 +59,7 @@ export default Vue.extend({
     hasPrefix(): boolean {
       return this.textPrefix !== '';
     },
-    spanStyle(): Record<string, string> {
+    spanStyle(): Properties {
       const color =
         this.amount === 'NaN' || this.amount === ''
           ? 'rgba(60, 60, 67, 0.6)'

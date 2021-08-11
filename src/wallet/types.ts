@@ -1,3 +1,4 @@
+import { TransactionMoveType } from './../services/mover/transactions/types';
 export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
 
 export type SmallTokenInfo = {
@@ -32,7 +33,7 @@ export enum TransactionTypes {
   unknown = 'unknown'
 }
 
-export type TransactionStatus = 'confirmed' | 'failed';
+export type TransactionStatus = 'confirmed' | 'failed' | 'pending';
 
 export type SmallTokenInfoWithIcon = SmallTokenInfo & {
   iconURL: string;
@@ -58,6 +59,9 @@ export type TransactionCommonData = {
   fee: FeeData;
   status: TransactionStatus;
   type: TransactionTypes;
+  isOffchain: boolean;
+  subsidizedQueueId?: string;
+  moverType: TransactionMoveType;
 };
 
 export type TransactionSwapERC20 = TransactionCommonData & {

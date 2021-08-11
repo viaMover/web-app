@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { GetGasErrors } from '@/wallet/gas';
 import { Result, isError } from './../responses';
 import { Network } from '@/utils/networkTypes';
+import { APIKeys } from '@/settings';
 import axios from 'axios';
 import { apiEndpoints } from './endpoints';
 import {
@@ -26,9 +27,7 @@ export const getGasPrices = async (
     return { isError: true, error: 'NoEndpointForNetwork' };
   }
 
-  const apiKey = process.env.VUE_APP_ETHERSCAN_API_KEY;
-
-  const url = `${endpoint}/api?module=gastracker&action=gasoracle&apikey=${apiKey}`;
+  const url = `${endpoint}/api?module=gastracker&action=gasoracle&apikey=${APIKeys.ETHERSCAN_API_KEY}`;
 
   try {
     const resp = (
@@ -93,9 +92,7 @@ export const getGasSpeed = async (
     return { isError: true, error: 'NoEndpointForNetwork' };
   }
 
-  const apiKey = process.env.VUE_APP_ETHERSCAN_API_KEY;
-
-  const url = `${endpoint}/api?module=gastracker&action=gasestimate&gasprice=${gasPrice}&apikey=${apiKey}`;
+  const url = `${endpoint}/api?module=gastracker&action=gasestimate&gasprice=${gasPrice}&apikey=${APIKeys.ETHERSCAN_API_KEY}`;
 
   try {
     const resp = (

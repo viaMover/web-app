@@ -22,7 +22,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
@@ -37,13 +37,18 @@ export default Vue.extend({
       'savingsEstimatedEarningsAnnuallyNative'
     ]),
     estimatedEarningsTomorrowNative(): string {
-      return `$${formatToNative(this.savingsEstimatedEarningsTomorrowNative)}`;
+      const value = formatToNative(this.savingsEstimatedEarningsTomorrowNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     estimatedEarningsNextMonthNative(): string {
-      return `$${formatToNative(this.savingsEstimatedEarningsNextMonthNative)}`;
+      const value = formatToNative(
+        this.savingsEstimatedEarningsNextMonthNative
+      );
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     estimatedEarningsAnnuallyNative(): string {
-      return `$${formatToNative(this.savingsEstimatedEarningsAnnuallyNative)}`;
+      const value = formatToNative(this.savingsEstimatedEarningsAnnuallyNative);
+      return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   }
 });
