@@ -63,36 +63,12 @@ $(document).ready(function() {
 	}
 	saveClose();
 
-	function swapsPopup() {
-		let popup = $('.swaps__popup'); 
-		let close = $('.swaps__popup-close');
-		let button = $('.general-desktop__menu-wrapper-item .swaps-item');
-		let bg = $('.swaps__popup-bg');
-
-		button.on('click', function() { 
-			popup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-		})
-		close.on('click', function() { 
-			popup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			popup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	swapsPopup();
-
 	function toggleSwaps() {
-		let next = $('.swaps__wrapper-info-items-item-right .currency'); 
-		let back = $('.swaps__wrapper-search-items-item'); 
-		let step1 = $('.swaps__wrapper-info'); 
-		let step2 = $('.swaps__wrapper-search'); 
-		let close = $('.swaps__popup-close'); 
+		let next = $('.popup-swaps .info__form .currency'); 
+		let back = $('.popup-swaps .popup__content-search .items__item'); 
+		let step1 = $('.popup-swaps .popup__content-swaps'); 
+		let step2 = $('.popup-swaps .popup__content-search'); 
+		let close = $('.popup__close'); 
 	
 		next.on('click', function() {
 			step2.show();
@@ -576,6 +552,22 @@ $(document).ready(function() {
 		})
 	}
 	claimAndRepurchasePopup();
+
+	function swapsPopup() {
+		let popup = $('.popup-swaps'); 
+		let close = $('.popup__close');
+		let button = $('.general-desktop-new__menu .swaps-item');
+
+		button.on('click', function() { 
+			popup.addClass('popup-active'); 
+			close.addClass('popup__close-active');
+		})
+		close.on('click', function() { 
+			popup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	swapsPopup();
 
 	function hideByClickEscButton() {
 		let popup = $('.popup');
