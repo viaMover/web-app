@@ -1,7 +1,13 @@
 <template>
   <div v-show="items.length">
-    <div v-if="hasHeader" class="items-title" :class="headerClass">
-      <slot name="header"></slot>
+    <div
+      v-if="showHeader && headerText !== ''"
+      class="items-title"
+      :class="headerClass"
+    >
+      <slot name="header">
+        <h3>{{ headerText }}</h3>
+      </slot>
     </div>
     <search-modal-token-item
       v-for="item in items"
@@ -28,11 +34,15 @@ export default Vue.extend({
       type: Array as PropType<Array<Token>>,
       required: true
     },
-    hasHeader: {
+    showHeader: {
       type: Boolean,
       default: false
     },
     headerClass: {
+      type: String,
+      default: ''
+    },
+    headerText: {
       type: String,
       default: ''
     }

@@ -112,7 +112,7 @@ export default Vue.extend({
         nativeAmount: ''
       },
       selectedGasPrice: '0',
-      withdrawGasLimit: '0',
+      actionGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
       loading: false
@@ -137,12 +137,6 @@ export default Vue.extend({
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Decrease Boost';
     },
-    currentTreasuryBalance(): string {
-      if (this.output.asset === undefined) {
-        return '0';
-      }
-      return this.getTreasuryTokenBalance(this.output.asset.address);
-    },
     availableTokens(): Array<TokenWithBalance> {
       const treasuryTokens = getAssetsForTreasury(
         this.networkInfo.network,
@@ -162,7 +156,7 @@ export default Vue.extend({
         return 'Enter Amount';
       }
 
-      if (greaterThan(this.output.amount, this.currentTreasuryBalance)) {
+      if (greaterThan(this.output.amount, this.maxOutputAmount)) {
         return 'Inssuficient Balance';
       }
 
@@ -241,12 +235,15 @@ export default Vue.extend({
     allGasLimit(): string {
       console.log(
         'all gas limit: ',
-        add(this.approveGasLimit, this.withdrawGasLimit)
+        add(this.approveGasLimit, this.actionGasLimit)
       );
-      return add(this.approveGasLimit, this.withdrawGasLimit);
+      return add(this.approveGasLimit, this.actionGasLimit);
     },
     maxOutputAmount(): string {
-      return this.savingsBalance ?? '0';
+      if (this.output.asset === undefined) {
+        return '0';
+      }
+      return this.getTreasuryTokenBalance(this.output.asset.address);
     },
     buttonClass(): string {
       if (this.actionAvaialble) {
@@ -311,7 +308,7 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.withdrawGasLimit,
+          this.actionGasLimit,
           this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
@@ -331,7 +328,7 @@ export default Vue.extend({
       this.output.amount = '';
       this.output.nativeAmount = '';
 
-      this.withdrawGasLimit = '0';
+      this.actionGasLimit = '0';
     },
     async handleUpdateOutputAmount(amount: string): Promise<void> {
       this.output.amount = amount;
@@ -413,7 +410,7 @@ export default Vue.extend({
         this.transferError = 'Estimate error';
         return;
       }
-      this.withdrawGasLimit = resp.actionGasLimit;
+      this.actionGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
     }
   }
