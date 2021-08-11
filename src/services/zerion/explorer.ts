@@ -57,33 +57,33 @@ export const InitExplorer = (
   // Transactions
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.RECEIVED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.RECEIVED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       setTransactions(txns);
     }
   );
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.CHANGED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.CHANGED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       updateTransactions(txns);
     }
   );
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.APPENDED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.APPENDED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       updateTransactions(txns);
     }
   );
   addressSocket.on(
     messages.ADDRESS_TRANSACTIONS.REMOVED,
-    (message: ZerionTransactionsReceived) => {
+    async (message: ZerionTransactionsReceived) => {
       console.log(messages.ADDRESS_TRANSACTIONS.REMOVED, message);
-      const txns = mapZerionTxns(message);
+      const txns = await mapZerionTxns(message, network);
       removeTransactions(txns.map((t) => t.hash));
     }
   );

@@ -29,6 +29,7 @@ import {
 } from '@/utils/format';
 
 import { TokenImage } from '@/components/tokens';
+import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -43,6 +44,12 @@ export default Vue.extend({
   },
   computed: {
     head(): string {
+      const moverHeader = getTransactionHumanType(this.transaction.moverType);
+
+      if (moverHeader !== '') {
+        return moverHeader;
+      }
+
       if (this.transaction.type === TransactionTypes.swapERC20) {
         return 'Swap';
       }

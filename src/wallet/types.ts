@@ -1,3 +1,4 @@
+import { TransactionMoveType } from './../services/mover/transactions/types';
 export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
 
 export type SmallTokenInfo = {
@@ -60,6 +61,7 @@ export type TransactionCommonData = {
   type: TransactionTypes;
   isOffchain: boolean;
   subsidizedQueueId?: string;
+  moverType: TransactionMoveType;
 };
 
 export type TransactionSwapERC20 = TransactionCommonData & {
