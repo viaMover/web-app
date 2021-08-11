@@ -543,6 +543,22 @@ $(document).ready(function() {
 	}
 	swapsPopup();
 
+	function provideLiquidityPopup() {
+		let provideLiquidityPopup = $('.popup-provide-liquidity'); 
+		let close = $('.popup__close');
+		let button = $('.general-desktop-new__menu .provide-liquidity');
+
+		button.on('click', function() { 
+			provideLiquidityPopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+		})
+		close.on('click', function() { 
+			provideLiquidityPopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	provideLiquidityPopup();
+
 	function transactionWaitingPopup() {
 		let transactionPopup = $('.popup-transaction-result'); 
 		let close = $('.popup__close');
