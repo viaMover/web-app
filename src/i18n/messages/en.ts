@@ -15,6 +15,7 @@ export default {
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   lblMore: 'More',
+  lblPageTitleSuffix: 'Portfolio',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
