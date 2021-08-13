@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <li class="button-active">
     <router-link :to="{ name: navigateToName }">
       <slot>{{ text }}</slot>
     </router-link>

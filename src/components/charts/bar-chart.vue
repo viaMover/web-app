@@ -1,21 +1,18 @@
 <template>
   <div class="chart-group-wrapper" :class="wrapperClass">
-    <PuSkeletonTheme color="#dcdcdc">
+    <PuSkeletonTheme v-if="isLoading" color="#dcdcdc">
       <PuSkeleton
-        v-if="isLoading"
         class="pu-skeleton"
-        height="140px"
+        height="166px"
         :loading="true"
         tag="div"
         width="100%"
       />
     </PuSkeletonTheme>
     <div v-show="!isLoading" class="chart">
-      <div class="chart--action-buttons"></div>
       <div class="chart--body">
         <canvas ref="chartCanvas"></canvas>
       </div>
-      <div class="chart--info"></div>
     </div>
   </div>
 </template>
@@ -27,12 +24,14 @@ import {
   ChartData,
   ChartOptions,
   ChartEvent,
-  ActiveElement
+  ActiveElement,
+  ScriptableScaleContext
 } from 'chart.js';
 
 import {
   buildBalancesChartData,
-  ChartDataItem
+  ChartDataItem,
+  TItem
 } from '@/store/modules/account/utils/charts';
 import {
   SavingsMonthBalanceItem,
@@ -49,6 +48,10 @@ export default Vue.extend({
     accentColor: {
       type: String,
       default: 'rgba(251, 157, 83, 1)'
+    },
+    tickColor: {
+      type: String,
+      default: 'rgba(60,60,67,0.60)'
     },
     chartDataSource: {
       type: Array as PropType<
@@ -69,7 +72,8 @@ export default Vue.extend({
     return {
       chartInstance: undefined as
         | Chart<'bar', Array<number>, string>
-        | undefined
+        | undefined,
+      selectedItem: undefined as undefined | TItem
     };
   },
   computed: {
@@ -89,6 +93,7 @@ export default Vue.extend({
         return;
       }
 
+      this.selectedItem = undefined;
       this.$emit('item-selected', undefined);
 
       this.chartInstance.data.labels = newVal.labels;
@@ -125,13 +130,19 @@ export default Vue.extend({
         backgroundColors;
       chart.config.data.datasets[elements[0].datasetIndex].borderColor =
         backgroundColors;
+      chart.config.data.datasets[
+        elements[0].datasetIndex
+      ].hoverBackgroundColor = backgroundColors;
+      chart.config.data.datasets[elements[0].datasetIndex].hoverBorderColor =
+        backgroundColors;
       chart.update();
 
+      this.selectedItem = item;
       this.$emit('item-selected', item);
     },
     initChart(): void {
       const el = this.$refs.chartCanvas as HTMLCanvasElement;
-      this.chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
+      const chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
         type: 'bar',
         data: this.chartData,
         options: {
@@ -142,6 +153,12 @@ export default Vue.extend({
           },
           animation: true,
           onClick: this.onClick,
+          onHover(event: ChartEvent, chartElements: ActiveElement[]) {
+            event.native.target.style.cursor = chartElements[0]
+              ? 'pointer'
+              : 'default';
+          },
+          maintainAspectRatio: false,
           responsive: false,
           normalized: true,
           plugins: {
@@ -152,20 +169,25 @@ export default Vue.extend({
               enabled: false
             },
             title: {
-              font: {
-                family: 'Regular',
-                lineHeight: 16,
-                size: 10
-              }
+              display: false
             }
           },
           datasets: {
             bar: {
               minBarLength: 10,
-              borderRadius: 5,
+              barThickness: 56,
+              maxBarThickness: 56
+            }
+          },
+          elements: {
+            bar: {
+              borderRadius: 4,
               borderWidth: 1,
               borderColor: this.defaultColor,
-              backgroundColor: this.defaultColor
+              backgroundColor: this.defaultColor,
+              hoverBackgroundColor: this.defaultColor,
+              hoverBorderColor: this.defaultColor,
+              borderSkipped: false
             }
           },
           scales: {
@@ -174,19 +196,54 @@ export default Vue.extend({
                 tooltipFormat: 'DD MMMM YYYY HH:mm'
               },
               grid: {
-                display: false
+                display: false,
+                drawBorder: false
               },
               ticks: {
-                align: 'center'
+                align: 'center',
+                font: {
+                  style: 'normal',
+                  family: 'Medium, sans-serif',
+                  lineHeight: '16px',
+                  size: 10,
+                  weight: 500
+                },
+                color: (ctx: ScriptableScaleContext) => {
+                  const selectedItemIdx =
+                    ctx.chart.data.datasets[0].data.findIndex(
+                      (val: ChartDataItem) => val.meta === this.selectedItem
+                    );
+                  if (
+                    selectedItemIdx < 0 &&
+                    this.selectedItem === undefined &&
+                    ctx.index === ctx.chart.data.datasets[0].data.length - 1
+                  ) {
+                    return this.accentColor;
+                  }
+
+                  return ctx.index === selectedItemIdx
+                    ? this.accentColor
+                    : this.tickColor;
+                },
+                maxRotation: 0,
+                minRotation: 0,
+                padding: 16
               },
               position: 'bottom'
             },
             y: {
-              display: false
+              display: false,
+              grid: {
+                display: false,
+                drawBorder: false
+              }
             }
           }
         } as ChartOptions<'bar'>
       });
+      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 176);
+
+      this.chartInstance = chartInstance;
     }
   }
 });

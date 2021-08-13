@@ -78,7 +78,8 @@ export const swapSubsidized = async (
         price: '0',
         symbol: inputAsset.symbol
       },
-      subsidizedQueueId: subsidizedResponse.queueID
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'execute_swap'
     };
     await store.dispatch('account/addTransaction', tx);
 

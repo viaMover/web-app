@@ -472,7 +472,7 @@ export default Vue.extend({
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
       this.input.amount = amount;
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.input.asset === undefined) {
         return;
       }
 
@@ -483,13 +483,17 @@ export default Vue.extend({
         return;
       }
 
+      this.input.nativeAmount = formatToNative(
+        multiply(this.input.asset.priceUSD, this.input.amount)
+      );
+
+      if (this.output.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -528,7 +532,7 @@ export default Vue.extend({
     },
     async handleUpdateInputNativeAmount(amount: string): Promise<void> {
       this.input.nativeAmount = amount;
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.input.asset === undefined) {
         return;
       }
 
@@ -539,15 +543,19 @@ export default Vue.extend({
         return;
       }
 
+      this.input.amount = convertAmountFromNativeValue(
+        this.input.nativeAmount,
+        this.input.asset.priceUSD,
+        this.input.asset.decimals
+      );
+
+      if (this.output.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.amount = convertAmountFromNativeValue(
-          this.input.nativeAmount,
-          this.input.asset.priceUSD,
-          this.input.asset.decimals
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -588,7 +596,7 @@ export default Vue.extend({
     async handleUpdateOutputAmount(amount: string): Promise<void> {
       this.output.amount = amount;
 
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.output.asset === undefined) {
         return;
       }
 
@@ -599,13 +607,17 @@ export default Vue.extend({
         return;
       }
 
+      this.output.nativeAmount = formatToNative(
+        multiply(this.output.asset.priceUSD, this.output.amount)
+      );
+
+      if (this.input.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = formatToNative(
-          multiply(this.output.asset.priceUSD, this.output.amount)
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -644,7 +656,7 @@ export default Vue.extend({
     },
     async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
       this.output.nativeAmount = amount;
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.output.asset === undefined) {
         return;
       }
 
@@ -655,15 +667,19 @@ export default Vue.extend({
         return;
       }
 
+      this.output.amount = convertAmountFromNativeValue(
+        this.output.nativeAmount,
+        this.output.asset.priceUSD,
+        this.output.asset.decimals
+      );
+
+      if (this.input.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.amount = convertAmountFromNativeValue(
-          this.output.nativeAmount,
-          this.output.asset.priceUSD,
-          this.output.asset.decimals
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,

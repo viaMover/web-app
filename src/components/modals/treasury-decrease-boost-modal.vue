@@ -154,13 +154,15 @@ export default Vue.extend({
         this.moveNativePrice,
         this.slpNativePrice
       );
-
-      return treasuryTokens
+      const res = treasuryTokens
         .map((t) => ({
           ...t,
           balance: this.getTreasuryTokenBalance(t.address)
         }))
         .filter((t) => greaterThan(t.balance, '0'));
+
+      console.log(res);
+      return res;
     },
     error(): string | undefined {
       if (!notZero(this.output.amount)) {

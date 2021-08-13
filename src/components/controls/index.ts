@@ -6,6 +6,7 @@ export { default as FormLoader } from './form-loader/form-loader.vue';
 export { default as PlusIcon } from './plus-icon.vue';
 export { default as PriceInputField } from './price-input-field.vue';
 export { default as ArrowDownIcon } from './arrow-down-icon.vue';
+export { default as ArrowLeftIcon } from './arrow-left-icon.vue';
 export { default as NavBarItem } from './nav-bar-item.vue';
 export { default as NavBar } from './nav-bar.vue';
 export { default as EmojiCard } from './emoji-card.vue';
