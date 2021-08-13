@@ -24,7 +24,7 @@
     <savings-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('savings.btnView.simple')"
-      icon="💰"
+      :icon="$t('savings.icon')"
       :in-progress-text="$t('savings.lblInProgress')"
       :items="savingsMonthStatsOptions"
       navigate-to-name="savings-month-stats"

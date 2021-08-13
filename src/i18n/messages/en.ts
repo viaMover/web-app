@@ -161,6 +161,7 @@ export default {
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',
     lblTreasuryOverview: '@:treasury.lblTreasuryPrefix Overview',
+    lblTreasuryStatements: '@:treasury.lblTreasuryPrefix Statements',
     lblReservedAssetsValue: 'Reserved assets value',
     lblCurrentBoost: 'Current boost',
     lblMaximumBoost: 'Maximum boost',

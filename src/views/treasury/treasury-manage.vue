@@ -28,11 +28,11 @@
     <treasury-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('treasury.btnView.simple')"
-      icon="💰"
+      :icon="$t('treasury.icon')"
       :in-progress-text="$t('treasury.lblInProgress')"
       :items="treasuryMonthStatsOptions"
       navigate-to-name="treasury-month-stats"
-      :title="$t('savings.lblSavingsStatements')"
+      :title="$t('treasury.lblTreasuryStatements')"
       wrapper-class="smart-treasury__menu-wrapper-statements"
     />
   </secondary-page>
