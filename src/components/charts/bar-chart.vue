@@ -1,21 +1,18 @@
 <template>
   <div class="chart-group-wrapper" :class="wrapperClass">
-    <PuSkeletonTheme color="#dcdcdc">
+    <PuSkeletonTheme v-if="isLoading" color="#dcdcdc">
       <PuSkeleton
-        v-if="isLoading"
         class="pu-skeleton"
-        height="140px"
+        height="166px"
         :loading="true"
         tag="div"
         width="100%"
       />
     </PuSkeletonTheme>
     <div v-show="!isLoading" class="chart">
-      <div class="chart--action-buttons"></div>
       <div class="chart--body">
         <canvas ref="chartCanvas"></canvas>
       </div>
-      <div class="chart--info"></div>
     </div>
   </div>
 </template>
@@ -244,7 +241,7 @@ export default Vue.extend({
           }
         } as ChartOptions<'bar'>
       });
-      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 140);
+      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 176);
 
       this.chartInstance = chartInstance;
     }
