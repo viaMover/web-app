@@ -7,7 +7,7 @@ export default {
   txtConnectWallet:
     'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
   txtNotFound:
-    'Wow, how did you end up here? Seems like even Google isn’t as of help.',
+    'Wow, how did you end up here?\nSeems like even Google isn’t as of help.',
   btnConnectWallet: 'Connect a wallet',
   txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
