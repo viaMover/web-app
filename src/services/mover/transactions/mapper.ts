@@ -9,9 +9,9 @@ export const getTransactionHumanType = (t: TransactionMoveType): string => {
     case 'subsidized_withdraw':
       return 'Withdraw from Savings';
     case 'deposit_treasury':
-      return 'Deposit in Treasury';
+      return 'Increase Boost';
     case 'withdraw_treasury':
-      return 'Withdraw from treasury';
+      return 'Decrease Boost';
     case 'execute_swap':
     case 'unknown':
     default:
