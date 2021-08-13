@@ -1,47 +1,53 @@
 <template>
-  <transition appear name="fade">
-    <div v-if="isDisplayed || isVisible" class="modal" :name="modalId">
+  <!--  <transition appear name="fade">-->
+  <div
+    v-if="isDisplayed"
+    v-show="isVisible"
+    class="modal"
+    :name="modalId"
+    role="dialog"
+  >
+    <div
+      v-show="isDimmerVisible"
+      class="modal__dimmer"
+      :class="dimmerHtmlClass"
+      :style="dimmerStyles"
+      @click="handleDimmerClick"
+    />
+    <close-button
+      v-if="showCloseButton"
+      class="modal__close-button"
+      is-black
+      :style="buttonStyles"
+      @close="handleClose"
+    />
+    <div
+      class="modal__body"
+      :class="{ 'no-bottom-padding': disableBodyBottomPadding }"
+      :style="bodyStyles"
+    >
       <div
-        v-show="isDimmerVisible"
-        class="modal__dimmer"
-        :class="dimmerHtmlClass"
-        :style="dimmerStyles"
-        @click="handleDimmerClick"
-      />
-      <close-button
-        v-if="showCloseButton"
-        class="modal__close-button"
-        is-black
-        :style="buttonStyles"
-        @close="handleClose"
-      />
-      <div
-        class="modal__body"
-        :class="{ 'no-bottom-padding': disableBodyBottomPadding }"
-        :style="bodyStyles"
+        v-if="isHeaderDisplayed"
+        class="modal__body-header"
+        :class="headerClass"
       >
-        <div
-          v-if="isHeaderDisplayed"
-          class="modal__body-header"
-          :class="headerClass"
-        >
-          <slot name="header">
-            <h3 class="modal__body-header--default">{{ headerText }}</h3>
-          </slot>
-        </div>
-        <div class="modal__body-content" :class="contentHtmlClass">
-          <slot></slot>
-        </div>
-        <div
-          v-if="isFooterDisplayed"
-          class="modal__body-footer"
-          :class="footerHtmlClass"
-        >
-          <slot name="footer">{{ footerText }}</slot>
-        </div>
+        <slot name="header">
+          <h3 class="modal__body-header--default">{{ headerText }}</h3>
+        </slot>
+      </div>
+      <div class="modal__body-content" :class="contentHtmlClass">
+        <slot></slot>
+      </div>
+      <div
+        v-if="isFooterDisplayed"
+        class="modal__body-footer"
+        :class="footerHtmlClass"
+      >
+        <slot name="footer">{{ footerText }}</slot>
       </div>
     </div>
-  </transition>
+  </div>
+  <!--  </transition>-->
 </template>
 
 <script lang="ts">
