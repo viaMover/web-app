@@ -1,13 +1,12 @@
 <template>
   <content-wrapper
+    base-class="not-found"
     has-back-button
     wrapper-class="not-found"
     @close="handleClose"
   >
-    <div>
-      <h1 class="title">404</h1>
-      <p>{{ $t('txtNotFound') }}</p>
-    </div>
+    <h1>404</h1>
+    <p>{{ $t('txtNotFound') }}</p>
   </content-wrapper>
 </template>
 

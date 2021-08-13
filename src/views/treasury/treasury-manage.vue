@@ -32,6 +32,7 @@
       :in-progress-text="$t('treasury.lblInProgress')"
       :items="treasuryMonthStatsOptions"
       navigate-to-name="treasury-month-stats"
+      :title="$t('savings.lblSavingsStatements')"
       wrapper-class="smart-treasury__menu-wrapper-statements"
     />
   </secondary-page>
