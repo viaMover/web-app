@@ -28,6 +28,12 @@ const mapStatus = (status: string): TransactionStatus => {
   }
 };
 
+// Temporary fix for zerion
+const mapZerionoSymbol = (assetSymbol: string): string => {
+  if (assetSymbol === 'HH') return 'MOVE';
+  return assetSymbol;
+};
+
 const feeMap = (fee: { value: number; price: number }): FeeData => ({
   feeInWEI: String(fee.value),
   ethPrice: String(fee.price)
@@ -145,7 +151,7 @@ const parseTradeTransaction = (
             asset: {
               address: c.asset.asset_code,
               decimals: c.asset.decimals,
-              symbol: c.asset.symbol,
+              symbol: mapZerionoSymbol(c.asset.symbol),
               change: String(c.value),
               iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
@@ -169,7 +175,7 @@ const parseTradeTransaction = (
             asset: {
               address: c.asset.asset_code,
               decimals: c.asset.decimals,
-              symbol: c.asset.symbol,
+              symbol: mapZerionoSymbol(c.asset.symbol),
               change: String(c.value),
               iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
@@ -200,7 +206,7 @@ const parseTradeTransaction = (
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
-          symbol: c.asset.symbol,
+          symbol: mapZerionoSymbol(c.asset.symbol),
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
@@ -236,7 +242,7 @@ const parseReceiveTransaction = (
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
-          symbol: c.asset.symbol,
+          symbol: mapZerionoSymbol(c.asset.symbol),
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
@@ -272,7 +278,7 @@ const parseAuthorizeTransaction = (
           address: tx.meta.asset.asset_code,
           decimals: tx.meta.asset.decimals,
           iconURL: tx.meta.asset.icon_url ?? '',
-          symbol: tx.meta.asset.symbol
+          symbol: mapZerionoSymbol(tx.meta.asset.symbol)
         },
         blockNumber: String(tx.block_number),
         hash: tx.hash,
@@ -302,7 +308,7 @@ const parseSendTransaction = (
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
-          symbol: c.asset.symbol,
+          symbol: mapZerionoSymbol(c.asset.symbol),
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),

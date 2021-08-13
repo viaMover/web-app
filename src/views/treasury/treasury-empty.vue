@@ -12,14 +12,6 @@
               :text="$t('treasury.btnDeposit.emoji')"
               @click="handleDepositClick"
             />
-            <context-button-item
-              :text="$t('treasury.btnWithdraw.emoji')"
-              @click="handleWithdrawClick"
-            />
-            <context-button-item
-              :text="$t('treasury.btnClaimAndBurn.emoji')"
-              @click="handleClaimAndBurnClick"
-            />
           </context-button>
         </template>
       </secondary-page-title>
@@ -93,14 +85,6 @@ export default Vue.extend({
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       toggleSingleItem(Modal.TreasuryIncreaseBoost);
-    },
-    handleWithdrawClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.TreasuryDecreaseBoost);
-    },
-    handleClaimAndBurnClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.TreasuryClaimAndBurn);
     }
   }
 });
