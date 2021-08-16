@@ -29,13 +29,18 @@ export default Vue.extend({
     modalId: {
       type: String as PropType<TModalKey>,
       default: ''
-    }
+    },
+    modalPayload: Object
   },
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     handleClick(): void {
       if (this.modalId !== '') {
-        this.setIsModalDisplayed({ id: this.modalId, value: true });
+        this.setIsModalDisplayed({
+          id: this.modalId,
+          value: true,
+          payload: this.modalPayload ?? {}
+        });
       } else {
         this.$emit('button-click');
       }

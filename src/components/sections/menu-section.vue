@@ -43,6 +43,7 @@
       <menu-list-icon-item
         :icon="$t('menu.lblGetMoveEmoji')"
         :modal-id="ModalType.Swap"
+        :modal-payload="{ swapType: SwapType.getMove }"
         :text="$t('menu.lblGetMove')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -80,7 +81,7 @@ import { mapGetters } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import { formatToNative } from '@/utils/format';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
 
 import {
   MenuList,
@@ -97,7 +98,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      ModalType: ModalType
+      ModalType: ModalType,
+      SwapType: SwapType
     };
   },
   computed: {

@@ -75,21 +75,24 @@ export default Vue.extend({
       toggleSingleItem(this.popoverParentId + '__popover');
       this.setModalIsDisplayed({
         id: ModalType.TreasuryIncreaseBoost,
-        value: true
+        value: true,
+        payload: {}
       });
     },
     handleDecreaseBoostClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       this.setModalIsDisplayed({
         id: ModalType.TreasuryDecreaseBoost,
-        value: true
+        value: true,
+        payload: {}
       });
     },
     handleClaimAndBurnClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       this.setModalIsDisplayed({
         id: ModalType.TreasuryClaimAndBurn,
-        value: true
+        value: true,
+        payload: {}
       });
     }
   }

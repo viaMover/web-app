@@ -34,7 +34,23 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -66,12 +82,17 @@
       <div v-if="showFooter" class="modal-info-footer">
         <p>
           Claim &amp; Burn allows you to exchange your
-          <span class="icon getShadow">
-            <img
-              alt="coin"
-              src="@/assets/images/coin-icon2.jpg"
-              :style="coinImageStyle"
-            />
+          <span class="icon">
+            <picture>
+              <img
+                alt=""
+                src="@/assets/images/MOVE.png"
+                srcset="
+                  @/assets/images/MOVE.png,
+                  @/assets/images/MOVE@2x.png 2x
+                "
+              />
+            </picture>
           </span>
           MOVE tokens for a larger portion of the Smart Treasury. You will burn
           your MOVE tokens, and receive four times (4x) of your treasury share

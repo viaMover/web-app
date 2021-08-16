@@ -120,6 +120,7 @@
   font-size: 18px;
   line-height: 28px;
   margin-left: 8px;
+  max-width: 250px;
 }
 
 .modal-wrapper-info-items-item-left .input-bottom {
@@ -209,6 +210,7 @@
 }
 
 .modal-wrapper-info-items-item-right button.use {
+  margin-left: auto;
   margin-top: 8px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -287,6 +289,16 @@
   transition: 0.3s;
 }
 
+.modal-wrapper-info-buttons button.flip picture {
+  width: 22px;
+  height: 18px;
+}
+.modal-wrapper-info-buttons button.flip picture img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .modal-wrapper-info-buttons button.flip:active {
   -webkit-transform: scale(1.11);
       -ms-transform: scale(1.11);
@@ -314,6 +326,18 @@
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
+}
+
+.modal-wrapper-info-buttons button.tx-details picture {
+  width: 16px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+.modal-wrapper-info-buttons button.tx-details picture img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .modal-wrapper-info-buttons button.tx-details:active {
@@ -683,14 +707,14 @@
   background-color: #fafafc;
 }
 
-.modal-wrapper-info .modal-info-footer p {
+.modal-info-footer p {
   color: rgba(60, 60, 67, 0.6);
   font-family: 'Regular', sans-serif;
   font-weight: 400;
   margin-top: 24px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon {
+.modal-info-footer .icon {
   margin: 0 3px;
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -700,14 +724,15 @@
   top: 6px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon img {
+.modal-info-footer .icon img {
   border-radius: 50%;
   display: block;
   width: 22px;
   height: 22px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon-wrapper {
+.modal-info-footer .icon-wrapper {
+  margin-top: -6px;
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
@@ -717,14 +742,14 @@
   left: 6px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon-wrapper img {
+.modal-info-footer .icon-wrapper img {
   border-radius: 50%;
   display: block;
   width: 22px;
   height: 22px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon-wrapper .icon-right {
+.modal-info-footer .icon-wrapper .icon-right {
   position: relative;
   left: -11px;
 }

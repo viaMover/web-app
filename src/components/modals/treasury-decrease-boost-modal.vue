@@ -35,7 +35,23 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">

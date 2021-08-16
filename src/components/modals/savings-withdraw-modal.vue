@@ -36,7 +36,23 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Withdraw Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -79,7 +95,8 @@ import Vue from 'vue';
 import {
   TokenWithBalance,
   SmallToken,
-  SmallTokenInfoWithIcon
+  SmallTokenInfoWithIcon,
+  GasData
 } from '@/wallet/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
@@ -103,7 +120,10 @@ import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/with
 import { formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 import Modal from './modal.vue';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 export default Vue.extend({
   name: 'SavingsWithdrawModal',
@@ -129,7 +149,7 @@ export default Vue.extend({
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
       loading: false,
-      modalId: ModalType.SavingsWithdraw
+      modalId: ModalTypes.SavingsWithdraw
     };
   },
   computed: {
@@ -145,6 +165,9 @@ export default Vue.extend({
       'usdcPriceInWeth',
       'ethPrice'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['usdcNativePrice', 'treasuryBonusNative']),
     outputUSDCToken(): TokenWithBalance {
       return {
@@ -161,6 +184,9 @@ export default Vue.extend({
     },
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Withdraw';
@@ -259,6 +285,27 @@ export default Vue.extend({
     },
     infoFooter(): string {
       return 'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.';
+    }
+  },
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+        this.checkSubsidizedAvailability();
+      }
+    },
+    modalPayload(newVal: TModalPayload<ModalTypes.SavingsDeposit> | undefined) {
+      if (newVal === undefined) {
+        return;
+      }
+      this.output.amount = '';
+      this.output.nativeAmount = '';
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+      this.checkSubsidizedAvailability();
     }
   },
   mounted() {

@@ -36,7 +36,23 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -65,29 +81,44 @@
       <div v-if="showFooter" class="modal-info-footer">
         <p>
           There are two boost options. Reserving
-          <span class="icon getShadow">
-            <img
-              alt="coin"
-              src="@/assets/images/coin-icon2.jpg"
-              style="box-shadow: rgb(182, 222, 49) 0px 0px 16px"
-            />
+          <span class="icon">
+            <picture>
+              <img
+                alt=""
+                src="@/assets/images/MOVE.png"
+                srcset="
+                  @/assets/images/MOVE.png,
+                  @/assets/images/MOVE@2x.png 2x
+                "
+              />
+            </picture>
           </span>
           MOVE tokens will increase (1x) your rewards share based on the total
           amount of the tokens you have reserved. Reserving
-          <span class="icon-wrapper getShadow">
-            <span class="icon-left getShadow">
-              <img
-                alt="coin"
-                src="@/assets/images/coin-icon2.jpg"
-                style="box-shadow: rgb(182, 222, 49) 0px 0px 16px"
-              />
+          <span class="icon-wrapper">
+            <span class="icon-left">
+              <picture>
+                <img
+                  alt=""
+                  src="@/assets/images/MOVE.png"
+                  srcset="
+                    @/assets/images/MOVE.png,
+                    @/assets/images/MOVE@2x.png 2x
+                  "
+                />
+              </picture>
             </span>
-            <span class="icon-right getShadow">
-              <img
-                alt="coin"
-                src="@/assets/images/coin-icon3.jpg"
-                style="box-shadow: rgb(100, 124, 236) 0px 0px 16px"
-              />
+            <span class="icon-right">
+              <picture>
+                <img
+                  alt=""
+                  src="@/assets/images/ETH.png"
+                  srcset="
+                    @/assets/images/ETH.png,
+                    @/assets/images/ETH@2x.png 2x
+                  "
+                />
+              </picture>
             </span>
           </span>
           MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share

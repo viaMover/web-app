@@ -24,7 +24,7 @@ export const mapZerionTokens = (
       address: t.asset.asset_code,
       balance: fromWei(t.quantity, t.asset.decimals),
       decimals: t.asset.decimals,
-      logo: t.asset.icon_url,
+      logo: t.asset.icon_url ?? '',
       name: assetName,
       symbol: assetSymbol,
       priceUSD: t.asset.price?.value ? String(t.asset.price?.value) : '0'

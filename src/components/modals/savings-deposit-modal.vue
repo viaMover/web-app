@@ -35,10 +35,23 @@
           type="button"
           @click="expandInfo"
         >
-          <img
-            :alt="$t('icon.txtSwapDetailsIconAlt')"
-            src="@/assets/images/swap-details.png"
-          />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Deposit Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -128,7 +141,10 @@ import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/deposi
 import { formatToNative } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
 import Modal from './modal.vue';
 
 export default Vue.extend({
@@ -157,7 +173,7 @@ export default Vue.extend({
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       loading: false,
-      modalId: ModalType.SavingsDeposit
+      modalId: ModalTypes.SavingsDeposit
     };
   },
   computed: {
@@ -172,6 +188,9 @@ export default Vue.extend({
       'usdcPriceInWeth',
       'ethPrice'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['treasuryBonusNative']),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
@@ -181,6 +200,9 @@ export default Vue.extend({
     },
     showFooter(): boolean {
       return this.input.asset === undefined || !notZero(this.input.amount);
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
@@ -344,7 +366,20 @@ export default Vue.extend({
         this.selectedGasPrice = newVal.ProposeGas.price;
         this.checkSubsidizedAvailability();
       }
+    },
+    modalPayload(newVal: TModalPayload<ModalTypes.SavingsDeposit> | undefined) {
+      if (newVal === undefined) {
+        return;
+      }
+      this.input.asset = undefined;
+      this.input.amount = '';
+      this.input.nativeAmount = '';
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+      this.checkSubsidizedAvailability();
     }
+  },
+  mounted() {
+    console.log('MOUNTED');
   },
   methods: {
     expandInfo(): void {

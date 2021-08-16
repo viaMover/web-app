@@ -83,14 +83,16 @@ export default Vue.extend({
     toggleIncreaseBoost(): void {
       this.setModalIsDisplayed({
         id: ModalType.TreasuryIncreaseBoost,
-        value: true
+        value: true,
+        payload: {}
       });
     },
     handleIncreaseBoostClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
       this.setModalIsDisplayed({
         id: ModalType.TreasuryIncreaseBoost,
-        value: true
+        value: true,
+        payload: {}
       });
     }
   }

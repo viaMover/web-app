@@ -11,9 +11,14 @@ export enum Modal {
   TreasuryClaimAndBurn = 'treasury-claim-and-burn'
 }
 
+export enum SwapType {
+  getMove = 'getMove',
+  simple = ''
+}
+
 export interface TModalParams {
   [Modal.SavingsDeposit]: {
-    payloadType: undefined;
+    payloadType: unknown | undefined;
     returnType: undefined;
   };
   [Modal.SavingsWithdraw]: {
@@ -30,7 +35,11 @@ export interface TModalParams {
     returnType: Token | undefined;
   };
   [Modal.Swap]: {
-    payloadType: undefined;
+    payloadType:
+      | {
+          swapType: SwapType;
+        }
+      | undefined;
     returnType: undefined;
   };
   [Modal.Transaction]: {

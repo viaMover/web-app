@@ -44,10 +44,20 @@
       </div>
       <div class="modal-wrapper-info-buttons">
         <button class="flip button-active" type="button" @click="flipAssets">
-          <img
-            :alt="$t('icon.txtFlipAssetsIconAlt')"
-            src="@/assets/images/flip.png"
-          />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Flip.webp,
+                @/assets/images/Flip@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtFlipAssetsIconAlt')"
+              src="@/assets/images/Flip.png"
+              srcset="@/assets/images/Flip.png, images/Flip@2x.png 2x"
+            />
+          </picture>
           <span>Flip</span>
         </button>
         <button
@@ -139,7 +149,7 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { formatSwapSources } from '@/wallet/references/data';
+import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
 import { TokenWithBalance, Token, SmallToken, GasData } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
@@ -158,7 +168,10 @@ import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
 import Modal from '@/components/modals/modal.vue';
-import { Modal as ModalTypes } from '@/store/modules/modals/types';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 export default Vue.extend({
   name: 'SwapModal',
@@ -205,9 +218,15 @@ export default Vue.extend({
       'tokens',
       'ethPrice'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['treasuryBonusNative']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
@@ -360,20 +379,57 @@ export default Vue.extend({
         this.checkSubsidizedAvailability();
       }
     },
-    tokens(newVal: Array<TokenWithBalance>, oldVal: Array<TokenWithBalance>) {
-      if (
-        oldVal.length === 0 &&
-        newVal.length !== 0 &&
-        this.input.asset === undefined
-      ) {
+    modalPayload(newVal: TModalPayload<ModalTypes.Swap> | undefined) {
+      if (newVal === undefined) {
+        return;
+      }
+      if (newVal.swapType === 'getMove') {
         const eth = this.tokens.find(
           (t: TokenWithBalance) => t.address === 'eth'
         );
         if (eth) {
           this.input.asset = eth;
-          this.checkSubsidizedAvailability();
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        } else {
+          this.input.asset = undefined;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
         }
+        const move = this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(
+            t.address,
+            getMoveAssetData(this.networkInfo.network).address
+          )
+        );
+        if (move) {
+          this.output.asset = move;
+          this.output.amount = '';
+          this.output.nativeAmount = '';
+        } else {
+          this.output.asset = undefined;
+          this.output.amount = '';
+          this.output.nativeAmount = '';
+        }
+      } else {
+        const eth = this.tokens.find(
+          (t: TokenWithBalance) => t.address === 'eth'
+        );
+        if (eth) {
+          this.input.asset = eth;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        } else {
+          this.input.asset = undefined;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        }
+        this.output.asset = undefined;
+        this.output.amount = '';
+        this.output.nativeAmount = '';
       }
+
+      this.checkSubsidizedAvailability();
     }
   },
   methods: {

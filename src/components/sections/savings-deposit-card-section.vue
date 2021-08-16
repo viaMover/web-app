@@ -36,7 +36,11 @@ export default Vue.extend({
       setIsModalDisplayed: 'setIsDisplayed'
     }),
     handleButtonClick(): void {
-      this.setIsModalDisplayed({ id: ModalType.SavingsDeposit, value: true });
+      this.setIsModalDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     }
   }
 });

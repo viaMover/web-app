@@ -70,11 +70,19 @@ export default Vue.extend({
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({ id: ModalType.SavingsDeposit, value: true });
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     },
     handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({ id: ModalType.SavingsWithdraw, value: true });
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsWithdraw,
+        value: true,
+        payload: {}
+      });
     }
   }
 });

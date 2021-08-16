@@ -81,11 +81,19 @@ export default Vue.extend({
       });
     },
     toggleDeposit(): void {
-      this.setModalIsDisplayed({ id: ModalType.SavingsDeposit, value: true });
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     },
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({ id: ModalType.SavingsDeposit, value: true });
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     }
   }
 });
