@@ -44,30 +44,7 @@ export default Vue.extend({
   },
   computed: {
     head(): string {
-      const moverHeader = getTransactionHumanType(this.transaction.moverType);
-
-      if (moverHeader !== '') {
-        return moverHeader;
-      }
-
-      if (this.transaction.type === TransactionTypes.swapERC20) {
-        return 'Swap';
-      }
-      if (this.transaction.type === TransactionTypes.transferERC20) {
-        if (this.transaction.asset.direction === 'in') {
-          return 'Receive';
-        }
-        if (this.transaction.asset.direction === 'out') {
-          return 'Send';
-        }
-        if (this.transaction.asset.direction === 'self') {
-          return 'Self';
-        }
-      }
-      if (this.transaction.type === TransactionTypes.approvalERC20) {
-        return 'Approve';
-      }
-      return 'Unknown';
+      return getTransactionHumanType(this.transaction);
     },
     subhead(): string {
       if (

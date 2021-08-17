@@ -1,7 +1,7 @@
-import { TransactionMoveType } from './types';
+import { Transaction, TransactionTypes } from '@/wallet/types';
 
-export const getTransactionHumanType = (t: TransactionMoveType): string => {
-  switch (t) {
+export const getTransactionHumanType = (t: Transaction): string => {
+  switch (t.moverType) {
     case 'deposit_savings':
     case 'subsidized_deposit':
       return 'Deposit in Savings';
@@ -15,6 +15,23 @@ export const getTransactionHumanType = (t: TransactionMoveType): string => {
     case 'execute_swap':
     case 'unknown':
     default:
-      return '';
+      if (t.type === TransactionTypes.swapERC20) {
+        return 'Swap';
+      }
+      if (t.type === TransactionTypes.transferERC20) {
+        if (t.asset.direction === 'in') {
+          return 'Receive';
+        }
+        if (t.asset.direction === 'out') {
+          return 'Send';
+        }
+        if (t.asset.direction === 'self') {
+          return 'Self';
+        }
+      }
+      if (t.type === TransactionTypes.approvalERC20) {
+        return 'Approve';
+      }
+      return 'Unknown';
   }
 };
