@@ -2520,9 +2520,6 @@ form.search-form button {
 .general-no-wallet-desktop .g-wrapper {
   margin: 0 auto;
 }
-.general-no-wallet-desktop__wrapper {
-  padding-top: 104px;
-}
 .general-no-wallet-desktop__wrapper-gif {
   width: 120px;
   height: 141px;
@@ -2538,18 +2535,46 @@ form.search-form button {
   font-size: 48px;
   line-height: 62px;
   color: #000;
-  margin-top: 17px;
+  margin-top: 41px;
 }
 .general-no-wallet-desktop__wrapper p {
   font-family: 'Medium';
   font-size: 14px;
   line-height: 22px;
   color: rgba(60,60,67,0.6);
-  margin-top: 16px;
+  margin-top: 24px;
 }
-.general-no-wallet-desktop__wrapper a {
-  max-width: 163px;
+.general-no-wallet-desktop__wrapper .buttons {
   margin-top: 40px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.general-no-wallet-desktop__wrapper .buttons-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: #fcfcfc;
+  -webkit-box-shadow: 0px 4px 16px #ccc;
+          box-shadow: 0px 4px 16px #ccc;
+  border-radius: 8px;
+  margin-left: 40px;
+  width: 240px;
+  height: 120px;
+  outline: none;
+}
+.general-no-wallet-desktop__wrapper .buttons-item:first-child {
+  margin-left: 0;
 }
 .general-desktop__sidebar-wrapper-user .user {
   width: 80px;
