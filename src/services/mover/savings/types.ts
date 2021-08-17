@@ -3,6 +3,7 @@ import { MoverResponse } from '../responses';
 export type SavingsMonthBalanceItem = {
   type: 'savings_month_balance_item';
   balance: number;
+  earned: number;
   snapshotTimestamp: number;
   year: number;
   month: number;

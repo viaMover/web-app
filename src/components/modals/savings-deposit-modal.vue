@@ -1,11 +1,17 @@
 <template>
-  <div class="modal-wrapper-info">
-    <div>
+  <modal
+    close-on-dimmer-click
+    :disable-header-bottom-margin="!headerLabel"
+    has-header
+    :modal-id="modalId"
+    show-close-button
+  >
+    <template v-slot:header>
       <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
-    </div>
+    </template>
     <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
@@ -29,10 +35,23 @@
           type="button"
           @click="expandInfo"
         >
-          <img
-            :alt="$t('icon.swapDetailsIconAlt')"
-            src="@/assets/images/swap-details.png"
-          />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Deposit Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -78,7 +97,7 @@
         <p>{{ infoFooter }}</p>
       </div>
     </form>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -87,7 +106,8 @@ import Vue from 'vue';
 import {
   TokenWithBalance,
   SmallToken,
-  SmallTokenInfoWithIcon
+  SmallTokenInfoWithIcon,
+  GasData
 } from '@/wallet/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
@@ -114,21 +134,27 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '../controls/form-loader.vue';
+import { Step } from '@/components/controls/form-loader';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import { formatToNative } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import Modal from './modal.vue';
 
 export default Vue.extend({
-  name: 'SavingsDepositForm',
+  name: 'SavingsDepositModal',
   components: {
     AssetField,
     ActionButton,
     GasSelector,
-    FormLoader
+    FormLoader,
+    Modal
   },
   data() {
     return {
@@ -146,7 +172,8 @@ export default Vue.extend({
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
-      loading: false
+      loading: false,
+      modalId: ModalTypes.SavingsDeposit
     };
   },
   computed: {
@@ -161,6 +188,9 @@ export default Vue.extend({
       'usdcPriceInWeth',
       'ethPrice'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['treasuryBonusNative']),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
@@ -170,6 +200,9 @@ export default Vue.extend({
     },
     showFooter(): boolean {
       return this.input.asset === undefined || !notZero(this.input.amount);
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
@@ -323,13 +356,27 @@ export default Vue.extend({
       return 'Once you deposit your assets in savings, Mover is constantly searching for the highest paying option using multiple DeFi protocols. Mover does automatic rebalancing, yield collection, and capital optimization. ';
     }
   },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.input.asset = eth;
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+        this.checkSubsidizedAvailability();
+      }
+    },
+    modalPayload(newVal: TModalPayload<ModalTypes.SavingsDeposit> | undefined) {
+      if (newVal === undefined) {
+        return;
+      }
+      this.input.asset = undefined;
+      this.input.amount = '';
+      this.input.nativeAmount = '';
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+      this.checkSubsidizedAvailability();
     }
-    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {
@@ -531,6 +578,12 @@ export default Vue.extend({
         this.subsidizedAvaialbe = false;
         return;
       }
+
+      if (this.input.asset?.address === 'eth') {
+        this.subsidizedAvaialbe = false;
+        return;
+      }
+
       this.subsidizedAvaialbe = isSubsidizedAllowed(
         gasPrice,
         this.actionGasLimit,

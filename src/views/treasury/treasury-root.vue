@@ -14,21 +14,18 @@
 
     <router-view />
 
-    <centered-modal-window v-cloak :modal-id="TreasuryIncreaseBoostModalId">
-      <treasury-increase-boost-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="TreasuryDecreaseBoostModalId">
-      <treasury-decrease-boost-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="TreasuryClaimAndBurnModalId">
-      <treasury-claim-and-burn-form />
-    </centered-modal-window>
-    <search-modal />
+    <template v-slot:modals>
+      <treasury-increase-boost-modal />
+      <treasury-decrease-boost-modal />
+      <treasury-claim-and-burn-modal />
+      <search-modal />
+    </template>
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
@@ -37,13 +34,14 @@ import {
   TreasuryReservedAssets
 } from '@/components/treasury';
 import {
-  TreasuryIncreaseBoostForm,
-  TreasuryDecreaseBoostForm,
-  TreasuryClaimAndBurnForm
-} from '@/components/forms';
+  SearchModal,
+  TreasuryIncreaseBoostModal,
+  TreasuryDecreaseBoostModal,
+  TreasuryClaimAndBurnModal
+} from '@/components/modals';
+
 import '@/styles/_treasury.less';
-import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
-import { mapGetters } from 'vuex';
+
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
@@ -51,18 +49,10 @@ export default Vue.extend({
     TreasuryOverview,
     TreasuryStats,
     TreasuryReservedAssets,
-    TreasuryIncreaseBoostForm,
-    TreasuryDecreaseBoostForm,
-    TreasuryClaimAndBurnForm,
-    CenteredModalWindow,
+    TreasuryIncreaseBoostModal,
+    TreasuryDecreaseBoostModal,
+    TreasuryClaimAndBurnModal,
     SearchModal
-  },
-  data() {
-    return {
-      TreasuryIncreaseBoostModalId: Modal.TreasuryIncreaseBoost,
-      TreasuryDecreaseBoostModalId: Modal.TreasuryDecreaseBoost,
-      TreasuryClaimAndBurnModalId: Modal.TreasuryClaimAndBurn
-    };
   },
   computed: {
     ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),
@@ -72,7 +62,7 @@ export default Vue.extend({
   },
   watch: {
     isReplaceRouteNeeded(newVal: boolean) {
-      if (!newVal) {
+      if (newVal) {
         this.replaceInactiveTreasuryRoute();
       }
     }

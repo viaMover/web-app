@@ -72,12 +72,14 @@ export const withdrawSubsidized = async (
       },
       from: holyHandAddress,
       to: accountAddress,
-      subsidizedQueueId: subsidizedResponse.queueID
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'subsidized_withdraw'
     };
     await store.dispatch('account/addTransaction', tx);
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
+    throw err;
   }
 };

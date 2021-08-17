@@ -1,11 +1,17 @@
 <template>
-  <div class="modal-wrapper-info">
-    <div>
+  <modal
+    close-on-dimmer-click
+    :disable-header-bottom-margin="!headerLabel"
+    has-header
+    :modal-id="modalId"
+    show-close-button
+  >
+    <template v-slot:header>
       <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
-    </div>
+    </template>
     <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
@@ -13,13 +19,11 @@
           :amount="input.amount"
           :asset="input.asset"
           field-role="input"
+          :force-token-array="availableTokens"
           :label="$t('swaps.lblSwapFrom')"
           :max-amount="maxInputAmount"
           :native-amount="input.nativeAmount"
-          treasury-only
-          use-wallet-tokens
           @update-amount="handleUpdateInputAmount"
-          @update-asset="handleUpdateInputAsset"
           @update-native-amount="handleUpdateInputNativeAmount"
         />
       </div>
@@ -30,14 +34,33 @@
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
           <div class="tx-details__content-item">
-            <p class="description">New smart treasury boost</p>
+            <p class="description">Claiming for</p>
             <div class="value">
-              <span>{{ newBoost }}</span>
+              <div class="icon getShadow">
+                <img alt="coin" src="@/assets/images/coin-icon3.jpg" />
+              </div>
+              <span>{{ claimingForStr }}</span>
             </div>
           </div>
         </div>
@@ -47,7 +70,7 @@
           :button-class="buttonClass"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
-          @button-click="handleExecuteDeposit"
+          @button-click="handleExecuteClaimAndBurn"
         />
       </div>
       <gas-selector
@@ -58,79 +81,67 @@
       />
       <div v-if="showFooter" class="modal-info-footer">
         <p>
-          There are two boost options. Reserving
-          <span class="icon getShadow">
-            <img
-              alt="coin"
-              src="@/assets/images/coin-icon2.jpg"
-              style="box-shadow: rgb(182, 222, 49) 0px 0px 16px"
-            />
-          </span>
-          MOVE tokens will increase (1x) your rewards share based on the total
-          amount of the tokens you have reserved. Reserving
-          <span class="icon-wrapper getShadow">
-            <span class="icon-left getShadow">
+          Claim &amp; Burn allows you to exchange your
+          <span class="icon">
+            <picture>
               <img
-                alt="coin"
-                src="@/assets/images/coin-icon2.jpg"
-                style="box-shadow: rgb(182, 222, 49) 0px 0px 16px"
+                alt=""
+                src="@/assets/images/MOVE.png"
+                srcset="
+                  @/assets/images/MOVE.png,
+                  @/assets/images/MOVE@2x.png 2x
+                "
               />
-            </span>
-            <span class="icon-right getShadow">
-              <img
-                alt="coin"
-                src="@/assets/images/coin-icon3.jpg"
-                style="box-shadow: rgb(100, 124, 236) 0px 0px 16px"
-              />
-            </span>
+            </picture>
           </span>
-          MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share
-          based on the total amount of LP tokens you have reserved.
+          MOVE tokens for a larger portion of the Smart Treasury. You will burn
+          your MOVE tokens, and receive four times (4x) of your treasury share
+          in a one-time payout.
         </p>
       </div>
     </form>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+import { Properties } from 'csstype';
 
-import { TokenWithBalance, SmallToken } from '@/wallet/types';
+import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
+import {
+  add,
+  convertAmountFromNativeValue,
+  greaterThan,
+  multiply,
+  notZero
+} from '@/utils/bigmath';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
+import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
+import { sameAddress } from '@/utils/address';
+import { formatToDecimals } from '@/utils/format';
+import { getExitingAmount, getMaxBurn } from '@/services/chain';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
-import { mapState } from 'vuex';
-import {
-  add,
-  convertAmountFromNativeValue,
-  divide,
-  fromWei,
-  greaterThan,
-  multiply,
-  notZero,
-  sub
-} from '@/utils/bigmath';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '../controls/form-loader.vue';
-import {
-  getMoveAssetData,
-  getMoveWethLPAssetData
-} from '@/wallet/references/data';
-import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
-import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
-import { sameAddress } from '@/utils/address';
-import { formatToDecimals } from '@/utils/format';
-import Web3 from 'web3';
+import { Step } from '@/components/controls/form-loader';
+import Modal from './modal.vue';
 
 export default Vue.extend({
-  name: 'TreasuryIncreaseBoostForm',
+  name: 'TreasuryIncreaseBoostModal',
   components: {
     AssetField,
     ActionButton,
     GasSelector,
-    FormLoader
+    FormLoader,
+    Modal
   },
   data() {
     return {
@@ -141,11 +152,14 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
+      claimingFor: '0',
       selectedGasPrice: '0',
       actionGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
-      loading: false
+      maxBurnedAmount: undefined as undefined | string,
+      loading: false,
+      modalId: ModalType.TreasuryClaimAndBurn
     };
   },
   computed: {
@@ -162,11 +176,42 @@ export default Vue.extend({
       'treasuryBalanceMove',
       'treasuryBalanceLP'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
+    ...mapGetters('account', ['moveNativePrice']),
     headerLabel(): string | undefined {
-      return this.loaderStep ? undefined : 'Increase Boost';
+      return this.loaderStep ? undefined : 'Claim & Burn';
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     showFooter(): boolean {
       return this.input.asset === undefined || !notZero(this.input.amount);
+    },
+    availableTokens(): Array<TokenWithBalance> {
+      const move = getMoveAssetData(this.networkInfo.network);
+      const moveWalletBalance =
+        this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(t.address, move.address)
+        )?.balance ?? '0';
+
+      if (greaterThan(moveWalletBalance, '0')) {
+        return [
+          {
+            address: move.address,
+            decimals: move.decimals,
+            name: move.name,
+            symbol: move.symbol,
+            priceUSD: this.moveNativePrice,
+            logo: move.iconURL,
+            isFavorite: true,
+            isVerified: true,
+            balance: moveWalletBalance
+          }
+        ];
+      }
+      return [];
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
@@ -186,42 +231,13 @@ export default Vue.extend({
       }
       return undefined;
     },
-    newBoost(): string {
+    claimingForStr(): string {
       if (this.input.asset === undefined) {
         return '';
       }
-
-      const move = getMoveAssetData(this.networkInfo.network);
-      const slp = getMoveWethLPAssetData(this.networkInfo.network);
-
-      const walletAmount = this.input.asset.balance;
-      let amountTreasury = '0';
-      let boostWeight = '1';
-      if (sameAddress(this.input.asset.address, move.address)) {
-        amountTreasury = this.treasuryBalanceMove;
-        boostWeight = '1';
-      } else if (sameAddress(this.input.asset.address, slp.address)) {
-        amountTreasury = this.treasuryBalanceLP;
-        boostWeight = '2.5';
-      }
-
-      let inputedAmount = this.input.amount || '0';
-      if (greaterThan(inputedAmount, walletAmount)) {
-        inputedAmount = walletAmount;
-      }
-
-      let futureBoost = multiply(
-        divide(
-          add(amountTreasury, inputedAmount),
-          add(amountTreasury, walletAmount)
-        ),
-        boostWeight
-      );
-
-      if (isNaN(+futureBoost)) {
-        futureBoost = '0';
-      }
-      return `${formatToDecimals(futureBoost, 1)}x`;
+      return `${formatToDecimals(this.claimingFor, 6)} ${
+        getUSDCAssetData(this.networkInfo.network).symbol
+      }`;
     },
     actionAvaialble(): boolean {
       return this.error === undefined && !this.loading;
@@ -234,10 +250,7 @@ export default Vue.extend({
         return this.error;
       }
 
-      return '📈 Increase Boost';
-    },
-    selectedGasPriceInWEI(): string {
-      return Web3.utils.toWei(this.selectedGasPrice, 'Gwei');
+      return '🔥 Claim & Burn';
     },
     availableGasModes(): Array<GasMode> {
       return ['low', 'normal', 'high'];
@@ -250,19 +263,7 @@ export default Vue.extend({
       return add(this.approveGasLimit, this.actionGasLimit);
     },
     maxInputAmount(): string {
-      if (this.input.asset === undefined) {
-        return '0';
-      }
-      if (this.input.asset.address === 'eth') {
-        const txnPriceInWeth = multiply(
-          this.allGasLimit,
-          this.selectedGasPriceInWEI
-        );
-        const txnPriceInEth = fromWei(txnPriceInWeth, 18);
-        const remaining = sub(this.input.asset.balance, txnPriceInEth);
-        return greaterThan(remaining, 0) ? remaining : '0';
-      }
-      return this.input.asset.balance;
+      return this.input.asset !== undefined ? this.input.asset.balance : '0';
     },
     buttonClass(): string {
       if (this.actionAvaialble) {
@@ -276,38 +277,79 @@ export default Vue.extend({
     },
     showInfo(): boolean {
       return this.infoExpanded && this.isInfoAvailable;
+    },
+    coinImageStyle(): Properties {
+      return {
+        boxShadow: 'rgb(182, 222, 49) 0px 0px 16px'
+      };
     }
   },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const move = this.tokens.find((t: TokenWithBalance) =>
-      sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
-    );
-    if (move) {
-      this.input.asset = move;
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+      }
+    },
+    async modalPayload(
+      newVal: TModalPayload<ModalType.TreasuryClaimAndBurn> | undefined
+    ) {
+      if (newVal === undefined) {
+        return;
+      }
+      const move = this.tokens.find((t: TokenWithBalance) =>
+        sameAddress(
+          t.address,
+          getMoveAssetData(this.networkInfo.network).address
+        )
+      );
+      if (move) {
+        this.input.asset = move;
+      } else {
+        this.input.asset = undefined;
+      }
+      this.input.amount = '';
+      this.input.nativeAmount = '';
+
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+
+      this.loading = true;
+
+      try {
+        this.maxBurnedAmount = await getMaxBurn(
+          this.currentAddress,
+          this.networkInfo.network,
+          this.provider.web3
+        );
+      } catch (err) {
+        console.log(`can't load max burn: ${JSON.stringify(err)}`);
+      } finally {
+        this.loading = false;
+      }
     }
   },
   methods: {
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
-    async handleExecuteDeposit(): Promise<void> {
+    async handleExecuteClaimAndBurn(): Promise<void> {
       if (this.input.asset === undefined) {
-        console.error(
-          "[deposit-form] can't execute deposit due to empty input asset"
-        );
+        console.error("[deposit-form] can't execute  due to empty input asset");
         return;
       }
       if (!notZero(this.input.amount)) {
         console.error(
-          "[deposit-form] can't execute deposit due to zero amount"
+          "[deposit-form] can't execute claim and burn due to zero amount"
         );
         return;
       }
 
       this.loaderStep = 'Confirm';
       try {
-        await depositCompound(
+        await claimAndBurnCompound(
           this.input.asset,
           this.input.amount,
           this.networkInfo.network,
@@ -344,10 +386,27 @@ export default Vue.extend({
           this.input.amount
         );
 
+        if (this.maxBurnedAmount === undefined) {
+          this.transferError = 'Burn conditions error';
+          return;
+        }
+
+        if (greaterThan(this.input.amount, this.maxBurnedAmount)) {
+          this.transferError = 'Burn limit reached';
+          return;
+        }
+
+        this.claimingFor = await getExitingAmount(
+          this.currentAddress,
+          this.input.amount,
+          this.networkInfo.network,
+          this.provider.web3
+        );
+
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
         console.error(`can't calc data: ${err}`);
-        this.transferError = 'Estimate error';
+        this.transferError = 'Estimatiom Error';
         console.error(`can't calc data: ${err}`);
         return;
       } finally {
@@ -374,6 +433,23 @@ export default Vue.extend({
           this.input.asset.decimals
         );
 
+        if (this.maxBurnedAmount === undefined) {
+          this.transferError = 'Burn conditions error';
+          return;
+        }
+
+        if (greaterThan(this.input.amount, this.maxBurnedAmount)) {
+          this.transferError = 'Burn limit reached';
+          return;
+        }
+
+        this.claimingFor = await getExitingAmount(
+          this.currentAddress,
+          this.input.amount,
+          this.networkInfo.network,
+          this.provider.web3
+        );
+
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
         console.error(`can't calc data: ${err}`);
@@ -394,6 +470,7 @@ export default Vue.extend({
       this.input.nativeAmount = '';
 
       this.actionGasLimit = '0';
+      this.claimingFor = '0';
     },
     handleSelectedGasChanged(newGas: GasModeData): void {
       this.selectedGasPrice = String(newGas.price);
@@ -402,7 +479,7 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken
     ): Promise<void> {
-      const resp = await estimateDepositCompound(
+      const resp = await estimateClaimAndBurnCompound(
         inputAsset,
         inputAmount,
         this.networkInfo.network,

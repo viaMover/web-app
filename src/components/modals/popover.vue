@@ -27,6 +27,7 @@ import {
   createPopper,
   Instance as Popper
 } from '@popperjs/core/lib/popper-lite';
+import offset from '@popperjs/core/lib/modifiers/offset';
 import { Placement } from '@popperjs/core/lib/enums';
 import { subToggle, unsubToggle } from '@/components/toggle/toggle-root';
 
@@ -65,10 +66,11 @@ export default Vue.extend({
     this.popperInstance = createPopper(parentEl, thisElem, {
       placement: this.placement as Placement,
       modifiers: [
+        offset,
         {
           name: 'offset',
           options: {
-            offset: [10, 20]
+            offset: [0, 24]
           }
         }
       ]

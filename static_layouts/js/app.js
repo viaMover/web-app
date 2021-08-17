@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable no-undef */
-
 $(document).ready(function() {
 
 	function preload() {
@@ -44,7 +41,7 @@ $(document).ready(function() {
 	dataHref();
 
 	function orderClose() {
-		let block = $('.general-desktop-new__menu-wrapper-save'); 
+		let block = $('.general-desktop__menu-wrapper-save'); 
 		let button = $('.order__buttons .close-button');
 
 		button.on('click', function() { 
@@ -54,11 +51,11 @@ $(document).ready(function() {
 	orderClose();
 
 	function saveClose() {
-		let block = $('.general-desktop-new__menu-wrapper-save'); 
+		let block = $('.general-desktop__menu-wrapper-save'); 
 		let button = $('.save__buttons .close-button');
 
 		button.on('click', function() { 
-			block.addClass('general-desktop-new__menu-wrapper-save-active');
+			block.addClass('general-desktop__menu-wrapper-save-active');
 		})
 	}
 	saveClose();
@@ -114,8 +111,8 @@ $(document).ready(function() {
 		});
 	}
 	SwapsSlider();
-
-	function burderMenu() {
+	
+	function burgerMenu() {
 		let popup = $('.burger-menu__popup'); 
 		let button = $('.burger-menu');
 		let bg = $('.burger-menu__popup-bg');
@@ -129,63 +126,7 @@ $(document).ready(function() {
 			bg.removeClass('burger-menu__popup-bg-active');
 		})
 	}
-	burderMenu();
-
-	function NFTDropsPopup() {
-		let NFTDropsPopup = $('.nft-drops__popup'); 
-		let close = $('.nft-drops__popup-close');
-		let button = $('.general-desktop__menu-wrapper-item .nft-drops');
-
-		button.on('click', function() { 
-			NFTDropsPopup.addClass('nft-drops__popup-active');
-			close.addClass('transaction__popup-close-active');
-		})
-		close.on('click', function() { 
-			NFTDropsPopup.removeClass('nft-drops__popup-active'); 
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	NFTDropsPopup();
-
-	function nibbleShopPopup() {
-		let nibbleShopPopup = $('.nibble-shop__popup'); 
-		let close = $('.nibble-shop__popup-close');
-		let button = $('.general-desktop__menu-wrapper-item .nibble-shop');
-
-		button.on('click', function() { 
-			nibbleShopPopup.addClass('nibble-shop__popup-active');
-			close.addClass('transaction__popup-close-active');
-		})
-		close.on('click', function() { 
-			nibbleShopPopup.removeClass('nibble-shop__popup-active'); 
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	nibbleShopPopup();
-
-	function noAccessPopup() {
-		let popup = $('.no-access__popup'); 
-		let close = $('.no-access__popup-close');
-		let button = $('.general-desktop__menu-wrapper-item .shop__items .shop__items-item');
-		let bg = $('.no-access__popup-bg');
-
-		button.on('click', function() { 
-			popup.addClass('transaction__popup-active'); 
-			bg.addClass('popup-bg-active');
-			close.addClass('transaction__popup-close-active');
-		})
-		close.on('click', function() { 
-			popup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-		bg.on('click', function() { 
-			popup.removeClass('transaction__popup-active'); 
-			bg.removeClass('popup-bg-active');
-			close.removeClass('transaction__popup-close-active');
-		})
-	}
-	noAccessPopup();
+	burgerMenu();
 
 	function balancePopup() {
 		let popup = $('.balance__popup'); 
@@ -530,7 +471,7 @@ $(document).ready(function() {
 	function swapsPopup() {
 		let popup = $('.popup-swaps'); 
 		let close = $('.popup__close');
-		let button = $('.general-desktop-new__menu .swaps-item');
+		let button = $('.general-desktop__menu .swaps-item');
 
 		button.on('click', function() { 
 			popup.addClass('popup-active'); 
@@ -546,7 +487,7 @@ $(document).ready(function() {
 	function provideLiquidityPopup() {
 		let provideLiquidityPopup = $('.popup-provide-liquidity'); 
 		let close = $('.popup__close');
-		let button = $('.general-desktop-new__menu .provide-liquidity');
+		let button = $('.general-desktop__menu .provide-liquidity');
 
 		button.on('click', function() { 
 			provideLiquidityPopup.addClass('popup-active');

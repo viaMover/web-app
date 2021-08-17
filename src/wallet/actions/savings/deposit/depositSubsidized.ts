@@ -76,12 +76,14 @@ export const depositSubsidized = async (
       },
       from: accountAddress,
       to: holyHandAddress,
-      subsidizedQueueId: subsidizedResponse.queueID
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'subsidized_deposit'
     };
     await store.dispatch('account/addTransaction', tx);
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
+    throw err;
   }
 };
