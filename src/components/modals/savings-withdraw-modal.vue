@@ -1,43 +1,69 @@
 <template>
-  <div class="modal-wrapper-info">
-    <div>
+  <modal
+    close-on-dimmer-click
+    :disable-header-bottom-margin="!headerLabel"
+    has-header
+    :modal-id="modalId"
+    show-close-button
+  >
+    <template v-slot:header>
       <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
-    </div>
+    </template>
     <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
         <asset-field
           :amount="output.amount"
-          :asset="output.asset"
+          :asset="outputUSDCToken"
+          disabled-select-currency
           field-role="input"
-          :force-token-array="availableTokens"
           :label="$t('swaps.lblSwapFrom')"
           :max-amount="maxOutputAmount"
           :native-amount="output.nativeAmount"
           use-wallet-tokens
           @update-amount="handleUpdateOutputAmount"
-          @update-asset="handleUpdateOutputAsset"
+          @update-asset="() => {}"
           @update-native-amount="handleUpdateOutputNativeAmount"
         />
       </div>
       <div class="modal-wrapper-info-buttons">
         <button
-          class="tx-details"
+          class="tx-details button-active"
           :class="{ disabled: !isInfoAvailable }"
           type="button"
           @click="expandInfo"
         >
-          <img src="@/assets/images/swap-details.png" />
-          <span>Transaction Details</span>
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Details.webp,
+                @/assets/images/Details@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtSwapDetailsIconAlt')"
+              src="@/assets/images/Details.png"
+              srcset="
+                @/assets/images/Details.png,
+                @/assets/images/Details@2x.png 2x
+              "
+            />
+          </picture>
+          <span>Withdraw Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
           <div class="tx-details__content-item">
-            <p class="description">New smart treasury boost</p>
+            <p class="description">Estimated lost annual earnings</p>
+            <p class="info">{{ estimatedLostAnnualEarning }}</p>
+          </div>
+          <div class="tx-details__content-item">
+            <p class="description">Smart Treasury cover</p>
             <div class="value">
-              <span>{{ newBoost }}</span>
+              <span>{{ treasuryCover }}</span>
             </div>
           </div>
         </div>
@@ -60,62 +86,70 @@
         <p>{{ infoFooter }}</p>
       </div>
     </form>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance, SmallToken } from '@/wallet/types';
+import {
+  TokenWithBalance,
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  GasData
+} from '@/wallet/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
+import Web3 from 'web3';
 import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
   divide,
   greaterThan,
+  isZero,
   multiply,
-  notZero,
-  sub
+  notZero
 } from '@/utils/bigmath';
-import { Step } from '../controls/form-loader.vue';
+import { Step } from '@/components/controls/form-loader';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
+import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
+import { formatToNative } from '@/utils/format';
+import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import Modal from './modal.vue';
 import {
-  getAssetsForTreasury,
-  getMoveAssetData,
-  getMoveWethLPAssetData
-} from '@/wallet/references/data';
-import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
-import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
-import { formatToDecimals } from '@/utils/format';
-import { sameAddress } from '@/utils/address';
-import { GetTokenPrice } from '@/services/thegraph/api';
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 export default Vue.extend({
-  name: 'TreasuryDecreaseBoostForm',
+  name: 'SavingsWithdrawModal',
   components: {
     AssetField,
     ActionButton,
     GasSelector,
-    FormLoader
+    FormLoader,
+    Modal
   },
   data() {
     return {
       loaderStep: undefined as Step | undefined,
       infoExpanded: false,
       output: {
-        asset: undefined as TokenWithBalance | undefined,
         amount: '',
         nativeAmount: ''
       },
       selectedGasPrice: '0',
+      useSubsidized: false,
+      subsidizedAvaialbe: false,
       actionGasLimit: '0',
       approveGasLimit: '0',
       transferError: undefined as undefined | string,
-      loading: false
+      loading: false,
+      modalId: ModalTypes.SavingsWithdraw
     };
   },
   computed: {
@@ -129,27 +163,33 @@ export default Vue.extend({
       'savingsAPY',
       'savingsBalance',
       'usdcPriceInWeth',
-      'ethPrice',
-      'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'ethPrice'
     ]),
-    ...mapGetters('account', ['moveNativePrice', 'slpNativePrice']),
-    headerLabel(): string | undefined {
-      return this.loaderStep ? undefined : 'Decrease Boost';
+    ...mapState('modals', {
+      state: 'state'
+    }),
+    ...mapGetters('account', ['usdcNativePrice', 'treasuryBonusNative']),
+    outputUSDCToken(): TokenWithBalance {
+      return {
+        address: this.outputUSDCAsset.address,
+        decimals: this.outputUSDCAsset.decimals,
+        symbol: this.outputUSDCAsset.symbol,
+        name: 'USDC',
+        priceUSD: this.usdcNativePrice,
+        logo: this.outputUSDCAsset.iconURL,
+        isFavorite: true,
+        isVerified: true,
+        balance: this.savingsBalance
+      };
     },
-    availableTokens(): Array<TokenWithBalance> {
-      const treasuryTokens = getAssetsForTreasury(
-        this.networkInfo.network,
-        this.moveNativePrice,
-        this.slpNativePrice
-      );
-
-      return treasuryTokens
-        .map((t) => ({
-          ...t,
-          balance: this.getTreasuryTokenBalance(t.address)
-        }))
-        .filter((t) => greaterThan(t.balance, '0'));
+    outputUSDCAsset(): SmallTokenInfoWithIcon {
+      return getUSDCAssetData(this.networkInfo.network);
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
+    },
+    headerLabel(): string | undefined {
+      return this.loaderStep ? undefined : 'Withdraw';
     },
     error(): string | undefined {
       if (!notZero(this.output.amount)) {
@@ -165,53 +205,16 @@ export default Vue.extend({
       }
       return undefined;
     },
-    newBoost(): string {
-      if (this.output.asset === undefined) {
-        return '';
-      }
-
-      const move = getMoveAssetData(this.networkInfo.network);
-      const slp = getMoveWethLPAssetData(this.networkInfo.network);
-
-      let walletAmount = '0';
-      let amountTreasury = '0';
-      let boostWeight = '1';
-      if (sameAddress(this.output.asset.address, move.address)) {
-        amountTreasury = this.treasuryBalanceMove;
-        boostWeight = '1';
-        walletAmount =
-          this.tokens.find((t: TokenWithBalance) =>
-            sameAddress(t.address, move.address)
-          )?.balance ?? '0';
-      } else if (sameAddress(this.output.asset.address, slp.address)) {
-        amountTreasury = this.treasuryBalanceLP;
-        boostWeight = '2.5';
-        walletAmount =
-          this.tokens.find((t: TokenWithBalance) =>
-            sameAddress(t.address, slp.address)
-          )?.balance ?? '0';
-      }
-
-      //console.log('amountTreasury', amountTreasury);
-      //console.log('walletAmount', walletAmount);
-
-      let inputedAmount = this.output.amount || '0';
-      if (greaterThan(inputedAmount, amountTreasury)) {
-        inputedAmount = amountTreasury;
-      }
-
-      let futureBoost = multiply(
-        divide(
-          sub(amountTreasury, inputedAmount),
-          add(amountTreasury, walletAmount)
-        ),
-        boostWeight
+    estimatedLostAnnualEarning(): string {
+      const usdcAmount = this.output.amount;
+      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const usdcAmountNative = multiply(usdcAmount, usdcNative);
+      const apyNative = multiply(
+        divide(this.savingsAPY, 100),
+        usdcAmountNative
       );
 
-      if (isNaN(+futureBoost)) {
-        futureBoost = '0';
-      }
-      return `${formatToDecimals(futureBoost, 1)}x`;
+      return `$${formatToNative(apyNative)}`;
     },
     showFooter(): boolean {
       return !notZero(this.output.amount);
@@ -227,10 +230,17 @@ export default Vue.extend({
         return this.error;
       }
 
-      return '📉 Decrease Boost';
+      return '🚪 Withdraw';
+    },
+    selectedGasPriceInWEI(): string {
+      return Web3.utils.toWei(this.selectedGasPrice, 'Gwei');
     },
     availableGasModes(): Array<GasMode> {
-      return ['low', 'normal', 'high'];
+      if (this.subsidizedAvaialbe) {
+        return ['treasury', 'low', 'normal', 'high'];
+      } else {
+        return ['low', 'normal', 'high'];
+      }
     },
     allGasLimit(): string {
       console.log(
@@ -240,10 +250,7 @@ export default Vue.extend({
       return add(this.approveGasLimit, this.actionGasLimit);
     },
     maxOutputAmount(): string {
-      if (this.output.asset === undefined) {
-        return '0';
-      }
-      return this.getTreasuryTokenBalance(this.output.asset.address);
+      return this.savingsBalance ?? '0';
     },
     buttonClass(): string {
       if (this.actionAvaialble) {
@@ -258,41 +265,56 @@ export default Vue.extend({
     showInfo(): boolean {
       return this.infoExpanded && !this.loading && this.isInfoAvailable;
     },
+    treasuryCover(): string {
+      const withdrawPriceInWEI = multiply(
+        this.selectedGasPriceInWEI,
+        this.actionGasLimit
+      );
+
+      const withdrawPriceInEth = Web3.utils.fromWei(
+        withdrawPriceInWEI,
+        'ether'
+      );
+      const withdrawPriceNative = multiply(withdrawPriceInEth, this.ethPrice);
+
+      if (this.useSubsidized) {
+        return `$${formatToNative(withdrawPriceNative)}`;
+      } else {
+        return '$0.00';
+      }
+    },
     infoFooter(): string {
-      return 'Decrease the boost will return your reserved assets, but will also decrease your Treasury share and future rewards.';
+      return 'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.';
     }
   },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const move = this.availableTokens.find((t: TokenWithBalance) =>
-      sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
-    );
-    if (move) {
-      this.output.asset = move;
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+        this.checkSubsidizedAvailability();
+      }
+    },
+    modalPayload(
+      newVal: TModalPayload<ModalTypes.SavingsWithdraw> | undefined
+    ) {
+      if (newVal === undefined) {
+        return;
+      }
+      this.output.amount = '';
+      this.output.nativeAmount = '';
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+      this.checkSubsidizedAvailability();
     }
   },
   methods: {
-    getTreasuryTokenBalance(address: string): string {
-      const move = getMoveAssetData(this.networkInfo.network);
-      const slp = getMoveWethLPAssetData(this.networkInfo.network);
-
-      if (sameAddress(address, move.address)) {
-        return this.treasuryBalanceMove;
-      } else if (sameAddress(address, slp.address)) {
-        return this.treasuryBalanceLP;
-      }
-      return '0';
-    },
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
     async handleExecuteWithdraw(): Promise<void> {
-      if (this.output.asset === undefined) {
-        console.error(
-          "[withdraw-form] can't execute withdraw due to empty input asset"
-        );
-        return;
-      }
       if (!notZero(this.output.amount)) {
         console.error(
           "[withdraw-form] can't execute withdraw due to zero amount"
@@ -303,13 +325,14 @@ export default Vue.extend({
       this.loaderStep = 'Confirm';
       try {
         await withdrawCompound(
-          this.output.asset,
+          this.outputUSDCAsset,
           this.output.amount,
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
           this.actionGasLimit,
           this.selectedGasPrice,
+          this.useSubsidized,
           async () => {
             this.loaderStep = 'Process';
           }
@@ -319,23 +342,8 @@ export default Vue.extend({
         this.loaderStep = 'Reverted';
       }
     },
-    async handleUpdateOutputAsset(asset: TokenWithBalance): Promise<void> {
-      const price = await GetTokenPrice(asset.address);
-      this.output.asset = asset;
-      if (!price && price !== '0') {
-        this.output.asset.priceUSD = price;
-      }
-      this.output.amount = '';
-      this.output.nativeAmount = '';
-
-      this.actionGasLimit = '0';
-    },
     async handleUpdateOutputAmount(amount: string): Promise<void> {
       this.output.amount = amount;
-
-      if (this.output.asset === undefined) {
-        return;
-      }
 
       if (!notZero(this.output.amount)) {
         this.output.nativeAmount = '0';
@@ -346,11 +354,13 @@ export default Vue.extend({
       this.transferError = undefined;
       try {
         this.output.nativeAmount = multiply(
-          this.output.asset.priceUSD,
+          this.usdcNativePrice,
           this.output.amount
         );
 
-        await this.tryToEstimate(this.output.amount, this.output.asset);
+        console.log('this.usdcNativePrice', this.usdcNativePrice);
+
+        await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
         console.error(`can't calc data: ${err}`);
         this.transferError = 'Exchange error';
@@ -363,10 +373,6 @@ export default Vue.extend({
     async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
       this.output.nativeAmount = amount;
 
-      if (this.output.asset === undefined) {
-        return;
-      }
-
       if (!notZero(this.output.nativeAmount)) {
         this.output.amount = '0';
         return;
@@ -377,11 +383,11 @@ export default Vue.extend({
       try {
         this.output.amount = convertAmountFromNativeValue(
           this.output.nativeAmount,
-          this.output.asset.priceUSD,
-          this.output.asset.decimals
+          this.usdcNativePrice,
+          this.outputUSDCAsset.decimals
         );
 
-        await this.tryToEstimate(this.output.amount, this.output.asset);
+        await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
         console.error(`can't calc data: ${err}`);
         this.transferError = 'Exchange error';
@@ -392,7 +398,9 @@ export default Vue.extend({
       }
     },
     handleSelectedGasChanged(newGas: GasModeData): void {
+      this.useSubsidized = newGas.mode === 'treasury';
       this.selectedGasPrice = String(newGas.price);
+      this.checkSubsidizedAvailability();
     },
     async tryToEstimate(
       outputAmount: string,
@@ -412,6 +420,24 @@ export default Vue.extend({
       }
       this.actionGasLimit = resp.actionGasLimit;
       this.approveGasLimit = resp.approveGasLimit;
+      this.checkSubsidizedAvailability();
+    },
+    checkSubsidizedAvailability(): void {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we don't allow subsidized transaction"
+        );
+        this.subsidizedAvaialbe = false;
+        return;
+      }
+      this.subsidizedAvaialbe = isSubsidizedAllowed(
+        gasPrice,
+        this.actionGasLimit,
+        this.ethPrice,
+        this.treasuryBonusNative
+      );
     }
   }
 });

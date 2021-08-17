@@ -80,5 +80,6 @@ export const withdrawSubsidized = async (
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
+    throw err;
   }
 };

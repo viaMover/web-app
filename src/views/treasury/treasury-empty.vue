@@ -10,15 +10,7 @@
           <context-button :popover-parent-id="popoverParentId">
             <context-button-item
               :text="$t('treasury.btnDeposit.emoji')"
-              @click="handleDepositClick"
-            />
-            <context-button-item
-              :text="$t('treasury.btnWithdraw.emoji')"
-              @click="handleWithdrawClick"
-            />
-            <context-button-item
-              :text="$t('treasury.btnClaimAndBurn.emoji')"
-              @click="handleClaimAndBurnClick"
+              @click="handleIncreaseBoostClick"
             />
           </context-button>
         </template>
@@ -30,7 +22,7 @@
       <p>{{ $t('treasury.txtNothingInTreasury') }}</p>
       <action-button
         button-class="black-link button-active"
-        @button-click="toggleDeposit"
+        @button-click="toggleIncreaseBoost"
       >
         {{ $t('treasury.btnDeposit.emoji') }}
       </action-button>
@@ -49,8 +41,8 @@ import {
   ContextButtonItem
 } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
-import { Modal } from '@/components/modals';
-import { mapGetters } from 'vuex';
+import { Modal as ModalType } from '@/store/modules/modals/types';
+import { mapActions, mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'TreasuryEmpty',
@@ -82,28 +74,27 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     replaceActiveTreasuryRoute(): void {
       this.$router.replace({
         name: 'treasury-manage'
       });
     },
-    toggleDeposit(): void {
-      toggleSingleItem(Modal.TreasuryIncreaseBoost);
+    toggleIncreaseBoost(): void {
+      this.setModalIsDisplayed({
+        id: ModalType.TreasuryIncreaseBoost,
+        value: true,
+        payload: {}
+      });
     },
-    handleDepositClick(): void {
+    handleIncreaseBoostClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.TreasuryIncreaseBoost);
-    },
-    handleWithdrawClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.TreasuryDecreaseBoost);
-    },
-    handleClaimAndBurnClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.TreasuryClaimAndBurn);
+      this.setModalIsDisplayed({
+        id: ModalType.TreasuryIncreaseBoost,
+        value: true,
+        payload: {}
+      });
     }
   }
 });
 </script>
-
-<style scoped></style>

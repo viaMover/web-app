@@ -11,16 +11,15 @@
 }
 
 .modal-wrapper-info-title {
-  font-family: 'Medium', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  color: rgba(60, 60, 67, 0.6);
-  text-align: center;
+  font-family: 'Medium';
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(60,60,67,0.6);
+    text-align: center;
 }
 
 .modal-wrapper-info-items {
-  margin-top: 24px;
+  margin: 24px 24px 0 24px;
 }
 
 .modal-wrapper-info-items-item {
@@ -101,17 +100,34 @@
 }
 
 .modal-wrapper-info-items-item-left .icon {
-  background-color: rgba(60, 60, 67, 0.6);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.modal-wrapper-info-items-item-left .icon img,
+.modal-wrapper-info-items-item-left .icon .img-stub {
   border-radius: 50%;
+  display: block;
   width: 28px;
   height: 28px;
 }
 
-.modal-wrapper-info-items-item-left .icon img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+.modal-wrapper-info-items-item-left .icon .img-stub {
+  background-color: #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 50%);
+
+  span {
+    font-size: 8px;
+    font-family: 'Regular', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 12px;
+  }
 }
 
 .modal-wrapper-info-items-item-left .input-top {
@@ -120,6 +136,7 @@
   font-size: 18px;
   line-height: 28px;
   margin-left: 8px;
+  max-width: 250px;
 }
 
 .modal-wrapper-info-items-item-left .input-bottom {
@@ -131,7 +148,7 @@
   line-height: 16px;
 }
 
-.modal-wrapper-info-items-item-left span {
+.modal-wrapper-info-items-item-left > span {
   background-color: transparent;
   border: none;
   outline: none;
@@ -209,6 +226,7 @@
 }
 
 .modal-wrapper-info-items-item-right button.use {
+  margin-left: auto;
   margin-top: 8px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -269,7 +287,7 @@
   -webkit-flex-wrap: wrap;
       -ms-flex-wrap: wrap;
           flex-wrap: wrap;
-  margin-top: 24px;
+  margin: 24px 24px 0 24px;
 }
 
 .modal-wrapper-info-buttons button.flip {
@@ -285,6 +303,16 @@
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
+}
+
+.modal-wrapper-info-buttons button.flip picture {
+  width: 22px;
+  height: 18px;
+}
+.modal-wrapper-info-buttons button.flip picture img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .modal-wrapper-info-buttons button.flip:active {
@@ -314,6 +342,18 @@
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
+}
+
+.modal-wrapper-info-buttons button.tx-details picture {
+  width: 16px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+.modal-wrapper-info-buttons button.tx-details picture img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .modal-wrapper-info-buttons button.tx-details:active {
@@ -419,7 +459,7 @@
 }
 
 .modal-wrapper-info-button {
-  margin-top: 24px;
+  margin: 24px 24px 0 24px;
 }
 
 .modal-wrapper-info-button button {
@@ -470,6 +510,7 @@
   -webkit-justify-content: space-between;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  margin: 0 24px 24px 24px 
 }
 
 .modal-wrapper-info-footer-left {
@@ -683,14 +724,14 @@
   background-color: #fafafc;
 }
 
-.modal-wrapper-info .modal-info-footer p {
+.modal-info-footer p {
   color: rgba(60, 60, 67, 0.6);
   font-family: 'Regular', sans-serif;
   font-weight: 400;
-  margin-top: 24px;
+  margin: 0 24px 24px 24px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon {
+.modal-info-footer .icon {
   margin: 0 3px;
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -700,14 +741,15 @@
   top: 6px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon img {
+.modal-info-footer .icon img {
   border-radius: 50%;
   display: block;
   width: 22px;
   height: 22px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon-wrapper {
+.modal-info-footer .icon-wrapper {
+  margin-top: -6px;
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
@@ -717,14 +759,14 @@
   left: 6px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon-wrapper img {
+.modal-info-footer .icon-wrapper img {
   border-radius: 50%;
   display: block;
   width: 22px;
   height: 22px;
 }
 
-.modal-wrapper-info .modal-info-footer .icon-wrapper .icon-right {
+.modal-info-footer .icon-wrapper .icon-right {
   position: relative;
   left: -11px;
 }

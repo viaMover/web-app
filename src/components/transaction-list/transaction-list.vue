@@ -16,7 +16,7 @@
         {{ $t('lblConnectWalletTransactionHistory') }}
       </div>
       <transaction-group
-        v-for="txGroup in transactionGroups"
+        v-for="txGroup in filteredTransactionGroups"
         v-else
         :key="txGroup.date"
         :heading-text="formatDate(txGroup.timeStamp)"
@@ -28,11 +28,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
 import TransactionGroup from './transaction-group.vue';
+import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
+import { Transaction } from '@/wallet/types';
+import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
+import { isValidTxHash, sameAddress } from '@/utils/address';
 
 export default Vue.extend({
   name: 'TransactionList',
@@ -50,7 +54,37 @@ export default Vue.extend({
   computed: {
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
-    })
+    }),
+    ...mapState('account', ['networkInfo']),
+    filteredTransactionGroups(): Array<TransactionGroupType> {
+      let searchType = 'byName';
+      if (isValidTxHash(this.searchTermDebounced)) {
+        searchType = 'byAddress';
+      }
+      return this.transactionGroups
+        .map((t: TransactionGroupType) => {
+          const txns = t.transactions.filter((tx: Transaction) => {
+            if (searchType === 'byName') {
+              const moverHeader = getTransactionHumanType(
+                tx,
+                this.networkInfo.network
+              ).toUpperCase();
+              return (
+                moverHeader.indexOf(this.searchTermDebounced.toUpperCase()) !==
+                -1
+              );
+            } else {
+              return sameAddress(tx.hash, this.searchTermDebounced);
+            }
+          });
+
+          return {
+            timeStamp: t.timeStamp,
+            transactions: txns
+          };
+        })
+        .filter((t: TransactionGroupType) => t.transactions.length > 0);
+    }
   },
   watch: {
     searchTerm(newVal: string) {

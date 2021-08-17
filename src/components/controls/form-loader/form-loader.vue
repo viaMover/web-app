@@ -43,14 +43,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-export type Step = 'Confirm' | 'Process' | 'Success' | 'Reverted';
-
-type StepData = {
-  id: Step;
-  title: string;
-  subtitle: string;
-};
+import { StepData } from '@/components/controls/form-loader/types';
 
 export default Vue.extend({
   name: 'FormLoader',

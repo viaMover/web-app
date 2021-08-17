@@ -13,3 +13,7 @@ export const getPureEthAddress = (): string =>
 
 export const convertStringToHexWithPrefix = (stringToConvert: string): string =>
   `0x${new BigNumber(stringToConvert).toString(16)}`;
+
+export const isValidTxHash = (txHash: string): boolean => {
+  return /^0x([A-Fa-f0-9]{64})$/.test(txHash);
+};

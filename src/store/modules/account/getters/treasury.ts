@@ -142,9 +142,16 @@ export default {
       return [];
     }
 
+    let hasTrimmedLeft = false;
     return state.treasuryInfo.last12MonthsBonuses
-      .filter((item) => item.bonusesEarned !== 0)
-      .slice()
+      .reduce((acc, item) => {
+        if (item.bonusesEarned === 0 && !hasTrimmedLeft) {
+          return acc;
+        }
+
+        hasTrimmedLeft = true;
+        return [...acc, item];
+      }, new Array<TreasuryMonthBonusesItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
   treasuryEarnedThisMonth(state): string {

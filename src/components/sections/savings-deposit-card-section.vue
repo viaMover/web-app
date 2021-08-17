@@ -16,8 +16,7 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
-import { Modal } from '@/components/modals';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import { Card } from '@/components/controls';
 
@@ -33,8 +32,15 @@ export default Vue.extend({
     ...mapActions('account', {
       toggleInfo: 'toggleIsDepositCardSectionVisible'
     }),
+    ...mapActions('modals', {
+      setIsModalDisplayed: 'setIsDisplayed'
+    }),
     handleButtonClick(): void {
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setIsModalDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     }
   }
 });

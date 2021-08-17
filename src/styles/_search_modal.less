@@ -19,10 +19,6 @@
   text-align: center;
 }
 
-.swaps__wrapper-search-form {
-  padding: 0 24px;
-}
-
 .swaps__wrapper-search-items {
   margin-top: 16px;
   max-height: 315px;
@@ -51,6 +47,12 @@
   font-family: 'Bold', sans-serif;
   font-weight: 700;
   margin-left: 5px;
+}
+
+.swaps__wrapper-search-items .items-title h3 {
+  font-family: 'Bold';
+  font-size: 14px;
+  line-height: 24px;
 }
 
 .swaps__wrapper-search-items .favorite span {
@@ -94,17 +96,41 @@
 }
 
 .swaps__wrapper-search-items-item-info .icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background-color: #8a8a8e;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-basis: 18%;
+  -ms-flex-preferred-size: 18%;
+  flex-basis: 18%;
 }
 
-.swaps__wrapper-search-items-item-info .icon img {
-  width: 100%;
-  height: 100%;
-  display: block;
+.swaps__wrapper-search-items-item-info .icon img,
+.swaps__wrapper-search-items-item-info .icon .img-stub {
   border-radius: 50%;
+  display: block;
+  width: 38px;
+  height: 38px;
+}
+
+.swaps__wrapper-search-items-item-info .icon .img-stub {
+  background-color: #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 50%);
+
+  span {
+    font-size: 10px;
+  }
+}
+
+.swaps__wrapper-search-items-item-info .icon .img-stub span {
+  font-size: 10px;
+  font-family: 'Regular', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 16px;
 }
 
 .swaps__wrapper-search-items-item-info .info {
@@ -153,6 +179,7 @@
 form.search-form {
   width: 100%;
   position: relative;
+  margin-top: 24px;
 }
 
 form.search-form input {
@@ -160,7 +187,7 @@ form.search-form input {
   position: relative;
   background-color: #f1f1f1;
   padding: 8px 51px;
-  font-family: 'Bold', sans-serif;
+  font-family: 'Bold';
   font-weight: 700;
   font-size: 14px;
   line-height: 24px;
@@ -169,8 +196,24 @@ form.search-form input {
   border: none;
 }
 
-form.search-form input:-ms-input-placeholder:-moz-placeholder::-moz-placeholder::-webkit-input-placeholder {
-  color: rgba(60, 60, 67, 0.6);
+form.search-form input::-webkit-input-placeholder {
+  font-family: 'Bold';
+  color: rgba(60,60,67,0.6);
+}
+
+form.search-form input::-moz-placeholder {
+  font-family: 'Bold';
+  color: rgba(60,60,67,0.6);
+}
+
+form.search-form input:-moz-placeholder {
+  font-family: 'Bold';
+  color: rgba(60,60,67,0.6);
+}
+
+form.search-form input:-ms-input-placeholder {
+  font-family: 'Bold';
+  color: rgba(60,60,67,0.6);
 }
 
 form.search-form button {
