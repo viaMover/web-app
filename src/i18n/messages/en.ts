@@ -492,7 +492,7 @@ export default {
   search: {
     lblSearch: 'Search',
     lblSearchBar: 'Search tokens',
-    lblSearchBarPlaceholder: 'Search any token on Ethereum',
+    lblSearchBarPlaceholder: 'Search any token',
     lblSearchTransaction: 'Search any transaction',
     lblFavorite: 'Favorite',
     lblVerified: 'Verified',

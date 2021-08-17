@@ -254,7 +254,7 @@ export default Vue.extend({
     min-height: 30vh;
     height: auto;
     max-height: 80vh;
-    padding: 24px;
+    padding: 0px;
     background-color: #fafafc;
     -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -265,11 +265,7 @@ export default Vue.extend({
     }
 
     &-header {
-      margin-bottom: 24px;
-
-      &.no-bottom-margin {
-        margin-bottom: 0;
-      }
+      margin: 24px 24px 0 24px;
 
       &--default {
         font-family: Regular, sans-serif;
