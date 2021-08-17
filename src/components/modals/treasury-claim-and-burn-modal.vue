@@ -123,7 +123,10 @@ import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAnd
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
 import { getExitingAmount, getMaxBurn } from '@/services/chain';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
@@ -173,9 +176,15 @@ export default Vue.extend({
       'treasuryBalanceMove',
       'treasuryBalanceLP'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['moveNativePrice']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Claim & Burn';
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     showFooter(): boolean {
       return this.input.asset === undefined || !notZero(this.input.amount);
@@ -283,38 +292,40 @@ export default Vue.extend({
         this.selectedGasPrice = newVal.ProposeGas.price;
       }
     },
-    async tokens(
-      newVal: Array<TokenWithBalance>,
-      oldVal: Array<TokenWithBalance>
+    async modalPayload(
+      newVal: TModalPayload<ModalType.TreasuryClaimAndBurn> | undefined
     ) {
-      if (
-        oldVal.length === 0 &&
-        newVal.length !== 0 &&
-        this.input.asset === undefined
-      ) {
-        const move = this.tokens.find((t: TokenWithBalance) =>
-          sameAddress(
-            t.address,
-            getMoveAssetData(this.networkInfo.network).address
-          )
+      if (newVal === undefined) {
+        return;
+      }
+      const move = this.tokens.find((t: TokenWithBalance) =>
+        sameAddress(
+          t.address,
+          getMoveAssetData(this.networkInfo.network).address
+        )
+      );
+      if (move) {
+        this.input.asset = move;
+      } else {
+        this.input.asset = undefined;
+      }
+      this.input.amount = '';
+      this.input.nativeAmount = '';
+
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+
+      this.loading = true;
+
+      try {
+        this.maxBurnedAmount = await getMaxBurn(
+          this.currentAddress,
+          this.networkInfo.network,
+          this.provider.web3
         );
-        if (move) {
-          this.input.asset = move;
-        }
-
-        this.loading = true;
-
-        try {
-          this.maxBurnedAmount = await getMaxBurn(
-            this.currentAddress,
-            this.networkInfo.network,
-            this.provider.web3
-          );
-        } catch (err) {
-          console.log(`can't load max burn: ${JSON.stringify(err)}`);
-        } finally {
-          this.loading = false;
-        }
+      } catch (err) {
+        console.log(`can't load max burn: ${JSON.stringify(err)}`);
+      } finally {
+        this.loading = false;
       }
     }
   },

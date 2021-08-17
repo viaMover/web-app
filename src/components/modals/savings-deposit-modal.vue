@@ -378,9 +378,6 @@ export default Vue.extend({
       this.checkSubsidizedAvailability();
     }
   },
-  mounted() {
-    console.log('MOUNTED');
-  },
   methods: {
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;

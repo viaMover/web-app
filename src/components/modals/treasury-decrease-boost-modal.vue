@@ -113,7 +113,10 @@ import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/wit
 import { formatToDecimals } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { GetTokenPrice } from '@/services/thegraph/api';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 import Modal from './modal.vue';
 import { Step } from '../controls/form-loader';
@@ -160,9 +163,15 @@ export default Vue.extend({
       'treasuryBalanceMove',
       'treasuryBalanceLP'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['moveNativePrice', 'slpNativePrice']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Decrease Boost';
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     availableTokens(): Array<TokenWithBalance> {
       const treasuryTokens = getAssetsForTreasury(
@@ -301,32 +310,31 @@ export default Vue.extend({
         this.selectedGasPrice = newVal.ProposeGas.price;
       }
     },
-    tokens(newVal: Array<TokenWithBalance>, oldVal: Array<TokenWithBalance>) {
-      if (
-        oldVal.length === 0 &&
-        newVal.length !== 0 &&
-        this.output.asset === undefined
-      ) {
-        const move = this.availableTokens.find((t: TokenWithBalance) =>
-          sameAddress(
-            t.address,
-            getMoveAssetData(this.networkInfo.network).address
-          )
-        );
-        if (move) {
-          this.output.asset = move;
+    modalPayload(
+      newVal: TModalPayload<ModalType.TreasuryDecreaseBoost> | undefined
+    ) {
+      if (newVal === undefined) {
+        return;
+      }
+      const move = this.availableTokens.find((t: TokenWithBalance) =>
+        sameAddress(
+          t.address,
+          getMoveAssetData(this.networkInfo.network).address
+        )
+      );
+      if (move) {
+        this.output.asset = move;
+      } else {
+        if (this.availableTokens.length > 0) {
+          this.output.asset = this.availableTokens[0];
+        } else {
+          this.output.asset = undefined;
         }
       }
-    }
-  },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+      this.output.amount = '';
+      this.output.nativeAmount = '';
 
-    const move = this.availableTokens.find((t: TokenWithBalance) =>
-      sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
-    );
-    if (move) {
-      this.output.asset = move;
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
     }
   },
   methods: {

@@ -254,7 +254,7 @@ const getAssetsForTreasury = (
       isVerified: true,
       name: 'Sushi MOVE-ETH LP',
       priceUSD: slpNativePrice,
-      logo: ''
+      logo: 'https://protocol-icons.s3.amazonaws.com/sushi-exchange.png'
     }
   ];
 };

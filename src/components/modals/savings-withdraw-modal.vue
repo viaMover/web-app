@@ -298,7 +298,9 @@ export default Vue.extend({
         this.checkSubsidizedAvailability();
       }
     },
-    modalPayload(newVal: TModalPayload<ModalTypes.SavingsDeposit> | undefined) {
+    modalPayload(
+      newVal: TModalPayload<ModalTypes.SavingsWithdraw> | undefined
+    ) {
       if (newVal === undefined) {
         return;
       }
@@ -307,10 +309,6 @@ export default Vue.extend({
       this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
       this.checkSubsidizedAvailability();
     }
-  },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {

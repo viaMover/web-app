@@ -160,7 +160,10 @@ import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depos
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
 import Web3 from 'web3';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 import Modal from './modal.vue';
 
@@ -204,11 +207,17 @@ export default Vue.extend({
       'treasuryBalanceMove',
       'treasuryBalanceLP'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Increase Boost';
     },
     showFooter(): boolean {
       return this.input.asset === undefined || !notZero(this.input.amount);
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
@@ -330,32 +339,27 @@ export default Vue.extend({
         this.selectedGasPrice = newVal.ProposeGas.price;
       }
     },
-    tokens(newVal: Array<TokenWithBalance>, oldVal: Array<TokenWithBalance>) {
-      if (
-        oldVal.length === 0 &&
-        newVal.length !== 0 &&
-        this.input.asset === undefined
-      ) {
-        const move = this.tokens.find((t: TokenWithBalance) =>
-          sameAddress(
-            t.address,
-            getMoveAssetData(this.networkInfo.network).address
-          )
-        );
-        if (move) {
-          this.input.asset = move;
-        }
+    modalPayload(
+      newVal: TModalPayload<ModalType.TreasuryIncreaseBoost> | undefined
+    ) {
+      if (newVal === undefined) {
+        return;
       }
-    }
-  },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
+      const move = this.tokens.find((t: TokenWithBalance) =>
+        sameAddress(
+          t.address,
+          getMoveAssetData(this.networkInfo.network).address
+        )
+      );
+      if (move) {
+        this.input.asset = move;
+      } else {
+        this.input.asset = undefined;
+      }
+      this.input.amount = '';
+      this.input.nativeAmount = '';
 
-    const move = this.tokens.find((t: TokenWithBalance) =>
-      sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
-    );
-    if (move) {
-      this.input.asset = move;
+      this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
     }
   },
   methods: {
