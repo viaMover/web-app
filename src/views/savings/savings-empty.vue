@@ -32,9 +32,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import {
   ActionButton,
@@ -42,7 +43,6 @@ import {
   ContextButtonItem
 } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
-import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
@@ -74,17 +74,26 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     replaceActiveSavingsRoute(): void {
       this.$router.replace({
         name: 'savings-manage'
       });
     },
     toggleDeposit(): void {
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     },
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     }
   }
 });

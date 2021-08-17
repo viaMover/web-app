@@ -1,11 +1,17 @@
 <template>
-  <div class="modal-wrapper-info">
-    <div>
+  <modal
+    close-on-dimmer-click
+    :disable-header-bottom-margin="!headerLabel"
+    has-header
+    :modal-id="modalId"
+    show-close-button
+  >
+    <template v-slot:header>
       <h3 v-if="headerLabel" class="modal-wrapper-info-title">
         {{ headerLabel }}
       </h3>
       <span v-else>&nbsp;</span>
-    </div>
+    </template>
     <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
@@ -38,10 +44,20 @@
       </div>
       <div class="modal-wrapper-info-buttons">
         <button class="flip button-active" type="button" @click="flipAssets">
-          <img
-            :alt="$t('icon.txtFlipAssetsIconAlt')"
-            src="@/assets/images/flip.png"
-          />
+          <picture>
+            <source
+              srcset="
+                @/assets/images/Flip.webp,
+                @/assets/images/Flip@2x.webp 2x
+              "
+              type="image/webp"
+            />
+            <img
+              :alt="$t('icon.txtFlipAssetsIconAlt')"
+              src="@/assets/images/Flip.png"
+              srcset="@/assets/images/Flip.png, images/Flip@2x.png 2x"
+            />
+          </picture>
           <span>Flip</span>
         </button>
         <button
@@ -105,7 +121,7 @@
         @selected-gas-changed="handleSelectedGasChanged"
       />
     </form>
-  </div>
+  </modal>
 </template>
 
 <script lang="ts">
@@ -133,8 +149,8 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { formatSwapSources } from '@/wallet/references/data';
-import { TokenWithBalance, Token, SmallToken } from '@/wallet/types';
+import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
+import { TokenWithBalance, Token, SmallToken, GasData } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
 
@@ -147,18 +163,25 @@ import {
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Slippage } from '../controls/slippage-selector.vue';
-import { Step } from '../controls/form-loader.vue';
+import { Step } from '@/components/controls/form-loader';
 import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
+import Modal from '@/components/modals/modal.vue';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
+
 export default Vue.extend({
-  name: 'SwapForm',
+  name: 'SwapModal',
   components: {
     AssetField,
     ActionButton,
     GasSelector,
     SlippageSelector,
-    FormLoader
+    FormLoader,
+    Modal
   },
   data() {
     return {
@@ -182,7 +205,8 @@ export default Vue.extend({
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
-      loading: false
+      loading: false,
+      modalId: ModalTypes.Swap
     };
   },
   computed: {
@@ -194,9 +218,15 @@ export default Vue.extend({
       'tokens',
       'ethPrice'
     ]),
+    ...mapState('modals', {
+      state: 'state'
+    }),
     ...mapGetters('account', ['treasuryBonusNative']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
+    },
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
     },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
@@ -338,13 +368,69 @@ export default Vue.extend({
       return this.infoExpanded && !this.loading && !!this.transferData;
     }
   },
-  mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.input.asset = eth;
+  watch: {
+    gasPrices(newVal: GasData, oldVal: GasData) {
+      if (newVal === oldVal) {
+        return;
+      }
+
+      if (this.selectedGasPrice === '0') {
+        this.selectedGasPrice = newVal.ProposeGas.price;
+        this.checkSubsidizedAvailability();
+      }
+    },
+    modalPayload(newVal: TModalPayload<ModalTypes.Swap> | undefined) {
+      if (newVal === undefined) {
+        return;
+      }
+      if (newVal.swapType === 'getMove') {
+        const eth = this.tokens.find(
+          (t: TokenWithBalance) => t.address === 'eth'
+        );
+        if (eth) {
+          this.input.asset = eth;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        } else {
+          this.input.asset = undefined;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        }
+        const move = this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(
+            t.address,
+            getMoveAssetData(this.networkInfo.network).address
+          )
+        );
+        if (move) {
+          this.output.asset = move;
+          this.output.amount = '';
+          this.output.nativeAmount = '';
+        } else {
+          this.output.asset = undefined;
+          this.output.amount = '';
+          this.output.nativeAmount = '';
+        }
+      } else {
+        const eth = this.tokens.find(
+          (t: TokenWithBalance) => t.address === 'eth'
+        );
+        if (eth) {
+          this.input.asset = eth;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        } else {
+          this.input.asset = undefined;
+          this.input.amount = '';
+          this.input.nativeAmount = '';
+        }
+        this.output.asset = undefined;
+        this.output.amount = '';
+        this.output.nativeAmount = '';
+      }
+
+      this.checkSubsidizedAvailability();
     }
-    this.checkSubsidizedAvailability();
   },
   methods: {
     expandInfo(): void {
@@ -442,7 +528,7 @@ export default Vue.extend({
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
       this.input.amount = amount;
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.input.asset === undefined) {
         return;
       }
 
@@ -453,13 +539,17 @@ export default Vue.extend({
         return;
       }
 
+      this.input.nativeAmount = formatToNative(
+        multiply(this.input.asset.priceUSD, this.input.amount)
+      );
+
+      if (this.output.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -498,7 +588,7 @@ export default Vue.extend({
     },
     async handleUpdateInputNativeAmount(amount: string): Promise<void> {
       this.input.nativeAmount = amount;
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.input.asset === undefined) {
         return;
       }
 
@@ -509,15 +599,19 @@ export default Vue.extend({
         return;
       }
 
+      this.input.amount = convertAmountFromNativeValue(
+        this.input.nativeAmount,
+        this.input.asset.priceUSD,
+        this.input.asset.decimals
+      );
+
+      if (this.output.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.amount = convertAmountFromNativeValue(
-          this.input.nativeAmount,
-          this.input.asset.priceUSD,
-          this.input.asset.decimals
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -558,7 +652,7 @@ export default Vue.extend({
     async handleUpdateOutputAmount(amount: string): Promise<void> {
       this.output.amount = amount;
 
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.output.asset === undefined) {
         return;
       }
 
@@ -569,13 +663,17 @@ export default Vue.extend({
         return;
       }
 
+      this.output.nativeAmount = formatToNative(
+        multiply(this.output.asset.priceUSD, this.output.amount)
+      );
+
+      if (this.input.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = formatToNative(
-          multiply(this.output.asset.priceUSD, this.output.amount)
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -614,7 +712,7 @@ export default Vue.extend({
     },
     async handleUpdateOutputNativeAmount(amount: string): Promise<void> {
       this.output.nativeAmount = amount;
-      if (this.input.asset === undefined || this.output.asset === undefined) {
+      if (this.output.asset === undefined) {
         return;
       }
 
@@ -625,15 +723,19 @@ export default Vue.extend({
         return;
       }
 
+      this.output.amount = convertAmountFromNativeValue(
+        this.output.nativeAmount,
+        this.output.asset.priceUSD,
+        this.output.asset.decimals
+      );
+
+      if (this.input.asset === undefined) {
+        return;
+      }
+
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.amount = convertAmountFromNativeValue(
-          this.output.nativeAmount,
-          this.output.asset.priceUSD,
-          this.output.asset.decimals
-        );
-
         const transferData = await this.calcData(
           this.input.asset,
           this.output.asset,
@@ -804,6 +906,15 @@ export default Vue.extend({
         this.subsidizedAvaialbe = false;
         return;
       }
+
+      if (
+        this.input.asset?.address === 'eth' ||
+        this.output.asset?.address === 'eth'
+      ) {
+        this.subsidizedAvaialbe = false;
+        return;
+      }
+
       this.subsidizedAvaialbe = isSubsidizedAllowed(
         gasPrice,
         this.actionGasLimit,

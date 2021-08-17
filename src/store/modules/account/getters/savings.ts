@@ -199,9 +199,16 @@ export default {
       return [];
     }
 
+    let hasTrimmedLeft = false;
     return state.savingsInfo.last12MonthsBalances
-      .filter((item) => item.balance !== 0)
-      .slice()
+      .reduce((acc, item) => {
+        if (item.balance === 0 && !hasTrimmedLeft) {
+          return acc;
+        }
+
+        hasTrimmedLeft = true;
+        return [...acc, item];
+      }, new Array<SavingsMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
   hasActiveSavings(state): boolean {

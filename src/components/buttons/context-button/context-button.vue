@@ -50,7 +50,7 @@ export default Vue.extend({
     },
     actionButtonClass(): string {
       if (this.buttonClass === '') {
-        return '';
+        return 'button-active';
       }
 
       return `${this.buttonClass} button-active`;

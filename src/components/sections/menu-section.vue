@@ -36,14 +36,14 @@
     <menu-list wrapper-class="desktop-center-section-list">
       <menu-list-icon-item
         :icon="$t('menu.lblSwapTokenEmoji')"
-        :modal-id="Modal.Swap"
+        :modal-id="ModalType.Swap"
         :text="$t('menu.lblSwapToken')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
-        v-if="isFeatureEnabled('isBondsEnabled')"
         :icon="$t('menu.lblGetMoveEmoji')"
-        :modal-id="Modal.Swap"
+        :modal-id="ModalType.Swap"
+        :modal-payload="{ swapType: SwapType.getMove }"
         :text="$t('menu.lblGetMove')"
         wrapper-class="desktop-center-section-list-item"
       />
@@ -55,17 +55,18 @@
       />
       <menu-list-icon-item
         :icon="$t('menu.lblDepositInSavingsEmoji')"
-        :modal-id="Modal.SavingsDeposit"
+        :modal-id="ModalType.SavingsDeposit"
         :text="$t('menu.lblDepositInSavings')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
         :icon="$t('menu.lblIncreaseBoostEmoji')"
-        :modal-id="Modal.TreasuryIncreaseBoost"
+        :modal-id="ModalType.TreasuryIncreaseBoost"
         :text="$t('menu.lblIncreaseBoost')"
         wrapper-class="desktop-center-section-list-item"
       />
       <menu-list-icon-item
+        v-if="isFeatureEnabled('isBondsEnabled')"
         :icon="$t('menu.lblPurchaseBondsEmoji')"
         :text="$t('menu.lblPurchaseBonds')"
         wrapper-class="desktop-center-section-list-item"
@@ -80,7 +81,7 @@ import { mapGetters } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import { formatToNative } from '@/utils/format';
-import { Modal } from '@/components/modals';
+import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
 
 import {
   MenuList,
@@ -97,7 +98,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      Modal
+      ModalType: ModalType,
+      SwapType: SwapType
     };
   },
   computed: {

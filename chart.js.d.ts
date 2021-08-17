@@ -19,5 +19,6 @@ export {
   Chart,
   Interaction,
   registerables,
-  ActiveElement
+  ActiveElement,
+  ScriptableScaleContext
 } from 'chart.js';

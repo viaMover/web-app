@@ -1,9 +1,8 @@
 <template>
-  <div>
-    <span v-if="hasPrefix" :style="spanStyle">{{ textPrefix }}</span>
+  <div v-if="hasPrefix" :class="inputClass">
+    <span :style="spanStyle">{{ textPrefix }}</span>
     <input
       :id="fieldId"
-      :class="inputClass"
       :max="maxAmount"
       min="0"
       :placeholder="placeholder"
@@ -13,6 +12,18 @@
       @input="updateAmount($event.target.value)"
     />
   </div>
+  <input
+    v-else
+    :id="fieldId"
+    :class="inputClass"
+    :max="maxAmount"
+    min="0"
+    :placeholder="placeholder"
+    :step="step"
+    type="number"
+    :value="amount"
+    @input="updateAmount($event.target.value)"
+  />
 </template>
 
 <script lang="ts">

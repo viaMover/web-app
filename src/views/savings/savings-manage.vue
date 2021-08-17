@@ -24,7 +24,7 @@
     <savings-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('savings.btnView.simple')"
-      icon="💰"
+      :icon="$t('savings.icon')"
       :in-progress-text="$t('savings.lblInProgress')"
       :items="savingsMonthStatsOptions"
       navigate-to-name="savings-month-stats"
@@ -36,14 +36,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
 import { SavingsYearlyChartWrapper } from '@/components/savings';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
-import { Modal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'SavingsManage',
@@ -66,13 +67,22 @@ export default Vue.extend({
     })
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleDepositClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.SavingsDeposit);
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsDeposit,
+        value: true,
+        payload: {}
+      });
     },
     handleWithdrawClick(): void {
       toggleSingleItem(this.popoverParentId + '__popover');
-      toggleSingleItem(Modal.SavingsWithdraw);
+      this.setModalIsDisplayed({
+        id: ModalType.SavingsWithdraw,
+        value: true,
+        payload: {}
+      });
     }
   }
 });

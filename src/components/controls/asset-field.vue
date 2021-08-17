@@ -66,17 +66,16 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { BigNumber } from 'bignumber.js';
 import { Properties } from 'csstype';
 
 import { TokenWithBalance } from '@/wallet/types';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
-import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
 import { TokenImage } from '@/components/tokens';
-import { Modal } from '@/components/modals';
 import PriceInputField from './price-input-field.vue';
 import PlusIcon from './plus-icon.vue';
 
@@ -239,6 +238,7 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleUpdateAmount(amount: number): void {
       this.$emit('update-amount', String(amount));
     },
@@ -250,17 +250,23 @@ export default Vue.extend({
     handleUpdateNativeAmount(amount: number): void {
       this.$emit('update-native-amount', String(amount));
     },
-    handleUpdateAsset(asset: TokenWithBalance): void {
-      this.$emit('update-asset', asset);
-    },
-    handleOpenSelectModal(): void {
+    async handleOpenSelectModal(): Promise<void> {
       if (!this.disabledSelectCurrency) {
-        toggleThenWaitForResult(Modal.SearchToken, this.handleUpdateAsset, {
-          useWalletTokens: this.useWalletTokens,
-          excludeTokens: this.excludeTokens,
-          treasuryOnly: this.treasuryOnly,
-          forceTokenArray: this.forceTokenArray
+        const newAsset = await this.setModalIsDisplayed({
+          id: ModalType.SearchToken,
+          value: true,
+          payload: {
+            useWalletTokens: this.useWalletTokens,
+            excludeTokens: this.excludeTokens,
+            treasuryOnly: this.treasuryOnly,
+            forceTokenArray: this.forceTokenArray
+          }
         });
+
+        if (newAsset === undefined) {
+          return;
+        }
+        this.$emit('update-asset', newAsset);
       }
     }
   }

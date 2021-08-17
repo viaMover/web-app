@@ -14,12 +14,8 @@
 
     <router-view />
 
-    <centered-modal-window v-cloak :modal-id="SavingsDepositModalId">
-      <savings-deposit-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="SavingsWithdrawModalId">
-      <savings-withdraw-form />
-    </centered-modal-window>
+    <savings-deposit-modal />
+    <savings-withdraw-modal />
     <search-modal />
   </content-wrapper>
 </template>
@@ -33,8 +29,11 @@ import {
   SavingsStats,
   SavingsEstimation
 } from '@/components/savings';
-import { SavingsDepositForm, SavingsWithdrawForm } from '@/components/forms';
-import { CenteredModalWindow, Modal, SearchModal } from '@/components/modals';
+import {
+  SearchModal,
+  SavingsDepositModal,
+  SavingsWithdrawModal
+} from '@/components/modals';
 
 import '@/styles/_savings.less';
 import { mapGetters } from 'vuex';
@@ -46,16 +45,9 @@ export default Vue.extend({
     SavingsOverview,
     SavingsStats,
     SavingsEstimation,
-    SavingsDepositForm,
-    SavingsWithdrawForm,
-    CenteredModalWindow,
+    SavingsDepositModal,
+    SavingsWithdrawModal,
     SearchModal
-  },
-  data() {
-    return {
-      SavingsDepositModalId: Modal.SavingsDeposit,
-      SavingsWithdrawModalId: Modal.SavingsWithdraw
-    };
   },
   computed: {
     ...mapGetters('account', {

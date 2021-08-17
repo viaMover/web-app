@@ -73,6 +73,7 @@ export type ZerionTransaction = {
           name: string;
           symbol: string;
         };
+        spender: string;
       };
     }
   | {
