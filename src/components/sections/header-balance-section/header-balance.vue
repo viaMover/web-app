@@ -88,7 +88,7 @@ export default Vue.extend({
         const prefixSize = 2; // 0x...
 
         return [
-          ...val.slice(0, cutSize + prefixSize - 1),
+          ...val.slice(0, cutSize + prefixSize),
           '...',
           ...val.slice(val.length - cutSize, val.length)
         ].join('');
