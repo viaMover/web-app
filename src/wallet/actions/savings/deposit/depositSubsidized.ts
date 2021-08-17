@@ -84,5 +84,6 @@ export const depositSubsidized = async (
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
+    throw err;
   }
 };

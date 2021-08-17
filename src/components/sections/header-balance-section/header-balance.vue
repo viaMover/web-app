@@ -6,12 +6,12 @@
     <header-balance-avatar />
     <div class="balance-wrapper">
       <div class="balance-wrapper-title">
-        <span class="title">{{ $t('headingBalance') }}</span>
         <context-button
           button-class="button"
           :popover-parent-id="popoverParentId"
         >
           <template v-slot:button>
+            <span class="title">{{ $t('headingBalance') }}</span>
             <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
           </template>
           <span class="address">{{ currentAddressText }}</span>
@@ -88,7 +88,7 @@ export default Vue.extend({
         const prefixSize = 2; // 0x...
 
         return [
-          ...val.slice(0, cutSize + prefixSize - 1),
+          ...val.slice(0, cutSize + prefixSize),
           '...',
           ...val.slice(val.length - cutSize, val.length)
         ].join('');

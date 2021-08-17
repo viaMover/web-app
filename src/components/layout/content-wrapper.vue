@@ -26,6 +26,7 @@
     <page-container :container-class="pageContainerClassDerived">
       <slot></slot>
     </page-container>
+    <slot name="modals"></slot>
   </div>
 </template>
 

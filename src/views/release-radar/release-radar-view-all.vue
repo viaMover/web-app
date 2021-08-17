@@ -37,7 +37,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
+
+import { Token } from '@/wallet/types';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import { ContentWrapper } from '@/components/layout';
 import {
@@ -45,8 +48,6 @@ import {
   ReleaseRadarTokenOfTheDay,
   ReleaseRadarLiveUpdates
 } from '@/components/release-radar';
-import { toggleThenWaitForResult } from '@/components/toggle/toggle-root';
-import { Modal } from '@/components/modals';
 import SearchModal from '@/components/modals/search-modal/search-modal.vue';
 
 export default Vue.extend({
@@ -63,17 +64,23 @@ export default Vue.extend({
     ...mapState('radar', ['isLoadingCuratedList', 'isLoadingPersonalList'])
   },
   methods: {
+    ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     handleClose(): void {
       this.$router.push({
         name: 'home'
       });
     },
-    handleSearchResult(): void {
-      //TODO replace this after create details page
-      // this.$router.push({ name: '<page>', props: { id: assetId }})
-    },
-    handleOpenSelectModal(): void {
-      toggleThenWaitForResult(Modal.SearchToken, this.handleSearchResult, {});
+    async handleOpenSelectModal(): Promise<void> {
+      const selectedAsset: Token | undefined = await this.setIsModalDisplayed({
+        id: ModalType.SearchToken,
+        value: true
+      });
+      if (selectedAsset !== undefined) {
+        await this.$router.push({
+          name: 'asset-view',
+          params: { id: selectedAsset.address }
+        });
+      }
     }
   }
 });

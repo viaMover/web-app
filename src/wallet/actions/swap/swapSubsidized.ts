@@ -93,5 +93,6 @@ export const swapSubsidized = async (
       console.error(`Subsidized request error: ${err.message}`);
     }
     console.error(`Common error: ${err}`);
+    throw err;
   }
 };

@@ -7,51 +7,79 @@
       wrapper-class="preload-wrapper"
     >
       <template v-slot:left-rail>
-        <div class="preload-wrapper__sidebar-wrapper-user">
-          <PuSkeleton circle class="user-icon" tag="div" />
-          <PuSkeleton class="user-button" tag="div" />
-          <PuSkeleton class="user-status" tag="div" />
+        <div class="preload-wrapper__sidebar-search">
+          <PuSkeleton class="search" tag="div" />
         </div>
-        <div class="preload-wrapper__sidebar-wrapper-items">
-          <div class="items-item">
-            <PuSkeleton class="items-item__title" tag="div" />
-            <PuSkeleton class="items-item__text" tag="div" />
-            <PuSkeleton class="items-item__description" tag="div" />
-            <PuSkeleton class="items-item__text" tag="div" />
-            <PuSkeleton class="items-item__description" tag="div" />
+        <div class="preload-wrapper__sidebar-items">
+          <div class="preload-wrapper__sidebar-items-item">
+            <PuSkeleton class="title" tag="div" />
+            <PuSkeleton class="description" tag="div" />
+            <PuSkeleton class="subtitle" tag="div" />
+            <PuSkeleton class="description" tag="div" />
+            <PuSkeleton class="subtitle" tag="div" />
           </div>
-          <div class="items-item">
-            <PuSkeleton class="items-item__title" tag="div" />
-            <PuSkeleton class="items-item__text" tag="div" />
-            <PuSkeleton class="items-item__description" tag="div" />
-            <PuSkeleton class="items-item__text" tag="div" />
-            <PuSkeleton class="items-item__description" tag="div" />
+          <div class="preload-wrapper__sidebar-items-item">
+            <PuSkeleton class="title" tag="div" />
+            <PuSkeleton class="description" tag="div" />
+            <PuSkeleton class="subtitle" tag="div" />
+            <PuSkeleton class="description" tag="div" />
+            <PuSkeleton class="subtitle" tag="div" />
+          </div>
+          <div class="preload-wrapper__sidebar-items-item">
+            <PuSkeleton class="title" tag="div" />
+            <PuSkeleton class="description" tag="div" />
+            <PuSkeleton class="subtitle" tag="div" />
+            <PuSkeleton class="description" tag="div" />
+            <PuSkeleton class="subtitle" tag="div" />
           </div>
         </div>
       </template>
 
-      <div class="preload-wrapper__menu-wrapper-item">
-        <div class="preload-wrapper__menu-wrapper-item-top">
-          <PuSkeleton class="title" tag="div" />
+      <div class="preload-wrapper__menu-user">
+        <PuSkeleton circle class="user" tag="div" />
+        <div class="info">
+          <PuSkeleton class="description" tag="div" />
           <PuSkeleton class="description" tag="div" />
         </div>
       </div>
-      <div class="preload-wrapper__menu-wrapper-item">
-        <div class="preload-wrapper__menu-wrapper-item-center">
+      <div class="preload-wrapper__menu-navigation">
+        <div class="preload-wrapper__menu-navigation-left">
           <div class="item">
-            <PuSkeleton class="item__title" tag="div" />
-            <PuSkeleton class="item__description" tag="div" />
+            <PuSkeleton class="icon" tag="div" />
+            <div class="info">
+              <PuSkeleton class="description" tag="div" />
+              <PuSkeleton class="description" tag="div" />
+            </div>
           </div>
           <div class="item">
-            <PuSkeleton class="item__title" tag="div" />
-            <PuSkeleton class="item__description" tag="div" />
+            <PuSkeleton class="icon" tag="div" />
+            <div class="info">
+              <PuSkeleton class="description" tag="div" />
+              <PuSkeleton class="description" tag="div" />
+            </div>
+          </div>
+          <div class="item">
+            <PuSkeleton class="icon" tag="div" />
+            <div class="info">
+              <PuSkeleton class="description" tag="div" />
+              <PuSkeleton class="description" tag="div" />
+            </div>
+          </div>
+          <div class="item">
+            <PuSkeleton class="icon" tag="div" />
+            <div class="info">
+              <PuSkeleton class="description" tag="div" />
+              <PuSkeleton class="description" tag="div" />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="preload-wrapper__menu-wrapper-item">
-        <div class="preload-wrapper__menu-wrapper-item-bottom">
-          <PuSkeleton class="title" tag="div" />
-          <PuSkeleton class="description" tag="div" />
+        <div class="preload-wrapper__menu-navigation-right">
+          <PuSkeleton class="item" tag="div" />
+          <PuSkeleton class="item" tag="div" />
+          <PuSkeleton class="item" tag="div" />
+          <PuSkeleton class="item" tag="div" />
+          <PuSkeleton class="item" tag="div" />
+          <PuSkeleton class="item" tag="div" />
         </div>
       </div>
     </content-wrapper>
