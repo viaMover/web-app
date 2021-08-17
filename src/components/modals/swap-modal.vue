@@ -906,6 +906,15 @@ export default Vue.extend({
         this.subsidizedAvaialbe = false;
         return;
       }
+
+      if (
+        this.input.asset?.address === 'eth' ||
+        this.output.asset?.address === 'eth'
+      ) {
+        this.subsidizedAvaialbe = false;
+        return;
+      }
+
       this.subsidizedAvaialbe = isSubsidizedAllowed(
         gasPrice,
         this.actionGasLimit,
