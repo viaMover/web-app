@@ -371,6 +371,16 @@ export default Vue.extend({
       if (newVal === undefined) {
         return;
       }
+
+      this.loaderStep = undefined;
+      this.infoExpanded = false;
+      this.loading = false;
+      this.transferData = undefined;
+      this.transferError = undefined;
+      this.useSubsidized = false;
+      this.actionGasLimit = '0';
+      this.approveGasLimit = '0';
+
       this.input.asset = undefined;
       this.input.amount = '';
       this.input.nativeAmount = '';

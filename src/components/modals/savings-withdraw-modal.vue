@@ -304,6 +304,15 @@ export default Vue.extend({
       if (newVal === undefined) {
         return;
       }
+
+      this.loaderStep = undefined;
+      this.infoExpanded = false;
+      this.loading = false;
+      this.transferError = undefined;
+      this.useSubsidized = false;
+      this.actionGasLimit = '0';
+      this.approveGasLimit = '0';
+
       this.output.amount = '';
       this.output.nativeAmount = '';
       this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';

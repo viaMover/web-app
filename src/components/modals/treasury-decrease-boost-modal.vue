@@ -120,7 +120,6 @@ import {
 
 import Modal from './modal.vue';
 import { Step } from '../controls/form-loader';
-import { getMaxBurn } from '@/services/chain';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseBoostModal',
@@ -316,6 +315,14 @@ export default Vue.extend({
       if (newVal === undefined) {
         return;
       }
+
+      this.loaderStep = undefined;
+      this.infoExpanded = false;
+      this.loading = false;
+      this.transferError = undefined;
+      this.actionGasLimit = '0';
+      this.approveGasLimit = '0';
+
       const move = this.availableTokens.find((t: TokenWithBalance) =>
         sameAddress(
           t.address,

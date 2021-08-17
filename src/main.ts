@@ -15,13 +15,13 @@ import '@/styles/_page_transitions.less';
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.warn = () => {};
+  //console.warn = () => {};
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.info = () => {};
+  //console.info = () => {};
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.log = () => {};
+  //console.log = () => {};
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.debug = () => {};
+  //console.debug = () => {};
 }
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);

@@ -300,6 +300,14 @@ export default Vue.extend({
       if (newVal === undefined) {
         return;
       }
+
+      this.loaderStep = undefined;
+      this.infoExpanded = false;
+      this.loading = false;
+      this.transferError = undefined;
+      this.actionGasLimit = '0';
+      this.approveGasLimit = '0';
+
       const move = this.tokens.find((t: TokenWithBalance) =>
         sameAddress(
           t.address,
