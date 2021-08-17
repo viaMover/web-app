@@ -20,6 +20,10 @@ export const mapZerionTokens = (
       assetSymbol = t.asset.symbol;
     }
 
+    if (assetSymbol === 'mobo') {
+      assetSymbol = 'MOBO';
+    }
+
     return {
       address: t.asset.asset_code,
       balance: fromWei(t.quantity, t.asset.decimals),
