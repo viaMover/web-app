@@ -196,20 +196,22 @@ export default Vue.extend({
           sameAddress(t.address, move.address)
         )?.balance ?? '0';
 
-      const tokens: Array<TokenWithBalance> = [
-        {
-          address: move.address,
-          decimals: move.decimals,
-          name: move.name,
-          symbol: move.symbol,
-          priceUSD: this.moveNativePrice,
-          logo: move.iconURL,
-          isFavorite: true,
-          isVerified: true,
-          balance: moveWalletBalance
-        }
-      ];
-      return tokens;
+      if (greaterThan(moveWalletBalance, '0')) {
+        return [
+          {
+            address: move.address,
+            decimals: move.decimals,
+            name: move.name,
+            symbol: move.symbol,
+            priceUSD: this.moveNativePrice,
+            logo: move.iconURL,
+            isFavorite: true,
+            isVerified: true,
+            balance: moveWalletBalance
+          }
+        ];
+      }
+      return [];
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {

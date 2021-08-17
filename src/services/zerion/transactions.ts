@@ -67,7 +67,13 @@ export const isMoverTransation = (
     return true;
   }
 
-  console.log('tx', zt.hash, ' is not by moVE');
+  if (
+    zt.type === 'authorize' &&
+    (sameAddress(TreasuryAddress, zt.meta.spender) ||
+      sameAddress(HolyHandAddress, zt.meta.spender))
+  ) {
+    return true;
+  }
 
   return false;
 };
