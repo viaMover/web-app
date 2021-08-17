@@ -329,29 +329,6 @@ export default Vue.extend({
       }
     }
   },
-  async mounted() {
-    this.selectedGasPrice = this.gasPrices?.ProposeGas.price ?? '0';
-    const move = this.tokens.find((t: TokenWithBalance) =>
-      sameAddress(t.address, getMoveAssetData(this.networkInfo.network).address)
-    );
-    if (move) {
-      this.input.asset = move;
-    }
-
-    this.loading = true;
-
-    try {
-      this.maxBurnedAmount = await getMaxBurn(
-        this.currentAddress,
-        this.networkInfo.network,
-        this.provider.web3
-      );
-    } catch (err) {
-      console.log(`can't load max burn: ${JSON.stringify(err)}`);
-    } finally {
-      this.loading = false;
-    }
-  },
   methods: {
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
