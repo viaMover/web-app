@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -55,6 +55,7 @@ export default Vue.extend({
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
     }),
+    ...mapState('account', ['networkInfo']),
     filteredTransactionGroups(): Array<TransactionGroupType> {
       let searchType = 'byName';
       if (isValidTxHash(this.searchTermDebounced)) {
@@ -64,7 +65,10 @@ export default Vue.extend({
         .map((t: TransactionGroupType) => {
           const txns = t.transactions.filter((tx: Transaction) => {
             if (searchType === 'byName') {
-              const moverHeader = getTransactionHumanType(tx).toUpperCase();
+              const moverHeader = getTransactionHumanType(
+                tx,
+                this.networkInfo.network
+              ).toUpperCase();
               return (
                 moverHeader.indexOf(this.searchTermDebounced.toUpperCase()) !==
                 -1

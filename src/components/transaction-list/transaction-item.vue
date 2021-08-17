@@ -30,6 +30,7 @@ import {
 
 import { TokenImage } from '@/components/tokens';
 import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -43,8 +44,13 @@ export default Vue.extend({
     }
   },
   computed: {
+    ...mapState('account', ['networkInfo']),
+
     head(): string {
-      return getTransactionHumanType(this.transaction);
+      return getTransactionHumanType(
+        this.transaction,
+        this.networkInfo.network
+      );
     },
     subhead(): string {
       if (
