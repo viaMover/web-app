@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable no-undef */
-
 $(document).ready(function() {
 
 	function preload() {
@@ -522,21 +519,57 @@ $(document).ready(function() {
 	}
 	transactionWaitingPopup();
 
+	function languageMenu() {
+		let popup = $('.language__popup'); 
+		let button = $('.language-menu');
+		let bg = $('.language__popup-bg');
+
+		button.on('click', function() { 
+			popup.addClass('language__popup-active'); 
+			bg.addClass('language__popup-bg-active');
+		})
+		bg.on('click', function() { 
+			popup.removeClass('language__popup-active'); 
+			bg.removeClass('language__popup-bg-active');
+		})
+	}
+	languageMenu();
+
+	function currencyPopup() {
+		let currencyPopup = $('.popup-currency'); 
+		let close = $('.popup__close');
+		let button = $('.currency-menu');
+
+		button.on('click', function() { 
+			currencyPopup.addClass('popup-active');
+			close.addClass('popup__close-active');
+		})
+		close.on('click', function() { 
+			currencyPopup.removeClass('popup-active'); 
+			close.removeClass('popup__close-active');
+		})
+	}
+	currencyPopup();
+
 	function hideByClickEscButton() {
 		let popup = $('.popup');
 		let transactionResultPopup = $('.transaction-result__popup'); 
 		let burgerPopup = $('.burger-menu__popup');
 		let NFTDropsPopup = $('.nft-drops__popup');
+		let languagePopup = $('.language__popup');
 		let nibbleShopPopup = $('.nibble-shop__popup');
 		let burgerBg = $('.burger-menu__popup-bg');
+		let languageBg = $('.language__popup-bg');
 		$(window).on('keydown', function(e) {
 			if ( e.keyCode == 27 ) {
 				popup.removeClass('popup-active'); 
 				transactionResultPopup.removeClass('transaction-result__popup-active'); 
 				burgerPopup.removeClass('burger-menu__popup-active');
+				languagePopup.removeClass('language__popup-active');
 				NFTDropsPopup.removeClass('nft-drops__popup-active');
 				nibbleShopPopup.removeClass('nibble-shop__popup-active');
 				burgerBg.removeClass('burger-menu__popup-bg-active');
+				languageBg.removeClass('language__popup-bg-active');
 			}
 		});
 	}
