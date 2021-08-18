@@ -1,9 +1,42 @@
 <template>
   <main id="app">
-    <transition-group appear name="fade">
-      <preload v-show="showPreload" key="preload" />
-      <router-view v-cloak v-if="!showPreload" key="viewport" />
-    </transition-group>
+    <div class="dashboard">
+      <transition-group appear name="fade">
+        <preload v-show="showPreload" key="preload" />
+        <router-view v-cloak v-if="!showPreload" key="viewport" />
+      </transition-group>
+    </div>
+    <div class="dashboard-mobile">
+      <a
+        class="logo button-active"
+        href="https://viamover.com/"
+        target="_blank"
+      >
+        <img alt="logo" src="@/assets/images/logo.svg" />
+      </a>
+      <div class="g-wrapper">
+        <div class="dashboard-mobile__wrapper">
+          <div class="dashboard-mobile__wrapper-gif">
+            <video
+              autoplay="autoplay"
+              data-keepplaying="data-keepplaying"
+              loop="loop"
+              muted="muted"
+              playsinline="playsinline"
+              src="@/assets/videos/welcome.webm"
+            ></video>
+          </div>
+          <h1>Oh no!</h1>
+          <p>
+            Mover web app is for the big screens. We’ve got mobile apps for all
+            the smaller screens.
+          </p>
+          <a class="black-link button-active" href="https://viamover.com/">
+            Got it. Take me home
+          </a>
+        </div>
+      </div>
+    </div>
   </main>
 </template>
 

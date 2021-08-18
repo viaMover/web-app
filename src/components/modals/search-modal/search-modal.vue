@@ -5,7 +5,6 @@
     disable-header-bottom-margin
     has-header
     header-html-class="swaps__wrapper-search-form"
-    :header-text="Search"
     :modal-id="modalId"
     show-close-button
     @close="handleSelect(undefined)"
