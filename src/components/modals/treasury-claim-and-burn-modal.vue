@@ -57,8 +57,18 @@
           <div class="tx-details__content-item">
             <p class="description">Claiming for</p>
             <div class="value">
-              <div class="icon getShadow">
-                <img alt="coin" src="@/assets/images/coin-icon3.jpg" />
+              <div class="icon">
+                <picture>
+                  <img
+                    alt=""
+                    src="@/assets/images/USDC.png"
+                    srcset="
+                      @/assets/images/USDC.png,
+                      @/assets/images/USDC@2x.png 2x
+                    "
+                    style="box-shadow: 0px 0px 16px rgb(195, 236, 52)"
+                  />
+                </picture>
               </div>
               <span>{{ claimingForStr }}</span>
             </div>
@@ -91,6 +101,7 @@
                   @/assets/images/MOVE.png,
                   @/assets/images/MOVE@2x.png 2x
                 "
+                style="box-shadow: 0px 0px 16px rgb(195, 236, 52)"
               />
             </picture>
           </span>

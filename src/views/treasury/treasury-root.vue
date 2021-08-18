@@ -41,6 +41,7 @@ import {
 } from '@/components/modals';
 
 import '@/styles/_treasury.less';
+import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'TreasuryRoot',
