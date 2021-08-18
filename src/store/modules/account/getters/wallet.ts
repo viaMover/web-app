@@ -99,6 +99,10 @@ export default {
         return '';
       }
 
+      if (address === 'eth') {
+        return '#687ee3';
+      }
+
       return state.tokenColorMap[address.toLowerCase()];
     };
   },

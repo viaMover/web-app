@@ -167,12 +167,15 @@ export default Vue.extend({
       if (this.asset === undefined) {
         return undefined;
       }
-
       return this.getTokenColor(this.asset.address);
     },
     buttonStyle(): Properties {
       if (this.assetColor === undefined) {
-        return {};
+        return {
+          backgroundColor: '#000',
+          boxShadow: `0 0 16px #000`,
+          WebkitBoxShadow: `0 0 16px #000`
+        };
       }
 
       return {
@@ -183,7 +186,9 @@ export default Vue.extend({
     },
     spanMaxAmountStyle(): Properties {
       if (this.assetColor === undefined) {
-        return {};
+        return {
+          color: '#000'
+        };
       }
 
       return {
@@ -192,7 +197,7 @@ export default Vue.extend({
     },
     plusIconColor(): string {
       if (this.assetColor === undefined) {
-        return '#687ee3';
+        return '#000';
       }
 
       return this.assetColor;
