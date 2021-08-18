@@ -1,4 +1,4 @@
-import { Network } from './../../utils/networkTypes';
+import { Network } from '@/utils/networkTypes';
 import { zeroXResponse, zeroXErrorResponse, isErrorResponse } from './response';
 import axios from 'axios';
 import { CustomError } from 'ts-custom-error';

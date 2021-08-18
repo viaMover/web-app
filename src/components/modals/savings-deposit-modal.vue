@@ -126,6 +126,7 @@ import {
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
+import { mapError } from '@/services/0x/errors';
 import Web3 from 'web3';
 import { mapGetters, mapState } from 'vuex';
 import {
@@ -467,7 +468,7 @@ export default Vue.extend({
         );
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
-          this.transferError = err.publicMessage;
+          this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
@@ -511,7 +512,7 @@ export default Vue.extend({
         );
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
-          this.transferError = err.publicMessage;
+          this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
