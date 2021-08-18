@@ -46,7 +46,11 @@
           />
         </template>
       </template>
-      <div v-else class="nothing-found">Nothing found here!</div>
+      <div v-else class="no-tokens">
+        <span class="icon">👻</span>
+        <h4>Oh, snap!</h4>
+        <p>We couldn’t find this token anywhere</p>
+      </div>
     </div>
   </modal>
 </template>

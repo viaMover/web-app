@@ -58,11 +58,18 @@
           <div class="tx-details__content-item">
             <p class="description">Swapping for</p>
             <div class="value">
-              <div class="icon getShadow">
-                <img
-                  :alt="$t('asset.txtAlt', { name: outputUSDCAsset.symbol })"
-                  :src="outputUSDCAsset.iconURL"
-                />
+              <div class="icon">
+                <picture>
+                  <img
+                    alt=""
+                    src="@/assets/images/USDC.png"
+                    srcset="
+                      @/assets/images/USDC.png,
+                      @/assets/images/USDC@2x.png 2x
+                    "
+                    style="box-shadow: rgb(36, 116, 204) 0px 0px 8px"
+                  />
+                </picture>
               </div>
               <span>{{ swappingForString }}</span>
             </div>

@@ -23,7 +23,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
@@ -48,7 +48,7 @@ export default Vue.extend({
       return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
     },
     currentBoost(): string {
-      return `${this.treasuryBoost}x`;
+      return `${formatToDecimals(this.treasuryBoost, 2)}x`;
     },
     smartTreasurySize(): string {
       return `$${formatToNative(this.treasuryTotalStakedBalanceNative)}`;

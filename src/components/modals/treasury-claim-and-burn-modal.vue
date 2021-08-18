@@ -66,7 +66,7 @@
                       @/assets/images/USDC.png,
                       @/assets/images/USDC@2x.png 2x
                     "
-                    style="box-shadow: 0px 0px 16px rgb(195, 236, 52)"
+                    style="box-shadow: rgb(36, 116, 204) 0px 0px 8px"
                   />
                 </picture>
               </div>
