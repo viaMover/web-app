@@ -60,7 +60,7 @@ export const buildBalancesChartData = (
           valSource = val.balance;
           break;
         case 'savings_month_balance_item':
-          valSource = val.balance;
+          valSource = val.earned;
           break;
         case 'treasury_hourly_balance_item':
           valSource = val.bonusEarned;
@@ -77,11 +77,11 @@ export const buildBalancesChartData = (
       const yVal = Number.parseFloat(fromWei(valSource, 6));
 
       hasTrimmedLeft = true;
-      if (lessThan(valSource, minValue)) {
+      if (lessThan(yVal, minValue)) {
         minValue = yVal;
       }
 
-      if (greaterThan(valSource, maxValue)) {
+      if (greaterThan(yVal, maxValue)) {
         maxValue = yVal;
       }
 
