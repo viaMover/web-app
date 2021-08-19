@@ -35,13 +35,14 @@
           <search-modal-token-list
             :header-text="$t('search.lblTokensInTheWallet')"
             :items="walletTokens"
-            :show-header="!useWalletTokens && walletTokens.length > 0"
+            show-balances
+            :show-header="walletTokens.length > 0"
             @select="handleSelect"
           />
           <search-modal-token-list
             :header-text="$t('search.lblGlobalSearch')"
             :items="globalTokens"
-            :show-header="!useWalletTokens && globalTokens.length > 0"
+            :show-header="globalTokens.length > 0"
             @select="handleSelect"
           />
         </template>
@@ -64,7 +65,7 @@ import filter from 'lodash-es/filter';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import SearchModalTokenList from './search-modal-token-list.vue';
-import { Token } from '@/wallet/types';
+import { Token, TokenWithBalance } from '@/wallet/types';
 import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
 import Modal from '../modal.vue';
 
@@ -111,7 +112,7 @@ export default Vue.extend({
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
-    walletTokens(): Array<Token> {
+    walletTokens(): Array<TokenWithBalance> {
       if (this.forceTokenArray.length > 0) {
         return [];
       }
@@ -203,7 +204,9 @@ export default Vue.extend({
         .search(searchTerm, { limit: 100 })
         .map((res) => res.item);
     },
-    filterTokens(tokens: Array<Token>): Array<Token> {
+    filterTokens<T extends TokenWithBalance | Token>(
+      tokens: Array<T>
+    ): Array<T> {
       let result = tokens.slice();
 
       if (this.treasuryOnly) {

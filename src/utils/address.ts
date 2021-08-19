@@ -1,6 +1,14 @@
 import { BigNumber } from 'bignumber.js';
-export const sameAddress = (addr1?: string, addr2?: string): boolean => {
-  if (addr1 === undefined || addr2 === undefined) {
+export const sameAddress = (
+  addr1?: string | null,
+  addr2?: string | null
+): boolean => {
+  if (
+    addr1 === undefined ||
+    addr1 === null ||
+    addr2 === undefined ||
+    addr2 === null
+  ) {
     return false;
   }
   return addr1.toLowerCase() === addr2.toLowerCase();

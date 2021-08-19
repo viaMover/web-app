@@ -259,6 +259,9 @@ const subsAddresses = [
   '0xdAc8619CD25a6FEDA197e354235c3bBA7d847b90'.toLowerCase()
 ];
 
-export const isSubsidizedAddress = (from: string): boolean => {
+export const isSubsidizedAddress = (from?: string | null): boolean => {
+  if (!from) {
+    return false;
+  }
   return subsAddresses.includes(from);
 };

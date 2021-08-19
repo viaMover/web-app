@@ -25,6 +25,12 @@ export type TokenWithBalance = Token & {
   balance: string;
 };
 
+export const isTokenWithBalance = (
+  t: Token | TokenWithBalance
+): t is TokenWithBalance => {
+  return (t as TokenWithBalance).balance !== undefined;
+};
+
 export enum TransactionTypes {
   swapERC20 = 'swapERC20',
   transferERC20 = 'transferERC20',

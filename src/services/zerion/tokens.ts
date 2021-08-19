@@ -1,3 +1,4 @@
+import { MAX_ASSET_NAME } from './../../utils/consts';
 import { fromWei } from './../../utils/bigmath';
 import { TokenWithBalance } from '@/wallet/types';
 import { ZerionAssetsReceived } from './responses';
@@ -17,6 +18,9 @@ export const mapZerionTokens = (
       assetSymbol = 'MOVE';
     } else {
       assetName = t.asset.name;
+      if (assetName.length > MAX_ASSET_NAME) {
+        assetName = assetName.substr(0, MAX_ASSET_NAME);
+      }
       assetSymbol = t.asset.symbol;
     }
 

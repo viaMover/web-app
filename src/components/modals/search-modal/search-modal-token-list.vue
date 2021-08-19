@@ -13,6 +13,7 @@
       v-for="item in items"
       :key="item.address"
       :item="item"
+      :show-balance="showBalances"
       @select="handleSelect"
     />
   </div>
@@ -22,7 +23,7 @@
 import Vue, { PropType } from 'vue';
 
 import SearchModalTokenItem from './search-modal-token-item.vue';
-import { Token } from '@/wallet/types';
+import { Token, TokenWithBalance } from '@/wallet/types';
 
 export default Vue.extend({
   name: 'SearchModalTokenList',
@@ -31,7 +32,7 @@ export default Vue.extend({
   },
   props: {
     items: {
-      type: Array as PropType<Array<Token>>,
+      type: Array as PropType<Array<Token | TokenWithBalance>>,
       required: true
     },
     showHeader: {
@@ -45,6 +46,10 @@ export default Vue.extend({
     headerText: {
       type: String,
       default: ''
+    },
+    showBalances: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
