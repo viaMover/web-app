@@ -71,6 +71,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
+          :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteWithdraw"
@@ -120,6 +121,8 @@ import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/with
 import { formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 import Modal from './modal.vue';
+import { Properties as CssProperties } from 'csstype';
+
 import {
   Modal as ModalTypes,
   TModalPayload
@@ -168,7 +171,11 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['usdcNativePrice', 'treasuryBonusNative']),
+    ...mapGetters('account', [
+      'usdcNativePrice',
+      'treasuryBonusNative',
+      'getTokenColor'
+    ]),
     outputUSDCToken(): TokenWithBalance {
       return {
         address: this.outputUSDCAsset.address,
@@ -285,6 +292,17 @@ export default Vue.extend({
     },
     infoFooter(): string {
       return 'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.';
+    },
+    toAssetColor(): string | undefined {
+      return this.getTokenColor(this.outputUSDCToken.address);
+    },
+    actionButtonStyle(): CssProperties {
+      if (this.actionAvaialble) {
+        return {
+          backgroundColor: this.toAssetColor
+        };
+      }
+      return {};
     }
   },
   watch: {

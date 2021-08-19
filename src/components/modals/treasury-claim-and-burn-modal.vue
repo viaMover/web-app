@@ -78,6 +78,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
+          :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteClaimAndBurn"
@@ -144,6 +145,7 @@ import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Step } from '@/components/controls/form-loader';
 import Modal from './modal.vue';
+import { Properties as CssProperties } from 'csstype';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostModal',
@@ -190,7 +192,7 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['moveNativePrice']),
+    ...mapGetters('account', ['moveNativePrice', 'getTokenColor']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Claim & Burn';
     },
@@ -293,6 +295,20 @@ export default Vue.extend({
       return {
         boxShadow: 'rgb(182, 222, 49) 0px 0px 16px'
       };
+    },
+    toAssetColor(): string | undefined {
+      if (this.input.asset === undefined) {
+        return undefined;
+      }
+      return this.getTokenColor(this.input.asset.address);
+    },
+    actionButtonStyle(): CssProperties {
+      if (this.actionAvaialble) {
+        return {
+          backgroundColor: this.toAssetColor ?? '#000'
+        };
+      }
+      return {};
     }
   },
   watch: {

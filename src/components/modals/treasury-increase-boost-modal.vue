@@ -67,6 +67,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
+          :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteDeposit"
@@ -138,11 +139,10 @@ import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
-  divide,
   fromWei,
   greaterThan,
   multiply,
@@ -159,6 +159,7 @@ import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
+import { Properties as CssProperties } from 'csstype';
 import Web3 from 'web3';
 import {
   Modal as ModalType,
@@ -211,6 +212,7 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
+    ...mapGetters('account', ['getTokenColor']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Increase Boost';
     },
@@ -336,6 +338,20 @@ export default Vue.extend({
     },
     showInfo(): boolean {
       return this.infoExpanded && this.isInfoAvailable;
+    },
+    toAssetColor(): string | undefined {
+      if (this.input.asset === undefined) {
+        return undefined;
+      }
+      return this.getTokenColor(this.input.asset.address);
+    },
+    actionButtonStyle(): CssProperties {
+      if (this.actionAvaialble) {
+        return {
+          backgroundColor: this.toAssetColor ?? '#000'
+        };
+      }
+      return {};
     }
   },
   watch: {

@@ -122,7 +122,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
-          :custom-style="swapButtonStyle"
+          :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteSwap"
@@ -231,7 +231,8 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
-      'ethPrice'
+      'ethPrice',
+      'allTokens'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -388,7 +389,7 @@ export default Vue.extend({
       }
       return this.getTokenColor(this.output.asset.address);
     },
-    swapButtonStyle(): CssProperties {
+    actionButtonStyle(): CssProperties {
       if (this.actionAvaialble) {
         return {
           backgroundColor: this.toAssetColor
@@ -435,7 +436,7 @@ export default Vue.extend({
           this.input.amount = '';
           this.input.nativeAmount = '';
         }
-        const move = this.tokens.find((t: TokenWithBalance) =>
+        const move = this.allTokens.find((t: TokenWithBalance) =>
           sameAddress(
             t.address,
             getMoveAssetData(this.networkInfo.network).address

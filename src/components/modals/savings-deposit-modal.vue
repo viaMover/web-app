@@ -89,6 +89,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
+          :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteDeposit"
@@ -154,6 +155,7 @@ import {
   TModalPayload
 } from '@/store/modules/modals/types';
 import Modal from './modal.vue';
+import { Properties as CssProperties } from 'csstype';
 
 export default Vue.extend({
   name: 'SavingsDepositModal',
@@ -199,7 +201,7 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
@@ -362,6 +364,20 @@ export default Vue.extend({
     },
     infoFooter(): string {
       return 'Once you deposit your assets in savings, Mover is constantly searching for the highest paying option using multiple DeFi protocols. Mover does automatic rebalancing, yield collection, and capital optimization. ';
+    },
+    toAssetColor(): string | undefined {
+      if (this.input.asset === undefined) {
+        return undefined;
+      }
+      return this.getTokenColor(this.input.asset.address);
+    },
+    actionButtonStyle(): CssProperties {
+      if (this.actionAvaialble) {
+        return {
+          backgroundColor: this.toAssetColor
+        };
+      }
+      return {};
     }
   },
   watch: {

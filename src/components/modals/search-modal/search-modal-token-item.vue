@@ -62,7 +62,7 @@ export default Vue.extend({
     assetBalance(): string {
       if (isTokenWithBalance(this.item)) {
         console.log(this.item);
-        return new BigNumber(this.item.balance).decimalPlaces(18).toFormat();
+        return new BigNumber(this.item.balance).decimalPlaces(4).toFormat();
       }
       return '0';
     },

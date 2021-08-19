@@ -66,6 +66,7 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
+          :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
           @button-click="handleExecuteWithdraw"
@@ -97,7 +98,6 @@ import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
-  divide,
   greaterThan,
   multiply,
   notZero,
@@ -121,6 +121,7 @@ import {
 import Modal from './modal.vue';
 import { Step } from '../controls/form-loader';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
+import { Properties as CssProperties } from 'csstype';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseBoostModal',
@@ -166,7 +167,11 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['moveNativePrice', 'slpNativePrice']),
+    ...mapGetters('account', [
+      'moveNativePrice',
+      'slpNativePrice',
+      'getTokenColor'
+    ]),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Decrease Boost';
     },
@@ -296,6 +301,20 @@ export default Vue.extend({
     },
     infoFooter(): string {
       return 'Decrease the boost will return your reserved assets, but will also decrease your Treasury share and future rewards.';
+    },
+    toAssetColor(): string | undefined {
+      if (this.output.asset === undefined) {
+        return undefined;
+      }
+      return this.getTokenColor(this.output.asset.address);
+    },
+    actionButtonStyle(): CssProperties {
+      if (this.actionAvaialble) {
+        return {
+          backgroundColor: this.toAssetColor ?? '#000'
+        };
+      }
+      return {};
     }
   },
   watch: {
