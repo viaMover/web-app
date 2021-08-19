@@ -1,7 +1,7 @@
 import { GetterTree } from 'vuex';
 import dayjs from 'dayjs';
 
-import { add, fromWei, multiply } from '@/utils/bigmath';
+import { add, multiply } from '@/utils/bigmath';
 
 import { AccountStoreState, TransactionGroup } from '../types';
 import { RootStoreState } from '@/store/types';
@@ -106,11 +106,15 @@ export default {
       return state.tokenColorMap[address.toLowerCase()];
     };
   },
-  searchInAllTokens(state): (searchTerm: string) => Array<Token> {
-    return (searchTerm: string) => {
+  searchInAllTokens(
+    state
+  ): (searchTerm: string, offset?: number) => Array<Token> {
+    return (searchTerm: string, offset?: number) => {
+      const of = offset ?? 0;
       const searchTermProcessed = searchTerm.trim().toLowerCase();
       if (searchTermProcessed === '') {
-        return state.allTokens.slice(0, 100);
+        console.log('searchInAllTokens', of);
+        return state.allTokens.slice(of, of + 100);
       }
 
       if (state.allTokensSearcher === undefined) {
@@ -120,11 +124,11 @@ export default {
               t.symbol.toLowerCase().includes(searchTermProcessed) ||
               t.name.toLowerCase().includes(searchTermProcessed)
           )
-          .slice(0, 100);
+          .slice(of, of + 100);
       }
 
       return state.allTokensSearcher
-        .search(searchTerm, { limit: 50 })
+        .search(searchTerm, { limit: 100 })
         .map((res) => res.item);
     };
   },
@@ -144,7 +148,11 @@ export default {
         );
       }
 
-      return state.tokensSearcher.search(searchTerm).map((res) => res.item);
+      const res = state.tokensSearcher
+        .search(searchTerm)
+        .map((res) => res.item);
+
+      return res;
     };
   },
   getOffchainExplorerHanlder(state): OffchainExplorerHanler | undefined {

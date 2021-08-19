@@ -40,9 +40,12 @@
             @select="handleSelect"
           />
           <search-modal-token-list
+            v-if="showGlobalTokens"
             :header-text="$t('search.lblGlobalSearch')"
-            :items="globalTokens"
-            :show-header="globalTokens.length > 0"
+            infinity-load
+            :items="globalTokensData"
+            :show-header="showGlobalTokens"
+            @load-more="handleGlobalLoadMore"
             @select="handleSelect"
           />
         </template>
@@ -59,15 +62,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState, mapActions } from 'vuex';
-import Fuse from 'fuse.js';
 import filter from 'lodash-es/filter';
 
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
 import SearchModalTokenList from './search-modal-token-list.vue';
 import { Token, TokenWithBalance } from '@/wallet/types';
 import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
 import Modal from '../modal.vue';
+import { StateChanger } from 'vue-infinite-loading';
 
 export default Vue.extend({
   name: 'SearchModal',
@@ -83,7 +89,9 @@ export default Vue.extend({
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
       debounceTimeout: 500,
-      forcedTokenArraySearcher: undefined as Fuse<Token> | undefined
+      forcedTokenArrayData: [] as Array<Token>,
+      globalTokensData: [] as Array<Token>,
+      globalsTokensDataOffset: 0
     };
   },
   computed: {
@@ -97,6 +105,9 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
+    },
     useWalletTokens(): boolean {
       return this.state[this.modalId].payload?.useWalletTokens ?? false;
     },
@@ -118,17 +129,24 @@ export default Vue.extend({
       }
 
       return this.filterTokens(
-        this.searchInWalletTokens(this.searchTermDebounced)
+        this.searchInWalletTokens(this.searchTermDebounced).sort(
+          (a: Token, b: Token) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          }
+        )
       );
     },
-    globalTokens(): Array<Token> {
+    showGlobalTokens(): boolean {
       if (this.useWalletTokens || this.forceTokenArray.length > 0) {
-        return [];
+        return false;
       }
-
-      return this.filterTokens(
-        this.searchInAllTokens(this.searchTermDebounced)
-      );
+      return true;
     },
     forcedTokens(): Array<Token> {
       if (this.forceTokenArray.length === 0) {
@@ -136,14 +154,22 @@ export default Vue.extend({
       }
 
       return this.filterTokens(
-        this.searchInForcedTokenArray(this.searchTermDebounced)
+        this.searchInForcedTokenArray(this.searchTermDebounced).sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        })
       );
     },
     totalResultsLength(): number {
       return (
         this.forcedTokens.length +
         this.walletTokens.length +
-        this.globalTokens.length
+        this.globalTokensData.length
       );
     }
   },
@@ -155,6 +181,14 @@ export default Vue.extend({
 
       this.debounce = window.setTimeout(() => {
         this.searchTermDebounced = newVal;
+        this.globalTokensData = [];
+        this.globalsTokensDataOffset = 0;
+        this.globalTokensData = this.filterTokens(
+          this.searchInAllTokens(
+            this.searchTermDebounced,
+            this.globalsTokensDataOffset
+          )
+        );
 
         this.$nextTick().then(() => {
           if (!this.$refs.resultsTop) {
@@ -165,29 +199,27 @@ export default Vue.extend({
         });
       }, debounceTimeout);
     },
-    forceTokenArray(newVal: Array<Token>, oldVal: Array<Token>) {
-      if (newVal === oldVal) {
+    modalPayload(newVal: TModalPayload<ModalType.Swap> | undefined) {
+      if (newVal === undefined) {
         return;
       }
 
-      this.initSearcher();
+      this.globalTokensData = [];
+      this.globalsTokensDataOffset = 0;
+
+      this.globalTokensData = this.filterTokens(
+        this.searchInAllTokens(
+          this.searchTermDebounced,
+          this.globalsTokensDataOffset
+        )
+      );
     }
   },
-  beforeMount() {
-    this.initSearcher();
-  },
   beforeDestroy() {
-    this.forcedTokenArraySearcher = undefined;
     window.clearTimeout(this.debounce);
   },
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
-    initSearcher(): void {
-      this.forcedTokenArraySearcher = new Fuse<Token>(this.forceTokenArray, {
-        keys: ['name', 'symbol'],
-        isCaseSensitive: false
-      });
-    },
     handleSelect(token: Token | undefined): void {
       this.state[this.modalId].resolver?.(token);
       this.setIsModalDisplayed({ id: this.modalId, value: false });
@@ -195,14 +227,35 @@ export default Vue.extend({
       this.searchTerm = '';
       this.searchTermDebounced = '';
     },
+    handleGlobalLoadMore($state: StateChanger): void {
+      if (this.searchTermDebounced) {
+        $state.reset();
+        return;
+      }
+      const newData = this.filterTokens(
+        this.searchInAllTokens(
+          this.searchTermDebounced,
+          this.globalsTokensDataOffset + 100
+        )
+      );
+      if (newData.length > 0) {
+        $state.loaded();
+      } else {
+        $state.complete();
+      }
+      this.globalTokensData.push(...newData);
+      this.globalsTokensDataOffset = this.globalsTokensDataOffset + 100;
+    },
     searchInForcedTokenArray(searchTerm: string): Array<Token> {
-      if (this.forcedTokenArraySearcher === undefined || searchTerm === '') {
+      if (searchTerm === '') {
         return this.forceTokenArray;
       }
 
-      return this.forcedTokenArraySearcher
-        .search(searchTerm, { limit: 100 })
-        .map((res) => res.item);
+      return this.forceTokenArray.filter(
+        (t) =>
+          t.symbol.toLowerCase().includes(searchTerm) ||
+          t.name.toLowerCase().includes(searchTerm)
+      );
     },
     filterTokens<T extends TokenWithBalance | Token>(
       tokens: Array<T>
