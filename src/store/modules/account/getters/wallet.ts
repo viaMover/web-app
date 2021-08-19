@@ -55,16 +55,16 @@ export default {
       return acc;
     }, '0');
 
-    if (state.savingsInfo !== undefined && state.networkInfo !== undefined) {
-      const savingsBalanceInUSDC = fromWei(
-        state.savingsInfo.currentBalance,
-        getUSDCAssetData(state.networkInfo.network).decimals
-      );
+    if (state.networkInfo !== undefined && state.savingsBalance !== undefined) {
       balance = add(
         balance,
-        multiply(savingsBalanceInUSDC, getters.usdcNativePrice)
+        multiply(state.savingsBalance, getters.usdcNativePrice)
       );
     }
+
+    balance = add(balance, getters.treasuryStakedBalanceNative);
+
+    balance = add(balance, getters.treasuryBonusNative);
 
     return balance;
   },

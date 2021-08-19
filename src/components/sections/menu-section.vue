@@ -82,6 +82,7 @@ import {
   MenuListEmojiCardItem,
   MenuListIconItem
 } from '@/components/home/menu-list';
+import { add } from '@/utils/bigmath';
 
 export default Vue.extend({
   name: 'MenuSection',
@@ -99,13 +100,18 @@ export default Vue.extend({
   computed: {
     ...mapGetters('account', [
       'savingsInfoBalanceNative',
-      'treasuryBonusNative'
+      'treasuryBonusNative',
+      'treasuryStakedBalanceNative'
     ]),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     },
     treasuryBalance(): string {
-      return `$${formatToNative(this.treasuryBonusNative)}`;
+      const treasuryAllBalance = add(
+        this.treasuryBonusNative,
+        this.treasuryStakedBalanceNative
+      );
+      return `$${formatToNative(treasuryAllBalance)}`;
     }
   },
   methods: {
