@@ -7,6 +7,9 @@ export const getTransactionHumanType = (
   t: Transaction,
   network: Network
 ): string => {
+  if (t.status === 'pending') {
+    return 'Pending';
+  }
   switch (t.moverType) {
     case 'deposit_savings':
     case 'subsidized_deposit':

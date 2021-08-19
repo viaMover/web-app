@@ -1,7 +1,11 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-info-item">
     <div class="label transaction-label" @click="onClick">
+      <div v-if="isLoading" class="loader-icon">
+        <img alt="pending" src="@/assets/images/tx-loading.svg" />
+      </div>
       <token-image
+        v-else
         :address="tokenAddress"
         :src="tokenImageSrc"
         :symbol="tokenSymbol"
@@ -117,6 +121,9 @@ export default Vue.extend({
         return this.transaction.asset.symbol;
       }
       return '';
+    },
+    isLoading(): boolean {
+      return this.transaction.status === 'pending';
     },
     tokenImageSrc(): string {
       if (this.transaction.status === 'pending') {
