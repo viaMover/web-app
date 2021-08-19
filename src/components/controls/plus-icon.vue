@@ -16,7 +16,7 @@
     />
     <path
       id="svg-horizontal-line"
-      d="M3,8 L13,8 M8,3 L8,13"
+      d="M0,8 L16,8 M8,0 L8,16"
       :fill="fill"
       :stroke="stroke"
       stroke-linecap="round"

@@ -1483,11 +1483,11 @@ body {
   padding: 24px;
 }
 .popup__content .title {
-  font-family: 'Medium';
+  font-family: Medium;
   font-size: 16px;
-  line-height: 24px;
-  color: rgba(60,60,67,0.6);
+  color: rgba(60,60,67,0.60);
   text-align: center;
+  line-height: 24px;
 }
 .popup__content .info {
   margin-top: 24px;
