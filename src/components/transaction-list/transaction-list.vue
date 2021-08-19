@@ -34,9 +34,10 @@ import dayjs from 'dayjs';
 
 import TransactionGroup from './transaction-group.vue';
 import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
-import { Transaction } from '@/wallet/types';
+import { Transaction, TransactionTypes } from '@/wallet/types';
 import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { isValidTxHash, sameAddress } from '@/utils/address';
+import { tryToGetTransactionAssetSymbol } from '@/store/modules/account/utils/transactions';
 
 export default Vue.extend({
   name: 'TransactionList',
@@ -71,7 +72,10 @@ export default Vue.extend({
               ).toUpperCase();
               return (
                 moverHeader.indexOf(this.searchTermDebounced.toUpperCase()) !==
-                -1
+                  -1 ||
+                tryToGetTransactionAssetSymbol(tx).indexOf(
+                  this.searchTermDebounced.toUpperCase()
+                ) !== -1
               );
             } else {
               return sameAddress(tx.hash, this.searchTermDebounced);
