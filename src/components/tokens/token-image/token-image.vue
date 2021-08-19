@@ -53,7 +53,10 @@ export default Vue.extend({
   computed: {
     ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
     truncatedSymbol(): string {
-      return this.symbol.substr(0, 5);
+      if (this.symbol.length > 5) {
+        return `${this.symbol.substr(0, 5)}...`;
+      }
+      return this.symbol;
     },
     displayOriginalImage(): boolean {
       return this.src !== '' && !this.loadingFailed;
