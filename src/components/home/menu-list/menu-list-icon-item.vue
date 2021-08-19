@@ -1,7 +1,9 @@
 <template>
-  <li class="button-active" :class="wrapperClass" @click="handleClick">
-    <div class="icon">{{ icon }}</div>
-    <div class="text">{{ text }}</div>
+  <li>
+    <button class="button-active" @click="handleClick">
+      <span class="icon">{{ icon }}</span>
+      <span class="description">{{ text }}</span>
+    </button>
   </li>
 </template>
 
@@ -19,10 +21,6 @@ export default Vue.extend({
       default: ''
     },
     text: {
-      type: String,
-      default: ''
-    },
-    wrapperClass: {
       type: String,
       default: ''
     },

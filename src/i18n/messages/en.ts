@@ -22,7 +22,7 @@ export default {
   },
   menu: {
     lblSwapTokenEmoji: '🔄',
-    lblSwapToken: 'Swap Token',
+    lblSwapToken: 'Swap Tokens',
     lblGetMoveEmoji: '💸',
     lblGetMove: 'Get MOVE',
     lblProvideLiquidityMoveEmoji: '💧',

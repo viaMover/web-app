@@ -1,44 +1,48 @@
 <template>
-  <router-link :to="{ name: this.navigateToName }">
-    <li :class="itemClass" :style="itemStyle">
-      <slot>
-        <emoji-card :corner-color="cornerColor" :emoji="emoji" />
-      </slot>
-      <div class="wrapper">
-        <div class="title">{{ title }}</div>
-        <div class="value">{{ description }}</div>
+  <li :class="itemClass">
+    <router-link class="button-active" :to="{ name: this.navigateToName }">
+      <div class="image">
+        <picture>
+          <source
+            :srcset="`
+              ${require(`@/assets/images/${pic}@1x.webp`)},
+              ${require(`@/assets/images/${pic}@2x.webp`)} 2x
+            `"
+            type="image/webp"
+          />
+          <img
+            alt=""
+            :src="`${require(`@/assets/images/${pic}@1x.png`)}`"
+            :srcset="`
+              ${require(`@/assets/images/${pic}@1x.png`)},
+              ${require(`@/assets/images/${pic}@2x.png`)} 2x
+            `"
+          />
+        </picture>
       </div>
-    </li>
-  </router-link>
+      <div class="info">
+        <h3>{{ title }}</h3>
+        <p>{{ description }}</p>
+      </div>
+    </router-link>
+  </li>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Properties } from 'csstype';
-
-import { EmojiCard } from '@/components/controls';
 
 export default Vue.extend({
   name: 'MenuListEmojiCardItem',
-  components: { EmojiCard },
   props: {
-    emoji: {
+    pic: {
       type: String,
       default: ''
-    },
-    cornerColor: {
-      type: String,
-      default: '#000'
     },
     title: {
       type: String,
       default: ''
     },
     description: {
-      type: String,
-      default: ''
-    },
-    wrapperClass: {
       type: String,
       default: ''
     },
@@ -52,17 +56,19 @@ export default Vue.extend({
     }
   },
   computed: {
-    itemStyle(): Properties {
-      return {
-        opacity: this.disabled ? '0.5' : '1'
-      };
-    },
     itemClass(): string {
       if (this.disabled) {
-        return this.wrapperClass;
+        return 'disabled';
       }
 
-      return `button-active ${this.wrapperClass}`;
+      return '';
+    },
+    srcsetWebp(): string {
+      return `@/assets/images/${this.pic}@1x.webp,
+              @/assets/images/${this.pic}@2x.webp 2x`;
+    },
+    src(): string {
+      return `@/assets/images/${this.pic}@1x.png`;
     }
   }
 });
