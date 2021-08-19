@@ -64,7 +64,17 @@ export default Vue.extend({
     step: {
       type: String,
       required: true
+    },
+    debounceTimeout: {
+      type: Number,
+      default: 700
     }
+  },
+  data() {
+    return {
+      amountRaw: '',
+      debounce: undefined as number | undefined
+    };
   },
   computed: {
     hasPrefix(): boolean {
@@ -78,13 +88,25 @@ export default Vue.extend({
       return { color };
     }
   },
+  watch: {
+    amountRaw(newVal: string) {
+      if (this.debounce) {
+        window.clearTimeout(this.debounce);
+      }
+      const debounceTimeout = newVal === '' ? 0 : this.debounceTimeout;
+
+      this.debounce = window.setTimeout(() => {
+        try {
+          this.$emit('update-amount', newVal);
+        } catch {
+          return;
+        }
+      }, debounceTimeout);
+    }
+  },
   methods: {
     updateAmount(amount: never): void {
-      try {
-        this.$emit('update-amount', amount);
-      } catch {
-        return;
-      }
+      this.amountRaw = amount;
     }
   }
 });

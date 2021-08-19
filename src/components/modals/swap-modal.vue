@@ -142,7 +142,6 @@
 import Vue from 'vue';
 import Web3 from 'web3';
 import { mapGetters, mapState } from 'vuex';
-
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
 import {
