@@ -54,7 +54,7 @@ export default Vue.extend({
     ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
     truncatedSymbol(): string {
       if (this.symbol.length > 5) {
-        return `${this.symbol.substr(0, 5)}...`;
+        return `${this.symbol.substr(0, 4)}...`;
       }
       return this.symbol;
     },
