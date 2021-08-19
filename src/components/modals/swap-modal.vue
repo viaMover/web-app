@@ -122,8 +122,8 @@
       <div class="modal-wrapper-info-button">
         <action-button
           :button-class="buttonClass"
+          :custom-style="swapButtonStyle"
           :disabled="!actionAvaialble"
-          :style="swapButtonStyle"
           :text="actionButtonText"
           @button-click="handleExecuteSwap"
         />
