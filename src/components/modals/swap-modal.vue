@@ -123,6 +123,7 @@
         <action-button
           :button-class="buttonClass"
           :disabled="!actionAvaialble"
+          :style="swapButtonStyle"
           :text="actionButtonText"
           @button-click="handleExecuteSwap"
         />
@@ -180,6 +181,7 @@ import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '@/components/controls/form-loader';
 import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import { Properties as CssProperties } from 'csstype';
 
 import Modal from '@/components/modals/modal.vue';
 import {
@@ -235,7 +237,7 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },
@@ -380,6 +382,20 @@ export default Vue.extend({
     },
     showInfo(): boolean {
       return this.infoExpanded && !this.loading && !!this.transferData;
+    },
+    toAssetColor(): string | undefined {
+      if (this.output.asset === undefined) {
+        return undefined;
+      }
+      return this.getTokenColor(this.output.asset.address);
+    },
+    swapButtonStyle(): CssProperties {
+      if (this.actionAvaialble) {
+        return {
+          backgroundColor: this.toAssetColor
+        };
+      }
+      return {};
     }
   },
   watch: {
