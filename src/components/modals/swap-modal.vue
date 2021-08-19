@@ -829,7 +829,10 @@ export default Vue.extend({
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
-      this.output.asset = { ...asset, priceUSD: price };
+      this.output.asset = asset;
+      if (!price && price !== '0') {
+        this.output.asset.priceUSD = price;
+      }
       this.input.amount = '';
       this.input.nativeAmount = '';
       this.output.amount = '';
