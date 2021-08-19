@@ -1,3 +1,4 @@
+import { calcTreasuryBoost } from './../utils/treasury';
 import { GetterTree } from 'vuex';
 
 import gt from 'lodash-es/gt';
@@ -37,43 +38,22 @@ export default {
     }
 
     const network = state.networkInfo.network;
-    const tokenWeight = '1';
-    const lpWeight = '2.5';
 
-    const moveBalanceOnWallet =
+    const walletBalanceMove =
       state.tokens.find((t) =>
         sameAddress(t.address, getMoveAssetData(network).address)
       )?.balance ?? '0';
-    const lpBalanceOnWallet =
+    const walletBalanceLP =
       state.tokens.find((t) =>
         sameAddress(t.address, getMoveWethLPAssetData(network).address)
       )?.balance ?? '0';
 
-    let boostMove = multiply(
-      divide(
-        state.treasuryBalanceMove,
-        add(moveBalanceOnWallet, state.treasuryBalanceMove)
-      ),
-      tokenWeight
+    return calcTreasuryBoost(
+      state.treasuryBalanceMove,
+      state.treasuryBalanceLP,
+      walletBalanceMove,
+      walletBalanceLP
     );
-
-    if (isNaN(boostMove) || !isFinite(boostMove)) {
-      boostMove = '0';
-    }
-
-    let boostLP = multiply(
-      divide(
-        state.treasuryBalanceLP,
-        add(lpBalanceOnWallet, state.treasuryBalanceLP)
-      ),
-      lpWeight
-    );
-
-    if (isNaN(boostLP) || !isFinite(boostLP)) {
-      boostLP = '0';
-    }
-
-    return add(boostMove, boostLP);
   },
   hasActiveTreasury(state): boolean {
     const isTreasuryBalanceMoveNotEmpty =

@@ -120,6 +120,7 @@ import {
 
 import Modal from './modal.vue';
 import { Step } from '../controls/form-loader';
+import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseBoostModal',
@@ -210,44 +211,42 @@ export default Vue.extend({
       const move = getMoveAssetData(this.networkInfo.network);
       const slp = getMoveWethLPAssetData(this.networkInfo.network);
 
-      let walletAmount = '0';
-      let amountTreasury = '0';
-      let boostWeight = '1';
+      let walletBalanceMove =
+        this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(t.address, move.address)
+        )?.balance ?? '0';
+
+      let walletBalanceLP =
+        this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(t.address, slp.address)
+        )?.balance ?? '0';
+
+      let treasuryBalanceMove = this.treasuryBalanceMove;
+      let treasuryBalanceLP = this.treasuryBalanceLP;
+
       if (sameAddress(this.output.asset.address, move.address)) {
-        amountTreasury = this.treasuryBalanceMove;
-        boostWeight = '1';
-        walletAmount =
-          this.tokens.find((t: TokenWithBalance) =>
-            sameAddress(t.address, move.address)
-          )?.balance ?? '0';
+        let inputedAmount = this.output.amount || '0';
+        if (greaterThan(inputedAmount, treasuryBalanceMove)) {
+          inputedAmount = treasuryBalanceMove;
+        }
+        walletBalanceMove = add(walletBalanceMove, inputedAmount);
+        treasuryBalanceMove = sub(treasuryBalanceMove, inputedAmount);
       } else if (sameAddress(this.output.asset.address, slp.address)) {
-        amountTreasury = this.treasuryBalanceLP;
-        boostWeight = '2.5';
-        walletAmount =
-          this.tokens.find((t: TokenWithBalance) =>
-            sameAddress(t.address, slp.address)
-          )?.balance ?? '0';
+        let inputedAmount = this.output.amount || '0';
+        if (greaterThan(inputedAmount, treasuryBalanceLP)) {
+          inputedAmount = treasuryBalanceLP;
+        }
+        walletBalanceLP = add(walletBalanceLP, inputedAmount);
+        treasuryBalanceLP = sub(treasuryBalanceLP, inputedAmount);
       }
 
-      //console.log('amountTreasury', amountTreasury);
-      //console.log('walletAmount', walletAmount);
-
-      let inputedAmount = this.output.amount || '0';
-      if (greaterThan(inputedAmount, amountTreasury)) {
-        inputedAmount = amountTreasury;
-      }
-
-      let futureBoost = multiply(
-        divide(
-          sub(amountTreasury, inputedAmount),
-          add(amountTreasury, walletAmount)
-        ),
-        boostWeight
+      const futureBoost = calcTreasuryBoost(
+        treasuryBalanceMove,
+        treasuryBalanceLP,
+        walletBalanceMove,
+        walletBalanceLP
       );
 
-      if (isNaN(+futureBoost)) {
-        futureBoost = '0';
-      }
       return `${formatToDecimals(futureBoost, 1)}x`;
     },
     showFooter(): boolean {
