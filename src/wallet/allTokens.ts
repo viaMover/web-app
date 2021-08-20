@@ -1,3 +1,4 @@
+import { MAX_ASSET_NAME } from './../utils/consts';
 import { Network } from '@/utils/networkTypes';
 import { Token } from './types';
 import assetList from '@/../data/assetList.json';
@@ -13,7 +14,10 @@ export const getAllTokens = (network: Network): Array<Token> => {
           address: asset.id,
           decimals: asset.decimals,
           symbol: asset.symbol,
-          name: asset.name,
+          name:
+            asset.name.length > MAX_ASSET_NAME
+              ? asset.name.substr(0, MAX_ASSET_NAME)
+              : asset.name,
           logo: getTokenLogo(asset.id),
           color: asset.color
         } as Token)

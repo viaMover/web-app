@@ -8,7 +8,7 @@
       <span>{{ networkFee }}</span>
       <p>{{ $t('gas.lblNetworkFee') }}</p>
     </div>
-    <div class="modal-wrapper-info-footer-right">
+    <div class="modal-wrapper-info-footer-right button-active">
       <div class="swiper-pagination-bullets">
         <span
           v-for="mode in avaialbleGasModes"

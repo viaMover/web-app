@@ -18,14 +18,31 @@
       </div>
       <h1>{{ $t('lblConnectWallet') }}</h1>
       <p>
-        {{ $t('txtConnectWallet') }}
+        Mover is a non-custodial service. It means that you need to connect your
+        wallet first, to continue.
+        <br />
+        By connecting your wallet, you agree with the
+        <a href="https://viamover.com/terms_of_use" target="_blank">
+          Terms and Conditions
+        </a>
+        .
       </p>
-      <a class="black-link" href="#" @click.prevent="connectMetaMask">
-        {{ metaMaskBtnText }}
-      </a>
-      <a class="black-link" href="#" @click.prevent="connectWalletConnect">
-        WalletConnect
-      </a>
+      <div class="buttons">
+        <button
+          class="buttons-item button-active"
+          type="button"
+          @click.prevent="connectMetaMask"
+        >
+          <img src="@/assets/images/metamask.svg" />
+        </button>
+        <button
+          class="buttons-item button-active"
+          type="button"
+          @click.prevent="connectWalletConnect"
+        >
+          <img src="@/assets/images/wallet-connect.svg" />
+        </button>
+      </div>
     </div>
   </content-wrapper>
 </template>

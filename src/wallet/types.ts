@@ -1,3 +1,4 @@
+import { TransactionMoveType } from './../services/mover/transactions/types';
 export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
 
 export type SmallTokenInfo = {
@@ -22,6 +23,12 @@ export type Token = {
 
 export type TokenWithBalance = Token & {
   balance: string;
+};
+
+export const isTokenWithBalance = (
+  t: Token | TokenWithBalance
+): t is TokenWithBalance => {
+  return (t as TokenWithBalance).balance !== undefined;
 };
 
 export enum TransactionTypes {
@@ -60,6 +67,7 @@ export type TransactionCommonData = {
   type: TransactionTypes;
   isOffchain: boolean;
   subsidizedQueueId?: string;
+  moverType: TransactionMoveType;
 };
 
 export type TransactionSwapERC20 = TransactionCommonData & {

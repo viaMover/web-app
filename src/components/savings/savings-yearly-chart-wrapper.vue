@@ -101,7 +101,7 @@ export default Vue.extend({
       return this.formatSelectedItemValue(
         multiply(
           fromWei(
-            this.selectedItem.balance,
+            this.selectedItem.earned,
             getUSDCAssetData(this.networkInfo.network).decimals
           ),
           this.usdcNativePrice

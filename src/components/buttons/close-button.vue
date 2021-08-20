@@ -6,7 +6,7 @@
     <img
       v-if="isBlack"
       :alt="$t('icon.txtCloseIconAlt')"
-      src="@/assets/images/black-cross.svg"
+      src="@/assets/images/back_cross.svg"
     />
     <img
       v-else

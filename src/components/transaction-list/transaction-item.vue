@@ -1,7 +1,11 @@
 <template>
   <div class="general-desktop__sidebar-wrapper-info-item">
     <div class="label transaction-label" @click="onClick">
+      <div v-if="isLoading" class="loader-icon">
+        <img alt="pending" src="@/assets/images/tx-loading.svg" />
+      </div>
       <token-image
+        v-else
         :address="tokenAddress"
         :src="tokenImageSrc"
         :symbol="tokenSymbol"
@@ -29,6 +33,8 @@ import {
 } from '@/utils/format';
 
 import { TokenImage } from '@/components/tokens';
+import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'TransactionItem',
@@ -42,25 +48,13 @@ export default Vue.extend({
     }
   },
   computed: {
+    ...mapState('account', ['networkInfo']),
+
     head(): string {
-      if (this.transaction.type === TransactionTypes.swapERC20) {
-        return 'Swap';
-      }
-      if (this.transaction.type === TransactionTypes.transferERC20) {
-        if (this.transaction.asset.direction === 'in') {
-          return 'Receive';
-        }
-        if (this.transaction.asset.direction === 'out') {
-          return 'Send';
-        }
-        if (this.transaction.asset.direction === 'self') {
-          return 'Self';
-        }
-      }
-      if (this.transaction.type === TransactionTypes.approvalERC20) {
-        return 'Approve';
-      }
-      return 'Unknown';
+      return getTransactionHumanType(
+        this.transaction,
+        this.networkInfo.network
+      );
     },
     subhead(): string {
       if (
@@ -127,6 +121,9 @@ export default Vue.extend({
         return this.transaction.asset.symbol;
       }
       return '';
+    },
+    isLoading(): boolean {
+      return this.transaction.status === 'pending';
     },
     tokenImageSrc(): string {
       if (this.transaction.status === 'pending') {

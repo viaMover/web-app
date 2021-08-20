@@ -11,7 +11,7 @@ import { divide, fromWei, greaterThan, lessThan, sub } from '@/utils/bigmath';
 import { dateFromExplicitPair } from '@/utils/time';
 
 type FilterPeriod = 'month' | 'week' | 'day';
-type TItem =
+export type TItem =
   | TreasuryHourlyBalancesItem
   | SavingsHourlyBalancesItem
   | TreasuryMonthBonusesItem
@@ -60,7 +60,7 @@ export const buildBalancesChartData = (
           valSource = val.balance;
           break;
         case 'savings_month_balance_item':
-          valSource = val.balance;
+          valSource = val.earned;
           break;
         case 'treasury_hourly_balance_item':
           valSource = val.bonusEarned;
@@ -77,11 +77,11 @@ export const buildBalancesChartData = (
       const yVal = Number.parseFloat(fromWei(valSource, 6));
 
       hasTrimmedLeft = true;
-      if (lessThan(valSource, minValue)) {
+      if (lessThan(yVal, minValue)) {
         minValue = yVal;
       }
 
-      if (greaterThan(valSource, maxValue)) {
+      if (greaterThan(yVal, maxValue)) {
         maxValue = yVal;
       }
 
@@ -96,7 +96,7 @@ export const buildBalancesChartData = (
       const label =
         chartType === 'bar'
           ? dateFromExplicitPair(val.year, val.month)
-              .format('MMM, YY')
+              .format('MMM')
               .toUpperCase()
           : dayjs.unix(val.snapshotTimestamp).toISOString();
 
@@ -114,6 +114,12 @@ export const buildBalancesChartData = (
             ),
             borderColor: acc.datasets[0].borderColor.concat(
               idx === arr.length - 1 ? accentedColor : defaultColor
+            ),
+            hoverBackgroundColor: acc.datasets[0].backgroundColor.concat(
+              idx === arr.length - 1 ? accentedColor : defaultColor
+            ),
+            hoverBorderColor: acc.datasets[0].borderColor.concat(
+              idx === arr.length - 1 ? accentedColor : defaultColor
             )
           }
         ]
@@ -125,7 +131,9 @@ export const buildBalancesChartData = (
         {
           data: new Array<ChartDataItem>(),
           backgroundColor: new Array<string>(),
-          borderColor: new Array<string>()
+          borderColor: new Array<string>(),
+          hoverBackgroundColor: new Array<string>(),
+          hoverBorderColor: new Array<string>()
         }
       ]
     }

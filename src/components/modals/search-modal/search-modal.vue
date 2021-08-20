@@ -1,6 +1,16 @@
 <template>
-  <centered-modal-window :modal-class="modalClass" :modal-id="modalId">
-    <div class="swaps__wrapper-search-form">
+  <modal
+    close-on-dimmer-click
+    disable-body-bottom-padding
+    disable-header-bottom-margin
+    has-header
+    header-html-class="swaps__wrapper-search-form"
+    :modal-id="modalId"
+    show-close-button
+    @close="handleSelect(undefined)"
+  >
+    <template v-slot:header>
+      <h3 class="modal-wrapper-info-title">Search</h3>
       <form class="search-form" @submit.prevent.stop="">
         <input
           v-model.trim="searchTerm"
@@ -12,71 +22,76 @@
           🔍
         </button>
       </form>
-    </div>
+    </template>
 
     <div ref="resultsTop" class="swaps__wrapper-search-items">
-      <search-modal-token-list
-        v-if="forceTokenArray.length > 0"
-        :items="forcedTokens"
-        @select="handleSelect"
-      />
-      <template v-else>
+      <template v-if="totalResultsLength > 0">
         <search-modal-token-list
-          :header-text="$t('search.lblTokensInTheWallet')"
-          :items="walletTokens"
-          :show-header="!useWalletTokens && walletTokens.length > 0"
+          v-if="forceTokenArray.length > 0"
+          :items="forcedTokens"
           @select="handleSelect"
         />
-        <search-modal-token-list
-          :header-text="$t('search.lblGlobalSearch')"
-          :items="globalTokens"
-          :show-header="!useWalletTokens && globalTokens.length > 0"
-          @select="handleSelect"
-        />
+        <template v-else>
+          <search-modal-token-list
+            :header-text="$t('search.lblTokensInTheWallet')"
+            :items="walletTokens"
+            show-balances
+            :show-header="walletTokens.length > 0"
+            @select="handleSelect"
+          />
+          <search-modal-token-list
+            v-if="showGlobalTokens"
+            :header-text="$t('search.lblGlobalSearch')"
+            infinity-load
+            :items="globalTokensData"
+            :show-header="showGlobalTokens"
+            @load-more="handleGlobalLoadMore"
+            @select="handleSelect"
+          />
+        </template>
       </template>
+      <div v-else class="no-tokens">
+        <span class="icon">👻</span>
+        <h4>Oh, snap!</h4>
+        <p>We couldn’t find this token anywhere</p>
+      </div>
     </div>
-  </centered-modal-window>
+  </modal>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
-import Fuse from 'fuse.js';
+import { mapGetters, mapState, mapActions } from 'vuex';
 import filter from 'lodash-es/filter';
 
 import {
-  sendResult,
-  subToggle,
-  TogglePayload,
-  toggleSingleItem,
-  unsubToggle
-} from '@/components/toggle/toggle-root';
-import { Modal } from '../modalTypes';
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
 
-import CenteredModalWindow from '../centered-modal-window.vue';
 import SearchModalTokenList from './search-modal-token-list.vue';
-import { Token } from '@/wallet/types';
+import { Token, TokenWithBalance } from '@/wallet/types';
 import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
+import Modal from '../modal.vue';
+import { StateChanger } from 'vue-infinite-loading';
 
 export default Vue.extend({
   name: 'SearchModal',
   components: {
-    CenteredModalWindow,
+    Modal,
     SearchModalTokenList
   },
   data() {
     return {
-      modalId: Modal.SearchToken,
+      modalId: ModalType.SearchToken,
       modalClass: 'swaps__wrapper transaction__popup-wrapper',
       searchTerm: '',
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
       debounceTimeout: 500,
-      forcedTokenArraySearcher: undefined as Fuse<Token> | undefined,
-      useWalletTokens: false,
-      excludedTokens: [] as Array<Token>,
-      treasuryOnly: false as boolean,
-      forceTokenArray: [] as Array<Token>
+      forcedTokenArrayData: [] as Array<Token>,
+      globalTokensData: [] as Array<Token>,
+      globalsTokensDataOffset: 0
     };
   },
   computed: {
@@ -87,34 +102,74 @@ export default Vue.extend({
       searchInAllTokens: 'searchInAllTokens',
       searchInWalletTokens: 'searchInWalletTokens'
     }),
+    ...mapState('modals', {
+      state: 'state'
+    }),
+    modalPayload(): boolean {
+      return this.state[this.modalId].payload;
+    },
+    useWalletTokens(): boolean {
+      return this.state[this.modalId].payload?.useWalletTokens ?? false;
+    },
+    excludedTokens(): Array<Token> {
+      return this.state[this.modalId].payload?.excludedTokens ?? [];
+    },
+    treasuryOnly(): boolean {
+      return this.state[this.modalId].payload?.treasuryOnly ?? false;
+    },
+    forceTokenArray(): Array<Token> {
+      return this.state[this.modalId].payload?.forceTokenArray ?? [];
+    },
     excludedTokenAddresses(): Array<string> {
       return this.excludedTokens.map((et) => et.address.toLowerCase());
     },
-    walletTokens(): Array<Token> {
+    walletTokens(): Array<TokenWithBalance> {
       if (this.forceTokenArray.length > 0) {
         return [];
       }
 
       return this.filterTokens(
-        this.searchInWalletTokens(this.searchTermDebounced)
+        this.searchInWalletTokens(this.searchTermDebounced).sort(
+          (a: Token, b: Token) => {
+            if (a.name < b.name) {
+              return -1;
+            }
+            if (a.name > b.name) {
+              return 1;
+            }
+            return 0;
+          }
+        )
       );
     },
-    globalTokens(): Array<Token> {
+    showGlobalTokens(): boolean {
       if (this.useWalletTokens || this.forceTokenArray.length > 0) {
-        return [];
+        return false;
       }
-
-      return this.filterTokens(
-        this.searchInAllTokens(this.searchTermDebounced)
-      );
+      return true;
     },
     forcedTokens(): Array<Token> {
-      if (this.useWalletTokens) {
+      if (this.forceTokenArray.length === 0) {
         return [];
       }
 
       return this.filterTokens(
-        this.searchInForcedTokenArray(this.searchTermDebounced)
+        this.searchInForcedTokenArray(this.searchTermDebounced).sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        })
+      );
+    },
+    totalResultsLength(): number {
+      return (
+        this.forcedTokens.length +
+        this.walletTokens.length +
+        this.globalTokensData.length
       );
     }
   },
@@ -126,6 +181,14 @@ export default Vue.extend({
 
       this.debounce = window.setTimeout(() => {
         this.searchTermDebounced = newVal;
+        this.globalTokensData = [];
+        this.globalsTokensDataOffset = 0;
+        this.globalTokensData = this.filterTokens(
+          this.searchInAllTokens(
+            this.searchTermDebounced,
+            this.globalsTokensDataOffset
+          )
+        );
 
         this.$nextTick().then(() => {
           if (!this.$refs.resultsTop) {
@@ -136,43 +199,67 @@ export default Vue.extend({
         });
       }, debounceTimeout);
     },
-    forceTokenArray(newVal: Array<Token>, oldVal: Array<Token>) {
-      if (newVal === oldVal) {
+    modalPayload(newVal: TModalPayload<ModalType.Swap> | undefined) {
+      if (newVal === undefined) {
         return;
       }
 
-      this.initSearcher();
+      this.globalTokensData = [];
+      this.globalsTokensDataOffset = 0;
+
+      this.globalTokensData = this.filterTokens(
+        this.searchInAllTokens(
+          this.searchTermDebounced,
+          this.globalsTokensDataOffset
+        )
+      );
     }
   },
-  beforeMount() {
-    subToggle(this.modalId, this.handleToggle);
-    this.initSearcher();
-  },
   beforeDestroy() {
-    this.forcedTokenArraySearcher = undefined;
     window.clearTimeout(this.debounce);
-    unsubToggle(this.modalId, this.handleToggle);
   },
   methods: {
-    initSearcher(): void {
-      this.forcedTokenArraySearcher = new Fuse<Token>(this.forceTokenArray, {
-        keys: ['name', 'symbol'],
-        isCaseSensitive: false
-      });
-    },
-    handleSelect(token: Token): void {
-      sendResult<Token>(this.modalId, token);
+    ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
+    handleSelect(token: Token | undefined): void {
+      this.state[this.modalId].resolver?.(token);
+      this.setIsModalDisplayed({ id: this.modalId, value: false });
+      window.clearTimeout(this.debounce);
       this.searchTerm = '';
-      toggleSingleItem(this.modalId);
+      this.searchTermDebounced = '';
+    },
+    handleGlobalLoadMore($state: StateChanger): void {
+      if (this.searchTermDebounced) {
+        $state.reset();
+        return;
+      }
+      const newData = this.filterTokens(
+        this.searchInAllTokens(
+          this.searchTermDebounced,
+          this.globalsTokensDataOffset + 100
+        )
+      );
+      if (newData.length > 0) {
+        $state.loaded();
+      } else {
+        $state.complete();
+      }
+      this.globalTokensData.push(...newData);
+      this.globalsTokensDataOffset = this.globalsTokensDataOffset + 100;
     },
     searchInForcedTokenArray(searchTerm: string): Array<Token> {
-      return (
-        this.forcedTokenArraySearcher
-          ?.search(searchTerm, { limit: 100 })
-          .map((res) => res.item) || this.forceTokenArray
+      if (searchTerm === '') {
+        return this.forceTokenArray;
+      }
+
+      return this.forceTokenArray.filter(
+        (t) =>
+          t.symbol.toLowerCase().includes(searchTerm) ||
+          t.name.toLowerCase().includes(searchTerm)
       );
     },
-    filterTokens(tokens: Array<Token>): Array<Token> {
+    filterTokens<T extends TokenWithBalance | Token>(
+      tokens: Array<T>
+    ): Array<T> {
       let result = tokens.slice();
 
       if (this.treasuryOnly) {
@@ -192,19 +279,6 @@ export default Vue.extend({
       }
 
       return result;
-    },
-    handleToggle(
-      payload: TogglePayload<{
-        useWalletTokens: boolean;
-        excludeTokens: Array<Token>;
-        treasuryOnly: boolean;
-        forceTokenArray: Array<Token>;
-      }>
-    ): void {
-      this.useWalletTokens = !!payload.payload?.useWalletTokens;
-      this.excludedTokens = payload.payload?.excludeTokens ?? [];
-      this.treasuryOnly = !!payload.payload?.treasuryOnly;
-      this.forceTokenArray = payload.payload?.forceTokenArray ?? [];
     }
   }
 });

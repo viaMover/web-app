@@ -1,15 +1,17 @@
 <template>
-  <li class="button-active" :class="wrapperClass" @click="handleClick">
-    <div class="icon">{{ icon }}</div>
-    <div class="text">{{ text }}</div>
+  <li>
+    <button class="button-active" @click="handleClick">
+      <span class="icon">{{ icon }}</span>
+      <span class="description">{{ text }}</span>
+    </button>
   </li>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapActions } from 'vuex';
 
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
-import { Modal } from '@/components/modals';
+import { TModalKey } from '@/store/modules/modals/types';
 
 export default Vue.extend({
   name: 'MenuListIconItem',
@@ -22,21 +24,23 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    wrapperClass: {
-      type: String,
+    modalId: {
+      type: String as PropType<TModalKey>,
       default: ''
     },
-    modalId: {
-      type: String as PropType<Modal>,
-      default: ''
-    }
+    modalPayload: Object
   },
   methods: {
+    ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     handleClick(): void {
       if (this.modalId !== '') {
-        toggleSingleItem(this.modalId);
+        this.setIsModalDisplayed({
+          id: this.modalId,
+          value: true,
+          payload: this.modalPayload ?? {}
+        });
       } else {
-        this.$emit('open-modal');
+        this.$emit('button-click');
       }
     }
   }

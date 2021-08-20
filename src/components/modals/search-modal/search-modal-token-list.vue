@@ -13,8 +13,13 @@
       v-for="item in items"
       :key="item.address"
       :item="item"
+      :show-balance="showBalances"
       @select="handleSelect"
     />
+    <infinite-loading
+      v-if="infinityLoad"
+      @infinite="infiniteHandler"
+    ></infinite-loading>
   </div>
 </template>
 
@@ -22,16 +27,18 @@
 import Vue, { PropType } from 'vue';
 
 import SearchModalTokenItem from './search-modal-token-item.vue';
-import { Token } from '@/wallet/types';
+import { Token, TokenWithBalance } from '@/wallet/types';
+import InfiniteLoading, { StateChanger } from 'vue-infinite-loading';
 
 export default Vue.extend({
   name: 'SearchModalTokenList',
   components: {
-    SearchModalTokenItem
+    SearchModalTokenItem,
+    InfiniteLoading
   },
   props: {
     items: {
-      type: Array as PropType<Array<Token>>,
+      type: Array as PropType<Array<Token | TokenWithBalance>>,
       required: true
     },
     showHeader: {
@@ -45,11 +52,22 @@ export default Vue.extend({
     headerText: {
       type: String,
       default: ''
+    },
+    showBalances: {
+      type: Boolean,
+      default: false
+    },
+    infinityLoad: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
     handleSelect(selected: Token): void {
       this.$emit('select', selected);
+    },
+    infiniteHandler($state: StateChanger): void {
+      this.$emit('load-more', $state);
     }
   }
 });
