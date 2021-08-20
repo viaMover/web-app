@@ -204,7 +204,7 @@ export default Vue.extend({
       }
 
       if (greaterThan(this.output.amount, this.maxOutputAmount)) {
-        return 'Insuficient Balance';
+        return 'Insufficient Balance';
       }
 
       if (this.transferError !== undefined) {

@@ -232,7 +232,7 @@ export default Vue.extend({
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Insuficient Balance';
+        return 'Insufficient Balance';
       }
 
       if (this.transferError !== undefined) {
