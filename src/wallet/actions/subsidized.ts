@@ -127,7 +127,11 @@ export const sendSubsidizedRequest = async (
     throw new Error(`network ${network} doesn't support subsidezed requests`);
   }
 
-  const signature = await web3.eth.sign(action, accountAddress);
+  console.log(`ActionType: ${actionType}`);
+  console.log(`Message to sign: ${action}`);
+  console.log(`Account address: ${accountAddress}`);
+
+  const signature = await web3.eth.personal.sign(action, accountAddress, '');
 
   changeStepToProcess();
 

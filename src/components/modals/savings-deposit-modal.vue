@@ -347,7 +347,7 @@ export default Vue.extend({
       }
     },
     isInfoAvailable(): boolean {
-      return !this.needTransfer || !!this.transferData;
+      return (!this.needTransfer || !!this.transferData) && !this.error;
     },
     needTransfer(): boolean {
       if (this.input.asset === undefined) {

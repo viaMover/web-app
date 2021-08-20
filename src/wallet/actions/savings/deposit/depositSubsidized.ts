@@ -1,3 +1,4 @@
+import { waitOffchainTransactionReceipt } from './../../../offchainExplorer';
 import { currentTimestamp } from './../../../../utils/time';
 import { Transaction } from './../../../types';
 import store from '@/store/index';
@@ -67,7 +68,7 @@ export const depositSubsidized = async (
       uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
       asset: {
         address: inputAsset.address,
-        change: inputAmount,
+        change: toWei(inputAmount, inputAsset.decimals),
         decimals: inputAsset.decimals,
         direction: 'out',
         iconURL: '',
@@ -80,6 +81,12 @@ export const depositSubsidized = async (
       moverType: 'subsidized_deposit'
     };
     await store.dispatch('account/addTransaction', tx);
+
+    await waitOffchainTransactionReceipt(
+      subsidizedResponse.queueID,
+      subsidizedResponse.txID,
+      web3
+    );
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
