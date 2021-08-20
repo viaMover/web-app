@@ -204,7 +204,7 @@ export default Vue.extend({
       }
 
       if (greaterThan(this.output.amount, this.maxOutputAmount)) {
-        return 'Inssuficient Balance';
+        return 'Insuficient Balance';
       }
 
       if (this.transferError !== undefined) {
@@ -380,9 +380,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = multiply(
-          this.usdcNativePrice,
-          this.output.amount
+        this.output.nativeAmount = formatToNative(
+          multiply(this.usdcNativePrice, this.output.amount)
         );
 
         console.log('this.usdcNativePrice', this.usdcNativePrice);

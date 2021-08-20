@@ -110,7 +110,7 @@ import {
 } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
-import { formatToDecimals } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import {
@@ -200,7 +200,7 @@ export default Vue.extend({
       }
 
       if (greaterThan(this.output.amount, this.maxOutputAmount)) {
-        return 'Inssuficient Balance';
+        return 'Insuficient Balance';
       }
 
       if (this.transferError !== undefined) {
@@ -436,9 +436,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = multiply(
-          this.output.asset.priceUSD,
-          this.output.amount
+        this.output.nativeAmount = formatToNative(
+          multiply(this.output.asset.priceUSD, this.output.amount)
         );
 
         await this.tryToEstimate(this.output.amount, this.output.asset);
