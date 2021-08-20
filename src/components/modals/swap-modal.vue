@@ -317,6 +317,10 @@ export default Vue.extend({
         return this.error;
       }
 
+      if (greaterThan(this.approveGasLimit, '0')) {
+        return '💸 Approve and Swap';
+      }
+
       return '💸 Swap';
     },
     availableGasModes(): Array<GasMode> {
@@ -392,7 +396,7 @@ export default Vue.extend({
     actionButtonStyle(): CssProperties {
       if (this.actionAvaialble) {
         return {
-          backgroundColor: this.toAssetColor
+          backgroundColor: this.toAssetColor ?? '#000'
         };
       }
       return {};
