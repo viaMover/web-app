@@ -1,7 +1,17 @@
-service: moverwebapp
+service: moverwebapp-production
 runtime: python27
 api_version: 1
 threadsafe: true
+default_expiration: "10m"
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 2
+  max_instances: 25
+  min_pending_latency: 50ms
+  max_pending_latency: automatic
+  max_concurrent_requests: 50
+
 
 handlers:
 
@@ -45,7 +55,9 @@ handlers:
   upload: www/intercom-web-init.js
   secure: always
 
+
 - url: /(.*)
   static_files: www/index.html
   upload: www/index.html
   secure: always
+  expiration: "1m"

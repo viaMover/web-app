@@ -22,7 +22,7 @@ jobs:
           root:  /tmp/workspace
           paths: [ '*' ]
 
-  deploy:
+  deploy_stg:
     working_directory: /tmp/workspace
     docker:
       - image: cimg/base:2021.04
@@ -50,18 +50,54 @@ jobs:
             mv deploy/www dist/
             cp deploy/moverwebapp.yaml dist/
             cd dist
-            /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp.yaml --promote
+            /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-stg.yaml --promote
+
+  deploy_prod:
+    working_directory: /tmp/workspace
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Install Google Cloud SDK
+          command: |
+            wget -qO- https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-351.0.0-linux-x86_64.tar.gz | sudo tar xz -C /usr/local
+            sudo /usr/local/google-cloud-sdk/install.sh --quiet
+            sudo /usr/local/google-cloud-sdk/bin/gcloud components install app-engine-go
+      - run:
+          name: Decrypt deploy key
+          command: |
+            cd /tmp/workspace
+            openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/deploykey-stg.enc -out deploy/deploykey-stg.json
+            /usr/local/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file deploy/deploykey-stg.json
+      - run:
+          name: Deploy to GAE
+          command: |
+            # align structure for static GAE app
+            mkdir deploy/www
+            mv dist/* deploy/www/
+            mv deploy/www dist/
+            cp deploy/moverwebapp.yaml dist/
+            cd dist
+            /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-prod.yaml --promote
 
 workflows:
   version: 2
   commit:
     jobs:
       - build
-      - deploy:
+      - deploy_stg:
           filters:
             branches:
               only:
                 - staging
-                - main
+          requires:
+            - build
+      - deploy_prod:
+          filters:
+            branches:
+              only:
+                - release
           requires:
             - build
