@@ -1,3 +1,4 @@
+import { getTransactionReceiptMined } from './../web3/transaction';
 import { Network } from './../utils/networkTypes';
 import { CheckSubsidizedInQueueTx, QUEUED_STATUS } from './actions/subsidized';
 import { Transaction } from './types';
@@ -7,7 +8,7 @@ import Web3 from 'web3';
 export type OffchainExplorerHanler = ReturnType<typeof setTimeout>;
 
 const REFRESH_OFFCHAIN_TRANSACTIONS_FREQUENCY = 10000; // 10 sec
-const REFRESH_OFFCHAIN_RECEIPT_TIMEOUT = 1000;
+const REFRESH_OFFCHAIN_RECEIPT_TIMEOUT = 10000;
 
 export const initOffchainExplorer = (network: Network) => {
   const refreshOffchainTxns = async () => {
@@ -116,7 +117,11 @@ export const waitOffchainTransactionReceipt = (
   web3: Web3
 ): Promise<unknown> => {
   if (hash !== undefined) {
-    return web3.eth.getTransactionReceipt(hash);
+    return getTransactionReceiptMined(
+      hash,
+      REFRESH_OFFCHAIN_RECEIPT_TIMEOUT,
+      web3
+    );
   }
   return new Promise<void>((resolve, reject) => {
     const checkTxStatus = async () => {
@@ -125,7 +130,11 @@ export const waitOffchainTransactionReceipt = (
       if (tx != undefined && tx.subsidizedQueueId === undefined) {
         if (tx.status === 'confirmed' && tx.hash) {
           try {
-            await web3.eth.getTransactionReceipt(tx.hash);
+            await getTransactionReceiptMined(
+              tx.hash,
+              REFRESH_OFFCHAIN_RECEIPT_TIMEOUT,
+              web3
+            );
           } catch {
             reject();
           }

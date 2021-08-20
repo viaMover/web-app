@@ -1,17 +1,14 @@
 <template>
   <div>
     <div class="item__info">
-      <div class="loading">
-        <div class="hold left">
-          <div class="fill"></div>
-        </div>
-        <div class="hold right">
-          <div class="fill"></div>
-        </div>
-      </div>
       <div class="item__info-icon">
         <span>{{ icon }}</span>
       </div>
+      <progress-loader
+        class="progress-loader"
+        :is-animated="isInProgress"
+        :value="isInProgress ? currentMonthProgress : 100"
+      />
       <div class="item__info-label">
         <p>{{ headerText }}</p>
         <span v-if="!isInProgress">{{ itemText }}</span>
@@ -41,9 +38,13 @@ import {
   TreasuryMonthBonusesItem
 } from '@/services/mover';
 import { dateFromExplicitPair } from '@/utils/time';
+import ProgressLoader from '../progress-loader.vue';
 
 export default Vue.extend({
   name: 'StatementNavListItem',
+  components: {
+    ProgressLoader
+  },
   props: {
     item: {
       type: Object as PropType<
@@ -75,6 +76,15 @@ export default Vue.extend({
         currentDate.get('year') === this.item.year &&
         currentDate.get('month') + 1 === this.item.month
       );
+    },
+    currentMonthProgress(): number {
+      const currentDate = dayjs();
+      const dayInCurrentMonth = new Date(
+        currentDate.get('year'),
+        currentDate.get('month'),
+        0
+      ).getDate();
+      return Math.round((currentDate.get('date') / dayInCurrentMonth) * 100);
     },
     headerText(): string {
       return dateFromExplicitPair(this.item.year, this.item.month).format(

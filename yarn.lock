@@ -14252,6 +14252,11 @@ vue-image-fallback@^1.0.0:
   resolved "https://registry.yarnpkg.com/vue-image-fallback/-/vue-image-fallback-1.0.0.tgz#9a9dad7cd8675aa8709ba6f606e7937b77c4cbd8"
   integrity sha512-pcuzGlKeEOEJSdH+EJhY6/A0kL0UoxUL8wP29klrQjbBQzfA78YwNsYBhrk2Q92l1DGt9F7BMpk8jq/wXKe60Q==
 
+vue-infinite-loading@^2.4.5:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/vue-infinite-loading/-/vue-infinite-loading-2.4.5.tgz#cc20fd40af7f20188006443c99b60470cf1de1b3"
+  integrity sha512-xhq95Mxun060bRnsOoLE2Be6BR7jYwuC89kDe18+GmCLVrRA/dU0jrGb12Xu6NjmKs+iTW0AA6saSEmEW4cR7g==
+
 vue-jest@^3.0.5:
   version "3.0.7"
   resolved "https://registry.nlark.com/vue-jest/download/vue-jest-3.0.7.tgz?cache=0&sync_timestamp=1620570471873&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fvue-jest%2Fdownload%2Fvue-jest-3.0.7.tgz#a6d29758a5cb4d750f5d1242212be39be4296a33"

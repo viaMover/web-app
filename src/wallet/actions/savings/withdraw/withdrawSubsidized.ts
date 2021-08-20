@@ -1,3 +1,4 @@
+import { waitOffchainTransactionReceipt } from './../../../offchainExplorer';
 import { Transaction } from './../../../types';
 import { currentTimestamp } from './../../../../utils/time';
 import { createSavingsWithdrawActionString } from './../../subsidized';
@@ -63,7 +64,7 @@ export const withdrawSubsidized = async (
       uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
       asset: {
         address: outputAsset.address,
-        change: outputAmount,
+        change: toWei(outputAmount, outputAsset.decimals),
         decimals: outputAsset.decimals,
         direction: 'in',
         iconURL: '',
@@ -72,12 +73,20 @@ export const withdrawSubsidized = async (
       },
       from: holyHandAddress,
       to: accountAddress,
-      subsidizedQueueId: subsidizedResponse.queueID
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'subsidized_withdraw'
     };
     await store.dispatch('account/addTransaction', tx);
+
+    await waitOffchainTransactionReceipt(
+      subsidizedResponse.queueID,
+      subsidizedResponse.txID,
+      web3
+    );
   } catch (err) {
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
+    throw err;
   }
 };

@@ -54,9 +54,14 @@ export default {
           name: 'symbol',
           weight: 2.5
         }
-      ]
+      ],
+      findAllMatches: true,
+      threshold: 0,
+      shouldSort: true
     };
-    state.tokensSearcher = new Fuse(state.tokens, searchOptions);
+    const index = Fuse.createIndex(searchOptions.keys, state.tokens);
+    // TODO: investigate wrong behavior
+    state.tokensSearcher = undefined; //new Fuse(state.tokens, searchOptions, index);
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];
@@ -79,7 +84,10 @@ export default {
           name: 'symbol',
           weight: 2.5
         }
-      ]
+      ],
+      findAllMatches: true,
+      threshold: 0,
+      shouldSort: true
     };
     const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
 

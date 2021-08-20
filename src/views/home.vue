@@ -9,20 +9,13 @@
     <savings-deposit-card-section />
     <menu-section />
 
-    <transaction-modal />
-    <centered-modal-window v-cloak :modal-id="SwapModalId">
-      <swap-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="SavingsWithdrawModalId">
-      <savings-withdraw-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="SavingsDepositModalId">
-      <savings-deposit-form />
-    </centered-modal-window>
-    <centered-modal-window v-cloak :modal-id="TreasuryIncreaseBoostModalId">
-      <treasury-increase-boost-form />
-    </centered-modal-window>
-    <search-modal />
+    <template v-slot:modals>
+      <swap-modal key="swap-modal" />
+      <savings-deposit-modal key="savings-deposit-modal" />
+      <savings-withdraw-modal key="savings-withdraw-modal" />
+      <treasury-increase-boost-modal key="treasury-increase-boost-modal" />
+      <search-modal key="search-modal" />
+    </template>
   </content-wrapper>
 </template>
 
@@ -38,45 +31,30 @@ import {
   MenuSection,
   SavingsDepositCardSection
 } from '@/components/sections';
-import { SwapForm } from '@/components/forms';
 import {
-  TransactionModal,
   SearchModal,
-  CenteredModalWindow,
-  Modal
+  SwapModal,
+  SavingsDepositModal,
+  SavingsWithdrawModal,
+  TreasuryIncreaseBoostModal
 } from '@/components/modals';
-import {
-  TreasuryIncreaseBoostForm,
-  SavingsDepositForm,
-  SavingsWithdrawForm
-} from '@/components/forms';
 
 import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'Home',
   components: {
-    TreasuryIncreaseBoostForm,
-    SavingsDepositForm,
-    SavingsWithdrawForm,
     SavingsDepositCardSection,
     DebitCardSection,
     MenuSection,
     ContentWrapper,
     TransactionList,
     HeaderBalance,
-    TransactionModal,
-    SwapForm,
+    SwapModal,
     SearchModal,
-    CenteredModalWindow
-  },
-  data() {
-    return {
-      SwapModalId: Modal.Swap,
-      SavingsWithdrawModalId: Modal.SavingsWithdraw,
-      SavingsDepositModalId: Modal.SavingsDeposit,
-      TreasuryIncreaseBoostModalId: Modal.TreasuryIncreaseBoost
-    };
+    SavingsDepositModal,
+    SavingsWithdrawModal,
+    TreasuryIncreaseBoostModal
   },
   methods: {
     isFeatureEnabled

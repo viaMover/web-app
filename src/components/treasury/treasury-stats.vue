@@ -50,7 +50,7 @@ export default Vue.extend({
       treasurySpentTotalNative: 'treasurySpentTotalNative'
     }),
     earnedToday(): string {
-      const value = formatToNative(this.treasuryEarnedTotalNative);
+      const value = formatToNative(this.treasuryEarnedTodayNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedThisMonth(): string {

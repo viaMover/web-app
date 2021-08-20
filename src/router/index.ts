@@ -238,22 +238,6 @@ router.beforeEach((to, from, next) => {
     .catch(() => next(false));
 });
 
-router.beforeResolve((to, from, next) => {
-  if (!to.meta.pageTitleTranslationKey) {
-    document.title = router.app.$t('lblPageTitleDefault') as string;
-    next();
-    return;
-  }
-
-  if (!router.app.$te(to.meta.pageTitleTranslationKey)) {
-    next();
-    return;
-  }
-
-  document.title = router.app.$t(to.meta.pageTitleTranslationKey) as string;
-  next();
-});
-
 router.beforeResolve(requireWalletAuth(['connect-wallet', 'not-found-route']));
 
 export default router;

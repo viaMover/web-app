@@ -9,7 +9,7 @@
   </div>
   <div v-else :class="wrapperClass">
     <div class="img-stub" :style="shadowStyles">
-      <span>{{ symbol }}</span>
+      <span>{{ truncatedSymbol }}</span>
     </div>
   </div>
 </template>
@@ -52,6 +52,12 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
+    truncatedSymbol(): string {
+      if (this.symbol.length > 5) {
+        return `${this.symbol.toUpperCase().substr(0, 4)}...`;
+      }
+      return this.symbol.toUpperCase();
+    },
     displayOriginalImage(): boolean {
       return this.src !== '' && !this.loadingFailed;
     },

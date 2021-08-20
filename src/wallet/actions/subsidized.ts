@@ -127,7 +127,11 @@ export const sendSubsidizedRequest = async (
     throw new Error(`network ${network} doesn't support subsidezed requests`);
   }
 
-  const signature = await web3.eth.sign(action, accountAddress);
+  console.log(`ActionType: ${actionType}`);
+  console.log(`Message to sign: ${action}`);
+  console.log(`Account address: ${accountAddress}`);
+
+  const signature = await web3.eth.personal.sign(action, accountAddress, '');
 
   changeStepToProcess();
 
@@ -242,9 +246,7 @@ export const isSubsidizedAllowed = (
   console.log('fastTransactionPriceNative:', fastTransactionPriceNative);
   console.log('treasuryBonus (native):', treasuryBonus);
 
-  const isDev = process.env.VUE_APP_IS_DEV;
-
-  if (isDev) {
+  if (process.env.NODE_ENV !== 'production') {
     console.log('Subsidized allowed for DEV');
     return true;
   }
@@ -261,6 +263,9 @@ const subsAddresses = [
   '0xdAc8619CD25a6FEDA197e354235c3bBA7d847b90'.toLowerCase()
 ];
 
-export const isSubsidizedAddress = (from: string): boolean => {
+export const isSubsidizedAddress = (from?: string | null): boolean => {
+  if (!from) {
+    return false;
+  }
   return subsAddresses.includes(from);
 };

@@ -38,8 +38,8 @@ export type ZerionChange = {
 };
 
 export type ZerionTransaction = {
-  address_from: string;
-  address_to: string;
+  address_from: string | null;
+  address_to: string | null;
   block_number: number;
   contract: null;
   direction: 'in' | 'out';
@@ -73,6 +73,7 @@ export type ZerionTransaction = {
           name: string;
           symbol: string;
         };
+        spender: string;
       };
     }
   | {

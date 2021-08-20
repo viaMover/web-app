@@ -7,7 +7,7 @@ export default {
   txtConnectWallet:
     'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
   txtNotFound:
-    'Wow, how did you end up here? Seems like even Google isn’t as of help.',
+    'Wow, how did you end up here?\nSeems like even Google isn’t as of help.',
   btnConnectWallet: 'Connect a wallet',
   txtChangeWalletAlt: 'Change wallet icon',
   lblWallet: 'Wallet',
@@ -15,13 +15,14 @@ export default {
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   lblMore: 'More',
+  lblPageTitleSuffix: 'Portfolio',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
   },
   menu: {
     lblSwapTokenEmoji: '🔄',
-    lblSwapToken: 'Swap Token',
+    lblSwapToken: 'Swap Tokens',
     lblGetMoveEmoji: '💸',
     lblGetMove: 'Get MOVE',
     lblProvideLiquidityMoveEmoji: '💧',
@@ -160,6 +161,7 @@ export default {
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',
     lblTreasuryOverview: '@:treasury.lblTreasuryPrefix Overview',
+    lblTreasuryStatements: '@:treasury.lblTreasuryPrefix Statements',
     lblReservedAssetsValue: 'Reserved assets value',
     lblCurrentBoost: 'Current boost',
     lblMaximumBoost: 'Maximum boost',
@@ -490,7 +492,7 @@ export default {
   search: {
     lblSearch: 'Search',
     lblSearchBar: 'Search tokens',
-    lblSearchBarPlaceholder: 'Search any token on Ethereum',
+    lblSearchBarPlaceholder: 'Search any token',
     lblSearchTransaction: 'Search any transaction',
     lblFavorite: 'Favorite',
     lblVerified: 'Verified',
