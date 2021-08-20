@@ -48,7 +48,7 @@ jobs:
             mkdir deploy/www
             mv dist/* deploy/www/
             mv deploy/www dist/
-            cp deploy/moverwebapp.yaml dist/
+            cp deploy/moverwebapp-stg.yaml dist/
             cd dist
             /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-stg.yaml --promote
 
@@ -78,7 +78,7 @@ jobs:
             mkdir deploy/www
             mv dist/* deploy/www/
             mv deploy/www dist/
-            cp deploy/moverwebapp.yaml dist/
+            cp deploy/moverwebapp-prod.yaml dist/
             cd dist
             /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-prod.yaml --promote
 
