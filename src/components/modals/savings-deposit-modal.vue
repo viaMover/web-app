@@ -224,7 +224,7 @@ export default Vue.extend({
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Inssuficient Balance';
+        return 'Insufficient Balance';
       }
 
       if (this.transferError !== undefined) {
@@ -467,9 +467,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = multiply(
-          this.input.asset.priceUSD,
-          this.input.amount
+        this.input.nativeAmount = formatToNative(
+          multiply(this.input.asset.priceUSD, this.input.amount)
         );
 
         const transferData = await this.calcData(

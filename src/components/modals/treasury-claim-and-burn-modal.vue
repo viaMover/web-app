@@ -133,7 +133,7 @@ import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { sameAddress } from '@/utils/address';
-import { formatToDecimals } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { getExitingAmount, getMaxBurn } from '@/services/chain';
 import {
   Modal as ModalType,
@@ -236,7 +236,7 @@ export default Vue.extend({
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Inssuficient Balance';
+        return 'Insufficient Balance';
       }
 
       if (this.transferError !== undefined) {
@@ -416,9 +416,8 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = multiply(
-          this.input.asset.priceUSD,
-          this.input.amount
+        this.input.nativeAmount = formatToNative(
+          multiply(this.input.asset.priceUSD, this.input.amount)
         );
 
         if (this.maxBurnedAmount === undefined) {
