@@ -23,6 +23,7 @@ export type SavingsInfo = {
   earnedThisMonth: number;
   last12MonthsBalances: Array<SavingsMonthBalanceItem>;
   actionHistory: Array<SavingsActionHistoryItem>;
+  avg30DaysAPY: number;
 };
 export type SavingsInfoResponse = MoverResponse<SavingsInfo>;
 
@@ -43,5 +44,8 @@ export type SavingsReceipt = {
   monthActionHistory: Array<SavingsActionHistoryItem>;
   totalDeposits: number;
   totalWithdrawals: number;
+  avgDailyEarnings: number;
+  paidToTreasury: number;
+  savedFees: number;
 };
 export type SavingsReceiptResponse = MoverResponse<SavingsReceipt>;

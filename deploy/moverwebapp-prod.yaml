@@ -18,38 +18,46 @@ handlers:
 - url: /
   static_files: www/index.html
   upload: www/index.html
-
+  secure: always
 
 - url: /css/(.*)
   static_files: www/css/\1
   upload: www/css/(.*)
+  secure: always
 
 - url: /fonts/(.*)
   static_files: www/fonts/\1
   upload: www/fonts/(.*)
+  secure: always
 
 - url: /js/(.*)
   static_files: www/js/\1
   upload: www/js/(.*)
+  secure: always
 
 - url: /img/(.*)
   static_files: www/img/\1
   upload: www/img/(.*)
+  secure: always
 
 - url: /media/(.*)
   static_files: www/media/\1
   upload: www/media/(.*)
+  secure: always
 
 - url: /favicon.ico
   static_files: www/favicon.ico
   upload: www/favicon.ico
+  secure: always
 
 - url: /intercom-web-init.js
   static_files: www/intercom-web-init.js
   upload: www/intercom-web-init.js
+  secure: always
 
 
 - url: /(.*)
   static_files: www/index.html
   upload: www/index.html
+  secure: always
   expiration: "1m"

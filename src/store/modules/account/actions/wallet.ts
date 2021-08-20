@@ -1,3 +1,7 @@
+import {
+  initOffchainExplorer,
+  clearOffchainExplorer
+} from '@/wallet/offchainExplorer';
 import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
@@ -173,6 +177,8 @@ export default {
     console.info('Updating wallet tokens from Etherscan...');
     if (state.networkInfo.network === Network.mainnet) {
       if (payload.init) {
+        console.log('Starting Offchain Explorer...');
+        initOffchainExplorer(state.networkInfo.network);
         console.log('Starting Zerion...');
         const explorer = InitExplorer(
           state.currentAddress,
@@ -322,6 +328,7 @@ export default {
         await state.provider.pureProvider.disconnect();
       }
     }
+    clearOffchainExplorer();
     commit('clearWalletData');
     disconnectIntercomSession();
     clearLastProviderPersist();

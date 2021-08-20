@@ -42,11 +42,15 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', {
+      treasuryEarnedTodayNative: 'treasuryEarnedTodayNative',
       treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
-      treasuryEarnedTotalNative: 'treasuryEarnedTotalNative'
+      treasuryEarnedTotalNative: 'treasuryEarnedTotalNative',
+      treasurySpentTodayNative: 'treasurySpentTodayNative',
+      treasurySpentThisMonthNative: 'treasurySpentThisMonthNative',
+      treasurySpentTotalNative: 'treasurySpentTotalNative'
     }),
     earnedToday(): string {
-      const value = '0';
+      const value = formatToNative(this.treasuryEarnedTotalNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedThisMonth(): string {
@@ -58,15 +62,15 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     spentToday(): string {
-      const value = '0';
+      const value = formatToNative(this.treasurySpentTodayNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     spentThisMonth(): string {
-      const value = '0';
+      const value = formatToNative(this.treasurySpentThisMonthNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     spentInTotal(): string {
-      const value = '0';
+      const value = formatToNative(this.treasurySpentTotalNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     }
   }

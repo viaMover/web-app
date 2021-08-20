@@ -33,6 +33,11 @@ export default Vue.extend({
     LeftRailSection,
     LeftRailSectionItem
   },
+  data() {
+    return {
+      maximumBoost: '3.5x'
+    };
+  },
   computed: {
     ...mapGetters('account', {
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative',
@@ -44,10 +49,6 @@ export default Vue.extend({
     },
     currentBoost(): string {
       return `${this.treasuryBoost}x`;
-    },
-    maximumBoost(): string {
-      // TODO: compute if needed
-      return '2.5x';
     },
     smartTreasurySize(): string {
       return `$${formatToNative(this.treasuryTotalStakedBalanceNative)}`;
