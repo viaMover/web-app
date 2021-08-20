@@ -8,7 +8,7 @@ import Web3 from 'web3';
 export type OffchainExplorerHanler = ReturnType<typeof setTimeout>;
 
 const REFRESH_OFFCHAIN_TRANSACTIONS_FREQUENCY = 10000; // 10 sec
-const REFRESH_OFFCHAIN_RECEIPT_TIMEOUT = 1000;
+const REFRESH_OFFCHAIN_RECEIPT_TIMEOUT = 10000;
 
 export const initOffchainExplorer = (network: Network) => {
   const refreshOffchainTxns = async () => {
