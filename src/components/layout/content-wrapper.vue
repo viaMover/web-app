@@ -1,5 +1,6 @@
 <template>
   <div :class="baseClass">
+    <back-button v-if="hasBackButton" @close="handleClose" />
     <left-rail
       v-if="hasLeftRail"
       :container-class="leftRailClass"
@@ -7,7 +8,6 @@
       :inner-wrapper-style="leftRailStyle"
     >
       <slot name="left-rail"></slot>
-      <back-button v-if="hasBackButton" @close="handleClose" />
       <close-button
         v-if="hasCloseButton"
         :is-black="isBlackCloseButton"
@@ -15,7 +15,6 @@
       />
     </left-rail>
     <template v-else>
-      <back-button v-if="hasBackButton" @close="handleClose" />
       <close-button
         v-if="hasCloseButton"
         :is-black="isBlackCloseButton"
