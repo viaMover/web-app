@@ -1,4 +1,6 @@
+import { clearLastProviderPersist } from '@/settings/persist/last-provider';
 import { ProviderWithCallbacks } from './types';
+import store from '@/store/index';
 
 export const InitCallbacks = async (
   provider: any,
@@ -11,8 +13,9 @@ export const InitCallbacks = async (
     window.location.reload();
   };
 
-  const disconnectHandler = () => {
+  const disconnectHandler = async () => {
     console.log('Provider - has been disconnected! Reloading page...');
+    await store.dispatch('account/disconnectWallet');
     window.location.reload();
   };
 

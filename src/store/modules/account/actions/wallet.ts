@@ -328,9 +328,9 @@ export default {
         await state.provider.pureProvider.disconnect();
       }
     }
+    clearLastProviderPersist();
     clearOffchainExplorer();
     commit('clearWalletData');
     disconnectIntercomSession();
-    clearLastProviderPersist();
   }
 } as ActionTree<AccountStoreState, RootStoreState>;
