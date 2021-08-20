@@ -71,7 +71,7 @@ export const swapSubsidized = async (
       uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
       asset: {
         address: inputAsset.address,
-        change: inputAmount,
+        change: toWei(inputAmount, inputAsset.decimals),
         decimals: inputAsset.decimals,
         direction: 'out',
         iconURL: '',
