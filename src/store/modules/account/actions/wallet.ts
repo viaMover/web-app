@@ -36,6 +36,7 @@ import {
   bootIntercomSession,
   disconnectIntercomSession
 } from '@/router/intercom-utils';
+import { getEthereumPrice } from '@/wallet/ethPrice';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -110,10 +111,13 @@ export default {
         pureProvider: payload.provider
       } as ProviderData);
 
-      dispatch('refreshWallet', {
+      await dispatch('refreshWallet', {
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
+
+      console.log('Starting gas listening...');
+      await dispatch('startGasListening');
 
       setLastProviderToPersist(payload.providerName);
     } catch (err) {
@@ -208,29 +212,6 @@ export default {
         );
         commit('setExplorer', explorer);
       }
-
-      //
-      // console.info('Use ethplorer for mainnet wallet...');
-      // const walletRes = await GetWalletInfo(state.currentAddress);
-      // if (walletRes.isError || walletRes.result === undefined) {
-      // commit(
-      //     'setRefreshEror',
-      //     `Can't get wallet info from ethplorer: ${walletRes.errorMessage}`
-      // );
-      // return;
-      // }
-      // const walletTokens = walletRes.result.tokens.map((et: EthplorerToken) => {
-      // return {
-      //     address: et.tokenInfo.address,
-      //     decimals: parseInt(et.tokenInfo.decimals),
-      //     balance: et.rawBalance,
-      //     name: et.tokenInfo.name,
-      //     priceUSD: et.tokenInfo.price.rate,
-      //     symbol: et.tokenInfo.symbol
-      // } as TokenWithBalance;
-      // });
-      // commit('setWalletTokens', walletTokens);
-      //
     } else {
       console.info('Not mainnet - should use balancer');
       const tokensList = getTestnetAssets(state.networkInfo.network);
@@ -247,13 +228,12 @@ export default {
 
     console.info('refresh eth price...');
     // TODO: works only for USD
-    const ethPriceInUSDResult = await getEthPrice(state.networkInfo.network);
-    if (ethPriceInUSDResult.isError) {
-      console.log(
-        `can't load eth price: ${JSON.stringify(ethPriceInUSDResult)}`
-      );
-    } else {
-      commit('setEthPrice', ethPriceInUSDResult.result);
+    try {
+      const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
+      commit('setEthPrice', ethPriceInUSD);
+    } catch (e) {
+      console.error("Can't get ETH price, stop loading data");
+      return;
     }
 
     const getMovePriceInWethPromise = getMOVEPriceInWETH(
@@ -297,24 +277,7 @@ export default {
       treasuryFreshData
     ]);
 
-    //const res = await GetTokensPrice([state.allTokens[0].address]);
-    //console.log(res);
-    //
-    // console.info('Updating txns from Etherscan');
-    // const txRes = await GetTransactions(
-    // state.currentAddress,
-    // state.networkInfo.network
-    // );
-    // if (txRes.isError || txRes.result === undefined) {
-    // commit(
-    //     'setRefreshEror',
-    //     `Can't get transactions from Etherscan: ${txRes.errorMessage}`
-    // );
-    // return;
-    // }
-    //
-    // commit('updateWalletTransactions', txRes.result);
-    //
+    console.info('Wallet refreshed');
   },
 
   async disconnectWallet({ commit, state }): Promise<void> {
