@@ -46,7 +46,8 @@ Sentry.init({
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
-  logErrors: true
+  logErrors: true,
+  environment: process.env.NODE_ENV
 });
 
 new Vue({
