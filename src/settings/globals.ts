@@ -21,7 +21,7 @@ const values: Globals = {
   isMoreEnabled: false,
   isNibbleShopEnabled: false,
   isNftDropsEnabled: false,
-  isIntercomEnabled: false,
+  isIntercomEnabled: true,
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false
 };
