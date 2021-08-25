@@ -38,7 +38,6 @@ export const requireWalletAuth =
         mustBeMetaMask: true
       });
       await store.dispatch('account/setDetectedProvider', ethProvider);
-      await store.dispatch('account/startGasListening');
 
       const lastSelectedProvider = getLastProviderFromPersist();
       if (lastSelectedProvider !== undefined) {

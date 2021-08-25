@@ -111,10 +111,13 @@ export default {
         pureProvider: payload.provider
       } as ProviderData);
 
-      dispatch('refreshWallet', {
+      await dispatch('refreshWallet', {
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
+
+      console.log('Starting gas listening...');
+      await dispatch('startGasListening');
 
       setLastProviderToPersist(payload.providerName);
     } catch (err) {
@@ -273,6 +276,8 @@ export default {
       savingsFreshData,
       treasuryFreshData
     ]);
+
+    console.info('Wallet refreshed');
   },
 
   async disconnectWallet({ commit, state }): Promise<void> {
