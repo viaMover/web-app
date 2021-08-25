@@ -160,6 +160,7 @@ import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depos
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { Properties as CssProperties } from 'csstype';
+import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import {
   Modal as ModalType,
@@ -431,6 +432,7 @@ export default Vue.extend({
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
+        Sentry.captureException(err);
       }
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
@@ -453,9 +455,9 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        console.error(`can't calc data: ${err}`);
         this.transferError = 'Estimate error';
         console.error(`can't calc data: ${err}`);
+        Sentry.captureException(err);
         return;
       } finally {
         this.loading = false;
@@ -483,9 +485,9 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        console.error(`can't calc data: ${err}`);
         this.transferError = 'Estimate error';
         console.error(`can't calc data: ${err}`);
+        Sentry.captureException(err);
         return;
       } finally {
         this.loading = false;
@@ -517,8 +519,8 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
         this.transferError = 'Estimate error';
+        Sentry.captureException("can't estimate treasury deposit");
         return;
       }
       this.actionGasLimit = resp.actionGasLimit;

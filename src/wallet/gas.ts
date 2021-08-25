@@ -22,7 +22,7 @@ export const getGasPrices = async (
       return await getGasPrices(network);
     }
 
-    throw new Error(`Cant get has prices: ${res.error}`);
+    throw new Error(`Cant get gas prices: ${res.error}`);
   }
 
   if (isSuccess<GasData, GetGasErrors>(res)) {

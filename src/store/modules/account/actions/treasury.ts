@@ -12,6 +12,7 @@ import {
   getTreasuryBalance,
   getTreasuryBonus
 } from '@/services/chain';
+import * as Sentry from '@sentry/vue';
 
 export type TreasuryGetReceiptPayload = {
   year: number;
@@ -93,7 +94,7 @@ export default {
     if (isError(info)) {
       commit('setTreasuryInfoError', info.error);
       commit('setIsTreasuryInfoLoading', false);
-
+      Sentry.captureException(`can't get treasury info: ${info.error}`);
       return;
     }
 
@@ -126,7 +127,7 @@ export default {
     if (isError(receipt)) {
       commit('setTreasuryReceiptError', receipt.error);
       commit('setIsTreasuryReceiptLoading', false);
-
+      Sentry.captureException(`can't get treasury receipt: ${receipt.error}`);
       return;
     }
 

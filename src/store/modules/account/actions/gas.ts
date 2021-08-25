@@ -2,6 +2,7 @@ import { getGasPrices } from '@/wallet/gas';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
+import * as Sentry from '@sentry/vue';
 
 const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
@@ -17,6 +18,7 @@ export default {
       } catch (err) {
         commit('setRefreshEror', err);
         console.log(`Can't get gas prices, err: ${err}`);
+        Sentry.captureException(err);
       } finally {
         if (state.gasUpdating) {
           setTimeout(updateGasFunc, GAS_UPDATE_INTERVAL);
