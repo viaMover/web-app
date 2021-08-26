@@ -39,7 +39,7 @@ Sentry.init({
   integrations: [
     new Integrations.BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracingOrigins: ['localhost', 'app.viamover.com', 'stg.viamover.com']
+      tracingOrigins: ['app.viamover.com', 'stg.viamover.com']
     })
   ],
   // Set tracesSampleRate to 1.0 to capture 100%
