@@ -135,6 +135,7 @@ import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAnd
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { getExitingAmount, getMaxBurn } from '@/services/chain';
+import * as Sentry from '@sentry/vue';
 import {
   Modal as ModalType,
   TModalPayload
@@ -361,6 +362,7 @@ export default Vue.extend({
         );
       } catch (err) {
         console.log(`can't load max burn: ${JSON.stringify(err)}`);
+        Sentry.captureException(err);
       } finally {
         this.loading = false;
       }
@@ -400,6 +402,7 @@ export default Vue.extend({
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
+        Sentry.captureException(err);
       }
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
@@ -439,9 +442,9 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        console.error(`can't calc data: ${err}`);
         this.transferError = 'Estimatiom Error';
         console.error(`can't calc data: ${err}`);
+        Sentry.captureException(err);
         return;
       } finally {
         this.loading = false;
@@ -486,9 +489,9 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        console.error(`can't calc data: ${err}`);
         this.transferError = 'Estimate error';
         console.error(`can't calc data: ${err}`);
+        Sentry.captureException(err);
         return;
       } finally {
         this.loading = false;
@@ -521,8 +524,8 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
         this.transferError = 'Estimate error';
+        Sentry.captureException("can't estimate burn");
         return;
       }
       this.actionGasLimit = resp.actionGasLimit;
