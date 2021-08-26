@@ -4,6 +4,7 @@ import { RootStoreState } from '@/store/types';
 import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
 import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
 import { isError } from '@/services/responses';
+import * as Sentry from '@sentry/vue';
 
 export type SavingsGetReceiptPayload = {
   year: number;
@@ -43,6 +44,7 @@ export default {
       commit('setSavingsBalance', savingsBalance);
     } catch (err) {
       console.error(`can't get savings fresh data: ${err}`);
+      Sentry.captureException(err);
       commit('setSavingsAPY', '0');
       commit('setSavingsDPY', '0');
       commit('setSavingsBalance', '0');
@@ -62,6 +64,7 @@ export default {
     if (isError(info)) {
       commit('setSavingsInfoError', info.error);
       commit('setIsSavingsInfoLoading', false);
+      Sentry.captureException(`can't get savings info: ${info.error}`);
       return;
     }
 
@@ -98,6 +101,7 @@ export default {
     if (isError(receipt)) {
       commit('setSavingsReceiptError', receipt.error);
       commit('setIsSavingsReceiptLoading', false);
+      Sentry.captureException(`can't get savings receipt: ${receipt.error}`);
       return;
     }
 

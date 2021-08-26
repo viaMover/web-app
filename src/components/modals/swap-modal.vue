@@ -181,7 +181,7 @@ import { Step } from '@/components/controls/form-loader';
 import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 import { Properties as CssProperties } from 'csstype';
-
+import * as Sentry from '@sentry/vue';
 import Modal from '@/components/modals/modal.vue';
 import {
   Modal as ModalTypes,
@@ -522,6 +522,7 @@ export default Vue.extend({
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
+        Sentry.captureException(err);
       }
     },
     async flipAssets(): Promise<void> {
@@ -622,6 +623,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
@@ -685,6 +687,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Swap error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
@@ -746,6 +749,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
@@ -809,6 +813,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
 
@@ -881,6 +886,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
@@ -934,6 +940,7 @@ export default Vue.extend({
 
       if (resp.error) {
         console.error(resp.error);
+        Sentry.captureException("Can't estimate swap");
         this.transferError = 'Estimate error';
         return;
       }

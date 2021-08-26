@@ -1,6 +1,6 @@
 import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
-
+import * as Sentry from '@sentry/vue';
 import { RootStoreState } from '@/store/types';
 
 export type EmitChartRequestPayload = {
@@ -19,6 +19,7 @@ export default {
       );
     } catch (err) {
       console.error(`Can't get chart data: ${err}`);
+      Sentry.captureException(err);
     }
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

@@ -150,6 +150,7 @@ import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/deposi
 import { formatToNative } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import * as Sentry from '@sentry/vue';
 import {
   Modal as ModalTypes,
   TModalPayload
@@ -451,6 +452,7 @@ export default Vue.extend({
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
+        Sentry.captureException(err);
       }
     },
     async handleUpdateInputAmount(amount: string): Promise<void> {
@@ -487,6 +489,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
@@ -531,6 +534,7 @@ export default Vue.extend({
         } else {
           console.error(`can't calc data: ${err}`);
           this.transferError = 'Exchange error';
+          Sentry.captureException(err);
         }
         this.transferData = undefined;
         console.error(`can't calc data: ${err}`);
@@ -595,6 +599,7 @@ export default Vue.extend({
       if (resp.error) {
         console.error(resp.error);
         this.transferError = 'Estimate error';
+        Sentry.captureException("can't estimate savings deposit");
         return;
       }
       this.actionGasLimit = resp.actionGasLimit;

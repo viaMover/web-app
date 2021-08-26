@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/vue';
 import {
   initOffchainExplorer,
   clearOffchainExplorer
@@ -168,6 +169,12 @@ export default {
       return;
     }
 
+    Sentry.setContext('crypto_person', {
+      address: state.currentAddress,
+      network: state.networkInfo.network
+    });
+    Sentry.setTag('crypto_person_address', state.currentAddress);
+
     if (payload.init) {
       bootIntercomSession(state.currentAddress, {
         network: state.networkInfo.network
@@ -233,6 +240,7 @@ export default {
       commit('setEthPrice', ethPriceInUSD);
     } catch (e) {
       console.error("Can't get ETH price, stop loading data");
+      Sentry.captureException(e);
       return;
     }
 
@@ -247,22 +255,30 @@ export default {
       state.networkInfo.network,
       state.provider.web3
     );
+    try {
+      const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
+        getMovePriceInWethPromise,
+        getUSDCPriceInWETHPromise
+      ]);
+      commit('setMovePriceInWeth', moveInWethPrice);
+      commit('setUsdcPriceInWeth', usdcInWethPrice);
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
+    }
 
-    const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
-      getMovePriceInWethPromise,
-      getUSDCPriceInWETHPromise
-    ]);
-    commit('setMovePriceInWeth', moveInWethPrice);
-    commit('setUsdcPriceInWeth', usdcInWethPrice);
-
-    const slpPriceInWETH = await getSLPPriceInWETH(
-      state.movePriceInWeth ?? '0',
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
-    );
-
-    commit('setSLPPriceInWETH', slpPriceInWETH);
+    try {
+      const slpPriceInWETH = await getSLPPriceInWETH(
+        state.movePriceInWeth ?? '0',
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      commit('setSLPPriceInWETH', slpPriceInWETH);
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
+    }
 
     const savingsFreshData = dispatch('fetchSavingsFreshData');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
@@ -270,12 +286,17 @@ export default {
     const treasuryFreshData = dispatch('fetchTreasuryFreshData');
     const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
 
-    await Promise.all([
-      savingsInfoPromise,
-      treasuryInfoPromise,
-      savingsFreshData,
-      treasuryFreshData
-    ]);
+    try {
+      await Promise.all([
+        savingsInfoPromise,
+        treasuryInfoPromise,
+        savingsFreshData,
+        treasuryFreshData
+      ]);
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
+    }
 
     console.info('Wallet refreshed');
   },

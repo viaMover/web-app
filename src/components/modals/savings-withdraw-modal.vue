@@ -114,6 +114,7 @@ import {
   multiply,
   notZero
 } from '@/utils/bigmath';
+import * as Sentry from '@sentry/vue';
 import { Step } from '@/components/controls/form-loader';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
@@ -367,6 +368,7 @@ export default Vue.extend({
         this.loaderStep = 'Success';
       } catch (err) {
         this.loaderStep = 'Reverted';
+        Sentry.captureException(err);
       }
     },
     async handleUpdateOutputAmount(amount: string): Promise<void> {
@@ -388,9 +390,9 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        console.error(`can't calc data: ${err}`);
         this.transferError = 'Exchange error';
         console.error(`can't calc data: ${err}`);
+        Sentry.captureException(err);
         return;
       } finally {
         this.loading = false;
@@ -415,9 +417,9 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        console.error(`can't calc data: ${err}`);
         this.transferError = 'Exchange error';
         console.error(`can't calc data: ${err}`);
+        Sentry.captureException(err);
         return;
       } finally {
         this.loading = false;
@@ -442,6 +444,7 @@ export default Vue.extend({
       if (resp.error) {
         console.error(resp.error);
         this.transferError = 'Estimate error';
+        Sentry.captureException("can't estimate saving withdraw");
         return;
       }
       this.actionGasLimit = resp.actionGasLimit;
