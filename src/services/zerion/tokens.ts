@@ -5,6 +5,7 @@ import { ZerionAssetsReceived } from './responses';
 import { Network } from '@/utils/networkTypes';
 import { sameAddress } from '@/utils/address';
 import { getMoveAssetData } from '@/wallet/references/data';
+import store from '@/store/index';
 
 export const mapZerionTokens = (
   data: ZerionAssetsReceived,
@@ -36,7 +37,10 @@ export const mapZerionTokens = (
         logo: t.asset.icon_url ?? '',
         name: assetName,
         symbol: assetSymbol,
-        priceUSD: t.asset.price?.value ? String(t.asset.price?.value) : '0'
+        priceUSD: t.asset.price?.value ? String(t.asset.price?.value) : '0',
+        marketCap: store.getters['account/getTokenMarketCap'](
+          t.asset.asset_code
+        )
       } as TokenWithBalance;
     })
     .filter((t) => t.decimals > 0);

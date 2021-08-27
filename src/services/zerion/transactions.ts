@@ -3,7 +3,7 @@ import {
   HOLY_HAND_ADDRESS,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
-import { isSubsidizedAddress } from './../../wallet/actions/subsidized';
+import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
 import { isSuccess, isError } from './../responses';
 import { TransactionMoveTypeData } from './../mover/transactions/types';
 import { getMoverTransactionsTypes } from './../mover/transactions/service';

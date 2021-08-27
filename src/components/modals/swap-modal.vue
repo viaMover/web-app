@@ -961,10 +961,7 @@ export default Vue.extend({
         return;
       }
 
-      if (
-        this.input.asset?.address === 'eth' ||
-        this.output.asset?.address === 'eth'
-      ) {
+      if (this.input.asset?.address === 'eth') {
         this.subsidizedAvaialbe = false;
         return;
       }

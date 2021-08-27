@@ -72,7 +72,9 @@ export default Vue.extend({
   },
   methods: {
     handleClose(): void {
-      this.$router.back();
+      this.$router.replace({
+        name: 'home'
+      });
     },
     replaceInactiveSavingsRoute(): void {
       this.$router.replace({

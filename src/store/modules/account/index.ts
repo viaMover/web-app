@@ -36,7 +36,7 @@ export default {
     transactions: [],
     tokens: [],
     tokensSearcher: undefined,
-    tokenColorMap: undefined,
+    tokenInfoMap: undefined,
     provider: undefined,
     detectedProvider: undefined,
     isDetecting: false,

@@ -47,7 +47,7 @@ export const requireWalletAuth =
         switch (lastSelectedProvider) {
           case 'MetaMask':
             if (ethProvider) {
-              const providerWithCb = await InitCallbacks(ethProvider, []);
+              const providerWithCb = await InitCallbacks(ethProvider);
               await store.dispatch('account/initWallet', {
                 provider: providerWithCb.provider,
                 providerName: 'MetaMask',
@@ -61,7 +61,7 @@ export const requireWalletAuth =
               infuraId: 'eac548bd478143d09d2c090d09251bf1'
             });
             await wcProvider.enable();
-            const providerWithCb = await InitCallbacks(wcProvider, []);
+            const providerWithCb = await InitCallbacks(wcProvider);
             await store.dispatch('account/initWallet', {
               provider: providerWithCb.provider,
               providerName: 'WalletConnect',
