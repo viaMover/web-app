@@ -1,0 +1,120 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  color: $black;
+  font-size: 14px;
+  line-height: 22px;
+}
+textarea::-webkit-input-placeholder,
+input::-webkit-input-placeholder {
+  font-family: $Medium;
+  color: rgba(60,60,67,0.6);
+}
+textarea::-moz-placeholder,
+input::-moz-placeholder {
+  font-family: $Medium;
+  color: rgba(60,60,67,0.6);
+}
+textarea:-moz-placeholder,
+input:-moz-placeholder {
+  font-family: $Medium;
+  color: rgba(60,60,67,0.6);
+}
+textarea:-ms-input-placeholder,
+input:-ms-input-placeholder {
+  font-family: $Medium;
+  color: rgba(60,60,67,0.6);
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+  width: 0;
+  height: 0;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+a {
+  text-decoration: none;
+  color: $black;
+}
+h2 {
+  font-family: $Bold;
+  font-size: 24px;
+  line-height: 40px;
+}
+h3 {
+  font-family: $Medium;
+  font-size: 16px;
+  line-height: 24px;
+}
+button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+.button-active {
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+.button-active:active {
+  -webkit-transform: scale(1.06);
+      -ms-transform: scale(1.06);
+          transform: scale(1.06);
+}
+.g-wrapper {
+  width: 780px;
+  margin-left: 107px;
+  padding: 80px 20px 0;
+  position: relative;
+}
+.sidebar-wrapper {
+  max-height: 100vh;
+  overflow-x: scroll;
+  position: relative;
+  width: 412px;
+  margin: 0 auto;
+  padding: 40px;
+  scrollbar-width: none;
+}
+.sidebar-wrapper::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+section,
+main {
+  position: relative;
+  display: block;
+}
+@media (max-width: 1279px) {
+  .sidebar-wrapper {
+    display: none;
+  }
+  .g-wrapper {
+    margin: 0 auto;
+  }
+}
+@media (max-width: 780px) {
+  .g-wrapper {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .sidebar-wrapper {
+    width: 100%;
+  }
+}

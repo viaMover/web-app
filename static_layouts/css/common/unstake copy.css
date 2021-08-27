@@ -1,0 +1,51 @@
+.claim-bonds__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right {
+  margin-left: auto;
+}
+.claim-bonds__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right button.currency {
+  background: #ffa202;
+  -webkit-box-shadow: 0px 0px 16px #ff9f00;
+          box-shadow: 0px 0px 16px #ff9f00;
+}
+.claim-bonds__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right button.currency span {
+  color: $black;
+}
+.claim-bonds__wrapper-info-items-item-right.transaction__popup-wrapper-info-items-item-right button.use span {
+  color: #ffa202;
+}
+.claim-bonds__wrapper-info-button .action {
+  background-color: $black;
+}
+.claim-bonds__wrapper-info-footer-description .icon {
+  margin: 0 3px;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  position: relative;
+  top: 6px;
+}
+.claim-bonds__wrapper-info-footer-description .icon img {
+  border-radius: 50%;
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+.claim-bonds__wrapper-info-footer-description .icon-wrapper {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  position: relative;
+  top: 6px;
+  left: 6px;
+}
+.claim-bonds__wrapper-info-footer-description .icon-wrapper img {
+  border-radius: 50%;
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+.claim-bonds__wrapper-info-footer-description .icon-wrapper .icon-right {
+  position: relative;
+  left: -11px;
+}

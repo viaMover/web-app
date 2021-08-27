@@ -1,0 +1,99 @@
+.nibble-shop__popup {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 0;
+  visibility: hidden;
+  background: #fff;
+}
+.nibble-shop__popup-active {
+  z-index: 19;
+  opacity: 1;
+  visibility: visible;
+  overflow: auto;
+}
+.nibble-shop__wrapper {
+  padding: 100px 0 200px;
+}
+.nibble-shop__wrapper .g-wrapper {
+  margin: 0 auto;
+}
+.nibble-shop__wrapper-info-title img {
+  width: 100%;
+  display: block;
+}
+.nibble-shop__wrapper-info-items {
+  list-style-type: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+  margin-top: 40px;
+}
+.nibble-shop__wrapper-info-items-item {
+  -webkit-flex-basis: 100%;
+      -ms-flex-preferred-size: 100%;
+          flex-basis: 100%;
+  -webkit-box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+          box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+  border-radius: 8px;
+  margin-top: 40px;
+  padding: 24px;
+  height: 33vh;
+  position: relative;
+}
+.nibble-shop__wrapper-info-items-item:first-child {
+  margin-top: 0;
+  background: url("../images/sweet-and-sour-bg.png") no-repeat 112% 46%;
+  background-color: #0a0a0a;
+  background-size: 69%;
+}
+.nibble-shop__wrapper-info-items-item:first-child .nibble-shop__wrapper-info-items-item-content h3 {
+  color: $white;
+}
+.nibble-shop__wrapper-info-items-item:first-child .nibble-shop__wrapper-info-items-item-content p {
+  color: rgba(255,255,255,0.6);
+}
+.nibble-shop__wrapper-info-items-item:first-child a {
+  color: $black;
+  background-color: $white;
+}
+.nibble-shop__wrapper-info-items-item:last-child {
+  background: url("../images/unexpected-move-bg.png") no-repeat bottom;
+  background-color: #e4e4e4;
+  background-size: 100%;
+}
+.nibble-shop__wrapper-info-items-item:last-child .nibble-shop__wrapper-info-items-item-content p {
+  color: rgba(60,60,67,0.6);
+}
+.nibble-shop__wrapper-info-items-item:last-child a {
+  background-color: $black;
+  color: $white;
+}
+.nibble-shop__wrapper-info-items-item-content {
+  max-width: 313px;
+}
+.nibble-shop__wrapper-info-items-item-content h3 {
+  font-size: 24px;
+  line-height: 32px;
+  font-family: $Bold;
+}
+.nibble-shop__wrapper-info-items-item-content p {
+  font-family: $Medium;
+}
+.nibble-shop__wrapper-info-items-item a {
+  display: inline-block;
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 8px 24px;
+  font-family: $Bold;
+  border-radius: 19px;
+}
