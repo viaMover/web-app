@@ -3,8 +3,7 @@ import { ProviderWithCallbacks } from './types';
 import store from '@/store/index';
 
 export const InitCallbacks = async (
-  provider: any,
-  addresses: string[]
+  provider: any
 ): Promise<ProviderWithCallbacks> => {
   console.info('Creating callbacks');
 
@@ -21,7 +20,11 @@ export const InitCallbacks = async (
 
   const accountsChangedHandler = async (accounts: Array<string>) => {
     console.log('Provider - accounts array has been changed!', accounts);
-    if (addresses.length !== 0) {
+    const addrs = store.getters['account/getCurrentAddresses'];
+    if (addrs.length !== 0) {
+      if (accounts.length === 0) {
+        await store.dispatch('account/disconnectWallet');
+      }
       window.location.reload();
     }
   };

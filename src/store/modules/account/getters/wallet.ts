@@ -157,5 +157,8 @@ export default {
   },
   getOffchainExplorerHanlder(state): OffchainExplorerHanler | undefined {
     return state.offchainExplorerHanlder;
+  },
+  getCurrentAddresses(state): string[] {
+    return state.addresses;
   }
 } as GetterTree<AccountStoreState, RootStoreState>;
