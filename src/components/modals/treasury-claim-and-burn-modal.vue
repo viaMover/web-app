@@ -221,7 +221,8 @@ export default Vue.extend({
             logo: move.iconURL,
             isFavorite: true,
             isVerified: true,
-            balance: moveWalletBalance
+            balance: moveWalletBalance,
+            marketCap: Number.MAX_SAFE_INTEGER
           }
         ];
       }

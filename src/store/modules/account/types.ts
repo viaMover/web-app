@@ -40,6 +40,11 @@ export type Avatar = {
   className: string;
 };
 
+export type TokenInfo = {
+  color: string;
+  marketCap: number;
+};
+
 export type AccountStoreState = {
   avatar: Avatar | undefined;
   avatars: Array<Avatar>;
@@ -52,7 +57,7 @@ export type AccountStoreState = {
   tokensSearcher: Fuse<TokenWithBalance> | undefined;
   allTokens: Array<Token>;
   allTokensSearcher: Fuse<Token> | undefined;
-  tokenColorMap: Record<string, string> | undefined;
+  tokenInfoMap: Record<string, TokenInfo> | undefined;
   provider: ProviderData | undefined;
   detectedProvider: any | undefined;
   isDetecting: boolean;

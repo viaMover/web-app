@@ -1,4 +1,3 @@
-import { clearLastProviderPersist } from '@/settings/persist/last-provider';
 import { ProviderWithCallbacks } from './types';
 import store from '@/store/index';
 

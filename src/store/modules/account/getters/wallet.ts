@@ -91,7 +91,7 @@ export default {
   },
   getTokenColor(state): (address?: string) => string | undefined {
     return (address?: string) => {
-      if (state.tokenColorMap === undefined) {
+      if (state.tokenInfoMap === undefined) {
         return '';
       }
 
@@ -103,7 +103,24 @@ export default {
         return '#687ee3';
       }
 
-      return state.tokenColorMap[address.toLowerCase()];
+      return state.tokenInfoMap[address.toLowerCase()]?.color;
+    };
+  },
+  getTokenMarketCap(state): (address?: string) => number {
+    return (address?: string) => {
+      if (state.tokenInfoMap === undefined) {
+        return 0;
+      }
+
+      if (address === undefined) {
+        return 0;
+      }
+
+      if (address === 'eth') {
+        return Number.MAX_SAFE_INTEGER;
+      }
+
+      return state.tokenInfoMap[address.toLowerCase()]?.marketCap ?? 0;
     };
   },
   searchInAllTokens(
@@ -113,7 +130,6 @@ export default {
       const of = offset ?? 0;
       const searchTermProcessed = searchTerm.trim().toLowerCase();
       if (searchTermProcessed === '') {
-        console.log('searchInAllTokens', of);
         return state.allTokens.slice(of, of + 100);
       }
 

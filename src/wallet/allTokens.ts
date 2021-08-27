@@ -19,7 +19,8 @@ export const getAllTokens = (network: Network): Array<Token> => {
               ? asset.name.substr(0, MAX_ASSET_NAME)
               : asset.name,
           logo: getTokenLogo(asset.id),
-          color: asset.color
+          color: asset.color,
+          marketCap: asset.marketCap ?? 0
         } as Token)
     );
   } else {
