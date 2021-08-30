@@ -8,6 +8,7 @@ import { RootStoreState } from '@/store/types';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { MarketCapSortLimit } from '@/wallet/constants';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {
@@ -124,19 +125,20 @@ export default {
     };
   },
   searchInAllTokens(
-    state
+    state,
+    getters
   ): (searchTerm: string, offset?: number) => Array<Token> {
     return (searchTerm: string, offset?: number) => {
       const of = offset ?? 0;
       const searchTermProcessed = searchTerm.trim().toLowerCase();
       if (searchTermProcessed === '') {
-        return state.allTokens.slice(of, of + 100);
+        return getters.allTokensSortedByMarketCap.slice(of, of + 100);
       }
 
       if (state.allTokensSearcher === undefined) {
-        return state.allTokens
+        return getters.allTokensSortedByMarketCap
           .filter(
-            (t) =>
+            (t: Token) =>
               t.symbol.toLowerCase().includes(searchTermProcessed) ||
               t.name.toLowerCase().includes(searchTermProcessed)
           )
@@ -147,6 +149,33 @@ export default {
         .search(searchTerm, { limit: 100 })
         .map((res) => res.item);
     };
+  },
+  allTokensSortedByMarketCap(state): Array<Token> {
+    return [...state.allTokens].sort((a: Token, b: Token) => {
+      if (
+        a.marketCap > MarketCapSortLimit &&
+        b.marketCap > MarketCapSortLimit
+      ) {
+        if (a.marketCap > b.marketCap) {
+          return -1;
+        }
+        if (a.marketCap < b.marketCap) {
+          return 1;
+        }
+      } else if (a.marketCap > MarketCapSortLimit) {
+        return -1;
+      } else if (b.marketCap > MarketCapSortLimit) {
+        return 1;
+      }
+
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    });
   },
   searchInWalletTokens(state): (searchTerm: string) => Array<TokenWithBalance> {
     return (searchTerm: string) => {
