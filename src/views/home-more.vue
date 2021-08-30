@@ -1,5 +1,9 @@
 <template>
-  <content-wrapper has-left-rail wrapper-class="general-desktop">
+  <content-wrapper
+    has-back-button
+    wrapper-class="general-desktop"
+    @close="handleClose"
+  >
     <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
     <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
@@ -27,7 +31,10 @@ export default Vue.extend({
     NftDropsSection
   },
   methods: {
-    isFeatureEnabled
+    isFeatureEnabled,
+    handleClose(): void {
+      this.$router.back();
+    }
   }
 });
 </script>
