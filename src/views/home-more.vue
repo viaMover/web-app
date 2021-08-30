@@ -22,6 +22,8 @@ import {
   NftDropsSection
 } from '@/components/sections';
 
+import '@/styles/_general.less';
+
 export default Vue.extend({
   name: 'HomeMore',
   components: {
