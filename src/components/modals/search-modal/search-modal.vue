@@ -91,7 +91,8 @@ export default Vue.extend({
       debounceTimeout: 500,
       forcedTokenArrayData: [] as Array<Token>,
       globalTokensData: [] as Array<Token>,
-      globalsTokensDataOffset: 0
+      globalsTokensDataOffset: 0,
+      marketCapSortLimit: 1000000
     };
   },
   computed: {
@@ -131,6 +132,22 @@ export default Vue.extend({
       return this.filterTokens(
         this.searchInWalletTokens(this.searchTermDebounced).sort(
           (a: Token, b: Token) => {
+            if (
+              a.marketCap > this.marketCapSortLimit &&
+              b.marketCap > this.marketCapSortLimit
+            ) {
+              if (a.marketCap > b.marketCap) {
+                return -1;
+              }
+              if (a.marketCap < b.marketCap) {
+                return 1;
+              }
+            } else if (a.marketCap > this.marketCapSortLimit) {
+              return -1;
+            } else if (b.marketCap > this.marketCapSortLimit) {
+              return 1;
+            }
+
             if (a.name < b.name) {
               return -1;
             }
@@ -155,6 +172,22 @@ export default Vue.extend({
 
       return this.filterTokens(
         this.searchInForcedTokenArray(this.searchTermDebounced).sort((a, b) => {
+          if (
+            a.marketCap > this.marketCapSortLimit &&
+            b.marketCap > this.marketCapSortLimit
+          ) {
+            if (a.marketCap > b.marketCap) {
+              return -1;
+            }
+            if (a.marketCap < b.marketCap) {
+              return 1;
+            }
+          } else if (a.marketCap > this.marketCapSortLimit) {
+            return -1;
+          } else if (b.marketCap > this.marketCapSortLimit) {
+            return 1;
+          }
+
           if (a.name < b.name) {
             return -1;
           }

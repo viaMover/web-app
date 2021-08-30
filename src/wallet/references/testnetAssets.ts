@@ -11,7 +11,8 @@ const assets = {
       priceUSD: '0.5',
       logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png',
       isFavorite: true,
-      isVerified: true
+      isVerified: true,
+      marketCap: 999999999999999999
     },
     {
       address: 'eth',
@@ -21,7 +22,8 @@ const assets = {
       priceUSD: '259.2',
       logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
       isFavorite: false,
-      isVerified: true
+      isVerified: true,
+      marketCap: 999999999999999999
     },
     {
       address: '0x75B0622Cec14130172EaE9Cf166B92E5C112FaFF',
@@ -31,7 +33,8 @@ const assets = {
       priceUSD: '1.0001',
       logo: 'https://s3.amazonaws.com/icons.assets/USDC_mcd.png',
       isFavorite: false,
-      isVerified: true
+      isVerified: true,
+      marketCap: 999999999999999999
     },
     {
       address: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
@@ -41,7 +44,8 @@ const assets = {
       priceUSD: '1.0001',
       logo: 'https://s3.amazonaws.com/icons.assets/DAI_mcd.png',
       isFavorite: false,
-      isVerified: true
+      isVerified: true,
+      marketCap: 999999999999999999
     }
   ],
   binance: [],

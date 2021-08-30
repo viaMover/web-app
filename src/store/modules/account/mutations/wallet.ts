@@ -92,14 +92,17 @@ export default {
     const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
 
     state.allTokensSearcher = new Fuse(state.allTokens, searchOptions, index);
-    state.tokenColorMap = state.allTokens.reduce((acc, token) => {
+    state.tokenInfoMap = state.allTokens.reduce((acc, token) => {
       if (token.color === undefined) {
         return acc;
       }
 
       return {
         ...acc,
-        [token.address.toLowerCase()]: token.color
+        [token.address.toLowerCase()]: {
+          color: token.color,
+          marketCap: token.marketCap
+        }
       };
     }, {});
   },

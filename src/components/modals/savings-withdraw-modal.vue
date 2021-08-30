@@ -187,7 +187,8 @@ export default Vue.extend({
         logo: this.outputUSDCAsset.iconURL,
         isFavorite: true,
         isVerified: true,
-        balance: this.savingsBalance
+        balance: this.savingsBalance,
+        marketCap: Number.MAX_SAFE_INTEGER
       };
     },
     outputUSDCAsset(): SmallTokenInfoWithIcon {

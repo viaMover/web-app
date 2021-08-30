@@ -75,7 +75,9 @@ export default Vue.extend({
   },
   methods: {
     handleClose(): void {
-      this.$router.back();
+      this.$router.replace({
+        name: 'home'
+      });
     },
     replaceInactiveTreasuryRoute(): void {
       this.$router.replace({

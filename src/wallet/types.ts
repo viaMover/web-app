@@ -19,6 +19,8 @@ export type Token = {
 
   // @deprecated use getAssetColor() store function instead
   color?: string;
+
+  marketCap: number;
 };
 
 export type TokenWithBalance = Token & {

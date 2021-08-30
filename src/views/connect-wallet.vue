@@ -97,7 +97,7 @@ export default Vue.extend({
         infuraId: 'eac548bd478143d09d2c090d09251bf1'
       });
       await provider.enable();
-      const providerWithCb = await InitCallbacks(provider, this.addresses);
+      const providerWithCb = await InitCallbacks(provider);
       //  Enable session (triggers QR Code modal)
       this.initWallet({
         provider: providerWithCb.provider,
@@ -108,10 +108,7 @@ export default Vue.extend({
     },
     async connectMetaMask(): Promise<void> {
       if (this.detectedProvider) {
-        const providerWithCb = await InitCallbacks(
-          this.detectedProvider,
-          this.addresses
-        );
+        const providerWithCb = await InitCallbacks(this.detectedProvider);
         this.initWallet({
           provider: providerWithCb.provider,
           providerName: 'MetaMask',
