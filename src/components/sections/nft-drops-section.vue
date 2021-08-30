@@ -1,5 +1,5 @@
 <template>
-  <heading-section
+  <section-base
     class="general-desktop__menu-wrapper-item"
     container-class="general-desktop__menu-wrapper-item-info"
     has-expand-button
@@ -20,20 +20,20 @@
         ></nft-asset-card-mini>
       </div>
     </template>
-  </heading-section>
+  </section-base>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
-import HeadingSection from './heading-section.vue';
+import SectionBase from './section-base/section-base.vue';
 import { NftAssetCardMini } from '@/components/nft';
 
 export default Vue.extend({
   name: 'NftDropsSection',
   components: {
-    HeadingSection,
+    SectionBase,
     NftAssetCardMini
   },
   computed: {

@@ -1,5 +1,5 @@
 <template>
-  <heading-section
+  <section-base
     class="general-desktop__menu-wrapper-item"
     container-class="general-desktop__menu-wrapper-item-info"
     has-expand-button
@@ -20,20 +20,20 @@
         />
       </div>
     </template>
-  </heading-section>
+  </section-base>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import HeadingSection from './heading-section.vue';
+import SectionBase from './section-base/section-base.vue';
 import { NibbleShopProductMini } from '@/components/nibble-shop';
 
 export default Vue.extend({
   name: 'NibbleShopSection',
   components: {
-    HeadingSection,
+    SectionBase,
     NibbleShopProductMini
   },
   computed: {

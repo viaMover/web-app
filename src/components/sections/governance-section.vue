@@ -1,5 +1,5 @@
 <template>
-  <heading-section
+  <section-base
     class="general-desktop__menu-wrapper-item"
     container-class="general-desktop__menu-wrapper-item-info"
     has-expand-button
@@ -45,20 +45,20 @@
         </router-link>
       </div>
     </template>
-  </heading-section>
+  </section-base>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import HeadingSection from './heading-section.vue';
+import SectionBase from './section-base/section-base.vue';
 import ActionButton from '@/components/buttons/action-button.vue';
 
 export default Vue.extend({
   name: 'GovernanceSection',
   components: {
-    HeadingSection,
+    SectionBase,
     ActionButton
   },
   computed: {
