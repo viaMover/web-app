@@ -6,6 +6,7 @@ import { add, multiply } from '@/utils/bigmath';
 import { AccountStoreState, TransactionGroup } from '../types';
 import { RootStoreState } from '@/store/types';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
+import { getUSDCAssetData } from '@/wallet/references/data';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { MarketCapSortLimit } from '@/wallet/constants';
 
@@ -150,7 +151,7 @@ export default {
     };
   },
   allTokensSortedByMarketCap(state): Array<Token> {
-    return state.allTokens.sort((a: Token, b: Token) => {
+    return [...state.allTokens].sort((a: Token, b: Token) => {
       if (
         a.marketCap > MarketCapSortLimit &&
         b.marketCap > MarketCapSortLimit
