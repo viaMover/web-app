@@ -1,0 +1,26 @@
+.no-access__popup-wrapper {
+  background: #fafafc;
+  -webkit-box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+          box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 80px 40px 24px;
+  text-align: center;
+}
+.no-access__popup-wrapper-icon {
+  margin: 0 auto;
+}
+.no-access__popup-wrapper-icon span {
+  font-size: 120px;
+  line-height: 140px;
+  font-family: $Roboto;
+}
+.no-access__popup-wrapper-info {
+  margin-top: 78px;
+}
+.no-access__popup-wrapper-info h2 {
+  font-family: $Bold;
+}
+.no-access__popup-wrapper-info p {
+  color: rgba(60,60,67,0.6);
+  font-family: $Medium;
+}
