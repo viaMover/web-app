@@ -11,8 +11,12 @@ export default {
   strict: true,
   state: {
     isLoading: false,
-    loadingPromise: null,
-    NFTs: []
+    UnexpectedMoveTotalAmount: '0',
+    UnexpectedMoveTotalClaimed: '0',
+    UnexpectedMoveTotalExchanged: '0',
+
+    SweetAndSourTotalAmount: '0',
+    SweetAndSourTotalClaimed: '0'
   },
   actions,
   getters,

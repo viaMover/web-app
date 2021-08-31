@@ -9,9 +9,7 @@
     <div class="nft-drops__wrapper__menu-info-title">
       <img :alt="$t('NFTs.txtLogoAlt')" src="@/assets/images/NFT-Drops.png" />
     </div>
-    <ul class="nft-drops__wrapper__menu-info-items">
-      <nft-asset-card v-for="nft in assets" :key="nft.id" :item="nft" />
-    </ul>
+    <ul class="nft-drops__wrapper__menu-info-items"></ul>
   </content-wrapper>
 </template>
 
@@ -20,16 +18,11 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
-import { NftAssetCard } from '@/components/nft';
 
 export default Vue.extend({
   name: 'NftViewAll',
   components: {
-    ContentWrapper,
-    NftAssetCard
-  },
-  computed: {
-    ...mapGetters('nft', { assets: 'plainNFTs' })
+    ContentWrapper
   },
   methods: {
     handleClose(): void {

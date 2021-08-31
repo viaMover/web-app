@@ -1,3 +1,4 @@
+import { AccountStoreState } from './modules/account/types';
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -17,7 +18,8 @@ Vue.use(Vuex);
 export default new Vuex.Store<RootStoreState>({
   state: {
     appVersion: '0.0.1',
-    i18n: null
+    i18n: null,
+    account: account.state as AccountStoreState | undefined
   },
   actions: actions,
   mutations: mutations,

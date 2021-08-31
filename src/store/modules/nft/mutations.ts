@@ -1,17 +1,19 @@
+import { SweetAndSourData } from '@/services/chain/nft/sweet-and-sour/index';
+import { UnexpectedMoveData } from '@/services/chain/nft/unexpected-move/index';
 import { MutationTree } from 'vuex';
-import { NFTAggregatedInfo, NFTStoreState } from './types';
+import { NFTStoreState } from './types';
 
 export default {
   setIsLoading(state, isLoading): void {
     state.isLoading = isLoading;
   },
-  setLoadingPromise(
-    state,
-    loadingPromise: Promise<Array<NFTAggregatedInfo>>
-  ): void {
-    state.loadingPromise = loadingPromise;
+  setUnexpectedMoveData(state, data: UnexpectedMoveData): void {
+    state.UnexpectedMoveTotalAmount = data.totalAmount;
+    state.UnexpectedMoveTotalClaimed = data.totalClaimed;
+    state.UnexpectedMoveTotalExchanged = data.totalExchanged;
   },
-  setNFTs(state, NFTs: Array<NFTAggregatedInfo>): void {
-    state.NFTs = NFTs;
+  setSweetAndSourData(state, data: SweetAndSourData): void {
+    state.SweetAndSourTotalAmount = data.totalAmount;
+    state.SweetAndSourTotalClaimed = data.totalClaimed;
   }
 } as MutationTree<NFTStoreState>;
