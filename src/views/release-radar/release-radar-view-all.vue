@@ -66,9 +66,7 @@ export default Vue.extend({
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     handleClose(): void {
-      this.$router.push({
-        name: 'home'
-      });
+      this.$router.back();
     },
     async handleOpenSelectModal(): Promise<void> {
       const selectedAsset: Token | undefined = await this.setIsModalDisplayed({
