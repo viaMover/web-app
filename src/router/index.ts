@@ -231,6 +231,26 @@ const router = new VueRouter({
   routes
 });
 
+// detect initial navigation
+let isInitialNavigation = false;
+router.beforeEach((to, from, next) => {
+  isInitialNavigation = from === VueRouter.START_LOCATION;
+  next();
+});
+
+// save original router.back() implementation bound to the initial router
+const originalRouterBack = router.back.bind(router);
+
+// substitute with the custom implementation
+router.back = async (): Promise<void> => {
+  if (isInitialNavigation && router.currentRoute.name !== 'home') {
+    await router.replace({ name: 'home' });
+    return;
+  }
+
+  originalRouterBack();
+};
+
 router.beforeEach((to, from, next) => {
   const { lang } = to.params;
   loadLanguageAsync(lang)
