@@ -1,34 +1,22 @@
 <template>
   <section-base
-    class="general-desktop__menu-wrapper-item"
-    container-class="general-desktop__menu-wrapper-item-info"
+    container-class="more__wrapper__menu-item"
     has-expand-button
+    :heading-text="$t('NFTs.lblNFTDrops')"
     :name="$t('NFTs.lblNFTDrops')"
     navigate-to-name="nft-view-all"
   >
-    <template v-slot:heading>
-      {{ $t('NFTs.lblNFTDrops') }}
-    </template>
-
-    <template v-slot:bottom>
-      <div class="drops__items">
-        <nft-asset-card-mini
-          v-for="nft in list"
-          :id="nft.id"
-          :key="nft.id"
-          class="button-active"
-        ></nft-asset-card-mini>
-      </div>
-    </template>
+    <div class="item__list">
+      <nft-asset-card-mini v-for="nft in nftList" :key="nft.name" :item="nft" />
+    </div>
   </section-base>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
 
 import SectionBase from './section-base/section-base.vue';
-import { NftAssetCardMini } from '@/components/nft';
+import { NftAssetCardMini, NftAssetCardMiniData } from '@/components/nft';
 
 export default Vue.extend({
   name: 'NftDropsSection',
@@ -36,14 +24,71 @@ export default Vue.extend({
     SectionBase,
     NftAssetCardMini
   },
-  computed: {
-    ...mapGetters('nft', { list: 'plainNFTs' })
-  },
-  async mounted() {
-    await this.loadNFTInfoList();
-  },
-  methods: {
-    ...mapActions('nft', ['loadNFTInfoList'])
+  data() {
+    return {
+      nftList: [
+        {
+          name: 'Swap Passport',
+          picture: {
+            alt: this.$t('NFTs.txtAssetAlt', { name: 'Swap Passport' }),
+            src: require('@/assets/images/SwapPassport.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/SwapPassport@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/SwapPassport.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/SwapPassport@2x.webp')
+              }
+            ]
+          }
+        },
+        {
+          name: 'Sweet & Sour',
+          picture: {
+            alt: this.$t('NFTs.txtAssetAlt', { name: 'Sweet & Sour' }),
+            src: require('@/assets/images/SweetAndSour.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/SweetAndSour@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/SweetAndSour.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/SweetAndSour@2x.webp')
+              }
+            ]
+          }
+        },
+        {
+          name: 'Unexpected Move',
+          picture: {
+            alt: this.$t('NFTs.txtAssetAlt', { name: 'Unexpected Move' }),
+            src: require('@/assets/images/UnexpectedMove.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/UnexpectedMove@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/UnexpectedMove.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/UnexpectedMove@2x.webp')
+              }
+            ]
+          }
+        }
+      ] as Array<NftAssetCardMiniData>
+    };
   }
 });
 </script>

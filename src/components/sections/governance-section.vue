@@ -1,50 +1,45 @@
 <template>
   <section-base
-    class="general-desktop__menu-wrapper-item"
-    container-class="general-desktop__menu-wrapper-item-info"
+    container-class="more__wrapper__menu-item"
     has-expand-button
+    :heading-text="$t('governance.lblGovernance')"
     :name="$t('governance.lblGovernance')"
     navigate-to-name="governance-view-all"
   >
-    <template v-slot:heading>
-      {{ $t('governance.lblGovernance') }}
-    </template>
-
-    <template v-slot:bottom>
-      <div v-if="lastProposal !== null" class="vote">
-        <div class="vote__info">
-          <div class="loading">
-            <div class="hold left">
-              <div class="fill"></div>
-            </div>
-            <div class="hold right">
-              <div class="fill"></div>
-            </div>
+    <div v-if="lastProposal !== null" class="item__column">
+      <div class="item__column-info active">
+        <div class="loading">
+          <div class="hold left">
+            <div class="fill"></div>
           </div>
-          <div class="vote__info-icon"><span>🗳</span></div>
-          <div class="vote__info-label">
-            <p>{{ lastProposal.name }}</p>
-            <span>{{
-              $t(`governance.lblVotingStatus.${lastProposal.status}`)
-            }}</span>
+          <div class="hold right">
+            <div class="fill"></div>
           </div>
         </div>
-        <div class="vote__link">
-          <router-link
-            :to="{ name: 'governance-view', params: { id: lastProposal.id } }"
-          >
-            <action-button class="black-link button-active">
-              {{ $t('governance.btnVote.simple') }}
-            </action-button>
-          </router-link>
+        <div class="item__column-info-icon"><span>🗳</span></div>
+        <div class="item__column-info-label">
+          <p>{{ lastProposal.name }}</p>
+          <span>{{
+            $t(`governance.lblVotingStatus.${lastProposal.status}`)
+          }}</span>
         </div>
       </div>
-      <div class="vote__link-all button-active">
-        <router-link :to="{ name: 'governance-view-all' }">
-          {{ $t('governance.btnSeeAll.simple') }}
+      <div class="item__column-link">
+        <router-link
+          class="black-link button-active"
+          :to="{ name: 'governance-view', params: { id: lastProposal.id } }"
+        >
+          {{ $t('governance.btnVote.simple') }}
         </router-link>
       </div>
-    </template>
+    </div>
+
+    <router-link
+      class="link button-active"
+      :to="{ name: 'governance-view-all' }"
+    >
+      {{ $t('governance.btnSeeAll.simple') }}
+    </router-link>
   </section-base>
 </template>
 
@@ -53,13 +48,11 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import SectionBase from './section-base/section-base.vue';
-import ActionButton from '@/components/buttons/action-button.vue';
 
 export default Vue.extend({
   name: 'GovernanceSection',
   components: {
-    SectionBase,
-    ActionButton
+    SectionBase
   },
   computed: {
     ...mapGetters('proposal', ['lastProposal'])

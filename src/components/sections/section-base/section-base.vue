@@ -1,19 +1,18 @@
 <template>
-  <section :name="name">
-    <div :class="containerClass">
-      <h2>
-        <slot name="heading"></slot>
-      </h2>
+  <div :class="containerClass">
+    <div class="item__link">
+      <slot name="heading">
+        <h2 class="title">{{ headingText }}</h2>
+      </slot>
       <section-base-link
         v-if="hasExpandButton"
         :navigate-to-name="navigateToName"
         :use-click-event="useClickEvent"
         @navigation-click="handleClick"
       />
-      <slot></slot>
     </div>
-    <slot name="bottom"></slot>
-  </section>
+    <slot></slot>
+  </div>
 </template>
 
 <script lang="ts">
@@ -46,6 +45,10 @@ export default Vue.extend({
     containerClass: {
       type: String,
       required: true
+    },
+    headingText: {
+      type: String,
+      default: ''
     }
   },
   methods: {

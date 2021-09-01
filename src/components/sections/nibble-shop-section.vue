@@ -1,34 +1,30 @@
 <template>
   <section-base
-    class="general-desktop__menu-wrapper-item"
-    container-class="general-desktop__menu-wrapper-item-info"
+    container-class="more__wrapper__menu-item"
     has-expand-button
+    :heading-text="$t('nibbleShop.lblNibbleShop')"
     :name="$t('nibbleShop.lblNibbleShop')"
     navigate-to-name="nibble-shop-view-all"
   >
-    <template v-slot:heading>
-      {{ $t('nibbleShop.lblNibbleShop') }}
-    </template>
-
-    <template v-slot:bottom>
-      <div class="shop__items">
-        <nibble-shop-product-mini
-          v-for="product in products"
-          :key="product.id"
-          class="button-active"
-          :item="product"
-        />
-      </div>
-    </template>
+    <div class="item__list">
+      <nibble-shop-product-mini
+        v-for="product in nftList"
+        :key="product.name"
+        class="button-active"
+        :item="product"
+      />
+    </div>
   </section-base>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
 
 import SectionBase from './section-base/section-base.vue';
-import { NibbleShopProductMini } from '@/components/nibble-shop';
+import {
+  NibbleShopProductMini,
+  NibbleShopProductMiniData
+} from '@/components/nibble-shop';
 
 export default Vue.extend({
   name: 'NibbleShopSection',
@@ -36,14 +32,27 @@ export default Vue.extend({
     SectionBase,
     NibbleShopProductMini
   },
-  computed: {
-    ...mapState('shop', { products: 'assets' })
-  },
-  async beforeMount() {
-    await this.loadAssetsInfoList();
-  },
-  methods: {
-    ...mapActions('shop', ['loadAssetsInfoList'])
+  data() {
+    return {
+      nftList: [
+        {
+          name: 'Cap',
+          videoSrc: require('@/assets/videos/ceo_of_money.webm')
+        },
+        {
+          name: 'Face mask',
+          videoSrc: require('@/assets/videos/street_jungle.webm')
+        },
+        {
+          name: 'Classic T-Shirt',
+          videoSrc: require('@/assets/videos/instant_classic.webm')
+        },
+        {
+          name: 'Power T-Shirt',
+          videoSrc: require('@/assets/videos/power_t_shirt.webm')
+        }
+      ] as Array<NibbleShopProductMiniData>
+    };
   }
 });
 </script>

@@ -1,7 +1,8 @@
 <template>
   <content-wrapper
+    base-class="more"
     has-back-button
-    wrapper-class="general-desktop"
+    wrapper-class="more__wrapper"
     @close="handleClose"
   >
     <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
@@ -22,7 +23,7 @@ import {
   NftDropsSection
 } from '@/components/sections';
 
-import '@/styles/_general.less';
+import '@/styles/_more.less';
 
 export default Vue.extend({
   name: 'HomeMore',
