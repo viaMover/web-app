@@ -23,51 +23,14 @@
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
 import { Properties } from 'csstype';
-
-import { NFT } from '@/store/modules/nft/types';
-
 export default Vue.extend({
   name: 'NftAssetCard',
   props: {
-    item: {
-      type: Object as PropType<NFT>,
-      required: true
-    },
     buttonClass: {
       type: String,
       default: 'button-primary'
     }
   },
-  computed: {
-    componentStyle(): Properties {
-      return {
-        background: `url(${this.item.imageSrc}) no-repeat ${this.item.imageScaleH} ${this.item.imageScaleV}`,
-        backgroundColor: this.item.background,
-        backgroundSize: this.item.imageSize
-      };
-    },
-    titleStyle(): Properties {
-      return {
-        color: this.item.titleColor
-      };
-    },
-    textStyle(): Properties {
-      return {
-        color: this.item.textColor
-      };
-    },
-    btnStyle(): Properties {
-      return {
-        color: this.item.btnTextColor,
-        backgroundColor: this.item.btnBackgroundColor
-      };
-    },
-    routeTo(): RawLocation {
-      return {
-        name: 'nft-view',
-        params: { id: this.item.id }
-      };
-    }
-  }
+  computed: {}
 });
 </script>

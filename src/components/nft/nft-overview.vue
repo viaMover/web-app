@@ -16,8 +16,6 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { NFTAggregatedInfo } from '@/store/modules/nft/types';
-
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
 export default Vue.extend({
@@ -25,12 +23,6 @@ export default Vue.extend({
   components: {
     LeftRailSection,
     LeftRailSectionItem
-  },
-  props: {
-    item: {
-      type: Object as PropType<NFTAggregatedInfo>,
-      required: true
-    }
   }
 });
 </script>

@@ -60,9 +60,6 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 import { Properties } from 'csstype';
-
-import { NFTAggregatedInfo } from '@/store/modules/nft/types';
-
 import {
   ContentWrapper,
   SecondaryPage,
@@ -94,21 +91,17 @@ export default Vue.extend({
     hasContextMenu(): boolean {
       return this.asset !== null;
     },
-    asset(): NFTAggregatedInfo | null {
-      return (
-        (this.assets as Array<NFTAggregatedInfo>).find(
-          (asset: NFTAggregatedInfo) => asset.nft.id === this.id
-        ) || null
-      );
+    asset(): null {
+      return null;
     },
     videoStyle(): Properties {
       return {
-        maxWidth: this.asset?.nft.page.imageWidth ?? ''
+        maxWidth: ''
       };
     },
     bannerStyle(): Properties {
       return {
-        background: this.asset?.nft.page.imageBackground ?? ''
+        background: ''
       };
     }
   },
