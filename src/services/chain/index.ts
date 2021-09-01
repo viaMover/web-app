@@ -15,3 +15,9 @@ export {
   getSLPPriceInWETH,
   getUSDCPriceInWETH
 } from './token-prices/token-prices';
+
+export { getUnexpectedMoveData } from './nft/unexpected-move/unexpected-move';
+export { UnexpectedMoveData } from './nft/unexpected-move/types';
+
+export { getSweetAndSourData } from './nft/sweet-and-sour/swett-and-sour';
+export { SweetAndSourData } from './nft/sweet-and-sour/types';

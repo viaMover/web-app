@@ -11,10 +11,10 @@ import '@/styles/_nft.less';
 export default Vue.extend({
   name: 'NftRoot',
   async beforeMount() {
-    await this.loadNFTInfoList();
+    await this.loadNFTInfo();
   },
   methods: {
-    ...mapActions('nft', ['loadNFTInfoList'])
+    ...mapActions('nft', ['loadNFTInfo'])
   }
 });
 </script>
