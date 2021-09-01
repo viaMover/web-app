@@ -13,8 +13,6 @@ export default {
   state: {
     isLoading: false,
 
-    modalStep: undefined,
-
     UnexpectedMoveTotalAmount: '0',
     UnexpectedMoveTotalClaimed: '0',
     UnexpectedMoveTotalExchanged: '0',
