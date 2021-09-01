@@ -1,0 +1,22 @@
+.no-access__popup-wrapper {
+  padding: 80px 40px 24px;
+  text-align: center;
+}
+.no-access__popup-wrapper-icon {
+  margin: 0 auto;
+}
+.no-access__popup-wrapper-icon span {
+  font-size: 120px;
+  line-height: 140px;
+  font-family: $Regular;
+}
+.no-access__popup-wrapper-status {
+  margin-top: 78px;
+}
+.no-access__popup-wrapper-status h2 {
+  font-family: $Bold;
+}
+.no-access__popup-wrapper-status p {
+  color: rgba(60,60,67,0.6);
+  font-family: $Medium;
+}

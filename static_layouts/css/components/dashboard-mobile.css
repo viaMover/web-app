@@ -1,0 +1,8 @@
+.dashboard-mobile {
+  display: none;
+}
+@media (max-width: 768px) {
+  .dashboard-mobile {
+    display: block;
+  }
+}

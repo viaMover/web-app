@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
+import { isFeatureEnabled } from '@/settings';
 
 Vue.use(VueRouter);
 
@@ -237,6 +238,28 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+if (isFeatureEnabled('isNavigationFallbackEnabled')) {
+  // detect initial navigation
+  let isInitialNavigation = false;
+  router.beforeEach((to, from, next) => {
+    isInitialNavigation = from === VueRouter.START_LOCATION;
+    next();
+  });
+
+  // save original router.back() implementation bound to the initial router
+  const originalRouterBack = router.back.bind(router);
+
+  // substitute with the custom implementation
+  router.back = async (): Promise<void> => {
+    if (isInitialNavigation && router.currentRoute.name !== 'home') {
+      await router.replace({ name: 'home' });
+      return;
+    }
+
+    originalRouterBack();
+  };
+}
 
 router.beforeEach((to, from, next) => {
   const { lang } = to.params;
