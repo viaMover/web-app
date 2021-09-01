@@ -1,13 +1,12 @@
-import { getSweetAndSourData } from './../../../services/chain/nft/sweet-and-sour/index';
-import { getUnexpectedMoveData } from '@/services/chain/nft/unexpected-move/index';
 import { ActionTree } from 'vuex';
+import * as Sentry from '@sentry/vue';
+
+import { getSweetAndSourData, getUnexpectedMoveData } from '@/services/chain';
 import { RootStoreState } from '@/store/types';
 import { NFTStoreState } from './types';
-import * as Sentry from '@sentry/vue';
 
 export default {
   async loadNFTInfo({ rootState, state, commit }): Promise<void> {
-    console.log('loadNFTInfo!!!!!!!!!!!!!!!11');
     commit('setIsLoading', true);
 
     if (rootState.account === undefined) {
@@ -33,24 +32,35 @@ export default {
 
     if (rootState.account.currentAddress === undefined) {
       commit('setIsLoading', false);
-      Sentry.captureException('empty currect address in loadNFTInfo');
+      console.error('empty current address in loadNFTInfo');
+      Sentry.captureException('empty current address in loadNFTInfo');
       return;
     }
 
-    const unexpectedMoveData = await getUnexpectedMoveData(
+    const unexpectedMoveDataPromise = getUnexpectedMoveData(
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3
     );
-    commit('setUnexpectedMoveData', unexpectedMoveData);
 
-    const sweetAndSourData = await getSweetAndSourData(
+    const sweetAndSourDataPromise = getSweetAndSourData(
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3
     );
-    commit('setSweetAndSourData', sweetAndSourData);
 
-    commit('setIsLoading', false);
+    try {
+      const [unexpectedMoveData, sweetAndSourData] = await Promise.all([
+        unexpectedMoveDataPromise,
+        sweetAndSourDataPromise
+      ]);
+      commit('setUnexpectedMoveData', unexpectedMoveData);
+      commit('setSweetAndSourData', sweetAndSourData);
+    } catch (err) {
+      console.error("can't load nft's data", err);
+      Sentry.captureException(err);
+    } finally {
+      commit('setIsLoading', false);
+    }
   }
 } as ActionTree<NFTStoreState, RootStoreState>;

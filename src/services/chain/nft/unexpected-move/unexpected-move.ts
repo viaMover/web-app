@@ -1,18 +1,14 @@
+import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
 import { TransactionsParams } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
 import {
   NFT_UNEXPECTED_MOVE_ABI,
   NFT_UNEXPECTED_MOVE_ADDRESS
 } from '@/wallet/references/data';
-import Web3 from 'web3';
 import { sub } from '@/utils/bigmath';
-
-export type UnexpectedMoveData = {
-  totalAmount: string;
-  totalClaimed: string;
-  totalExchanged: string;
-};
+import { UnexpectedMoveData } from './types';
 
 export const getUnexpectedMoveData = async (
   accountAddress: string,

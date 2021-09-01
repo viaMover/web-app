@@ -1,16 +1,13 @@
+import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
 import { TransactionsParams } from '@/wallet/types';
+import { SweetAndSourData } from './types';
 import { Network } from '@/utils/networkTypes';
 import {
   NFT_SWEET_AND_SOUR_ABI,
   NFT_SWEET_AND_SOUR_ADDRESS
 } from '@/wallet/references/data';
-import Web3 from 'web3';
-
-export type SweetAndSourData = {
-  totalAmount: string;
-  totalClaimed: string;
-};
 
 export const getSweetAndSourData = async (
   accountAddress: string,

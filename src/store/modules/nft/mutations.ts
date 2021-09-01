@@ -1,5 +1,4 @@
-import { SweetAndSourData } from '@/services/chain/nft/sweet-and-sour/index';
-import { UnexpectedMoveData } from '@/services/chain/nft/unexpected-move/index';
+import { UnexpectedMoveData, SweetAndSourData } from '@/services/chain';
 import { MutationTree } from 'vuex';
 import { NFTStoreState } from './types';
 
