@@ -1,4 +1,3 @@
-import { asyncSleep } from '@/utils/time';
 /* eslint-disable  @typescript-eslint/no-non-null-assertion */
 
 import { checkAccountStateIsReady } from './../../account/utils/state';
@@ -14,7 +13,7 @@ import { RootStoreState } from '@/store/types';
 import { NFTStoreState } from './../types';
 
 export default {
-  async loadNFTInfo({ rootState, state, commit, dispatch }): Promise<void> {
+  async loadNFTInfo({ rootState, commit }): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       return;
     }
