@@ -151,6 +151,9 @@ export default {
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
   },
+  setAvatars(state, avatars: Array<Avatar>): void {
+    state.avatars = avatars;
+  },
   setAvatar(state, avatar: Avatar): void {
     state.avatar = avatar;
   }
