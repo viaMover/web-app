@@ -4,7 +4,7 @@ import {
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
 import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
-import { isSuccess, isError } from './../responses';
+import { isError } from './../responses';
 import { TransactionMoveTypeData } from './../mover/transactions/types';
 import { getMoverTransactionsTypes } from './../mover/transactions/service';
 import { FeeData, TransactionStatus, TransactionUnknown } from '@/wallet/types';

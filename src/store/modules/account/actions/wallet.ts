@@ -20,7 +20,6 @@ import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { getWalletTokens } from '@/services/balancer';
 import { getAllTokens } from '@/wallet/allTokens';
-import { getEthPrice } from '@/services/etherscan/ethPrice';
 import {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
@@ -29,7 +28,9 @@ import {
 import {
   clearLastProviderPersist,
   getAvatarFromPersist,
+  getIsOlympusAvatarKnownFromPersist,
   setAvatarToPersist,
+  setIsOlympusAvatarKnownToPersist,
   setLastProviderToPersist
 } from '@/settings';
 import sample from 'lodash-es/sample';
@@ -38,6 +39,9 @@ import {
   disconnectIntercomSession
 } from '@/router/intercom-utils';
 import { getEthereumPrice } from '@/wallet/ethPrice';
+
+import allAvatars from '@/../data/avatars.json';
+import { getOlympusAvatar, isOlympusAvatar } from '@/../data/olympus-avatar';
 
 export type RefreshWalletPayload = {
   injected: boolean;
@@ -61,13 +65,57 @@ export default {
   setIsDetecting({ commit }, isDetecting: boolean): void {
     commit('setIsDetecting', isDetecting);
   },
-  async loadAvatar({ commit, state }): Promise<void> {
+  async loadAvatar({ commit, state, rootState, rootGetters }): Promise<void> {
+    const avatars: Array<Avatar> = allAvatars as Array<Avatar>;
+
+    const olympusAvatar = getOlympusAvatar(rootState.i18n);
+    const hasOlympusNft = rootGetters['nft/hasOlympus'];
+    if (hasOlympusNft) {
+      avatars.push(olympusAvatar);
+    }
+
+    commit('setAvatars', avatars);
+
     if (state.currentAddress === undefined) {
       commit('setAvatar', sample<Avatar>(state.avatars));
       return;
     }
 
+    // if the user has seen olympus avatar at least once
+    const isOlympusAvatarKnown = await getIsOlympusAvatarKnownFromPersist(
+      state.currentAddress
+    );
+
+    // if they have never seen olympus avatar but have it
+    // then force set the olympus avatar instead of the old one
+    if (hasOlympusNft && !isOlympusAvatarKnown) {
+      commit('setAvatar', olympusAvatar);
+      await setAvatarToPersist(state.currentAddress, olympusAvatar);
+      await setIsOlympusAvatarKnownToPersist(state.currentAddress, true);
+      return;
+    }
+
     const persistedValue = await getAvatarFromPersist(state.currentAddress);
+
+    // if one have seen an avatar but don't have it anymore
+    // then set avatar as never seen
+    if (!hasOlympusNft && isOlympusAvatarKnown) {
+      await setIsOlympusAvatarKnownToPersist(state.currentAddress, false);
+    }
+
+    // if they have seen an avatar therefore it's currently persisted
+    // but don't have it anymore then revoke
+    if (!hasOlympusNft && isOlympusAvatar(persistedValue)) {
+      const newAvatar = sample<Avatar>(state.avatars);
+      if (newAvatar === undefined) {
+        return;
+      }
+
+      commit('setAvatar', newAvatar);
+      await setAvatarToPersist(state.currentAddress, newAvatar);
+      return;
+    }
+
     if (persistedValue !== undefined) {
       commit('setAvatar', persistedValue);
       return;
@@ -82,8 +130,28 @@ export default {
     await setAvatarToPersist(state.currentAddress, newAvatar);
   },
   async toggleAvatar({ commit, state }): Promise<void> {
+    if (
+      isOlympusAvatar(state.avatar) &&
+      state.currentAddress !== undefined &&
+      !(await getIsOlympusAvatarKnownFromPersist(state.currentAddress))
+    ) {
+      await setIsOlympusAvatarKnownToPersist(state.currentAddress, true);
+    }
+
     const prevIdx =
-      state.avatars.findIndex((av) => av.symbol === state.avatar?.symbol) ?? -1;
+      state.avatars.findIndex((av) => {
+        if (av.type === 'symbol') {
+          return (
+            state.avatar?.type === 'symbol' &&
+            av.symbol === state.avatar?.symbol
+          );
+        }
+
+        return (
+          state.avatar?.type === 'image' &&
+          av.imageSrc === state.avatar?.imageSrc
+        );
+      }) ?? -1;
 
     const newAvatar = state.avatars[(prevIdx + 1) % state.avatars.length];
     if (newAvatar === undefined) {
@@ -158,7 +226,6 @@ export default {
       balance: balance,
       networkId: chainId
     } as AccountData);
-    dispatch('loadAvatar');
 
     if (!state.currentAddress || !state.networkInfo) {
       console.info("can't refresh wallet due to empty address");
@@ -286,12 +353,19 @@ export default {
     const treasuryFreshData = dispatch('fetchTreasuryFreshData');
     const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
 
+    const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
+      root: true
+    });
+    const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
+
     try {
       await Promise.all([
         savingsInfoPromise,
         treasuryInfoPromise,
         savingsFreshData,
-        treasuryFreshData
+        treasuryFreshData,
+        nftInfoPromise,
+        loadAvatarPromise
       ]);
     } catch (e) {
       Sentry.captureException(e);

@@ -60,7 +60,6 @@ export default {
       shouldSort: true
     };
     const index = Fuse.createIndex(searchOptions.keys, state.tokens);
-    // TODO: investigate wrong behavior
     state.tokensSearcher = undefined; //new Fuse(state.tokens, searchOptions, index);
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
@@ -150,6 +149,9 @@ export default {
   },
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
+  },
+  setAvatars(state, avatars: Array<Avatar>): void {
+    state.avatars = avatars;
   },
   setAvatar(state, avatar: Avatar): void {
     state.avatar = avatar;

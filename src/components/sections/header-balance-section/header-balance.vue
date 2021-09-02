@@ -44,7 +44,7 @@
       />
       <nav-bar-item
         v-if="isFeatureEnabled('isMoreEnabled')"
-        navigate-to-name="more"
+        navigate-to-name="home-more"
         :text="$t('lblMore')"
       />
     </nav-bar>

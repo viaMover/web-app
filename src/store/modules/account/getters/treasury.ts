@@ -2,14 +2,7 @@ import { calcTreasuryBoost } from './../utils/treasury';
 import { GetterTree } from 'vuex';
 
 import gt from 'lodash-es/gt';
-import {
-  add,
-  divide,
-  fromWei,
-  isFinite,
-  isNaN,
-  multiply
-} from '@/utils/bigmath';
+import { add, fromWei, multiply } from '@/utils/bigmath';
 
 import { sameAddress } from '@/utils/address';
 import { AccountStoreState } from '../types';

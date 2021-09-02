@@ -1,0 +1,101 @@
+.release-radar-asset__menu-wrapper-title {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.release-radar-asset__menu-wrapper-title .title {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.release-radar-asset__menu-wrapper-title .title .icon {
+  margin-right: 15px;
+}
+.release-radar-asset__menu-wrapper-title .title .icon img {
+  border-radius: 50%;
+  display: block;
+  width: 42px;
+  height: 42px;
+}
+.release-radar-asset__menu-wrapper-title .button {
+  margin-left: auto;
+}
+.release-radar-asset__menu-wrapper-title .button button {
+  width: 100%;
+  min-width: 114px;
+  padding: 9px;
+  font-family: $Bold;
+  color: $white;
+  background-color: #7485b3;
+  border-radius: 25px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.release-radar-asset__menu-wrapper-title .button button span {
+  margin-right: 7px;
+}
+.release-radar-asset__menu-wrapper-balance {
+  margin-top: 20px;
+}
+.release-radar-asset__menu-wrapper-balance .balance {
+  font-family: $Bold;
+  font-size: 24px;
+  line-height: 40px;
+}
+.release-radar-asset__menu-wrapper-balance .up {
+  margin-top: 2px;
+  font-family: $Medium;
+  color: #07c144;
+}
+.release-radar-asset__menu-wrapper-about {
+  margin-top: 40px;
+}
+.release-radar-asset__menu-wrapper-about .description {
+  margin-top: 4px;
+  color: rgba(60,60,67,0.6);
+  font-family: $Regular;
+}
+.release-radar-asset__menu-wrapper-about .links {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  list-style-type: none;
+  margin-top: 40px;
+}
+.release-radar-asset__menu-wrapper-about .links li {
+  margin-left: 24px;
+}
+.release-radar-asset__menu-wrapper-about .links li:first-child {
+  margin-left: 0;
+}
+.release-radar-asset__menu-wrapper-about .links li a {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 8px 24px;
+  background: #f1f1f1;
+  border-radius: 20px;
+  font-family: $Bold;
+}
