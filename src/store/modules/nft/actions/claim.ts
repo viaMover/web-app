@@ -1,10 +1,15 @@
+/* eslint-disable  @typescript-eslint/no-non-null-assertion */
+
+import { greaterThan, lessThan } from '@/utils/bigmath';
+import { currentTimestamp } from '@/utils/time';
 import { ActionTree } from 'vuex';
 
 import {
   claimSweetAndSour,
   claimUnexpectedMove,
   claimAndExchangeUnexpectedMove,
-  exchangeUnexpectedMove
+  exchangeUnexpectedMove,
+  claimOlympus
 } from '@/services/chain';
 import { RootStoreState } from '@/store/types';
 import { NFTStoreState } from './../types';
@@ -16,11 +21,40 @@ export type ClaimPayload = {
   changeStep: (step: Step) => Promise<void>;
 };
 
-export type ExchangePayload = {
+export type ChangePayload = {
   changeStep: (step: Step) => Promise<void>;
 };
 
 export default {
+  async claimOlympus(
+    { rootState, state },
+    payload: ChangePayload
+  ): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    if (fastGasPrice === undefined) {
+      throw new Error('There is no gas price, please, try again');
+    }
+
+    if (
+      greaterThan(currentTimestamp(), state.OlympusEndTs) ||
+      lessThan(currentTimestamp(), state.OlympusStartTs)
+    ) {
+      throw new Error('Public claim has not started yet!');
+    }
+
+    await claimOlympus(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice.price,
+      payload.changeStep
+    );
+  },
   async claimSweetAndSour({ rootState }, payload: ClaimPayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
@@ -89,7 +123,7 @@ export default {
   },
   async exchangeUnexpectedMove(
     { rootState },
-    payload: ExchangePayload
+    payload: ChangePayload
   ): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');

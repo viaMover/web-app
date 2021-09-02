@@ -1,5 +1,8 @@
-import { greaterThan } from '@/utils/bigmath';
-import { UnexpectedMoveData, SweetAndSourData } from '@/services/chain';
+import {
+  UnexpectedMoveData,
+  SweetAndSourData,
+  OlympusData
+} from '@/services/chain';
 import { MutationTree } from 'vuex';
 import { NFTStoreState } from './types';
 
@@ -16,5 +19,11 @@ export default {
   setSweetAndSourData(state, data: SweetAndSourData): void {
     state.SweetAndSourTotalAmount = data.totalAmount;
     state.SweetAndSourTotalClaimed = data.totalClaimed;
+  },
+  setOlympusData(state, data: OlympusData): void {
+    state.OlympusTotalClaimed = data.totalClaimed;
+    state.OlympusStartTs = data.claimStart;
+    state.OlympusEndTs = data.claimEnd;
+    state.OlympusBalance = data.balance;
   }
 } as MutationTree<NFTStoreState>;

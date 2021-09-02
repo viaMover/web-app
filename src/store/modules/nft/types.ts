@@ -1,7 +1,10 @@
-import { StepData } from '@/components/controls/form-loader/types';
-
 export type NFTStoreState = {
   isLoading: boolean;
+
+  OlympusTotalClaimed: string;
+  OlympusStartTs: string;
+  OlympusEndTs: string;
+  OlympusBalance: string;
 
   UnexpectedMoveTotalAmount: string;
   UnexpectedMoveTotalClaimed: string;

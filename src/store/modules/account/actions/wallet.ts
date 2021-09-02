@@ -20,7 +20,6 @@ import { TokenWithBalance, Transaction } from '@/wallet/types';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { getWalletTokens } from '@/services/balancer';
 import { getAllTokens } from '@/wallet/allTokens';
-import { getEthPrice } from '@/services/etherscan/ethPrice';
 import {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
