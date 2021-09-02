@@ -522,5 +522,8 @@ export default {
     txtNavigationLinkAlt: 'navigation link',
     txtSwapDetailsIconAlt: 'swap details',
     txtTokenInfoAlt: '{name} info on Etherscan'
+  },
+  more: {
+    lblMore: 'More'
   }
 };

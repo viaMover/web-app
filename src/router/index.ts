@@ -14,6 +14,13 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
   },
   {
+    path: '/more',
+    name: 'home-more',
+    component: () =>
+      import(/* webpackChunkName: "home" */ '@/views/home-more.vue'),
+    beforeEnter: checkFeatureFlag('isMoreEnabled')
+  },
+  {
     path: '/connect-wallet',
     name: 'connect-wallet',
     component: () =>
