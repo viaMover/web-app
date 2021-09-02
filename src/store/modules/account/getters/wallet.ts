@@ -6,7 +6,6 @@ import { add, multiply } from '@/utils/bigmath';
 import { AccountStoreState, TransactionGroup } from '../types';
 import { RootStoreState } from '@/store/types';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
-import { getUSDCAssetData } from '@/wallet/references/data';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { MarketCapSortLimit } from '@/wallet/constants';
 
@@ -37,13 +36,14 @@ export default {
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;
   },
-  isWalletReady(state, getters): boolean {
+  isWalletReady(state, getters, rootState): boolean {
     return (
       getters.isWalletConnected &&
       state.provider !== undefined &&
       !state.isDetecting &&
       state.savingsInfo !== undefined &&
-      state.treasuryInfo !== undefined
+      state.treasuryInfo !== undefined &&
+      !rootState.nft?.isLoading
     );
   },
   entireBalance(state, getters): string {
@@ -193,11 +193,7 @@ export default {
         );
       }
 
-      const res = state.tokensSearcher
-        .search(searchTerm)
-        .map((res) => res.item);
-
-      return res;
+      return state.tokensSearcher.search(searchTerm).map((res) => res.item);
     };
   },
   getOffchainExplorerHanlder(state): OffchainExplorerHanler | undefined {
