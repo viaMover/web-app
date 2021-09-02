@@ -387,30 +387,43 @@ export default {
     lblTotalNumberOfNFTs: 'Total number of NFTs',
     lblTotalClaimed: 'Total claimed',
     lblTotalExchanged: 'Total exchanged',
+    lblWhatElseCanDo: 'What else can you do',
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
     txtNFTs: {
-      sweetAndSour: {
+      movingWithOlympus: {
         description:
+          'The Moving with Olympus NFT gives you an exclusive avatar.',
+        pageDescription:
+          'The Moving with Olympus is the limited NFT series available only ' +
+          'for 3 days. 3 days is all it takes to become a part of something ' +
+          'bigger than any one of us. This NFT gives it’s owner a right to a ' +
+          'unique avatar on Mover. Wear the badge of honor.\n'
+      },
+      swapPassport: {
+        description:
+          'The Swap Passport NFT can be exchanged for one free swap via Mover.',
+        pageDescription:
+          'The Swap Passport is the limited NFT series available to those, ' +
+          'who was present during the Sushi AMA on July 14th 2021. This NFT ' +
+          'can be exchanged for one free swap on Mover platform.'
+      },
+      sweetAndSour: {
+        description: 'The Sweet & Sour NFT gives early access to Nibble Shop.',
+        pageDescription:
           'This NFT is dropped for all unique addresses that have held HOLY ' +
           'until April 31, 2021; and those that participated in the early LP ' +
-          'program bu didn’t migrate. The Sweet & Sour NFT gives early access' +
-          ' to Nibble Shop.',
-        pageDescription:
-          'Nothing really to add here. This cap is hand-made ' +
-          'for all the CEOs of all the monies. This is a genesis limited ' +
-          'addition with only 30 ever caps to be made. This item will not ' +
-          'be restocked. One size fits all CEOs.'
+          'program bu didn’t migrate. The Sweet & Sour NFT gives early access ' +
+          'to Nibble Shop.'
       },
       unexpectedMove: {
         description:
-          'This NFT is dropped for all participants in our Twitter promo. ' +
           'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
           'but only once.',
         pageDescription:
-          'This NFT is dropped for all participants in our ' +
-          'Twitter promo. The Unexpected Move NFT can be exchanged for 1 ' +
-          'MOVE token, but only once.'
+          'This NFT is dropped for all participants in our Twitter promo. ' +
+          'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
+          'but only once.'
       }
     },
     btnGet: {
