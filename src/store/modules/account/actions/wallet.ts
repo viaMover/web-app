@@ -86,8 +86,6 @@ export default {
       state.currentAddress
     );
 
-    console.debug('isOlympusAvatarKnown', isOlympusAvatarKnown);
-
     // if they have never seen olympus avatar but have it
     // then force set the olympus avatar instead of the old one
     if (hasOlympusNft && !isOlympusAvatarKnown) {
