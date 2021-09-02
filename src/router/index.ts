@@ -194,17 +194,43 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-root.vue'),
     children: [
       {
-        path: 'view/:id',
-        name: 'nft-view',
-        component: () =>
-          import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view.vue')
-      },
-      {
         path: '',
         name: 'nft-view-all',
         component: () =>
           import(
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
+          )
+      },
+      {
+        path: 'view/swap-passport',
+        name: 'swap-passport',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-swap-passport.vue'
+          )
+      },
+      {
+        path: 'view/sweet-and-sour',
+        name: 'sweet-&-sour',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-sweet-and-sour.vue'
+          )
+      },
+      {
+        path: 'view/unexpected-move',
+        name: 'unexpected-move',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-unexpected-move.vue'
+          )
+      },
+      {
+        path: 'view/moving-with-olympus',
+        name: 'moving-with-olympus',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
           )
       }
     ],

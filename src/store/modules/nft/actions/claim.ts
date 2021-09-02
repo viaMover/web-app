@@ -18,14 +18,20 @@ import { Step } from '@/components/controls/form-loader';
 
 export type ClaimPayload = {
   signature: string;
-  changeStep: (step: Step) => Promise<void>;
+  changeStep: (step: Step) => void;
 };
 
 export type ChangePayload = {
-  changeStep: (step: Step) => Promise<void>;
+  changeStep: (step: Step) => void;
 };
 
 export default {
+  checkOlympusClaimable({ state }): boolean {
+    return (
+      lessThan(currentTimestamp(), state.OlympusEndTs) &&
+      greaterThan(currentTimestamp(), state.OlympusStartTs)
+    );
+  },
   async claimOlympus(
     { rootState, state },
     payload: ChangePayload

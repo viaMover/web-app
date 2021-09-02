@@ -16,7 +16,8 @@
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
 
-import { NftAssetCardMiniData } from '@/components/nft';
+import { NftAsset } from '@/store/modules/nft/types';
+
 import { CustomPicture } from '@/components/html5';
 
 export default Vue.extend({
@@ -24,15 +25,14 @@ export default Vue.extend({
   components: { CustomPicture },
   props: {
     item: {
-      type: Object as PropType<NftAssetCardMiniData>,
+      type: Object as PropType<NftAsset>,
       required: true
     }
   },
   computed: {
     routeTo(): RawLocation {
       return {
-        name: 'nft-view',
-        params: { id: this.item.name }
+        name: this.item.name.toLowerCase().replaceAll(' ', '-')
       };
     }
   }

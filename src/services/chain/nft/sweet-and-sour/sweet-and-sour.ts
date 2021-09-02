@@ -49,7 +49,7 @@ export const claimSweetAndSour = async (
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
-  changeStep: (step: Step) => Promise<void>
+  changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = NFT_SWEET_AND_SOUR_ADDRESS(network);
 
