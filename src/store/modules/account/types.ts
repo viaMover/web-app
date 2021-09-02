@@ -36,9 +36,12 @@ export type ProviderData = {
 };
 
 export type Avatar = {
-  symbol: string;
+  id: string;
   className: string;
-};
+} & (
+  | { type: 'symbol'; symbol: string }
+  | { type: 'image'; imageSrc: string; imageAlt: string }
+);
 
 export type TokenInfo = {
   color: string;

@@ -1,6 +1,6 @@
 import { Module } from 'vuex';
 
-import { AccountStoreState, Avatar } from '@/store/modules/account/types';
+import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 
 import chartsActions from './actions/charts';
@@ -23,14 +23,12 @@ import treasuryMutations from './mutations/treasury';
 import utilityMutations from './mutations/utility';
 import walletMutations from './mutations/wallet';
 
-import allAvatars from '@/../data/avatars.json';
-
 export default {
   namespaced: true,
   strict: true,
   state: {
     avatar: undefined,
-    avatars: allAvatars as Array<Avatar>,
+    avatars: [],
     addresses: [],
     currentAddress: undefined,
     transactions: [],
