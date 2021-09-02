@@ -24,7 +24,9 @@ export default {
     UnexpectedMoveBalance: '0',
 
     SweetAndSourTotalAmount: '0',
-    SweetAndSourTotalClaimed: '0'
+    SweetAndSourTotalClaimed: '0',
+
+    nfts: []
   },
   actions: {
     ...actionsInit,

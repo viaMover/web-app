@@ -1,3 +1,5 @@
+import { PictureDescriptor } from '@/components/html5';
+
 export type NFTStoreState = {
   isLoading: boolean;
 
@@ -13,4 +15,19 @@ export type NFTStoreState = {
 
   SweetAndSourTotalAmount: string;
   SweetAndSourTotalClaimed: string;
+
+  nfts: Array<NftAsset>;
+};
+
+export type NftAsset = {
+  name: string;
+  description: string;
+  picture: PictureDescriptor;
+  bigPicture: PictureDescriptor;
+  meta: Array<MetaItem>;
+};
+
+export type MetaItem = {
+  name: string;
+  value: string | number;
 };
