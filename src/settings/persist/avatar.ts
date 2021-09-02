@@ -100,14 +100,28 @@ export const setIsOlympusAvatarKnownToPersist = async (
 ): Promise<void> => {
   const persistedItem = await getIsOlympusAvatarKnownPersistItem();
   if (persistedItem === undefined) {
+    if (!isKnown) {
+      return;
+    }
+
     const candidate: IsOlympusAvatarKnownPersistItem = {
-      [address]: isKnown
+      [address]: true
     };
     localStorage.setItem(olympusAvatarPersistKey, JSON.stringify(candidate));
     return;
   }
 
-  persistedItem[address] = isKnown;
+  if (!isKnown && persistedItem[address] !== undefined) {
+    delete persistedItem[address];
+
+    localStorage.setItem(
+      olympusAvatarPersistKey,
+      JSON.stringify(persistedItem)
+    );
+    return;
+  }
+
+  persistedItem[address] = true;
   localStorage.setItem(olympusAvatarPersistKey, JSON.stringify(persistedItem));
 };
 
