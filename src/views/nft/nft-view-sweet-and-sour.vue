@@ -1,48 +1,61 @@
 <template>
-  <shop-wrapper has-close-button @close="handleClose">
-    <template v-slot:info>
-      <h1 class="info__title">{{ $t('NFTs.lblSweetAndSour') }}</h1>
-      <p class="info__description">
-        {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartOne') }}
-        <br /><br />
-        {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartTwo') }}
-      </p>
-      <shop-list>
-        <shop-list-item
-          :title="$t('NFTs.lblTotalAmount')"
-          :value="totalAmount"
+  <div>
+    <shop-wrapper has-close-button @close="handleClose">
+      <template v-slot:info>
+        <h1 class="info__title">{{ $t('NFTs.lblSweetAndSour') }}</h1>
+        <p class="info__description">
+          {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartOne') }}
+          <br /><br />
+          {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartTwo') }}
+        </p>
+        <shop-list>
+          <shop-list-item
+            :title="$t('NFTs.lblTotalAmount')"
+            :value="totalAmount"
+          />
+          <shop-list-item
+            :title="$t('NFTs.lblTotalClaimed')"
+            :value="totalClaimed"
+          />
+        </shop-list>
+        <action-button
+          button-class="button button-active"
+          :text="$t('NFTs.btn.sweetAndSour.get.txt')"
+          @button-click="handleClaim"
         />
-        <shop-list-item
-          :title="$t('NFTs.lblTotalClaimed')"
-          :value="totalClaimed"
+        <div v-if="error !== undefined" class="error-message">
+          {{ error }}
+        </div>
+      </template>
+      <template v-slot:illustration>
+        <video
+          autoplay="autoplay"
+          class="sweet-and-sour"
+          data-keepplaying="data-keepplaying"
+          loop="loop"
+          muted="muted"
+          playsinline="playsinline"
+          src="@/assets/videos/SweetAndSour.webm"
         />
-      </shop-list>
-      <action-button
-        button-class="button button-active"
-        :text="$t('NFTs.btn.sweetAndSour.get.txt')"
-      />
-      <div v-if="hasError" class="error-message">{{ $t('NFTs.txtOhNo') }}</div>
-    </template>
-    <template v-slot:illustration>
-      <video
-        autoplay="autoplay"
-        class="sweet-and-sour"
-        data-keepplaying="data-keepplaying"
-        loop="loop"
-        muted="muted"
-        playsinline="playsinline"
-        src="@/assets/videos/SweetAndSour.webm"
-      />
-    </template>
-  </shop-wrapper>
+      </template>
+    </shop-wrapper>
+    <simple-loader-modal
+      v-if="transactionStep !== undefined"
+      :loader-step="transactionStep"
+      @close="transactionStep = undefined"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
+import { Step } from '@/components/controls/form-loader';
+import { getSweetAndSourClaimSignature } from '@/services/chain';
+import { ClaimPayload } from '@/store/modules/nft/actions/claim';
 
 export default Vue.extend({
   name: 'NftViewSweetAndSour',
@@ -52,18 +65,56 @@ export default Vue.extend({
     ShopListItem,
     ShopWrapper
   },
+  data() {
+    return {
+      transactionStep: undefined as Step | undefined,
+      error: undefined as string | undefined
+    };
+  },
   computed: {
     ...mapState('nft', {
       totalAmount: 'SweetAndSourTotalAmount',
       totalClaimed: 'SweetAndSourTotalClaimed'
     }),
-    hasError(): boolean {
-      return false;
-    }
+    ...mapState('account', {
+      currentAddress: 'currentAddress'
+    })
+  },
+  mounted(): void {
+    this.transactionStep = undefined;
+    this.error = undefined;
   },
   methods: {
+    ...mapActions('nft', ['claimSweetAndSour', 'refreshNftStats']),
     handleClose(): void {
       this.$router.back();
+    },
+    async handleClaim(): Promise<void> {
+      let sig = '';
+      try {
+        sig = await getSweetAndSourClaimSignature(this.currentAddress);
+      } catch {
+        this.error = this.$t('NFTs.txtOhNo').toString();
+        return;
+      }
+      try {
+        this.transactionStep = 'Confirm';
+        await this.claimSweetAndSour({
+          signature: sig,
+          changeStep: () => {
+            this.transactionStep = 'Process';
+          }
+        } as ClaimPayload);
+        await this.refreshNftStats();
+        this.transactionStep = 'Success';
+      } catch (err) {
+        if (this.transactionStep === 'Process') {
+          this.transactionStep = 'Reverted';
+        } else {
+          this.transactionStep = undefined;
+          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+        }
+      }
     }
   }
 });

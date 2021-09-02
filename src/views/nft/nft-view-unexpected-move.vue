@@ -25,9 +25,10 @@
         <action-button
           button-class="button button-active"
           :text="$t('NFTs.btn.unexpectedMove.get.txt')"
+          @button-click="handleClaim"
         />
-        <div v-if="hasError" class="error-message">
-          {{ $t('NFTs.txtOhNo') }}
+        <div v-if="error !== undefined" class="error-message">
+          {{ error }}
         </div>
         <div class="info__more">
           <p>{{ $t('NFTs.lblWhatElseCanDo') }}</p>
@@ -37,6 +38,7 @@
                 button-class="button-active"
                 :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
                 :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
+                @button-click="handleClaimAndExchange"
               />
             </li>
             <li>
@@ -44,6 +46,7 @@
                 button-class="button-active"
                 :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
                 :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
+                @button-click="handleExchange"
               />
             </li>
           </ul>
@@ -61,18 +64,25 @@
         />
       </template>
     </shop-wrapper>
-    <simple-loader-modal />
+    <simple-loader-modal
+      v-if="transactionStep !== undefined"
+      :loader-step="transactionStep"
+      @close="transactionStep = undefined"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
 import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { Step } from '@/components/controls/form-loader';
+import { getUnexpectedMoveClaimSignature } from '@/services/chain';
+import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
 
 export default Vue.extend({
   name: 'NftViewUnexpectedMove',
@@ -84,19 +94,108 @@ export default Vue.extend({
     ShopWrapper,
     SimpleLoaderModal
   },
+  data() {
+    return {
+      transactionStep: undefined as Step | undefined,
+      error: undefined as string | undefined
+    };
+  },
   computed: {
     ...mapState('nft', {
       totalAmount: 'UnexpectedMoveTotalAmount',
       totalClaimed: 'UnexpectedMoveTotalClaimed',
       totalExchanged: 'UnexpectedMoveTotalExchanged'
     }),
-    hasError(): boolean {
-      return false;
-    }
+    ...mapState('account', {
+      currentAddress: 'currentAddress'
+    })
+  },
+  mounted(): void {
+    this.transactionStep = undefined;
+    this.error = undefined;
   },
   methods: {
+    ...mapActions('nft', [
+      'claimUnexpectedMove',
+      'refreshNftStats',
+      'claimAndExchangeUnexpectedMove',
+      'exchangeUnexpectedMove'
+    ]),
     handleClose(): void {
       this.$router.back();
+    },
+    async handleClaim(): Promise<void> {
+      let sig = '';
+      try {
+        sig = await getUnexpectedMoveClaimSignature(this.currentAddress);
+      } catch {
+        this.error = this.$t('NFTs.txtOhNo').toString();
+        return;
+      }
+      try {
+        this.transactionStep = 'Confirm';
+        await this.claimUnexpectedMove({
+          signature: sig,
+          changeStep: () => {
+            this.transactionStep = 'Process';
+          }
+        } as ClaimPayload);
+        await this.refreshNftStats();
+        this.transactionStep = 'Success';
+      } catch (err) {
+        if (this.transactionStep === 'Process') {
+          this.transactionStep = 'Reverted';
+        } else {
+          this.transactionStep = undefined;
+          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+        }
+      }
+    },
+    async handleClaimAndExchange(): Promise<void> {
+      let sig = '';
+      try {
+        sig = await getUnexpectedMoveClaimSignature(this.currentAddress);
+      } catch {
+        this.error = this.$t('NFTs.txtOhNo').toString();
+        return;
+      }
+      try {
+        this.transactionStep = 'Confirm';
+        await this.claimAndExchangeUnexpectedMove({
+          signature: sig,
+          changeStep: () => {
+            this.transactionStep = 'Process';
+          }
+        } as ClaimPayload);
+        await this.refreshNftStats();
+        this.transactionStep = 'Success';
+      } catch (err) {
+        if (this.transactionStep === 'Process') {
+          this.transactionStep = 'Reverted';
+        } else {
+          this.transactionStep = undefined;
+          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+        }
+      }
+    },
+    async handleExchange(): Promise<void> {
+      try {
+        this.transactionStep = 'Confirm';
+        await this.exchangeUnexpectedMove({
+          changeStep: () => {
+            this.transactionStep = 'Process';
+          }
+        } as ChangePayload);
+        await this.refreshNftStats();
+        this.transactionStep = 'Success';
+      } catch (err) {
+        if (this.transactionStep === 'Process') {
+          this.transactionStep = 'Reverted';
+        } else {
+          this.transactionStep = undefined;
+          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+        }
+      }
     }
   }
 });

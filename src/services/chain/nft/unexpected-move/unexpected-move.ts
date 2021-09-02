@@ -221,6 +221,7 @@ export const exchangeUnexpectedMove = async (
     const gasLimitObj = await sweetAndSour.methods
       .burnNFTForMoverTokens()
       .estimateGas(transacionParamsEstimate);
+
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
       const gasLimitWithBuffer = floorDivide(

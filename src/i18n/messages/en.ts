@@ -397,6 +397,7 @@ export default {
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
     txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
+    txtOhNoSomething: 'Oh no. Something went wrong',
     txtNFTs: {
       movingWithOlympus: {
         description:

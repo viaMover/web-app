@@ -83,9 +83,6 @@ export default Vue.extend({
       totalClaimed: 'OlympusTotalClaimed',
       availableFrom: 'OlympusStartTs'
     }),
-    hasError(): boolean {
-      return false;
-    },
     availableToString(): string {
       return dayjs.unix(this.availableTo).format('MMMM DD, HH:mm UTC');
     },
@@ -122,7 +119,12 @@ export default Vue.extend({
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {
-        this.transactionStep = 'Reverted';
+        if (this.transactionStep === 'Process') {
+          this.transactionStep = 'Reverted';
+        } else {
+          this.transactionStep = undefined;
+          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+        }
       }
     }
   }
