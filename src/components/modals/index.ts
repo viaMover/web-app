@@ -5,4 +5,5 @@ export { default as SavingsWithdrawModal } from './savings-withdraw-modal.vue';
 export { default as TreasuryIncreaseBoostModal } from './treasury-increase-boost-modal.vue';
 export { default as TreasuryDecreaseBoostModal } from './treasury-decrease-boost-modal.vue';
 export { default as TreasuryClaimAndBurnModal } from './treasury-claim-and-burn-modal.vue';
+export { default as SimpleLoaderModal } from './simple-loader-modal.vue';
 export { default as Popover } from './popover.vue';
