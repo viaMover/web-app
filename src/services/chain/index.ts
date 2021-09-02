@@ -31,3 +31,6 @@ export {
 } from './nft/sweet-and-sour/sweet-and-sour';
 export type { SweetAndSourData } from './nft/sweet-and-sour/types';
 export { getSweetAndSourClaimSignature } from './nft/sweet-and-sour/service';
+
+export { getOlympusData, claimOlympus } from './nft/olympus/olympus';
+export type { OlympusData } from './nft/olympus/types';

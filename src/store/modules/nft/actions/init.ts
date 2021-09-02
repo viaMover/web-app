@@ -1,14 +1,21 @@
+import { asyncSleep } from '@/utils/time';
+/* eslint-disable  @typescript-eslint/no-non-null-assertion */
+
 import { checkAccountStateIsReady } from './../../account/utils/state';
 import { ActionTree } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
-import { getSweetAndSourData, getUnexpectedMoveData } from '@/services/chain';
+import {
+  getOlympusData,
+  getSweetAndSourData,
+  getUnexpectedMoveData
+} from '@/services/chain';
 import { RootStoreState } from '@/store/types';
 import { NftAsset, NFTStoreState } from './../types';
 import { isFeatureEnabled } from '@/settings';
 
 export default {
-  async loadNFTInfo({ rootState, state, commit }): Promise<void> {
+  async loadNFTInfo({ rootState, state, commit, dispatch }): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       return;
     }
@@ -22,6 +29,12 @@ export default {
     );
 
     const sweetAndSourDataPromise = getSweetAndSourData(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3
+    );
+
+    const olympusPromise = getOlympusData(
       rootState!.account!.currentAddress!,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3
@@ -214,12 +227,15 @@ export default {
     }
 
     try {
-      const [unexpectedMoveData, sweetAndSourData] = await Promise.all([
-        unexpectedMoveDataPromise,
-        sweetAndSourDataPromise
-      ]);
+      const [unexpectedMoveData, sweetAndSourData, olympusData] =
+        await Promise.all([
+          unexpectedMoveDataPromise,
+          sweetAndSourDataPromise,
+          olympusPromise
+        ]);
       commit('setUnexpectedMoveData', unexpectedMoveData);
       commit('setSweetAndSourData', sweetAndSourData);
+      commit('setOlympusData', olympusData);
       commit('setNFTs', nftAssets);
     } catch (err) {
       console.error("can't load nft's data", err);

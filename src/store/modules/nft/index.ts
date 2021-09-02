@@ -13,6 +13,11 @@ export default {
   state: {
     isLoading: false,
 
+    OlympusTotalClaimed: '0',
+    OlympusStartTs: '0',
+    OlympusEndTs: '0',
+    OlympusBalance: '0',
+
     UnexpectedMoveTotalAmount: '0',
     UnexpectedMoveTotalClaimed: '0',
     UnexpectedMoveTotalExchanged: '0',
