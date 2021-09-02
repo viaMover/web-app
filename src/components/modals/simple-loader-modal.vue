@@ -35,7 +35,7 @@ export default Vue.extend({
   props: {
     showCloseButton: {
       type: Boolean,
-      default: true
+      default: false
     },
     disableDimmer: {
       type: Boolean,
@@ -71,9 +71,11 @@ export default Vue.extend({
     left: 0;
     height: 100%;
     width: 100%;
+    z-index: 40;
   }
 
   &__close-button {
+    z-index: 41;
     cursor: pointer;
     width: 40px;
     height: 40px;
@@ -99,6 +101,7 @@ export default Vue.extend({
   }
 
   &__body {
+    z-index: 41;
     position: fixed;
     top: 104px;
     left: calc(50% - 264px);

@@ -58,7 +58,7 @@ export const claimUnexpectedMove = async (
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
-  changeStep: (step: Step) => Promise<void>
+  changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
 
@@ -130,7 +130,7 @@ export const claimAndExchangeUnexpectedMove = async (
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
-  changeStep: (step: Step) => Promise<void>
+  changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
 
@@ -203,7 +203,7 @@ export const exchangeUnexpectedMove = async (
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
-  changeStep: (step: Step) => Promise<void>
+  changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
 

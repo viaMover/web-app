@@ -15,30 +15,8 @@ import { NftAsset, NFTStoreState } from './../types';
 import { isFeatureEnabled } from '@/settings';
 
 export default {
-  async loadNFTInfo({ rootState, state, commit, dispatch }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      return;
-    }
-
+  async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
     commit('setIsLoading', true);
-
-    const unexpectedMoveDataPromise = getUnexpectedMoveData(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3
-    );
-
-    const sweetAndSourDataPromise = getSweetAndSourData(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3
-    );
-
-    const olympusPromise = getOlympusData(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3
-    );
 
     const nftAssets: Array<NftAsset> = [
       {
@@ -226,6 +204,31 @@ export default {
       });
     }
     commit('setNFTs', nftAssets);
+    commit('setIsLoading', false);
+    await dispatch('refreshNftStats');
+  },
+  async refreshNftStats({ rootState, commit }): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      return;
+    }
+
+    const unexpectedMoveDataPromise = getUnexpectedMoveData(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3
+    );
+
+    const sweetAndSourDataPromise = getSweetAndSourData(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3
+    );
+
+    const olympusPromise = getOlympusData(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3
+    );
 
     try {
       const [unexpectedMoveData, sweetAndSourData, olympusData] =
@@ -240,8 +243,6 @@ export default {
     } catch (err) {
       console.error("can't load nft's data", err);
       Sentry.captureException(err);
-    } finally {
-      commit('setIsLoading', false);
     }
   }
 } as ActionTree<NFTStoreState, RootStoreState>;

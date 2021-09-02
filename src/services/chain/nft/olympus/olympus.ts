@@ -51,7 +51,7 @@ export const claimOlympus = async (
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
-  changeStep: (step: Step) => Promise<void>
+  changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = NFT_OLYMPUS_ADDRESS(network);
 
