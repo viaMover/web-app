@@ -24,7 +24,6 @@ import {
 } from '@/components/sections';
 
 import '@/styles/_more.less';
-import { mapActions } from 'vuex';
 
 export default Vue.extend({
   name: 'HomeMore',
@@ -34,12 +33,8 @@ export default Vue.extend({
     NibbleShopSection,
     NftDropsSection
   },
-  async beforeMount() {
-    await this.loadNFTInfo();
-  },
   methods: {
     isFeatureEnabled,
-    ...mapActions('nft', ['loadNFTInfo']),
     handleClose(): void {
       this.$router.back();
     }
