@@ -521,7 +521,8 @@ export default {
     txtSelectAssetButtonAlt: 'select asset',
     txtNavigationLinkAlt: 'navigation link',
     txtSwapDetailsIconAlt: 'swap details',
-    txtTokenInfoAlt: '{name} info on Etherscan'
+    txtTokenInfoAlt: '{name} info on Etherscan',
+    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus'
   },
   more: {
     lblMore: 'More'
