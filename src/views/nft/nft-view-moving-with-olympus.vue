@@ -39,7 +39,7 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-          src="@/assets/videos/MovingWithOlympus.mp4"
+          src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
         />
       </template>
     </shop-wrapper>

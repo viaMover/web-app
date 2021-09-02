@@ -60,7 +60,7 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-          src="@/assets/videos/UnexpectedMove.webm"
+          src="https://ipfs.io/ipfs/QmS7nM63XtExqL8okruaLs1GifveNfhfcwdXvruiLM5qdJ"
         />
       </template>
     </shop-wrapper>

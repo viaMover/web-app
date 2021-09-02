@@ -35,7 +35,7 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-          src="@/assets/videos/SweetAndSour.webm"
+          src="https://ipfs.io/ipfs/QmZE2K69rBaBze3Kb6UTPyr7wXr2spJ6V1mCxc6HvqEfbA/SAS.mp4"
         />
       </template>
     </shop-wrapper>
@@ -56,6 +56,7 @@ import ActionButton from '@/components/buttons/action-button.vue';
 import { Step } from '@/components/controls/form-loader';
 import { getSweetAndSourClaimSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/actions/claim';
+import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
 
 export default Vue.extend({
   name: 'NftViewSweetAndSour',
@@ -63,7 +64,8 @@ export default Vue.extend({
     ActionButton,
     ShopList,
     ShopListItem,
-    ShopWrapper
+    ShopWrapper,
+    SimpleLoaderModal
   },
   data() {
     return {
