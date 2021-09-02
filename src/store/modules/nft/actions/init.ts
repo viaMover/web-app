@@ -225,6 +225,7 @@ export default {
         }
       });
     }
+    commit('setNFTs', nftAssets);
 
     try {
       const [unexpectedMoveData, sweetAndSourData, olympusData] =
@@ -236,7 +237,6 @@ export default {
       commit('setUnexpectedMoveData', unexpectedMoveData);
       commit('setSweetAndSourData', sweetAndSourData);
       commit('setOlympusData', olympusData);
-      commit('setNFTs', nftAssets);
     } catch (err) {
       console.error("can't load nft's data", err);
       Sentry.captureException(err);

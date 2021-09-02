@@ -32,8 +32,7 @@ export default Vue.extend({
   computed: {
     routeTo(): RawLocation {
       return {
-        name: 'nft-view',
-        params: { id: this.item.name }
+        name: this.item.name.toLowerCase().replaceAll(' ', '-')
       };
     }
   }
