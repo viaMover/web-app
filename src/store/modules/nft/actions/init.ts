@@ -1,4 +1,3 @@
-import { asyncSleep } from '@/utils/time';
 /* eslint-disable  @typescript-eslint/no-non-null-assertion */
 
 import { checkAccountStateIsReady } from './../../account/utils/state';
@@ -204,8 +203,8 @@ export default {
       });
     }
     commit('setNFTs', nftAssets);
-    commit('setIsLoading', false);
     await dispatch('refreshNftStats');
+    commit('setIsLoading', false);
   },
   async refreshNftStats({ rootState, commit }): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
