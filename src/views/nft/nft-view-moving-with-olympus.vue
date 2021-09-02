@@ -10,11 +10,11 @@
       <shop-list>
         <shop-list-item
           :title="$t('NFTs.lblAvailableFrom')"
-          :value="totalAmount"
+          :value="availableFromString"
         />
         <shop-list-item
           :title="$t('NFTs.lblAvailableTo')"
-          :value="totalClaimed"
+          :value="availableToString"
         />
         <shop-list-item
           :title="$t('NFTs.lblTotalClaimed')"
@@ -47,6 +47,7 @@ import { mapState } from 'vuex';
 
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
+import dayjs from 'dayjs';
 
 export default Vue.extend({
   name: 'NftViewMovingWithOlympus',
@@ -59,12 +60,18 @@ export default Vue.extend({
   computed: {
     ...mapState('nft', {
       //TODO use other store field
-      totalAmount: 'UnexpectedMoveTotalAmount',
-      totalClaimed: 'UnexpectedMoveTotalClaimed',
-      totalExchanged: 'UnexpectedMoveTotalExchanged'
+      availableTo: 'OlympusEndTs',
+      totalClaimed: 'OlympusTotalClaimed',
+      availableFrom: 'OlympusStartTs'
     }),
     hasError(): boolean {
       return false;
+    },
+    availableToString(): string {
+      return dayjs.unix(this.availableTo).format('MMMM DD, HH:mm UTC');
+    },
+    availableFromString(): string {
+      return dayjs.unix(this.availableFrom).format('MMMM DD, HH:mm UTC');
     }
   },
   methods: {
