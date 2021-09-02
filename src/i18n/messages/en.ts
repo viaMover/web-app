@@ -382,23 +382,32 @@ export default {
     }
   },
   NFTs: {
+    lblUnexpectedMove: 'Unexpected Move',
+    lblMovingWithOlympus: 'Moving with Olympus',
+    lblSweetAndSour: 'Sweet & Sour',
     lblNFTDrops: 'NFT Drops',
     lblNFTOverview: '{name} Overview',
     lblTotalNumberOfNFTs: 'Total number of NFTs',
+    lblTotalAmount: 'Total amount',
     lblTotalClaimed: 'Total claimed',
     lblTotalExchanged: 'Total exchanged',
+    lblAvailableFrom: 'Available from',
+    lblAvailableTo: 'Available to',
     lblWhatElseCanDo: 'What else can you do',
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
+    txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
     txtNFTs: {
       movingWithOlympus: {
         description:
           'The Moving with Olympus NFT gives you an exclusive avatar.',
-        pageDescription:
+        pageDescriptionPartOne:
           'The Moving with Olympus is the limited NFT series available only ' +
           'for 3 days. 3 days is all it takes to become a part of something ' +
-          'bigger than any one of us. This NFT gives it’s owner a right to a ' +
-          'unique avatar on Mover. Wear the badge of honor.\n'
+          'bigger than any one of us.',
+        pageDescriptionPartTwo:
+          'This NFT gives it’s owner a right to a ' +
+          'unique avatar on Mover. Wear the badge of honor.'
       },
       swapPassport: {
         description:
@@ -410,36 +419,48 @@ export default {
       },
       sweetAndSour: {
         description: 'The Sweet & Sour NFT gives early access to Nibble Shop.',
-        pageDescription:
+        pageDescriptionPartOne:
           'This NFT is dropped for all unique addresses that have held HOLY ' +
           'until April 31, 2021; and those that participated in the early LP ' +
-          'program bu didn’t migrate. The Sweet & Sour NFT gives early access ' +
-          'to Nibble Shop.'
+          'program bu didn’t migrate.',
+        pageDescriptionPartTwo:
+          'The Sweet & Sour NFT gives early access to Nibble Shop.'
       },
       unexpectedMove: {
         description:
           'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
           'but only once.',
-        pageDescription:
-          'This NFT is dropped for all participants in our Twitter promo. ' +
+        pageDescriptionPartOne:
+          'This NFT is dropped for all participants in our Twitter promo.',
+        pageDescriptionPartTwo:
           'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
           'but only once.'
       }
     },
-    btnGet: {
-      simple: 'Get'
-    },
-    btnClaimAndExchange: {
-      simple: 'Claim & Exchange',
-      emoji: '🦍 @:NFTs.btnClaimAndExchange.simple'
-    },
-    btnExchange: {
-      simple: 'Exchange',
-      emoji: '🔥 @:NFTs.btnExchange.simple'
-    },
-    btnClaim: {
-      simple: 'Claim',
-      emoji: '🎉 @:NFTs.btnClaim.simple'
+    btn: {
+      unexpectedMove: {
+        get: {
+          txt: 'Get my Unexpected Move'
+        },
+        claimAndExchange: {
+          emoji: '🦍',
+          txt: 'Claim and Exchange for MOVE'
+        },
+        exchange: {
+          emoji: '🔄',
+          txt: 'Exchange for MOVE'
+        }
+      },
+      sweetAndSour: {
+        get: {
+          txt: 'Get my Swet & Sour'
+        }
+      },
+      movingWithOlympus: {
+        get: {
+          txt: 'Get my Moving with Olympus'
+        }
+      }
     }
   },
   asset: {

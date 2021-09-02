@@ -1,36 +1,47 @@
 <template>
   <shop-wrapper has-close-button @close="handleClose">
     <template v-slot:info>
-      <h1 class="info__title">Unexpected Move</h1>
+      <h1 class="info__title">{{ $t('NFTs.lblUnexpectedMove') }}</h1>
       <p class="info__description">
-        This NFT is dropped for all participants in our Twitter promo.
+        {{ $t('NFTs.txtNFTs.unexpectedMove.pageDescriptionPartOne') }}
         <br /><br />
-        The Unexpected Move NFT can be exchanged for 1 MOVE token, but only
-        once.
+        {{ $t('NFTs.txtNFTs.unexpectedMove.pageDescriptionPartTwo') }}
       </p>
       <shop-list>
-        <shop-list-item :title="$t('Total amount')" value="247" />
-        <shop-list-item :title="$t('Total claimed')" value="16" />
-        <shop-list-item :title="$t('Total exchanged')" value="14" />
+        <shop-list-item
+          :title="$t('NFTs.lblTotalAmount')"
+          :value="totalAmount"
+        />
+        <shop-list-item
+          :title="$t('NFTs.lblTotalClaimed')"
+          :value="totalClaimed"
+        />
+        <shop-list-item
+          :title="$t('NFTs.lblTotalExchanged')"
+          :value="totalExchanged"
+        />
       </shop-list>
       <action-button
         button-class="button button-active"
-        text="Get my Unexpected Move"
+        :text="$t('NFTs.btn.unexpectedMove.get.txt')"
       />
+      <div v-if="hasError" class="error-message">{{ $t('NFTs.txtOhNo') }}</div>
       <div class="info__more">
-        <p>{{ $t('NFTs.txtWhatElseCanDo') }}</p>
+        <p>{{ $t('NFTs.lblWhatElseCanDo') }}</p>
         <ul>
           <li>
-            <button class="button-active" type="button">
-              <span class="icon">🦍</span>
-              <span class="description"></span>
-            </button>
+            <emoji-text-button
+              button-class="button-active"
+              :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
+              :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
+            />
           </li>
           <li>
-            <button class="button-active" type="button">
-              <span class="icon">🔄</span>
-              <span class="description">Exchange for MOVE</span>
-            </button>
+            <emoji-text-button
+              button-class="button-active"
+              :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
+              :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
+            />
           </li>
         </ul>
       </div>
@@ -38,11 +49,12 @@
     <template v-slot:illustration>
       <video
         autoplay="autoplay"
+        class="unexpected-move"
         data-keepplaying="data-keepplaying"
         loop="loop"
         muted="muted"
         playsinline="playsinline"
-        src="videos/unexpected-move-gif.webm"
+        src="@/assets/videos/UnexpectedMove.webm"
       />
     </template>
   </shop-wrapper>
@@ -50,17 +62,30 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
+import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
 
 export default Vue.extend({
   name: 'NftViewUnexpectedMove',
   components: {
+    EmojiTextButton,
     ActionButton,
     ShopList,
     ShopListItem,
     ShopWrapper
+  },
+  computed: {
+    ...mapState('nft', {
+      totalAmount: 'UnexpectedMoveTotalAmount',
+      totalClaimed: 'UnexpectedMoveTotalClaimed',
+      totalExchanged: 'UnexpectedMoveTotalExchanged'
+    }),
+    hasError(): boolean {
+      return false;
+    }
   },
   methods: {
     handleClose(): void {

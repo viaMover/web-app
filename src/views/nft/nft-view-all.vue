@@ -16,10 +16,10 @@
       <li v-for="nft in nftList" :key="nft.name" class="list__item">
         <router-link class="button-active" :to="routeTo(nft.name)">
           <custom-picture
-            :alt="nft.picture.alt"
-            :sources="nft.picture.sources"
-            :src="nft.picture.src"
-            :webp-sources="nft.picture.webpSources"
+            :alt="nft.bigPicture.alt"
+            :sources="nft.bigPicture.sources"
+            :src="nft.bigPicture.src"
+            :webp-sources="nft.bigPicture.webpSources"
           />
           <h3>{{ nft.name }}</h3>
           <p class="description">{{ nft.description }}</p>
@@ -32,9 +32,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
-
-import { NftAssetViewAllCardData } from '@/components/nft';
-import { isFeatureEnabled } from '@/settings';
+import { mapState } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
@@ -46,7 +44,7 @@ export default Vue.extend({
     CustomPicture
   },
   data() {
-    const result = {
+    return {
       headerImage: {
         alt: this.$t('NFTs.txtLogoAlt'),
         src: require('@/assets/images/NFT-Drops.png'),
@@ -64,99 +62,11 @@ export default Vue.extend({
             src: require('@/assets/images/NFT-Drops@2x.webp')
           }
         ]
-      } as PictureDescriptor,
-      nftList: [
-        {
-          name: 'Moving With Olympus',
-          description: this.$t('NFTs.txtNFTs.movingWithOlympus.description'),
-          picture: {
-            alt: this.$t('NFTs.txtAssetAlt', { name: 'Mowing With Olympus' }),
-            src: require('@/assets/images/MovingWithOlympusBig.png'),
-            sources: [
-              {
-                variant: '2x',
-                src: require('@/assets/images/MovingWithOlympusBig@2x.png')
-              }
-            ],
-            webpSources: [
-              { src: require('@/assets/images/MovingWithOlympusBig.webp') },
-              {
-                variant: '2x',
-                src: require('@/assets/images/MovingWithOlympusBig@2x.webp')
-              }
-            ]
-          }
-        },
-        {
-          name: 'Sweet & Sour',
-          description: this.$t('NFTs.txtNFTs.sweetAndSour.description'),
-          picture: {
-            alt: this.$t('NFTs.txtAssetAlt', { name: 'Sweet & Sour' }),
-            src: require('@/assets/images/SweetAndSourBig.png'),
-            sources: [
-              {
-                variant: '2x',
-                src: require('@/assets/images/SweetAndSourBig@2x.png')
-              }
-            ],
-            webpSources: [
-              { src: require('@/assets/images/SweetAndSourBig.webp') },
-              {
-                variant: '2x',
-                src: require('@/assets/images/SweetAndSourBig@2x.webp')
-              }
-            ]
-          }
-        },
-        {
-          name: 'Unexpected Move',
-          description: this.$t('NFTs.txtNFTs.unexpectedMove.description'),
-          picture: {
-            alt: this.$t('NFTs.txtAssetAlt', { name: 'Unexpected Move' }),
-            src: require('@/assets/images/UnexpectedMoveBig.png'),
-            sources: [
-              {
-                variant: '2x',
-                src: require('@/assets/images/UnexpectedMoveBig@2x.png')
-              }
-            ],
-            webpSources: [
-              { src: require('@/assets/images/UnexpectedMoveBig.webp') },
-              {
-                variant: '2x',
-                src: require('@/assets/images/UnexpectedMoveBig@2x.webp')
-              }
-            ]
-          }
-        }
-      ] as Array<NftAssetViewAllCardData>
+      } as PictureDescriptor
     };
-
-    if (isFeatureEnabled('isSwapPassportEnabled')) {
-      result.nftList.push({
-        name: 'Swap Passport',
-        description: this.$t('NFTs.txtNFTs.swapPassport.description'),
-        picture: {
-          alt: this.$t('NFTs.txtAssetAlt', { name: 'Swap Passport' }),
-          src: require('@/assets/images/SwapPassportBig.png'),
-          sources: [
-            {
-              variant: '2x',
-              src: require('@/assets/images/SwapPassportBig@2x.png')
-            }
-          ],
-          webpSources: [
-            { src: require('@/assets/images/SwapPassportBig.webp') },
-            {
-              variant: '2x',
-              src: require('@/assets/images/SwapPassportBig@2x.webp')
-            }
-          ]
-        }
-      } as NftAssetViewAllCardData);
-    }
-
-    return result;
+  },
+  computed: {
+    ...mapState('nft', { nftList: 'nfts' })
   },
   methods: {
     handleClose(): void {
