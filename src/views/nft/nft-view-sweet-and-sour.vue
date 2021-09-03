@@ -35,8 +35,20 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-          src="https://ipfs.io/ipfs/QmZE2K69rBaBze3Kb6UTPyr7wXr2spJ6V1mCxc6HvqEfbA/SAS.mp4"
-        />
+        >
+          <source
+            src="https://storage.googleapis.com/movermedia/SweetAndSour.webm"
+            type="video/webm"
+          />
+          <source
+            src="https://storage.googleapis.com/movermedia/SAS.mp4"
+            type="video/mp4"
+          />
+          <source
+            src="https://ipfs.io/ipfs/QmZE2K69rBaBze3Kb6UTPyr7wXr2spJ6V1mCxc6HvqEfbA/SAS.mp4"
+            type="video/mp4"
+          />
+        </video>
       </template>
     </shop-wrapper>
     <simple-loader-modal

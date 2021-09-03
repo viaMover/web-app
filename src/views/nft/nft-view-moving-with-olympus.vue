@@ -39,8 +39,16 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-          src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
-        />
+        >
+          <source
+            src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"
+            type="video/mp4"
+          />
+          <source
+            src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
+            type="video/mp4"
+          />
+        </video>
       </template>
     </shop-wrapper>
     <simple-loader-modal
