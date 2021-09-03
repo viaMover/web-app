@@ -27,8 +27,8 @@
           :text="$t('NFTs.btn.unexpectedMove.get.txt')"
           @button-click="handleClaim"
         />
-        <div v-if="getNFTerror !== undefined" class="error-message">
-          {{ getNFTerror }}
+        <div v-if="getNftError !== undefined" class="error-message">
+          {{ getNftError }}
         </div>
         <div class="info__more">
           <p>{{ $t('NFTs.lblWhatElseCanDo') }}</p>
@@ -102,7 +102,7 @@ export default Vue.extend({
   data() {
     return {
       transactionStep: undefined as Step | undefined,
-      getNFTerror: undefined as string | undefined,
+      getNftError: undefined as string | undefined,
       actionError: undefined as string | undefined
     };
   },
@@ -118,7 +118,7 @@ export default Vue.extend({
   },
   mounted(): void {
     this.transactionStep = undefined;
-    this.getNFTerror = undefined;
+    this.getNftError = undefined;
     this.actionError = undefined;
   },
   methods: {
@@ -136,7 +136,7 @@ export default Vue.extend({
       try {
         sig = await getUnexpectedMoveClaimSignature(this.currentAddress);
       } catch {
-        this.getNFTerror = this.$t('NFTs.txtOhNo').toString();
+        this.getNftError = this.$t('NFTs.txtOhNo').toString();
         return;
       }
       try {
@@ -163,7 +163,7 @@ export default Vue.extend({
       try {
         sig = await getUnexpectedMoveClaimSignature(this.currentAddress);
       } catch {
-        this.getNFTerror = this.$t('NFTs.txtOhNo').toString();
+        this.getNftError = this.$t('NFTs.txtOhNo').toString();
         return;
       }
       try {
