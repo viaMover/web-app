@@ -404,7 +404,7 @@ export default {
           'The Moving with Olympus NFT gives you an exclusive avatar.',
         pageDescriptionPartOne:
           'The Moving with Olympus is the limited NFT series available only ' +
-          'for 3 days. 3 days is all it takes to become a part of something ' +
+          'for 3 hours. 3 hours is all it takes to become a part of something ' +
           'bigger than any one of us.',
         pageDescriptionPartTwo:
           'This NFT gives it’s owner a right to a ' +
@@ -423,7 +423,7 @@ export default {
         pageDescriptionPartOne:
           'This NFT is dropped for all unique addresses that have held HOLY ' +
           'until April 31, 2021; and those that participated in the early LP ' +
-          'program bu didn’t migrate.',
+          'program but didn’t migrate.',
         pageDescriptionPartTwo:
           'The Sweet & Sour NFT gives early access to Nibble Shop.'
       },
