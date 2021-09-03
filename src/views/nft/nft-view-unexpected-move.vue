@@ -27,8 +27,8 @@
           :text="$t('NFTs.btn.unexpectedMove.get.txt')"
           @button-click="handleClaim"
         />
-        <div v-if="error !== undefined" class="error-message">
-          {{ error }}
+        <div v-if="getNFTerror !== undefined" class="error-message">
+          {{ getNFTerror }}
         </div>
         <div class="info__more">
           <p>{{ $t('NFTs.lblWhatElseCanDo') }}</p>
@@ -48,6 +48,11 @@
                 :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
                 @button-click="handleExchange"
               />
+            </li>
+            <li>
+              <div v-if="actionError !== undefined" class="error-message">
+                {{ actionError }}
+              </div>
             </li>
           </ul>
         </div>
@@ -97,7 +102,8 @@ export default Vue.extend({
   data() {
     return {
       transactionStep: undefined as Step | undefined,
-      error: undefined as string | undefined
+      getNFTerror: undefined as string | undefined,
+      actionError: undefined as string | undefined
     };
   },
   computed: {
@@ -112,7 +118,8 @@ export default Vue.extend({
   },
   mounted(): void {
     this.transactionStep = undefined;
-    this.error = undefined;
+    this.getNFTerror = undefined;
+    this.actionError = undefined;
   },
   methods: {
     ...mapActions('nft', [
@@ -129,7 +136,7 @@ export default Vue.extend({
       try {
         sig = await getUnexpectedMoveClaimSignature(this.currentAddress);
       } catch {
-        this.error = this.$t('NFTs.txtOhNo').toString();
+        this.getNFTerror = this.$t('NFTs.txtOhNo').toString();
         return;
       }
       try {
@@ -147,7 +154,7 @@ export default Vue.extend({
           this.transactionStep = 'Reverted';
         } else {
           this.transactionStep = undefined;
-          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
         }
       }
     },
@@ -156,7 +163,7 @@ export default Vue.extend({
       try {
         sig = await getUnexpectedMoveClaimSignature(this.currentAddress);
       } catch {
-        this.error = this.$t('NFTs.txtOhNo').toString();
+        this.getNFTerror = this.$t('NFTs.txtOhNo').toString();
         return;
       }
       try {
@@ -174,7 +181,7 @@ export default Vue.extend({
           this.transactionStep = 'Reverted';
         } else {
           this.transactionStep = undefined;
-          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
         }
       }
     },
@@ -193,7 +200,7 @@ export default Vue.extend({
           this.transactionStep = 'Reverted';
         } else {
           this.transactionStep = undefined;
-          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
         }
       }
     }
