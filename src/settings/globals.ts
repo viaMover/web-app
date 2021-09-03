@@ -27,7 +27,7 @@ const values: Globals = {
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
-  isNavigationFallbackEnabled: false
+  isNavigationFallbackEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
