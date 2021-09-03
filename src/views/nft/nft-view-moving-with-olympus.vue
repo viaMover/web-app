@@ -108,6 +108,9 @@ export default Vue.extend({
       'checkOlympusClaimable',
       'refreshNftStats'
     ]),
+    ...mapActions('account', {
+      loadAvatar: 'loadAvatar'
+    }),
     handleClose(): void {
       this.$router.back();
     },
@@ -125,6 +128,7 @@ export default Vue.extend({
           }
         } as ChangePayload);
         await this.refreshNftStats();
+        await this.loadAvatar();
         this.transactionStep = 'Success';
       } catch (err) {
         if (this.transactionStep === 'Process') {
