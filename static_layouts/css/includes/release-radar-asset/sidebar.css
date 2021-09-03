@@ -1,0 +1,32 @@
+.release-radar-asset__sidebar-wrapper ul {
+  margin-top: 16px;
+  list-style-type: none;
+}
+.release-radar-asset__sidebar-wrapper ul li {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 16px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(60,60,67,0.08);
+}
+.release-radar-asset__sidebar-wrapper ul li:first-child {
+  margin-top: 0;
+}
+.release-radar-asset__sidebar-wrapper ul li .description {
+  -webkit-flex-basis: 50%;
+      -ms-flex-preferred-size: 50%;
+          flex-basis: 50%;
+  font-family: $Regular;
+  font-size: 12px;
+  line-height: 22px;
+}
+.release-radar-asset__sidebar-wrapper ul li .value {
+  display: block;
+  text-align: right;
+  -webkit-flex-basis: 50%;
+      -ms-flex-preferred-size: 50%;
+          flex-basis: 50%;
+  font-family: $Medium;
+}

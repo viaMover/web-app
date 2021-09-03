@@ -55,22 +55,28 @@ export const buildBalancesChartData = (
   const source = filterByPeriod(list, filterPeriod).reduce(
     (acc, val, idx, arr) => {
       let valSource: number;
+      let shouldTrimLeft: boolean;
+
       switch (val.type) {
         case 'savings_hourly_balance_item':
           valSource = val.balance;
+          shouldTrimLeft = val.balance === 0;
           break;
         case 'savings_month_balance_item':
           valSource = val.earned;
+          shouldTrimLeft = val.earned === 0 && val.balance === 0;
           break;
         case 'treasury_hourly_balance_item':
           valSource = val.bonusEarned;
+          shouldTrimLeft = val.bonusEarned === 0;
           break;
         case 'treasury_month_bonuses_item':
           valSource = val.bonusesEarned;
+          shouldTrimLeft = val.bonusesEarned === 0;
           break;
       }
 
-      if (valSource === 0 && !hasTrimmedLeft) {
+      if (!hasTrimmedLeft && shouldTrimLeft) {
         return acc;
       }
 
@@ -140,10 +146,26 @@ export const buildBalancesChartData = (
   );
 
   // pre-normalize items to the range of [0, 1]
-  source.datasets[0].data = source.datasets[0].data.map((dataItem) => ({
-    ...dataItem,
-    y: divide(sub(dataItem.y, minValue), sub(maxValue, minValue))
-  }));
+
+  // if `minValue` and `maxValue` are equal
+  // then division by zero occurs
+  //
+  // in such case we treat all values as equal
+  const areEqualValues = minValue === maxValue;
+
+  source.datasets[0].data = source.datasets[0].data.map((dataItem) => {
+    if (areEqualValues) {
+      return {
+        ...dataItem,
+        y: '1'
+      };
+    }
+
+    return {
+      ...dataItem,
+      y: divide(sub(dataItem.y, minValue), sub(maxValue, minValue))
+    };
+  });
 
   return source;
 };

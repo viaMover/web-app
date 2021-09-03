@@ -382,51 +382,86 @@ export default {
     }
   },
   NFTs: {
+    lblUnexpectedMove: 'Unexpected Move',
+    lblMovingWithOlympus: 'Moving with Olympus',
+    lblSweetAndSour: 'Sweet & Sour',
     lblNFTDrops: 'NFT Drops',
     lblNFTOverview: '{name} Overview',
     lblTotalNumberOfNFTs: 'Total number of NFTs',
+    lblTotalAmount: 'Total amount',
     lblTotalClaimed: 'Total claimed',
     lblTotalExchanged: 'Total exchanged',
+    lblAvailableFrom: 'Available from',
+    lblAvailableTo: 'Available to',
+    lblWhatElseCanDo: 'What else can you do',
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
+    txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
+    txtOhNoSomething: 'Oh no. Something went wrong',
     txtNFTs: {
-      sweetAndSour: {
+      movingWithOlympus: {
         description:
+          'The Moving with Olympus NFT gives you an exclusive avatar.',
+        pageDescriptionPartOne:
+          'The Moving with Olympus is the limited NFT series available only ' +
+          'for 3 hours. 3 hours is all it takes to become a part of something ' +
+          'bigger than any one of us.',
+        pageDescriptionPartTwo:
+          'This NFT gives it’s owner a right to a ' +
+          'unique avatar on Mover. Wear the badge of honor.'
+      },
+      swapPassport: {
+        description:
+          'The Swap Passport NFT can be exchanged for one free swap via Mover.',
+        pageDescription:
+          'The Swap Passport is the limited NFT series available to those, ' +
+          'who was present during the Sushi AMA on July 14th 2021. This NFT ' +
+          'can be exchanged for one free swap on Mover platform.'
+      },
+      sweetAndSour: {
+        description: 'The Sweet & Sour NFT gives early access to Nibble Shop.',
+        pageDescriptionPartOne:
           'This NFT is dropped for all unique addresses that have held HOLY ' +
           'until April 31, 2021; and those that participated in the early LP ' +
-          'program bu didn’t migrate. The Sweet & Sour NFT gives early access' +
-          ' to Nibble Shop.',
-        pageDescription:
-          'Nothing really to add here. This cap is hand-made ' +
-          'for all the CEOs of all the monies. This is a genesis limited ' +
-          'addition with only 30 ever caps to be made. This item will not ' +
-          'be restocked. One size fits all CEOs.'
+          'program but didn’t migrate.',
+        pageDescriptionPartTwo:
+          'The Sweet & Sour NFT gives early access to Nibble Shop.'
       },
       unexpectedMove: {
         description:
-          'This NFT is dropped for all participants in our Twitter promo. ' +
           'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
           'but only once.',
-        pageDescription:
-          'This NFT is dropped for all participants in our ' +
-          'Twitter promo. The Unexpected Move NFT can be exchanged for 1 ' +
-          'MOVE token, but only once.'
+        pageDescriptionPartOne:
+          'This NFT is dropped for all participants in our Twitter promo.',
+        pageDescriptionPartTwo:
+          'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
+          'but only once.'
       }
     },
-    btnGet: {
-      simple: 'Get'
-    },
-    btnClaimAndExchange: {
-      simple: 'Claim & Exchange',
-      emoji: '🦍 @:NFTs.btnClaimAndExchange.simple'
-    },
-    btnExchange: {
-      simple: 'Exchange',
-      emoji: '🔥 @:NFTs.btnExchange.simple'
-    },
-    btnClaim: {
-      simple: 'Claim',
-      emoji: '🎉 @:NFTs.btnClaim.simple'
+    btn: {
+      unexpectedMove: {
+        get: {
+          txt: 'Get my Unexpected Move'
+        },
+        claimAndExchange: {
+          emoji: '🦍',
+          txt: 'Claim and Exchange for MOVE'
+        },
+        exchange: {
+          emoji: '🔄',
+          txt: 'Exchange for MOVE'
+        }
+      },
+      sweetAndSour: {
+        get: {
+          txt: 'Get my Swet & Sour'
+        }
+      },
+      movingWithOlympus: {
+        get: {
+          txt: 'Get my Moving with Olympus'
+        }
+      }
     }
   },
   asset: {
@@ -521,6 +556,10 @@ export default {
     txtSelectAssetButtonAlt: 'select asset',
     txtNavigationLinkAlt: 'navigation link',
     txtSwapDetailsIconAlt: 'swap details',
-    txtTokenInfoAlt: '{name} info on Etherscan'
+    txtTokenInfoAlt: '{name} info on Etherscan',
+    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus'
+  },
+  more: {
+    lblMore: 'More'
   }
 };

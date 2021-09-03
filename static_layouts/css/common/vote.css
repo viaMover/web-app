@@ -1,0 +1,31 @@
+.popup-vote .popup__content .info__form-left div.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background: #f1f1f1;
+  -webkit-box-shadow: 0px 0px 8px #ccc;
+          box-shadow: 0px 0px 8px #ccc;
+}
+.popup-vote .popup__content .info__form-right button.currency {
+  background: #ccc;
+  -webkit-box-shadow: 0px 0px 16px #ccc;
+          box-shadow: 0px 0px 16px #ccc;
+}
+.popup-vote .popup__content .info__form-right button.currency span {
+  color: $black;
+}
+.popup-vote .popup__content .button .action {
+  background-color: $black;
+}

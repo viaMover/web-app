@@ -1,0 +1,11 @@
+.popup-product-item-sell .popup__content .info__form-right button.currency {
+  background: #b9bbbc;
+  -webkit-box-shadow: 0px 0px 16px #b9bbbc;
+          box-shadow: 0px 0px 16px #b9bbbc;
+}
+.popup-product-item-sell .popup__content .info__form-right button.currency span {
+  color: $black;
+}
+.popup-product-item-sell .popup__content .button .action {
+  background-color: $black;
+}

@@ -1,4 +1,9 @@
-export { getAvatarFromPersist, setAvatarToPersist } from './avatar';
+export {
+  getAvatarFromPersist,
+  setAvatarToPersist,
+  getIsOlympusAvatarKnownFromPersist,
+  setIsOlympusAvatarKnownToPersist
+} from './avatar';
 export {
   getLastProviderFromPersist,
   setLastProviderToPersist,

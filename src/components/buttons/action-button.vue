@@ -21,12 +21,10 @@ export default Vue.extend({
   props: {
     text: {
       type: String,
-      required: false,
       default: ''
     },
     buttonClass: {
       type: String,
-      required: false,
       default: 'button'
     },
     disabled: {
