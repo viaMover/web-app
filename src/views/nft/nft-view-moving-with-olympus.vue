@@ -84,10 +84,10 @@ export default Vue.extend({
       availableFrom: 'OlympusStartTs'
     }),
     availableToString(): string {
-      return dayjs.unix(this.availableTo).format('MMMM DD, HH:mm UTC');
+      return dayjs.unix(this.availableTo).utc().format('MMMM DD, HH:mm UTC');
     },
     availableFromString(): string {
-      return dayjs.unix(this.availableFrom).format('MMMM DD, HH:mm UTC');
+      return dayjs.unix(this.availableFrom).utc().format('MMMM DD, HH:mm UTC');
     }
   },
   mounted(): void {
