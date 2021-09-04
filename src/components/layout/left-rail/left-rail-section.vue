@@ -3,9 +3,9 @@
     <h3>
       <slot name="section-name">{{ sectionName }}</slot>
     </h3>
-    <ul>
+    <component :is="itemsContainerTag" :class="itemsContainerClass">
       <slot></slot>
-    </ul>
+    </component>
   </div>
 </template>
 
@@ -16,6 +16,14 @@ export default Vue.extend({
   name: 'LeftRailSection',
   props: {
     sectionName: {
+      type: String,
+      default: ''
+    },
+    itemsContainerTag: {
+      type: String,
+      default: 'ul'
+    },
+    itemsContainerClass: {
       type: String,
       default: ''
     }
