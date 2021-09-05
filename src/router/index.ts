@@ -144,6 +144,14 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'global-analytics',
+        name: 'governance-global-analytics',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
+          )
+      },
+      {
         path: '',
         name: 'governance-view-all',
         component: () =>
