@@ -26,7 +26,7 @@ import { Properties } from 'csstype';
 import '@/styles/_left_rail_section_nav_item.less';
 
 export default Vue.extend({
-  name: 'LeftRailSectionItemEmoji',
+  name: 'LeftRailSectionNavItemEmoji',
   props: {
     navigateToName: {
       type: String,
