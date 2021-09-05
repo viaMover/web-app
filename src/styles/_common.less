@@ -114,6 +114,7 @@ main {
   .dashboard {
     display: none;
   }
+
   .dashboard-mobile {
     display: block;
   }
@@ -135,6 +136,7 @@ main {
   .sidebar-wrapper {
     display: none;
   }
+
   .g-wrapper {
     margin: 0 auto;
   }
@@ -373,8 +375,12 @@ body {
   font-weight: 700;
 }
 
-.page-sidebar-wrapper-item ul {
+.page-sidebar-wrapper-item > ul {
   list-style-type: none;
+  margin-top: 16px;
+}
+
+.page-sidebar-wrapper-item > div {
   margin-top: 16px;
 }
 
@@ -582,7 +588,8 @@ body {
   top: 8px;
   left: 24px;
   background-color: transparent;
-  font-family: 'Roboto-Regular';
+  font-family: 'Roboto-Regular', sans-serif;
+  font-weight: 400;
   font-size: 14px;
   line-height: 24px;
   color: rgba(60, 60, 67, 0.6);
@@ -787,7 +794,7 @@ body {
   font-weight: 500;
   font-size: 14px;
   line-height: 22px;
-  color: rgba(60,60,67,0.6);
+  color: rgba(60, 60, 67, 0.6);
   margin-top: 16px;
 }
 

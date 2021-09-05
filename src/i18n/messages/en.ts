@@ -310,7 +310,15 @@ export default {
     lblAvailableVotingPower: 'Available voting power',
     lblVotesFor: 'Votes FOR',
     lblVotesAgainst: 'Votes AGAINST',
-    lblCurrentOutcome: 'Current outcome'
+    lblCurrentOutcome: 'Current outcome',
+    txtGovernanceImageAlt: 'Governance icon image',
+    lblMyGovernance: 'My Governance',
+    lblManageGovernance: 'Manage Governance',
+    txtCreateAProposal: 'Community Voting',
+    txtCreateAProposalAlt: 'Create a proposal icon image',
+    txtGlobalAnalytics: 'All information about Governance',
+    lblGlobalAnalytics: 'Global analytics',
+    txtGovernanceGlobalAnalyticsImageAlt: 'Global analytics icon image'
   },
   nibbleShop: {
     lblNibbleShop: 'Nibble shop',

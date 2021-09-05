@@ -21,7 +21,8 @@ export default Vue.extend({
     },
     itemsContainerTag: {
       type: String,
-      default: 'ul'
+      default: 'ul',
+      validator: (tag) => ['div', 'ul'].includes(tag)
     },
     itemsContainerClass: {
       type: String,

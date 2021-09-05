@@ -1,8 +1,8 @@
 <template>
   <router-link
-    active-class="active"
     class="left-rail-section-nav-item button-active emoji"
     :class="containerClass"
+    exact-active-class="active"
     :style="containerStyles"
     :to="{ name: this.navigateToName }"
   >
