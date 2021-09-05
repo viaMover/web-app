@@ -1,25 +1,21 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
     has-close-button
     has-left-rail
+    is-black-close-button
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <governance-overview />
-      <governance-stats />
+      <left-rail-section>
+        <governance-nav-my-governance />
+        <governance-nav-manage-governance />
+      </left-rail-section>
     </template>
 
     <secondary-page
       :has-heading-buttons="isCreateProposalAvailable"
       :title="$t('governance.lblGovernance')"
     >
-      <template v-if="isCreateProposalAvailable" v-slot:heading-buttons>
-        <heading-nav-button navigate-to-name="governance-create">
-          {{ $t('governance.btnCreateAProposal.emoji') }}
-        </heading-nav-button>
-      </template>
-
       <h2>{{ $t('governance.lblGetInvolved') }}</h2>
       <governance-proposals />
     </secondary-page>
@@ -29,12 +25,15 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { SecondaryPage, ContentWrapper } from '@/components/layout';
-import { HeadingNavButton } from '@/components/buttons';
 import {
-  GovernanceOverview,
+  SecondaryPage,
+  ContentWrapper,
+  LeftRailSection
+} from '@/components/layout';
+import {
   GovernanceProposals,
-  GovernanceStats
+  GovernanceNavMyGovernance,
+  GovernanceNavManageGovernance
 } from '@/components/governance';
 
 export default Vue.extend({
@@ -42,10 +41,10 @@ export default Vue.extend({
   components: {
     ContentWrapper,
     SecondaryPage,
-    HeadingNavButton,
-    GovernanceOverview,
-    GovernanceProposals,
-    GovernanceStats
+    LeftRailSection,
+    GovernanceNavMyGovernance,
+    GovernanceNavManageGovernance,
+    GovernanceProposals
   },
   computed: {
     hasBackButton(): boolean {
