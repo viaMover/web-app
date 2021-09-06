@@ -49,7 +49,7 @@ export const getAvatarFromPersist = async (
   }
 
   const addressBoundItem = persistedItem[address];
-  if (addressBoundItem.type === undefined) {
+  if (addressBoundItem?.type === undefined) {
     return undefined; // compatibility check for Olympus NFT avatar feature
   }
 
