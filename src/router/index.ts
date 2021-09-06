@@ -202,6 +202,14 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'view/vaults',
+        name: 'vaults',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-vaults.vue'
+          )
+      },
+      {
         path: 'view/swap-passport',
         name: 'swap-passport',
         component: () =>

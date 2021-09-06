@@ -12,12 +12,36 @@ import {
 import { RootStoreState } from '@/store/types';
 import { NftAsset, NFTStoreState } from './../types';
 import { isFeatureEnabled } from '@/settings';
+import { getVaultsData } from '@/services/chain/nft/vaults/vaults';
 
 export default {
   async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {
       const nftAssets: Array<NftAsset> = [
+        {
+          name: 'Vaults',
+          description: rootState.i18n?.t(
+            'NFTs.txtNFTs.vaults.description'
+          ) as string,
+          meta: [],
+          picture: {
+            alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
+              name: 'Vaults'
+            }) as string,
+            src: require('@/assets/images/MovingWithOlympus.png'),
+            sources: [],
+            webpSources: []
+          },
+          bigPicture: {
+            alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
+              name: 'Vaults'
+            }) as string,
+            src: require('@/assets/images/MovingWithOlympusBig.png'),
+            sources: [],
+            webpSources: []
+          }
+        },
         {
           name: 'Moving With Olympus',
           description: rootState.i18n?.t(
@@ -225,22 +249,30 @@ export default {
       rootState!.account!.provider!.web3
     );
 
-    const olympusPromise = getOlympusData(
+    const olympusDataPromise = getOlympusData(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3
+    );
+
+    const vaultsDataPromise = getVaultsData(
       rootState!.account!.currentAddress!,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3
     );
 
     try {
-      const [unexpectedMoveData, sweetAndSourData, olympusData] =
+      const [unexpectedMoveData, sweetAndSourData, olympusData, vaultsData] =
         await Promise.all([
           unexpectedMoveDataPromise,
           sweetAndSourDataPromise,
-          olympusPromise
+          olympusDataPromise,
+          vaultsDataPromise
         ]);
       commit('setUnexpectedMoveData', unexpectedMoveData);
       commit('setSweetAndSourData', sweetAndSourData);
       commit('setOlympusData', olympusData);
+      commit('setVaultsData', vaultsData);
     } catch (err) {
       console.error("can't load nft's data", err);
       Sentry.captureException(err);

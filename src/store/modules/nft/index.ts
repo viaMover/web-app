@@ -26,6 +26,9 @@ export default {
     SweetAndSourTotalAmount: '0',
     SweetAndSourTotalClaimed: '0',
 
+    VaultsTotalAmount: '0',
+    VaultsTotalClaimed: '0',
+
     nfts: []
   },
   actions: {
