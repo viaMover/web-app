@@ -352,22 +352,27 @@ export default {
       townOrCity: 'Nakamoto Town',
       postalCode: 'Just a code'
     },
-    btnGet: {
-      simple: 'Get'
-    },
     txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
     txtProductAlt: '{title} product image',
-    btnBuy: {
-      simple: 'Buy',
-      emoji: '🛍 @:nibbleShop.btnBuy.simple'
-    },
-    btnSell: {
-      simple: 'Sell',
-      emoji: '🚪 @:nibbleShop.btnSell.simple'
-    },
-    btnRedeem: {
-      simple: 'Redeem',
-      emoji: '📦 @:nibbleShop.btnRedeem.simple'
+    lblTotalAvailable: 'Total available',
+    lblPrice: 'Price',
+    lblWhatElseCanDo: 'What else can you do',
+    btn: {
+      get: {
+        txt: 'Purchase the {item}'
+      },
+      redeem: {
+        emoji: '📦',
+        txt: 'Reedem'
+      },
+      sell: {
+        emoji: '🚪',
+        txt: 'Sell'
+      },
+      buy: {
+        emoji: '🛍',
+        txt: 'Buy'
+      }
     },
     lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
     txtNoNFT:
@@ -376,8 +381,25 @@ export default {
       $CEO1: {
         description:
           'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
-          'This is a genesis limited addition with only 30 ever caps to be made. ' +
-          'This item will not be restocked. One size fits all CEOs.'
+          'CEOs are very busy, thus it is a limited addition with only 30 caps ever to be made. ' +
+          'This is a genesis limited addition with only 30 caps ever to be made. One size fits all CEOs.'
+      },
+      $SJ1: {
+        description:
+          'The face mask is stylish and cool, and it’s also hand-made. It’s how you can be different from ' +
+          'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
+          'This mask is also a limited edition with only 30 ever to be released.'
+      },
+      $IC1: {
+        description:
+          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
+          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
+          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
+      },
+      $PWR01: {
+        description:
+          'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
+          'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
       }
     }
   },
