@@ -5,6 +5,7 @@ import {
 } from '@/services/chain';
 import { MutationTree } from 'vuex';
 import { NftAsset, NFTStoreState } from './types';
+import { VaultsData } from '@/services/chain/nft/vaults/types';
 
 export default {
   setIsLoading(state, isLoading): void {
@@ -22,6 +23,10 @@ export default {
   setSweetAndSourData(state, data: SweetAndSourData): void {
     state.SweetAndSourTotalAmount = data.totalAmount;
     state.SweetAndSourTotalClaimed = data.totalClaimed;
+  },
+  setVaultsData(state, data: VaultsData): void {
+    state.VaultsTotalAmount = data.totalAmount;
+    state.VaultsTotalClaimed = data.totalClaimed;
   },
   setOlympusData(state, data: OlympusData): void {
     state.OlympusTotalClaimed = data.totalClaimed;

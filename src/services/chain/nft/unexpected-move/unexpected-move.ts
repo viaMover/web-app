@@ -62,7 +62,7 @@ export const claimUnexpectedMove = async (
 ): Promise<void> => {
   const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
 
-  const sweetAndSour = new web3.eth.Contract(
+  const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
     contractAddress
   );
@@ -73,7 +73,7 @@ export const claimUnexpectedMove = async (
 
   let gasLimit = undefined;
   try {
-    const gasLimitObj = await sweetAndSour.methods
+    const gasLimitObj = await unexpectedMove.methods
       .claimNFT(signature)
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
@@ -106,7 +106,7 @@ export const claimUnexpectedMove = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    sweetAndSour.methods
+    unexpectedMove.methods
       .claimNFT(signature)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
@@ -134,7 +134,7 @@ export const claimAndExchangeUnexpectedMove = async (
 ): Promise<void> => {
   const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
 
-  const sweetAndSour = new web3.eth.Contract(
+  const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
     contractAddress
   );
@@ -145,7 +145,7 @@ export const claimAndExchangeUnexpectedMove = async (
 
   let gasLimit = undefined;
   try {
-    const gasLimitObj = await sweetAndSour.methods
+    const gasLimitObj = await unexpectedMove.methods
       .claimAsMoverToken(signature)
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
@@ -180,7 +180,7 @@ export const claimAndExchangeUnexpectedMove = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    sweetAndSour.methods
+    unexpectedMove.methods
       .claimAsMoverToken(signature)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
@@ -207,7 +207,7 @@ export const exchangeUnexpectedMove = async (
 ): Promise<void> => {
   const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
 
-  const sweetAndSour = new web3.eth.Contract(
+  const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
     contractAddress
   );
@@ -218,7 +218,7 @@ export const exchangeUnexpectedMove = async (
 
   let gasLimit = undefined;
   try {
-    const gasLimitObj = await sweetAndSour.methods
+    const gasLimitObj = await unexpectedMove.methods
       .burnNFTForMoverTokens()
       .estimateGas(transacionParamsEstimate);
 
@@ -252,7 +252,7 @@ export const exchangeUnexpectedMove = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    sweetAndSour.methods
+    unexpectedMove.methods
       .burnNFTForMoverTokens()
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
