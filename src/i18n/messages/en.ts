@@ -382,6 +382,7 @@ export default {
     }
   },
   NFTs: {
+    lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
     lblMovingWithOlympus: 'Moving with Olympus',
     lblSweetAndSour: 'Sweet & Sour',
@@ -394,11 +395,24 @@ export default {
     lblAvailableFrom: 'Available from',
     lblAvailableTo: 'Available to',
     lblWhatElseCanDo: 'What else can you do',
+    lblDontFitTheCriteria: 'Don’t fit the criteria?',
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
     txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
     txtOhNoSomething: 'Oh no. Something went wrong',
     txtNFTs: {
+      vaults: {
+        description:
+          'Vault is a randomized adventurer bank account generated and ' +
+          'stored on chain.',
+        pageDescriptionPartOne:
+          'Vault is a randomized adventurer bank account generated and stored ' +
+          'on chain. Every day vault owners can roll the dice on chain. ' +
+          'Every week the vault that has the highest number of points ' +
+          'wins the entire pool balance.',
+        pageDescriptionPartTwo:
+          'For more details on the critera, please see the FAQ'
+      },
       movingWithOlympus: {
         description:
           'The Moving with Olympus NFT gives you an exclusive avatar.',
@@ -460,6 +474,15 @@ export default {
       movingWithOlympus: {
         get: {
           txt: 'Get my Moving with Olympus'
+        }
+      },
+      vaults: {
+        get: {
+          txt: 'I fit the criteria, get my Vault'
+        },
+        noWorries: {
+          emoji: '🤓',
+          txt: 'No worries, still get the Vault'
         }
       }
     }

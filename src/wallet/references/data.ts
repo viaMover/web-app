@@ -11,6 +11,7 @@ import ERC20_ABI from './abi/erc20-abi.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
+import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -31,7 +32,8 @@ const ADDRESSES = {
     BALANCE_CHECKER_ADDRESS: '0x4dcf4562268dd384fe814c00fad239f06c2a0c2b',
     NFT_UNEXPECTED_MOVE: '0x0769747d4cac06bc2320e0bb1efb31d53fa0aaa1',
     NFT_SWEET_AND_SOUR: '0x129b9083a9f02aed65e31644a8103d5aa2c73701',
-    NFT_OLYMPUS: '0x2733a766d2d79d26b2d23343db5bf38290f67f22'
+    NFT_OLYMPUS: '0x2733a766d2d79d26b2d23343db5bf38290f67f22',
+    NFT_VAULTS: '0x'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -49,7 +51,8 @@ const ADDRESSES = {
     BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9',
     NFT_UNEXPECTED_MOVE: '0x',
     NFT_SWEET_AND_SOUR: '0x',
-    NFT_OLYMPUS: '0x'
+    NFT_OLYMPUS: '0x',
+    NFT_VAULTS: '0x'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -68,7 +71,8 @@ const ADDRESSES = {
     BALANCE_CHECKER_ADDRESS: '0xf3352813b612a2d198e437691557069316b84ebe',
     NFT_UNEXPECTED_MOVE: '0x05425c5e19456c6b2773C3595fCf56cC469902AF',
     NFT_SWEET_AND_SOUR: '0x164c1cc343b6a45eDb37F0dD7558FdCddF173c82',
-    NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf'
+    NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf',
+    NFT_VAULTS: '0x'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -86,7 +90,8 @@ const ADDRESSES = {
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_UNEXPECTED_MOVE: '0x',
     NFT_SWEET_AND_SOUR: '0x',
-    NFT_OLYMPUS: '0x'
+    NFT_OLYMPUS: '0x',
+    NFT_VAULTS: '0x'
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x',
@@ -104,7 +109,8 @@ const ADDRESSES = {
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_UNEXPECTED_MOVE: '0x',
     NFT_SWEET_AND_SOUR: '0x',
-    NFT_OLYMPUS: '0x'
+    NFT_OLYMPUS: '0x',
+    NFT_VAULTS: '0x'
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x',
@@ -122,7 +128,8 @@ const ADDRESSES = {
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_UNEXPECTED_MOVE: '0x',
     NFT_SWEET_AND_SOUR: '0x',
-    NFT_OLYMPUS: '0x'
+    NFT_OLYMPUS: '0x',
+    NFT_VAULTS: '0x'
   }
 };
 
@@ -247,6 +254,10 @@ const NFT_SWEET_AND_SOUR_ADDRESS = (network: Network): string => {
 
 const NFT_OLYMPUS_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].NFT_OLYMPUS ?? '0x1';
+};
+
+const NFT_VAULTS_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].NFT_VAULTS ?? '0x1';
 };
 
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
@@ -380,7 +391,9 @@ export {
   NFT_UNEXPECTED_MOVE_ADDRESS,
   NFT_SWEET_AND_SOUR_ADDRESS,
   NFT_OLYMPUS_ADDRESS,
+  NFT_VAULTS_ADDRESS,
   NFT_UNEXPECTED_MOVE_ABI,
   NFT_SWEET_AND_SOUR_ABI,
-  NFT_OLYMPUS_ABI
+  NFT_OLYMPUS_ABI,
+  NFT_VAULTS_ABI
 };

@@ -2,11 +2,11 @@
   <div>
     <shop-wrapper has-close-button @close="handleClose">
       <template v-slot:info>
-        <h1 class="info__title">{{ $t('NFTs.lblSweetAndSour') }}</h1>
+        <h1 class="info__title">{{ $t('NFTs.lblVaults') }}</h1>
         <p class="info__description">
-          {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartOne') }}
+          {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartOne') }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartTwo') }}
+          {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartTwo') }}
         </p>
         <shop-list>
           <shop-list-item
@@ -20,32 +20,50 @@
         </shop-list>
         <action-button
           button-class="button button-active"
-          :text="$t('NFTs.btn.sweetAndSour.get.txt')"
+          :text="$t('NFTs.btn.vaults.get.txt')"
           @button-click="handleClaim"
         />
-        <div v-if="error !== undefined" class="error-message">
-          {{ error }}
+        <div v-if="getNftError !== undefined" class="error-message">
+          {{ getNftError }}
+        </div>
+        <div class="info__more">
+          <p>{{ $t('NFTs.lblDontFitTheCriteria') }}</p>
+          <ul>
+            <li>
+              <emoji-text-button
+                button-class="button-active"
+                :emoji="$t('NFTs.btn.vaults.noWorries.emoji')"
+                :text="$t('NFTs.btn.vaults.noWorries.txt')"
+                @button-click="handleClaim"
+              />
+            </li>
+            <li>
+              <div v-if="actionError !== undefined" class="error-message">
+                {{ actionError }}
+              </div>
+            </li>
+          </ul>
         </div>
       </template>
       <template v-slot:illustration>
         <video
           autoplay="autoplay"
-          class="sweet-and-sour"
+          class="unexpected-move"
           data-keepplaying="data-keepplaying"
           loop="loop"
           muted="muted"
           playsinline="playsinline"
         >
           <source
-            src="https://storage.googleapis.com/movermedia/SweetAndSour.webm"
+            src="https://storage.googleapis.com/movermedia/UnexpectedMove.webm"
             type="video/webm"
           />
           <source
-            src="https://storage.googleapis.com/movermedia/SAS.mp4"
+            src="https://storage.googleapis.com/movermedia/UnexpectedMove.mp4"
             type="video/mp4"
           />
           <source
-            src="https://ipfs.io/ipfs/QmZE2K69rBaBze3Kb6UTPyr7wXr2spJ6V1mCxc6HvqEfbA/SAS.mp4"
+            src="https://ipfs.io/ipfs/QmS7nM63XtExqL8okruaLs1GifveNfhfcwdXvruiLM5qdJ"
             type="video/mp4"
           />
         </video>
@@ -63,16 +81,19 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import ActionButton from '@/components/buttons/action-button.vue';
 import { Step } from '@/components/controls/form-loader';
-import { getSweetAndSourClaimSignature } from '@/services/chain';
+import { getVaultsSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/actions/claim';
+
+import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
+import ActionButton from '@/components/buttons/action-button.vue';
+import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
 
 export default Vue.extend({
-  name: 'NftViewSweetAndSour',
+  name: 'NftViewUnexpectedMove',
   components: {
+    EmojiTextButton,
     ActionButton,
     ShopList,
     ShopListItem,
@@ -82,13 +103,14 @@ export default Vue.extend({
   data() {
     return {
       transactionStep: undefined as Step | undefined,
-      error: undefined as string | undefined
+      getNftError: undefined as string | undefined,
+      actionError: undefined as string | undefined
     };
   },
   computed: {
     ...mapState('nft', {
-      totalAmount: 'SweetAndSourTotalAmount',
-      totalClaimed: 'SweetAndSourTotalClaimed'
+      totalAmount: 'VaultsTotalAmount',
+      totalClaimed: 'VaultsTotalClaimed'
     }),
     ...mapState('account', {
       currentAddress: 'currentAddress'
@@ -96,24 +118,25 @@ export default Vue.extend({
   },
   mounted(): void {
     this.transactionStep = undefined;
-    this.error = undefined;
+    this.getNftError = undefined;
+    this.actionError = undefined;
   },
   methods: {
-    ...mapActions('nft', ['claimSweetAndSour', 'refreshNftStats']),
+    ...mapActions('nft', ['claimVaults', 'refreshNftStats']),
     handleClose(): void {
       this.$router.back();
     },
     async handleClaim(): Promise<void> {
       let sig = '';
       try {
-        sig = await getSweetAndSourClaimSignature(this.currentAddress);
+        sig = await getVaultsSignature(this.currentAddress);
       } catch {
-        this.error = this.$t('NFTs.txtOhNo').toString();
+        this.getNftError = this.$t('NFTs.txtOhNo').toString();
         return;
       }
       try {
         this.transactionStep = 'Confirm';
-        await this.claimSweetAndSour({
+        await this.claimVaults({
           signature: sig,
           changeStep: () => {
             this.transactionStep = 'Process';
@@ -126,7 +149,7 @@ export default Vue.extend({
           this.transactionStep = 'Reverted';
         } else {
           this.transactionStep = undefined;
-          this.error = this.$t('NFTs.txtOhNoSomething').toString();
+          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
         }
       }
     }
