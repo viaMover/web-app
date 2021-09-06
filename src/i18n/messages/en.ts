@@ -411,7 +411,8 @@ export default {
           'Every week the vault that has the highest number of points ' +
           'wins the entire pool balance.',
         pageDescriptionPartTwo:
-          'For more details on the critera, please see the FAQ'
+          'For more details on the criteria, please see the {0}',
+        faq: 'FAQ'
       },
       movingWithOlympus: {
         description:

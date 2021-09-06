@@ -6,7 +6,11 @@
         <p class="info__description">
           {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartOne') }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartTwo') }}
+          <i18n path="NFTs.txtNFTs.vaults.pageDescriptionPartTwo">
+            <a href="https://viamover.com/faq/vaults" target="_blank">
+              <b>{{ $t('NFTs.txtNFTs.vaults.faq') }}</b>
+            </a>
+          </i18n>
         </p>
         <shop-list>
           <shop-list-item
