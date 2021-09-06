@@ -111,15 +111,15 @@ export type GasData = {
   LastBlock: string;
   SafeGas: {
     price: string;
-    estTime: number;
+    estTime: string;
   };
   ProposeGas: {
     price: string;
-    estTime: number;
+    estTime: string;
   };
   FastGas: {
     price: string;
-    estTime: number;
+    estTime: string;
   };
 };
 
