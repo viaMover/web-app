@@ -74,7 +74,7 @@ export const claimVaults = async (
         '100'
       );
       console.log(
-        '[unexpected move claim estimation] gas estimation by web3 (with additional 20% as buffer): ' +
+        '[vaults claim estimation] gas estimation by web3 (with additional 20% as buffer): ' +
           gasLimitWithBuffer
       );
       gasLimit = gasLimitWithBuffer;
