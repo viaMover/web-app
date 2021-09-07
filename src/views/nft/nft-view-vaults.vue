@@ -52,7 +52,7 @@
       <template v-slot:illustration>
         <video
           autoplay="autoplay"
-          class="unexpected-move"
+          class="vaults"
           data-keepplaying="data-keepplaying"
           loop="loop"
           muted="muted"
@@ -83,7 +83,7 @@ import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
 
 export default Vue.extend({
-  name: 'NftViewUnexpectedMove',
+  name: 'NftViewVaults',
   components: {
     EmojiTextButton,
     ActionButton,

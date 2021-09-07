@@ -240,6 +240,14 @@ const routes: Array<RouteConfig> = [
           import(
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
           )
+      },
+      {
+        path: 'view/dice-project',
+        name: 'dice-project',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
+          )
       }
     ],
     beforeEnter: checkFeatureFlag('isNftDropsEnabled')

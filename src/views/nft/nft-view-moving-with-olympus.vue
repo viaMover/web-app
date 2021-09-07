@@ -131,12 +131,7 @@ export default Vue.extend({
         await this.loadAvatar();
         this.transactionStep = 'Success';
       } catch (err) {
-        if (this.transactionStep === 'Process') {
-          this.transactionStep = 'Reverted';
-        } else {
-          this.transactionStep = undefined;
-          this.error = this.$t('NFTs.txtOhNoSomething').toString();
-        }
+        this.transactionStep = 'Reverted';
       }
     }
   }

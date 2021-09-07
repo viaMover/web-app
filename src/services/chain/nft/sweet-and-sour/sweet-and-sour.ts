@@ -80,12 +80,12 @@ export const claimSweetAndSour = async (
       gasLimit = gasLimitWithBuffer;
     } else {
       Sentry.captureException('Empty gas limit in SweetAndSour claim');
-      throw new Error("Can't estimate SweetAndSour claim");
+      gasLimit = '0';
     }
   } catch (err) {
     console.error("Can't estimate SweetAndSour claim", err);
     Sentry.captureException(err);
-    throw new Error("Can't estimate SweetAndSour claim");
+    gasLimit = '0';
   }
 
   const transactionParams: TransactionsParams = {

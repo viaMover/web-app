@@ -1,3 +1,4 @@
+import { DiceData } from './../../../services/chain/nft/dice/types';
 import {
   UnexpectedMoveData,
   SweetAndSourData,
@@ -27,6 +28,9 @@ export default {
   setVaultsData(state, data: VaultsData): void {
     state.VaultsTotalAmount = data.totalAmount;
     state.VaultsTotalClaimed = data.totalClaimed;
+  },
+  setDiceData(state, data: DiceData): void {
+    state.DiceTotalClaimed = data.totalClaimed;
   },
   setOlympusData(state, data: OlympusData): void {
     state.OlympusTotalClaimed = data.totalClaimed;
