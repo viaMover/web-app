@@ -3,80 +3,60 @@ import { AbiItem } from 'web3-utils';
 import * as Sentry from '@sentry/vue';
 
 import { TransactionsParams } from '@/wallet/types';
-import { OlympusData } from './types';
+import { DiceData, DiceType } from './types';
 import { Network } from '@/utils/networkTypes';
-import { NFT_OLYMPUS_ABI, NFT_OLYMPUS_ADDRESS } from '@/wallet/references/data';
-import store from '@/store/index';
+import { NFT_DICE_ABI, NFT_DICE_ADDRESS } from '@/wallet/references/data';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Step } from '@/components/controls/form-loader/types';
 
-export const getOlympusData = async (
+export const getDiceData = async (
   accountAddress: string,
   network: Network,
   web3: Web3
-): Promise<OlympusData> => {
+): Promise<DiceData> => {
   const transactionParams = {
     from: accountAddress
   } as TransactionsParams;
 
-  const contractAddress = NFT_OLYMPUS_ADDRESS(network);
+  const contractAddress = NFT_DICE_ADDRESS(network);
 
-  const olympus = new web3.eth.Contract(
-    NFT_OLYMPUS_ABI as AbiItem[],
+  const dice = new web3.eth.Contract(
+    NFT_DICE_ABI as AbiItem[],
     contractAddress
   );
 
-  const totalClaimed = await olympus.methods
+  const totalClaimed = await dice.methods
     .totalClaimed()
     .call(transactionParams);
 
-  const balance = await olympus.methods
-    .balanceOf(accountAddress)
-    .call(transactionParams);
-
-  const claimStart = await olympus.methods.claimStart().call(transactionParams);
-
-  const claimEnd = await olympus.methods.claimEnd().call(transactionParams);
-
   return {
-    totalClaimed: totalClaimed.toString(),
-    balance: balance.toString(),
-    claimStart: claimStart.toString(),
-    claimEnd: claimEnd.toString()
+    totalClaimed: totalClaimed.toString()
   };
 };
 
-export const claimOlympus = async (
+export const claimDice = async (
+  diceType: DiceType,
   accountAddress: string,
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_OLYMPUS_ADDRESS(network);
+  const contractAddress = NFT_DICE_ADDRESS(network);
 
-  const olympus = new web3.eth.Contract(
-    NFT_OLYMPUS_ABI as AbiItem[],
+  const sweetAndSour = new web3.eth.Contract(
+    NFT_DICE_ABI as AbiItem[],
     contractAddress
   );
 
-  let feeAmount = await olympus.methods.feeAmount().call({
-    from: accountAddress
-  });
-
-  feeAmount = feeAmount.toString();
-
-  console.info('Fee amount to calim Olympus: ', feeAmount);
-
   const transacionParamsEstimate: TransactionsParams = {
-    from: accountAddress,
-    value: feeAmount
+    from: accountAddress
   };
 
   let gasLimit = undefined;
   try {
-    const gasLimitObj = await olympus.methods
-      .claimNFT()
+    const gasLimitObj = await sweetAndSour.methods
+      .claimNFT(diceType)
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
@@ -85,32 +65,29 @@ export const claimOlympus = async (
         '100'
       );
       console.log(
-        '[olympus estimation] gas estimation by web3 (with additional 20% as buffer): ' +
+        '[dice estimation] gas estimation by web3 (with additional 20% as buffer): ' +
           gasLimitWithBuffer
       );
       gasLimit = gasLimitWithBuffer;
     } else {
-      Sentry.captureException('Empty gas limit in olympus claim');
-      gasLimit = '0';
+      Sentry.captureException('Empty gas limit in Dice claim');
     }
   } catch (err) {
-    console.error("Can't estimate olympus claim", err);
+    console.error("Can't estimate Dice claim", err);
     Sentry.captureException(err);
-    gasLimit = '0';
   }
 
   const transactionParams: TransactionsParams = {
     from: accountAddress,
-    gas: web3.utils.toBN(gasLimit).toNumber(),
+    gas: gasLimit ? web3.utils.toBN(gasLimit).toNumber() : undefined,
     gasPrice: web3.utils
       .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString(),
-    value: feeAmount
+      .toString()
   };
 
   await new Promise<void>((resolve, reject) => {
-    olympus.methods
-      .claimNFT()
+    sweetAndSour.methods
+      .claimNFT(diceType)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);

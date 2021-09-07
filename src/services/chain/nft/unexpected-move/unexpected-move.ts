@@ -89,12 +89,12 @@ export const claimUnexpectedMove = async (
       gasLimit = gasLimitWithBuffer;
     } else {
       Sentry.captureException('Empty gas limit in UnexpectedMove claim');
-      throw new Error("Can't estimate UnexpectedMove claim");
+      gasLimit = '0';
     }
   } catch (err) {
     console.error("Can't estimate UnexpectedMove claim", err);
     Sentry.captureException(err);
-    throw new Error("Can't estimate UnexpectedMove claim");
+    gasLimit = '0';
   }
 
   const transactionParams: TransactionsParams = {

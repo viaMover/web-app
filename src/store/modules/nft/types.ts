@@ -19,6 +19,8 @@ export type NFTStoreState = {
   VaultsTotalAmount: string;
   VaultsTotalClaimed: string;
 
+  DiceTotalClaimed: string;
+
   nfts: Array<NftAsset>;
 };
 
