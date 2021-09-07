@@ -1,6 +1,6 @@
 <template>
-  <li class="item__list-item">
-    <router-link class="button-active" :to="routeTo">
+  <div class="item__list-item">
+    <router-link class="item__list-item button-active" :to="routeTo">
       <custom-picture
         :alt="item.picture.alt"
         :sources="item.picture.sources"
@@ -9,7 +9,7 @@
       />
       <h3>{{ item.name }}</h3>
     </router-link>
-  </li>
+  </div>
 </template>
 
 <script lang="ts">
@@ -17,7 +17,6 @@ import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
 
 import { NftAsset } from '@/store/modules/nft/types';
-
 import { CustomPicture } from '@/components/html5';
 
 export default Vue.extend({
