@@ -4,7 +4,7 @@
     :class="containerClass"
     exact-active-class="active"
     :style="containerStyles"
-    :to="{ name: this.navigateToName }"
+    :to="navigateToRoute"
   >
     <div class="emoji">
       <slot name="emoji">
@@ -24,12 +24,13 @@ import Vue, { PropType } from 'vue';
 import { Properties } from 'csstype';
 
 import '@/styles/_left_rail_section_nav_item.less';
+import { RawLocation } from 'vue-router';
 
 export default Vue.extend({
   name: 'LeftRailSectionNavItemEmoji',
   props: {
-    navigateToName: {
-      type: String,
+    navigateTo: {
+      type: [String, Object] as PropType<RawLocation>,
       required: true
     },
     containerClass: {
@@ -51,6 +52,15 @@ export default Vue.extend({
     textClass: {
       type: String,
       default: ''
+    }
+  },
+  computed: {
+    navigateToRoute(): RawLocation {
+      if (typeof this.navigateTo === 'string') {
+        return { name: this.navigateTo };
+      }
+
+      return this.navigateTo;
     }
   }
 });

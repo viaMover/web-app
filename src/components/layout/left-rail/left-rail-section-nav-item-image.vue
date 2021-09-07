@@ -4,7 +4,7 @@
     :class="containerClass"
     exact-active-class="active"
     :style="containerStyles"
-    :to="{ name: this.navigateToName }"
+    :to="navigateToRoute"
   >
     <div class="image">
       <slot name="picture" />
@@ -22,6 +22,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { RawLocation } from 'vue-router';
 import { Properties } from 'csstype';
 
 import '@/styles/_left_rail_section_nav_item.less';
@@ -29,8 +30,8 @@ import '@/styles/_left_rail_section_nav_item.less';
 export default Vue.extend({
   name: 'LeftRailSectionNavItemImage',
   props: {
-    navigateToName: {
-      type: String,
+    navigateTo: {
+      type: [String, Object] as PropType<RawLocation>,
       required: true
     },
     containerClass: {
@@ -56,6 +57,15 @@ export default Vue.extend({
     descriptionClass: {
       type: String,
       default: ''
+    }
+  },
+  computed: {
+    navigateToRoute(): RawLocation {
+      if (typeof this.navigateTo === 'string') {
+        return { name: this.navigateTo };
+      }
+
+      return this.navigateTo;
     }
   }
 });
