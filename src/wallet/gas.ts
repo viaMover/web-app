@@ -1,12 +1,12 @@
+import * as Sentry from '@sentry/vue';
+
 import { isError, isSuccess } from './../services/responses';
 import { Network } from '@/utils/networkTypes';
 import { getGasPrices as getGasPricesFromEtherscan } from './../services/etherscan/gas';
-import { asyncSleep } from '@/utils/time';
 import { GasData } from './types';
+import { getGasPrices as getGasPricesFromGasStation } from './../services/gasstation/gas';
 
 export type GetGasErrors = 'RateReached' | 'NoEndpointForNetwork' | string;
-
-const WAIT_INTERVAL = 6000; // 6 s
 
 export const getGasPrices = async (
   network = Network.mainnet
@@ -17,12 +17,16 @@ export const getGasPrices = async (
   const res = await getGasPricesFromEtherscan(network);
 
   if (isError<GasData, GetGasErrors>(res)) {
-    if (res.error === 'RateReached') {
-      await asyncSleep(WAIT_INTERVAL);
-      return await getGasPrices(network);
-    }
+    console.error(
+      `Can't load gas prices from Etherscan: ${res.error}, trying another source...`
+    );
 
-    throw new Error(`Cant get gas prices: ${res.error}`);
+    try {
+      return getGasPricesFromGasStation();
+    } catch (err) {
+      console.error("Can't load gas prices from Gas Station");
+      throw new Error("Can't load gas price from all sources");
+    }
   }
 
   if (isSuccess<GasData, GetGasErrors>(res)) {

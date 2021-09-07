@@ -235,6 +235,14 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'view/vaults',
+        name: 'vaults',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-vaults.vue'
+          )
+      },
+      {
         path: 'view/swap-passport',
         name: 'swap-passport',
         component: () =>
@@ -264,6 +272,14 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
+          )
+      },
+      {
+        path: 'view/dice-project',
+        name: 'dice-project',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
           )
       }
     ],

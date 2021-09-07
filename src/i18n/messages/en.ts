@@ -409,6 +409,8 @@ export default {
     }
   },
   NFTs: {
+    lblDiceProject: 'Dice Project',
+    lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
     lblMovingWithOlympus: 'Moving with Olympus',
     lblSweetAndSour: 'Sweet & Sour',
@@ -421,11 +423,37 @@ export default {
     lblAvailableFrom: 'Available from',
     lblAvailableTo: 'Available to',
     lblWhatElseCanDo: 'What else can you do',
+    lblDontFitTheCriteria: 'Don’t fit the criteria?',
+    lblOtherDiceOptions: 'Other dice options?',
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
     txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
     txtOhNoSomething: 'Oh no. Something went wrong',
     txtNFTs: {
+      dice: {
+        description:
+          'Dice is a randomizer contract as NFT. You can roll from ' +
+          'your wallet, and store results on chain',
+        pageDescriptionPartOne:
+          'Every adventure starts from a dice. ' +
+          'In the Loot Metaverse, you’ll need to make ' +
+          'a next step. It is a dice that you can claim as NFT, ' +
+          'roll it right from your wallet, and also store results on chain.',
+        pageDescriptionPartTwo: 'For more details, please visit the {0}.'
+      },
+      vaults: {
+        description:
+          'Vault is a randomized adventurer bank account generated and ' +
+          'stored on chain.',
+        pageDescriptionPartOne:
+          'Vault is a randomized adventurer bank account generated and stored ' +
+          'on chain. Every day vault owners can roll the dice on chain. ' +
+          'Every week the vault that has the highest number of points ' +
+          'wins the entire pool balance.',
+        pageDescriptionPartTwo:
+          'For more details on the criteria, please see the {0}',
+        faq: 'FAQ'
+      },
       movingWithOlympus: {
         description:
           'The Moving with Olympus NFT gives you an exclusive avatar.',
@@ -487,6 +515,44 @@ export default {
       movingWithOlympus: {
         get: {
           txt: 'Get my Moving with Olympus'
+        }
+      },
+      vaults: {
+        get: {
+          txt: 'I fit the criteria, get my Vault'
+        },
+        noWorries: {
+          emoji: '🤓',
+          txt: 'No worries, still get the Vault'
+        }
+      },
+      dice: {
+        get: {
+          txt: 'Get the 20-sided dice'
+        },
+        fourSide: {
+          emoji: '🍀',
+          txt: '4-sided dice'
+        },
+        sixSide: {
+          emoji: '🎲',
+          txt: '6-sided dice'
+        },
+        doubleSixSide: {
+          emoji: '👯‍♀️',
+          txt: 'two 6-sided dice'
+        },
+        eightSide: {
+          emoji: '🎱',
+          txt: '8-sided dice'
+        },
+        tenSide: {
+          emoji: '🔟',
+          txt: '10-sided dice'
+        },
+        twelveSide: {
+          emoji: '🕛',
+          txt: '12-sided dice'
         }
       }
     }

@@ -2,6 +2,7 @@ export enum Network {
   binance = 'binance',
   binanceTest = 'binanceTest',
   kovan = 'kovan',
+  rinkeby = 'rinkeby',
   mainnet = 'mainnet',
   matic = 'matic',
   ropsten = 'ropsten'
@@ -25,6 +26,12 @@ export const networks = new Array<NetworkInfo>(
     chainId: 3,
     network: Network.ropsten,
     explorer: 'https://ropsten.etherscan.io',
+    subsidizedUrl: undefined
+  },
+  {
+    chainId: 4,
+    network: Network.rinkeby,
+    explorer: 'https://rinkeby.etherscan.io',
     subsidizedUrl: undefined
   },
   {

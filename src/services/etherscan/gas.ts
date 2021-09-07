@@ -86,7 +86,7 @@ export const getGasPrices = async (
 export const getGasSpeed = async (
   gasPrice: string,
   network = Network.mainnet
-): Promise<Result<number, GetGasErrors>> => {
+): Promise<Result<string, GetGasErrors>> => {
   const endpoint = apiEndpoints.get(network);
   if (endpoint === undefined) {
     return { isError: true, error: 'NoEndpointForNetwork' };
@@ -115,7 +115,7 @@ export const getGasSpeed = async (
 
     return {
       isError: false,
-      result: resp.result
+      result: String(resp.result)
     };
   } catch (err) {
     return { isError: true, error: `Request error: ${err}` };
@@ -125,12 +125,12 @@ export const getGasSpeed = async (
 export const getGasSpeedWithoutErr = async (
   gasPriceInGwei: string,
   network = Network.mainnet
-): Promise<number> => {
+): Promise<string> => {
   const gasPriceInWei = Web3.utils.toWei(gasPriceInGwei, 'Gwei');
   const res = await getGasSpeed(gasPriceInWei, network);
-  if (isError<number, GetGasErrors>(res)) {
+  if (isError<string, GetGasErrors>(res)) {
     console.log(res.error);
-    return 0;
+    return '0';
   }
   return res.result;
 };

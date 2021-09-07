@@ -16,6 +16,11 @@ export type NFTStoreState = {
   SweetAndSourTotalAmount: string;
   SweetAndSourTotalClaimed: string;
 
+  VaultsTotalAmount: string;
+  VaultsTotalClaimed: string;
+
+  DiceTotalClaimed: string;
+
   nfts: Array<NftAsset>;
 };
 
