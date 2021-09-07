@@ -6,7 +6,11 @@
         <p class="info__description">
           {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartOne') }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartTwo') }}
+          <i18n path="NFTs.txtNFTs.vaults.pageDescriptionPartTwo">
+            <a href="https://viamover.com/faq/vaults" target="_blank">
+              <b>{{ $t('NFTs.txtNFTs.vaults.faq') }}</b>
+            </a>
+          </i18n>
         </p>
         <shop-list>
           <shop-list-item
@@ -53,20 +57,8 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-        >
-          <source
-            src="https://storage.googleapis.com/movermedia/UnexpectedMove.webm"
-            type="video/webm"
-          />
-          <source
-            src="https://storage.googleapis.com/movermedia/UnexpectedMove.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://ipfs.io/ipfs/QmS7nM63XtExqL8okruaLs1GifveNfhfcwdXvruiLM5qdJ"
-            type="video/mp4"
-          />
-        </video>
+          src="@/assets/videos/vaults.webm"
+        />
       </template>
     </shop-wrapper>
     <simple-loader-modal

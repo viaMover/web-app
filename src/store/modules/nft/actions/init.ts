@@ -29,17 +29,39 @@ export default {
             alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
               name: 'Vaults'
             }) as string,
-            src: require('@/assets/images/MovingWithOlympus.png'),
-            sources: [],
-            webpSources: []
+            src: require('@/assets/images/Vaults.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/Vaults@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/Vaults.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/Vaults@2x.webp')
+              }
+            ]
           },
           bigPicture: {
             alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
               name: 'Vaults'
             }) as string,
-            src: require('@/assets/images/MovingWithOlympusBig.png'),
-            sources: [],
-            webpSources: []
+            src: require('@/assets/images/VaultsBig.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/VaultsBig@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/VaultsBig.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/VaultsBig@2x.webp')
+              }
+            ]
           }
         },
         {
