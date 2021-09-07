@@ -57,20 +57,8 @@
           loop="loop"
           muted="muted"
           playsinline="playsinline"
-        >
-          <source
-            src="https://storage.googleapis.com/movermedia/UnexpectedMove.webm"
-            type="video/webm"
-          />
-          <source
-            src="https://storage.googleapis.com/movermedia/UnexpectedMove.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://ipfs.io/ipfs/QmS7nM63XtExqL8okruaLs1GifveNfhfcwdXvruiLM5qdJ"
-            type="video/mp4"
-          />
-        </video>
+          src="@/assets/videos/vaults.webm"
+        />
       </template>
     </shop-wrapper>
     <simple-loader-modal
