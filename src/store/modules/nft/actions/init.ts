@@ -22,27 +22,27 @@ export default {
     try {
       const nftAssets: Array<NftAsset> = [
         {
-          name: 'Vaults',
+          name: 'Dice Project',
           description: rootState.i18n?.t(
-            'NFTs.txtNFTs.vaults.description'
+            'NFTs.txtNFTs.dice.description'
           ) as string,
           meta: [],
           picture: {
             alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
               name: 'Vaults'
             }) as string,
-            src: require('@/assets/images/Vaults.png'),
+            src: require('@/assets/images/DiceProject.png'),
             sources: [
               {
                 variant: '2x',
-                src: require('@/assets/images/Vaults@2x.png')
+                src: require('@/assets/images/DiceProject@2x.png')
               }
             ],
             webpSources: [
-              { src: require('@/assets/images/Vaults.webp') },
+              { src: require('@/assets/images/DiceProject.webp') },
               {
                 variant: '2x',
-                src: require('@/assets/images/Vaults@2x.webp')
+                src: require('@/assets/images/DiceProject@2x.webp')
               }
             ]
           },
@@ -50,18 +50,18 @@ export default {
             alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
               name: 'Vaults'
             }) as string,
-            src: require('@/assets/images/VaultsBig.png'),
+            src: require('@/assets/images/DiceProjectBig.png'),
             sources: [
               {
                 variant: '2x',
-                src: require('@/assets/images/VaultsBig@2x.png')
+                src: require('@/assets/images/DiceProjectBig@2x.png')
               }
             ],
             webpSources: [
-              { src: require('@/assets/images/VaultsBig.webp') },
+              { src: require('@/assets/images/DiceProjectBig.webp') },
               {
                 variant: '2x',
-                src: require('@/assets/images/VaultsBig@2x.webp')
+                src: require('@/assets/images/DiceProjectBig@2x.webp')
               }
             ]
           }
@@ -202,6 +202,53 @@ export default {
           }
         }
       ];
+      if (isFeatureEnabled('isVaultsEnabled')) {
+        nftAssets.splice(0, 0, {
+          name: 'Vaults',
+          description: rootState.i18n?.t(
+            'NFTs.txtNFTs.vaults.description'
+          ) as string,
+          meta: [],
+          picture: {
+            alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
+              name: 'Vaults'
+            }) as string,
+            src: require('@/assets/images/Vaults.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/Vaults@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/Vaults.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/Vaults@2x.webp')
+              }
+            ]
+          },
+          bigPicture: {
+            alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
+              name: 'Vaults'
+            }) as string,
+            src: require('@/assets/images/VaultsBig.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/VaultsBig@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/VaultsBig.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/VaultsBig@2x.webp')
+              }
+            ]
+          }
+        });
+      }
 
       if (isFeatureEnabled('isSwapPassportEnabled')) {
         nftAssets.push({
