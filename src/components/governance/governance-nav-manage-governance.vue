@@ -5,7 +5,7 @@
   >
     <left-rail-section-nav-item-image
       :description="$t('governance.txtCreateAProposal')"
-      navigate-to-name="governance-create"
+      navigate-to="governance-create"
       :title="$t('governance.lblCreateAProposal')"
     >
       <template v-slot:picture>
@@ -18,7 +18,7 @@
     </left-rail-section-nav-item-image>
     <left-rail-section-nav-item-image
       :description="$t('governance.txtGlobalAnalytics')"
-      navigate-to-name="governance-global-analytics"
+      navigate-to="governance-global-analytics"
       :title="$t('governance.lblGlobalAnalytics')"
     >
       <template v-slot:picture>

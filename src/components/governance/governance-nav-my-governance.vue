@@ -6,7 +6,7 @@
     <left-rail-section-nav-item-image
       :description="governancePower"
       description-class="bold"
-      navigate-to-name="governance-view-all"
+      navigate-to="governance-view-all"
       :title="$t('governance.lblGovernance')"
       title-class="disabled"
     >

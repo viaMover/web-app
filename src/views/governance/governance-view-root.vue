@@ -1,20 +1,49 @@
 <template>
-  <secondary-page>
-    <secondary-page-title :title="proposal.name" />
-    <p>{{ proposal.text }}</p>
-  </secondary-page>
+  <content-wrapper
+    has-back-button
+    has-close-button
+    has-left-rail
+    @close="handleClose"
+  >
+    <template v-slot:left-rail>
+      <left-rail-section>
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('governance.btnVoteFor.emoji')"
+          :navigate-to="voteForPage"
+          :text="$t('governance.btnVoteFor.txt')"
+        />
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('governance.btnVoteAgainst.emoji')"
+          :navigate-to="voteAgainstPage"
+          :text="$t('governance.btnVoteAgainst.txt')"
+        />
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('governance.btnProposalAnalytics.emoji')"
+          :navigate-to="analyticsPage"
+          :text="$t('governance.btnProposalAnalytics.txt')"
+        />
+      </left-rail-section>
+    </template>
+    <router-view />
+  </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { RawLocation } from 'vue-router';
 
-import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import {
+  ContentWrapper,
+  LeftRailSection,
+  LeftRailSectionNavItemEmoji
+} from '@/components/layout';
 
 export default Vue.extend({
-  name: 'GovernanceView',
+  name: 'GovernanceViewRoot',
   components: {
-    SecondaryPage,
-    SecondaryPageTitle
+    LeftRailSection,
+    LeftRailSectionNavItemEmoji,
+    ContentWrapper
   },
   data() {
     return {
@@ -52,6 +81,23 @@ export default Vue.extend({
         currentOutcome: 'quorumNotReached'
       }
     };
+  },
+  computed: {
+    voteForPage(): RawLocation {
+      return {
+        name: 'governance-vote',
+        params: { id: this.proposal.id, decision: 'for' }
+      };
+    },
+    voteAgainstPage(): RawLocation {
+      return {
+        name: 'governance-vote',
+        params: { id: this.proposal.id, decision: 'against' }
+      };
+    },
+    analyticsPage(): RawLocation {
+      return { name: 'governance-analytics', params: { id: this.proposal.id } };
+    }
   },
   methods: {
     handleClose(): void {

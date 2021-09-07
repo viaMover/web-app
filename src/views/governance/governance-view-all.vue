@@ -12,11 +12,10 @@
       </left-rail-section>
     </template>
 
-    <secondary-page
-      :has-heading-buttons="isCreateProposalAvailable"
-      :title="$t('governance.lblGovernance')"
-    >
+    <secondary-page>
       <h2>{{ $t('governance.lblGetInvolved') }}</h2>
+      <p>{{ $t('governance.txtGetInvolved') }}</p>
+
       <governance-proposals />
     </secondary-page>
   </content-wrapper>
@@ -45,14 +44,6 @@ export default Vue.extend({
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
     GovernanceProposals
-  },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    },
-    isCreateProposalAvailable(): boolean {
-      return true;
-    }
   },
   methods: {
     handleClose(): void {
