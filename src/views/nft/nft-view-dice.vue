@@ -23,9 +23,6 @@
           :text="$t('NFTs.btn.dice.get.txt')"
           @button-click="handleClaim(20)"
         />
-        <div v-if="getNftError !== undefined" class="error-message">
-          {{ getNftError }}
-        </div>
         <div class="info__more">
           <p>{{ $t('NFTs.lblOtherDiceOptions') }}</p>
           <ul>
@@ -110,7 +107,7 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { Step } from '@/components/controls/form-loader';
-import { ChangePayload, DicePayload } from '@/store/modules/nft/actions/claim';
+import { DicePayload } from '@/store/modules/nft/actions/claim';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
@@ -131,21 +128,16 @@ export default Vue.extend({
   data() {
     return {
       transactionStep: undefined as Step | undefined,
-      getNftError: undefined as string | undefined,
       actionError: undefined as string | undefined
     };
   },
   computed: {
     ...mapState('nft', {
       totalClaimed: 'DiceTotalClaimed'
-    }),
-    ...mapState('account', {
-      currentAddress: 'currentAddress'
     })
   },
   mounted(): void {
     this.transactionStep = undefined;
-    this.getNftError = undefined;
     this.actionError = undefined;
   },
   methods: {
@@ -154,6 +146,7 @@ export default Vue.extend({
       this.$router.back();
     },
     async handleClaim(type: DiceType): Promise<void> {
+      this.actionError = undefined;
       try {
         this.transactionStep = 'Confirm';
         await this.claimDice({
@@ -166,6 +159,7 @@ export default Vue.extend({
         this.transactionStep = 'Success';
       } catch (err) {
         this.transactionStep = 'Reverted';
+        this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
       }
     }
   }
