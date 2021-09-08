@@ -1,8 +1,8 @@
 <template>
   <li class="button-active" @click="$emit('click')">
-    <span>
-      <slot>{{ text }}</slot>
-    </span>
+    <slot>
+      <span>{{ text }}</span>
+    </slot>
   </li>
 </template>
 
