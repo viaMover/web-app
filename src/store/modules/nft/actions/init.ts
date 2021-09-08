@@ -13,7 +13,6 @@ import {
 import { RootStoreState } from '@/store/types';
 import { NftAsset, NFTStoreState } from './../types';
 import { isFeatureEnabled } from '@/settings';
-import { getVaultsData } from '@/services/chain/nft/vaults/vaults';
 import { logger } from '@sentry/utils';
 
 export default {
@@ -31,18 +30,18 @@ export default {
             alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
               name: 'Vaults'
             }) as string,
-            src: require('@/assets/images/DiceProject.png'),
+            src: require('@/assets/images/Dice_Project_More@1x.png'),
             sources: [
               {
                 variant: '2x',
-                src: require('@/assets/images/DiceProject@2x.png')
+                src: require('@/assets/images/Dice_Project_More@2x.png')
               }
             ],
             webpSources: [
-              { src: require('@/assets/images/DiceProject.webp') },
+              { src: require('@/assets/images/Dice_Project_More@1x.webp') },
               {
                 variant: '2x',
-                src: require('@/assets/images/DiceProject@2x.webp')
+                src: require('@/assets/images/Dice_Project_More@2x.webp')
               }
             ]
           },
@@ -50,18 +49,18 @@ export default {
             alt: rootState.i18n?.t('NFTs.txtAssetAlt', {
               name: 'Vaults'
             }) as string,
-            src: require('@/assets/images/DiceProjectBig.png'),
+            src: require('@/assets/images/Dice_Project@1x.png'),
             sources: [
               {
                 variant: '2x',
-                src: require('@/assets/images/DiceProjectBig@2x.png')
+                src: require('@/assets/images/Dice_Project@2x.png')
               }
             ],
             webpSources: [
-              { src: require('@/assets/images/DiceProjectBig.webp') },
+              { src: require('@/assets/images/Dice_Project@1x.webp') },
               {
                 variant: '2x',
-                src: require('@/assets/images/DiceProjectBig@2x.webp')
+                src: require('@/assets/images/Dice_Project@2x.webp')
               }
             ]
           }
@@ -303,7 +302,7 @@ export default {
       commit('setIsLoading', false);
     }
   },
-  async refreshNftStats({ rootState, commit, dispatch }): Promise<void> {
+  async refreshNftStats({ rootState, commit }): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       return;
     }
