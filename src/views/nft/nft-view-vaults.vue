@@ -56,8 +56,7 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { Step } from '@/components/controls/form-loader';
-import { getVaultsSignature } from '@/services/chain';
-import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload } from '@/store/modules/nft/actions/claim';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
