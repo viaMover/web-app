@@ -44,7 +44,7 @@ export const claimDice = async (
 ): Promise<void> => {
   const contractAddress = NFT_DICE_ADDRESS(network);
 
-  const sweetAndSour = new web3.eth.Contract(
+  const dice = new web3.eth.Contract(
     NFT_DICE_ABI as AbiItem[],
     contractAddress
   );
@@ -55,7 +55,7 @@ export const claimDice = async (
 
   let gasLimit = undefined;
   try {
-    const gasLimitObj = await sweetAndSour.methods
+    const gasLimitObj = await dice.methods
       .claimNFT(diceType)
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
@@ -86,7 +86,7 @@ export const claimDice = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    sweetAndSour.methods
+    dice.methods
       .claimNFT(diceType)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {

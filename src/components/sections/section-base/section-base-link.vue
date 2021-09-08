@@ -12,14 +12,12 @@
     class="link-icon button-active"
     :to="{ name: navigateToName }"
   >
-    <picture>
-      <custom-picture
-        :alt="$t('icon.txtNavigationLinkAlt')"
-        :sources="picture.sources"
-        :src="picture.src"
-        :webp-sources="picture.webpSources"
-      />
-    </picture>
+    <custom-picture
+      :alt="$t('icon.txtNavigationLinkAlt')"
+      :sources="picture.sources"
+      :src="picture.src"
+      :webp-sources="picture.webpSources"
+    />
   </router-link>
 </template>
 
@@ -32,6 +30,7 @@ const picture: PictureDescriptor = {
   alt: '', // not used
   src: require('@/assets/images/open_icon.png'),
   sources: [
+    { src: require('@/assets/images/open_icon.png') },
     {
       src: require('@/assets/images/open_icon@2x.png'),
       variant: '2x'

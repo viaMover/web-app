@@ -2,23 +2,12 @@
   <li :class="itemClass">
     <router-link class="button-active" :to="{ name: this.navigateToName }">
       <div class="image">
-        <picture>
-          <source
-            :srcset="`
-              ${require(`@/assets/images/${pic}@1x.webp`)},
-              ${require(`@/assets/images/${pic}@2x.webp`)} 2x
-            `"
-            type="image/webp"
-          />
-          <img
-            alt=""
-            :src="`${require(`@/assets/images/${pic}@1x.png`)}`"
-            :srcset="`
-              ${require(`@/assets/images/${pic}@1x.png`)},
-              ${require(`@/assets/images/${pic}@2x.png`)} 2x
-            `"
-          />
-        </picture>
+        <custom-picture
+          alt=""
+          :sources="pictureSources"
+          :src="src"
+          :webp-sources="pictureWebpSources"
+        />
       </div>
       <div class="info">
         <h3>{{ title }}</h3>
@@ -31,8 +20,11 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import { CustomPicture, PictureSourceDescriptor } from '@/components/html5';
+
 export default Vue.extend({
   name: 'MenuListEmojiCardItem',
+  components: { CustomPicture },
   props: {
     pic: {
       type: String,
@@ -63,9 +55,16 @@ export default Vue.extend({
 
       return '';
     },
-    srcsetWebp(): string {
-      return `@/assets/images/${this.pic}@1x.webp,
-              @/assets/images/${this.pic}@2x.webp 2x`;
+    pictureSources(): Array<PictureSourceDescriptor> {
+      return [
+        { src: require(`@/assets/images/${this.pic}@2x.png`), variant: '2x' }
+      ];
+    },
+    pictureWebpSources(): Array<PictureSourceDescriptor> {
+      return [
+        { src: require(`@/assets/images/${this.pic}@1x.webp`) },
+        { src: require(`@/assets/images/${this.pic}@2x.webp`), variant: '2x' }
+      ];
     },
     src(): string {
       return `@/assets/images/${this.pic}@1x.png`;

@@ -15,11 +15,11 @@
         <shop-list>
           <shop-list-item
             :title="$t('NFTs.lblTotalAmount')"
-            :value="totalAmount"
+            :value="formatToDecimals(totalAmount, 0)"
           />
           <shop-list-item
             :title="$t('NFTs.lblTotalClaimed')"
-            :value="totalClaimed"
+            :value="formatToDecimals(totalClaimed, 0)"
           />
         </shop-list>
         <action-button
@@ -56,8 +56,8 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { Step } from '@/components/controls/form-loader';
-import { getVaultsSignature } from '@/services/chain';
-import { ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload } from '@/store/modules/nft/actions/claim';
+import { formatToDecimals } from '@/utils/format';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
@@ -92,26 +92,19 @@ export default Vue.extend({
     this.getNftError = undefined;
   },
   methods: {
+    formatToDecimals,
     ...mapActions('nft', ['claimVaults', 'refreshNftStats']),
     handleClose(): void {
       this.$router.back();
     },
     async handleClaim(): Promise<void> {
-      let sig = '';
-      try {
-        sig = await getVaultsSignature(this.currentAddress);
-      } catch {
-        this.getNftError = this.$t('NFTs.txtOhNo').toString();
-        return;
-      }
       try {
         this.transactionStep = 'Confirm';
         await this.claimVaults({
-          signature: sig,
           changeStep: () => {
             this.transactionStep = 'Process';
           }
-        } as ClaimPayload);
+        } as ChangePayload);
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {

@@ -36,23 +36,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Withdraw Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -128,6 +112,7 @@ import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
+import DetailsPicture from '@/components/modals/details-picture.vue';
 
 export default Vue.extend({
   name: 'SavingsWithdrawModal',
@@ -136,7 +121,8 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     FormLoader,
-    Modal
+    Modal,
+    DetailsPicture
   },
   data() {
     return {
