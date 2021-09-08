@@ -2,7 +2,7 @@
   <card
     :button-text="$t('savingsDepositCard.btnSavingsDepositCard')"
     :description="$t('savingsDepositCard.txtSavingsDepositCard')"
-    :icon="$t('savingsDepositCard.icon')"
+    :image="image"
     is-black-close-btn
     :opened="isInfoVisible"
     :title="$t('savingsDepositCard.lblSavingsDepositCardHeading')"
@@ -19,11 +19,34 @@ import { mapActions, mapState } from 'vuex';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import { Card } from '@/components/controls';
+import { PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'SavingsDepositCardSection',
   components: {
     Card
+  },
+  data() {
+    return {
+      image: {
+        alt: this.$t('savingsDepositCard.txtCardImageAlt'),
+        src: require('@/assets/images/SavingsDepositCard.png'),
+        sources: [
+          { src: require('@/assets/images/SavingsDepositCard.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/SavingsDepositCard@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/SavingsDepositCard.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/SavingsDepositCard@2x.webp')
+          }
+        ]
+      } as PictureDescriptor
+    };
   },
   computed: {
     ...mapState('account', { isInfoVisible: 'isDepositCardSectionVisible' })
