@@ -1,7 +1,7 @@
 <template>
-  <picture>
+  <picture :style="containerStyle">
     <source v-if="webpSrcset !== ''" :srcset="webpSrcset" type="image/webp" />
-    <img :alt="alt" :src="src" :srcset="imageSrcSet" />
+    <img :alt="alt" :src="src" :srcset="imageSrcSet" :style="pictureStyle" />
   </picture>
 </template>
 
@@ -10,6 +10,7 @@ import Vue, { PropType } from 'vue';
 
 import { formatPictureSources } from './utils';
 import { PictureSourceDescriptor } from './types';
+import { Properties } from 'csstype';
 
 export default Vue.extend({
   name: 'CustomPicture',
@@ -29,6 +30,14 @@ export default Vue.extend({
     webpSources: {
       type: Array as PropType<Array<PictureSourceDescriptor>>,
       default: () => []
+    },
+    containerStyle: {
+      type: [String, Object] as PropType<string | Properties>,
+      default: undefined
+    },
+    pictureStyle: {
+      type: [String, Object] as PropType<string | Properties>,
+      default: undefined
     }
   },
   computed: {
