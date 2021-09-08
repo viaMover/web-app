@@ -17,6 +17,7 @@ import { RootStoreState } from '@/store/types';
 import { NFTStoreState } from './../types';
 import { checkAccountStateIsReady } from '../../account/utils/state';
 import { Step } from '@/components/controls/form-loader';
+import { claimVaults } from '@/services/chain/nft/vaults/vaults';
 
 export type ClaimPayload = {
   signature: string;
@@ -50,6 +51,24 @@ export default {
     const fastGasPrice = rootState.account!.gasPrices?.FastGas;
 
     await claimOlympus(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimVaults(
+    { rootState, state },
+    payload: ChangePayload
+  ): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimVaults(
       rootState!.account!.currentAddress!,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3,

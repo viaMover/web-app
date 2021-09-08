@@ -57,7 +57,7 @@ import { mapActions, mapState } from 'vuex';
 
 import { Step } from '@/components/controls/form-loader';
 import { getVaultsSignature } from '@/services/chain';
-import { ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
@@ -97,21 +97,13 @@ export default Vue.extend({
       this.$router.back();
     },
     async handleClaim(): Promise<void> {
-      let sig = '';
-      try {
-        sig = await getVaultsSignature(this.currentAddress);
-      } catch {
-        this.getNftError = this.$t('NFTs.txtOhNo').toString();
-        return;
-      }
       try {
         this.transactionStep = 'Confirm';
         await this.claimVaults({
-          signature: sig,
           changeStep: () => {
             this.transactionStep = 'Process';
           }
-        } as ClaimPayload);
+        } as ChangePayload);
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {

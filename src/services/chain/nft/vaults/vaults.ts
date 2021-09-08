@@ -45,7 +45,6 @@ export const getVaultsData = async (
 
 export const claimVaults = async (
   accountAddress: string,
-  signature: string,
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
@@ -65,7 +64,7 @@ export const claimVaults = async (
   let gasLimit = undefined;
   try {
     const gasLimitObj = await vaults.methods
-      .claimNFT(signature)
+      .claimNFT()
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
@@ -98,7 +97,7 @@ export const claimVaults = async (
 
   await new Promise<void>((resolve, reject) => {
     vaults.methods
-      .claimNFT(signature)
+      .claimNFT()
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
