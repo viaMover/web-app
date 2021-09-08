@@ -17,7 +17,7 @@ export interface Globals {
 
 const values: Globals = {
   isSwapPassportEnabled: false,
-  isVaultsEnabled: false,
+  isVaultsEnabled: true,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
   isGovernanceEnabled: false,

@@ -2,12 +2,7 @@ import { Network } from '@/utils/networkTypes';
 import Web3 from 'web3';
 import { VaultsData } from '@/services/chain';
 import { TransactionsParams } from '@/wallet/types';
-import {
-  NFT_UNEXPECTED_MOVE_ABI,
-  NFT_UNEXPECTED_MOVE_ADDRESS,
-  NFT_VAULTS_ABI,
-  NFT_VAULTS_ADDRESS
-} from '@/wallet/references/data';
+import { NFT_VAULTS_ABI, NFT_VAULTS_ADDRESS } from '@/wallet/references/data';
 import { AbiItem } from 'web3-utils';
 import { Step } from '@/components/controls/form-loader';
 import { floorDivide, multiply } from '@/utils/bigmath';
@@ -29,23 +24,18 @@ export const getVaultsData = async (
     contractAddress
   );
 
-  const totalAmount = await vaults.methods
-    ._claimLimit()
-    .call(transactionParams);
-
   const totalClaimed = await vaults.methods
-    ._totalClaimed()
+    .totalClaimed()
     .call(transactionParams);
 
   return {
-    totalAmount: totalAmount.toString(),
+    totalAmount: '9999',
     totalClaimed: totalClaimed.toString()
   };
 };
 
 export const claimVaults = async (
   accountAddress: string,
-  signature: string,
   network: Network,
   web3: Web3,
   gasPriceInGwei: string,
@@ -65,7 +55,7 @@ export const claimVaults = async (
   let gasLimit = undefined;
   try {
     const gasLimitObj = await vaults.methods
-      .claimNFT(signature)
+      .claimNFT()
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
@@ -98,7 +88,7 @@ export const claimVaults = async (
 
   await new Promise<void>((resolve, reject) => {
     vaults.methods
-      .claimNFT(signature)
+      .claimNFT()
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
