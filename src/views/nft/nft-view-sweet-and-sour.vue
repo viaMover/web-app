@@ -11,11 +11,11 @@
         <shop-list>
           <shop-list-item
             :title="$t('NFTs.lblTotalAmount')"
-            :value="totalAmount"
+            :value="formatToDecimals(totalAmount, 0)"
           />
           <shop-list-item
             :title="$t('NFTs.lblTotalClaimed')"
-            :value="totalClaimed"
+            :value="formatToDecimals(totalClaimed, 0)"
           />
         </shop-list>
         <action-button
@@ -69,6 +69,7 @@ import { Step } from '@/components/controls/form-loader';
 import { getSweetAndSourClaimSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/actions/claim';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'NftViewSweetAndSour',
@@ -99,6 +100,7 @@ export default Vue.extend({
     this.error = undefined;
   },
   methods: {
+    formatToDecimals,
     ...mapActions('nft', ['claimSweetAndSour', 'refreshNftStats']),
     handleClose(): void {
       this.$router.back();
