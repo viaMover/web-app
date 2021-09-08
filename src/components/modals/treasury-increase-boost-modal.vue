@@ -36,23 +36,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -83,43 +67,16 @@
         <p>
           There are two boost options. Reserving
           <span class="icon">
-            <picture>
-              <img
-                alt=""
-                src="@/assets/images/MOVE.png"
-                srcset="
-                  @/assets/images/MOVE.png,
-                  @/assets/images/MOVE@2x.png 2x
-                "
-              />
-            </picture>
+            <move-picture />
           </span>
           MOVE tokens will increase (1x) your rewards share based on the total
           amount of the tokens you have reserved. Reserving
           <span class="icon-wrapper">
             <span class="icon-left">
-              <picture>
-                <img
-                  alt=""
-                  src="@/assets/images/MOVE.png"
-                  srcset="
-                    @/assets/images/MOVE.png,
-                    @/assets/images/MOVE@2x.png 2x
-                  "
-                />
-              </picture>
+              <move-picture />
             </span>
             <span class="icon-right">
-              <picture>
-                <img
-                  alt=""
-                  src="@/assets/images/ETH.png"
-                  srcset="
-                    @/assets/images/ETH.png,
-                    @/assets/images/ETH@2x.png 2x
-                  "
-                />
-              </picture>
+              <eth-picture />
             </span>
           </span>
           MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share
@@ -169,6 +126,9 @@ import {
 
 import Modal from './modal.vue';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
+import DetailsPicture from '@/components/modals/details-picture.vue';
+import MovePicture from '@/components/modals/move-picture.vue';
+import EthPicture from '@/components/modals/eth-picture.vue';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostModal',
@@ -177,7 +137,10 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     FormLoader,
-    Modal
+    Modal,
+    EthPicture,
+    MovePicture,
+    DetailsPicture
   },
   data() {
     return {

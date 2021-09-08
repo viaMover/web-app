@@ -20,17 +20,12 @@
       class="swaps__wrapper-search-items-item-button"
     >
       <a class="button-active" :href="infoButtonSrc" target="_blank">
-        <picture>
-          <source
-            srcset="@/assets/images/info.webp, @/assets/images/info2x.webp 2x"
-            type="image/webp"
-          />
-          <img
-            :alt="$t('icon.txtTokenInfoAlt')"
-            src="@/assets/images/info.png"
-            srcset="@/assets/images/info.png, @/assets/images/info2x.png 2x"
-          />
-        </picture>
+        <custom-picture
+          :alt="$t('icon.txtTokenInfoAlt', { name: item.name })"
+          :sources="pictureSources"
+          :src="require('@/assets/images/info.png')"
+          :webp-sources="pictureWebpSources"
+        />
       </a>
     </div>
   </div>
@@ -42,11 +37,13 @@ import BigNumber from 'bignumber.js';
 
 import { isTokenWithBalance, Token, TokenWithBalance } from '@/wallet/types';
 import { TokenImage } from '@/components/tokens';
+import { CustomPicture, PictureSourceDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'SearchModalTokenItem',
   components: {
-    TokenImage
+    TokenImage,
+    CustomPicture
   },
   props: {
     item: {
@@ -57,6 +54,18 @@ export default Vue.extend({
       type: Boolean,
       default: false
     }
+  },
+  data() {
+    return {
+      pictureSources: [
+        { src: require('@/assets/images/info.png') },
+        { src: require('@/assets/images/info2x.png'), variant: '2x' }
+      ],
+      pictureWebpSources: [
+        { src: require('@/assets/images/info.webp') },
+        { src: require('@/assets/images/info2x.webp'), variant: '2x' }
+      ] as Array<PictureSourceDescriptor>
+    };
   },
   computed: {
     assetBalance(): string {
