@@ -162,12 +162,7 @@ export default Vue.extend({
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {
-        if (this.transactionStep === 'Process') {
-          this.transactionStep = 'Reverted';
-        } else {
-          this.transactionStep = undefined;
-          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
-        }
+        this.transactionStep = 'Reverted';
       }
     },
     async handleClaimAndExchange(): Promise<void> {

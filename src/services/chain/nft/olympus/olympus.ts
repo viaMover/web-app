@@ -91,12 +91,12 @@ export const claimOlympus = async (
       gasLimit = gasLimitWithBuffer;
     } else {
       Sentry.captureException('Empty gas limit in olympus claim');
-      throw new Error("Can't estimate olympus claim");
+      gasLimit = '0';
     }
   } catch (err) {
     console.error("Can't estimate olympus claim", err);
     Sentry.captureException(err);
-    throw new Error("Can't estimate olympus claim");
+    gasLimit = '0';
   }
 
   const transactionParams: TransactionsParams = {

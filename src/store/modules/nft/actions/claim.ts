@@ -9,7 +9,9 @@ import {
   claimUnexpectedMove,
   claimAndExchangeUnexpectedMove,
   exchangeUnexpectedMove,
-  claimOlympus
+  claimOlympus,
+  DiceType,
+  claimDice
 } from '@/services/chain';
 import { RootStoreState } from '@/store/types';
 import { NFTStoreState } from './../types';
@@ -22,6 +24,11 @@ export type ClaimPayload = {
 };
 
 export type ChangePayload = {
+  changeStep: (step: Step) => void;
+};
+
+export type DicePayload = {
+  diceType: DiceType;
   changeStep: (step: Step) => void;
 };
 
@@ -42,22 +49,27 @@ export default {
 
     const fastGasPrice = rootState.account!.gasPrices?.FastGas;
 
-    if (fastGasPrice === undefined) {
-      throw new Error('There is no gas price, please, try again');
-    }
-
-    if (
-      greaterThan(currentTimestamp(), state.OlympusEndTs) ||
-      lessThan(currentTimestamp(), state.OlympusStartTs)
-    ) {
-      throw new Error('Public claim has not started yet!');
-    }
-
     await claimOlympus(
       rootState!.account!.currentAddress!,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3,
-      fastGasPrice.price,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimDice({ rootState, state }, payload: DicePayload): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimDice(
+      payload.diceType,
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -68,16 +80,12 @@ export default {
 
     const fastGasPrice = rootState.account!.gasPrices?.FastGas;
 
-    if (fastGasPrice === undefined) {
-      throw new Error('There is no gas price, please, try again');
-    }
-
     await claimSweetAndSour(
       rootState!.account!.currentAddress!,
       payload.signature,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3,
-      fastGasPrice.price,
+      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -91,16 +99,12 @@ export default {
 
     const fastGasPrice = rootState.account!.gasPrices?.FastGas;
 
-    if (fastGasPrice === undefined) {
-      throw new Error('There is no gas price, please, try again');
-    }
-
     await claimUnexpectedMove(
       rootState!.account!.currentAddress!,
       payload.signature,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3,
-      fastGasPrice.price,
+      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
