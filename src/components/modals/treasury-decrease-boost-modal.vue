@@ -35,23 +35,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -88,9 +72,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
+import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
 
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
@@ -123,6 +107,7 @@ import Modal from './modal.vue';
 import { Step } from '../controls/form-loader';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
 import { Properties as CssProperties } from 'csstype';
+import DetailsPicture from '@/components/modals/details-picture.vue';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseBoostModal',
@@ -131,7 +116,8 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     FormLoader,
-    Modal
+    Modal,
+    DetailsPicture
   },
   data() {
     return {
@@ -185,13 +171,12 @@ export default Vue.extend({
         this.moveNativePrice,
         this.slpNativePrice
       );
-      const res = treasuryTokens
+      return treasuryTokens
         .map((t) => ({
           ...t,
           balance: this.getTreasuryTokenBalance(t.address)
         }))
         .filter((t) => greaterThan(t.balance, '0'));
-      return res;
     },
     error(): string | undefined {
       if (!notZero(this.output.amount)) {

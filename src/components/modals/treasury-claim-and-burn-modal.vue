@@ -34,23 +34,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -58,17 +42,7 @@
             <p class="description">Claiming for</p>
             <div class="value">
               <div class="icon">
-                <picture>
-                  <img
-                    alt=""
-                    src="@/assets/images/USDC.png"
-                    srcset="
-                      @/assets/images/USDC.png,
-                      @/assets/images/USDC@2x.png 2x
-                    "
-                    style="box-shadow: rgb(36, 116, 204) 0px 0px 8px"
-                  />
-                </picture>
+                <usdc-picture />
               </div>
               <span>{{ claimingForStr }}</span>
             </div>
@@ -94,17 +68,7 @@
         <p>
           Claim &amp; Burn allows you to exchange your
           <span class="icon">
-            <picture>
-              <img
-                alt=""
-                src="@/assets/images/MOVE.png"
-                srcset="
-                  @/assets/images/MOVE.png,
-                  @/assets/images/MOVE@2x.png 2x
-                "
-                style="box-shadow: 0px 0px 16px rgb(195, 236, 52)"
-              />
-            </picture>
+            <move-picture />
           </span>
           MOVE tokens for a larger portion of the Smart Treasury. You will burn
           your MOVE tokens, and receive four times (4x) of your treasury share
@@ -118,7 +82,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
-import { Properties } from 'csstype';
+import { Properties as CssProperties } from 'csstype';
 
 import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
 import {
@@ -146,7 +110,9 @@ import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Step } from '@/components/controls/form-loader';
 import Modal from './modal.vue';
-import { Properties as CssProperties } from 'csstype';
+import DetailsPicture from '@/components/modals/details-picture.vue';
+import UsdcPicture from '@/components/modals/usdc-picture.vue';
+import MovePicture from '@/components/modals/move-picture.vue';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostModal',
@@ -155,7 +121,10 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     FormLoader,
-    Modal
+    Modal,
+    MovePicture,
+    UsdcPicture,
+    DetailsPicture
   },
   data() {
     return {
@@ -293,7 +262,7 @@ export default Vue.extend({
     showInfo(): boolean {
       return this.infoExpanded && this.isInfoAvailable;
     },
-    coinImageStyle(): Properties {
+    coinImageStyle(): CssProperties {
       return {
         boxShadow: 'rgb(182, 222, 49) 0px 0px 16px'
       };
