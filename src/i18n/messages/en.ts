@@ -67,7 +67,8 @@ export default {
     lblSavingsDepositCardHeading: 'Save it!',
     txtSavingsDepositCard:
       'Savings just got better. Enjoy easy higher rates and even less hassle.',
-    btnSavingsDepositCard: '@:savingsDepositCard.icon Deposit in Savings'
+    btnSavingsDepositCard: 'Deposit in Savings',
+    txtCardImageAlt: 'Savings icon'
   },
   savings: {
     icon: '💰',
@@ -435,10 +436,9 @@ export default {
           'Dice is a randomizer contract as NFT. You can roll from ' +
           'your wallet, and store results on chain',
         pageDescriptionPartOne:
-          'Every adventure starts from a dice. ' +
-          'In the Loot Metaverse, you’ll need to make ' +
-          'a next step. It is a dice that you can claim as NFT, ' +
-          'roll it right from your wallet, and also store results on chain.',
+          'Every adventure starts with rolling a dice. Make your next step ' +
+          'in the Loot Metaverse. Dice is the NFT you can claim. It also ' +
+          'allows you to roll a dice and store results on chain.',
         pageDescriptionPartTwo: 'For more details, please visit the {0}.'
       },
       vaults: {
@@ -553,6 +553,10 @@ export default {
         twelveSide: {
           emoji: '🕛',
           txt: '12-sided dice'
+        },
+        twentySide: {
+          emoji: '🧙‍♂️',
+          txt: '20-sided dice'
         }
       }
     }

@@ -41,8 +41,8 @@ export default {
       getters.isWalletConnected &&
       state.provider !== undefined &&
       !state.isDetecting &&
-      state.savingsInfo !== undefined &&
-      state.treasuryInfo !== undefined &&
+      !state.isSavingsInfoLoading &&
+      !state.isTreasuryInfoLoading &&
       !rootState.nft?.isLoading
     );
   },

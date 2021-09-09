@@ -15,11 +15,11 @@
         <shop-list>
           <shop-list-item
             :title="$t('NFTs.lblTotalAmount')"
-            :value="totalAmount"
+            :value="formatToDecimals(totalAmount, 0)"
           />
           <shop-list-item
             :title="$t('NFTs.lblTotalClaimed')"
-            :value="totalClaimed"
+            :value="formatToDecimals(totalClaimed, 0)"
           />
         </shop-list>
         <action-button
@@ -29,24 +29,6 @@
         />
         <div v-if="getNftError !== undefined" class="error-message">
           {{ getNftError }}
-        </div>
-        <div class="info__more">
-          <p>{{ $t('NFTs.lblDontFitTheCriteria') }}</p>
-          <ul>
-            <li>
-              <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.vaults.noWorries.emoji')"
-                :text="$t('NFTs.btn.vaults.noWorries.txt')"
-                @button-click="handleClaim"
-              />
-            </li>
-            <li>
-              <div v-if="actionError !== undefined" class="error-message">
-                {{ actionError }}
-              </div>
-            </li>
-          </ul>
         </div>
       </template>
       <template v-slot:illustration>
@@ -74,18 +56,16 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { Step } from '@/components/controls/form-loader';
-import { getVaultsSignature } from '@/services/chain';
-import { ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload } from '@/store/modules/nft/actions/claim';
+import { formatToDecimals } from '@/utils/format';
 
 import { ShopWrapper, ShopList, ShopListItem } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
-import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
 
 export default Vue.extend({
   name: 'NftViewVaults',
   components: {
-    EmojiTextButton,
     ActionButton,
     ShopList,
     ShopListItem,
@@ -95,8 +75,7 @@ export default Vue.extend({
   data() {
     return {
       transactionStep: undefined as Step | undefined,
-      getNftError: undefined as string | undefined,
-      actionError: undefined as string | undefined
+      getNftError: undefined as string | undefined
     };
   },
   computed: {
@@ -111,29 +90,21 @@ export default Vue.extend({
   mounted(): void {
     this.transactionStep = undefined;
     this.getNftError = undefined;
-    this.actionError = undefined;
   },
   methods: {
+    formatToDecimals,
     ...mapActions('nft', ['claimVaults', 'refreshNftStats']),
     handleClose(): void {
       this.$router.back();
     },
     async handleClaim(): Promise<void> {
-      let sig = '';
-      try {
-        sig = await getVaultsSignature(this.currentAddress);
-      } catch {
-        this.getNftError = this.$t('NFTs.txtOhNo').toString();
-        return;
-      }
       try {
         this.transactionStep = 'Confirm';
         await this.claimVaults({
-          signature: sig,
           changeStep: () => {
             this.transactionStep = 'Process';
           }
-        } as ClaimPayload);
+        } as ChangePayload);
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {
@@ -141,7 +112,7 @@ export default Vue.extend({
           this.transactionStep = 'Reverted';
         } else {
           this.transactionStep = undefined;
-          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
+          this.getNftError = this.$t('NFTs.txtOhNoSomething').toString();
         }
       }
     }
