@@ -578,7 +578,7 @@ $(document).ready(function () {
   hideByClickEscButton();
 
   function textareaSize() {
-    $('.create-a-proposal-wrapper-statements form textarea')
+    $('.create-a-proposal .statements form textarea')
       .on('keyup change drop paste focusin focusout', function () {
         $(this)
           .attr('rows', '1')
