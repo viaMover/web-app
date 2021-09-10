@@ -92,6 +92,7 @@ import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   greaterThan,
   isZero,
@@ -369,8 +370,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = formatToNative(
-          multiply(this.usdcNativePrice, this.output.amount)
+        this.output.nativeAmount = convertNativeAmountFromAmount(
+          this.output.amount,
+          this.usdcNativePrice
         );
 
         console.log('this.usdcNativePrice', this.usdcNativePrice);

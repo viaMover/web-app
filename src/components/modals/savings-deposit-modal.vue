@@ -104,6 +104,7 @@ import { mapError } from '@/services/0x/errors';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   fromWei,
   greaterThan,
@@ -446,8 +447,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         const transferData = await this.calcData(
@@ -523,7 +525,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';

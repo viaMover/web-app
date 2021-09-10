@@ -88,8 +88,8 @@ import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   greaterThan,
-  multiply,
   notZero
 } from '@/utils/bigmath';
 import { GetTokenPrice } from '@/services/thegraph/api';
@@ -97,7 +97,7 @@ import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { sameAddress } from '@/utils/address';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import { getExitingAmount, getMaxBurn } from '@/services/chain';
 import * as Sentry from '@sentry/vue';
 import {
@@ -389,8 +389,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         if (this.maxBurnedAmount === undefined) {
@@ -470,7 +471,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';

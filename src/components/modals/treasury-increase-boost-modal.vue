@@ -100,6 +100,7 @@ import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   fromWei,
   greaterThan,
   multiply,
@@ -412,8 +413,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
@@ -459,7 +461,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';

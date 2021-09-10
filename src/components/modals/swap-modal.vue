@@ -127,6 +127,7 @@ import { mapError } from '@/services/0x/errors';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   fromWei,
   greaterThan,
@@ -213,7 +214,11 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
+    ...mapGetters('account', [
+      'treasuryBonusNative',
+      'getTokenColor',
+      'moveNativePrice'
+    ]),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },
@@ -416,13 +421,15 @@ export default Vue.extend({
           this.input.amount = '';
           this.input.nativeAmount = '';
         }
-        const move = this.allTokens.find((t: TokenWithBalance) =>
-          sameAddress(
-            t.address,
-            getMoveAssetData(this.networkInfo.network).address
-          )
+        const move: TokenWithBalance = this.allTokens.find(
+          (t: TokenWithBalance) =>
+            sameAddress(
+              t.address,
+              getMoveAssetData(this.networkInfo.network).address
+            )
         );
         if (move) {
+          move.priceUSD = this.moveNativePrice;
           this.output.asset = move;
           this.output.amount = '';
           this.output.nativeAmount = '';
@@ -560,8 +567,9 @@ export default Vue.extend({
         return;
       }
 
-      this.input.nativeAmount = formatToNative(
-        multiply(this.input.asset.priceUSD, this.input.amount)
+      this.input.nativeAmount = convertNativeAmountFromAmount(
+        this.input.amount,
+        this.input.asset.priceUSD
       );
 
       if (this.output.asset === undefined) {
@@ -583,8 +591,9 @@ export default Vue.extend({
           transferData.buyAmount,
           this.output.asset.decimals
         );
-        this.output.nativeAmount = formatToNative(
-          multiply(this.output.asset.priceUSD, this.output.amount)
+        this.output.nativeAmount = convertNativeAmountFromAmount(
+          this.output.amount,
+          this.output.asset.priceUSD
         );
 
         await this.tryToEstimate(
@@ -686,8 +695,9 @@ export default Vue.extend({
         return;
       }
 
-      this.output.nativeAmount = formatToNative(
-        multiply(this.output.asset.priceUSD, this.output.amount)
+      this.output.nativeAmount = convertNativeAmountFromAmount(
+        this.output.amount,
+        this.output.asset.priceUSD
       );
 
       if (this.input.asset === undefined) {
@@ -709,8 +719,9 @@ export default Vue.extend({
           transferData.sellAmount,
           this.input.asset.decimals
         );
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         await this.tryToEstimate(
@@ -801,7 +812,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';
@@ -815,7 +826,7 @@ export default Vue.extend({
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.output.asset.priceUSD && price !== '0') {
         this.output.asset.priceUSD = price;
       }
       this.input.amount = '';
