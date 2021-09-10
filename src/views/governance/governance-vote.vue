@@ -1,20 +1,39 @@
 <template>
   <secondary-page>
-    <secondary-page-title :title="proposal.name" />
-    <p>{{ proposal.text }}</p>
+    <h2>{{ proposal.name }}</h2>
+    <p>{{ explanatoryText }}</p>
+    <governance-overview-section>
+      <governance-overview-section-item
+        :description="$t('governance.lblMyVotingPower')"
+        :value="myVotingPower"
+      />
+    </governance-overview-section>
+    <action-button button-class="button button-active" :text="voteButtonText" />
+    <div v-if="error !== undefined" class="error-message">
+      {{ error }}
+    </div>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import { formatToNative } from '@/utils/format';
+
+import { SecondaryPage } from '@/components/layout';
+import {
+  GovernanceOverviewSection,
+  GovernanceOverviewSectionItem
+} from '@/components/governance';
+import { ActionButton } from '@/components/buttons';
 
 export default Vue.extend({
-  name: 'GovernanceView',
+  name: 'GovernanceVote',
   components: {
     SecondaryPage,
-    SecondaryPageTitle
+    GovernanceOverviewSection,
+    GovernanceOverviewSectionItem,
+    ActionButton
   },
   data() {
     return {
@@ -50,8 +69,34 @@ export default Vue.extend({
         votesFor: 8194000,
         votesAgainst: 46000,
         currentOutcome: 'quorumNotReached'
-      }
+      },
+      error: undefined
     };
+  },
+  computed: {
+    hasBackButton(): boolean {
+      return this.$route.path.split('/').filter((part) => !!part).length > 1;
+    },
+    isVoteFor(): boolean {
+      return this.$route.params.decision === 'for';
+    },
+    explanatoryText(): string {
+      if (this.isVoteFor) {
+        return this.$t('governance.txtVoteFor') as string;
+      }
+
+      return this.$t('governance.txtVoteAgainst') as string;
+    },
+    myVotingPower(): string {
+      return formatToNative('123190.24');
+    },
+    voteButtonText(): string {
+      if (this.isVoteFor) {
+        return this.$t('governance.btnVoteFor.txt') as string;
+      }
+
+      return this.$t('governance.btnVoteAgainst.txt') as string;
+    }
   },
   methods: {
     handleClose(): void {

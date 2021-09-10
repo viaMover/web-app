@@ -1,18 +1,14 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
+    has-back-button
     has-close-button
     has-left-rail
     @close="handleClose"
   >
-    <template v-slot:left-rail>
-      <governance-proposal-create-overview />
-    </template>
-
     <secondary-page :title="$t('governance.lblProposal')">
       <h2>{{ $t('governance.lblCreateAProposal') }}</h2>
       <div class="proposal-creator">
-        TODO: Let's imagine a proposal creator here
+        <governance-proposal-create-overview />
       </div>
     </secondary-page>
   </content-wrapper>

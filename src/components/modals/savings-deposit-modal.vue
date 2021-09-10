@@ -104,6 +104,7 @@ import { mapError } from '@/services/0x/errors';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   fromWei,
   greaterThan,
@@ -446,8 +447,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         const transferData = await this.calcData(
