@@ -584,4 +584,38 @@ $(document).ready(function() {
 		}).focus();
 	}
 	textareaSize();
+
+	function toggleTextETH() {
+		let button = $('.deposit__form-button.eth-text');
+		let placeholder = $('.deposit__form-input.eth-input');
+		
+		button.on('click', function() {
+			button.text(function(i, text) {
+				return text === "ETH" ? "USDC" : "ETH";
+			});
+			if (button.text() == ('USDC')) {
+				placeholder.attr("placeholder", "0.00 USDC");
+			} else {
+				placeholder.attr("placeholder", "0.00 ETH");
+			}
+		});
+	}
+	toggleTextETH();
+
+	function toggleTextMOVE() {
+		let button = $('.deposit__form-button.move-text');
+		let placeholder = $('.deposit__form-input.move-input');
+		
+		button.on('click', function() {
+			button.text(function(i, text) {
+				return text === "MOVE" ? "USD" : "MOVE";
+			});
+			if (button.text() == ('USD')) {
+				placeholder.attr("placeholder", "0.00 USD");
+			} else {
+				placeholder.attr("placeholder", "0.00 MOVE");
+			}
+		});
+	}
+	toggleTextMOVE();
 });

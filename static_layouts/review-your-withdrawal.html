@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Savings</title>
+    <title>Review your withdrawal</title>
     <link rel="stylesheet" href="css/libs.min.css"/>
     <link rel="stylesheet" href="css/app.css"/>
     <link rel="shortcut icon" href="images/favicon.ico"/>
@@ -16,7 +16,7 @@
         <div class="sidebar-wrapper sidebar-cards">
           <div class="sidebar-cards__items">
             <h3>My Savings</h3>
-            <div class="sidebar-cards__item button-active active">
+            <div class="sidebar-cards__item button-active">
               <div class="item"> <a href="#"> 
                   <div class="image">
                     <picture>
@@ -43,7 +43,7 @@
                     <p>Get 8.3% APY on simple savings in USDC</p>
                   </div></a></div>
             </div>
-            <div class="sidebar-cards__item button-active">
+            <div class="sidebar-cards__item button-active active">
               <div class="item"> <a href="#"> 
                   <div class="image">
                     <picture>
@@ -70,45 +70,49 @@
           </div>
         </div>
       </div>
-      <div class="transaction">
-        <div class="g-wrapper"><a class="escape-link button-active" href="#"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="review info__wrapper-menu">
+        <div class="g-wrapper"><a class="back-link button-active" href="#"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.6109 9.11046L9.49999 15.4995" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.49994 2.50142L1.61085 8.89051" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></a><a class="escape-link button-active" href="#"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11 1L1 11M1 1L11 11L1 1Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg></a>
-          <div class="transaction__wrapper">
-            <div class="transaction__wrapper-status">
-              <h1 class="title">Waiting for confirmation</h1>
-              <p class="description">Confirm this transaction in your wallet</p>
+          <div class="review__wrapper">
+            <h1 class="title">Review your withdrawal</h1>
+            <div class="review__wrapper-arrow">
+              <div class="item">
+                <picture class="item-image">
+                  <source type="image/webp" srcset="images/BeautifulCard@1x.webp, images/BeautifulCard@2x.webp 2x"/><img src="images/BeautifulCard@1x.png" srcset="images/BeautifulCard@1x.png, images/BeautifulCard@2x.png 2x" alt=""/>
+                </picture>
+              </div>
+              <div class="item">
+                <div class="item-arrow"><span></span><span></span></div>
+              </div>
+              <div class="item">
+                <picture class="item-coin"><img src="images/coin-icon1.png" srcset="images/coin-icon1.png, images/coin-icon1@2x.png 2x" alt=""/></picture>
+              </div>
             </div>
-            <div class="transaction__wrapper-gif">
-              <video src="videos/TransactionWalletWaiting.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
+            <div class="review__wrapper-items">
+              <div class="item">
+                <h2>Amount we withdraw in USDC</h2><span>1,284.19 USDC</span>
+              </div>
+              <div class="item">
+                <h2>And it will be a total of</h2><span>1,294.11 USDC</span>
+              </div>
             </div>
-          </div>
-          <div class="transaction__wrapper">
-            <div class="transaction__wrapper-status">
-              <h1 class="title">Your transaction is processing</h1>
-              <p class="description">Waiting for the transaction to be confirmed</p>
+            <div class="review__wrapper-switch">
+              <p>Use Smart Treasury rewards to cover gas</p>
+              <form class="switch__container" action="#"> 
+                <input id="switch-shadow" type="checkbox" hidden="hidden"/>
+                <label class="switch" for="switch-shadow"></label>
+              </form>
             </div>
-            <div class="transaction__wrapper-gif">
-              <video src="videos/TransactionProcessing.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
+            <div class="review__wrapper-items">
+              <div class="item">
+                <h2>Estimated gas cost</h2><span>$15.94</span>
+              </div>
             </div>
-          </div>
-          <div class="transaction__wrapper">
-            <div class="transaction__wrapper-status">
-              <h1 class="title">Success</h1>
-              <p class="description">Your transaction was successfuly processed</p>
-            </div>
-            <div class="transaction__wrapper-gif">
-              <video src="videos/TransactionSuccess.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
-            </div>
-          </div>
-          <div class="transaction__wrapper">
-            <div class="transaction__wrapper-status">
-              <h1 class="title">Transaction was reverted</h1>
-              <p class="description">Something went wrong, and your transaction wasn’t processed</p>
-            </div>
-            <div class="transaction__wrapper-gif">
-              <video src="videos/TransactionFailed.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
-            </div>
+            <button class="button-active black-link" type="button">Withdraw from Savings</button>
           </div>
         </div>
       </div>
