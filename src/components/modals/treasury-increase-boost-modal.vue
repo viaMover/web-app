@@ -100,6 +100,7 @@ import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   fromWei,
   greaterThan,
   multiply,
@@ -412,8 +413,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         await this.tryToEstimate(this.input.amount, this.input.asset);

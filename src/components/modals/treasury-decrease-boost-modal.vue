@@ -82,6 +82,7 @@ import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   greaterThan,
   multiply,
   notZero,
@@ -94,7 +95,7 @@ import {
 } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import * as Sentry from '@sentry/vue';
@@ -421,8 +422,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = formatToNative(
-          multiply(this.output.asset.priceUSD, this.output.amount)
+        this.output.nativeAmount = convertNativeAmountFromAmount(
+          this.output.amount,
+          this.output.asset.priceUSD
         );
 
         await this.tryToEstimate(this.output.amount, this.output.asset);

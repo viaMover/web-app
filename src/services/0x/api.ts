@@ -64,7 +64,7 @@ export const getTransferData = async (
       buyTokenToEthRate: resp.buyTokenToEthRate,
       sellTokenToEthRate: resp.sellTokenToEthRate
     } as TransferData;
-  } catch (err) {
+  } catch (err: any) {
     if (err && err.response && err.response.data) {
       if (
         err.response.data.reason === 'Validation Failed' &&
