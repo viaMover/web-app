@@ -277,12 +277,16 @@ export default {
       simple: 'Vote'
     },
     btnVoteFor: {
-      simple: 'Vote FOR',
-      emoji: '👍 @:governance.btnVoteFor.simple'
+      txt: 'Vote FOR',
+      emoji: '👍'
     },
     btnVoteAgainst: {
-      simple: 'Vote AGAINST',
-      emoji: '👍 @:governance.btnVoteAgainst.simple'
+      txt: 'Vote AGAINST',
+      emoji: '👎'
+    },
+    btnProposalAnalytics: {
+      txt: 'Proposal analytics',
+      emoji: '🌍'
     },
     btnView: {
       simple: 'View'
@@ -311,7 +315,30 @@ export default {
     lblAvailableVotingPower: 'Available voting power',
     lblVotesFor: 'Votes FOR',
     lblVotesAgainst: 'Votes AGAINST',
-    lblCurrentOutcome: 'Current outcome'
+    lblCurrentOutcome: 'Current outcome',
+    txtGovernanceImageAlt: 'Governance icon image',
+    lblMyGovernance: 'My Governance',
+    lblManageGovernance: 'Manage Governance',
+    txtCreateAProposal: 'Community Voting',
+    txtCreateAProposalAlt: 'Create a proposal icon image',
+    txtGlobalAnalytics: 'All information about Governance',
+    lblGlobalAnalytics: 'Global analytics',
+    txtGetInvolved:
+      'Community governance is the key in ' +
+      'Mover’s ecosystem. Your voice matters.',
+    txtGovernanceGlobalAnalyticsImageAlt: 'Global analytics icon image',
+    txtGovernanceOverview:
+      'Governance is a non-custodial and permissionless ' +
+      'product. Check the global statistics across the board.',
+    lblMyVotingPower: 'My voting power',
+    lblPowerNeeded: 'Power needed to become a proposer',
+    lblTotalNumberOfProposals: 'Total number of proposals',
+    txtVoteFor:
+      'You are about to vote FOR. ' +
+      'It means that you want this proposal to pass.',
+    txtVoteAgainst:
+      'You are about to vote AGAINST. ' +
+      'It means that you want this proposal to defeat.'
   },
   nibbleShop: {
     lblNibbleShop: 'Nibble shop',

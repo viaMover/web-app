@@ -1,7 +1,8 @@
 <template>
   <secondary-page>
-    <secondary-page-title :title="proposal.name" />
-    <p>{{ proposal.text }}</p>
+    <template v-slot:title>
+      <secondary-page-title :title="proposal.name" />
+    </template>
   </secondary-page>
 </template>
 
@@ -11,7 +12,7 @@ import Vue from 'vue';
 import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 
 export default Vue.extend({
-  name: 'GovernanceView',
+  name: 'GovernanceAnalytics',
   components: {
     SecondaryPage,
     SecondaryPageTitle
@@ -52,6 +53,11 @@ export default Vue.extend({
         currentOutcome: 'quorumNotReached'
       }
     };
+  },
+  computed: {
+    hasBackButton(): boolean {
+      return this.$route.path.split('/').filter((part) => !!part).length > 1;
+    }
   },
   methods: {
     handleClose(): void {
