@@ -812,7 +812,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';
@@ -826,7 +826,7 @@ export default Vue.extend({
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.output.asset.priceUSD && price !== '0') {
         this.output.asset.priceUSD = price;
       }
       this.input.amount = '';
