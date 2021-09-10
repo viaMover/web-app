@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { Result } from '../../responses';
-import { baseUrl } from '../consts';
+import { tempBaseUrl } from '../consts';
 import {
   SavingsInfo,
   SavingsInfoResponse,
@@ -15,7 +15,7 @@ export const getSavingsInfo = async (
   try {
     const response = (
       await axios.get<SavingsInfoResponse>(
-        `${baseUrl}/v1/savings/info/${address}`,
+        `${tempBaseUrl}/v1/savings/info/${address}`,
         {
           headers: {
             Accept: 'application/json'
@@ -42,7 +42,7 @@ export const getSavingsInfo = async (
 
     return { isError: false, result: payloadProcessed };
   } catch (err) {
-    return { isError: true, error: err };
+    return { isError: true, error: String(err) };
   }
 };
 
@@ -54,7 +54,7 @@ export const getSavingsReceipt = async (
   try {
     const response = (
       await axios.get<SavingsReceiptResponse>(
-        `${baseUrl}/v1/savings/receipt/${address}/${year}/${month}`,
+        `${tempBaseUrl}/v1/savings/receipt/${address}/${year}/${month}`,
         {
           headers: {
             Accept: 'application/json'
@@ -79,6 +79,6 @@ export const getSavingsReceipt = async (
 
     return { isError: false, result: payloadProcessed };
   } catch (err) {
-    return { isError: true, error: err };
+    return { isError: true, error: String(err) };
   }
 };
