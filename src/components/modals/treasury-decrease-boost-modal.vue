@@ -399,7 +399,7 @@ export default Vue.extend({
     async handleUpdateOutputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.output.asset.priceUSD && price !== '0') {
         this.output.asset.priceUSD = price;
       }
       this.output.amount = '';
