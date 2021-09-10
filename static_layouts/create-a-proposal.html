@@ -12,46 +12,78 @@
   </head>
   <body class="dashboard-desktop">
     <main class="info__wrapper dashboard">
-      <div class="create-a-proposal__sidebar info__wrapper-sidebar"><a class="back-link button-active" href="/governance.html"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M1.6109 9.11046L9.49999 15.4995" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M9.49994 2.50142L1.61085 8.89051" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></a>
-        <div class="sidebar-wrapper">
-          <div class="page-sidebar-wrapper">
-            <div class="page-sidebar-wrapper-item">
-              <h3>Proposal Overview</h3>
-              <ul>
-                <li>
-                  <p class="description">Voting period</p><span class="value">3 days</span>
-                </li>
-                <li>
-                  <p class="description">Minimum voting threshold</p><span class="value">24,000,000</span>
-                </li>
-                <li>
-                  <p class="description">Proposer</p><span class="value">0xd90a…8572</span>
-                </li>
-              </ul>
+      <div class="governance-overview__sidebar info__wrapper-sidebar">
+        <div class="sidebar-wrapper sidebar-cards">
+          <div class="sidebar-cards__items">
+            <h3>My Governance</h3>
+            <div class="sidebar-cards__item active">
+              <div class="item"> <a class="button-active" href="#"> 
+                  <div class="image">
+                    <picture>
+                      <source type="image/webp" srcset="images/BeautifulCard@1x.webp, images/BeautifulCard@2x.webp 2x"/><img src="images/BeautifulCard@1x.png" srcset="images/BeautifulCard@1x.png, images/BeautifulCard@2x.png 2x" alt=""/>
+                    </picture>
+                  </div>
+                  <div class="info">
+                    <h4>Governance</h4>
+                    <p>123,190.24 Power</p>
+                  </div></a></div>
+            </div>
+          </div>
+          <div class="sidebar-cards__items">
+            <h3>Manage Governance</h3>
+            <div class="sidebar-cards__item">
+              <div class="item"> <a class="button-active" href="#"> 
+                  <div class="image">
+                    <picture>
+                      <source type="image/webp" srcset="images/BeautifulCard@1x.webp, images/BeautifulCard@2x.webp 2x"/><img src="images/BeautifulCard@1x.png" srcset="images/BeautifulCard@1x.png, images/BeautifulCard@2x.png 2x" alt=""/>
+                    </picture>
+                  </div>
+                  <div class="info">
+                    <h4>Create a proposal</h4>
+                    <p>Community voting</p>
+                  </div></a></div>
+            </div>
+            <div class="sidebar-cards__item">
+              <div class="item"> <a class="button-active" href="#"> 
+                  <div class="image">
+                    <picture>
+                      <source type="image/webp" srcset="images/BeautifulCard@1x.webp, images/BeautifulCard@2x.webp 2x"/><img src="images/BeautifulCard@1x.png" srcset="images/BeautifulCard@1x.png, images/BeautifulCard@2x.png 2x" alt=""/>
+                    </picture>
+                  </div>
+                  <div class="info">
+                    <h4>Global analytics</h4>
+                    <p>All information about Governance </p>
+                  </div></a></div>
             </div>
           </div>
         </div>
       </div>
       <div class="create-a-proposal info__wrapper-menu product-item">
-        <div class="g-wrapper">
-          <div class="create-a-proposal-wrapper product-item__wrapper">
-            <div class="create-a-proposal-wrapper-title">
-              <div class="title">
-                <div class="icon"><span>🗳</span></div>
-                <h2>Governance</h2>
+        <div class="g-wrapper"><a class="back-link button-active" href="#"><svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.6109 9.11046L9.49999 15.4995" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.49994 2.50142L1.61085 8.89051" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></a><a class="escape-link button-active" href="#"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 1L1 11M1 1L11 11L1 1Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></a>
+          <div class="create-a-proposal__wrapper product-item__wrapper">
+            <h1 class="title">Create a proposal</h1>
+            <p class="description">You are about to create a governance proposal. Make it count.</p>
+            <div class="column">
+              <div class="item"><span>3</span>
+                <p>Days to run</p>
+              </div>
+              <div class="item"><span>4,000,000</span>
+                <p>Minimum voting threshold</p>
               </div>
             </div>
-            <div class="create-a-proposal-wrapper-statements">
-              <h2>Create a Proposal</h2>
-              <form action="#"> 
+            <p class="text">A small tip. To make it easier for other community members a proposal should be answered as simple yes or no. Make a descriptive title, and an accurate explanation. The more details you provide, the easier it will be to make a decision for others. </p>
+            <div class="statements">
+              <form action="#">
                 <label>Proposal title
-                  <input type="text" name="title" placeholder="Let’s make Mover great again"/>
+                  <input type="text" name="title" placeholder="My title"/>
                 </label>
-                <label>Proposal description
-                  <textarea placeholder="Write a detailed proposal description"></textarea>
+                <label>Proposal title
+                  <textarea placeholder="My proposal description"></textarea>
                 </label>
                 <button class="black-link button-active" type="submit">Create a proposal</button>
               </form>
