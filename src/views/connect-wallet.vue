@@ -59,6 +59,7 @@ import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
 import { InitCallbacks } from '@/web3/callbacks';
 
 import { ContentWrapper } from '@/components/layout';
+import { APIKeys } from '@/settings';
 
 export default Vue.extend({
   name: 'ConnectWallet',
@@ -94,7 +95,7 @@ export default Vue.extend({
     async connectWalletConnect(): Promise<void> {
       //  Create WalletConnect Provider
       const provider = new WalletConnectProvider({
-        infuraId: 'eac548bd478143d09d2c090d09251bf1'
+        infuraId: APIKeys.INFURA_PROJECT_ID
       });
       await provider.enable();
       const providerWithCb = await InitCallbacks(provider);
