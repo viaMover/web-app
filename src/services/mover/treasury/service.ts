@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { Result } from '../../responses';
-import { tempBaseUrl } from '../consts';
+import { baseUrl } from '../consts';
 import {
   TreasuryInfo,
   TreasuryInfoResponse,
@@ -15,7 +15,7 @@ export const getTreasuryInfo = async (
   try {
     const response = (
       await axios.get<TreasuryInfoResponse>(
-        `${tempBaseUrl}/v1/treasury/info/${address}`,
+        `${baseUrl}/v1/treasury/info/${address}`,
         {
           headers: {
             Accept: 'application/json'
@@ -52,7 +52,7 @@ export const getTreasuryReceipt = async (
   try {
     const response = (
       await axios.get<TreasuryReceiptResponse>(
-        `${tempBaseUrl}/v1/treasury/receipt/${address}/${year}/${month}`,
+        `${baseUrl}/v1/treasury/receipt/${address}/${year}/${month}`,
         {
           headers: {
             Accept: 'application/json'
