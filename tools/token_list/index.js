@@ -1,16 +1,18 @@
 import {
   existsSync,
   mkdirSync,
-  readdirSync,
   promises,
+  readdirSync,
   readFileSync,
   writeFileSync
 } from 'fs';
 import simpleGit from 'simple-git';
-import { join, basename } from 'path';
+import { basename, join } from 'path';
 import Vibrant from 'node-vibrant';
 import logger from 'node-color-log';
 import axios from 'axios';
+
+const alsoIncludedAddresses = ['0x383518188c0c6d7730d91b2c03a03c837814a899'];
 
 const isDirEmpty = (dir) => {
   if (!existsSync(dir)) {
@@ -70,66 +72,177 @@ const iterateOverAssets = async () => {
 const getCoingekoList = async () => {
   const allTokentsUrl =
     'https://api.coingecko.com/api/v3/coins/list?include_platform=true';
-  const coingeckoList = (await axios.get(allTokentsUrl)).data;
-  return coingeckoList;
+  return (await axios.get(allTokentsUrl)).data;
+};
+
+const getExtendedCoingeckoTokenData = async (id) => {
+  try {
+    return (
+      await axios.get(
+        `https://api.coingecko.com/api/v3/coins/${id}?localization=false&tickers=false&market_data=false&community_data=true&developer_data=false&sparkline=false`
+      )
+    ).data;
+  } catch (e) {
+    logger.error(
+      'failed to get extended info from coingecko for',
+      id,
+      e.message ?? e
+    );
+    return undefined;
+  }
+};
+
+const getEthplorerTokenData = async (address, deep = 0) => {
+  try {
+    const result = await axios.get(
+      `https://api.ethplorer.io/getTokenInfo/${address}?apiKey=freekey`
+    );
+
+    // handle too many requests
+    if (result.status === 429) {
+      if (deep > 2) {
+        logger.error(
+          'failed to get ethplorer info for',
+          address,
+          'recursion limit reached'
+        );
+        return undefined;
+      }
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 10000);
+      }).then(async () => await getEthplorerTokenData(address, deep + 1));
+    }
+
+    return result.data;
+  } catch (e) {
+    logger.error('failed to get ethplorer info for', address, e.message ?? e);
+    return undefined;
+  }
 };
 
 const getCoingekoMarketData = async (coingeckoIds) => {
   const marketUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coingeckoIds.join(
     ','
   )}`;
-  const coingeckoList = (await axios.get(marketUrl)).data;
-  return coingeckoList;
+  return (await axios.get(marketUrl)).data;
+};
+
+const getAssetImageColor = async (source, address) => {
+  try {
+    const palette = await Vibrant.from(source).getPalette();
+
+    return palette.Vibrant ? palette.Vibrant.hex : undefined;
+  } catch (e) {
+    logger.warn(
+      'failed to get color pallet for',
+      address,
+      e.message ? e.message : e
+    );
+  }
 };
 
 const enrichWithTWdata = async (assetAddresses) => {
   return assetAddresses.reduce(async (acc, address) => {
-    logger.info(`Add token: ${address}`);
-    const buf = readFileSync(`${twAssetFoler}/${address}/info.json`, 'utf8');
-    const info = JSON.parse(buf);
-    if (info.status !== 'active') {
-      return await acc;
-    }
-
-    const imgPath = `${twAssetFoler}/${address}/logo.png`;
-    if (existsSync(imgPath)) {
-      try {
-        const buffer = Buffer.from(readFileSync(imgPath));
-        const palette = await Vibrant.from(buffer).getPalette();
-
-        info.color = palette.Vibrant ? palette.Vibrant.hex : undefined;
-      } catch (e) {
-        logger.warn(
-          'failed to get color pallet for',
-          imgPath,
-          e.message ? e.message : e
-        );
+    try {
+      const buf = readFileSync(`${twAssetFoler}/${address}/info.json`, 'utf8');
+      const info = JSON.parse(buf);
+      if (info.status !== 'active') {
+        return await acc;
       }
-    } else {
-      logger.warn('logo file for', imgPath, 'does not exist');
-    }
 
-    return [...(await acc), info];
+      logger.info(`Add token: ${address}`);
+
+      const imgPath = `${twAssetFoler}/${address}/logo.png`;
+      if (existsSync(imgPath)) {
+        const buffer = Buffer.from(readFileSync(imgPath));
+        info.color = await getAssetImageColor(buffer, address);
+      } else {
+        logger.warn('logo file for', imgPath, 'does not exist');
+      }
+
+      return [...(await acc), info];
+    } catch (e) {
+      logger.warn(
+        'failed to read info for, create an incomplete entry',
+        address
+      );
+      const fallbackInfo = {
+        isIncomplete: true,
+        id: address
+      };
+      return [...(await acc), fallbackInfo];
+    }
   }, []);
 };
 
 const enrichWithCoingeckoData = async (assets) => {
   const coingeckoList = await getCoingekoList();
-  const enrichedAssets = assets.map((as) => {
-    const coingeckoAsset = coingeckoList
-      .filter((c) => c?.platforms?.ethereum)
-      .find((cas) => {
-        return (
-          (cas?.platforms?.ethereum ?? '').toLowerCase() ===
-          (as?.id ?? '').toLowerCase()
-        );
-      });
-    if (coingeckoAsset !== undefined) {
-      return { ...as, coingeckoId: coingeckoAsset.id };
-    }
-    return { ...as, coingeckoId: undefined };
-  });
-  return enrichedAssets;
+  return await Promise.all(
+    assets.map(async (as) => {
+      const coingeckoAsset = coingeckoList
+        .filter((c) => c?.platforms?.ethereum)
+        .find((cas) => {
+          return (
+            (cas?.platforms?.ethereum ?? '').toLowerCase() ===
+            (as?.id ?? '').toLowerCase()
+          );
+        });
+      if (coingeckoAsset !== undefined) {
+        if (as.isIncomplete) {
+          const [coingeckoExtendedToken, ethplorerToken] = await Promise.all([
+            getExtendedCoingeckoTokenData(coingeckoAsset.id),
+            getEthplorerTokenData(as.id)
+          ]);
+
+          if (
+            coingeckoExtendedToken === undefined ||
+            ethplorerToken === undefined
+          ) {
+            logger.warn('failed to get remote info for', as.id);
+            return as;
+          }
+
+          const recoveredData = {
+            ...as,
+            isIncomplete: false,
+            coingeckoId: coingeckoAsset.id,
+            name: coingeckoAsset.name,
+            symbol: coingeckoAsset.symbol.toUpperCase(),
+            description: coingeckoExtendedToken.description?.en ?? '',
+            explorer:
+              coingeckoExtendedToken?.links?.blockchain_site?.find((url) =>
+                url.includes('etherscan.io/token/')
+              ) ?? `https://etherscan.io/token/${as.id}`,
+            status: 'active',
+            type: 'ERC20',
+            decimals: Number.parseInt(ethplorerToken.decimals),
+            website:
+              coingeckoExtendedToken.links?.homepage?.find((url) => !!url) ??
+              '',
+            imageUrl: coingeckoExtendedToken.image?.large ?? undefined,
+            color: undefined
+          };
+
+          if (recoveredData.imageUrl) {
+            recoveredData.color = await getAssetImageColor(
+              recoveredData.imageUrl,
+              as.id
+            );
+          }
+
+          delete recoveredData.isIncomplete;
+
+          return recoveredData;
+        }
+
+        return { ...as, coingeckoId: coingeckoAsset.id };
+      }
+      return { ...as, coingeckoId: undefined };
+    })
+  );
 };
 
 const enrichWithCoingeckoMarketData = async (assets) => {
@@ -155,6 +268,10 @@ const enrichWithCoingeckoMarketData = async (assets) => {
   return res;
 };
 
+const filterCompleteTokenData = (assets) => {
+  return assets.filter((asset) => !asset.isIncomplete);
+};
+
 const save = (assets) => {
   writeFileSync('./data/assetList.json', JSON.stringify(assets, null, 2));
 };
@@ -162,8 +279,10 @@ const save = (assets) => {
 const generateNewList = async () => {
   await updateTrustwalletRepo();
   let assets = await iterateOverAssets();
+  assets = [...assets, ...alsoIncludedAddresses];
   assets = await enrichWithTWdata(assets);
   assets = await enrichWithCoingeckoData(assets);
+  assets = await filterCompleteTokenData(assets);
   assets = await enrichWithCoingeckoMarketData(assets);
   save(assets);
 };
