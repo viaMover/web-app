@@ -19,7 +19,7 @@
           />
           <shop-list-item
             :title="$t('NFTs.lblTotalClaimed')"
-            :value="totalClaimed"
+            :value="formatToDecimals(totalClaimed, 0)"
           />
         </shop-list>
         <action-button
@@ -63,12 +63,14 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
+import { Step } from '@/components/controls/form-loader';
+import { ChangePayload } from '@/store/modules/nft/actions/claim';
+import { formatToDecimals } from '@/utils/format';
+
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 import ActionButton from '@/components/buttons/action-button.vue';
 import dayjs from 'dayjs';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
-import { Step } from '@/components/controls/form-loader';
-import { ChangePayload } from '@/store/modules/nft/actions/claim';
 
 export default Vue.extend({
   name: 'NftViewMovingWithOlympus',
@@ -103,6 +105,7 @@ export default Vue.extend({
     this.error = undefined;
   },
   methods: {
+    formatToDecimals,
     ...mapActions('nft', [
       'claimOlympus',
       'checkOlympusClaimable',
@@ -131,12 +134,7 @@ export default Vue.extend({
         await this.loadAvatar();
         this.transactionStep = 'Success';
       } catch (err) {
-        if (this.transactionStep === 'Process') {
-          this.transactionStep = 'Reverted';
-        } else {
-          this.transactionStep = undefined;
-          this.error = this.$t('NFTs.txtOhNoSomething').toString();
-        }
+        this.transactionStep = 'Reverted';
       }
     }
   }

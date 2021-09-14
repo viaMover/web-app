@@ -9,10 +9,12 @@
       :value="currentVariableAPY"
     />
     <left-rail-section-item
+      v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
       :description="$t('savings.lbl30DayAverageAPY')"
       :value="monthAverageAPY"
     />
     <left-rail-section-item
+      v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
       :description="$t('savings.lblTotalAssetsUnderManagement')"
       :value="totalAssetsUnderManagement"
     />
@@ -26,6 +28,7 @@ import { mapGetters, mapState } from 'vuex';
 import { formatPercents, formatToNative } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+import { isFeatureEnabled } from '@/settings';
 
 export default Vue.extend({
   name: 'SavingsOverview',
@@ -55,6 +58,9 @@ export default Vue.extend({
     totalAssetsUnderManagement(): string {
       return `$${formatToNative(this.savingsInfoTotalPoolBalanceNative)}`;
     }
+  },
+  methods: {
+    isFeatureEnabled
   }
 });
 </script>

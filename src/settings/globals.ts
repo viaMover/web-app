@@ -1,5 +1,7 @@
 export interface Globals {
+  isSavingsOverviewSomeFieldsEnabled: boolean;
   isSwapPassportEnabled: boolean;
+  isVaultsEnabled: boolean;
   isReleaseRadarEnabled: boolean;
   isDebitCardEnabled: boolean;
   isGovernanceEnabled: boolean;
@@ -15,7 +17,9 @@ export interface Globals {
 }
 
 const values: Globals = {
+  isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
+  isVaultsEnabled: true,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
   isGovernanceEnabled: false,

@@ -52,7 +52,20 @@ const assets = {
   binanceTest: [],
   mainnet: [],
   matic: [],
-  ropsten: []
+  ropsten: [],
+  rinkeby: [
+    {
+      address: '0xb6c8e5f00117136571d260bfb1baff62ddfd9960',
+      decimals: 6,
+      symbol: 'USDC',
+      name: 'USDc',
+      priceUSD: '1.0001',
+      logo: 'https://s3.amazonaws.com/icons.assets/USDC_mcd.png',
+      isFavorite: false,
+      isVerified: true,
+      marketCap: 999999999999999999
+    }
+  ]
 };
 
 export const getTestnetAssets = (network: Network): Array<Token> => {

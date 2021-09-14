@@ -13,6 +13,7 @@ import find from 'lodash-es/find';
 
 import { Transaction, TransactionTypes } from '@/wallet/types';
 import { sameAddress } from '@/utils/address';
+import * as Sentry from '@sentry/vue';
 
 const mapStatus = (status: string): TransactionStatus => {
   switch (status) {
@@ -82,60 +83,65 @@ export const mapZerionTxns = async (
   data: ZerionTransactionsReceived,
   network: Network
 ): Promise<Array<Transaction>> => {
-  let txns: Transaction[] = [];
+  try {
+    let txns: Transaction[] = [];
 
-  data.payload.transactions = data.payload.transactions.filter((t) =>
-    isMoverTransation(t, network)
-  );
-
-  let moverTypesData: TransactionMoveTypeData[] = [];
-  const moverTypesDataRes = await getMoverTransactionsTypes(
-    data.payload.transactions.map((t) => t.hash)
-  );
-  if (isError<TransactionMoveTypeData[], string>(moverTypesDataRes)) {
-    console.error(
-      `Error from mover transaction service: ${moverTypesDataRes.error}`
+    data.payload.transactions = data.payload.transactions.filter((t) =>
+      isMoverTransation(t, network)
     );
-  } else {
-    moverTypesData = moverTypesDataRes.result;
+
+    let moverTypesData: TransactionMoveTypeData[] = [];
+    const moverTypesDataRes = await getMoverTransactionsTypes(
+      data.payload.transactions.map((t) => t.hash)
+    );
+    if (isError<TransactionMoveTypeData[], string>(moverTypesDataRes)) {
+      console.error(
+        `Error from mover transaction service: ${moverTypesDataRes.error}`
+      );
+    } else {
+      moverTypesData = moverTypesDataRes.result;
+    }
+    data.payload.transactions.forEach((t) => {
+      const tradeTxns = parseTradeTransaction(t, moverTypesData);
+      if (tradeTxns !== undefined) {
+        txns = txns.concat(tradeTxns);
+        return;
+      }
+
+      const receiveTxns = parseReceiveTransaction(t, moverTypesData);
+      if (receiveTxns !== undefined) {
+        txns = txns.concat(receiveTxns);
+        return;
+      }
+
+      const sendTxns = parseSendTransaction(t, moverTypesData);
+      if (sendTxns !== undefined) {
+        txns = txns.concat(sendTxns);
+        return;
+      }
+
+      const authTxns = parseAuthorizeTransaction(t, moverTypesData);
+      if (authTxns !== undefined) {
+        txns = txns.concat(authTxns);
+        return;
+      }
+
+      const unknownTxns = tryToParseToUnknown(t, moverTypesData);
+      if (unknownTxns !== undefined) {
+        //txns = txns.concat(unknownTxns);
+        console.log('Unknown txns:');
+        console.log(unknownTxns);
+        return;
+      }
+    });
+
+    console.log('txns:', txns);
+    return txns;
+  } catch (e) {
+    console.log('huy', e);
+    Sentry.captureException(e);
+    return [];
   }
-  data.payload.transactions.forEach((t) => {
-    const tradeTxns = parseTradeTransaction(t, moverTypesData);
-    if (tradeTxns !== undefined) {
-      txns = txns.concat(tradeTxns);
-      return;
-    }
-
-    const receiveTxns = parseReceiveTransaction(t, moverTypesData);
-    if (receiveTxns !== undefined) {
-      txns = txns.concat(receiveTxns);
-      return;
-    }
-
-    const sendTxns = parseSendTransaction(t, moverTypesData);
-    if (sendTxns !== undefined) {
-      txns = txns.concat(sendTxns);
-      return;
-    }
-
-    const authTxns = parseAuthorizeTransaction(t, moverTypesData);
-    if (authTxns !== undefined) {
-      txns = txns.concat(authTxns);
-      return;
-    }
-
-    const unknownTxns = tryToParseToUnknown(t, moverTypesData);
-    if (unknownTxns !== undefined) {
-      //txns = txns.concat(unknownTxns);
-      console.log('Unknown txns:');
-      console.log(unknownTxns);
-      return;
-    }
-  });
-
-  console.log('txns:', txns);
-
-  return txns;
 };
 
 const parseTradeTransaction = (

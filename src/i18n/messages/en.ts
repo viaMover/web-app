@@ -67,7 +67,8 @@ export default {
     lblSavingsDepositCardHeading: 'Save it!',
     txtSavingsDepositCard:
       'Savings just got better. Enjoy easy higher rates and even less hassle.',
-    btnSavingsDepositCard: '@:savingsDepositCard.icon Deposit in Savings'
+    btnSavingsDepositCard: 'Deposit in Savings',
+    txtCardImageAlt: 'Savings icon'
   },
   savings: {
     icon: '💰',
@@ -276,12 +277,16 @@ export default {
       simple: 'Vote'
     },
     btnVoteFor: {
-      simple: 'Vote FOR',
-      emoji: '👍 @:governance.btnVoteFor.simple'
+      txt: 'Vote FOR',
+      emoji: '👍'
     },
     btnVoteAgainst: {
-      simple: 'Vote AGAINST',
-      emoji: '👍 @:governance.btnVoteAgainst.simple'
+      txt: 'Vote AGAINST',
+      emoji: '👎'
+    },
+    btnProposalAnalytics: {
+      txt: 'Proposal analytics',
+      emoji: '🌍'
     },
     btnView: {
       simple: 'View'
@@ -310,7 +315,30 @@ export default {
     lblAvailableVotingPower: 'Available voting power',
     lblVotesFor: 'Votes FOR',
     lblVotesAgainst: 'Votes AGAINST',
-    lblCurrentOutcome: 'Current outcome'
+    lblCurrentOutcome: 'Current outcome',
+    txtGovernanceImageAlt: 'Governance icon image',
+    lblMyGovernance: 'My Governance',
+    lblManageGovernance: 'Manage Governance',
+    txtCreateAProposal: 'Community Voting',
+    txtCreateAProposalAlt: 'Create a proposal icon image',
+    txtGlobalAnalytics: 'All information about Governance',
+    lblGlobalAnalytics: 'Global analytics',
+    txtGetInvolved:
+      'Community governance is the key in ' +
+      'Mover’s ecosystem. Your voice matters.',
+    txtGovernanceGlobalAnalyticsImageAlt: 'Global analytics icon image',
+    txtGovernanceOverview:
+      'Governance is a non-custodial and permissionless ' +
+      'product. Check the global statistics across the board.',
+    lblMyVotingPower: 'My voting power',
+    lblPowerNeeded: 'Power needed to become a proposer',
+    lblTotalNumberOfProposals: 'Total number of proposals',
+    txtVoteFor:
+      'You are about to vote FOR. ' +
+      'It means that you want this proposal to pass.',
+    txtVoteAgainst:
+      'You are about to vote AGAINST. ' +
+      'It means that you want this proposal to defeat.'
   },
   nibbleShop: {
     lblNibbleShop: 'Nibble shop',
@@ -404,6 +432,7 @@ export default {
     }
   },
   NFTs: {
+    lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
     lblMovingWithOlympus: 'Moving with Olympus',
@@ -418,11 +447,22 @@ export default {
     lblAvailableTo: 'Available to',
     lblWhatElseCanDo: 'What else can you do',
     lblDontFitTheCriteria: 'Don’t fit the criteria?',
+    lblOtherDiceOptions: 'Other dice options?',
     txtLogoAlt: '@:NFTs.lblNFTDrops image',
     txtAssetAlt: '{name} NFT asset image',
     txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
     txtOhNoSomething: 'Oh no. Something went wrong',
     txtNFTs: {
+      dice: {
+        description:
+          'Dice is a randomizer contract as NFT. You can roll from ' +
+          'your wallet, and store results on chain',
+        pageDescriptionPartOne:
+          'Every adventure starts with rolling a dice. Make your next step ' +
+          'in the Loot Metaverse. Dice is the NFT you can claim. It also ' +
+          'allows you to roll a dice and store results on chain.',
+        pageDescriptionPartTwo: 'For more details, please visit the {0}.'
+      },
       vaults: {
         description:
           'Vault is a randomized adventurer bank account generated and ' +
@@ -433,7 +473,8 @@ export default {
           'Every week the vault that has the highest number of points ' +
           'wins the entire pool balance.',
         pageDescriptionPartTwo:
-          'For more details on the critera, please see the FAQ'
+          'For more details on the criteria, please see the {0}',
+        faq: 'FAQ'
       },
       movingWithOlympus: {
         description:
@@ -505,6 +546,39 @@ export default {
         noWorries: {
           emoji: '🤓',
           txt: 'No worries, still get the Vault'
+        }
+      },
+      dice: {
+        get: {
+          txt: 'Get the 20-sided dice'
+        },
+        fourSide: {
+          emoji: '🍀',
+          txt: '4-sided dice'
+        },
+        sixSide: {
+          emoji: '🎲',
+          txt: '6-sided dice'
+        },
+        doubleSixSide: {
+          emoji: '👯‍♀️',
+          txt: 'two 6-sided dice'
+        },
+        eightSide: {
+          emoji: '🎱',
+          txt: '8-sided dice'
+        },
+        tenSide: {
+          emoji: '🔟',
+          txt: '10-sided dice'
+        },
+        twelveSide: {
+          emoji: '🕛',
+          txt: '12-sided dice'
+        },
+        twentySide: {
+          emoji: '🧙‍♂️',
+          txt: '20-sided dice'
         }
       }
     }

@@ -82,3 +82,13 @@ export const convertAmountFromNativeValue = (
       .toFixed(decimals, BigNumber.ROUND_DOWN)
   ).toFixed();
 };
+
+export const convertNativeAmountFromAmount = (
+  value: BigNumberish,
+  priceUnit: BigNumberish
+): string => {
+  if (isZero(priceUnit)) return '0';
+  return new BigNumber(
+    new BigNumber(value).times(priceUnit).toFixed(2, BigNumber.ROUND_DOWN)
+  ).toFixed();
+};

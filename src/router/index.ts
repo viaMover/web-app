@@ -137,10 +137,43 @@ const routes: Array<RouteConfig> = [
       },
       {
         path: 'view/:id',
-        name: 'governance-view',
         component: () =>
           import(
-            /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-view-root.vue'
+          ),
+        children: [
+          {
+            path: '',
+            name: 'governance-view',
+            component: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
+              )
+          },
+          {
+            path: 'analytics',
+            name: 'governance-analytics',
+            component: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-analytics.vue'
+              )
+          },
+          {
+            path: 'vote/:decision',
+            name: 'governance-vote',
+            component: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-vote.vue'
+              )
+          }
+        ]
+      },
+      {
+        path: 'global-analytics',
+        name: 'governance-global-analytics',
+        component: () =>
+          import(
+            /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
           )
       },
       {
@@ -231,6 +264,14 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
+          )
+      },
+      {
+        path: 'view/dice-project',
+        name: 'dice-project',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
           )
       }
     ],

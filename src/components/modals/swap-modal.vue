@@ -44,20 +44,7 @@
       </div>
       <div class="modal-wrapper-info-buttons">
         <button class="flip button-active" type="button" @click="flipAssets">
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Flip.webp,
-                @/assets/images/Flip@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtFlipAssetsIconAlt')"
-              src="@/assets/images/Flip.png"
-              srcset="@/assets/images/Flip.png, images/Flip@2x.png 2x"
-            />
-          </picture>
+          <flip-picture />
           <span>Flip</span>
         </button>
         <button
@@ -66,23 +53,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Swap Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -140,8 +111,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Web3 from 'web3';
 import { mapGetters, mapState } from 'vuex';
+import Web3 from 'web3';
+import { Properties as CssProperties } from 'csstype';
+import * as Sentry from '@sentry/vue';
+
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
 import { swapCompound } from '@/wallet/actions/swap/swap';
 import {
@@ -153,6 +127,7 @@ import { mapError } from '@/services/0x/errors';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   fromWei,
   greaterThan,
@@ -167,6 +142,8 @@ import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
 import { TokenWithBalance, Token, SmallToken, GasData } from '@/wallet/types';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { sameAddress } from '@/utils/address';
+import ethDefaults from '@/wallet/references/defaults';
+import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 
 import {
   AssetField,
@@ -178,15 +155,13 @@ import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '@/components/controls/form-loader';
-import ethDefaults from '@/wallet/references/defaults';
-import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import { Properties as CssProperties } from 'csstype';
-import * as Sentry from '@sentry/vue';
-import Modal from '@/components/modals/modal.vue';
 import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
+import Modal from '@/components/modals/modal.vue';
+import DetailsPicture from './details-picture.vue';
+import FlipPicture from './flip-picture.vue';
 
 export default Vue.extend({
   name: 'SwapModal',
@@ -196,7 +171,9 @@ export default Vue.extend({
     GasSelector,
     SlippageSelector,
     FormLoader,
-    Modal
+    Modal,
+    DetailsPicture,
+    FlipPicture
   },
   data() {
     return {
@@ -237,7 +214,11 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
+    ...mapGetters('account', [
+      'treasuryBonusNative',
+      'getTokenColor',
+      'moveNativePrice'
+    ]),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },
@@ -440,13 +421,15 @@ export default Vue.extend({
           this.input.amount = '';
           this.input.nativeAmount = '';
         }
-        const move = this.allTokens.find((t: TokenWithBalance) =>
-          sameAddress(
-            t.address,
-            getMoveAssetData(this.networkInfo.network).address
-          )
+        const move: TokenWithBalance = this.allTokens.find(
+          (t: TokenWithBalance) =>
+            sameAddress(
+              t.address,
+              getMoveAssetData(this.networkInfo.network).address
+            )
         );
         if (move) {
+          move.priceUSD = this.moveNativePrice;
           this.output.asset = move;
           this.output.amount = '';
           this.output.nativeAmount = '';
@@ -584,8 +567,9 @@ export default Vue.extend({
         return;
       }
 
-      this.input.nativeAmount = formatToNative(
-        multiply(this.input.asset.priceUSD, this.input.amount)
+      this.input.nativeAmount = convertNativeAmountFromAmount(
+        this.input.amount,
+        this.input.asset.priceUSD
       );
 
       if (this.output.asset === undefined) {
@@ -607,8 +591,9 @@ export default Vue.extend({
           transferData.buyAmount,
           this.output.asset.decimals
         );
-        this.output.nativeAmount = formatToNative(
-          multiply(this.output.asset.priceUSD, this.output.amount)
+        this.output.nativeAmount = convertNativeAmountFromAmount(
+          this.output.amount,
+          this.output.asset.priceUSD
         );
 
         await this.tryToEstimate(
@@ -710,8 +695,9 @@ export default Vue.extend({
         return;
       }
 
-      this.output.nativeAmount = formatToNative(
-        multiply(this.output.asset.priceUSD, this.output.amount)
+      this.output.nativeAmount = convertNativeAmountFromAmount(
+        this.output.amount,
+        this.output.asset.priceUSD
       );
 
       if (this.input.asset === undefined) {
@@ -733,8 +719,9 @@ export default Vue.extend({
           transferData.sellAmount,
           this.input.asset.decimals
         );
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         await this.tryToEstimate(
@@ -825,7 +812,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';
@@ -839,7 +826,7 @@ export default Vue.extend({
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.output.asset.priceUSD && price !== '0') {
         this.output.asset.priceUSD = price;
       }
       this.input.amount = '';

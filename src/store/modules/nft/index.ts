@@ -29,6 +29,8 @@ export default {
     VaultsTotalAmount: '0',
     VaultsTotalClaimed: '0',
 
+    DiceTotalClaimed: '0',
+
     nfts: []
   },
   actions: {

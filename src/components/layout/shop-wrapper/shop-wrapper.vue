@@ -12,6 +12,7 @@
       is-black
       @close="handleClose"
     />
+    <slot name="context-menu"></slot>
   </div>
 </template>
 

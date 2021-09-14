@@ -35,23 +35,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Deposit Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -59,17 +43,7 @@
             <p class="description">Swapping for</p>
             <div class="value">
               <div class="icon">
-                <picture>
-                  <img
-                    alt=""
-                    src="@/assets/images/USDC.png"
-                    srcset="
-                      @/assets/images/USDC.png,
-                      @/assets/images/USDC@2x.png 2x
-                    "
-                    style="box-shadow: rgb(36, 116, 204) 0px 0px 8px"
-                  />
-                </picture>
+                <usdc-picture />
               </div>
               <span>{{ swappingForString }}</span>
             </div>
@@ -110,6 +84,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+import Web3 from 'web3';
+import * as Sentry from '@sentry/vue';
+import { Properties as CssProperties } from 'csstype';
 
 import {
   TokenWithBalance,
@@ -117,22 +95,16 @@ import {
   SmallTokenInfoWithIcon,
   GasData
 } from '@/wallet/types';
-
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
 import {
   getTransferData,
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
-import Web3 from 'web3';
-import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   fromWei,
   greaterThan,
@@ -150,13 +122,17 @@ import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/deposi
 import { formatToNative } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import * as Sentry from '@sentry/vue';
 import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
+
 import Modal from './modal.vue';
-import { Properties as CssProperties } from 'csstype';
+import { AssetField, GasSelector, FormLoader } from '@/components/controls';
+import { ActionButton } from '@/components/buttons';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import UsdcPicture from './usdc-picture.vue';
+import DetailsPicture from './details-picture.vue';
 
 export default Vue.extend({
   name: 'SavingsDepositModal',
@@ -165,7 +141,9 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     FormLoader,
-    Modal
+    Modal,
+    UsdcPicture,
+    DetailsPicture
   },
   data() {
     return {
@@ -469,8 +447,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.input.nativeAmount = formatToNative(
-          multiply(this.input.asset.priceUSD, this.input.amount)
+        this.input.nativeAmount = convertNativeAmountFromAmount(
+          this.input.amount,
+          this.input.asset.priceUSD
         );
 
         const transferData = await this.calcData(
@@ -546,7 +525,7 @@ export default Vue.extend({
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.input.asset.priceUSD && price !== '0') {
         this.input.asset.priceUSD = price;
       }
       this.input.amount = '';

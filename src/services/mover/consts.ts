@@ -1,1 +1,1 @@
-export const baseUrl = 'https://api.viamover.com/api';
+export const baseUrl = 'https://apiview.viamover.com/api';

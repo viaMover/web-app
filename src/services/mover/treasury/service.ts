@@ -40,7 +40,7 @@ export const getTreasuryInfo = async (
 
     return { isError: false, result: payloadProcessed };
   } catch (err) {
-    return { isError: true, error: err };
+    return { isError: true, error: String(err) };
   }
 };
 
@@ -77,6 +77,6 @@ export const getTreasuryReceipt = async (
 
     return { isError: false, result: payloadProcessed };
   } catch (err) {
-    return { isError: true, error: err };
+    return { isError: true, error: String(err) };
   }
 };

@@ -367,7 +367,7 @@ export default {
     const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
 
     try {
-      await Promise.all([
+      await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
         savingsFreshData,

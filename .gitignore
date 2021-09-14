@@ -24,3 +24,4 @@ pnpm-debug.log*
 
 #assets script
 /tw
+deploy/keys-stg.json

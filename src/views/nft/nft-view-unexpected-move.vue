@@ -11,15 +11,15 @@
         <shop-list>
           <shop-list-item
             :title="$t('NFTs.lblTotalAmount')"
-            :value="totalAmount"
+            :value="formatToDecimals(totalAmount, 0)"
           />
           <shop-list-item
             :title="$t('NFTs.lblTotalClaimed')"
-            :value="totalClaimed"
+            :value="formatToDecimals(totalClaimed, 0)"
           />
           <shop-list-item
             :title="$t('NFTs.lblTotalExchanged')"
-            :value="totalExchanged"
+            :value="formatToDecimals(totalExchanged, 0)"
           />
         </shop-list>
         <action-button
@@ -100,6 +100,7 @@ import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
 import { Step } from '@/components/controls/form-loader';
 import { getUnexpectedMoveClaimSignature } from '@/services/chain';
 import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'NftViewUnexpectedMove',
@@ -134,6 +135,7 @@ export default Vue.extend({
     this.actionError = undefined;
   },
   methods: {
+    formatToDecimals,
     ...mapActions('nft', [
       'claimUnexpectedMove',
       'refreshNftStats',
@@ -162,12 +164,7 @@ export default Vue.extend({
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {
-        if (this.transactionStep === 'Process') {
-          this.transactionStep = 'Reverted';
-        } else {
-          this.transactionStep = undefined;
-          this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
-        }
+        this.transactionStep = 'Reverted';
       }
     },
     async handleClaimAndExchange(): Promise<void> {

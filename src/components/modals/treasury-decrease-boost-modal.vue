@@ -35,23 +35,7 @@
           type="button"
           @click="expandInfo"
         >
-          <picture>
-            <source
-              srcset="
-                @/assets/images/Details.webp,
-                @/assets/images/Details@2x.webp 2x
-              "
-              type="image/webp"
-            />
-            <img
-              :alt="$t('icon.txtSwapDetailsIconAlt')"
-              src="@/assets/images/Details.png"
-              srcset="
-                @/assets/images/Details.png,
-                @/assets/images/Details@2x.png 2x
-              "
-            />
-          </picture>
+          <details-picture />
           <span>Transaction Details</span>
         </button>
         <div v-if="showInfo" class="tx-details__content">
@@ -88,9 +72,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
+import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
 
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 
@@ -98,6 +82,7 @@ import { mapGetters, mapState } from 'vuex';
 import {
   add,
   convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   greaterThan,
   multiply,
   notZero,
@@ -110,7 +95,7 @@ import {
 } from '@/wallet/references/data';
 import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import { sameAddress } from '@/utils/address';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import * as Sentry from '@sentry/vue';
@@ -123,6 +108,7 @@ import Modal from './modal.vue';
 import { Step } from '../controls/form-loader';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
 import { Properties as CssProperties } from 'csstype';
+import DetailsPicture from '@/components/modals/details-picture.vue';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseBoostModal',
@@ -131,7 +117,8 @@ export default Vue.extend({
     ActionButton,
     GasSelector,
     FormLoader,
-    Modal
+    Modal,
+    DetailsPicture
   },
   data() {
     return {
@@ -185,13 +172,12 @@ export default Vue.extend({
         this.moveNativePrice,
         this.slpNativePrice
       );
-      const res = treasuryTokens
+      return treasuryTokens
         .map((t) => ({
           ...t,
           balance: this.getTreasuryTokenBalance(t.address)
         }))
         .filter((t) => greaterThan(t.balance, '0'));
-      return res;
     },
     error(): string | undefined {
       if (!notZero(this.output.amount)) {
@@ -413,7 +399,7 @@ export default Vue.extend({
     async handleUpdateOutputAsset(asset: TokenWithBalance): Promise<void> {
       const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!price && price !== '0') {
+      if (!this.output.asset.priceUSD && price !== '0') {
         this.output.asset.priceUSD = price;
       }
       this.output.amount = '';
@@ -436,8 +422,9 @@ export default Vue.extend({
       this.loading = true;
       this.transferError = undefined;
       try {
-        this.output.nativeAmount = formatToNative(
-          multiply(this.output.asset.priceUSD, this.output.amount)
+        this.output.nativeAmount = convertNativeAmountFromAmount(
+          this.output.amount,
+          this.output.asset.priceUSD
         );
 
         await this.tryToEstimate(this.output.amount, this.output.asset);

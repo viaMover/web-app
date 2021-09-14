@@ -1,54 +1,20 @@
 <template>
-  <content-wrapper
-    :has-back-button="hasBackButton"
-    has-close-button
-    has-left-rail
-    @close="handleClose"
-  >
-    <template v-slot:left-rail>
-      <governance-proposal-overview :id="proposal.id" />
-      <governance-proposal-details :id="proposal.id" />
-    </template>
-
-    <secondary-page
-      :has-heading-buttons="isEnoughVotingPower"
-      :title="$t('governance.lblProposal')"
-    >
-      <template v-if="isEnoughVotingPower" v-slot:heading-buttons>
-        <action-button @button-click="vote(true)">
-          {{ $t('governance.btnVoteFor.emoji') }}
-        </action-button>
-        <action-button @button-click="vote(false)">
-          {{ $t('governance.btnVoteAgainst.emoji') }}
-        </action-button>
-      </template>
-
-      <h2>{{ proposal.name }}</h2>
-      <governance-proposal :id="proposal.id" />
-    </secondary-page>
-  </content-wrapper>
+  <secondary-page>
+    <secondary-page-title :title="proposal.name" />
+    <p>{{ proposal.text }}</p>
+  </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import { SecondaryPage, ContentWrapper } from '@/components/layout';
-import { ActionButton } from '@/components/buttons';
-import {
-  GovernanceProposalOverview,
-  GovernanceProposalDetails,
-  GovernanceProposal
-} from '@/components/governance';
+import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceView',
   components: {
-    ContentWrapper,
     SecondaryPage,
-    ActionButton,
-    GovernanceProposalOverview,
-    GovernanceProposalDetails,
-    GovernanceProposal
+    SecondaryPageTitle
   },
   data() {
     return {
@@ -87,20 +53,9 @@ export default Vue.extend({
       }
     };
   },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    },
-    isEnoughVotingPower(): boolean {
-      return true;
-    }
-  },
   methods: {
     handleClose(): void {
       this.$router.back();
-    },
-    vote(decision: boolean): void {
-      //
     }
   }
 });

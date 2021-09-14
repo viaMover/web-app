@@ -42,7 +42,7 @@ export const getSavingsInfo = async (
 
     return { isError: false, result: payloadProcessed };
   } catch (err) {
-    return { isError: true, error: err };
+    return { isError: true, error: String(err) };
   }
 };
 
@@ -79,6 +79,6 @@ export const getSavingsReceipt = async (
 
     return { isError: false, result: payloadProcessed };
   } catch (err) {
-    return { isError: true, error: err };
+    return { isError: true, error: String(err) };
   }
 };

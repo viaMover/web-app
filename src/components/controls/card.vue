@@ -6,7 +6,12 @@
         <p>{{ description }}</p>
       </div>
       <div class="card__info-icon">
-        <span>{{ icon }}</span>
+        <custom-picture
+          :alt="image.alt"
+          :sources="image.sources"
+          :src="image.src"
+          :webp-sources="image.webpSources"
+        />
       </div>
     </div>
     <div class="card__buttons">
@@ -25,13 +30,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
+
+import { PictureDescriptor } from '@/components/html5';
 
 import { ActionButton, CloseButton } from '@/components/buttons';
+import CustomPicture from '@/components/html5/custom-picture.vue';
 
 export default Vue.extend({
   name: 'Card',
   components: {
+    CustomPicture,
     ActionButton,
     CloseButton
   },
@@ -44,9 +53,9 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    icon: {
-      type: String,
-      default: ''
+    image: {
+      type: Object as PropType<PictureDescriptor>,
+      required: true
     },
     buttonText: {
       type: String,

@@ -1,26 +1,21 @@
 <template>
   <content-wrapper
-    :has-back-button="hasBackButton"
     has-close-button
     has-left-rail
+    is-black-close-button
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <governance-overview />
-      <governance-stats />
+      <left-rail-section>
+        <governance-nav-my-governance />
+        <governance-nav-manage-governance />
+      </left-rail-section>
     </template>
 
-    <secondary-page
-      :has-heading-buttons="isCreateProposalAvailable"
-      :title="$t('governance.lblGovernance')"
-    >
-      <template v-if="isCreateProposalAvailable" v-slot:heading-buttons>
-        <heading-nav-button navigate-to-name="governance-create">
-          {{ $t('governance.btnCreateAProposal.emoji') }}
-        </heading-nav-button>
-      </template>
-
+    <secondary-page>
       <h2>{{ $t('governance.lblGetInvolved') }}</h2>
+      <p>{{ $t('governance.txtGetInvolved') }}</p>
+
       <governance-proposals />
     </secondary-page>
   </content-wrapper>
@@ -29,12 +24,15 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { SecondaryPage, ContentWrapper } from '@/components/layout';
-import { HeadingNavButton } from '@/components/buttons';
 import {
-  GovernanceOverview,
+  SecondaryPage,
+  ContentWrapper,
+  LeftRailSection
+} from '@/components/layout';
+import {
   GovernanceProposals,
-  GovernanceStats
+  GovernanceNavMyGovernance,
+  GovernanceNavManageGovernance
 } from '@/components/governance';
 
 export default Vue.extend({
@@ -42,18 +40,10 @@ export default Vue.extend({
   components: {
     ContentWrapper,
     SecondaryPage,
-    HeadingNavButton,
-    GovernanceOverview,
-    GovernanceProposals,
-    GovernanceStats
-  },
-  computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
-    },
-    isCreateProposalAvailable(): boolean {
-      return true;
-    }
+    LeftRailSection,
+    GovernanceNavMyGovernance,
+    GovernanceNavManageGovernance,
+    GovernanceProposals
   },
   methods: {
     handleClose(): void {
