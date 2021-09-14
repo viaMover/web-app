@@ -29,6 +29,7 @@ import {
   clearLastProviderPersist,
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
+  isFeatureEnabled,
   setAvatarToPersist,
   setIsOlympusAvatarKnownToPersist,
   setLastProviderToPersist
@@ -356,6 +357,15 @@ export default {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
+
+    let nibbleShopInfoPromise = Promise.resolve();
+    if (isFeatureEnabled('isNibbleShopEnabled')) {
+      nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
+        dispatch('shop/loadAssetsInfoList', undefined, {
+          root: true
+        })
+      );
+    }
     const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
 
     try {
@@ -365,7 +375,8 @@ export default {
         savingsFreshData,
         treasuryFreshData,
         nftInfoPromise,
-        loadAvatarPromise
+        loadAvatarPromise,
+        nibbleShopInfoPromise
       ]);
     } catch (e) {
       Sentry.captureException(e);

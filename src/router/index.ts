@@ -203,14 +203,6 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
-        path: 'no-nft',
-        name: 'nibble-shop-no-nft',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-no-nft.vue'
-          )
-      },
-      {
         path: '',
         name: 'nibble-shop-view-all',
         component: () =>
