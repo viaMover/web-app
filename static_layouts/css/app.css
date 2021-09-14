@@ -2181,7 +2181,7 @@ body {
 }
 .popup-currency .popup__content-search .items__item-info .icon span {
   display: block;
-  font-family: $R;
+  font-family: 'Regular';
   font-size: 16px;
   line-height: 16px;
 }
