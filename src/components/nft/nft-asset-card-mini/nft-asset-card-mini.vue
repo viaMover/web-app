@@ -1,6 +1,6 @@
 <template>
   <div class="item__list-item">
-    <router-link class="item__list-item button-active" :to="routeTo">
+    <router-link class="item__list-item" :to="routeTo">
       <custom-picture
         :alt="item.picture.alt"
         :sources="item.picture.sources"
