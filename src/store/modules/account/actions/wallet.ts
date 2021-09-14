@@ -360,9 +360,11 @@ export default {
 
     let nibbleShopInfoPromise = Promise.resolve();
     if (isFeatureEnabled('isNibbleShopEnabled')) {
-      nibbleShopInfoPromise = dispatch('shop/loadAssetsInfoList', undefined, {
-        root: true
-      });
+      nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
+        dispatch('shop/loadAssetsInfoList', undefined, {
+          root: true
+        })
+      );
     }
     const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
 
