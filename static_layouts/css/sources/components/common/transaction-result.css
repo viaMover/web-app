@@ -1,0 +1,35 @@
+.popup-transaction-result .popup__content {
+  min-height: 364px;
+  text-align: center;
+  padding: 0;
+}
+.popup-transaction-result .popup__content .info {
+  border-radius: 16px;
+  padding: 80px 40px 24px;
+  margin-top: 0;
+}
+.popup-transaction-result .popup__content .info__gif {
+  margin: 0 auto;
+  width: 158px;
+  height: 158px;
+}
+.popup-transaction-result .popup__content .info__gif video {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.popup-transaction-result .popup__content .info__status {
+  margin-top: 78px;
+}
+.popup-transaction-result .popup__content .info__status h2 {
+  font-family: $Bold;
+}
+.popup-transaction-result .popup__content .info__status p {
+  color: rgba(60,60,67,0.6);
+  font-family: $Medium;
+}
+.popup-transaction-result .popup__content .info.success,
+.popup-transaction-result .popup__content .info.failed {
+  background-color: #fff;
+}

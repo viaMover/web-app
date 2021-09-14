@@ -1,0 +1,13 @@
+.ceo-of-money__menu.product-item .product-item__wrapper-title .title .icon {
+  -webkit-box-shadow: 0px 0px 8px #b9bbbc;
+          box-shadow: 0px 0px 8px #b9bbbc;
+}
+.ceo-of-money__menu.product-item .product-item__wrapper-title .title .icon img {
+  background-color: #d8dfe6;
+}
+.ceo-of-money__menu.product-item .product-item__wrapper-banner {
+  background: #d8dfe6;
+}
+.ceo-of-money__menu.product-item .product-item__wrapper-banner video {
+  max-width: 391px;
+}

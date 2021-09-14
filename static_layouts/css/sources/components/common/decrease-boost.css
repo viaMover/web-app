@@ -1,0 +1,11 @@
+.popup-decrease-boost .popup__content .info__form-right button.currency {
+  background: #343c77;
+  -webkit-box-shadow: 0px 0px 16px #343c77;
+          box-shadow: 0px 0px 16px #343c77;
+}
+.popup-decrease-boost .popup__content .info__form-right button.use span {
+  color: #687ee3;
+}
+.popup-decrease-boost .popup__content .button .action {
+  background-color: $black;
+}
