@@ -1,0 +1,282 @@
+.settings {
+  background-color: #fafafc;
+  min-height: 100vh;
+}
+.settings .g-wrapper {
+  margin: 0 auto;
+}
+.settings__wrapper .item {
+  padding-bottom: 15.5px;
+  border-bottom: 1px solid rgba(60,60,67,0.08);
+}
+.settings__wrapper .item .title {
+  font-family: $Bold;
+  font-size: 24px;
+  line-height: 32px;
+}
+.settings__wrapper .item__wrapper {
+  margin-top: 16px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.settings__wrapper .item__wrapper-info {
+  -webkit-flex-basis: 60%;
+      -ms-flex-preferred-size: 60%;
+          flex-basis: 60%;
+}
+.settings__wrapper .item__wrapper-button {
+  -webkit-flex-basis: auto;
+      -ms-flex-preferred-size: auto;
+          flex-basis: auto;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+.settings__wrapper .description {
+  font-family: $Medium;
+  font-size: 14px;
+  line-height: 22px;
+}
+.settings__wrapper .info {
+  font-family: $Regular;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(60,60,67,0.6);
+}
+.settings__wrapper-user .user {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 50%;
+}
+.settings__wrapper-user .user span {
+  font-family: $Regular;
+  font-size: 40px;
+  line-height: 47px;
+  display: block;
+}
+.settings__wrapper-user .user1 {
+  background: #ffda38;
+  -webkit-box-shadow: 0px 0px 16px #ffda38;
+          box-shadow: 0px 0px 16px #ffda38;
+}
+.settings__wrapper-user .user2 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#b5b0b6), to(#b5b0b6));
+  background: -o-linear-gradient(bottom, #b5b0b6, #b5b0b6);
+  background: linear-gradient(0deg, #b5b0b6, #b5b0b6);
+  -webkit-box-shadow: 0px 0px 16px #b5b0b6;
+          box-shadow: 0px 0px 16px #b5b0b6;
+}
+.settings__wrapper-user .user3 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ff96ca), to(#ff96ca));
+  background: -o-linear-gradient(bottom, #ff96ca, #ff96ca);
+  background: linear-gradient(0deg, #ff96ca, #ff96ca);
+  -webkit-box-shadow: 0px 0px 16px #ff96ca;
+          box-shadow: 0px 0px 16px #ff96ca;
+}
+.settings__wrapper-user .user4 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ffb6ba), to(#ffb6ba));
+  background: -o-linear-gradient(bottom, #ffb6ba, #ffb6ba);
+  background: linear-gradient(0deg, #ffb6ba, #ffb6ba);
+  -webkit-box-shadow: 0px 0px 16px #ffb6ba;
+          box-shadow: 0px 0px 16px #ffb6ba;
+}
+.settings__wrapper-user .user5 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ffe67d), to(#ffe67d));
+  background: -o-linear-gradient(bottom, #ffe67d, #ffe67d);
+  background: linear-gradient(0deg, #ffe67d, #ffe67d);
+  -webkit-box-shadow: 0px 0px 16px #ffe67d;
+          box-shadow: 0px 0px 16px #ffe67d;
+}
+.settings__wrapper-user .user6 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#c8ccce), to(#c8ccce));
+  background: -o-linear-gradient(bottom, #c8ccce, #c8ccce);
+  background: linear-gradient(0deg, #c8ccce, #c8ccce);
+  -webkit-box-shadow: 0px 0px 16px #c8ccce;
+          box-shadow: 0px 0px 16px #c8ccce;
+}
+.settings__wrapper-user .user7 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#a8cf5a), to(#a8cf5a));
+  background: -o-linear-gradient(bottom, #a8cf5a, #a8cf5a);
+  background: linear-gradient(0deg, #a8cf5a, #a8cf5a);
+  -webkit-box-shadow: 0px 0px 16px #a8cf5a;
+          box-shadow: 0px 0px 16px #a8cf5a;
+}
+.settings__wrapper-user .user8 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#a2664f), to(#a2664f));
+  background: -o-linear-gradient(bottom, #a2664f, #a2664f);
+  background: linear-gradient(0deg, #a2664f, #a2664f);
+  -webkit-box-shadow: 0px 0px 16px #a2664f;
+          box-shadow: 0px 0px 16px #a2664f;
+}
+.settings__wrapper-user .user9 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#c8ccce), to(#c8ccce));
+  background: -o-linear-gradient(bottom, #c8ccce, #c8ccce);
+  background: linear-gradient(0deg, #c8ccce, #c8ccce);
+  -webkit-box-shadow: 0px 0px 16px #c8ccce;
+          box-shadow: 0px 0px 16px #c8ccce;
+}
+.settings__wrapper-user .user10 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#e68444), to(#e68444));
+  background: -o-linear-gradient(bottom, #e68444, #e68444);
+  background: linear-gradient(0deg, #e68444, #e68444);
+  -webkit-box-shadow: 0px 0px 16px #e68444;
+          box-shadow: 0px 0px 16px #e68444;
+}
+.settings__wrapper-user .user11 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#c8ccce), to(#c8ccce));
+  background: -o-linear-gradient(bottom, #c8ccce, #c8ccce);
+  background: linear-gradient(0deg, #c8ccce, #c8ccce);
+  -webkit-box-shadow: 0px 0px 16px #c8ccce;
+          box-shadow: 0px 0px 16px #c8ccce;
+}
+.settings__wrapper-user .user12 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ff8b84), to(#ff8b84));
+  background: -o-linear-gradient(bottom, #ff8b84, #ff8b84);
+  background: linear-gradient(0deg, #ff8b84, #ff8b84);
+  -webkit-box-shadow: 0px 0px 16px #ff8b84;
+          box-shadow: 0px 0px 16px #ff8b84;
+}
+.settings__wrapper-user .user13 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#a8cf5a), to(#a8cf5a));
+  background: -o-linear-gradient(bottom, #a8cf5a, #a8cf5a);
+  background: linear-gradient(0deg, #a8cf5a, #a8cf5a);
+  -webkit-box-shadow: 0px 0px 16px #a8cf5a;
+          box-shadow: 0px 0px 16px #a8cf5a;
+}
+.settings__wrapper-user .user14 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ffaf1e), to(#ffaf1e));
+  background: -o-linear-gradient(bottom, #ffaf1e, #ffaf1e);
+  background: linear-gradient(0deg, #ffaf1e, #ffaf1e);
+  -webkit-box-shadow: 0px 0px 16px #ffaf1e;
+          box-shadow: 0px 0px 16px #ffaf1e;
+}
+.settings__wrapper-user .user15 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#b5b0b6), to(#b5b0b6));
+  background: -o-linear-gradient(bottom, #b5b0b6, #b5b0b6);
+  background: linear-gradient(0deg, #b5b0b6, #b5b0b6);
+  -webkit-box-shadow: 0px 0px 16px #b5b0b6;
+          box-shadow: 0px 0px 16px #b5b0b6;
+}
+.settings__wrapper-user .user16 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#ffdb3d), to(#ffdb3d));
+  background: -o-linear-gradient(bottom, #ffdb3d, #ffdb3d);
+  background: linear-gradient(0deg, #ffdb3d, #ffdb3d);
+  -webkit-box-shadow: 0px 0px 16px #ffdb3d;
+          box-shadow: 0px 0px 16px #ffdb3d;
+}
+.settings__wrapper-user .user17 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#d65450), to(#d65450));
+  background: -o-linear-gradient(bottom, #d65450, #d65450);
+  background: linear-gradient(0deg, #d65450, #d65450);
+  -webkit-box-shadow: 0px 0px 16px #d65450;
+          box-shadow: 0px 0px 16px #d65450;
+}
+.settings__wrapper-user .user18 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#a8cf5a), to(#a8cf5a));
+  background: -o-linear-gradient(bottom, #a8cf5a, #a8cf5a);
+  background: linear-gradient(0deg, #a8cf5a, #a8cf5a);
+  -webkit-box-shadow: 0px 0px 16px #a8cf5a;
+          box-shadow: 0px 0px 16px #a8cf5a;
+}
+.settings__wrapper-user .user19 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#69c2df), to(#69c2df));
+  background: -o-linear-gradient(bottom, #69c2df, #69c2df);
+  background: linear-gradient(0deg, #69c2df, #69c2df);
+  -webkit-box-shadow: 0px 0px 16px #69c2df;
+          box-shadow: 0px 0px 16px #69c2df;
+}
+.settings__wrapper-user .user20 {
+  background: -webkit-gradient(linear, left bottom, left top, from(#a8cf5a), to(#a8cf5a));
+  background: -o-linear-gradient(bottom, #a8cf5a, #a8cf5a);
+  background: linear-gradient(0deg, #a8cf5a, #a8cf5a);
+  -webkit-box-shadow: 0px 0px 16px #a8cf5a;
+          box-shadow: 0px 0px 16px #a8cf5a;
+}
+.settings__wrapper-user button {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 40px;
+  left: 75px;
+  z-index: 10;
+  border-radius: 50%;
+  background: #f1f1f1;
+  -webkit-box-shadow: 0px 0px 10px #ccc;
+          box-shadow: 0px 0px 10px #ccc;
+  display: block;
+}
+.settings__wrapper-user button picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.settings__wrapper-user button picture img {
+  display: block;
+  width: 100%;
+}
+.settings__wrapper-wallet {
+  margin-top: 40px;
+}
+.settings__wrapper-wallet .item__wrapper-button button {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 9px;
+  width: 133px;
+  font-family: $Bold;
+  font-size: 14px;
+  line-height: 20px;
+  background: #f1f1f1;
+  border-radius: 19px;
+}
+.settings__wrapper-account {
+  margin-top: 39.5px;
+}
+.settings__wrapper-account .item__wrapper-button button {
+  font-family: $Bold;
+  font-size: 16px;
+  line-height: 24px;
+  background: transparent;
+}
+.settings__wrapper-language {
+  margin-top: 16.5px;
+}
+.settings__wrapper-language .item__wrapper-button button {
+  font-family: $Bold;
+  font-size: 16px;
+  line-height: 24px;
+  background: transparent;
+}

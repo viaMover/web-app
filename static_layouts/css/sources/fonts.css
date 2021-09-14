@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'Regular';
+  src: url("../fonts/Inter-Regular.woff2");
+}
+@font-face {
+  font-family: 'Bold';
+  src: url("../fonts/Inter-Bold.woff2");
+}
+@font-face {
+  font-family: 'Medium';
+  src: url("../fonts/Inter-Medium.woff2");
+}
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url("../fonts/Roboto-Regular.woff2");
+}

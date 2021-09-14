@@ -1,0 +1,30 @@
+.popup-delegate-voting-power .info {
+  margin-top: 24px;
+  background-color: #fcfcfc;
+  padding: 24px 16px;
+  -webkit-box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+          box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+  border-radius: 8px;
+}
+.popup-delegate-voting-power .info form {
+  width: 100%;
+}
+.popup-delegate-voting-power .info form label,
+.popup-delegate-voting-power .info form input {
+  font-family: $Medium;
+  font-size: 18px;
+  line-height: 28px;
+}
+.popup-delegate-voting-power .info form label {
+  display: block;
+  width: 100%;
+  color: rgba(60,60,67,0.6);
+}
+.popup-delegate-voting-power .info form input {
+  color: $black;
+  background: none;
+  border: none;
+}
+.popup-delegate-voting-power .button .action {
+  background-color: $black;
+}
