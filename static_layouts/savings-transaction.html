@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Savings Statements</title>
+    <title>Savings</title>
     <link rel="stylesheet" href="css/libs.min.css"/>
     <link rel="stylesheet" href="css/app.css"/>
     <link rel="shortcut icon" href="images/favicon.ico"/>
@@ -70,23 +70,45 @@
           </div>
         </div>
       </div>
-      <div class="savings-statements info__wrapper-menu product-item statements-inner">
+      <div class="transaction">
         <div class="g-wrapper"><a class="escape-link button-active" href="#"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11 1L1 11M1 1L11 11L1 1Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg></a>
-          <div class="savings-statements__wrapper product-item__wrapper statements-inner__wrapper">
-            <div class="title"><span class="balance">~ $984.17</span>
-              <p class="description">You could approximately earn in a year if you deposit $10,000 now. </p>
+          <div class="transaction__wrapper">
+            <div class="transaction__wrapper-status">
+              <h1 class="title">Waiting for confirmation</h1>
+              <p class="description">Confirm this transaction in your wallet</p>
             </div>
-            <div class="graph">
-              <p>If you deposit in Savings now, you are getting</p>
+            <div class="transaction__wrapper-gif">
+              <video src="videos/TransactionWalletWaiting.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
             </div>
-            <div class="column">
-              <div class="column__item"><span>8.3%</span>
-                <p>APY on all savings</p>
-              </div>
+          </div>
+          <div class="transaction__wrapper">
+            <div class="transaction__wrapper-status">
+              <h1 class="title">Your transaction is processing</h1>
+              <p class="description">Waiting for the transaction to be confirmed</p>
             </div>
-            <button class="black-link button-active" type="button">Start saving</button>
+            <div class="transaction__wrapper-gif">
+              <video src="videos/TransactionProcessing.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
+            </div>
+          </div>
+          <div class="transaction__wrapper">
+            <div class="transaction__wrapper-status">
+              <h1 class="title">Success</h1>
+              <p class="description">Your transaction was successfuly processed</p>
+            </div>
+            <div class="transaction__wrapper-gif">
+              <video src="videos/TransactionSuccess.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
+            </div>
+          </div>
+          <div class="transaction__wrapper">
+            <div class="transaction__wrapper-status">
+              <h1 class="title">Transaction was reverted</h1>
+              <p class="description">Something went wrong, and your transaction wasn’t processed</p>
+            </div>
+            <div class="transaction__wrapper-gif">
+              <video src="videos/TransactionFailed.webm" autoplay="autoplay" loop="loop" data-keepplaying="data-keepplaying" muted="muted"></video>
+            </div>
           </div>
         </div>
       </div>
