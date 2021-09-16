@@ -56,17 +56,34 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/savings',
+    name: 'savings-root',
     component: () =>
       import(
         /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
       ),
     children: [
       {
-        path: 'empty',
-        name: 'savings-empty',
+        path: '',
+        name: 'savings-manage-wrapper',
         component: () =>
           import(
-            /* webpackChunkName: "savings" */ '@/views/savings/savings-empty.vue'
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
+          )
+      },
+      {
+        path: 'deposit',
+        name: 'savings-deposit',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit.vue'
+          )
+      },
+      {
+        path: 'withdraw',
+        name: 'savings-withdraw',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw.vue'
           )
       },
       {
@@ -75,14 +92,6 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
-          )
-      },
-      {
-        path: '',
-        name: 'savings-manage',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage.vue'
           )
       }
     ]

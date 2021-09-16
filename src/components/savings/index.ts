@@ -4,3 +4,6 @@ export { default as SavingsMonthlyStatement } from './savings-monthly-statement.
 export { default as SavingsOverview } from './savings-overview.vue';
 export { default as SavingsStats } from './savings-stats.vue';
 export { default as SavingsYearlyChartWrapper } from './savings-yearly-chart-wrapper.vue';
+export { default as SavingsLeftRail } from './savings-left-rail.vue';
+export { default as SavingsEmpty } from './savings-empty.vue';
+export { default as SavingsManage } from './savings-manage.vue';

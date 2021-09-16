@@ -3,6 +3,7 @@
     base-class="more"
     has-back-button
     wrapper-class="more__wrapper"
+    @back="handleClose"
     @close="handleClose"
   >
     <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />

@@ -73,6 +73,12 @@ export default {
   savings: {
     icon: '💰',
     lblSavings: 'Savings',
+    lblMySavings: 'My Savings',
+    lblGlobalAnalytics: 'Global analytics',
+    txtGlobalAnalytics: 'All information about Savings',
+    txtYouCouldApproximately:
+      'You could approximately earn in a year if you deposit $10,000 now.',
+    txtIfYouDeposit: 'If you deposit in Savings now, you are getting',
     lblNothingInSavings: 'Nothing in @:savings.lblSavings',
     txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
@@ -122,6 +128,7 @@ export default {
     },
     deposit: {
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
+      txtDepositShortDescription: 'Get 8.3% APY on simple savings in USDC',
       txtDepositDescription:
         'Once you deposit your assets in savings, Mover is ' +
         'constantly searching for the highest paying option using multiple DeFi protocols. ' +
@@ -138,6 +145,8 @@ export default {
     },
     withdraw: {
       lblWithdrawFromSavings: 'Withdraw from @:savings.lblSavingsPrefix',
+      txtWithdrawShortDescription:
+        'Remove your assets from savings fully or partially',
       txtWithdrawDescription:
         'You can withdraw the entire or partial balance. ' +
         'Available balance consists of principal amount you deposited together with the accumulated yield.',

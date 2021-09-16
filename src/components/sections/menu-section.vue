@@ -11,7 +11,7 @@
         />
         <menu-list-emoji-card-item
           :description="savingsBalance"
-          navigate-to-name="savings-manage"
+          navigate-to-name="savings-manage-wrapper"
           pic="Savings"
           :title="$t('savings.lblSavings')"
         />

@@ -4,6 +4,7 @@
     has-left-rail
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="smart-treasury"
+    @back="handleClose"
     @close="handleClose"
   >
     <template v-slot:left-rail>

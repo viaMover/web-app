@@ -25,7 +25,7 @@
     </div>
     <nav-bar>
       <nav-bar-item
-        navigate-to-name="savings-manage"
+        navigate-to-name="savings-manage-wrapper"
         :text="$t('savings.lblSavings')"
       />
       <nav-bar-item

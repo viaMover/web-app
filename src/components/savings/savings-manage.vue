@@ -1,26 +1,5 @@
 <template>
-  <secondary-page has-heading-buttons>
-    <template v-slot:title>
-      <secondary-page-title
-        :icon="$t('savings.icon')"
-        :title="$t('savings.lblSavings')"
-        wrapper-class="savings__menu-wrapper-title"
-      >
-        <template v-slot:context-menu>
-          <context-button :popover-parent-id="popoverParentId">
-            <context-button-item
-              :text="$t('savings.btnDeposit.emoji')"
-              @click="handleDepositClick"
-            />
-            <context-button-item
-              :text="$t('savings.btnWithdraw.emoji')"
-              @click="handleWithdrawClick"
-            />
-          </context-button>
-        </template>
-      </secondary-page-title>
-    </template>
-
+  <secondary-page>
     <savings-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('savings.btnView.simple')"
@@ -39,19 +18,15 @@ import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
 import { Modal as ModalType } from '@/store/modules/modals/types';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
-import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
-import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { SecondaryPage } from '@/components/layout';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
 import { SavingsYearlyChartWrapper } from '@/components/savings';
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'SavingsManage',
   components: {
-    ContextButton,
-    ContextButtonItem,
-    SecondaryPageTitle,
     SecondaryPage,
     SavingsYearlyChartWrapper,
     StatementNavList

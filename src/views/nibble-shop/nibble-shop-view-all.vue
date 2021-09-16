@@ -3,6 +3,7 @@
     base-class="nibble-shop"
     has-back-button
     page-container-class="nibble-shop"
+    @back="handleClose"
     @close="handleClose"
   >
     <custom-picture

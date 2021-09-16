@@ -1,31 +1,19 @@
 <template>
-  <secondary-page :title="$t('savings.lblSavings')">
-    <template v-slot:title>
-      <secondary-page-title
-        :icon="$t('savings.icon')"
-        :title="$t('savings.lblSavings')"
-        wrapper-class="savings__menu-wrapper-title"
-      >
-        <template v-slot:context-menu>
-          <context-button :popover-parent-id="popoverParentId">
-            <context-button-item
-              :text="$t('savings.btnDeposit.emoji')"
-              @click="handleDepositClick"
-            />
-          </context-button>
-        </template>
-      </secondary-page-title>
-    </template>
-    <div class="savings__menu-wrapper-empty">
-      <span class="icon">💰</span>
-      <h2>{{ $t('savings.lblNothingInSavings') }}</h2>
-      <p>{{ $t('savings.txtNothingInSavings') }}</p>
+  <secondary-page>
+    <savings-yearly-chart-wrapper>
+      <template v-slot:title>
+        <span class="title">{{ title }}</span>
+        <p>{{ $t('savings.txtYouCouldApproximately') }}</p>
+      </template>
+      <p>{{ $t('savings.txtIfYouDeposit') }}</p>
+    </savings-yearly-chart-wrapper>
+    <div class="savings__menu-wrapper-body">
+      <span class="title">{{ $t('8.3%') }}</span>
+      <p class="description">{{ $t('APY on all savings') }}</p>
       <action-button
-        button-class="black-link button-active"
-        @button-click="toggleDeposit"
-      >
-        {{ $t('savings.btnDeposit.emoji') }}
-      </action-button>
+        button-class="button button-active"
+        :text="$t('Start saving')"
+      />
     </div>
   </secondary-page>
 </template>
@@ -37,21 +25,16 @@ import { mapGetters, mapActions } from 'vuex';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 
-import {
-  ActionButton,
-  ContextButton,
-  ContextButtonItem
-} from '@/components/buttons';
-import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
+import { SecondaryPage } from '../../components/layout';
+import SavingsYearlyChartWrapper from '@/components/savings/savings-yearly-chart-wrapper.vue';
+import ActionButton from '@/components/buttons/action-button.vue';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
   components: {
-    SecondaryPage,
-    SecondaryPageTitle,
-    ContextButton,
-    ContextButtonItem,
-    ActionButton
+    ActionButton,
+    SavingsYearlyChartWrapper,
+    SecondaryPage
   },
   data() {
     return {
@@ -59,7 +42,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' })
+    ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' }),
+    title(): string {
+      return '~ $984.17';
+    }
   },
   watch: {
     hasActiveSavings(newVal: boolean) {
@@ -98,5 +84,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style scoped></style>

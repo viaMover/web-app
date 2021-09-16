@@ -22,7 +22,7 @@ const values: Globals = {
   isVaultsEnabled: true,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
-  isGovernanceEnabled: false,
+  isGovernanceEnabled: true,
   isBondsEnabled: false,
   isCardEnabled: false,
   isMoreEnabled: true,

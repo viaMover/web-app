@@ -3,6 +3,7 @@
     base-class="nft-drops"
     has-back-button
     page-container-class="nft-drops"
+    @back="handleClose"
     @close="handleClose"
   >
     <custom-picture

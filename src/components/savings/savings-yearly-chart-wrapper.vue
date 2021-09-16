@@ -1,8 +1,10 @@
 <template>
   <div class="">
     <div class="savings__menu-wrapper-balance">
-      <span class="balance">{{ savingsBalance }}</span>
-      <p>{{ $t('savings.lblSavingsBalance') }}</p>
+      <slot name="title">
+        <span class="balance">{{ savingsBalance }}</span>
+        <p class="balance">{{ $t('savings.lblSavingsBalance') }}</p>
+      </slot>
     </div>
     <div class="savings__menu-wrapper-graph">
       <bar-chart
@@ -10,10 +12,12 @@
         :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
         @item-selected="handleItemSelected"
       />
-      <p>
-        {{ selectedItemPrefix }}
-        <b>{{ selectedItemValue }}</b>
-      </p>
+      <slot>
+        <p>
+          {{ selectedItemPrefix }}
+          <b>{{ selectedItemValue }}</b>
+        </p>
+      </slot>
     </div>
   </div>
 </template>

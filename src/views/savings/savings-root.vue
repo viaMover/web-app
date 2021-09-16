@@ -4,12 +4,13 @@
     has-left-rail
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="savings"
+    @back="handleBack"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <savings-overview />
-      <savings-stats />
-      <savings-estimation />
+      <keep-alive>
+        <component :is="'savings-left-rail'" />
+      </keep-alive>
     </template>
 
     <router-view />
@@ -25,59 +26,29 @@ import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  SavingsOverview,
-  SavingsStats,
-  SavingsEstimation
-} from '@/components/savings';
-import {
   SearchModal,
   SavingsDepositModal,
   SavingsWithdrawModal
 } from '@/components/modals';
+import SavingsLeftRail from '@/components/savings/savings-left-rail.vue';
 
 import '@/styles/_savings.less';
-import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsRoot',
   components: {
+    SavingsLeftRail,
     ContentWrapper,
-    SavingsOverview,
-    SavingsStats,
-    SavingsEstimation,
     SavingsDepositModal,
     SavingsWithdrawModal,
     SearchModal
-  },
-  computed: {
-    ...mapGetters('account', {
-      hasActiveSavings: 'hasActiveSavings',
-      savingsMonthStatsOptions: 'savingsMonthStatsOptions'
-    }),
-    isReplaceRouteNeeded(): boolean {
-      return this.$route.name !== 'savings-empty' && !this.hasActiveSavings;
-    }
-  },
-  watch: {
-    isReplaceRouteNeeded(newVal: boolean) {
-      if (newVal) {
-        this.replaceInactiveSavingsRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (this.isReplaceRouteNeeded) {
-      this.replaceInactiveSavingsRoute();
-    }
   },
   methods: {
     handleClose(): void {
       this.$router.back();
     },
-    replaceInactiveSavingsRoute(): void {
-      this.$router.replace({
-        name: 'savings-empty'
-      });
+    handleBack(): void {
+      this.$router.back(); //TODO
     }
   }
 });
