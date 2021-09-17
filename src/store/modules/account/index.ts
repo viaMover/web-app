@@ -27,6 +27,8 @@ export default {
   namespaced: true,
   strict: true,
   state: {
+    web3Modal: undefined,
+
     avatar: undefined,
     avatars: [],
     addresses: [],

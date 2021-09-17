@@ -116,7 +116,6 @@ export default {
   },
   setProvider(state, payload: ProviderData): void {
     state.provider = {
-      providerName: payload.providerName,
       web3: payload.web3,
       providerBeforeClose: payload.providerBeforeClose,
       pureProvider: payload.pureProvider
@@ -155,5 +154,8 @@ export default {
   },
   setAvatar(state, avatar: Avatar): void {
     state.avatar = avatar;
+  },
+  setWeb3Modal(state, web3Modal: any): void {
+    state.web3Modal = web3Modal;
   }
 } as MutationTree<AccountStoreState>;

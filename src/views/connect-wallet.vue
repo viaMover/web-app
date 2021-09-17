@@ -67,7 +67,7 @@ export default Vue.extend({
     ContentWrapper
   },
   computed: {
-    ...mapState('account', ['detectedProvider', 'addresses']),
+    ...mapState('account', ['detectedProvider', 'addresses', 'web3Modal']),
     ...mapGetters('account', ['isWalletConnected']),
     metaMaskBtnText(): string {
       return this.detectedProvider ? 'Connect MetaMask' : 'Install MetaMask';
@@ -108,18 +108,27 @@ export default Vue.extend({
       } as InitWalletPayload);
     },
     async connectMetaMask(): Promise<void> {
-      if (this.detectedProvider) {
-        const providerWithCb = await InitCallbacks(this.detectedProvider);
-        this.initWallet({
-          provider: providerWithCb.provider,
-          providerName: 'MetaMask',
-          providerBeforeCloseCb: providerWithCb.onDisconnectCb,
-          injected: true
-        } as InitWalletPayload);
-      } else {
-        const onboarding = new MetaMaskOnboarding();
-        onboarding.startOnboarding();
-      }
+      // if (this.detectedProvider) {
+      //   const providerWithCb = await InitCallbacks(this.detectedProvider);
+      //   this.initWallet({
+      //     provider: providerWithCb.provider,
+      //     providerName: 'MetaMask',
+      //     providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+      //     injected: true
+      //   } as InitWalletPayload);
+      // } else {
+      //   const onboarding = new MetaMaskOnboarding();
+      //   onboarding.startOnboarding();
+      // }
+      const provider = await this.web3Modal.connect();
+      console.log('NEW PROVIDER');
+      console.log(provider);
+      const providerWithCb = await InitCallbacks(provider);
+      await this.initWallet({
+        provider: providerWithCb.provider,
+        providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+        injected: provider.isMetaMask
+      } as InitWalletPayload);
     }
   }
 });
