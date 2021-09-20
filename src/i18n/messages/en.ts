@@ -3,7 +3,7 @@ export default {
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
   headingBalance: 'Your wallet balance',
-  lblConnectWallet: 'Please connect a wallet',
+  lblConnectWallet: 'Please connect your wallet',
   txtConnectWallet:
     'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
   txtNotFound:
