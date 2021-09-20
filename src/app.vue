@@ -50,16 +50,15 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import Web3ModalVue from 'web3modal-vue';
-
-import Preload from '@/views/preload.vue';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 
 import '@/styles/_common.less';
 import '@/styles/_modal.less';
 import '@/styles/_execute_modal.less';
 import '@/styles/_search_modal.less';
+import Preload from '@/views/preload.vue';
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import { APIKeys } from './settings';
 import { InitCallbacks } from './web3/callbacks';
 import { InitWalletPayload } from './store/modules/account/actions/wallet';

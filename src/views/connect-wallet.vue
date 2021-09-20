@@ -66,11 +66,8 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['detectedProvider', 'addresses', 'web3Modal']),
-    ...mapGetters('account', ['isWalletConnected']),
-    metaMaskBtnText(): string {
-      return this.detectedProvider ? 'Connect MetaMask' : 'Install MetaMask';
-    }
+    ...mapState('account', ['addresses', 'web3Modal']),
+    ...mapGetters('account', ['isWalletConnected'])
   },
   watch: {
     isWalletConnected(newValue): void {
@@ -98,12 +95,19 @@ export default Vue.extend({
     };
     const provider = new WalletConnectProvider({
       infuraId: APIKeys.INFURA_PROJECT_ID,
-      qrcodeModal: qrModal
+      qrcodeModal: {
+        open: async (uri: string) => {
+          const qrCodeUri = await QRCode.toDataURL(uri);
+          this.wcCode = qrCodeUri;
+        },
+        close: () => {
+          // do nothing.
+        }
+      }
     });
 
     provider.enable().then(async () => {
       console.info('User enabled WC provider by QR');
-      console.log(provider);
       const providerWithCb = await InitCallbacks(provider);
       await this.initWallet({
         provider: providerWithCb.provider,
@@ -129,15 +133,13 @@ export default Vue.extend({
       //  Enable session (triggers QR Code modal)
       this.initWallet({
         provider: providerWithCb.provider,
-        providerName: 'WalletConnect',
         providerBeforeCloseCb: providerWithCb.onDisconnectCb,
         injected: false
       } as InitWalletPayload);
     },
     async otherProvider(): Promise<void> {
       const provider = await this.web3Modal.connect();
-      console.log('NEW PROVIDER');
-      console.log(provider);
+      console.log('Other provider');
       const providerWithCb = await InitCallbacks(provider);
       await this.initWallet({
         provider: providerWithCb.provider,

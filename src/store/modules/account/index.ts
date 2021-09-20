@@ -38,7 +38,6 @@ export default {
     tokensSearcher: undefined,
     tokenInfoMap: undefined,
     provider: undefined,
-    detectedProvider: undefined,
     isDetecting: false,
     balance: undefined,
     networkInfo: undefined,

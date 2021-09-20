@@ -108,9 +108,6 @@ export default {
   setRefreshEror(state, error): void {
     state.refreshError = error;
   },
-  setDetectedProvider(state, provider: any): void {
-    state.detectedProvider = provider;
-  },
   setIsDetecting(state, isDetecting: boolean): void {
     state.isDetecting = isDetecting;
   },

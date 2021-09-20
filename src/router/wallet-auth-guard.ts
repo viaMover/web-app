@@ -6,13 +6,12 @@ export const requireWalletAuth =
   (excludedRouteNames: Array<string>) =>
   async (to: Route, from: Route, next: NavigationGuardNext): Promise<void> => {
     const store = router.app.$store;
-    let walletReady = false;
     if (excludedRouteNames.includes(to.name ?? '')) {
       next();
       return;
     }
-    walletReady = await store.dispatch('account/waitWallet');
-    if (walletReady) {
+    const isWalletReady = await store.dispatch('account/waitWallet');
+    if (isWalletReady) {
       next();
       updateIntercomSession(store.state['account/currentAddress']);
       return;

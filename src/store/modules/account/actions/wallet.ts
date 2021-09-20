@@ -25,13 +25,11 @@ import {
   getUSDCPriceInWETH
 } from '@/services/chain';
 import {
-  clearLastProviderPersist,
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
   isFeatureEnabled,
   setAvatarToPersist,
-  setIsOlympusAvatarKnownToPersist,
-  setLastProviderToPersist
+  setIsOlympusAvatarKnownToPersist
 } from '@/settings';
 import sample from 'lodash-es/sample';
 import {
@@ -57,9 +55,6 @@ export type InitWalletPayload = {
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
-  },
-  setDetectedProvider({ commit }, provider: unknown): void {
-    commit('setDetectedProvider', provider);
   },
   setIsDetecting({ commit }, isDetecting: boolean): void {
     commit('setIsDetecting', isDetecting);

@@ -61,7 +61,6 @@ export type AccountStoreState = {
   allTokensSearcher: Fuse<Token> | undefined;
   tokenInfoMap: Record<string, TokenInfo> | undefined;
   provider: ProviderData | undefined;
-  detectedProvider: any | undefined;
   isDetecting: boolean;
   refreshError: undefined | string;
 
