@@ -15,7 +15,9 @@
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",
+    "@myetherwallet/mewconnect-web-client": "^2.2.0-beta.13",
     "@popperjs/core": "^2.9.2",
+    "@portis/web3": "^4.0.5",
     "@sentry/tracing": "^6.11.0",
     "@sentry/vue": "^6.11.0",
     "@types/socket.io-client": "^1.4.36",

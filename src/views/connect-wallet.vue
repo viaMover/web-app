@@ -10,12 +10,11 @@
       <div class="general-no-wallet-desktop__wrapper-info">
         <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
         <p class="description">
-          Mover is a non-custodial service. It means that you need to connect
-          your your wallet first, to continue.
+          {{ $t('connect.moverDescription') }}
           <br />
           By connecting your wallet, you agree with the
           <a href="https://viamover.com/terms_of_use" target="_blank">
-            Terms and Conditions
+            {{ $t('connect.termsAndConditions') }}
           </a>
           .
         </p>
@@ -24,18 +23,15 @@
           type="button"
           @click.prevent="otherProvider"
         >
-          Connect other wallet providers
+          {{ $t('connect.btnConnectOtherWallet') }}
         </button>
-        <p class="text">Choose from Metamask and other popular wallets</p>
+        <p class="text">{{ $t('connect.chooseProvider') }}</p>
       </div>
       <div class="general-no-wallet-desktop__wrapper-qr">
         <div class="qr-code">
           <img alt="" :src="wcCode" />
         </div>
-        <p class="description">
-          Scan QR code from your Mover app. <br />
-          Or use another compatible mobile wallet with WalletConnect.
-        </p>
+        <p class="description" v-html="$t('connect.qrDescription')"></p>
       </div>
     </div>
   </content-wrapper>

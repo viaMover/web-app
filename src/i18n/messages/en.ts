@@ -4,8 +4,6 @@ export default {
   lblBalance: 'Balance',
   headingBalance: 'Your wallet balance',
   lblConnectWallet: 'Please connect your wallet',
-  txtConnectWallet:
-    'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
   txtNotFound:
     'Wow, how did you end up here?\nSeems like even Google isn’t as of help.',
   btnConnectWallet: 'Connect a wallet',
@@ -19,6 +17,15 @@ export default {
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
+  },
+  connect: {
+    moverDescription:
+      'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
+    termsAndConditions: ' Terms and Conditions',
+    btnConnectOtherWallet: 'Connect other wallet providers',
+    qrDescription:
+      'Scan QR code from your Mover app. <br />Or use another compatible mobile wallet with WalletConnect.',
+    chooseProvider: 'Choose from Metamask and other popular wallets'
   },
   menu: {
     lblSwapTokenEmoji: '🔄',

@@ -50,7 +50,8 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import Web3ModalVue from 'web3modal-vue';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import MewConnect from '@myetherwallet/mewconnect-web-client';
+import Portis from '@portis/web3';
 
 import '@/styles/_common.less';
 import '@/styles/_modal.less';
@@ -72,7 +73,20 @@ export default Vue.extend({
   data() {
     return {
       theme: 'light',
-      providerOptions: {}
+      providerOptions: {
+        mewconnect: {
+          package: MewConnect,
+          options: {
+            infuraId: APIKeys.INFURA_PROJECT_ID
+          }
+        },
+        portis: {
+          package: Portis,
+          options: {
+            id: APIKeys.PORTUS_DAPP_ID
+          }
+        }
+      }
     };
   },
   computed: {

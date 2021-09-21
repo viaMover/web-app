@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "typeRoots": [ "./types", "./node_modules/@types"],
+    "typeRoots": ["./node_modules/@types"],
     "types": [
       "webpack-env",
       "jest"
@@ -34,11 +34,11 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "index.d.ts"
   ],
   "exclude": [
     "node_modules",
-    "tools",
-    "types"
+    "tools"
   ]
 }
