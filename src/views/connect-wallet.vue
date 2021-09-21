@@ -105,7 +105,6 @@ export default Vue.extend({
         }
       }
     });
-
     provider.enable().then(async () => {
       console.info('User enabled WC provider by QR');
       const providerWithCb = await InitCallbacks(provider);
@@ -122,20 +121,6 @@ export default Vue.extend({
     }),
     replaceRoute(): void {
       this.$router.replace(this.$route.redirectedFrom ?? { name: 'home' });
-    },
-    async connectWalletConnect(): Promise<void> {
-      //  Create WalletConnect Provider
-      const provider = new WalletConnectProvider({
-        infuraId: APIKeys.INFURA_PROJECT_ID
-      });
-      await provider.enable();
-      const providerWithCb = await InitCallbacks(provider);
-      //  Enable session (triggers QR Code modal)
-      this.initWallet({
-        provider: providerWithCb.provider,
-        providerBeforeCloseCb: providerWithCb.onDisconnectCb,
-        injected: false
-      } as InitWalletPayload);
     },
     async otherProvider(): Promise<void> {
       const provider = await this.web3Modal.connect();

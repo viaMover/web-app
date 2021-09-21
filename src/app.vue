@@ -72,14 +72,7 @@ export default Vue.extend({
   data() {
     return {
       theme: 'light',
-      providerOptions: {
-        walletconnect: {
-          package: WalletConnectProvider,
-          options: {
-            infuraId: APIKeys.INFURA_PROJECT_ID
-          }
-        }
-      }
+      providerOptions: {}
     };
   },
   computed: {
