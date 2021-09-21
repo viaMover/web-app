@@ -79,6 +79,11 @@ export default {
     txtYouCouldApproximately:
       'You could approximately earn in a year if you deposit $10,000 now.',
     txtIfYouDeposit: 'If you deposit in Savings now, you are getting',
+    lblAPYOnAllSavings: 'APY on all savings',
+    lblStartSaving: 'Start saving',
+    lblReviewTransaction: 'Review transaction',
+    lblChooseAmount: 'Choose the amount to deposit',
+    lblChooseToken: 'Choose Token',
     lblNothingInSavings: 'Nothing in @:savings.lblSavings',
     txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
@@ -133,13 +138,18 @@ export default {
         'Once you deposit your assets in savings, Mover is ' +
         'constantly searching for the highest paying option using multiple DeFi protocols. ' +
         'Mover does automatic rebalancing, yield collection, and capital optimization.',
-      txtAssetWillBeConverted: {
-        part1: 'Your asset will be automatically convered to ',
-        part2: 'USDC at the market rate at the time of the deposit transaction.'
-      },
-      lblWhatToDeposit: 'What to deposit',
+      txtAssetWillBeConverted:
+        'You chose a non USDC asset. It means that it will be converted ' +
+        'to USDC at the time of the deposit at the current market rate.',
+      txtUSDCCoinIsAStable:
+        'USD Coin is a stable asset and the easiest way to grow your ' +
+        'savings. Your returns will also be in USDC.',
+      lblWhatDoWeDeposit: 'What we do deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
+      lblAvailable: 'Available',
+      lblSwappingFor: 'Swapping for',
+      lblAmountWeDepositIn: 'Amount we deposit in',
       txtYieldEstimation:
         'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
     },

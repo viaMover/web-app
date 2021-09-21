@@ -64,7 +64,7 @@ const routes: Array<RouteConfig> = [
     children: [
       {
         path: '',
-        name: 'savings-manage-wrapper',
+        name: 'savings-manage',
         component: () =>
           import(
             /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
@@ -75,7 +75,7 @@ const routes: Array<RouteConfig> = [
         name: 'savings-deposit',
         component: () =>
           import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit.vue'
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit-wrapper.vue'
           )
       },
       {

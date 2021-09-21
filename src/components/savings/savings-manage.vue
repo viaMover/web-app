@@ -15,10 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
-
-import { Modal as ModalType } from '@/store/modules/modals/types';
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { mapGetters } from 'vuex';
 
 import { SecondaryPage } from '@/components/layout';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
@@ -40,25 +37,6 @@ export default Vue.extend({
     ...mapGetters('account', {
       savingsMonthStatsOptions: 'savingsMonthStatsOptions'
     })
-  },
-  methods: {
-    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
-    handleDepositClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({
-        id: ModalType.SavingsDeposit,
-        value: true,
-        payload: {}
-      });
-    },
-    handleWithdrawClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({
-        id: ModalType.SavingsWithdraw,
-        value: true,
-        payload: {}
-      });
-    }
   }
 });
 </script>

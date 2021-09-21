@@ -8,11 +8,11 @@
       <p>{{ $t('savings.txtIfYouDeposit') }}</p>
     </savings-yearly-chart-wrapper>
     <div class="savings__menu-wrapper-body">
-      <span class="title">{{ $t('8.3%') }}</span>
-      <p class="description">{{ $t('APY on all savings') }}</p>
+      <span class="title">{{ currentVariableAPY }}</span>
+      <p class="description">{{ $t('savings.lblAPYOnAllSavings') }}</p>
       <action-button
         button-class="button button-active"
-        :text="$t('Start saving')"
+        :text="$t('savings.lblStartSaving')"
       />
     </div>
   </secondary-page>
@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Modal as ModalType } from '@/store/modules/modals/types';
@@ -28,6 +28,7 @@ import { Modal as ModalType } from '@/store/modules/modals/types';
 import { SecondaryPage } from '../../components/layout';
 import SavingsYearlyChartWrapper from '@/components/savings/savings-yearly-chart-wrapper.vue';
 import ActionButton from '@/components/buttons/action-button.vue';
+import { formatPercents } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
@@ -43,8 +44,12 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' }),
+    ...mapState('account', { apy: 'savingsAPY' }),
     title(): string {
       return '~ $984.17';
+    },
+    currentVariableAPY(): string {
+      return `${formatPercents(this.apy)}%`;
     }
   },
   watch: {

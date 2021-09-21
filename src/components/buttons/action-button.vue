@@ -1,6 +1,6 @@
 <template>
   <button
-    :class="[buttonClass]"
+    :class="[classes]"
     :disabled="disabled"
     :style="customStyle"
     @click.prevent.stop="handleClick"
@@ -34,6 +34,11 @@ export default Vue.extend({
     customStyle: {
       type: Object as PropType<CssProperties>,
       default: undefined
+    }
+  },
+  computed: {
+    classes(): string {
+      return `${this.buttonClass} ${this.disabled ? 'disabled' : ''}`;
     }
   },
   methods: {

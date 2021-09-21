@@ -4,7 +4,7 @@
       <left-rail-section-nav-item-image
         :description="savingsBalance"
         description-class="bold"
-        navigate-to="savings-manage-wrapper"
+        navigate-to="savings-manage"
         :title="$t('savings.lblSavings')"
         title-class="disabled"
       >

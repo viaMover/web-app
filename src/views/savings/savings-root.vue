@@ -15,9 +15,11 @@
 
     <router-view />
 
-    <savings-deposit-modal />
-    <savings-withdraw-modal />
-    <search-modal />
+    <template v-slot:modals>
+      <savings-deposit-modal />
+      <savings-withdraw-modal />
+      <search-modal />
+    </template>
   </content-wrapper>
 </template>
 
