@@ -72,6 +72,7 @@ export default {
   },
   savings: {
     icon: '💰',
+    USDC: 'USDC',
     lblSavings: 'Savings',
     lblMySavings: 'My Savings',
     lblGlobalAnalytics: 'Global analytics',
@@ -150,6 +151,10 @@ export default {
       lblAvailable: 'Available',
       lblSwappingFor: 'Swapping for',
       lblAmountWeDepositIn: 'Amount we deposit in',
+      lblReviewYourDeposit: 'Review your deposit',
+      lblAndTotalOf: 'And it will be a total of',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
       txtYieldEstimation:
         'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
     },

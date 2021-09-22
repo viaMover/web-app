@@ -5,6 +5,7 @@
       v-else
       :amount-type="selectedDepositIn"
       :input-amount="amountToDeposit"
+      :input-native-amount="nativeAmountToDeposit"
       :selected-token="selectedToken"
     />
   </secondary-page>
@@ -25,6 +26,7 @@ export default Vue.extend({
       isShowReview: false as boolean,
       selectedToken: undefined as TokenWithBalance | undefined,
       amountToDeposit: undefined as string | undefined,
+      nativeAmountToDeposit: undefined as string | undefined,
       selectedDepositIn: undefined as string | undefined
     };
   },
@@ -32,10 +34,12 @@ export default Vue.extend({
     handleTxReview(args: {
       selectedToken: TokenWithBalance;
       amountToDeposit: string;
+      nativeAmountToDeposit: string;
       selectedDepositIn: string;
     }): void {
       this.selectedToken = args.selectedToken;
       this.amountToDeposit = args.amountToDeposit;
+      this.nativeAmountToDeposit = args.nativeAmountToDeposit;
       this.selectedDepositIn = args.selectedDepositIn;
 
       this.isShowReview = true;

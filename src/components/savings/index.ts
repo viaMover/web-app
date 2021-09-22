@@ -9,3 +9,4 @@ export { default as SavingsEmpty } from './savings-empty.vue';
 export { default as SavingsManage } from './savings-manage.vue';
 export { default as SavingsDepositForm } from './savings-deposit-form.vue';
 export { default as SavingsDepositReview } from './savings-deposit-review.vue';
+export { default as SavingsFormLoader } from './savings-form-loader.vue';

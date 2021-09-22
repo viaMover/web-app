@@ -183,9 +183,36 @@ export default Vue.extend({
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     handleTxReview(): void {
+      if (this.selectedToken === undefined) {
+        return;
+      }
+      let nativeAmount = '';
+      let amount = '';
+
+      if (this.isSelectedUSDCToken) {
+        nativeAmount = this.amountToDeposit;
+        amount = this.amountToDeposit;
+      } else {
+        if (this.selectedDepositIn === 'USDC') {
+          nativeAmount = this.amountToDeposit;
+          amount = convertAmountFromNativeValue(
+            this.amountToDeposit,
+            this.selectedToken.priceUSD,
+            this.selectedToken.decimals
+          );
+        } else {
+          amount = this.amountToDeposit;
+          nativeAmount = convertNativeAmountFromAmount(
+            this.amountToDeposit,
+            this.selectedToken.priceUSD
+          );
+        }
+      }
+
       this.$emit('tx-review', {
         selectedToken: this.selectedToken,
-        amountToDeposit: this.amountToDeposit,
+        amountToDeposit: amount,
+        nativeAmountToDeposit: nativeAmount,
         selectedDepositIn: this.selectedDepositIn
       });
     },
