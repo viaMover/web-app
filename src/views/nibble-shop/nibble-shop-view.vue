@@ -1,87 +1,87 @@
 <template>
-  <content-wrapper
-    has-back-button
-    has-left-rail
-    page-container-class="nibble-shop-product-item"
-    wrapper-class="nibble-shop-product-item"
-    @close="handleClose"
-  >
-    <template v-slot:left-rail>
-      <nibble-shop-product-overview :item="product" />
-    </template>
-
-    <secondary-page>
-      <template v-slot:title>
-        <secondary-page-title
-          :icon-img-src="product.page.iconSrc"
-          :title="$t('nibbleShop.lblNibbleShop')"
-          wrapper-class="nibble-shop-product-item-wrapper-title"
-        >
-          <template v-if="hasContextMenu" v-slot:context-menu>
-            <context-button :popover-parent-id="popoverParentId">
-              <context-button-item
-                :text="$t('nibbleShop.btnBuy.emoji')"
-                @click="handleBuy"
-              />
-              <context-button-item
-                :text="$t('nibbleShop.btnSell.emoji')"
-                @click="handleSell"
-              />
-              <context-button-item
-                :text="$t('nibbleShop.btnRedeem.emoji')"
-                @click="handleRedeem"
-              />
-            </context-button>
-          </template>
-        </secondary-page-title>
-      </template>
-      <div class="nibble-shop-product-item-wrapper-banner">
-        <video
-          :alt="$t('nibbleShop.txtProductAlt', { title: product.title })"
-          autoplay
-          data-keepplaying
-          loop
-          muted
-          :src="product.page.videoSrc"
+  <shop-wrapper has-close-button @close="handleClose">
+    <template v-slot:info>
+      <h1 class="info__title">{{ product.title }}</h1>
+      <p class="info__description">
+        {{ product.page.description }}
+      </p>
+      <shop-list>
+        <shop-list-item
+          :title="$t('nibbleShop.lblTotalAvailable')"
+          :value="product.availableQuantity"
         />
+        <shop-list-item
+          :title="$t('nibbleShop.lblPrice')"
+          :value="product.price"
+        />
+      </shop-list>
+      <action-button
+        button-class="button button-active"
+        :text="$t('nibbleShop.btn.get.txt', { item: product.shortName })"
+        @button-click="handleBuy"
+      />
+      <div v-if="getTokenError !== undefined" class="error-message">
+        {{ getTokenError }}
       </div>
-      <div class="nibble-shop-product-item-wrapper-info">
-        <span>{{ product.id }}</span>
-        <h3>{{ product.title }}</h3>
-        <span class="price">{{ product.price }}</span>
-        <p>{{ product.description }}</p>
+      <div class="info__more">
+        <p>{{ $t('nibbleShop.lblWhatElseCanDo') }}</p>
+        <ul>
+          <li>
+            <emoji-text-button
+              button-class="button-active"
+              :emoji="$t('nibbleShop.btn.redeem.emoji')"
+              :text="$t('nibbleShop.btn.redeem.txt')"
+              @button-click="handleRedeem"
+            />
+          </li>
+          <li>
+            <div v-if="actionError !== undefined" class="error-message">
+              {{ actionError }}
+            </div>
+          </li>
+        </ul>
       </div>
-    </secondary-page>
-  </content-wrapper>
+    </template>
+    <template v-slot:illustration>
+      <video
+        autoplay="autoplay"
+        data-keepplaying="data-keepplaying"
+        loop="loop"
+        muted="muted"
+        playsinline="playsinline"
+        :style="videoStyle"
+      >
+        <source :src="product.page.videoSrc" type="video/webm" />
+      </video>
+    </template>
+  </shop-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+import { Properties } from 'csstype';
 
 import { Asset } from '@/store/modules/shop/types';
 
-import {
-  ContentWrapper,
-  SecondaryPage,
-  SecondaryPageTitle
-} from '@/components/layout';
-import { NibbleShopProductOverview } from '@/components/nibble-shop';
-import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
+import { EmojiTextButton, ActionButton } from '@/components/buttons';
+import { Step } from '@/components/controls/form-loader';
 
 export default Vue.extend({
   name: 'NibbleShopView',
   components: {
-    ContentWrapper,
-    NibbleShopProductOverview,
-    SecondaryPage,
-    ContextButton,
-    ContextButtonItem,
-    SecondaryPageTitle
+    EmojiTextButton,
+    ActionButton,
+    ShopList,
+    ShopListItem,
+    ShopWrapper
   },
   data() {
     return {
-      popoverParentId: 'nibble-shop-action-buttons'
+      transactionStep: undefined as Step | undefined,
+      getTokenError: undefined as string | undefined,
+      actionError: undefined as string | undefined
     };
   },
   computed: {
@@ -89,8 +89,10 @@ export default Vue.extend({
     id(): string {
       return this.$route.params.id;
     },
-    hasContextMenu(): boolean {
-      return true;
+    videoStyle(): Properties {
+      return {
+        backgroundColor: this.product?.page.background
+      };
     },
     product(): Asset | null {
       return (

@@ -1,0 +1,23 @@
+.black-link {
+  height: 40px;
+  padding: 10px 24px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: center;
+  background-color: $black;
+  font-family: $Bold;
+  font-size: 14px;
+  line-height: 17px;
+  color: $white;
+  border-radius: 40px;
+}

@@ -26,12 +26,9 @@ export type AccountData = {
   networkId: number | undefined;
 };
 
-export type ProviderNames = 'MetaMask' | 'WalletConnect';
-
 export type ProviderData = {
   web3: Web3;
   pureProvider: any;
-  providerName: ProviderNames;
   providerBeforeClose: () => void;
 };
 
@@ -49,6 +46,8 @@ export type TokenInfo = {
 };
 
 export type AccountStoreState = {
+  web3Modal: any;
+
   avatar: Avatar | undefined;
   avatars: Array<Avatar>;
   addresses: Array<string>;
@@ -62,7 +61,6 @@ export type AccountStoreState = {
   allTokensSearcher: Fuse<Token> | undefined;
   tokenInfoMap: Record<string, TokenInfo> | undefined;
   provider: ProviderData | undefined;
-  detectedProvider: any | undefined;
   isDetecting: boolean;
   refreshError: undefined | string;
 
