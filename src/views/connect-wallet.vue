@@ -9,15 +9,11 @@
     <div class="general-no-wallet-desktop__wrapper">
       <div class="general-no-wallet-desktop__wrapper-info">
         <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
-        <p class="description">
-          {{ $t('connect.moverDescription') }}
-          <br />
-          By connecting your wallet, you agree with the
+        <i18n class="description" path="connect.txtMoverDescription" tag="p">
           <a href="https://viamover.com/terms_of_use" target="_blank">
-            {{ $t('connect.termsAndConditions') }}
+            {{ $t('connect.lblTermsAndConditions') }}
           </a>
-          .
-        </p>
+        </i18n>
         <button
           class="button-active black-link"
           type="button"
@@ -25,13 +21,20 @@
         >
           {{ $t('connect.btnConnectOtherWallet') }}
         </button>
-        <p class="text">{{ $t('connect.chooseProvider') }}</p>
+        <p class="text">{{ $t('connect.lblChooseProvider') }}</p>
       </div>
       <div class="general-no-wallet-desktop__wrapper-qr">
         <div class="qr-code">
           <img alt="QR code" :src="wcCode" />
         </div>
-        <p class="description" v-html="$t('connect.qrDescription')"></p>
+        <i18n
+          class="description"
+          path="connect.txtQrDescriptionPartOne"
+          tag="p"
+        >
+          <br />
+          {{ $t('connect.txtQrDescriptionPartTwo') }}
+        </i18n>
       </div>
     </div>
   </content-wrapper>
@@ -78,17 +81,6 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    const qrModal = {} as {
-      open: (uri: string) => Promise<void>;
-      close: () => void;
-    };
-    qrModal.open = async (uri: string) => {
-      const qrCodeUri = await QRCode.toDataURL(uri);
-      this.wcCode = qrCodeUri;
-    };
-    qrModal.close = () => {
-      console.info('Modal closed');
-    };
     const provider = new WalletConnectProvider({
       infuraId: APIKeys.INFURA_PROJECT_ID,
       qrcodeModal: {

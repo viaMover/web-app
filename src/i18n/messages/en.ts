@@ -19,13 +19,14 @@ export default {
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
   },
   connect: {
-    moverDescription:
-      'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue.',
-    termsAndConditions: ' Terms and Conditions',
+    txtMoverDescription:
+      'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
+    lblTermsAndConditions: 'Terms and Conditions.',
     btnConnectOtherWallet: 'Connect other wallet providers',
-    qrDescription:
-      'Scan QR code from your Mover app. <br />Or use another compatible mobile wallet with WalletConnect.',
-    chooseProvider: 'Choose from Metamask and other popular wallets'
+    txtQrDescriptionPartOne: 'Scan QR code from your Mover app. {0} {1}',
+    txtQrDescriptionPartTwo:
+      'Or use another compatible mobile wallet with WalletConnect.',
+    lblChooseProvider: 'Choose from Metamask and other popular wallets'
   },
   menu: {
     lblSwapTokenEmoji: '🔄',
