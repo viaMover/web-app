@@ -29,7 +29,7 @@
       </div>
       <div class="general-no-wallet-desktop__wrapper-qr">
         <div class="qr-code">
-          <img alt="" :src="wcCode" />
+          <img alt="QR code" :src="wcCode" />
         </div>
         <p class="description" v-html="$t('connect.qrDescription')"></p>
       </div>
