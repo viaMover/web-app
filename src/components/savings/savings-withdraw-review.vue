@@ -8,6 +8,7 @@
       <div class="item">
         <custom-picture
           :alt="savings.alt"
+          class="shadow"
           :sources="savings.sources"
           :src="savings.src"
           :webp-sources="savings.webpSources"
