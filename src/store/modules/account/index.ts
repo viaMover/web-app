@@ -27,6 +27,8 @@ export default {
   namespaced: true,
   strict: true,
   state: {
+    web3Modal: undefined,
+
     avatar: undefined,
     avatars: [],
     addresses: [],
@@ -36,7 +38,6 @@ export default {
     tokensSearcher: undefined,
     tokenInfoMap: undefined,
     provider: undefined,
-    detectedProvider: undefined,
     isDetecting: false,
     balance: undefined,
     networkInfo: undefined,

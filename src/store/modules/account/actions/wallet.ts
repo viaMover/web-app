@@ -9,7 +9,6 @@ import { RootStoreState } from '@/store/types';
 import {
   AccountStoreState,
   AccountData,
-  ProviderNames,
   ProviderData,
   Avatar
 } from './../types';
@@ -26,12 +25,11 @@ import {
   getUSDCPriceInWETH
 } from '@/services/chain';
 import {
-  clearLastProviderPersist,
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
+  isFeatureEnabled,
   setAvatarToPersist,
-  setIsOlympusAvatarKnownToPersist,
-  setLastProviderToPersist
+  setIsOlympusAvatarKnownToPersist
 } from '@/settings';
 import sample from 'lodash-es/sample';
 import {
@@ -50,17 +48,13 @@ export type RefreshWalletPayload = {
 
 export type InitWalletPayload = {
   provider: provider;
-  providerName: ProviderNames;
-  providerBeforeCloseCb: () => void;
   injected: boolean;
+  providerBeforeCloseCb: () => void;
 };
 
 export default {
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
-  },
-  setDetectedProvider({ commit }, provider: unknown): void {
-    commit('setDetectedProvider', provider);
   },
   setIsDetecting({ commit }, isDetecting: boolean): void {
     commit('setIsDetecting', isDetecting);
@@ -175,7 +169,6 @@ export default {
       (web3Inst.eth as any).maxListenersWarningThreshold = 200;
       commit('setProvider', {
         providerBeforeClose: payload.providerBeforeCloseCb,
-        providerName: payload.providerName,
         web3: web3Inst,
         pureProvider: payload.provider
       } as ProviderData);
@@ -187,8 +180,6 @@ export default {
 
       console.log('Starting gas listening...');
       await dispatch('startGasListening');
-
-      setLastProviderToPersist(payload.providerName);
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
@@ -356,6 +347,15 @@ export default {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
+
+    let nibbleShopInfoPromise = Promise.resolve();
+    if (isFeatureEnabled('isNibbleShopEnabled')) {
+      nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
+        dispatch('shop/loadAssetsInfoList', undefined, {
+          root: true
+        })
+      );
+    }
     const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
 
     try {
@@ -365,7 +365,8 @@ export default {
         savingsFreshData,
         treasuryFreshData,
         nftInfoPromise,
-        loadAvatarPromise
+        loadAvatarPromise,
+        nibbleShopInfoPromise
       ]);
     } catch (e) {
       Sentry.captureException(e);
@@ -374,7 +375,25 @@ export default {
 
     console.info('Wallet refreshed');
   },
+  async waitWallet({ commit, state }): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      const checkWalletConnection = async () => {
+        console.log('checkWalletConnection...');
+        if (!state.isDetecting) {
+          resolve(state.currentAddress !== undefined);
+          return;
+        }
+        if (state.currentAddress !== undefined) {
+          commit('setIsDetecting', false);
+          resolve(true);
+          return;
+        }
+        setTimeout(checkWalletConnection, 1000);
+      };
 
+      checkWalletConnection();
+    });
+  },
   async disconnectWallet({ commit, state }): Promise<void> {
     if (state.provider) {
       state.provider.providerBeforeClose();
@@ -386,7 +405,12 @@ export default {
         await state.provider.pureProvider.disconnect();
       }
     }
-    clearLastProviderPersist();
+    try {
+      await state.web3Modal.clearCachedProvider();
+    } catch (error) {
+      console.error(error);
+      Sentry.captureException("Can't close cached provider");
+    }
     clearOffchainExplorer();
     commit('clearWalletData');
     disconnectIntercomSession();

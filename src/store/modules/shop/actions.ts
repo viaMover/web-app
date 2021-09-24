@@ -64,92 +64,88 @@ export default {
         id: '$CEO1',
         address:
           '0x806cb7767eb835e5fe0e4de354cc946e21418997d01b90d9f98b0e4da195ce92',
-        previewImageSrc: require('@/assets/images/cap.png'),
-        imageSrc: require('@/assets/images/ceo-of-money-img.png'),
-        imageSize: '53%',
-        imageScaleH: '38%',
-        background: '#dbe2e6',
-        title: 'CEO of Money',
         price: '$49.99',
-        edition: 'Genesis Edition',
         totalTrades: 0,
         initialQuantity: 0,
         redeemedQuantity: 0,
         remainingQuantity: 0,
         availableQuantity: 0,
-        description: '',
+        title: 'The Cap',
+        shortName: 'cap',
+        preview: {
+          videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
+          background: '#dbe2e6'
+        },
         page: {
           videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
+          description: '',
+          background: '#dbe2e6'
         }
       },
       {
         id: '$SJ1',
         address:
           '0x806cb7767eb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        previewImageSrc: require('@/assets/images/face-mask.png'),
-        imageSrc: require('@/assets/images/street-jungle-img.png'),
-        imageSize: '47%',
-        imageScaleH: '38%',
-        background: '#dbe2e6',
-        title: 'Face mask',
         price: '$49.99',
-        edition: 'Genesis Edition',
         totalTrades: 0,
         initialQuantity: 0,
         redeemedQuantity: 0,
         remainingQuantity: 0,
         availableQuantity: 0,
-        description: '',
+        title: 'Face mask',
+        shortName: 'mask',
+        preview: {
+          videoSrc: require('@/assets/videos/FaceMask.webm'),
+          background: '#dde3e7'
+        },
         page: {
-          videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
+          videoSrc: require('@/assets/videos/FaceMask.webm'),
+          description: '',
+          background: '#dde3e7'
         }
       },
       {
         id: '$IC1',
         address:
           '0x806cb7767eb835f5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        previewImageSrc: require('@/assets/images/classic-t-shirt.png'),
-        imageSrc: require('@/assets/images/instant-classic-img.png'),
-        imageSize: '40%',
-        imageScaleH: '100%',
-        background: '#f0f6f8',
-        title: 'Classic T-Shirt',
         price: '$49.99',
-        edition: 'Genesis Edition',
         totalTrades: 0,
         initialQuantity: 0,
         redeemedQuantity: 0,
         remainingQuantity: 0,
         availableQuantity: 0,
-        description: '',
+        title: 'Classic T-Shirt',
+        shortName: 'classic T-Shirt',
+        preview: {
+          videoSrc: require('@/assets/videos/ClassicTShirt.webm'),
+          background: '#f0f6f8'
+        },
         page: {
-          videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
+          videoSrc: require('@/assets/videos/ClassicTShirt.webm'),
+          description: '',
+          background: '#f0f6f8'
         }
       },
       {
         id: '$PWR01',
         address:
           '0x806cb7767fb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        previewImageSrc: require('@/assets/images/power-t-shirt.png'),
-        imageSrc: require('@/assets/images/power-t-shirt-img.png'),
-        imageSize: '37%',
-        imageScaleH: '58%',
-        background: '#f0f6f8',
-        title: 'Power T-Shirt',
         price: '$49.99',
-        edition: 'Limited Edition',
         totalTrades: 0,
         initialQuantity: 0,
         redeemedQuantity: 0,
         remainingQuantity: 0,
         availableQuantity: 0,
-        description: '',
+        title: 'Power T-Shirt',
+        shortName: 'power T-Shirt',
+        preview: {
+          videoSrc: require('@/assets/videos/PowerTShirt.webm'),
+          background: '#f0f6f8'
+        },
         page: {
-          videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
-          iconSrc: require('@/assets/images/ceo-of-money-icon.png')
+          videoSrc: require('@/assets/videos/PowerTShirt.webm'),
+          description: '',
+          background: '#f0f6f8'
         }
       }
     ];
@@ -169,13 +165,16 @@ export default {
         redeemedQuantity: remoteEntry.redeemedQuantity,
         remainingQuantity: remoteEntry.remainingQuantity,
         availableQuantity: remoteEntry.availableQuantity,
-        description: rootState.i18n?.te(
-          `nibbleShop.txtAssets.${localEntries[localEntryIdx].id}.description`
-        )
-          ? (rootState.i18n?.t(
-              `nibbleShop.txtAssets.${localEntries[localEntryIdx].id}.description`
-            ) as string)
-          : localEntries[localEntryIdx].description
+        page: {
+          ...localEntries[localEntryIdx].page,
+          description: rootState.i18n?.te(
+            `nibbleShop.txtAssets.${localEntries[localEntryIdx].id}.description`
+          )
+            ? (rootState.i18n?.t(
+                `nibbleShop.txtAssets.${localEntries[localEntryIdx].id}.description`
+              ) as string)
+            : localEntries[localEntryIdx].page.description
+        }
       };
     });
 

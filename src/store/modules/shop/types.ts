@@ -1,23 +1,22 @@
 export type Asset = {
   id: string;
   address: string;
-  previewImageSrc: string;
-  imageSrc: string;
-  imageSize: string;
-  imageScaleH: string;
-  background: string;
-  title: string;
   price: string;
-  edition: string;
   totalTrades: number;
   initialQuantity: number;
   redeemedQuantity: number;
   remainingQuantity: number;
   availableQuantity: number;
-  description: string;
-  page: {
-    iconSrc: string;
+  title: string;
+  shortName: string;
+  preview: {
     videoSrc: string;
+    background: string;
+  };
+  page: {
+    description: string;
+    videoSrc: string;
+    background: string;
   };
 };
 

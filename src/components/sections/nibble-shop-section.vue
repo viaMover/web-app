@@ -8,10 +8,12 @@
   >
     <div class="item__list">
       <nibble-shop-product-mini
-        v-for="product in nftList"
-        :key="product.name"
+        v-for="product in products"
+        :id="product.id"
+        :key="product.title"
         class="button-active"
-        :item="product"
+        :name="product.title"
+        :src="product.preview.videoSrc"
       />
     </div>
   </section-base>
@@ -19,12 +21,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import SectionBase from './section-base/section-base.vue';
-import {
-  NibbleShopProductMini,
-  NibbleShopProductMiniData
-} from '@/components/nibble-shop';
+import { NibbleShopProductMini } from '@/components/nibble-shop';
 
 export default Vue.extend({
   name: 'NibbleShopSection',
@@ -32,27 +32,8 @@ export default Vue.extend({
     SectionBase,
     NibbleShopProductMini
   },
-  data() {
-    return {
-      nftList: [
-        {
-          name: 'Cap',
-          videoSrc: require('@/assets/videos/ceo_of_money.webm')
-        },
-        {
-          name: 'Face mask',
-          videoSrc: require('@/assets/videos/street_jungle.webm')
-        },
-        {
-          name: 'Classic T-Shirt',
-          videoSrc: require('@/assets/videos/instant_classic.webm')
-        },
-        {
-          name: 'Power T-Shirt',
-          videoSrc: require('@/assets/videos/power_t_shirt.webm')
-        }
-      ] as Array<NibbleShopProductMiniData>
-    };
+  computed: {
+    ...mapState('shop', { products: 'assets' })
   }
 });
 </script>
