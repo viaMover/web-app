@@ -169,7 +169,7 @@ export default Vue.extend({
         address: this.outputUSDCAsset.address,
         decimals: this.outputUSDCAsset.decimals,
         symbol: this.outputUSDCAsset.symbol,
-        name: 'USDC',
+        name: 'USDc',
         priceUSD: this.usdcNativePrice,
         logo: this.outputUSDCAsset.iconURL,
         isFavorite: true,

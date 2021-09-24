@@ -6,11 +6,11 @@
     />
     <div class="arrow">
       <div class="item">
-        <token-image
-          :address="token.address"
-          :src="token.logo"
-          :symbol="token.symbol"
-          wrapper-class="item-coin"
+        <custom-picture
+          :alt="savings.alt"
+          :sources="savings.sources"
+          :src="savings.src"
+          :webp-sources="savings.webpSources"
         />
       </div>
       <div class="item">
@@ -20,11 +20,11 @@
         </div>
       </div>
       <div class="item">
-        <custom-picture
-          :alt="savings.alt"
-          :sources="savings.sources"
-          :src="savings.src"
-          :webp-sources="savings.webpSources"
+        <token-image
+          :address="token.address"
+          :src="token.logo"
+          :symbol="token.symbol"
+          wrapper-class="item-coin"
         />
       </div>
     </div>
@@ -34,13 +34,11 @@
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           {{ token.symbol }}
         </h2>
-        <span> {{ formatAmount }} </span>
+        <span> {{ formatToNative(amount) }} {{ $t('savings.USDC') }} </span>
       </div>
       <div class="item">
         <h2>{{ $t('savings.deposit.lblAndTotalOf') }}</h2>
-        <span>
-          {{ formatToNative(nativeAmount) }} {{ $t('savings.USDC') }}
-        </span>
+        <span> {{ formatToNative(amount) }} {{ $t('savings.USDC') }} </span>
       </div>
     </div>
     <div v-if="isSubsidy">
@@ -75,18 +73,16 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState } from 'vuex';
 
 import { TokenWithBalance } from '@/wallet/types';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { isUSDCAssetData } from '@/wallet/references/data';
 
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
-  name: 'SavingsDepositReview',
+  name: 'SavingsWithdrawReview',
   components: {
     TokenImage,
     SecondaryPageSimpleTitle,
@@ -98,14 +94,6 @@ export default Vue.extend({
       required: true
     },
     amount: {
-      type: String,
-      required: true
-    },
-    nativeAmount: {
-      type: String,
-      required: true
-    },
-    amountType: {
       type: String,
       required: true
     }
@@ -134,21 +122,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['networkInfo']),
-    formatAmount(): string {
-      if (this.isSelectedUSDCToken) {
-        return `${formatToNative(this.amount)} ${this.$t('savings.USDC')}`;
-      }
-      return `${formatToDecimals(this.amount, 4)} ${this.token.symbol}`;
-    },
-    formatNativeAmount(): string {
-      return `${formatToNative(this.nativeAmount)} ${this.$t('savings.USDC')}`;
-    },
     isSelectedUSDCToken(): boolean {
-      return isUSDCAssetData(
-        this.networkInfo.network,
-        this.token?.address ?? ''
-      );
+      //TODO find some best way
+      return this.token.name === 'USDc';
     },
     isSubsidy(): boolean {
       //TODO

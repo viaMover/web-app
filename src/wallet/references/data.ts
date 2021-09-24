@@ -384,6 +384,15 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const isUSDCAssetData = (network: Network, address: string): boolean => {
+  const USDcAddress = USDC_TOKEN_ADDRESS(network);
+  if (USDcAddress === '0x1') {
+    return false;
+  } else {
+    return USDcAddress.trim().toLowerCase() === address.trim().toLowerCase();
+  }
+};
+
 const formatSwapSources = (swapSource: string): string => {
   return SWAP_SOURCES_ICON[swapSource]
     ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
@@ -397,6 +406,7 @@ export {
   getUSDCAssetData,
   getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
+  isUSDCAssetData,
   formatSwapSources,
   SUSHI_ADDRESS,
   MOBO_ADDRESS,

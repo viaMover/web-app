@@ -1,10 +1,10 @@
 <template>
   <content-wrapper
-    has-back-button
+    has-close-button
     has-left-rail
+    is-black-close-button
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="savings"
-    @back="handleBack"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -32,7 +32,7 @@ import {
   SavingsDepositModal,
   SavingsWithdrawModal
 } from '@/components/modals';
-import SavingsLeftRail from '@/components/savings/savings-left-rail.vue';
+import { SavingsLeftRail } from '@/components/savings';
 
 import '@/styles/_savings.less';
 
@@ -47,10 +47,7 @@ export default Vue.extend({
   },
   methods: {
     handleClose(): void {
-      this.$router.back();
-    },
-    handleBack(): void {
-      this.$router.back(); //TODO
+      this.$router.replace({ name: 'home' });
     }
   }
 });

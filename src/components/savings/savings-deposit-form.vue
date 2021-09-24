@@ -2,25 +2,29 @@
   <div>
     <div>
       <secondary-page-simple-title
-        class="deposit_in_savings-title"
+        class="savings_secondary_page-title"
         :description="$t('savings.deposit.txtDepositDescription')"
         :title="$t('savings.deposit.lblDepositInSavings')"
       />
+      <div class="savings_secondary_page-token-info">
+        <span>~ $0.00</span>
+        <p>{{ $t('savings.deposit.txtYouCouldEarnInYear') }}</p>
+      </div>
     </div>
-    <div class="deposit_in_savings-body">
+    <div class="savings_secondary_page-body">
       <h2>{{ $t('savings.deposit.lblWhatDoWeDeposit') }}</h2>
-      <div class="deposit__info">
+      <div class="info">
         <token-image
-          :address="selectedToken ? selectedToken.address : ''"
-          :src="selectedToken ? selectedToken.logo : ''"
-          :symbol="selectedToken ? selectedToken.symbol : ''"
+          :address="token ? token.address : ''"
+          :src="token ? token.logo : ''"
+          :symbol="token ? token.symbol : ''"
           wrapper-class="icon"
         />
         <div class="coin">
           <p>
-            {{ selectedToken ? selectedToken.name : '' }}
+            {{ token ? token.name : '' }}
             <span>
-              {{ selectedToken ? selectedToken.symbol : '' }}
+              {{ token ? token.symbol : '' }}
             </span>
           </p>
         </div>
@@ -32,26 +36,26 @@
           <arrow-down-icon stroke="#fff" />
         </button>
       </div>
-      <div class="deposit__available">
+      <div class="available">
         <p>
-          {{ $t('savings.deposit.lblAvailable') }}
+          {{ $t('savings.lblAvailable') }}
           <span @click="handleSelectMaxAmount">{{ formattedMaxAmount }}</span>
         </p>
       </div>
-      <div class="deposit__description">
+      <div class="description">
         <p>
           {{
             isSelectedUSDCToken
-              ? $t('savings.deposit.txtUSDCCoinIsAStable')
+              ? $t('savings.txtUSDCCoinIsAStable')
               : $t('savings.deposit.txtAssetWillBeConverted')
           }}
         </p>
       </div>
-      <form action="#" autocomplete="off" class="deposit__form">
+      <form action="#" autocomplete="off" class="form">
         <p>
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           <span
-            class="deposit__form-button"
+            class="form-button"
             @click.capture.stop.prevent="swapSelectedDepositIn"
           >
             {{ selectedDepositIn }}
@@ -65,7 +69,7 @@
           type="text"
         />
         <span>{{ selectedDepositIn }}</span>
-        <div v-if="isShowSwappingBlock" class="deposit__form-swap">
+        <div v-if="isShowSwappingBlock" class="form-swap">
           <p>
             {{ $t('savings.deposit.lblSwappingFor') }}
             <picture>
@@ -82,7 +86,7 @@
           {{
             isButtonActive
               ? $t('savings.lblReviewTransaction')
-              : $t('savings.lblChooseAmount')
+              : $t('savings.deposit.lblChooseAmount')
           }}
         </action-button>
       </form>
@@ -109,6 +113,7 @@ import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import { ArrowDownIcon } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { isUSDCAssetData } from '@/wallet/references/data';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -122,15 +127,15 @@ export default Vue.extend({
     return {
       selectedDepositIn: 'USDC' as string,
       amountToDeposit: '' as string,
-      selectedToken: undefined as TokenWithBalance | undefined
+      token: undefined as TokenWithBalance | undefined
     };
   },
   computed: {
-    ...mapState('account', ['tokens']),
+    ...mapState('account', ['tokens', 'networkInfo']),
     isSelectedUSDCToken(): boolean {
-      //TODO find some best way
-      return (
-        this.selectedToken !== undefined && this.selectedToken.name === 'USDc'
+      return isUSDCAssetData(
+        this.networkInfo.network,
+        this.token?.address ?? ''
       );
     },
     isShowSwappingBlock(): boolean {
@@ -142,7 +147,7 @@ export default Vue.extend({
     },
     isButtonActive(): boolean {
       return (
-        this.selectedToken !== undefined &&
+        this.token !== undefined &&
         this.amountToDeposit !== '' &&
         !isNaN(this.amountToDeposit) &&
         notZero(this.amountToDeposit) &&
@@ -150,21 +155,19 @@ export default Vue.extend({
       );
     },
     formattedMaxAmount(): string {
-      if (this.selectedToken === undefined) {
+      if (this.token === undefined) {
         return `0`;
       }
 
-      return `${formatToDecimals(this.selectedToken.balance, 4)} ${
-        this.selectedToken.symbol
-      }`;
+      return `${formatToDecimals(this.token.balance, 4)} ${this.token.symbol}`;
     },
     formattedNativeTotal(): string {
-      if (this.selectedToken === undefined) {
+      if (this.token === undefined) {
         return '0';
       }
       const native = convertNativeAmountFromAmount(
         this.amountToDeposit,
-        this.selectedToken.priceUSD
+        this.token.priceUSD
       );
 
       if (native === 'NaN') {
@@ -177,13 +180,13 @@ export default Vue.extend({
   mounted() {
     const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
     if (eth) {
-      this.selectedToken = eth;
+      this.token = eth;
     }
   },
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     handleTxReview(): void {
-      if (this.selectedToken === undefined) {
+      if (this.token === undefined) {
         return;
       }
       let nativeAmount = '';
@@ -197,45 +200,45 @@ export default Vue.extend({
           nativeAmount = this.amountToDeposit;
           amount = convertAmountFromNativeValue(
             this.amountToDeposit,
-            this.selectedToken.priceUSD,
-            this.selectedToken.decimals
+            this.token.priceUSD,
+            this.token.decimals
           );
         } else {
           amount = this.amountToDeposit;
           nativeAmount = convertNativeAmountFromAmount(
             this.amountToDeposit,
-            this.selectedToken.priceUSD
+            this.token.priceUSD
           );
         }
       }
 
       this.$emit('tx-review', {
-        selectedToken: this.selectedToken,
-        amountToDeposit: amount,
-        nativeAmountToDeposit: nativeAmount,
+        token: this.token,
+        amount: amount,
+        nativeAmount: nativeAmount,
         selectedDepositIn: this.selectedDepositIn
       });
     },
     swapSelectedDepositIn(): void {
       if (this.selectedDepositIn === 'USDC') {
-        if (this.selectedToken !== undefined) {
+        if (this.token !== undefined) {
           if (this.isSelectedUSDCToken) {
             return;
           }
 
-          this.selectedDepositIn = this.selectedToken.symbol;
+          this.selectedDepositIn = this.token.symbol;
           this.amountToDeposit = convertAmountFromNativeValue(
             this.amountToDeposit,
-            this.selectedToken.priceUSD,
-            this.selectedToken.decimals
+            this.token.priceUSD,
+            this.token.decimals
           );
         }
       } else {
         this.selectedDepositIn = 'USDC';
-        if (this.selectedToken !== undefined) {
+        if (this.token !== undefined) {
           this.amountToDeposit = convertNativeAmountFromAmount(
             this.amountToDeposit,
-            this.selectedToken.priceUSD
+            this.token.priceUSD
           );
         }
       }
@@ -245,16 +248,16 @@ export default Vue.extend({
       }
     },
     handleSelectMaxAmount(): void {
-      if (!this.selectedToken) {
+      if (!this.token) {
         return;
       }
       if (this.selectedDepositIn === 'USDC') {
         this.amountToDeposit = convertNativeAmountFromAmount(
-          this.selectedToken.balance,
-          this.selectedToken.priceUSD
+          this.token.balance,
+          this.token.priceUSD
         );
       } else {
-        this.amountToDeposit = this.selectedToken.balance;
+        this.amountToDeposit = this.token.balance;
       }
     },
     async handleOpenSelectModal(): Promise<void> {
@@ -266,15 +269,12 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       } else {
-        this.selectedToken = token;
+        this.token = token;
       }
       this.amountToDeposit = '';
 
-      if (
-        this.selectedDepositIn !== 'USDC' &&
-        this.selectedToken !== undefined
-      ) {
-        this.selectedDepositIn = this.selectedToken.symbol;
+      if (this.selectedDepositIn !== 'USDC' && this.token !== undefined) {
+        this.selectedDepositIn = this.token.symbol;
       } else {
         this.selectedDepositIn = 'USDC';
       }

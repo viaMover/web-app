@@ -1,6 +1,6 @@
 <template>
   <action-button
-    button-class="button close-button button-active"
+    button-class="button escape-link button-active"
     @button-click="handleClick"
   >
     <img

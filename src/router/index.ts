@@ -83,7 +83,15 @@ const routes: Array<RouteConfig> = [
         name: 'savings-withdraw',
         component: () =>
           import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw.vue'
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw-wrapper.vue'
+          )
+      },
+      {
+        path: 'analytics',
+        name: 'savings-global-analytics',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-global-analytics.vue'
           )
       },
       {

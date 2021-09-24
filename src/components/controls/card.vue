@@ -21,10 +21,21 @@
       >
         {{ buttonText }}
       </action-button>
-      <close-button
-        :is-black="isBlackCloseBtn"
-        @close="handleCloseButton"
-      ></close-button>
+      <action-button
+        button-class="close-button button-active"
+        @button-click="handleCloseButton"
+      >
+        <img
+          v-if="isBlackCloseBtn"
+          :alt="$t('icon.txtCloseIconAlt')"
+          src="@/assets/images/back_cross.svg"
+        />
+        <img
+          v-else
+          :alt="$t('icon.txtCloseIconAlt')"
+          src="@/assets/images/cross.svg"
+        />
+      </action-button>
     </div>
   </div>
 </template>
@@ -41,8 +52,7 @@ export default Vue.extend({
   name: 'Card',
   components: {
     CustomPicture,
-    ActionButton,
-    CloseButton
+    ActionButton
   },
   props: {
     title: {

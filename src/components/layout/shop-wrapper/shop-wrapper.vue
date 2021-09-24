@@ -6,12 +6,7 @@
     <div class="shop__wrapper-illustration">
       <slot name="illustration"></slot>
     </div>
-    <close-button
-      v-if="hasCloseButton"
-      class="shop__wrapper-back"
-      is-black
-      @close="handleClose"
-    />
+    <close-button v-if="hasCloseButton" is-black @close="handleClose" />
     <slot name="context-menu"></slot>
   </div>
 </template>

@@ -4,12 +4,10 @@
     hide-title
     @back="handleBack"
   >
-    <savings-deposit-form v-if="!isShowReview" @tx-review="handleTxReview" />
-    <savings-deposit-review
+    <savings-withdraw-form v-if="!isShowReview" @tx-review="handleTxReview" />
+    <savings-withdraw-review
       v-else-if="txStep === undefined"
       :amount="amount"
-      :amount-type="selectedDepositIn"
-      :native-amount="nativeAmount"
       :token="token"
       @tx-start="handleTxStart"
     />
@@ -22,20 +20,20 @@ import Vue from 'vue';
 
 import { TokenWithBalance } from '@/wallet/types';
 
+import { SecondaryPage } from '@/components/layout/secondary-page';
 import {
-  SavingsDepositForm,
-  SavingsDepositReview,
+  SavingsWithdrawForm,
+  SavingsWithdrawReview,
   SavingsFormLoader
 } from '@/components/savings';
-import { SecondaryPage } from '@/components/layout/secondary-page';
 
 export default Vue.extend({
-  name: 'SavingsDepositWrapper',
+  name: 'SavingsWithdrawWrapper',
   components: {
     SavingsFormLoader,
-    SecondaryPage,
-    SavingsDepositReview,
-    SavingsDepositForm
+    SavingsWithdrawReview,
+    SavingsWithdrawForm,
+    SecondaryPage
   },
   data() {
     return {
@@ -44,9 +42,7 @@ export default Vue.extend({
 
       isSmartTreasury: true as boolean,
       token: undefined as TokenWithBalance | undefined,
-      amount: undefined as string | undefined,
-      nativeAmount: undefined as string | undefined,
-      selectedDepositIn: undefined as string | undefined
+      amount: undefined as string | undefined
     };
   },
   computed: {
@@ -62,16 +58,9 @@ export default Vue.extend({
         this.$router.back();
       }
     },
-    handleTxReview(args: {
-      token: TokenWithBalance;
-      amount: string;
-      nativeAmount: string;
-      selectedDepositIn: string;
-    }): void {
+    handleTxReview(args: { token: TokenWithBalance; amount: string }): void {
       this.token = args.token;
       this.amount = args.amount;
-      this.nativeAmount = args.nativeAmount;
-      this.selectedDepositIn = args.selectedDepositIn;
 
       this.isShowReview = true;
     },

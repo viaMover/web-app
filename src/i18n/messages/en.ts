@@ -83,7 +83,6 @@ export default {
     lblAPYOnAllSavings: 'APY on all savings',
     lblStartSaving: 'Start saving',
     lblReviewTransaction: 'Review transaction',
-    lblChooseAmount: 'Choose the amount to deposit',
     lblChooseToken: 'Choose Token',
     lblNothingInSavings: 'Nothing in @:savings.lblSavings',
     txtNothingInSavings: 'Looks like you don’t have any savings, yet',
@@ -94,7 +93,7 @@ export default {
     lblSavingsStatements: '@:savings.lblSavingsPrefix Statements',
     lblManageSavings: 'Manage @:savings.lblSavingsPrefix',
     lblSavingsOverview: '@:savings.lblSavingsPrefix Overview',
-    lblDepositedAssets: 'Deposited assets',
+    lblDepositedAssets: 'My total deposited assets value',
     lblCurrentVariableAPY: 'Current variable APY',
     lbl30DayAverageAPY: '30-day average APY',
     lblTotalAssetsUnderManagement: 'Total assets under management',
@@ -103,9 +102,12 @@ export default {
     lblEarnedThisMonth: 'Earned this month',
     lblEarnedInTotal: 'Earned in total',
     lblSavingsEstimation: '@:savings.lblSavingsPrefix Estimation',
-    lblEstimatedEarningsTomorrow: 'Est. earnings tomorrow',
-    lblEstimatedEarningsNextMonth: 'Est. earnings next month',
-    lblEstimatedEarningsAnnually: 'Est. earnings annually',
+    lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
+    lblEstimatedEarningsNextMonth: 'Estimated earnings next month',
+    lblEstimatedEarningsAnnually: 'Estimated earnings annually',
+    txtSavingsOverviewDescription:
+      'Savings is a non-custodial and permissionless product. ' +
+      'Check the global statistics across the board.',
     btnDeposit: {
       simple: 'Deposit in @:savings.lblSavingsPrefix',
       emoji: '💰 @:savings.btnDeposit.simple'
@@ -121,7 +123,11 @@ export default {
     lblEarnedRelativeMonthlyChangeExtended: '{amount} earned on {date}',
     lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
       'Yield earned in {date}',
+    txtUSDCCoinIsAStable:
+      'USD Coin is a stable asset and the easiest way to grow your ' +
+      'savings. Your returns will also be in USDC.',
     lblInProgress: 'In progress',
+    lblAvailable: 'Available',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -133,8 +139,11 @@ export default {
       lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}'
     },
     deposit: {
+      lblChooseAmount: 'Choose the amount to deposit',
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
       txtDepositShortDescription: 'Get 8.3% APY on simple savings in USDC',
+      txtYouCouldEarnInYear:
+        'You could earn in a year. Considering all changes.',
       txtDepositDescription:
         'Once you deposit your assets in savings, Mover is ' +
         'constantly searching for the highest paying option using multiple DeFi protocols. ' +
@@ -142,13 +151,9 @@ export default {
       txtAssetWillBeConverted:
         'You chose a non USDC asset. It means that it will be converted ' +
         'to USDC at the time of the deposit at the current market rate.',
-      txtUSDCCoinIsAStable:
-        'USD Coin is a stable asset and the easiest way to grow your ' +
-        'savings. Your returns will also be in USDC.',
       lblWhatDoWeDeposit: 'What we do deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
-      lblAvailable: 'Available',
       lblSwappingFor: 'Swapping for',
       lblAmountWeDepositIn: 'Amount we deposit in',
       lblReviewYourDeposit: 'Review your deposit',
@@ -159,15 +164,21 @@ export default {
         'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
     },
     withdraw: {
+      lblChooseAmount: 'Choose the amount to withdraw',
+      lblAmountWeDepositIn: 'Amount we withdraw in',
+      lblWhatDoWeWithdraw: 'What we do withdraw',
       lblWithdrawFromSavings: 'Withdraw from @:savings.lblSavingsPrefix',
       txtWithdrawShortDescription:
         'Remove your assets from savings fully or partially',
       txtWithdrawDescription:
         'You can withdraw the entire or partial balance. ' +
-        'Available balance consists of principal amount you deposited together with the accumulated yield.',
+        'Available balance consists of principal amount you deposited ' +
+        'together with the accumulated yield.',
       lblWhatToWithdraw: 'What to withdraw',
       btnWithdraw: 'Withdraw',
       lblWhatAboutTheYield: 'What about the yield?',
+      txtIfYouKeepSavings:
+        'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:
         'Estimated lost annual yield based on your withdrawal amount is {amount} at the current rate of {apy}% APY.'
     },

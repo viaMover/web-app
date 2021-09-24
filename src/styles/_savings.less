@@ -170,7 +170,31 @@
   }
 }
 
-.deposit_in_savings-title {
+.savings_secondary_page-token-info {
+  position: fixed;
+  top: 80px;
+  right: 64px;
+  max-width: 200px;
+  width: 100%;
+
+  span {
+    display: block;
+    font-family: 'Bold', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  p {
+    margin-top: 7px;
+    font-family: 'Medium', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.savings_secondary_page-title {
   max-width: 480px;
   margin-top: 40px;
 
@@ -189,7 +213,7 @@
   }
 }
 
-.deposit_in_savings-body {
+.savings_secondary_page-body {
   max-width: 480px;
   margin-top: 80px;
 
@@ -201,7 +225,7 @@
     line-height: 16px;
   }
 
-  .deposit__form-swap {
+  .form-swap {
     margin-top: 8px;
 
     p {
@@ -240,7 +264,7 @@
     }
   }
 
-  .deposit__form {
+  .form {
     margin-top: 40px;
 
     p {
@@ -250,7 +274,7 @@
       line-height: 16px;
       color: rgba(60, 60, 67, 0.6);
 
-      .deposit__form-button {
+      .form-button {
         font-family: 'Bold', sans-serif;
         font-weight: 700;
         cursor: pointer;
@@ -290,7 +314,7 @@
     }
   }
 
-  .deposit__description {
+  .description {
     margin-top: 16px;
 
     p {
@@ -300,7 +324,7 @@
     }
   }
 
-  .deposit__available {
+  .available {
     margin-top: 8px;
 
     p {
@@ -322,7 +346,7 @@
     }
   }
 
-  .deposit__info {
+  .info {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -458,6 +482,26 @@
         display: block;
         width: 100%;
         border-radius: 50%;
+      }
+
+      .img-stub {
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        background-color: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 16px rgba(0, 0, 0, 50%);
+
+        span {
+          font-family: 'Bold', sans-serif;
+          font-weight: 700;
+          font-size: 9px;
+          color: #000;
+          text-align: center;
+          line-height: 16px;
+        }
       }
     }
 
@@ -675,6 +719,10 @@
       width: 100%;
     }
   }
+}
+
+.savings__sidebar-wrapper {
+  margin-top: 80px;
 }
 
 .savings__menu-wrapper-graph p {
@@ -959,40 +1007,44 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   padding: 24px;
+
+  li {
+    margin-top: 16px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(60, 60, 67, 0.08);
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    p.description {
+      font-family: 'Regular', sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    span.value {
+      display: block;
+      margin-left: auto;
+      font-family: 'Medium', sans-serif;
+      font-weight: 500;
+    }
+  }
 }
 
-.savings-statements__wrapper-list li {
-  margin-top: 16px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid rgba(60, 60, 67, 0.08);
-}
-
-.savings-statements__wrapper-list li:first-child {
-  margin-top: 0;
-}
-
-.savings-statements__wrapper-list li:last-child {
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.savings-statements__wrapper-list li p.description {
-  font-family: 'Regular', sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-}
-
-.savings-statements__wrapper-list li span.value {
-  display: block;
-  margin-left: auto;
-  font-family: 'Medium', sans-serif;
-  font-weight: 500;
+.savings__menu {
+  padding-bottom: 200px;
 }

@@ -84,7 +84,7 @@ export default Vue.extend({
       return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
     },
     leftRailStyle(): Properties {
-      if (this.hasBackButton || this.hasCloseButton) {
+      if (this.hasBackButton) {
         return {
           paddingTop: '104px'
         };
