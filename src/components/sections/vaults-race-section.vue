@@ -4,7 +4,7 @@
     has-expand-button
     :heading-text="$t('vaultsRace.lblGames')"
     :name="$t('vaultsRace.lblGames')"
-    navigate-to-name="vaults-race"
+    navigate-to-name="vaults-race-view-all"
   >
     <custom-picture
       :alt="image.alt"

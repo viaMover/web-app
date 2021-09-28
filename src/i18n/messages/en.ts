@@ -476,7 +476,16 @@ export default {
   },
   vaultsRace: {
     lblGames: 'Games',
-    txtGamesAlt: 'Vaults race promo image'
+    txtGamesAlt: 'Vaults race promo image',
+    lblMyVaults: 'My Vaults',
+    lblVaults: 'Vaults',
+    lblManageVaults: 'Manage Vaults',
+    lblLeaderboard: 'Leaderboard',
+    lblGlobalStatistics: 'Global Statistics',
+    lblWeeklyChallenge: 'Weekly challenge',
+    lblWeeklyChallengeDescription:
+      'A vault with the highest score at the end of the week, ' +
+      'gets to win the prize. Roll dice daily to participate.'
   },
   NFTs: {
     lblDiceProject: 'Dice Project',

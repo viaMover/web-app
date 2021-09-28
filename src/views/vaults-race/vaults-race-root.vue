@@ -1,13 +1,40 @@
 <template>
-  <router-view />
+  <content-wrapper
+    has-close-button
+    has-left-rail
+    is-black-close-button
+    left-rail-inner-wrapper-class="page-sidebar-wrapper"
+    wrapper-class="savings"
+    @close="handleClose"
+  >
+    <template v-slot:left-rail>
+      <keep-alive>
+        <component :is="'vaults-race-left-rail'" />
+      </keep-alive>
+    </template>
+
+    <router-view />
+  </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import { ContentWrapper } from '@/components/layout';
+
 import '@/styles/_nft.less';
+import { VaultsRaceLeftRail } from '@/components/vaults-race';
 
 export default Vue.extend({
-  name: 'VaultsRaceRoot'
+  name: 'VaultsRaceRoot',
+  components: {
+    ContentWrapper,
+    VaultsRaceLeftRail
+  },
+  methods: {
+    handleClose(): void {
+      this.$router.replace({ name: 'home' });
+    }
+  }
 });
 </script>

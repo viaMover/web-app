@@ -36,6 +36,16 @@ const routes: Array<RouteConfig> = [
       import(
         /* webpackChunkName: "home" */ '@/views/vaults-race/vaults-race-root.vue'
       ),
+    children: [
+      {
+        path: '',
+        name: 'vaults-race-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "release-radar" */ '@/views/vaults-race/vaults-race-view-all.vue'
+          )
+      }
+    ],
     beforeEnter: checkFeatureFlag('isVaultsRaceEnabled')
   },
   {
