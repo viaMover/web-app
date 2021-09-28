@@ -474,6 +474,10 @@ export default {
       }
     }
   },
+  vaultsRace: {
+    lblGames: 'Games',
+    txtGamesAlt: 'Vaults race promo image'
+  },
   NFTs: {
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',

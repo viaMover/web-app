@@ -9,6 +9,7 @@
     <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
     <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
+    <vaults-race-section v-if="isFeatureEnabled('isVaultsRaceEnabled')" />
   </content-wrapper>
 </template>
 
@@ -25,10 +26,12 @@ import {
 } from '@/components/sections';
 
 import '@/styles/_more.less';
+import VaultsRaceSection from '@/components/sections/vaults-race-section.vue';
 
 export default Vue.extend({
   name: 'HomeMore',
   components: {
+    VaultsRaceSection,
     ContentWrapper,
     GovernanceSection,
     NibbleShopSection,

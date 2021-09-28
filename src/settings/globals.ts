@@ -10,6 +10,7 @@ export interface Globals {
   isMoreEnabled: boolean;
   isNibbleShopEnabled: boolean;
   isNftDropsEnabled: boolean;
+  isVaultsRaceEnabled: boolean;
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
   isTreasuryMonthlyChartEnabled: boolean;
@@ -28,6 +29,7 @@ const values: Globals = {
   isMoreEnabled: true,
   isNibbleShopEnabled: false,
   isNftDropsEnabled: true,
+  isVaultsRaceEnabled: true,
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
