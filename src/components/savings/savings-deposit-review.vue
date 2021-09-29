@@ -78,13 +78,14 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
-import { TokenWithBalance } from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { isUSDCAssetData } from '@/wallet/references/data';
 
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { sameAddress } from '@/utils/address';
 
 export default Vue.extend({
   name: 'SavingsDepositReview',
@@ -103,10 +104,6 @@ export default Vue.extend({
       required: true
     },
     nativeAmount: {
-      type: String,
-      required: true
-    },
-    amountType: {
       type: String,
       required: true
     }
@@ -145,11 +142,11 @@ export default Vue.extend({
     formatNativeAmount(): string {
       return `${formatToNative(this.nativeAmount)} ${this.$t('savings.USDC')}`;
     },
+    outputUSDCAsset(): SmallTokenInfoWithIcon {
+      return getUSDCAssetData(this.networkInfo.network);
+    },
     isSelectedUSDCToken(): boolean {
-      return isUSDCAssetData(
-        this.networkInfo.network,
-        this.token?.address ?? ''
-      );
+      return sameAddress(this.token.address, this.outputUSDCAsset.address);
     },
     isSubsidy(): boolean {
       //TODO
