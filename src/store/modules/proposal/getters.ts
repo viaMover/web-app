@@ -1,13 +1,173 @@
 import { GetterTree } from 'vuex';
 import { RootStoreState } from '@/store/types';
-import { Proposal, ProposalStoreState } from './types';
+import {
+  ProposalState,
+  ProposalStoreState,
+  ProposalCumulativeInfo
+} from './types';
+import { Choice, ProposalInfo } from '@/services/mover/governance';
+import { sameAddress } from '@/utils/address';
 
 export default {
-  lastProposal(state): Proposal | null {
+  lastProposal(state): ProposalInfo | undefined {
     return (
-      state.proposals
-        .slice()
-        .sort((a: Proposal, b: Proposal) => b.ends - a.ends)[0] ?? null
+      state.items.slice().sort((a, b) => b.proposal.end - a.proposal.end)[0] ??
+      undefined
     );
+  },
+  timesVoted(state, getters, rootState): number {
+    if (rootState.account?.currentAddress === undefined) {
+      return 0;
+    }
+
+    return state.items.reduce((count, proposal) => {
+      if (
+        proposal.votes.some((vote) =>
+          sameAddress(vote.voter, rootState.account?.currentAddress)
+        )
+      ) {
+        return count + 1;
+      }
+
+      return count;
+    }, 0);
+  },
+  proposalsCreated(state, getters, rootState): number {
+    if (rootState.account?.currentAddress === undefined) {
+      return 0;
+    }
+
+    return state.items.reduce((count, proposal) => {
+      if (
+        sameAddress(proposal.proposal.author, rootState.account?.currentAddress)
+      ) {
+        return count + 1;
+      }
+
+      return count;
+    }, 0);
+  },
+  totalNumberOfProposals(state): number {
+    return state.items.length;
+  },
+  openProposals(state): number {
+    return state.items.reduce((count, proposal) => {
+      if (proposal.proposal.state === 'active') {
+        return count + 1;
+      }
+
+      return count;
+    }, 0);
+  },
+  succeededProposals(state, getters): number {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+    return state.items.reduce((count, proposal) => {
+      const proposalStats = source[proposal.proposal.id];
+
+      if (proposal.proposal.state === 'closed' && proposalStats.isSucceded) {
+        return count + 1;
+      }
+
+      return count;
+    }, 0);
+  },
+  defeatedProposals(state, getters): number {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+    return state.items.reduce((count, proposal) => {
+      const proposalStats = source[proposal.proposal.id];
+
+      if (proposal.proposal.state === 'closed' && !proposalStats.isSucceded) {
+        return count + 1;
+      }
+
+      return count;
+    }, 0);
+  },
+  proposalCumulativeInfo(state): ProposalCumulativeInfo {
+    return state.items.reduce((acc, item) => {
+      const scores = item.scores.all[0] ?? {};
+      const votesCountFor = item.votes.reduce((count, vote) => {
+        if (vote.choice === Choice.For) {
+          return count + scores[vote.voter] ?? 0;
+        }
+
+        return count;
+      }, 0);
+
+      const votesCountAgainst = item.votes.reduce((count, vote) => {
+        if (vote.choice === Choice.Against) {
+          return count + scores[vote.voter] ?? 0;
+        }
+
+        return count;
+      }, 0);
+
+      const votingActivity =
+        (100 * (votesCountFor + votesCountAgainst)) / item.communityVotingPower;
+      const isQuorumReached =
+        votesCountFor + votesCountAgainst >
+        item.communityVotingPower * state.minimumVotingThresholdMultiplier;
+      const hasOutweight = votesCountFor > votesCountAgainst;
+
+      return {
+        ...acc,
+        [item.proposal.id]: {
+          state: item.proposal.state,
+          communityVotingPower: item.communityVotingPower,
+          votesCountFor,
+          votesCountAgainst,
+          votingActivity,
+          isQuorumReached,
+          isSucceeded: isQuorumReached && hasOutweight
+        }
+      };
+    }, {});
+  },
+  proposalVotedFor(state, getters): (id: string) => number {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.votesCountFor ?? 0;
+  },
+  proposalVotedAgainst(state, getters): (id: string) => number {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.votesCountAgainst ?? 0;
+  },
+  proposalCommunityVotingPower(state, getters): (id: string) => number {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.communityVotingPower ?? 0;
+  },
+  proposalVotingActivity(state, getters): (id: string) => number {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.votingActivity ?? 0;
+  },
+  proposalState(state, getters): (id: string) => ProposalState {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => {
+      const item = source[id];
+      if (item === undefined) {
+        return 'quorumNotReached';
+      }
+
+      if (item.state === 'closed') {
+        if (item.isSucceded) {
+          return 'accepted';
+        } else {
+          return 'defeated';
+        }
+      }
+
+      if (item.isQuorumReached) {
+        return 'quorumReached';
+      }
+
+      return 'quorumNotReached';
+    };
+  },
+  minimumVotingThreshold(state): number {
+    return state.communityVotingPower * state.minimumVotingThresholdMultiplier;
   }
 } as GetterTree<ProposalStoreState, RootStoreState>;
