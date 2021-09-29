@@ -11,13 +11,14 @@ export {
   getCommunityVotingPower
 } from './service';
 
+export { Choice } from './types';
+
 export type {
   Proposal,
   ProposalWithVotes,
   ProposalInfo,
   Space,
   Scores,
-  Choice,
   Vote,
   CreateProposalParams,
   VoteParams,
