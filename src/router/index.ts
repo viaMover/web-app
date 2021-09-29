@@ -30,11 +30,20 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: '/vaults-race/view/:address',
+    name: 'vaults-race-view',
+    component: () =>
+      import(
+        /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-view.vue'
+      ),
+    beforeEnter: checkFeatureFlag('isVaultsRaceEnabled')
+  },
+  {
     path: '/vaults-race',
     name: 'vaults-race',
     component: () =>
       import(
-        /* webpackChunkName: "home" */ '@/views/vaults-race/vaults-race-root.vue'
+        /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-root.vue'
       ),
     children: [
       {
@@ -42,7 +51,15 @@ const routes: Array<RouteConfig> = [
         name: 'vaults-race-view-all',
         component: () =>
           import(
-            /* webpackChunkName: "release-radar" */ '@/views/vaults-race/vaults-race-view-all.vue'
+            /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-view-all.vue'
+          )
+      },
+      {
+        path: 'statistics',
+        name: 'vaults-race-statistics',
+        component: () =>
+          import(
+            /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-statistics.vue'
           )
       }
     ],

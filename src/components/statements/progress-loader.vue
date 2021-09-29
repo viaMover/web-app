@@ -8,7 +8,7 @@
       r="15.91549430918954"
       stroke="#000"
       stroke-width="2"
-    ></circle>
+    />
     <circle
       class="donut-segment"
       cx="18"
@@ -19,12 +19,13 @@
       :stroke-dasharray="dashArray"
       :stroke-dashoffset="dashOffset"
       stroke-width="3"
-    ></circle>
+    />
   </svg>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+
 export default Vue.extend({
   name: 'ProgressLoader',
   props: {

@@ -1,4 +1,4 @@
-import { DiceData } from './../../../services/chain/nft/dice/types';
+import { DiceData } from '@/services/chain';
 import {
   UnexpectedMoveData,
   SweetAndSourData,

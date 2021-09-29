@@ -1,60 +1,54 @@
 <template>
   <secondary-page hide-title>
     <secondary-page-simple-title
+      class="vaults-race_secondary_page-title"
       :description="$t('vaultsRace.lblWeeklyChallengeDescription')"
       :title="$t('vaultsRace.lblWeeklyChallenge')"
+    />
+    <account-list
+      icon="💼"
+      :items="vaultsRaceAccounts"
+      @button-click="handleButton"
     />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { RawLocation } from 'vue-router';
 import { mapState } from 'vuex';
 
-import { PictureDescriptor } from '@/components/html5';
-import { SecondaryPage } from '@/components/layout/secondary-page';
-import SecondaryPageSimpleTitle from '@/components/layout/secondary-page/secondary-page-simple-title.vue';
+import { VaultRaceAccount } from '@/store/modules/games/types';
+
+import {
+  SecondaryPage,
+  SecondaryPageSimpleTitle
+} from '@/components/layout/secondary-page';
+import { AccountList } from '@/components/vaults-race/account-list';
 
 export default Vue.extend({
   name: 'VaultsRaceViewAll',
   components: {
+    AccountList,
     SecondaryPageSimpleTitle,
     SecondaryPage
   },
   data() {
     return {
-      headerImage: {
-        alt: this.$t('NFTs.txtLogoAlt'),
-        src: require('@/assets/images/NFT-Drops.png'),
-        sources: [
-          { src: require('@/assets/images/NFT-Drops.png') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/NFT-Drops@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/NFT-Drops.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/NFT-Drops@2x.webp')
-          }
-        ]
-      } as PictureDescriptor
+      selectedRace: undefined as VaultRaceAccount | undefined
     };
   },
   computed: {
-    ...mapState('nft', { nftList: 'nfts' })
+    ...mapState('games', ['vaultsRaceAccounts'])
   },
   methods: {
     handleClose(): void {
       this.$router.back();
     },
-    routeTo(name: string): RawLocation {
-      return {
-        name: name.toLowerCase().replaceAll(' ', '-')
-      };
+    handleButton(item: VaultRaceAccount): void {
+      this.$router.push({
+        name: 'vaults-race-view',
+        params: { address: item.address }
+      });
     }
   }
 });

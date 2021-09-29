@@ -10,6 +10,7 @@ import nft from './modules/nft';
 import proposal from './modules/proposal';
 import radar from './modules/radar';
 import modals from './modules/modals';
+import games from './modules/games';
 import { RootStoreState } from './types';
 
 Vue.use(Vuex);
@@ -27,6 +28,7 @@ export default new Vuex.Store<RootStoreState>({
     nft,
     proposal,
     radar,
-    modals
+    modals,
+    games
   }
 });

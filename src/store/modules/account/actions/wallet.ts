@@ -348,6 +348,10 @@ export default {
       root: true
     });
 
+    const gamesPromise = dispatch('games/init', undefined, {
+      root: true
+    });
+
     let nibbleShopInfoPromise = Promise.resolve();
     if (isFeatureEnabled('isNibbleShopEnabled')) {
       nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
@@ -366,7 +370,8 @@ export default {
         treasuryFreshData,
         nftInfoPromise,
         loadAvatarPromise,
-        nibbleShopInfoPromise
+        nibbleShopInfoPromise,
+        gamesPromise
       ]);
     } catch (e) {
       Sentry.captureException(e);

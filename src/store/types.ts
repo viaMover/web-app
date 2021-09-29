@@ -5,6 +5,7 @@ import { ShopStoreState } from '@/store/modules/shop/types';
 import { ProposalStoreState } from '@/store/modules/proposal/types';
 import { RadarStoreState } from '@/store/modules/radar/types';
 import { ModalsStoreState } from '@/store/modules/modals/types';
+import { GamesStoreState } from '@/store/modules/games/types';
 
 export interface RootStoreState {
   appVersion: string;
@@ -18,5 +19,6 @@ export interface RootStoreState {
   proposal?: ProposalStoreState;
   radar?: RadarStoreState;
   modals?: ModalsStoreState;
+  games?: GamesStoreState;
   // rootState members end
 }

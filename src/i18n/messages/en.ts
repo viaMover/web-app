@@ -479,13 +479,40 @@ export default {
     txtGamesAlt: 'Vaults race promo image',
     lblMyVaults: 'My Vaults',
     lblVaults: 'Vaults',
+    lblRollDice: 'Roll dice',
     lblManageVaults: 'Manage Vaults',
     lblLeaderboard: 'Leaderboard',
     lblGlobalStatistics: 'Global Statistics',
     lblWeeklyChallenge: 'Weekly challenge',
+    lblAccountNumber: 'Account number',
+    lblCurrentScore: 'Current weekly score',
+    lblOpenSeaCollection: 'OpenSea collection',
     lblWeeklyChallengeDescription:
       'A vault with the highest score at the end of the week, ' +
-      'gets to win the prize. Roll dice daily to participate.'
+      'gets to win the prize. Roll dice daily to participate.',
+    txtPageDescriptionPartOne:
+      'You will roll 20-sided dice. It means that you can get ' +
+      'a score from 1 to 20. Your result will be stored on ' +
+      'chain during a weekly challenge. When the challenge ' +
+      'ends everyone’s score is cleared, and the game restarts.',
+    btn: {
+      rollDice: 'Roll Dice',
+      comeBackTomorrow: 'Come back tomorrow'
+    },
+    statistics: {
+      lblGlobalLeaderboard: 'Global Leaderboard',
+      txtGlobalStatisticsDescription:
+        'Vaults challenge global leaderboard and statistic. ' +
+        'Find out about current leaders and other ' +
+        'interesting stats.',
+      lblThisWeekChallengeDates: 'This week challenge dates',
+      lblTotalParticipantingVaults: 'Total participanting vaults',
+      lblThisWeekPrize: 'This week prize',
+      lblDaysRemainingInTheWeek: 'Days remaining in the week',
+      lblLeadingVault: 'Leading Vault',
+      lblPositionInTheRace: 'Position in the race',
+      lblTotalPointsScored: 'Total points scored'
+    }
   },
   NFTs: {
     lblDiceProject: 'Dice Project',

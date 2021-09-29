@@ -4,7 +4,7 @@
       <left-rail-section-nav-item-image
         :description="vaultsDescription"
         description-class="bold"
-        navigate-to="vaults-race-manage"
+        navigate-to="vaults-race-view-all"
         :title="$t('vaultsRace.lblVaults')"
         title-class="disabled"
       >
@@ -57,6 +57,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      //TODO insert new image
       race: {
         alt: '',
         src: require('@/assets/images/Savings@1x.png'),
@@ -76,7 +77,6 @@ export default Vue.extend({
         ]
       } as PictureDescriptor,
       leaderboard: {
-        //TODO insert new image
         alt: '',
         src: require('@/assets/images/Savings@1x.png'),
         sources: [
@@ -97,12 +97,11 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', {
-      hasActiveSavings: 'hasActiveSavings',
-      savingsInfoBalanceNative: 'savingsInfoBalanceNative'
+    ...mapGetters('games', {
+      vaultsRaceAccountsCount: 'vaultsRaceAccountsCount'
     }),
     vaultsDescription(): string {
-      return `4 accounts`;
+      return `${this.vaultsRaceAccountsCount} accounts`;
     }
   }
 });

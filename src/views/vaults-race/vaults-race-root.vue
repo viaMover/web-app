@@ -4,7 +4,7 @@
     has-left-rail
     is-black-close-button
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
-    wrapper-class="savings"
+    wrapper-class="vaults-race"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -22,8 +22,9 @@ import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
 
-import '@/styles/_nft.less';
 import { VaultsRaceLeftRail } from '@/components/vaults-race';
+
+import '@/styles/_games.less';
 
 export default Vue.extend({
   name: 'VaultsRaceRoot',
