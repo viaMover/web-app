@@ -11,10 +11,12 @@ import proposal from './modules/proposal';
 import radar from './modules/radar';
 import modals from './modules/modals';
 import { RootStoreState } from './types';
+import { isFeatureEnabled, isProduction } from '@/settings';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store<RootStoreState>({
+const store = new Vuex.Store<RootStoreState>({
+  strict: !isProduction(),
   state: {
     appVersion: '0.0.1',
     i18n: null
@@ -23,10 +25,24 @@ export default new Vuex.Store<RootStoreState>({
   mutations: mutations,
   modules: {
     account,
-    shop,
-    nft,
-    proposal,
-    radar,
     modals
   }
 });
+
+if (isFeatureEnabled('isNibbleShopEnabled')) {
+  store.registerModule('shop', shop);
+}
+
+if (isFeatureEnabled('isNftDropsEnabled')) {
+  store.registerModule('nft', nft);
+}
+
+if (isFeatureEnabled('isReleaseRadarEnabled')) {
+  store.registerModule('radar', radar);
+}
+
+if (isFeatureEnabled('isGovernanceEnabled')) {
+  store.registerModule('proposal', proposal);
+}
+
+export default store;

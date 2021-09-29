@@ -4,10 +4,11 @@ import { Modal, ModalsStoreState } from './types';
 
 import actions from './actions';
 import mutations from './mutations';
+import { isProduction } from '@/settings';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     state: {
       [Modal.SavingsDeposit]: {

@@ -5,10 +5,11 @@ import mutations from './mutations';
 import getters from './getters';
 import { RadarStoreState } from './types';
 import { RootStoreState } from '@/store/types';
+import { isProduction } from '@/settings';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     isLoadingCuratedList: false,
     isLoadingPersonalList: false,

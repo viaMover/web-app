@@ -22,10 +22,11 @@ import transactionMutations from './mutations/transactions';
 import treasuryMutations from './mutations/treasury';
 import utilityMutations from './mutations/utility';
 import walletMutations from './mutations/wallet';
+import { isProduction } from '@/settings';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     web3Modal: undefined,
 
