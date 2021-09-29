@@ -1,17 +1,23 @@
 <template>
   <secondary-page>
-    <h2>{{ proposal.name }}</h2>
-    <p>{{ explanatoryText }}</p>
-    <governance-overview-section>
-      <governance-overview-section-item
-        :description="$t('governance.lblMyVotingPower')"
-        :value="myVotingPower"
+    <template v-if="proposal !== undefined">
+      <h2>{{ proposal.name }}</h2>
+      <p>{{ explanatoryText }}</p>
+      <governance-overview-section>
+        <governance-overview-section-item
+          :description="$t('governance.lblMyVotingPower')"
+          :value="myVotingPower"
+        />
+      </governance-overview-section>
+      <action-button
+        button-class="button button-active"
+        :text="voteButtonText"
+        @button-click="handleVote"
       />
-    </governance-overview-section>
-    <action-button button-class="button button-active" :text="voteButtonText" />
-    <div v-if="error !== undefined" class="error-message">
-      {{ error }}
-    </div>
+      <p v-if="errorText" class="error">
+        {{ errorText }}
+      </p>
+    </template>
   </secondary-page>
 </template>
 
@@ -26,6 +32,18 @@ import {
   GovernanceOverviewSectionItem
 } from '@/components/governance';
 import { ActionButton } from '@/components/buttons';
+import {
+  Choice,
+  Proposal,
+  ProposalInfo,
+  VoteParams
+} from '@/services/mover/governance';
+import { mapActions, mapState } from 'vuex';
+import {
+  isProviderRpcError,
+  ProviderRpcError
+} from '@/store/modules/proposal/utils';
+import { GovernanceApiError } from '@/services/mover/governance';
 
 export default Vue.extend({
   name: 'GovernanceVote',
@@ -37,43 +55,19 @@ export default Vue.extend({
   },
   data() {
     return {
-      // todo: should be in the store some day
-      proposal: {
-        id: 'CIP10-1',
-        name: 'Governance Analysis Period',
-        status: 'open',
-        text:
-          'Summary:\n\n' +
-          'This post outlines a framework for funding Uniswap ecosystem development ' +
-          'with grants from the UNI Community Treasury. The program starts small—sponsoring ' +
-          'hackathons, for example—but could grow in significance over time ' +
-          '(with renewals approved by governance) to fund core protocol development. ' +
-          'Grants administration is a subjective process that cannot be easily automated, ' +
-          'and thus we propose a nimble committee of 6 members —1 lead and 5 reviewers—to ' +
-          'deliver an efficient, predictable process to applicants, such that funding can be ' +
-          'administered without having to put each application to a vote. We propose the program ' +
-          'start with an initial cap of $750K per quarter and a limit of 2 quarters before renewal—a ' +
-          'sum that we feel is appropriate for an MVP relative to the size of the treasury that UNI ' +
-          'token holders are entrusted with allocating.\n\n' +
-          'Purpose:\n\n' +
-          'The mission of the UGP is to provide valuable resources to help grow the Uniswap ecosystem. ' +
-          'Through public discourse and inbound applications, the community will get first-hand exposure to ' +
-          'identify and respond to the most pressing needs of the ecosystem, as well as the ability to support ' +
-          'innovative projects expanding the capabilities of Uniswap. By rewarding talent early with developer ' +
-          'incentives, bounties, and infrastructure support, UGP acts as a catalyst for growth and helps to maintain ' +
-          'Uniswap as a nexus for DeFi on Ethereum.',
-        proposer:
-          '0x806cb7767eb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        ends: 1621609904,
-        votingActivity: 27,
-        votesFor: 8194000,
-        votesAgainst: 46000,
-        currentOutcome: 'quorumNotReached'
-      },
-      error: undefined
+      errorText: '',
+      isLoading: false
     };
   },
   computed: {
+    ...mapState('proposal', {
+      proposals: 'items'
+    }),
+    proposal(): Proposal | undefined {
+      return (this.proposals as Array<ProposalInfo>).find(
+        (item) => item.proposal.id === this.$route.params.id
+      )?.proposal;
+    },
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
     },
@@ -98,9 +92,65 @@ export default Vue.extend({
       return this.$t('governance.btnVoteAgainst.txt') as string;
     }
   },
+  watch: {
+    isVoteFor: {
+      handler() {
+        this.errorText = '';
+      },
+      immediate: true
+    }
+  },
   methods: {
+    ...mapActions('proposal', {
+      vote: 'vote',
+      loadProposalInfo: 'loadProposalInfo'
+    }),
     handleClose(): void {
       this.$router.back();
+    },
+    async handleVote(): Promise<void> {
+      if (this.proposal === undefined) {
+        return;
+      }
+
+      this.isLoading = true;
+
+      try {
+        await this.vote({
+          proposal: this.proposal.id,
+          choice: this.isVoteFor ? Choice.For : Choice.Against
+        } as VoteParams);
+
+        await this.loadProposalInfo({ id: this.proposal.id, refetch: true });
+
+        this.isLoading = false;
+      } catch (error) {
+        if (isProviderRpcError(error)) {
+          const providerError = error as ProviderRpcError;
+
+          if (this.$te(`provider.errors.${providerError.code}`)) {
+            this.errorText = this.$t(
+              `provider.errors.${providerError.code}`
+            ).toString();
+            this.isLoading = false;
+            return;
+          }
+        }
+
+        if (
+          error instanceof GovernanceApiError &&
+          this.$te(`governance.errors.${error.message}`)
+        ) {
+          this.errorText = this.$t(
+            `governance.errors.${error.message}`
+          ).toString();
+          this.isLoading = false;
+          return;
+        }
+
+        this.errorText = this.$t('governance.errors.default').toString();
+        this.isLoading = false;
+      }
     }
   }
 });

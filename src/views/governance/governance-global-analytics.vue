@@ -12,11 +12,8 @@
       </left-rail-section>
     </template>
 
-    <secondary-page :title="$t('governance.lblGovernance')">
-      <template v-slot:title>
-        <secondary-page-title :title="$t('governance.lblGovernanceOverview')" />
-      </template>
-      <p>{{ $t('governance.txtGovernanceOverview') }}</p>
+    <secondary-page :title="$t('governance.lblGovernanceOverview')">
+      <p>{{ $t('governance.txtGetInvolved') }}</p>
 
       <governance-overview-section>
         <governance-overview-section-item
@@ -68,12 +65,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 
 import {
   SecondaryPage,
-  SecondaryPageTitle,
   ContentWrapper,
   LeftRailSection
 } from '@/components/layout';
@@ -89,7 +86,6 @@ export default Vue.extend({
   components: {
     ContentWrapper,
     SecondaryPage,
-    SecondaryPageTitle,
     LeftRailSection,
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
@@ -97,36 +93,32 @@ export default Vue.extend({
     GovernanceOverviewSectionItem
   },
   computed: {
+    ...mapState('proposal', {
+      proposals: 'proposalsListMinimal',
+      votingPowerSelf: 'votingPowerSelf',
+      communityVotingPowerRaw: 'communityVotingPower',
+      powerNeededToBecomeAProposer: 'powerNeededToBecomeAProposer'
+    }),
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
     },
     myVotingPower(): string {
-      return formatToNative('123190.24');
-    },
-    timesVoted(): string {
-      return '2';
-    },
-    proposalsCreated(): string {
-      return '1';
+      return formatToDecimals(this.votingPowerSelf, 0);
     },
     powerNeeded(): string {
-      return formatToNative('100000');
+      return formatToDecimals(this.powerNeededToBecomeAProposer, 0);
     },
     communityVotingPower(): string {
-      return formatToNative('123405104');
+      return formatToDecimals(this.communityVotingPowerRaw, 0);
     },
-    totalNumberOfProposals(): string {
-      return '7';
-    },
-    openProposals(): string {
-      return '1';
-    },
-    succeededProposals(): string {
-      return '3';
-    },
-    defeatedProposals(): string {
-      return '3';
-    }
+    ...mapGetters('proposal', {
+      timesVoted: 'timesVoted',
+      proposalsCreated: 'proposalsCreated',
+      totalNumberOfProposals: 'totalNumberOfProposals',
+      openProposals: 'openProposals',
+      succeededProposals: 'succeededProposals',
+      defeatedProposals: 'defeatedProposals'
+    })
   },
   methods: {
     handleClose(): void {

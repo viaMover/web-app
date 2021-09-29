@@ -6,7 +6,7 @@
     :name="$t('governance.lblGovernance')"
     navigate-to-name="governance-view-all"
   >
-    <div v-if="lastProposal !== null" class="item__column">
+    <div v-if="lastProposal !== undefined" class="item__column">
       <div class="item__column-info active">
         <div class="loading">
           <div class="hold left">
@@ -18,10 +18,8 @@
         </div>
         <div class="item__column-info-icon"><span>🗳</span></div>
         <div class="item__column-info-label">
-          <p>{{ lastProposal.name }}</p>
-          <span>{{
-            $t(`governance.lblVotingStatus.${lastProposal.status}`)
-          }}</span>
+          <p>{{ lastProposal.title }}</p>
+          <span>{{ statusText }}</span>
         </div>
       </div>
       <div class="item__column-link">
@@ -44,8 +42,9 @@
 </template>
 
 <script lang="ts">
+import { Proposal } from '@/services/mover/governance';
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 
 import SectionBase from './section-base/section-base.vue';
 
@@ -55,7 +54,35 @@ export default Vue.extend({
     SectionBase
   },
   computed: {
-    ...mapGetters('proposal', ['lastProposal'])
+    ...mapState('proposal', {
+      isLoading: 'isLoading'
+    }),
+    ...mapGetters('proposal', {
+      lastProposalRaw: 'lastProposal'
+    }),
+    lastProposal(): Proposal | undefined {
+      return this.lastProposalRaw?.proposal;
+    },
+    statusText(): string {
+      if (this.lastProposal === undefined) {
+        return '';
+      }
+
+      switch ((this.lastProposal as Proposal).state) {
+        case 'closed':
+          return this.$t('governance.lblVotingStatus.closed').toString();
+        default:
+          return this.$t('governance.lblVotingStatus.active').toString();
+      }
+    }
+  },
+  async mounted() {
+    await this.loadGovernanceInfo();
+  },
+  methods: {
+    ...mapActions('proposal', {
+      loadGovernanceInfo: 'loadGovernanceInfo'
+    })
   }
 });
 </script>

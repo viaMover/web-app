@@ -24,13 +24,14 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 
 import {
   LeftRailSection,
   LeftRailSectionNavItemImage
 } from '@/components/layout';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'GovernanceNavMyGovernance',
@@ -54,8 +55,11 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('proposal', {
+      votingPowerSelf: 'votingPowerSelf'
+    }),
     governancePower(): string {
-      return `${formatToNative('123190.24')} Power`;
+      return `${formatToDecimals(this.votingPowerSelf, 0)} Power`;
     }
   }
 });
