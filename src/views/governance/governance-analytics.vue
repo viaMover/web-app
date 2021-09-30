@@ -49,16 +49,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapGetters, mapState } from 'vuex';
+import dayjs from 'dayjs';
+
+import { ProposalInfo } from '@/services/mover/governance';
+import { formatToDecimals } from '@/utils/format';
 
 import { SecondaryPage } from '@/components/layout';
-import { mapActions, mapGetters, mapState } from 'vuex';
-import { ProposalInfo } from '@/services/mover/governance';
 import {
   GovernanceOverviewSection,
   GovernanceOverviewSectionItem
 } from '@/components/governance';
-import dayjs from 'dayjs';
-import { formatToDecimals } from '@/utils/format';
 
 export default Vue.extend({
   name: 'GovernanceAnalytics',
@@ -79,11 +80,6 @@ export default Vue.extend({
       proposalState: 'proposalState',
       proposalVotingActivity: 'proposalVotingActivity'
     }),
-    hasBackButton(): boolean {
-      return (
-        this.$route.path.split('/').filter((part: string) => !!part).length > 1
-      );
-    },
     proposalId(): string {
       return this.$route.params.id;
     },
