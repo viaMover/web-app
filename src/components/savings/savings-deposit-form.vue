@@ -204,8 +204,6 @@ export default Vue.extend({
         return 'Choose Token';
       }
 
-      console.log('err - ', this.amount, this.usdcAmount);
-
       if (!notZero(this.amount)) {
         return this.$t('savings.deposit.lblChooseAmount').toString();
       }
@@ -226,12 +224,6 @@ export default Vue.extend({
       return this.error === undefined && !this.loading;
     },
     estimatedAnnualEarning(): string {
-      console.log(
-        'this.usdcPriceInWeth, this.ethPrice',
-        this.usdcPriceInWeth,
-        this.ethPrice
-      );
-
       let possibleSavingsBalance = '0';
       if (this.usdcAmount !== '') {
         possibleSavingsBalance = this.usdcAmount;
