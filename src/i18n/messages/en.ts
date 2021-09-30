@@ -479,7 +479,11 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
       'not in voting window': 'The voting is already closed',
       'too many requests':
         'You are making too many requests, please wait at least 10 seconds then try again',
-      'already voted': 'Oh no. Seems like you already voted'
+      'already voted': 'Oh no. Seems like you already voted',
+      'not enough power to vote':
+        "Oh no. Seems like you don't have enough power to vote",
+      'not enough power to create a proposal':
+        "Oh no. Seems like you don't have enough power to create a proposal"
     }
   };
 }
