@@ -58,17 +58,22 @@
             {{ currentInputAsset.symbol }}
           </span>
         </p>
-        <debounced-input
-          class="deposit__form-input eth-input"
+        <dynamic-input
           :disabled="loading"
+          input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
+          :symbol="currentInputAsset.symbol"
           type="text"
           :value="inputValue"
           @update-value="handleUpdateValue"
-        ></debounced-input>
-        <span>{{ currentInputAsset.symbol }}</span>
-        <div v-if="isNeedTransfer && formattedUSDCTotal" class="form-swap">
+        ></dynamic-input>
+        <div
+          v-if="
+            isNeedTransfer && formattedUSDCTotal && selectedMode === 'TOKEN'
+          "
+          class="form-swap"
+        >
           <p>
             {{ $t('savings.deposit.lblSwappingFor') }}
             <picture>
@@ -112,7 +117,7 @@ import {
 import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import { ArrowDownIcon, DebouncedInput } from '@/components/controls';
+import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -137,7 +142,7 @@ export default Vue.extend({
     SecondaryPageSimpleTitle,
     ActionButton,
     ArrowDownIcon,
-    DebouncedInput
+    DynamicInput
   },
   data() {
     return {
@@ -215,7 +220,6 @@ export default Vue.extend({
       return undefined;
     },
     inputValue(): string {
-      console.log('inputValue, ', this.amount, this.usdcAmount);
       return this.selectedMode === 'TOKEN' ? this.amount : this.usdcAmount;
     },
     isButtonActive(): boolean {
@@ -288,6 +292,7 @@ export default Vue.extend({
     const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
     if (eth) {
       this.asset = eth;
+      this.calcTokenMaxInUSDC(eth);
     }
   },
   methods: {
@@ -485,6 +490,37 @@ export default Vue.extend({
       }
       await this.updatingValue(this.asset.balance, 'TOKEN');
     },
+    async calcTokenMaxInUSDC(token: TokenWithBalance): Promise<void> {
+      if (sameAddress(token.address, this.outputUSDCAsset.address)) {
+        this.maxInUSDC = token.balance;
+        this.selectedMode = 'USDC';
+      } else {
+        this.loading = true;
+        try {
+          const inputInWei = toWei(token.balance, token.decimals);
+          const transferData = await getTransferData(
+            this.outputUSDCAsset.address,
+            token.address,
+            inputInWei,
+            true,
+            '0.01',
+            this.networkInfo.network
+          );
+          this.maxInUSDC = fromWei(
+            transferData.buyAmount,
+            this.outputUSDCAsset.decimals
+          );
+        } catch (err) {
+          Sentry.captureException(err);
+          console.error(`transfer error: ${err}`);
+          this.maxInUSDC = '0';
+        } finally {
+          this.loading = false;
+        }
+
+        this.selectedMode = 'TOKEN';
+      }
+    },
     async handleOpenSelectModal(): Promise<void> {
       const token = await this.setIsModalDisplayed({
         id: ModalType.SearchToken,
@@ -499,36 +535,7 @@ export default Vue.extend({
         this.transferError = undefined;
         this.amount = '';
         this.usdcAmount = '';
-
-        if (sameAddress(token.address, this.outputUSDCAsset.address)) {
-          this.maxInUSDC = token.balance;
-          this.selectedMode = 'USDC';
-        } else {
-          this.loading = true;
-          try {
-            const inputInWei = toWei(token.balance, token.decimals);
-            const transferData = await getTransferData(
-              this.outputUSDCAsset.address,
-              token.address,
-              inputInWei,
-              true,
-              '0.01',
-              this.networkInfo.network
-            );
-            this.maxInUSDC = fromWei(
-              transferData.buyAmount,
-              this.outputUSDCAsset.decimals
-            );
-          } catch (err) {
-            Sentry.captureException(err);
-            console.error(`transfer error: ${err}`);
-            this.maxInUSDC = '0';
-          } finally {
-            this.loading = false;
-          }
-
-          this.selectedMode = 'TOKEN';
-        }
+        this.calcTokenMaxInUSDC(token);
       }
     }
   }
