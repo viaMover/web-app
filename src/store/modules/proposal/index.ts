@@ -1,11 +1,8 @@
 import { Module } from 'vuex';
 
-import actions from './actions';
-import mutations from './mutations';
-import getters from './getters';
-import { ProposalStoreState } from './types';
 import { RootStoreState } from '@/store/types';
 import { isProduction } from '@/settings';
+
 import {
   defaultCachePeriodSeconds,
   defaultPowerNeededToBecomeAProposer,
@@ -13,6 +10,11 @@ import {
   minimumVotingThresholdMultiplier,
   moverSpaceId
 } from '@/services/mover/governance';
+
+import actions from './actions';
+import mutations from './mutations';
+import getters from './getters';
+import { ProposalStoreState } from './types';
 
 export default {
   namespaced: true,

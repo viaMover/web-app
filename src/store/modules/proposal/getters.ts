@@ -1,12 +1,15 @@
 import { GetterTree } from 'vuex';
+
 import { RootStoreState } from '@/store/types';
+
+import { sameAddress } from '@/utils/address';
+import { Choice, ProposalInfo } from '@/services/mover/governance';
+
 import {
   ProposalState,
   ProposalStoreState,
   ProposalCumulativeInfo
 } from './types';
-import { Choice, ProposalInfo } from '@/services/mover/governance';
-import { sameAddress } from '@/utils/address';
 
 export default {
   lastProposal(state): ProposalInfo | undefined {
@@ -83,23 +86,28 @@ export default {
       return count;
     }, 0);
   },
-  proposalCumulativeInfo(state): ProposalCumulativeInfo {
+  proposalCumulativeInfo(state, getters, rootState): ProposalCumulativeInfo {
     return state.items.reduce((acc, item) => {
-      const scores = item.scores.all[0] ?? {};
-      const votesCountFor = item.votes.reduce((count, vote) => {
-        if (vote.choice === Choice.For) {
-          return count + scores[vote.voter] ?? 0;
-        }
+      let votesCountFor = 0;
+      let votesCountAgainst = 0;
 
-        return count;
-      }, 0);
+      item.scores.all.forEach((score) => {
+        item.votes.forEach((vote) => {
+          if (vote.choice === Choice.For) {
+            votesCountFor = votesCountFor + (score[vote.voter] ?? 0);
+          }
 
-      const votesCountAgainst = item.votes.reduce((count, vote) => {
-        if (vote.choice === Choice.Against) {
-          return count + scores[vote.voter] ?? 0;
-        }
+          if (vote.choice === Choice.Against) {
+            votesCountAgainst = votesCountAgainst + (score[vote.voter] ?? 0);
+          }
+        });
+      });
 
-        return count;
+      const votingPowerSelf = item.scores.self.reduce((acc, score) => {
+        return (
+          acc +
+          (score[rootState.account?.currentAddress ?? 'missing_address'] ?? 0)
+        );
       }, 0);
 
       const votingActivity =
@@ -108,6 +116,14 @@ export default {
         votesCountFor + votesCountAgainst >
         item.communityVotingPower * state.minimumVotingThresholdMultiplier;
       const hasOutweight = votesCountFor > votesCountAgainst;
+      const isVoted = item.scores.all.some(
+        (score) =>
+          ![0, undefined].includes(
+            score[rootState.account?.currentAddress ?? 'missing_address']
+          )
+      );
+      const hasEnoughVotingPowerToVote =
+        isVoted || votingPowerSelf > state.powerNeededToBecomeAProposer;
 
       return {
         ...acc,
@@ -118,7 +134,9 @@ export default {
           votesCountAgainst,
           votingActivity,
           isQuorumReached,
-          isSucceeded: isQuorumReached && hasOutweight
+          isSucceeded: isQuorumReached && hasOutweight,
+          isVoted,
+          hasEnoughVotingPowerToVote
         }
       };
     }, {});
@@ -169,5 +187,18 @@ export default {
   },
   minimumVotingThreshold(state): number {
     return state.communityVotingPower * state.minimumVotingThresholdMultiplier;
+  },
+  isAlreadyVoted(state, getters): (id: string) => boolean {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.isVoted ?? false;
+  },
+  hasEnoughVotingPowerToVote(state, getters): (id: string) => boolean {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.hasEnoughVotingPowerToVote ?? false;
+  },
+  hasEnoughVotingPowerToBecomeAProposer(state): boolean {
+    return state.votingPowerSelf >= state.powerNeededToBecomeAProposer;
   }
 } as GetterTree<ProposalStoreState, RootStoreState>;

@@ -1,12 +1,8 @@
 import { ActionTree } from 'vuex';
 import * as Sentry from '@sentry/vue';
+import dayjs from 'dayjs';
+
 import { RootStoreState } from '@/store/types';
-import {
-  CreateProposalPayload,
-  LoadProposalInfoPayload,
-  LoadScoresPayload,
-  ProposalStoreState
-} from './types';
 import {
   getProposal,
   getProposalsList,
@@ -17,16 +13,20 @@ import {
   getSpace,
   createProposal,
   getCommunityVotingPower,
-  getVotingPower
-} from '@/services/mover/governance';
-import { isValidCacheItem } from './utils';
-import {
+  getVotingPower,
   CreateProposalParams,
   ProposalInfo,
-  Scores
+  Scores,
+  GovernanceApiError
 } from '@/services/mover/governance';
-import dayjs from 'dayjs';
-import { sameAddress } from '@/utils/address';
+
+import {
+  CreateProposalPayload,
+  LoadProposalInfoPayload,
+  LoadScoresPayload,
+  ProposalStoreState
+} from './types';
+import { isValidCacheItem } from './utils';
 
 export default {
   async loadGovernanceInfo(
@@ -148,7 +148,7 @@ export default {
     }
   },
   async createProposal(
-    { state, rootState },
+    { state, rootState, getters },
     { title, description, metadata = {} }: CreateProposalPayload
   ): Promise<void> {
     try {
@@ -159,8 +159,11 @@ export default {
         throw new Error('failed to get web3 provider or current address');
       }
 
-      const now = dayjs();
+      if (!getters.hasEnoughVotingPowerToBecomeAProposer) {
+        throw new GovernanceApiError('not enough power to create a proposal');
+      }
 
+      const now = dayjs();
       const blockNumber =
         await rootState.account.provider.web3.eth.getBlockNumber();
 
@@ -185,7 +188,10 @@ export default {
       throw error;
     }
   },
-  async vote({ state, rootState }, payload: VoteParams): Promise<void> {
+  async vote(
+    { state, rootState, getters },
+    payload: VoteParams
+  ): Promise<void> {
     try {
       if (
         rootState.account?.provider?.web3 === undefined ||
@@ -194,14 +200,12 @@ export default {
         throw new Error('failed to get web3 provider or current address');
       }
 
-      if (
-        state.items.some((info) =>
-          info.votes.some((vote) =>
-            sameAddress(vote.voter, rootState.account?.currentAddress)
-          )
-        )
-      ) {
-        throw new Error('already voted');
+      if (getters.isAlreadyVoted(payload.proposal)) {
+        throw new GovernanceApiError('already voted');
+      }
+
+      if (!getters.hasEnoughVotingPowerToVote(payload.proposal)) {
+        throw new GovernanceApiError('not enough power to vote');
       }
 
       await vote(

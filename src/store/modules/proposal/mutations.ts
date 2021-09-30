@@ -1,6 +1,8 @@
-import { ProposalInfo, Space } from '@/services/mover/governance';
-import dayjs from 'dayjs';
 import { MutationTree } from 'vuex';
+import dayjs from 'dayjs';
+
+import { ProposalInfo, Space } from '@/services/mover/governance';
+
 import { ProposalStoreState } from './types';
 
 export default {

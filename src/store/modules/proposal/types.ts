@@ -30,6 +30,8 @@ export type ProposalCumulativeInfo = Record<
     isQuorumReached: boolean;
     communityVotingPower: number;
     votingActivity: number;
+    isVoted: boolean;
+    hasEnoughVotingPowerToVote: boolean;
   }
 >;
 
