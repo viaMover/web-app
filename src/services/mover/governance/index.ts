@@ -11,7 +11,7 @@ export {
   getCommunityVotingPower
 } from './service';
 
-export { Choice } from './types';
+export { Choice, GovernanceApiError } from './types';
 
 export type {
   Proposal,
@@ -21,8 +21,7 @@ export type {
   Scores,
   Vote,
   CreateProposalParams,
-  VoteParams,
-  GovernanceApiError
+  VoteParams
 } from './types';
 
 export {
