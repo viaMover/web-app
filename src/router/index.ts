@@ -262,6 +262,14 @@ const routes: Array<RouteConfig> = [
           import(
             /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
           )
+      },
+      {
+        path: 'redeem/:id',
+        name: 'nibble-shop-redeem',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
+          )
       }
     ],
     beforeEnter: checkFeatureFlag('isNibbleShopEnabled')

@@ -408,11 +408,15 @@ export default {
     lblBuyWith: 'Buy with',
     lblBalance: 'Balance',
     lblRedeem: 'Redeem',
+    lblRedeemAnItem: 'Redeem an item',
+    txtRedeemDescription:
+      'Burn a digital token, and receive a ' +
+      'physical item delivered to you anywhere in the world.',
     lblSell: 'Sell',
-    lblFullName: 'Full name',
-    lblEmail: 'Email',
+    lblYourName: 'Your name',
+    lblYourEmail: 'Your email',
     lblCountry: 'Country',
-    lblFullAddress: 'Full address',
+    lblDeliveryAddress: 'Delivery address',
     lblTownOrCity: 'Town or city',
     lblPostalCode: 'Postal code',
     lblPlaceholders: {

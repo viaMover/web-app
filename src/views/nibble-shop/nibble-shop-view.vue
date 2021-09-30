@@ -113,7 +113,10 @@ export default Vue.extend({
       //
     },
     handleRedeem(): void {
-      //
+      this.$router.push({
+        name: 'nibble-shop-redeem',
+        params: { id: this.id }
+      });
     }
   }
 });
