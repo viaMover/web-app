@@ -11,12 +11,12 @@ import proposal from './modules/proposal';
 import radar from './modules/radar';
 import modals from './modules/modals';
 import { RootStoreState } from './types';
-import { isFeatureEnabled, isProduction } from '@/settings';
+import { isFeatureEnabled } from '@/settings';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store<RootStoreState>({
-  strict: !isProduction(),
+  strict: false, // should never be true as recursion level is too deep
   state: {
     appVersion: '0.0.1',
     i18n: null
