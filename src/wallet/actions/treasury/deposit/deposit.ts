@@ -32,8 +32,6 @@ export const depositCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         await deposit(
           inputAsset,
@@ -46,7 +44,9 @@ export const depositCompound = async (
           changeStepToProcess
         );
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't treasury deposit: ${err}`);

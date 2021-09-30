@@ -8,10 +8,10 @@ export const approve = async (
   accountAddress: string,
   tokenAddress: string,
   spenderAddress: string,
-  gasLimit: string,
-  gasPrice: string,
   web3: Web3,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasLimit: string,
+  gasPrice?: string
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     const tokenContract = new web3.eth.Contract(
@@ -22,7 +22,11 @@ export const approve = async (
       const transactionParams = {
         from: accountAddress,
         gas: web3.utils.toBN(gasLimit).toNumber(),
-        gasPrice: web3.utils.toWei(web3.utils.toBN(gasPrice), 'gwei').toString()
+        gasPrice: gasPrice
+          ? web3.utils.toWei(web3.utils.toBN(gasPrice), 'gwei').toString()
+          : undefined,
+        maxPrioiryFeePerGas: gasPrice ? undefined : null,
+        maxFeePerGas: gasPrice ? undefined : null
       } as TransactionsParams;
 
       tokenContract.methods

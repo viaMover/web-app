@@ -31,8 +31,6 @@ export const claimAndBurnCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         await claimAndBurn(
           inputAsset,
@@ -45,7 +43,9 @@ export const claimAndBurnCompound = async (
           changeStepToProcess
         );
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't treasury claim and burn: ${err}`);

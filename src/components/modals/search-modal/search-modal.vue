@@ -6,7 +6,7 @@
     has-header
     header-html-class="swaps__wrapper-search-form"
     :modal-id="modalId"
-    show-close-button
+    :show-close-button="showCloseButton"
     @close="handleSelect(undefined)"
   >
     <template v-slot:header>
@@ -92,7 +92,8 @@ export default Vue.extend({
       forcedTokenArrayData: [] as Array<Token>,
       globalTokensData: [] as Array<Token>,
       globalsTokensDataOffset: 0,
-      marketCapSortLimit: 1000000
+      marketCapSortLimit: 1000000,
+      showCloseButton: true
     };
   },
   computed: {
@@ -232,10 +233,14 @@ export default Vue.extend({
         });
       }, debounceTimeout);
     },
-    modalPayload(newVal: TModalPayload<ModalType.Swap> | undefined) {
+    modalPayload(newVal: TModalPayload<ModalType.SearchToken> | undefined) {
       if (newVal === undefined) {
         return;
       }
+
+      console.log('PAYLOAD:', newVal);
+
+      this.showCloseButton = !newVal.hideCloseButton;
 
       this.globalTokensData = [];
       this.globalsTokensDataOffset = 0;

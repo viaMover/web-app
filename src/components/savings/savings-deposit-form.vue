@@ -91,7 +91,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import {
   SmallToken,
@@ -104,6 +104,7 @@ import {
   divide,
   fromWei,
   greaterThan,
+  isZero,
   multiply,
   notZero,
   toWei
@@ -122,6 +123,12 @@ import {
   ZeroXSwapError
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
+import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
+import {
+  calcTransactionFastNativePrice,
+  isSubsidizedAllowed
+} from '@/wallet/actions/subsidized';
+import { CompoudEstimateResponse } from '@/wallet/actions/savings/deposit/depositEstimate';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -141,19 +148,24 @@ export default Vue.extend({
       usdcAmount: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
-      loading: false
+      loading: false,
+      process: false
     };
   },
   computed: {
     ...mapState('account', [
-      'tokens',
       'networkInfo',
+      'currentAddress',
+      'provider',
+      'gasPrices',
+      'tokens',
       'ethPrice',
       'savingsAPY',
       'usdcPriceInWeth',
       'ethPrice',
       'savingsBalance'
     ]),
+    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
@@ -216,17 +228,17 @@ export default Vue.extend({
         this.ethPrice
       );
 
-      let additionalUSDCDeposit = '0';
-      if (this.usdcAmount) {
-        additionalUSDCDeposit = this.usdcAmount;
+      let possibleSavingsBalance = '0';
+      if (this.usdcAmount !== '') {
+        possibleSavingsBalance = this.usdcAmount;
       }
 
-      const possibleSavingsBalance = add(
-        this.savingsBalance,
-        additionalUSDCDeposit
-      );
-
-      console.log('possibleSavingsBalance', possibleSavingsBalance);
+      if (this.savingsBalance !== undefined) {
+        possibleSavingsBalance = add(
+          this.savingsBalance,
+          possibleSavingsBalance
+        );
+      }
 
       const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
@@ -280,24 +292,6 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
-    async calcData(
-      inputAsset: SmallToken,
-      amount: string,
-      isInput: boolean
-    ): Promise<TransferData | undefined> {
-      const inputInWei = toWei(amount, inputAsset.decimals);
-
-      const transferData = await getTransferData(
-        this.outputUSDCAsset.address,
-        inputAsset.address,
-        inputInWei,
-        isInput,
-        '0.01',
-        this.networkInfo.network
-      );
-      this.transferData = transferData;
-      return transferData;
-    },
     async handleUpdateValue(val: string): Promise<void> {
       await this.updatingValue(val, this.selectedMode);
     },
@@ -329,6 +323,7 @@ export default Vue.extend({
               this.networkInfo.network
             );
             this.transferData = transferData;
+            this.transferError = undefined;
             this.usdcAmount = fromWei(
               this.transferData.buyAmount,
               this.outputUSDCAsset.decimals
@@ -345,6 +340,7 @@ export default Vue.extend({
               this.networkInfo.network
             );
             this.transferData = transferData;
+            this.transferError = undefined;
             this.amount = fromWei(
               this.transferData.sellAmount,
               this.asset.decimals
@@ -369,15 +365,109 @@ export default Vue.extend({
         this.loading = false;
       }
     },
-    handleTxReview(): void {
+    subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we can't calculate subsidized tx native price"
+        );
+        return undefined;
+      }
+      return calcTransactionFastNativePrice(
+        gasPrice,
+        actionGasLimit,
+        this.ethPrice
+      );
+    },
+    checkSubsidizedAvailability(actionGasLimit: string): boolean {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we don't allow subsidized transaction"
+        );
+        return false;
+      }
+
+      if (this.asset?.address === 'eth') {
+        console.info('Subsidizing for deposit ETH denied');
+        return false;
+      }
+
+      return isSubsidizedAllowed(
+        gasPrice,
+        actionGasLimit,
+        this.ethPrice,
+        this.treasuryBonusNative
+      );
+    },
+    async estimateAction(
+      inputAmount: string,
+      inputAsset: SmallToken,
+      transferData: TransferData | undefined
+    ): Promise<CompoudEstimateResponse> {
+      const resp = await estimateDepositCompound(
+        inputAsset,
+        this.outputUSDCAsset,
+        inputAmount,
+        transferData,
+        this.networkInfo.network,
+        this.provider.web3,
+        this.currentAddress
+      );
+      if (resp.error) {
+        console.error(resp.error);
+        this.transferError = 'Estimate error';
+        Sentry.captureException("can't estimate savings deposit");
+        throw new Error(`Can't estimate action ${resp.error}`);
+      }
+      return resp;
+    },
+    async handleTxReview(): Promise<void> {
       if (this.asset === undefined) {
         return;
+      }
+
+      let subsidizedEnabled = false;
+      let subsidizedTxPrice = undefined;
+      let actionGasLimit = '0';
+      let approveGasLimit = '0';
+      this.process = true;
+      try {
+        const gasLimits = await this.estimateAction(
+          this.amount,
+          this.asset,
+          this.transferData
+        );
+
+        actionGasLimit = gasLimits.actionGasLimit;
+        approveGasLimit = gasLimits.approveGasLimit;
+
+        console.info('Savings deposit action gaslimit:', actionGasLimit);
+        console.info('Savings deposit approve gaslimit:', approveGasLimit);
+
+        if (!isZero(actionGasLimit)) {
+          subsidizedEnabled = this.checkSubsidizedAvailability(actionGasLimit);
+          subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
+        }
+      } catch (err) {
+        subsidizedEnabled = false;
+        console.error(err);
+        Sentry.captureException("can't estimate savings deposit for subs");
+      } finally {
+        this.process = false;
       }
 
       this.$emit('tx-review', {
         token: this.asset,
         amount: this.amount,
-        nativeAmount: this.usdcAmount
+        nativeAmount: this.usdcAmount,
+        subsidizedEnabled: subsidizedEnabled,
+        estimatedGasCost: subsidizedTxPrice,
+        transferData: this.transferData,
+        actionGasLimit: actionGasLimit,
+        approveGasLimit: approveGasLimit
       });
     },
     swapTokens(): void {
@@ -410,34 +500,35 @@ export default Vue.extend({
         this.amount = '';
         this.usdcAmount = '';
 
-        this.loading = true;
-        try {
-          const inputInWei = toWei(token.balance, token.decimals);
-          const transferData = await getTransferData(
-            this.outputUSDCAsset.address,
-            token.address,
-            inputInWei,
-            true,
-            '0.01',
-            this.networkInfo.network
-          );
-          this.maxInUSDC = fromWei(
-            transferData.buyAmount,
-            this.outputUSDCAsset.decimals
-          );
-        } catch (err) {
-          Sentry.captureException(err);
-          console.error(`transfer error: ${err}`);
-          this.maxInUSDC = '0';
-        } finally {
-          this.loading = false;
-        }
-      }
+        if (sameAddress(token.address, this.outputUSDCAsset.address)) {
+          this.maxInUSDC = token.balance;
+          this.selectedMode = 'USDC';
+        } else {
+          this.loading = true;
+          try {
+            const inputInWei = toWei(token.balance, token.decimals);
+            const transferData = await getTransferData(
+              this.outputUSDCAsset.address,
+              token.address,
+              inputInWei,
+              true,
+              '0.01',
+              this.networkInfo.network
+            );
+            this.maxInUSDC = fromWei(
+              transferData.buyAmount,
+              this.outputUSDCAsset.decimals
+            );
+          } catch (err) {
+            Sentry.captureException(err);
+            console.error(`transfer error: ${err}`);
+            this.maxInUSDC = '0';
+          } finally {
+            this.loading = false;
+          }
 
-      if (sameAddress(token.address, this.outputUSDCAsset.address)) {
-        this.selectedMode = 'USDC';
-      } else {
-        this.selectedMode = 'TOKEN';
+          this.selectedMode = 'TOKEN';
+        }
       }
     }
   }

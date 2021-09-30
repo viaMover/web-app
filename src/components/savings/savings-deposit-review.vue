@@ -37,14 +37,14 @@
         </h2>
         <span> {{ formatAmount }} </span>
       </div>
-      <div class="item">
+      <div v-if="!isSelectedUSDCToken" class="item">
         <h2>{{ $t('savings.deposit.lblAndTotalOf') }}</h2>
         <span>
-          {{ formatToNative(nativeAmount) }} {{ $t('savings.USDC') }}
+          {{ formatNativeAmount }}
         </span>
       </div>
     </div>
-    <div v-if="isSubsidy">
+    <div v-if="subsidizedEnabled">
       <div class="switch">
         <p>{{ $t('savings.deposit.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
@@ -60,7 +60,7 @@
       <div class="items">
         <div class="item">
           <h2>{{ $t('savings.deposit.lblEstimatedGasCost') }}</h2>
-          <span>{{ gasCost }}</span>
+          <span>{{ formatEstimatedGasCost }}</span>
         </div>
       </div>
     </div>
@@ -106,6 +106,14 @@ export default Vue.extend({
     nativeAmount: {
       type: String,
       required: true
+    },
+    subsidizedEnabled: {
+      type: Boolean,
+      default: false
+    },
+    estimatedGasCost: {
+      type: String,
+      default: undefined
     }
   },
   data() {
@@ -135,30 +143,29 @@ export default Vue.extend({
     ...mapState('account', ['networkInfo']),
     formatAmount(): string {
       if (this.isSelectedUSDCToken) {
-        return `${formatToNative(this.amount)} ${this.$t('savings.USDC')}`;
+        return `${formatToNative(this.amount)} ${this.outputUSDCAsset.symbol}`;
       }
       return `${formatToDecimals(this.amount, 4)} ${this.token.symbol}`;
     },
+    formatEstimatedGasCost(): string {
+      if (this.isSmartTreasury) {
+        return '$0.00';
+      }
+      if (this.estimatedGasCost === undefined) {
+        return 'No data';
+      }
+      return `$${formatToNative(this.estimatedGasCost)}`;
+    },
     formatNativeAmount(): string {
-      return `${formatToNative(this.nativeAmount)} ${this.$t('savings.USDC')}`;
+      return `${formatToNative(this.nativeAmount)} ${
+        this.outputUSDCAsset.symbol
+      }`;
     },
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
     isSelectedUSDCToken(): boolean {
       return sameAddress(this.token.address, this.outputUSDCAsset.address);
-    },
-    isSubsidy(): boolean {
-      //TODO
-      return true;
-    },
-    gasCost(): string {
-      //TODO
-      if (this.isSmartTreasury) {
-        return '$0.00';
-      } else {
-        return '$123.02';
-      }
     }
   },
   methods: {
@@ -166,7 +173,7 @@ export default Vue.extend({
     formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
-        isSmartTreasury: this.isSmartTreasury
+        isSmartTreasury: this.isSmartTreasury && this.subsidizedEnabled
       });
     }
   }

@@ -419,13 +419,13 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.actionGasLimit,
-          this.approveGasLimit,
-          this.selectedGasPrice,
           this.useSubsidized,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.actionGasLimit,
+          this.approveGasLimit,
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {

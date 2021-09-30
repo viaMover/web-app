@@ -36,8 +36,6 @@ export const swapCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         if (useSubsidized) {
           await swapSubsidized(
@@ -65,7 +63,9 @@ export const swapCompound = async (
           );
         }
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't swap: ${err}`);
