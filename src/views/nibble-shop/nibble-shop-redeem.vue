@@ -105,7 +105,8 @@ import {
 import ContentWrapper from '@/components/layout/content-wrapper.vue';
 import ActionButton from '@/components/buttons/action-button.vue';
 
-const vString = helpers.regex('alpha', /^[a-zA-Z0-9_ ]*$/i);
+const vString = helpers.regex('vString', /^[a-zA-Z_ ]*$/i);
+const vStringNum = helpers.regex('vStringNum', /^[a-zA-Z0-9_ ]*$/i);
 
 export default Vue.extend({
   name: 'NibbleShopRedeem',
@@ -125,7 +126,7 @@ export default Vue.extend({
       required
     },
     name: {
-      alpha,
+      vString,
       required
     },
     country: {
@@ -133,11 +134,11 @@ export default Vue.extend({
       required
     },
     address: {
-      vString,
+      vStringNum,
       required
     },
     postCode: {
-      vString,
+      vStringNum,
       required
     }
   },
