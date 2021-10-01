@@ -832,6 +832,19 @@ body {
       font-size: 16px;
       line-height: 22px;
       display: block;
+
+      &.thin {
+        font-size: 12px;
+        line-height: 16px;
+        color: rgba(60, 60, 67, 0.6);
+      }
+
+      &.bold {
+        font-family: 'Bold', sans-serif;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 32px;
+      }
     }
 
     .value {
@@ -842,6 +855,25 @@ body {
       color: rgba(60, 60, 67, 0.6);
       margin-top: 7px;
       display: block;
+
+      input {
+        border-style: none;
+        background: transparent;
+
+        &::placeholder {
+          font-family: 'Medium', sans-serif;
+          font-weight: 500;
+          font-size: 14px;
+          line-height: 22px;
+          color: #000;
+          mix-blend-mode: normal;
+          opacity: 0.2;
+        }
+
+        &.error {
+          color: darkred;
+        }
+      }
     }
   }
 }

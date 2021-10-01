@@ -420,12 +420,11 @@ export default {
     lblTownOrCity: 'Town or city',
     lblPostalCode: 'Postal code',
     lblPlaceholders: {
-      fullName: 'Antoshi Nakamoto',
-      email: 'your@email.com',
-      country: 'Nakamoto Land',
-      fullAddress: 'Street name, house or apartment number',
-      townOrCity: 'Nakamoto Town',
-      postalCode: 'Just a code'
+      email: 'email@example.com',
+      yourName: 'Antoshi Nakamoto',
+      country: 'Cryptoland',
+      deliveryAddress: 'Street, house or apartment number',
+      postalCode: '######'
     },
     txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
     txtProductAlt: '{title} product image',

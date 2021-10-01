@@ -25,22 +25,61 @@
           :description="$t('nibbleShop.lblRedeem')"
           :value="product ? product.title : ''"
         />
-        <statement-list-item :description="$t('nibbleShop.lblYourEmail')">
-          <input />
+        <statement-list-item
+          :description="$t('nibbleShop.lblYourEmail')"
+          thin-description
+        >
+          <input
+            v-model.trim="email"
+            :class="status($v.email)"
+            :placeholder="$t('nibbleShop.lblPlaceholders.email')"
+          />
         </statement-list-item>
-        <statement-list-item :description="$t('nibbleShop.lblYourName')">
-          <input />
+        <statement-list-item
+          :description="$t('nibbleShop.lblYourName')"
+          thin-description
+        >
+          <input
+            v-model.trim="name"
+            :class="status($v.name)"
+            :placeholder="$t('nibbleShop.lblPlaceholders.yourName')"
+          />
         </statement-list-item>
-        <statement-list-item :description="$t('nibbleShop.lblCountry')">
-          <input />
+        <statement-list-item
+          :description="$t('nibbleShop.lblCountry')"
+          thin-description
+        >
+          <input
+            v-model.trim="country"
+            :class="status($v.country)"
+            :placeholder="$t('nibbleShop.lblPlaceholders.country')"
+          />
         </statement-list-item>
-        <statement-list-item :description="$t('nibbleShop.lblDeliveryAddress')">
-          <input />
+        <statement-list-item
+          :description="$t('nibbleShop.lblDeliveryAddress')"
+          thin-description
+        >
+          <input
+            v-model.trim="address"
+            :class="status($v.address)"
+            :placeholder="$t('nibbleShop.lblPlaceholders.deliveryAddress')"
+          />
         </statement-list-item>
-        <statement-list-item :description="$t('nibbleShop.lblPostalCode')">
-          <input />
+        <statement-list-item
+          :description="$t('nibbleShop.lblPostalCode')"
+          thin-description
+        >
+          <input
+            v-model.trim="postCode"
+            :class="status($v.postCode)"
+            :placeholder="$t('nibbleShop.lblPlaceholders.postalCode')"
+          />
         </statement-list-item>
       </statement-list>
+      <action-button
+        button-class="black-link button-active button"
+        :text="$t('nibbleShop.lblRedeem')"
+      />
     </secondary-page>
   </content-wrapper>
 </template>
@@ -48,6 +87,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+import { validationMixin } from 'vuelidate';
+import { alpha, email, helpers, required } from 'vuelidate/lib/validators';
+import { Validation } from 'vuelidate/vuelidate';
 
 import { Asset } from '@/store/modules/shop/types';
 
@@ -61,16 +103,52 @@ import {
   StatementListItem
 } from '@/components/statements/statement-list';
 import ContentWrapper from '@/components/layout/content-wrapper.vue';
+import ActionButton from '@/components/buttons/action-button.vue';
+
+const vString = helpers.regex('alpha', /^[a-zA-Z0-9_ ]*$/i);
 
 export default Vue.extend({
   name: 'NibbleShopRedeem',
   components: {
+    ActionButton,
     StatementListItem,
     StatementList,
     SecondaryPageSimpleTitle,
     SecondaryPage,
     ContentWrapper,
     NibbleShopRedeemLeftRail
+  },
+  mixins: [validationMixin],
+  validations: {
+    email: {
+      email,
+      required
+    },
+    name: {
+      alpha,
+      required
+    },
+    country: {
+      alpha,
+      required
+    },
+    address: {
+      vString,
+      required
+    },
+    postCode: {
+      vString,
+      required
+    }
+  },
+  data() {
+    return {
+      email: '' as string,
+      name: '' as string,
+      country: '' as string,
+      address: '' as string,
+      postCode: '' as string
+    };
   },
   computed: {
     ...mapState('shop', { products: 'assets' }),
@@ -91,6 +169,11 @@ export default Vue.extend({
     },
     handleClose(): void {
       this.$router.push({ name: 'home' });
+    },
+    status(validation: Validation) {
+      return {
+        error: validation.$error || validation.$invalid
+      };
     }
   }
 });
