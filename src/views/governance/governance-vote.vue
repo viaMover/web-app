@@ -23,27 +23,28 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapState } from 'vuex';
 
 import { formatToNative } from '@/utils/format';
 
-import { SecondaryPage } from '@/components/layout';
-import {
-  GovernanceOverviewSection,
-  GovernanceOverviewSectionItem
-} from '@/components/governance';
-import { ActionButton } from '@/components/buttons';
 import {
   Choice,
   Proposal,
   ProposalInfo,
   VoteParams
 } from '@/services/mover/governance';
-import { mapActions, mapState } from 'vuex';
 import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/proposal/utils';
 import { GovernanceApiError } from '@/services/mover/governance';
+
+import { SecondaryPage } from '@/components/layout';
+import { ActionButton } from '@/components/buttons';
+import {
+  GovernanceOverviewSection,
+  GovernanceOverviewSectionItem
+} from '@/components/governance';
 
 export default Vue.extend({
   name: 'GovernanceVote',

@@ -63,6 +63,14 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
+import { formatToDecimals } from '@/utils/format';
+import { CreateProposalPayload } from '@/store/modules/proposal/types';
+import {
+  isProviderRpcError,
+  ProviderRpcError
+} from '@/store/modules/proposal/utils';
+import { GovernanceApiError } from '@/services/mover/governance';
+
 import {
   SecondaryPage,
   ContentWrapper,
@@ -72,13 +80,6 @@ import {
   GovernanceNavMyGovernance,
   GovernanceNavManageGovernance
 } from '@/components/governance';
-import { formatToDecimals } from '@/utils/format';
-import { CreateProposalPayload } from '@/store/modules/proposal/types';
-import {
-  isProviderRpcError,
-  ProviderRpcError
-} from '@/store/modules/proposal/utils';
-import { GovernanceApiError } from '@/services/mover/governance';
 
 export default Vue.extend({
   name: 'GovernanceCreateProposal',

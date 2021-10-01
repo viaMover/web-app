@@ -67,7 +67,7 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 
 import {
   SecondaryPage,
