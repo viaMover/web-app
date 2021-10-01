@@ -37,7 +37,7 @@
         </h2>
         <span> {{ formatAmount }} </span>
       </div>
-      <div v-if="!isSelectedUSDCToken" class="item">
+      <div class="item">
         <h2>{{ $t('savings.deposit.lblAndTotalOf') }}</h2>
         <span>
           {{ formatNativeAmount }}

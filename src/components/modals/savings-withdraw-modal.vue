@@ -347,11 +347,11 @@ export default Vue.extend({
           this.provider.web3,
           this.currentAddress,
           this.actionGasLimit,
-          this.selectedGasPrice,
           this.useSubsidized,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {

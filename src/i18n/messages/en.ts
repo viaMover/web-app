@@ -14,6 +14,7 @@ export default {
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
+  lblInsufficientBalance: 'Insufficient Balance',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
@@ -173,8 +174,9 @@ export default {
     },
     withdraw: {
       lblChooseAmount: 'Choose the amount to withdraw',
-      lblAmountWeDepositIn: 'Amount we withdraw in',
+      lblAmountWeWithdrawIn: 'Amount we withdraw in',
       lblWhatDoWeWithdraw: 'What we do withdraw',
+      lblAndTotalOf: 'And it will be a total of',
       lblWithdrawFromSavings: 'Withdraw from @:savings.lblSavingsPrefix',
       txtWithdrawShortDescription:
         'Remove your assets from savings fully or partially',
@@ -183,8 +185,11 @@ export default {
         'Available balance consists of principal amount you deposited ' +
         'together with the accumulated yield.',
       lblWhatToWithdraw: 'What to withdraw',
+      lblReviewYourWithdraw: 'Review your withdrawal',
       btnWithdraw: 'Withdraw',
       lblWhatAboutTheYield: 'What about the yield?',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
       txtIfYouKeepSavings:
         'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:

@@ -42,7 +42,7 @@
       </div>
       <form action="#" autocomplete="off" class="form">
         <p>
-          {{ $t('savings.withdraw.lblAmountWeDepositIn') }}
+          {{ $t('savings.withdraw.lblAmountWeWithdrawIn') }}
           <span class="form-button">
             {{ $t('savings.USDC') }}
           </span>
@@ -150,11 +150,11 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (!notZero(this.amountToWithdraw)) {
-        return this.$t('savings.deposit.lblChooseAmount').toString();
+        return this.$t('savings.withdraw.lblChooseAmount').toString();
       }
 
       if (greaterThan(this.amountToWithdraw, this.token.balance)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance').toString();
       }
 
       return undefined;

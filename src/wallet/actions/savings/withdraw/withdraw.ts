@@ -18,9 +18,9 @@ export const withdrawCompound = async (
   web3: Web3,
   accountAddress: string,
   actionGasLimit: string,
-  gasPriceInGwei: string,
   useSubsidized: boolean,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   try {
     if (useSubsidized) {
@@ -40,8 +40,8 @@ export const withdrawCompound = async (
         web3,
         accountAddress,
         actionGasLimit,
-        gasPriceInGwei,
-        changeStepToProcess
+        changeStepToProcess,
+        gasPriceInGwei
       );
     }
   } catch (err) {
@@ -57,8 +57,8 @@ export const withdraw = async (
   web3: Web3,
   accountAddress: string,
   gasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   console.log('Executing savings withdraw...');
 
@@ -76,9 +76,11 @@ export const withdraw = async (
     const transactionParams = {
       from: accountAddress,
       gas: web3.utils.toBN(gasLimit).toNumber(),
-      gasPrice: web3.utils
-        .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-        .toString()
+      gasPrice: gasPriceInGwei
+        ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+        : undefined,
+      maxFeePerGas: gasPriceInGwei ? undefined : null,
+      maxPrioiryFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
     const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);

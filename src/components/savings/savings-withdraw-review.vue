@@ -2,7 +2,7 @@
   <div class="review__wrapper">
     <secondary-page-simple-title
       class="savings_secondary_page-title"
-      :title="$t('savings.deposit.lblReviewYourDeposit')"
+      :title="$t('savings.withdraw.lblReviewYourWithdraw')"
     />
     <div class="arrow">
       <div class="item">
@@ -32,19 +32,19 @@
     <div class="items">
       <div class="item">
         <h2>
-          {{ $t('savings.deposit.lblAmountWeDepositIn') }}
+          {{ $t('savings.withdraw.lblAmountWeWithdrawIn') }}
           {{ token.symbol }}
         </h2>
         <span> {{ formatToNative(amount) }} {{ $t('savings.USDC') }} </span>
       </div>
       <div class="item">
-        <h2>{{ $t('savings.deposit.lblAndTotalOf') }}</h2>
+        <h2>{{ $t('savings.withdraw.lblAndTotalOf') }}</h2>
         <span> {{ formatToNative(amount) }} {{ $t('savings.USDC') }} </span>
       </div>
     </div>
-    <div v-if="isSubsidy">
+    <div v-if="subsidizedEnabled">
       <div class="switch">
-        <p>{{ $t('savings.deposit.lblUseSmartTreasury') }}</p>
+        <p>{{ $t('savings.withdraw.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
           <input
             id="switch-shadow"
@@ -57,8 +57,8 @@
       </div>
       <div class="items">
         <div class="item">
-          <h2>{{ $t('savings.deposit.lblEstimatedGasCost') }}</h2>
-          <span>{{ gasCost }}</span>
+          <h2>{{ $t('savings.withdraw.lblEstimatedGasCost') }}</h2>
+          <span>{{ formatEstimatedGasCost }}</span>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@
       type="button"
       @click="handleCreateTx"
     >
-      {{ $t('savings.deposit.lblDepositInSavings') }}
+      {{ $t('savings.withdraw.lblWithdrawFromSavings') }}
     </button>
   </div>
 </template>
@@ -97,6 +97,14 @@ export default Vue.extend({
     amount: {
       type: String,
       required: true
+    },
+    subsidizedEnabled: {
+      type: Boolean,
+      default: false
+    },
+    estimatedGasCost: {
+      type: String,
+      default: undefined
     }
   },
   data() {
@@ -123,21 +131,14 @@ export default Vue.extend({
     };
   },
   computed: {
-    isSelectedUSDCToken(): boolean {
-      //TODO find some best way
-      return this.token.name === 'USDc';
-    },
-    isSubsidy(): boolean {
-      //TODO
-      return true;
-    },
-    gasCost(): string {
-      //TODO
+    formatEstimatedGasCost(): string {
       if (this.isSmartTreasury) {
         return '$0.00';
-      } else {
-        return '$123.02';
       }
+      if (this.estimatedGasCost === undefined) {
+        return 'No data';
+      }
+      return `$${formatToNative(this.estimatedGasCost)}`;
     }
   },
   methods: {
