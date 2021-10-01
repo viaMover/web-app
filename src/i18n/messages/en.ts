@@ -412,7 +412,7 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
       emoji: '🌍'
     },
     btnView: {
-      simple: 'View'
+      text: 'View'
     },
     btnSeeAll: {
       simple: 'See All'
