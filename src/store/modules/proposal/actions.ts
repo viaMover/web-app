@@ -4,20 +4,20 @@ import dayjs from 'dayjs';
 
 import { RootStoreState } from '@/store/types';
 import {
+  createProposal,
+  CreateProposalParams,
+  getCommunityVotingPower,
   getProposal,
   getProposalsList,
-  ProposalWithVotes,
-  vote,
-  VoteParams,
   getScores,
   getSpace,
-  createProposal,
-  getCommunityVotingPower,
   getVotingPower,
-  CreateProposalParams,
+  GovernanceApiError,
   ProposalInfo,
+  ProposalWithVotes,
   Scores,
-  GovernanceApiError
+  vote,
+  VoteParams
 } from '@/services/mover/governance';
 
 import {
@@ -33,42 +33,51 @@ export default {
     { state, commit, dispatch },
     refetch = false
   ): Promise<Array<ProposalWithVotes>> {
-    try {
-      if (state.loadingPromise !== undefined && !refetch) {
-        return state.loadingPromise;
+    const load = async () => {
+      try {
+        if (state.loadingPromise !== undefined && !refetch) {
+          return state.loadingPromise;
+        }
+
+        commit('setIsLoading', true);
+        commit('clearItems');
+        commit('setSpaceInfo', undefined);
+        commit('setError', undefined);
+        commit('setLoadingPromise', undefined);
+
+        const proposalsListPromise = getProposalsList(state.spaceId);
+        const powerInfoPromise = dispatch('loadPowerInfo');
+
+        const [proposalIds] = await Promise.all([
+          proposalsListPromise,
+          powerInfoPromise
+        ]);
+        const results = await Promise.all(
+          proposalIds.map(
+            async (id: string): Promise<ProposalInfo | undefined> =>
+              dispatch('loadProposalInfo', { id, refetch })
+          )
+        );
+        const result = (
+          results.filter((res) => res !== undefined) as Array<ProposalInfo>
+        ).sort((a, b) => {
+          return b.proposal.end - a.proposal.end;
+        });
+
+        commit('setIsLoading', false);
+        return result;
+      } catch (error) {
+        Sentry.captureException(error);
+        commit('setError', error);
+        commit('setIsLoading', false);
+        return [];
       }
+    };
 
-      commit('setIsLoading', true);
-      commit('clearItems');
-      commit('setSpaceInfo', undefined);
-      commit('setError', undefined);
-      commit('setLoadingPromise', undefined);
+    const info = load();
+    commit('setLoadingPromise', info);
 
-      const proposalsListPromise = getProposalsList(state.spaceId);
-      const powerInfoPromise = dispatch('loadPowerInfo');
-      commit('setLoadingPromise', proposalsListPromise);
-
-      const [proposalIds] = await Promise.all([
-        proposalsListPromise,
-        powerInfoPromise
-      ]);
-      const results = await Promise.all(
-        proposalIds.map(
-          async (id: string): Promise<ProposalInfo | undefined> =>
-            dispatch('loadProposalInfo', { id, refetch })
-        )
-      );
-      commit('setIsLoading', false);
-      return results.filter(
-        (res) => res !== undefined
-      ) as Array<ProposalWithVotes>;
-    } catch (error) {
-      Sentry.captureException(error);
-      commit('setLoadingPromise', undefined);
-      commit('setError', error);
-      commit('setIsLoading', false);
-      return [];
-    }
+    return info;
   },
   async loadProposalInfo(
     { state, commit, dispatch, rootState },
@@ -99,14 +108,14 @@ export default {
         );
       }
 
-      const commuintyVotingPowerPromise = getCommunityVotingPower(
+      const communityVotingPowerPromise = getCommunityVotingPower(
         Number.parseInt(proposalWithVotes.proposal.snapshot)
       );
 
       const [scoresAll, scoresSelf, communityVotingPower] = await Promise.all([
         scoresAllPromise,
         scoresSelfPromise,
-        commuintyVotingPowerPromise
+        communityVotingPowerPromise
       ]);
 
       const newItem = {
@@ -152,11 +161,12 @@ export default {
     { title, description, metadata = {} }: CreateProposalPayload
   ): Promise<void> {
     try {
-      if (
-        rootState.account?.provider?.web3 === undefined ||
-        rootState.account?.currentAddress === undefined
-      ) {
-        throw new Error('failed to get web3 provider or current address');
+      if (rootState.account?.provider?.web3 === undefined) {
+        throw new Error('failed to get web3 provider');
+      }
+
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
       }
 
       if (!getters.hasEnoughVotingPowerToBecomeAProposer) {
@@ -193,11 +203,12 @@ export default {
     payload: VoteParams
   ): Promise<void> {
     try {
-      if (
-        rootState.account?.provider?.web3 === undefined ||
-        rootState.account.currentAddress === undefined
-      ) {
-        throw new Error('failed to get web3 provider or current address');
+      if (rootState.account?.provider?.web3 === undefined) {
+        throw new Error('failed to get web3 provider');
+      }
+
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
       }
 
       if (getters.isAlreadyVoted(payload.proposal)) {
@@ -224,15 +235,13 @@ export default {
     { proposal, addresses, snapshot = 'latest' }: LoadScoresPayload
   ): Promise<Scores> {
     try {
-      const scores = getScores(
+      return getScores(
         state.spaceId,
         proposal.strategies,
         proposal.network,
         addresses,
         snapshot
       );
-
-      return scores;
     } catch (error) {
       Sentry.captureException(error);
       return new Array(proposal.strategies.length).fill({});
@@ -241,7 +250,11 @@ export default {
   async loadPowerInfo({ state, commit, dispatch }): Promise<void> {
     try {
       const spaceInfoPromise = getSpace(state.spaceId);
+
+      // current community voting power
       const votingPowerPromise = getCommunityVotingPower();
+
+      // current self voting power
       const votingPowerSelfPromise = dispatch('loadVotingPowerSelf');
 
       const [spaceInfo, votingPower] = await Promise.all([
@@ -249,6 +262,7 @@ export default {
         votingPowerPromise,
         votingPowerSelfPromise
       ]);
+
       commit('setSpaceInfo', spaceInfo);
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
       commit('setCommunityVotingPower', votingPower);
@@ -257,8 +271,22 @@ export default {
       throw error;
     }
   },
-  async loadVotingPowerSelf({ commit, rootState }): Promise<number> {
+  async loadVotingPowerSelf(
+    { commit, state, rootState },
+    refetch = false
+  ): Promise<number> {
     try {
+      if (
+        !refetch &&
+        isValidCacheItem(
+          state.cacheGenericInfoMap,
+          'votingPowerSelf',
+          state.cachePeriodSeconds
+        )
+      ) {
+        return state.votingPowerSelf;
+      }
+
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
       }

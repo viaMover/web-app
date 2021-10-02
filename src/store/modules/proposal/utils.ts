@@ -9,10 +9,11 @@ export const isValidCacheItem = (
     return false;
   }
 
-  return dayjs
+  const expiresAt = dayjs
     .unix(cacheMap[id].updatedAt)
-    .add(expirationPeriod, 'second')
-    .isBefore(dayjs());
+    .add(expirationPeriod, 'second');
+
+  return expiresAt.isAfter(dayjs());
 };
 
 export const isProviderRpcError = (error: unknown): boolean => {
@@ -21,11 +22,7 @@ export const isProviderRpcError = (error: unknown): boolean => {
   }
 
   const candidate = error as Partial<ProviderRpcError>;
-  if (candidate.message === undefined || candidate.code === undefined) {
-    return false;
-  }
-
-  return true;
+  return !(candidate.message === undefined || candidate.code === undefined);
 };
 
 export interface ProviderRpcError extends Error {

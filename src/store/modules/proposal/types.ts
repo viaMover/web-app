@@ -7,6 +7,7 @@ export type ProposalStoreState = {
   spaceInfo: Space | undefined;
   items: Array<ProposalInfo>;
   cacheInfoMap: Record<string, CacheInfo>;
+  cacheGenericInfoMap: Record<string, CacheInfo>;
   communityVotingPower: number;
   votingPowerSelf: number;
   proposalDurationDays: number;

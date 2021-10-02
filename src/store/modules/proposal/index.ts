@@ -26,6 +26,7 @@ export default {
     spaceInfo: undefined,
     items: [],
     cacheInfoMap: {},
+    cacheGenericInfoMap: {},
     proposalDurationDays: defaultProposalDurationDays,
     powerNeededToBecomeAProposer: defaultPowerNeededToBecomeAProposer,
     minimumVotingThresholdMultiplier: minimumVotingThresholdMultiplier,

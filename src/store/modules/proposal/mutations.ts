@@ -51,5 +51,8 @@ export default {
   },
   setVotingPowerSelf(state, value: number): void {
     state.votingPowerSelf = value;
+    state.cacheGenericInfoMap['votingPowerSelf'] = {
+      updatedAt: dayjs().unix()
+    };
   }
 } as MutationTree<ProposalStoreState>;
