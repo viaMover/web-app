@@ -1,7 +1,7 @@
 export const voteHubBaseUrl = 'https://vote.holyheld.com';
 export const scoresApiBaseUrl = 'https://vote.holyheld.com/api';
 export const graphqlUrl = voteHubBaseUrl + '/graphql';
-export const clientVersion = '0.1.3';
+export const defaultClientVersion = '0.1.3';
 export const moverSpaceId = 'mover';
 export const defaultCachePeriodSeconds = 60;
 export const minimumVotingThresholdMultiplier = 0.4;

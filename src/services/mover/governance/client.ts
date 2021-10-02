@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import Web3 from 'web3';
-import { clientVersion } from './consts';
+import { defaultClientVersion } from './consts';
 import {
   BroadcastMessage,
   CreateProposalParams,
@@ -10,20 +10,43 @@ import {
   ScoresResponse,
   Space,
   Strategy,
-  VoteParams
+  VoteParams,
+  ServerInfo
 } from './types';
 
 export default class Client {
   private readonly voteApiClient: AxiosInstance;
   private readonly scoreApiClient: AxiosInstance;
+  private clientVersion: string;
+  private isInitialized: boolean;
+
   constructor(voteApiAddress: string, scoreApiAddress: string) {
     this.voteApiClient = axios.create({
       baseURL: `${voteApiAddress}/api`
     });
+
     this.scoreApiClient = axios.create({
       baseURL: scoreApiAddress
     });
+
+    this.isInitialized = false;
+    this.clientVersion = defaultClientVersion;
   }
+
+  public initialize = async (): Promise<void> => {
+    try {
+      const serverInfo = await this.getServerInfo();
+
+      this.clientVersion = serverInfo.version;
+      this.isInitialized = true;
+    } catch (error) {
+      this.clientVersion = defaultClientVersion;
+    }
+  };
+
+  private getServerInfo = async (): Promise<ServerInfo> => {
+    return this.request<ServerInfo>('');
+  };
 
   public getSpaces = async (): Promise<Array<Space>> => {
     return this.request('spaces');
@@ -95,7 +118,6 @@ export default class Client {
       } else if (axiosError.request !== undefined) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest
-        console.error(axiosError.request);
         throw new Error(
           `the request is failed, no response: ${axiosError.toJSON()}`
         );
@@ -117,10 +139,21 @@ export default class Client {
     type: string,
     payload: unknown
   ): Promise<void> => {
+    if (!this.isInitialized) {
+      // the server implicitly requires all the broadcast messages
+      // to be signed with proper client version
+      // so we have to be sure that this version is used
+      //
+      // since our vote hub is not going to be updated
+      // package-wise very frequently, we can make an assumption
+      // that we satisfy server version in every case
+      await this.initialize();
+    }
+
     const msg: BroadcastMessage = {
       address: accountAddress,
       msg: JSON.stringify({
-        version: clientVersion,
+        version: this.clientVersion,
         timestamp: (Date.now() / 1e3).toFixed(),
         space: spaceId,
         type,

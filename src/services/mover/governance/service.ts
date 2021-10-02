@@ -53,7 +53,6 @@ export const getVotingPower = async (
   address: string,
   snapshot?: number
 ): Promise<number> => {
-  console.log('called');
   console.log('TODO: just to use snapshot parameter', snapshot);
   return Promise.resolve(123456);
 };

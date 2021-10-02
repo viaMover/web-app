@@ -116,3 +116,11 @@ export class GovernanceApiError extends Error {
     super();
   }
 }
+
+export type ServerInfo = {
+  name: string;
+  network: string;
+  version: string;
+  tag: string;
+  relater: string;
+};
