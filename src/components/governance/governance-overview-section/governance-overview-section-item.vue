@@ -1,9 +1,9 @@
 <template>
-  <li>
-    <p class="description" :class="descriptionClass">
+  <li class="item">
+    <h3 :class="descriptionClass">
       <slot name="description">{{ description }}</slot>
-    </p>
-    <span class="value" :class="valueClass">
+    </h3>
+    <span :class="valueClass">
       <slot>{{ value }}</slot>
     </span>
   </li>

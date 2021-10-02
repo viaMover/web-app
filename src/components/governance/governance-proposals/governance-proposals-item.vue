@@ -1,23 +1,22 @@
 <template>
-  <div class="item__column">
-    <div class="item__column-info active">
-      <div class="loading">
-        <div class="hold left">
-          <div class="fill"></div>
-        </div>
-        <div class="hold right">
-          <div class="fill"></div>
-        </div>
-      </div>
-      <div class="item__column-info-icon"><span>🗳</span></div>
-      <div class="item__column-info-label">
+  <div class="governance__menu-wrapper-item">
+    <div class="item__info">
+      <div class="item__info-icon"><span>🗳</span></div>
+      <progress-loader
+        class="progress-loader"
+        :is-animated="itemProgress !== 100"
+        :stroke-color="strokeColor"
+        :value="itemProgress"
+      />
+      <div class="item__info-label">
         <p>{{ item.title }}</p>
         <span>{{ statusText }}</span>
       </div>
     </div>
-    <div class="item__column-link">
+    <div class="item__link">
       <router-link
-        class="black-link button-active"
+        class="button-active"
+        :class="{ 'black-link': item.state !== 'closed' }"
         :to="{ name: 'governance-view', params: { id: item.id } }"
       >
         {{ buttonText }}
@@ -28,10 +27,19 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapGetters } from 'vuex';
+import dayjs from 'dayjs';
+
 import { Proposal } from '@/services/mover/governance';
+import { ProposalState } from '@/store/modules/proposal/types';
+
+import { ProgressLoader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceProposalsItem',
+  components: {
+    ProgressLoader
+  },
   props: {
     item: {
       type: Object as PropType<Proposal>,
@@ -39,6 +47,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    ...mapGetters('proposal', {
+      proposalStateRaw: 'proposalState'
+    }),
     statusText(): string {
       if (this.item.state === 'closed') {
         return this.$t('governance.lblVotingStatus.closed').toString();
@@ -52,6 +63,29 @@ export default Vue.extend({
       }
 
       return this.$t('governance.btnVote.simple').toString();
+    },
+    proposalState(): ProposalState {
+      return this.proposalStateRaw(this.item.id);
+    },
+    strokeColor(): string {
+      switch (this.proposalState) {
+        case 'accepted':
+          return '#30be16';
+        case 'defeated':
+          return '#ff585f';
+        default:
+          return '#000';
+      }
+    },
+    itemProgress(): number {
+      if (['accepted', 'defeated'].includes(this.proposalState)) {
+        return 100;
+      }
+
+      const elapsed = dayjs().unix() - this.item.start;
+      const proposalLifeSpan = this.item.end - this.item.start;
+
+      return Math.round(100 * (elapsed / proposalLifeSpan));
     }
   }
 });

@@ -1,16 +1,16 @@
 <template>
-  <secondary-page>
-    <pu-skeleton-theme color="#dcdcdc">
-      <template v-slot:title>
-        <secondary-page-title v-if="isReady">{{
-          proposal.proposal.title
-        }}</secondary-page-title>
-        <pu-skeleton v-else tag="h2" />
-      </template>
+  <secondary-page :title="proposal ? proposal.proposal.title : ''">
+    <template v-if="isLoading" v-slot:title>
+      <pu-skeleton class="title page-title" tag="h2" />
+    </template>
 
-      <p v-if="isReady">{{ proposal.proposal.body }}</p>
-      <pu-skeleton v-else tag="p"></pu-skeleton>
-    </pu-skeleton-theme>
+    <div class="content">
+      <markdown
+        v-if="!isLoading"
+        :text="proposal ? proposal.proposal.body : ''"
+      />
+      <pu-skeleton v-else :count="8"></pu-skeleton>
+    </div>
   </secondary-page>
 </template>
 
@@ -18,30 +18,25 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import { SecondaryPage } from '@/components/layout';
 import { ProposalWithVotes } from '@/services/mover/governance';
+
+import { SecondaryPage, Markdown } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceView',
   components: {
-    SecondaryPage
+    SecondaryPage,
+    Markdown
   },
   computed: {
-    ...mapState('proposal', { items: 'items', isLoading: 'isLoading' }),
+    ...mapState('proposal', {
+      items: 'items',
+      isLoading: 'isLoading'
+    }),
     proposal(): ProposalWithVotes | undefined {
       return this.items.find(
         (item: ProposalWithVotes) => item.proposal.id === this.$route.params.id
       );
-    },
-    pageTitle(): string {
-      if (this.proposal !== undefined) {
-        return this.proposal.proposal.title;
-      }
-
-      return this.$t('governance.lblProposal').toString();
-    },
-    isReady(): boolean {
-      return !this.isLoading && this.proposal !== undefined;
     }
   },
   methods: {

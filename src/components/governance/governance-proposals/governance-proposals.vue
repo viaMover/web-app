@@ -7,7 +7,7 @@
         :item="proposal.proposal"
       />
     </div>
-    <governance-proposals-item-skeleton v-else :number="4" />
+    <governance-proposals-item-skeleton v-for="idx in 4" v-else :key="idx" />
   </div>
 </template>
 

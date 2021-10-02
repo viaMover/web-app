@@ -1,23 +1,24 @@
 <template>
-  <secondary-page>
-    <template v-if="proposal !== undefined">
-      <h2>{{ proposal.name }}</h2>
-      <p>{{ explanatoryText }}</p>
-      <governance-overview-section>
-        <governance-overview-section-item
-          :description="$t('governance.lblMyVotingPower')"
-          :value="myVotingPower"
-        />
-      </governance-overview-section>
-      <action-button
-        button-class="button button-active"
-        :text="voteButtonText"
-        @button-click="handleVote"
+  <secondary-page :title="proposal ? proposal.title : ''">
+    <p class="description">{{ explanatoryText }}</p>
+    <governance-overview-section>
+      <governance-overview-section-item
+        :description="$t('governance.lblMyVotingPower')"
+        :value="myVotingPower"
       />
-      <p v-if="errorText" class="error">
-        {{ errorText }}
-      </p>
-    </template>
+    </governance-overview-section>
+    <button
+      class="black-link button-active"
+      :class="{ disabled: isLoading }"
+      :disabled="isLoading"
+      type="button"
+      @click="handleVote"
+    >
+      {{ voteButtonText }}
+    </button>
+    <p v-if="errorText" class="error">
+      {{ errorText }}
+    </p>
   </secondary-page>
 </template>
 
@@ -40,7 +41,6 @@ import {
 import { GovernanceApiError } from '@/services/mover/governance';
 
 import { SecondaryPage } from '@/components/layout';
-import { ActionButton } from '@/components/buttons';
 import {
   GovernanceOverviewSection,
   GovernanceOverviewSectionItem
@@ -51,8 +51,7 @@ export default Vue.extend({
   components: {
     SecondaryPage,
     GovernanceOverviewSection,
-    GovernanceOverviewSectionItem,
-    ActionButton
+    GovernanceOverviewSectionItem
   },
   data() {
     return {
@@ -97,6 +96,7 @@ export default Vue.extend({
     isVoteFor: {
       handler() {
         this.errorText = '';
+        this.isLoading = false;
       },
       immediate: true
     }

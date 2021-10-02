@@ -1,30 +1,26 @@
 <template>
-  <pu-skeleton-theme color="#dcdcdc">
-    <div v-for="idx in number" :key="idx" class="item__column">
-      <div class="item__column-info active">
-        <pu-skeleton circle class="loading" tag="div" />
-        <div class="item__column-info-label">
-          <pu-skeleton tag="p" />
-          <pu-skeleton tag="span" />
-        </div>
-      </div>
-      <div class="item__column-link">
-        <pu-skeleton class="button-active" tag="a" />
+  <div class="governance__menu-wrapper-item">
+    <div class="item__info active">
+      <pu-skeleton circle class="progress-loader" color="#dcdcdc" tag="div" />
+      <div class="item__info-label">
+        <pu-skeleton color="#dcdcdc" tag="p" width="200px" />
+        <pu-skeleton color="#dcdcdc" tag="span" width="80px" />
       </div>
     </div>
-  </pu-skeleton-theme>
+    <pu-skeleton
+      class="item__link"
+      color="#dcdcdc"
+      height="42px"
+      tag="div"
+      width="91px"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'GovernanceProposalsItemSkeleton',
-  props: {
-    number: {
-      type: Number,
-      default: 1
-    }
-  }
+  name: 'GovernanceProposalsItemSkeleton'
 });
 </script>

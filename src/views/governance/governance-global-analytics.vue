@@ -1,8 +1,13 @@
 <template>
   <content-wrapper
+    base-class="info__wrapper"
+    has-back-button
     has-close-button
     has-left-rail
     is-black-close-button
+    page-container-class="overview__wrapper governance-overview__menu-wrapper"
+    wrapper-class="governance-overview"
+    @back="handleBack"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -13,7 +18,7 @@
     </template>
 
     <secondary-page :title="$t('governance.lblGovernanceOverview')">
-      <p>{{ $t('governance.txtGetInvolved') }}</p>
+      <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
       <governance-overview-section>
         <governance-overview-section-item
@@ -81,6 +86,8 @@ import {
   GovernanceOverviewSectionItem
 } from '@/components/governance';
 
+import '@/styles/_overview.less';
+
 export default Vue.extend({
   name: 'GovernanceGlobalAnalytics',
   components: {
@@ -121,8 +128,11 @@ export default Vue.extend({
     })
   },
   methods: {
+    handleBack(): void {
+      this.$router.replace({ name: 'governance-view-all' });
+    },
     handleClose(): void {
-      this.$router.back();
+      this.$router.replace({ name: 'home' });
     }
   }
 });

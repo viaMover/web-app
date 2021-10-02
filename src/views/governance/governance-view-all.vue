@@ -1,8 +1,11 @@
 <template>
   <content-wrapper
+    base-class="info__wrapper"
     has-close-button
     has-left-rail
     is-black-close-button
+    page-container-class="product-item__wrapper governance__menu"
+    wrapper-class="governance"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -12,9 +15,8 @@
       </left-rail-section>
     </template>
 
-    <secondary-page>
-      <h2>{{ $t('governance.lblGetInvolved') }}</h2>
-      <p>{{ $t('governance.txtGetInvolved') }}</p>
+    <secondary-page :title="$t('governance.lblGetInvolved')">
+      <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
       <governance-proposals />
     </secondary-page>
@@ -47,7 +49,7 @@ export default Vue.extend({
   },
   methods: {
     handleClose(): void {
-      this.$router.back();
+      this.$router.replace({ name: 'home' });
     }
   }
 });

@@ -1,6 +1,6 @@
 <template>
   <secondary-page :title="pageTitle">
-    <p>{{ $t('governance.txtGetInvolved') }}</p>
+    <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
     <template v-if="proposalInfo !== undefined">
       <governance-overview-section>

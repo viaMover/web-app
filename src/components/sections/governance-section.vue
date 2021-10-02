@@ -1,36 +1,21 @@
 <template>
   <section-base
-    container-class="more__wrapper__menu-item"
+    container-class="more__wrapper__menu-item governance"
     has-expand-button
     :heading-text="$t('governance.lblGovernance')"
     :name="$t('governance.lblGovernance')"
     navigate-to-name="governance-view-all"
   >
-    <div v-if="lastProposal !== undefined" class="item__column">
-      <div class="item__column-info active">
-        <div class="loading">
-          <div class="hold left">
-            <div class="fill"></div>
-          </div>
-          <div class="hold right">
-            <div class="fill"></div>
-          </div>
-        </div>
-        <div class="item__column-info-icon"><span>🗳</span></div>
-        <div class="item__column-info-label">
-          <p>{{ lastProposal.title }}</p>
-          <span>{{ statusText }}</span>
-        </div>
-      </div>
-      <div class="item__column-link">
-        <router-link
-          class="black-link button-active"
-          :to="{ name: 'governance-view', params: { id: lastProposal.id } }"
-        >
-          {{ $t('governance.btnVote.simple') }}
-        </router-link>
-      </div>
-    </div>
+    <governance-proposals-item
+      v-if="!isLoading && lastProposal !== undefined"
+      class="no-border no-padding"
+      :item="lastProposal"
+    />
+    <governance-proposals-item-skeleton
+      v-else-if="isLoading"
+      class="no-border no-padding"
+      :number="1"
+    />
 
     <router-link
       class="link button-active"
@@ -47,11 +32,19 @@ import Vue from 'vue';
 import { mapActions, mapState, mapGetters } from 'vuex';
 
 import SectionBase from './section-base/section-base.vue';
+import {
+  GovernanceProposalsItem,
+  GovernanceProposalsItemSkeleton
+} from '@/components/governance';
+
+import '@/styles/_governance-proposals-item.less';
 
 export default Vue.extend({
   name: 'GovernanceSection',
   components: {
-    SectionBase
+    SectionBase,
+    GovernanceProposalsItem,
+    GovernanceProposalsItemSkeleton
   },
   computed: {
     ...mapState('proposal', {

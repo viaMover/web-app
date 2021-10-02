@@ -3,21 +3,26 @@
     items-container-tag="div"
     :section-name="$t('governance.lblMyGovernance')"
   >
-    <left-rail-section-nav-item-image
-      :description="governancePower"
-      description-class="bold"
-      navigate-to="governance-view-all"
-      :title="$t('governance.lblGovernance')"
-      title-class="disabled"
-    >
-      <template v-slot:picture>
-        <custom-picture
-          :alt="picture.alt"
-          :sources="picture.sources"
-          :src="picture.src"
-        />
-      </template>
-    </left-rail-section-nav-item-image>
+    <template v-if="isLoading">
+      <left-rail-section-nav-item-image-skeleton />
+    </template>
+    <template v-else>
+      <left-rail-section-nav-item-image
+        :description="governancePower"
+        description-class="bold"
+        navigate-to="governance-view-all"
+        :title="$t('governance.lblGovernance')"
+        title-class="disabled"
+      >
+        <template v-slot:picture>
+          <custom-picture
+            :alt="picture.alt"
+            :sources="picture.sources"
+            :src="picture.src"
+          />
+        </template>
+      </left-rail-section-nav-item-image>
+    </template>
   </left-rail-section>
 </template>
 
@@ -28,7 +33,8 @@ import { formatToDecimals } from '@/utils/format';
 
 import {
   LeftRailSection,
-  LeftRailSectionNavItemImage
+  LeftRailSectionNavItemImage,
+  LeftRailSectionNavItemImageSkeleton
 } from '@/components/layout';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { mapState } from 'vuex';
@@ -38,6 +44,7 @@ export default Vue.extend({
   components: {
     LeftRailSection,
     LeftRailSectionNavItemImage,
+    LeftRailSectionNavItemImageSkeleton,
     CustomPicture
   },
   data() {
@@ -56,6 +63,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('proposal', {
+      isLoading: 'isLoading',
       votingPowerSelf: 'votingPowerSelf'
     }),
     governancePower(): string {
