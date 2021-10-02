@@ -484,6 +484,20 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
         "Oh no. Seems like you don't have enough power to vote",
       'not enough power to create a proposal':
         "Oh no. Seems like you don't have enough power to create a proposal"
+    },
+    btnTogglePreview: 'Toggle preview',
+    txtTogglePreview: 'Toggle markdown preview',
+    createProposal: {
+      validations: {
+        title: {
+          required: 'This field is required. Please provide a title',
+          maxLength: 'Maximum length should be less than {boundary}'
+        },
+        description: {
+          required: 'This field is required. Please provide a description',
+          maxLength: 'Maximum length should be less than {boundary}'
+        }
+      }
     }
   };
 }
