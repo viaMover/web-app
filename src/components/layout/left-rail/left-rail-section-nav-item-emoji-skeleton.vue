@@ -1,7 +1,6 @@
 <template>
   <pu-skeleton
     class="left-rail-section-nav-item button-active emoji"
-    color="#dcdcdc"
     height="60px"
     tag="a"
   />

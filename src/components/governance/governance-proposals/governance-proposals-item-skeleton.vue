@@ -1,19 +1,13 @@
 <template>
   <div class="governance__menu-wrapper-item">
     <div class="item__info active">
-      <pu-skeleton circle class="progress-loader" color="#dcdcdc" tag="div" />
+      <pu-skeleton circle class="progress-loader" tag="div" />
       <div class="item__info-label">
-        <pu-skeleton color="#dcdcdc" tag="p" width="200px" />
-        <pu-skeleton color="#dcdcdc" tag="span" width="80px" />
+        <pu-skeleton tag="p" width="200px" />
+        <pu-skeleton tag="span" width="80px" />
       </div>
     </div>
-    <pu-skeleton
-      class="item__link"
-      color="#dcdcdc"
-      height="42px"
-      tag="div"
-      width="91px"
-    />
+    <pu-skeleton class="item__link" height="42px" tag="div" width="91px" />
   </div>
 </template>
 
