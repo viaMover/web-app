@@ -1,16 +1,21 @@
 <template>
-  <secondary-page :title="proposal ? proposal.title : ''">
+  <secondary-page :title="pageTitle">
     <p class="description">{{ explanatoryText }}</p>
-    <governance-overview-section>
+
+    <governance-overview-section-skeleton v-if="isProposalLoading">
+      <governance-overview-section-item-skeleton />
+    </governance-overview-section-skeleton>
+    <governance-overview-section v-else>
       <governance-overview-section-item
         :description="$t('governance.lblMyVotingPower')"
         :value="myVotingPower"
       />
     </governance-overview-section>
+
     <button
       class="black-link button-active"
-      :class="{ disabled: isLoading }"
-      :disabled="isLoading"
+      :class="{ disabled: isLoading || isProposalLoading }"
+      :disabled="isLoading || isProposalLoading"
       type="button"
       @click="handleVote"
     >
@@ -43,7 +48,9 @@ import { GovernanceApiError } from '@/services/mover/governance';
 import { SecondaryPage } from '@/components/layout';
 import {
   GovernanceOverviewSection,
-  GovernanceOverviewSectionItem
+  GovernanceOverviewSectionSkeleton,
+  GovernanceOverviewSectionItem,
+  GovernanceOverviewSectionItemSkeleton
 } from '@/components/governance';
 
 export default Vue.extend({
@@ -51,7 +58,9 @@ export default Vue.extend({
   components: {
     SecondaryPage,
     GovernanceOverviewSection,
-    GovernanceOverviewSectionItem
+    GovernanceOverviewSectionSkeleton,
+    GovernanceOverviewSectionItem,
+    GovernanceOverviewSectionItemSkeleton
   },
   data() {
     return {
@@ -61,8 +70,16 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('proposal', {
+      isProposalLoading: 'isLoading',
       proposals: 'items'
     }),
+    pageTitle(): string {
+      if (this.proposal === undefined) {
+        return this.$t('governance.lblProposal').toString();
+      }
+
+      return this.proposal.title;
+    },
     proposal(): Proposal | undefined {
       return (this.proposals as Array<ProposalInfo>).find(
         (item) => item.proposal.id === this.$route.params.id

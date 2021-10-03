@@ -2,7 +2,22 @@
   <secondary-page :title="pageTitle">
     <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
-    <template v-if="proposalInfo !== undefined">
+    <template v-if="isLoading">
+      <governance-overview-section-skeleton>
+        <governance-overview-section-item-skeleton
+          v-for="idx in 4"
+          :key="idx"
+        />
+      </governance-overview-section-skeleton>
+
+      <governance-overview-section-skeleton has-title>
+        <governance-overview-section-item-skeleton
+          v-for="idx in 4"
+          :key="idx"
+        />
+      </governance-overview-section-skeleton>
+    </template>
+    <template v-else-if="proposalInfo !== undefined">
       <governance-overview-section>
         <governance-overview-section-item
           :description="$t('governance.lblProposalId')"
@@ -58,7 +73,9 @@ import { formatToDecimals } from '@/utils/format';
 import { SecondaryPage } from '@/components/layout';
 import {
   GovernanceOverviewSection,
-  GovernanceOverviewSectionItem
+  GovernanceOverviewSectionSkeleton,
+  GovernanceOverviewSectionItem,
+  GovernanceOverviewSectionItemSkeleton
 } from '@/components/governance';
 
 export default Vue.extend({
@@ -66,7 +83,9 @@ export default Vue.extend({
   components: {
     SecondaryPage,
     GovernanceOverviewSection,
-    GovernanceOverviewSectionItem
+    GovernanceOverviewSectionSkeleton,
+    GovernanceOverviewSectionItem,
+    GovernanceOverviewSectionItemSkeleton
   },
   computed: {
     ...mapState('proposal', {

@@ -5,8 +5,11 @@
 .create-a-proposal {
   position: relative;
 
-  .g-wrapper {
-    position: static;
+  &__menu {
+    .g-wrapper {
+      position: static;
+      padding-top: 80px;
+    }
   }
 
   &__wrapper {
@@ -146,11 +149,6 @@
 
         button {
           margin-top: 40px;
-
-          &.disabled {
-            pointer-events: none;
-            background-color: #e5e5e5;
-          }
         }
       }
     }

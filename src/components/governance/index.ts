@@ -3,7 +3,9 @@ export { default as GovernanceNavMyGovernance } from './governance-nav-my-govern
 export { default as GovernanceNavManageGovernance } from './governance-nav-manage-governance.vue';
 export {
   GovernanceOverviewSection,
-  GovernanceOverviewSectionItem
+  GovernanceOverviewSectionSkeleton,
+  GovernanceOverviewSectionItem,
+  GovernanceOverviewSectionItemSkeleton
 } from './governance-overview-section';
 export {
   GovernanceProposalsItemSkeleton,

@@ -12,11 +12,11 @@ import {
 } from './types';
 
 export default {
-  lastProposal(state): ProposalInfo | undefined {
-    return (
-      state.items.slice().sort((a, b) => b.proposal.end - a.proposal.end)[0] ??
-      undefined
-    );
+  proposalsOrderedByEndingDesc(state): Array<ProposalInfo> {
+    return state.items.slice().sort((a, b) => b.proposal.end - a.proposal.end);
+  },
+  lastProposal(state, getters): ProposalInfo | undefined {
+    return getters.proposalsOrderedByEndingDesc[0] ?? undefined;
   },
   timesVoted(state, getters, rootState): number {
     if (rootState.account?.currentAddress === undefined) {

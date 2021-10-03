@@ -58,11 +58,10 @@ export default {
               dispatch('loadProposalInfo', { id, refetch })
           )
         );
-        const result = (
-          results.filter((res) => res !== undefined) as Array<ProposalInfo>
-        ).sort((a, b) => {
-          return b.proposal.end - a.proposal.end;
-        });
+
+        const result = results.filter(
+          (res) => res !== undefined
+        ) as Array<ProposalInfo>;
 
         commit('setIsLoading', false);
         return result;

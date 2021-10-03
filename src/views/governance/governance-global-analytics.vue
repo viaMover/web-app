@@ -20,50 +20,67 @@
     <secondary-page :title="$t('governance.lblGovernanceOverview')">
       <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
-      <governance-overview-section>
-        <governance-overview-section-item
-          :description="$t('governance.lblMyVotingPower')"
-          :value="myVotingPower"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblTimesVoted')"
-          :value="timesVoted"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblProposalsCreated')"
-          :value="proposalsCreated"
-        />
-      </governance-overview-section>
+      <template v-if="isLoading">
+        <governance-overview-section-skeleton>
+          <governance-overview-section-item-skeleton
+            v-for="idx in 3"
+            :key="idx"
+          />
+        </governance-overview-section-skeleton>
 
-      <governance-overview-section
-        has-title
-        :title="$t('governance.lblGovernanceStats')"
-      >
-        <governance-overview-section-item
-          :description="$t('governance.lblPowerNeeded')"
-          :value="powerNeeded"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblCommunityVotingPower')"
-          :value="communityVotingPower"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblTotalNumberOfProposals')"
-          :value="totalNumberOfProposals"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblOpenProposals')"
-          :value="openProposals"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblSucceededProposals')"
-          :value="succeededProposals"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblDefeatedProposals')"
-          :value="defeatedProposals"
-        />
-      </governance-overview-section>
+        <governance-overview-section-skeleton has-title>
+          <governance-overview-section-item-skeleton
+            v-for="idx in 6"
+            :key="idx"
+          />
+        </governance-overview-section-skeleton>
+      </template>
+      <template v-else>
+        <governance-overview-section>
+          <governance-overview-section-item
+            :description="$t('governance.lblMyVotingPower')"
+            :value="myVotingPower"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblTimesVoted')"
+            :value="timesVoted"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblProposalsCreated')"
+            :value="proposalsCreated"
+          />
+        </governance-overview-section>
+
+        <governance-overview-section
+          has-title
+          :title="$t('governance.lblGovernanceStats')"
+        >
+          <governance-overview-section-item
+            :description="$t('governance.lblPowerNeeded')"
+            :value="powerNeeded"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblCommunityVotingPower')"
+            :value="communityVotingPower"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblTotalNumberOfProposals')"
+            :value="totalNumberOfProposals"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblOpenProposals')"
+            :value="openProposals"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblSucceededProposals')"
+            :value="succeededProposals"
+          />
+          <governance-overview-section-item
+            :description="$t('governance.lblDefeatedProposals')"
+            :value="defeatedProposals"
+          />
+        </governance-overview-section>
+      </template>
     </secondary-page>
   </content-wrapper>
 </template>
@@ -83,7 +100,9 @@ import {
   GovernanceNavMyGovernance,
   GovernanceNavManageGovernance,
   GovernanceOverviewSection,
-  GovernanceOverviewSectionItem
+  GovernanceOverviewSectionSkeleton,
+  GovernanceOverviewSectionItem,
+  GovernanceOverviewSectionItemSkeleton
 } from '@/components/governance';
 
 import '@/styles/_overview.less';
@@ -97,14 +116,25 @@ export default Vue.extend({
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
     GovernanceOverviewSection,
-    GovernanceOverviewSectionItem
+    GovernanceOverviewSectionSkeleton,
+    GovernanceOverviewSectionItem,
+    GovernanceOverviewSectionItemSkeleton
   },
   computed: {
     ...mapState('proposal', {
+      isLoading: 'isLoading',
       proposals: 'proposalsListMinimal',
       votingPowerSelf: 'votingPowerSelf',
       communityVotingPowerRaw: 'communityVotingPower',
       powerNeededToBecomeAProposer: 'powerNeededToBecomeAProposer'
+    }),
+    ...mapGetters('proposal', {
+      timesVoted: 'timesVoted',
+      proposalsCreated: 'proposalsCreated',
+      totalNumberOfProposals: 'totalNumberOfProposals',
+      openProposals: 'openProposals',
+      succeededProposals: 'succeededProposals',
+      defeatedProposals: 'defeatedProposals'
     }),
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
@@ -117,15 +147,7 @@ export default Vue.extend({
     },
     communityVotingPower(): string {
       return formatToDecimals(this.communityVotingPowerRaw, 0);
-    },
-    ...mapGetters('proposal', {
-      timesVoted: 'timesVoted',
-      proposalsCreated: 'proposalsCreated',
-      totalNumberOfProposals: 'totalNumberOfProposals',
-      openProposals: 'openProposals',
-      succeededProposals: 'succeededProposals',
-      defeatedProposals: 'defeatedProposals'
-    })
+    }
   },
   methods: {
     handleBack(): void {
