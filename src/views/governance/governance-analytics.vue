@@ -88,11 +88,11 @@ export default Vue.extend({
     GovernanceOverviewSectionItemSkeleton
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       isLoading: 'isLoading',
       items: 'items'
     }),
-    ...mapGetters('proposal', {
+    ...mapGetters('governance', {
       proposalCommunityVotingPower: 'proposalCommunityVotingPower',
       proposalVotedFor: 'proposalVotedFor',
       proposalVotedAgainst: 'proposalVotedAgainst',
@@ -162,7 +162,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('proposal', {
+    ...mapActions('governance', {
       loadProposal: 'loadProposalInfo'
     }),
     handleClose(): void {

@@ -121,14 +121,14 @@ export default Vue.extend({
     GovernanceOverviewSectionItemSkeleton
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       isLoading: 'isLoading',
       proposals: 'proposalsListMinimal',
       votingPowerSelf: 'votingPowerSelf',
       communityVotingPowerRaw: 'communityVotingPower',
       powerNeededToBecomeAProposer: 'powerNeededToBecomeAProposer'
     }),
-    ...mapGetters('proposal', {
+    ...mapGetters('governance', {
       timesVoted: 'timesVoted',
       proposalsCreated: 'proposalsCreated',
       totalNumberOfProposals: 'totalNumberOfProposals',

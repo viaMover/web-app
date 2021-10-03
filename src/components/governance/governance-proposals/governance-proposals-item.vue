@@ -31,7 +31,7 @@ import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 
 import { Proposal } from '@/services/mover/governance';
-import { ProposalState } from '@/store/modules/proposal/types';
+import { ProposalState } from '@/store/modules/governance/types';
 
 import { ProgressLoader } from '@/components/layout';
 
@@ -47,7 +47,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters('proposal', {
+    ...mapGetters('governance', {
       proposalStateRaw: 'proposalState'
     }),
     statusText(): string {

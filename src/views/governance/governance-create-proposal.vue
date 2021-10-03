@@ -141,11 +141,11 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import { required, maxLength } from 'vuelidate/lib/validators';
 
 import { formatToDecimals } from '@/utils/format';
-import { CreateProposalPayload } from '@/store/modules/proposal/types';
+import { CreateProposalPayload } from '@/store/modules/governance/types';
 import {
   isProviderRpcError,
   ProviderRpcError
-} from '@/store/modules/proposal/utils';
+} from '@/store/modules/governance/utils';
 import { GovernanceApiError } from '@/services/mover/governance';
 
 import {
@@ -182,10 +182,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       daysToRun: 'proposalDurationDays'
     }),
-    ...mapGetters('proposal', {
+    ...mapGetters('governance', {
       minimumVotingThreshold: 'minimumVotingThreshold'
     }),
     minimumVotingThresholdText(): string {
@@ -196,7 +196,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('proposal', {
+    ...mapActions('governance', {
       createProposal: 'createProposal'
     }),
     handleBack(): void {

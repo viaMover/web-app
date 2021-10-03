@@ -7,7 +7,7 @@ import { Choice, ProposalInfo } from '@/services/mover/governance';
 
 import {
   ProposalState,
-  ProposalStoreState,
+  GovernanceStoreState,
   ProposalCumulativeInfo
 } from './types';
 
@@ -201,4 +201,4 @@ export default {
   hasEnoughVotingPowerToBecomeAProposer(state): boolean {
     return state.votingPowerSelf >= state.powerNeededToBecomeAProposer;
   }
-} as GetterTree<ProposalStoreState, RootStoreState>;
+} as GetterTree<GovernanceStoreState, RootStoreState>;

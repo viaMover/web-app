@@ -1,6 +1,6 @@
 import { Proposal, ProposalInfo, Space } from '@/services/mover/governance';
 
-export type ProposalStoreState = {
+export type GovernanceStoreState = {
   isLoading: boolean;
   error: string | Error | undefined;
   loadingPromise: Promise<Array<ProposalInfo>> | undefined;

@@ -21,7 +21,7 @@ export default Vue.extend({
     await this.loadGovernanceInfo();
   },
   methods: {
-    ...mapActions('proposal', {
+    ...mapActions('governance', {
       loadGovernanceInfo: 'loadGovernanceInfo',
       loadVotingPowerSelf: 'loadVotingPowerSelf'
     })

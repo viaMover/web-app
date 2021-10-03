@@ -14,7 +14,7 @@ import {
 import actions from './actions';
 import mutations from './mutations';
 import getters from './getters';
-import { ProposalStoreState } from './types';
+import { GovernanceStoreState } from './types';
 
 export default {
   namespaced: true,
@@ -38,4 +38,4 @@ export default {
   actions,
   getters,
   mutations
-} as Module<ProposalStoreState, RootStoreState>;
+} as Module<GovernanceStoreState, RootStoreState>;

@@ -24,7 +24,7 @@ import {
   CreateProposalPayload,
   LoadProposalInfoPayload,
   LoadScoresPayload,
-  ProposalStoreState
+  GovernanceStoreState
 } from './types';
 import { isValidCacheItem } from './utils';
 
@@ -301,4 +301,4 @@ export default {
       return 0;
     }
   }
-} as ActionTree<ProposalStoreState, RootStoreState>;
+} as ActionTree<GovernanceStoreState, RootStoreState>;

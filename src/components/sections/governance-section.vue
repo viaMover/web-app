@@ -47,10 +47,10 @@ export default Vue.extend({
     GovernanceProposalsItemSkeleton
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       isLoading: 'isLoading'
     }),
-    ...mapGetters('proposal', {
+    ...mapGetters('governance', {
       lastProposalRaw: 'lastProposal'
     }),
     lastProposal(): Proposal | undefined {
@@ -73,7 +73,7 @@ export default Vue.extend({
     await this.loadGovernanceInfo();
   },
   methods: {
-    ...mapActions('proposal', {
+    ...mapActions('governance', {
       loadGovernanceInfo: 'loadGovernanceInfo'
     })
   }

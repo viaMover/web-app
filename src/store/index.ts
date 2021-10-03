@@ -7,7 +7,7 @@ import mutations from './mutations';
 import account from './modules/account';
 import shop from './modules/shop';
 import nft from './modules/nft';
-import proposal from './modules/proposal';
+import governance from './modules/governance';
 import radar from './modules/radar';
 import modals from './modules/modals';
 import { RootStoreState } from './types';
@@ -42,7 +42,7 @@ if (isFeatureEnabled('isReleaseRadarEnabled')) {
 }
 
 if (isFeatureEnabled('isGovernanceEnabled')) {
-  store.registerModule('proposal', proposal);
+  store.registerModule('governance', governance);
 }
 
 export default store;

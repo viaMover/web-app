@@ -29,7 +29,7 @@ export default Vue.extend({
     Markdown
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       items: 'items',
       isLoading: 'isLoading'
     }),

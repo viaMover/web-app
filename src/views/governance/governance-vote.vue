@@ -42,7 +42,7 @@ import {
 import {
   isProviderRpcError,
   ProviderRpcError
-} from '@/store/modules/proposal/utils';
+} from '@/store/modules/governance/utils';
 import { GovernanceApiError } from '@/services/mover/governance';
 
 import { SecondaryPage } from '@/components/layout';
@@ -69,7 +69,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       isProposalLoading: 'isLoading',
       proposals: 'items'
     }),
@@ -119,7 +119,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('proposal', {
+    ...mapActions('governance', {
       vote: 'vote',
       loadProposalInfo: 'loadProposalInfo'
     }),

@@ -67,7 +67,7 @@ export default Vue.extend({
     ContentWrapper
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       items: 'items',
       isLoading: 'isLoading'
     }),
@@ -119,7 +119,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('proposal', {
+    ...mapActions('governance', {
       loadGovernanceInfo: 'loadGovernanceInfo'
     }),
     handleBack(): void {

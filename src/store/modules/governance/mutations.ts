@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 import { ProposalInfo, Space } from '@/services/mover/governance';
 
-import { ProposalStoreState } from './types';
+import { GovernanceStoreState } from './types';
 
 export default {
   setIsLoading(state, isLoading): void {
@@ -55,4 +55,4 @@ export default {
       updatedAt: dayjs().unix()
     };
   }
-} as MutationTree<ProposalStoreState>;
+} as MutationTree<GovernanceStoreState>;

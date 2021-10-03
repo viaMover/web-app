@@ -25,10 +25,10 @@ export default Vue.extend({
     GovernanceProposalsItemSkeleton
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       isLoading: 'isLoading'
     }),
-    ...mapGetters('proposal', {
+    ...mapGetters('governance', {
       proposals: 'proposalsOrderedByEndingDesc'
     })
   }

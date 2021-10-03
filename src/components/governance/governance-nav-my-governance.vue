@@ -62,7 +62,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('proposal', {
+    ...mapState('governance', {
       isLoading: 'isLoading',
       votingPowerSelf: 'votingPowerSelf'
     }),
