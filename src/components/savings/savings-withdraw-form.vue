@@ -55,7 +55,7 @@
           type="text"
           :value="amountToWithdraw"
           @update-value="handleUpdateValue"
-        ></dynamic-input>
+        />
         <action-button
           button-class="black-link button-active"
           :disabled="!isButtonActive"

@@ -43,7 +43,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { ActionButton, CloseButton } from '@/components/buttons';
+import { ActionButton } from '@/components/buttons';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
 

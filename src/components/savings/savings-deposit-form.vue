@@ -67,7 +67,7 @@
           type="text"
           :value="inputValue"
           @update-value="handleUpdateValue"
-        ></dynamic-input>
+        />
         <div
           v-if="
             isNeedTransfer && formattedUSDCTotal && selectedMode === 'TOKEN'
