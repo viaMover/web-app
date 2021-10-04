@@ -298,7 +298,42 @@ export default {
       return votingPowerSelf;
     } catch (error) {
       Sentry.captureException(error);
-      return 0;
+      Sentry.addBreadcrumb({
+        message: 'trying to use fallback self voting power scenario'
+      });
+
+      try {
+        if (rootState.account?.currentAddress === undefined) {
+          throw new Error('failed to get current address');
+        }
+
+        let spaceInfo = state.spaceInfo;
+        if (spaceInfo === undefined) {
+          // if spaceInfo is not ready yet
+          spaceInfo = await getSpace(state.spaceId);
+        }
+
+        const scores = await getScores(
+          state.spaceId,
+          spaceInfo.strategies,
+          spaceInfo.network,
+          [rootState.account.currentAddress],
+          'latest'
+        );
+
+        const votingPowerSelf = scores.reduce((acc, score) => {
+          return (
+            acc +
+            (score[rootState.account?.currentAddress ?? 'missing_address'] ?? 0)
+          );
+        }, 0);
+        commit('setVotingPowerSelf', votingPowerSelf);
+
+        return votingPowerSelf;
+      } catch (fallbackError) {
+        Sentry.captureException(fallbackError);
+        return 0;
+      }
     }
   }
 } as ActionTree<GovernanceStoreState, RootStoreState>;
