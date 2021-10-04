@@ -59,23 +59,31 @@ export default Vue.extend({
       stepsData: new Array<StepData>(
         {
           id: 'Confirm',
-          title: 'Waiting for confirmation',
-          subtitle: 'Confirm this transaction in your wallet'
+          title: this.$t('transaction.lblState.waiting.header') as string,
+          subtitle: this.$t(
+            'transaction.lblState.waiting.description'
+          ) as string
         },
         {
           id: 'Process',
-          title: 'Your transaction is processing',
-          subtitle: 'Waiting for transaction to be confirmed'
+          title: this.$t('transaction.lblState.pending.header') as string,
+          subtitle: this.$t(
+            'transaction.lblState.pending.description'
+          ) as string
         },
         {
           id: 'Success',
-          title: 'Success!',
-          subtitle: 'Your transaction was processed'
+          title: this.$t('transaction.lblState.processed.header') as string,
+          subtitle: this.$t(
+            'transaction.lblState.processed.description'
+          ) as string
         },
         {
           id: 'Reverted',
-          title: 'Transaction was reverted!',
-          subtitle: 'Your transaction failed'
+          title: this.$t('transaction.lblState.reverted.header') as string,
+          subtitle: this.$t(
+            'transaction.lblState.reverted.description'
+          ) as string
         }
       )
     };
