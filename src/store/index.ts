@@ -14,6 +14,7 @@ import { RootStoreState } from './types';
 Vue.use(Vuex);
 
 export default new Vuex.Store<RootStoreState>({
+  strict: false,
   state: {
     appVersion: '0.0.1',
     i18n: null

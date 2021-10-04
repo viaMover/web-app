@@ -23,7 +23,8 @@ import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { formatPercents } from '@/utils/format';
+import { divide, multiply } from '@/utils/bigmath';
+import { formatPercents, formatToNative } from '@/utils/format';
 
 import ActionButton from '@/components/buttons/action-button.vue';
 import SavingsYearlyChartWrapper from '@/components/savings/savings-yearly-chart-wrapper.vue';
@@ -47,7 +48,8 @@ export default Vue.extend({
     ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' }),
     ...mapState('account', { apy: 'savingsAPY' }),
     title(): string {
-      return '~ $984.17';
+      const apyNative = multiply(divide(this.apy, '100'), '10000');
+      return `~ $${formatToNative(apyNative)}`;
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
