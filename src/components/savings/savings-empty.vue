@@ -1,19 +1,20 @@
 <template>
   <secondary-page>
-    <savings-yearly-chart-wrapper>
-      <template v-slot:title>
-        <span class="title">{{ title }}</span>
-        <p>{{ $t('savings.txtYouCouldApproximately') }}</p>
-      </template>
+    <div class="savings__menu-wrapper-graph">
+      <div class="savings__menu-wrapper-balance">
+        <span class="balance">{{ savingsBalance }}</span>
+        <p class="black">{{ $t('savings.txtYouCouldApproximately') }}</p>
+      </div>
+      <bar-chart :chart-data-source="chartDataSource" />
       <p>{{ $t('savings.txtIfYouDeposit') }}</p>
-    </savings-yearly-chart-wrapper>
-    <div class="savings__menu-wrapper-body">
-      <span class="title">{{ currentVariableAPY }}</span>
-      <p class="description">{{ $t('savings.lblAPYOnAllSavings') }}</p>
-      <action-button
-        button-class="button button-active"
-        :text="$t('savings.lblStartSaving')"
-      />
+      <div class="savings__menu-wrapper-body">
+        <span class="title">{{ currentVariableAPY }}</span>
+        <p class="description black">{{ $t('savings.lblAPYOnAllSavings') }}</p>
+        <action-button
+          button-class="button button-active"
+          :text="$t('savings.lblStartSaving')"
+        />
+      </div>
     </div>
   </secondary-page>
 </template>
@@ -22,22 +23,22 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
+import { SavingsMonthBalanceItem } from '@/services/mover';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { divide, multiply } from '@/utils/bigmath';
 import { formatPercents, formatToNative } from '@/utils/format';
 
 import ActionButton from '@/components/buttons/action-button.vue';
-import SavingsYearlyChartWrapper from '@/components/savings/savings-yearly-chart-wrapper.vue';
+import { BarChart } from '@/components/charts';
+import { SecondaryPage } from '@/components/layout';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
-
-import { SecondaryPage } from '../../components/layout';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
   components: {
     ActionButton,
-    SavingsYearlyChartWrapper,
-    SecondaryPage
+    SecondaryPage,
+    BarChart
   },
   data() {
     return {
@@ -47,12 +48,22 @@ export default Vue.extend({
   computed: {
     ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' }),
     ...mapState('account', { apy: 'savingsAPY' }),
-    title(): string {
+    savingsBalance(): string {
       const apyNative = multiply(divide(this.apy, '100'), '10000');
       return `~ $${formatToNative(apyNative)}`;
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
+    },
+    chartDataSource(): Array<SavingsMonthBalanceItem> {
+      return Array.from(Array(10).keys()).map((n) => ({
+        type: 'savings_month_balance_item',
+        balance: 100,
+        earned: n,
+        snapshotTimestamp: n,
+        year: 2000 + n,
+        month: 1 + n
+      }));
     }
   },
   watch: {
