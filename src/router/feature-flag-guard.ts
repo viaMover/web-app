@@ -1,5 +1,6 @@
-import { isFeatureEnabled, Globals } from '@/settings';
 import { NavigationGuardNext, Route } from 'vue-router';
+
+import { Globals, isFeatureEnabled } from '@/settings';
 
 export const checkFeatureFlag =
   <T extends keyof Globals>(feature: T) =>

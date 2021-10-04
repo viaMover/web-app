@@ -71,14 +71,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
+import { formatToNative } from '@/utils/format';
+
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
   LeftRailSection,
   LeftRailSectionNavItemImage
 } from '@/components/layout';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
-import { mapGetters } from 'vuex';
-import { formatToNative } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsLeftRail',

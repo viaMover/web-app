@@ -20,15 +20,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Modal as ModalType } from '@/store/modules/modals/types';
+import { formatPercents } from '@/utils/format';
+
+import ActionButton from '@/components/buttons/action-button.vue';
+import SavingsYearlyChartWrapper from '@/components/savings/savings-yearly-chart-wrapper.vue';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 import { SecondaryPage } from '../../components/layout';
-import SavingsYearlyChartWrapper from '@/components/savings/savings-yearly-chart-wrapper.vue';
-import ActionButton from '@/components/buttons/action-button.vue';
-import { formatPercents } from '@/utils/format';
 
 export default Vue.extend({
   name: 'SavingsEmpty',

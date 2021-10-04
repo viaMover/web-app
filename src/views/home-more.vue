@@ -20,8 +20,8 @@ import { isFeatureEnabled } from '@/settings';
 import { ContentWrapper } from '@/components/layout';
 import {
   GovernanceSection,
-  NibbleShopSection,
-  NftDropsSection
+  NftDropsSection,
+  NibbleShopSection
 } from '@/components/sections';
 
 import '@/styles/_more.less';

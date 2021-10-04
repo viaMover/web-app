@@ -17,6 +17,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
+
 import { Properties } from 'csstype';
 
 import { IImageFallbackOpts } from '@/components/tokens/token-image/types';

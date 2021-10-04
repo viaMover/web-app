@@ -53,6 +53,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapActions, mapState } from 'vuex';
+
 import { Properties as CssProperties } from 'csstype';
 
 import { TModalKey } from '@/store/modules/modals/types';

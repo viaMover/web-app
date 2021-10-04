@@ -71,14 +71,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
-
-import { AssetField, FormLoader, GasSelector } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
 import { mapGetters, mapState } from 'vuex';
+
+import * as Sentry from '@sentry/vue';
+import { Properties as CssProperties } from 'csstype';
+
+import { GetTokenPrice } from '@/services/thegraph/api';
+import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -88,27 +92,23 @@ import {
   notZero,
   sub
 } from '@/utils/bigmath';
+import { formatToDecimals } from '@/utils/format';
+import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
+import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
 import {
   getAssetsForTreasury,
   getMoveAssetData,
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
-import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
-import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
-import { formatToDecimals } from '@/utils/format';
-import { sameAddress } from '@/utils/address';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import * as Sentry from '@sentry/vue';
-import {
-  Modal as ModalType,
-  TModalPayload
-} from '@/store/modules/modals/types';
+import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
 
-import Modal from './modal.vue';
-import { Step } from '../controls/form-loader';
-import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
-import { Properties as CssProperties } from 'csstype';
+import { ActionButton } from '@/components/buttons';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import DetailsPicture from '@/components/modals/details-picture.vue';
+
+import { Step } from '../controls/form-loader';
+import Modal from './modal.vue';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseBoostModal',

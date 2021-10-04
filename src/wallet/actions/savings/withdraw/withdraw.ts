@@ -1,14 +1,16 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { getPureEthAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
-import { AbiItem } from 'web3-utils';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
 import {
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
 import { withdrawSubsidized } from './withdrawSubsidized';
 
 export const withdrawCompound = async (

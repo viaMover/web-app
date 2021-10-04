@@ -18,8 +18,8 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import { SecondaryPage } from '@/components/layout';
-import { StatementNavList } from '@/components/statements/statement-nav-list';
 import { SavingsYearlyChartWrapper } from '@/components/savings';
+import { StatementNavList } from '@/components/statements/statement-nav-list';
 
 export default Vue.extend({
   name: 'SavingsManage',

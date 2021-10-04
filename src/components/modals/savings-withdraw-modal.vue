@@ -76,19 +76,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+
+import * as Sentry from '@sentry/vue';
+import { Properties as CssProperties } from 'csstype';
+import Web3 from 'web3';
 
 import {
-  TokenWithBalance,
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  GasData
-} from '@/wallet/types';
-
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-import Web3 from 'web3';
-import { mapGetters, mapState } from 'vuex';
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
 import {
   add,
   convertAmountFromNativeValue,
@@ -99,21 +96,25 @@ import {
   multiply,
   notZero
 } from '@/utils/bigmath';
-import * as Sentry from '@sentry/vue';
-import { Step } from '@/components/controls/form-loader';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { formatToNative } from '@/utils/format';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
-import { formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import Modal from './modal.vue';
-import { Properties as CssProperties } from 'csstype';
-
+import { getUSDCAssetData } from '@/wallet/references/data';
 import {
-  Modal as ModalTypes,
-  TModalPayload
-} from '@/store/modules/modals/types';
+  GasData,
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
+
+import { ActionButton } from '@/components/buttons';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { Step } from '@/components/controls/form-loader';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import DetailsPicture from '@/components/modals/details-picture.vue';
+
+import Modal from './modal.vue';
 
 export default Vue.extend({
   name: 'SavingsWithdrawModal',

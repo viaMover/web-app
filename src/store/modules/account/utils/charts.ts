@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
 import { ChartData, ChartType } from 'chart.js';
+import dayjs from 'dayjs';
 
 import {
   SavingsHourlyBalancesItem,

@@ -1,8 +1,9 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { MAXUINT256 } from '@/utils/consts';
 import { ERC20_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
 
 export const estimateApprove = async (
   accountAddress: string,

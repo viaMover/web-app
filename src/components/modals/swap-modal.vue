@@ -112,18 +112,23 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
-import Web3 from 'web3';
-import { Properties as CssProperties } from 'csstype';
-import * as Sentry from '@sentry/vue';
 
-import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
-import { swapCompound } from '@/wallet/actions/swap/swap';
+import * as Sentry from '@sentry/vue';
+import { Properties as CssProperties } from 'csstype';
+import Web3 from 'web3';
+
 import {
   getTransferData,
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -138,28 +143,25 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
-import { TokenWithBalance, Token, SmallToken, GasData } from '@/wallet/types';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import { sameAddress } from '@/utils/address';
-import ethDefaults from '@/wallet/references/defaults';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import { swapCompound } from '@/wallet/actions/swap/swap';
+import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
+import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
+import ethDefaults from '@/wallet/references/defaults';
+import { GasData, SmallToken, Token, TokenWithBalance } from '@/wallet/types';
 
+import { ActionButton } from '@/components/buttons';
 import {
   AssetField,
+  FormLoader,
   GasSelector,
-  SlippageSelector,
-  FormLoader
+  SlippageSelector
 } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-import { Slippage } from '../controls/slippage-selector.vue';
 import { Step } from '@/components/controls/form-loader';
-import {
-  Modal as ModalTypes,
-  TModalPayload
-} from '@/store/modules/modals/types';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import Modal from '@/components/modals/modal.vue';
+
+import { Slippage } from '../controls/slippage-selector.vue';
 import DetailsPicture from './details-picture.vue';
 import FlipPicture from './flip-picture.vue';
 

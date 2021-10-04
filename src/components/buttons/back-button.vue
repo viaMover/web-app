@@ -10,8 +10,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import ActionButton from './action-button.vue';
 import ArrowLeftIcon from '@/components/controls/arrow-left-icon.vue';
+
+import ActionButton from './action-button.vue';
 
 export default Vue.extend({
   name: 'BackButton',

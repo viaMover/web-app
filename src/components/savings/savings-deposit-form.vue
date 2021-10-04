@@ -97,13 +97,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
+
 import * as Sentry from '@sentry/vue';
+
 import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+  getTransferData,
+  TransferData,
+  ZeroXSwapError
+} from '@/services/0x/api';
+import { mapError } from '@/services/0x/errors';
+import { Modal as ModalType } from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   divide,
@@ -114,26 +118,24 @@ import {
   notZero,
   toWei
 } from '@/utils/bigmath';
-import { Modal as ModalType } from '@/store/modules/modals/types';
-
-import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import { ArrowDownIcon, DynamicInput } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { sameAddress } from '@/utils/address';
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
+import { CompoudEstimateResponse } from '@/wallet/actions/savings/deposit/depositEstimate';
 import {
   calcTransactionFastNativePrice,
   isSubsidizedAllowed
 } from '@/wallet/actions/subsidized';
-import { CompoudEstimateResponse } from '@/wallet/actions/savings/deposit/depositEstimate';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import {
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
+
+import { ActionButton } from '@/components/buttons';
+import { ArrowDownIcon, DynamicInput } from '@/components/controls';
+import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
+import TokenImage from '@/components/tokens/token-image/token-image.vue';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',

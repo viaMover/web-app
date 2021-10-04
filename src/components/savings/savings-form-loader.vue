@@ -43,6 +43,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { StepData } from '@/components/controls/form-loader/types';
 
 export default Vue.extend({

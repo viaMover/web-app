@@ -72,14 +72,8 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
-import { DynamicInput } from '@/components/controls';
-import { formatToDecimals, formatToNative } from '@/utils/format';
 import * as Sentry from '@sentry/vue';
+
 import {
   divide,
   greaterThan,
@@ -89,17 +83,24 @@ import {
   notZero,
   sub
 } from '@/utils/bigmath';
-import { getUSDCAssetData } from '@/wallet/references/data';
-
-import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import { ActionButton } from '@/components/buttons';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
 import {
   calcTransactionFastNativePrice,
   isSubsidizedAllowed
 } from '@/wallet/actions/subsidized';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import {
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
+
+import { ActionButton } from '@/components/buttons';
+import { DynamicInput } from '@/components/controls';
+import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
+import TokenImage from '@/components/tokens/token-image/token-image.vue';
 
 export default Vue.extend({
   name: 'SavingsWithdrawForm',

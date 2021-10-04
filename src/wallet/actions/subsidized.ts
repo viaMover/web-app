@@ -1,10 +1,11 @@
-import { greaterThan, greaterThanOrEqual } from '@/utils/bigmath';
-import { getNetwork } from '@/utils/networkTypes';
-import Web3 from 'web3';
-import { Network } from '@/utils/networkTypes';
 import axios from 'axios';
-import { fromWei, multiply } from '@/utils/bigmath';
 import { CustomError } from 'ts-custom-error';
+import Web3 from 'web3';
+
+import { greaterThan, greaterThanOrEqual } from '@/utils/bigmath';
+import { fromWei, multiply } from '@/utils/bigmath';
+import { getNetwork } from '@/utils/networkTypes';
+import { Network } from '@/utils/networkTypes';
 
 export class SubsidizedRequestError extends CustomError {
   public publicMessage: string;

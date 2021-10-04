@@ -28,8 +28,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import dayjs from 'dayjs';
 import { mapState } from 'vuex';
+
+import dayjs from 'dayjs';
 
 import { Proposal } from '@/store/modules/proposal/types';
 

@@ -21,17 +21,18 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import { Chart, ChartData, ChartOptions } from 'chart.js';
 import Color from 'color';
 
 import {
-  buildBalancesChartData,
-  ChartDataItem
-} from '@/store/modules/account/utils/charts';
-import {
   SavingsHourlyBalancesItem,
   TreasuryHourlyBalancesItem
 } from '@/services/mover';
+import {
+  buildBalancesChartData,
+  ChartDataItem
+} from '@/store/modules/account/utils/charts';
 
 import { ActionButton } from '@/components/buttons';
 

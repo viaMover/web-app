@@ -1,18 +1,19 @@
-import { calcTreasuryBoost } from './../utils/treasury';
 import { GetterTree } from 'vuex';
 
 import gt from 'lodash-es/gt';
-import { add, fromWei, multiply } from '@/utils/bigmath';
 
-import { sameAddress } from '@/utils/address';
-import { AccountStoreState } from '../types';
+import { TreasuryMonthBonusesItem } from '@/services/mover';
 import { RootStoreState } from '@/store/types';
+import { sameAddress } from '@/utils/address';
+import { add, fromWei, multiply } from '@/utils/bigmath';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData
 } from '@/wallet/references/data';
-import { TreasuryMonthBonusesItem } from '@/services/mover';
+
+import { AccountStoreState } from '../types';
+import { calcTreasuryBoost } from './../utils/treasury';
 
 export default {
   treasuryBonusNative(state, getters): string {

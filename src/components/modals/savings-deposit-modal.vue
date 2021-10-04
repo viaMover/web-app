@@ -85,22 +85,23 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
-import Web3 from 'web3';
+
 import * as Sentry from '@sentry/vue';
 import { Properties as CssProperties } from 'csstype';
+import Web3 from 'web3';
 
-import {
-  TokenWithBalance,
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  GasData
-} from '@/wallet/types';
 import {
   getTransferData,
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -114,25 +115,26 @@ import {
   sub,
   toWei
 } from '@/utils/bigmath';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '@/components/controls/form-loader';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { formatToNative } from '@/utils/format';
 import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
-import { formatToNative } from '@/utils/format';
-import { sameAddress } from '@/utils/address';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import { getUSDCAssetData } from '@/wallet/references/data';
 import {
-  Modal as ModalTypes,
-  TModalPayload
-} from '@/store/modules/modals/types';
+  GasData,
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
 
-import Modal from './modal.vue';
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { Step } from '@/components/controls/form-loader';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-import UsdcPicture from './usdc-picture.vue';
+
 import DetailsPicture from './details-picture.vue';
+import Modal from './modal.vue';
+import UsdcPicture from './usdc-picture.vue';
 
 export default Vue.extend({
   name: 'SavingsDepositModal',

@@ -1,16 +1,18 @@
+import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { BigNumber } from 'bignumber.js';
-import { multiply, toWei } from './../../../utils/bigmath';
-import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from './../actionWithApprove';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { TransferData } from '@/services/0x/api';
-import Web3 from 'web3';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
+import { multiply, toWei } from './../../../utils/bigmath';
+import { executeTransactionWithApprove } from './../actionWithApprove';
 import { swapSubsidized } from './swapSubsidized';
 
 export const swapCompound = async (

@@ -24,9 +24,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { Properties } from 'csstype';
 
 import { BackButton, CloseButton } from '@/components/buttons';
+
 import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
 

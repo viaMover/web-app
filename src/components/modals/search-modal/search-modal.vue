@@ -61,19 +61,20 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { StateChanger } from 'vue-infinite-loading';
+import { mapActions, mapGetters, mapState } from 'vuex';
+
 import filter from 'lodash-es/filter';
 
 import {
   Modal as ModalType,
   TModalPayload
 } from '@/store/modules/modals/types';
-
-import SearchModalTokenList from './search-modal-token-list.vue';
-import { Token, TokenWithBalance } from '@/wallet/types';
 import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
+import { Token, TokenWithBalance } from '@/wallet/types';
+
 import Modal from '../modal.vue';
-import { StateChanger } from 'vue-infinite-loading';
+import SearchModalTokenList from './search-modal-token-list.vue';
 
 export default Vue.extend({
   name: 'SearchModal',
@@ -237,8 +238,6 @@ export default Vue.extend({
       if (newVal === undefined) {
         return;
       }
-
-      console.log('PAYLOAD:', newVal);
 
       this.showCloseButton = !newVal.hideCloseButton;
 

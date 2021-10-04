@@ -21,21 +21,23 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
+
 import * as Sentry from '@sentry/vue';
 
+import { TransferData } from '@/services/0x/api';
+import { sameAddress } from '@/utils/address';
+import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
+import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+
+import { Step } from '@/components/controls/form-loader/types';
+import { SecondaryPage } from '@/components/layout/secondary-page';
 import {
   SavingsDepositForm,
   SavingsDepositReview,
   SavingsFormLoader
 } from '@/components/savings';
-import { SecondaryPage } from '@/components/layout/secondary-page';
-import { TransferData } from '@/services/0x/api';
-import { Step } from '@/components/controls/form-loader/types';
-import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
-import { mapState } from 'vuex';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { sameAddress } from '@/utils/address';
 
 export default Vue.extend({
   name: 'SavingsDepositWrapper',

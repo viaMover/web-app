@@ -74,15 +74,15 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
-import { formatToNative } from '@/utils/format';
 import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
+import { add } from '@/utils/bigmath';
+import { formatToNative } from '@/utils/format';
 
 import {
   MenuList,
   MenuListEmojiCardItem,
   MenuListIconItem
 } from '@/components/home/menu-list';
-import { add } from '@/utils/bigmath';
 
 export default Vue.extend({
   name: 'MenuSection',

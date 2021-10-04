@@ -1,8 +1,9 @@
 import Web3 from 'web3';
 
+import { SmallToken } from '@/wallet/types';
+
 import { approve } from './approve/approve';
 import { needApprove } from './approve/needApprove';
-import { SmallToken } from '@/wallet/types';
 
 export const executeTransactionWithApprove = async (
   token: SmallToken,

@@ -78,14 +78,14 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
-import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+import { sameAddress } from '@/utils/address';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { sameAddress } from '@/utils/address';
 
 export default Vue.extend({
   name: 'SavingsDepositReview',

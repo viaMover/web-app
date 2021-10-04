@@ -9,7 +9,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import { SavingsManage, SavingsEmpty } from '@/components/savings';
+import { SavingsEmpty, SavingsManage } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsManageWrapper',

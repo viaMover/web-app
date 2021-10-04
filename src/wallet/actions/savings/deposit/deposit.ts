@@ -1,21 +1,23 @@
+import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
 import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { BigNumber } from 'bignumber.js';
 import { multiply, toWei } from '@/utils/bigmath';
-import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { TransferData } from '@/services/0x/api';
-import Web3 from 'web3';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import {
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
 import { depositSubsidized } from './depositSubsidized';
 
 export const depositCompound = async (

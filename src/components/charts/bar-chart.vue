@@ -19,24 +19,25 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import {
+  ActiveElement,
   Chart,
   ChartData,
-  ChartOptions,
   ChartEvent,
-  ActiveElement,
+  ChartOptions,
   ScriptableScaleContext
 } from 'chart.js';
 
+import {
+  SavingsMonthBalanceItem,
+  TreasuryMonthBonusesItem
+} from '@/services/mover';
 import {
   buildBalancesChartData,
   ChartDataItem,
   TItem
 } from '@/store/modules/account/utils/charts';
-import {
-  SavingsMonthBalanceItem,
-  TreasuryMonthBonusesItem
-} from '@/services/mover';
 
 export default Vue.extend({
   name: 'BarChart',

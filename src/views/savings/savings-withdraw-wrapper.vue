@@ -19,18 +19,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
+
 import * as Sentry from '@sentry/vue';
 
+import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { TokenWithBalance } from '@/wallet/types';
 
 import { SecondaryPage } from '@/components/layout/secondary-page';
 import {
+  SavingsFormLoader,
   SavingsWithdrawForm,
-  SavingsWithdrawReview,
-  SavingsFormLoader
+  SavingsWithdrawReview
 } from '@/components/savings';
-import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsWithdrawWrapper',

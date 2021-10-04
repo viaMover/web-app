@@ -36,11 +36,13 @@
 </template>
 
 <script lang="ts">
-import { add, multiply } from '@/utils/bigmath';
-import { formatToNative } from '@/utils/format';
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
+
 import Web3 from 'web3';
+
+import { add, multiply } from '@/utils/bigmath';
+import { formatToNative } from '@/utils/format';
 
 export type GasMode = 'high' | 'low' | 'normal' | 'treasury';
 export type GasModeData = {

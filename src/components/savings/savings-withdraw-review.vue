@@ -75,12 +75,12 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { TokenWithBalance } from '@/wallet/types';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import { TokenWithBalance } from '@/wallet/types';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'SavingsWithdrawReview',

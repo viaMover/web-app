@@ -25,14 +25,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
+
 import dayjs from 'dayjs';
 
-import { BarChart } from '@/components/charts';
-import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import { SavingsMonthBalanceItem } from '@/services/mover';
-import { dateFromExplicitPair } from '@/utils/time';
 import { fromWei, multiply } from '@/utils/bigmath';
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
+import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
+
+import { BarChart } from '@/components/charts';
 
 export default Vue.extend({
   name: 'SavingsYearlyChartWrapper',

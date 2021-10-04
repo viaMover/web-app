@@ -20,10 +20,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
-import { Popover } from '@/components/modals';
 import ActionButton from '@/components/buttons/action-button.vue';
+import { Popover } from '@/components/modals';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 import '@/styles/_burger.less';
 
