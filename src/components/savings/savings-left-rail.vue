@@ -20,7 +20,11 @@
     </left-rail-section>
     <left-rail-section :section-name="$t('savings.lblManageSavings')">
       <left-rail-section-nav-item-image
-        :description="$t('savings.deposit.txtDepositShortDescription')"
+        :description="
+          $t('savings.deposit.txtDepositShortDescription', {
+            apy: formattedAPY
+          })
+        "
         description-class="disabled"
         navigate-to="savings-deposit"
         :title="$t('savings.btnDeposit.simple')"
@@ -71,9 +75,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import { isZero } from '@/utils/bigmath';
+import { formatPercents, formatToNative } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
@@ -130,10 +135,14 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('account', { apy: 'savingsAPY' }),
     ...mapGetters('account', {
       hasActiveSavings: 'hasActiveSavings',
       savingsInfoBalanceNative: 'savingsInfoBalanceNative'
     }),
+    formattedAPY(): string {
+      return formatPercents(this.apy);
+    },
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     }

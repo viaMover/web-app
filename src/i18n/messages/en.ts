@@ -16,6 +16,7 @@ export default {
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',
   lblEnterAmount: 'Enter amount',
+  lblNoData: 'No data',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
@@ -151,7 +152,7 @@ export default {
     deposit: {
       lblChooseAmount: 'Choose the amount to deposit',
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
-      txtDepositShortDescription: 'Get 8.3% APY on simple savings in USDC',
+      txtDepositShortDescription: 'Get {apy}% APY on simple savings in USDC',
       txtYouCouldEarnInYear:
         'You could earn in a year. Considering all changes.',
       txtDepositDescription:
@@ -161,7 +162,7 @@ export default {
       txtAssetWillBeConverted:
         'You chose a non USDC asset. It means that it will be converted ' +
         'to USDC at the time of the deposit at the current market rate.',
-      lblWhatDoWeDeposit: 'What we do deposit',
+      lblWhatDoWeDeposit: 'What do we deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
       lblSwappingFor: 'Swapping for',

@@ -131,7 +131,7 @@ export default Vue.extend({
     },
     gasPriceInGwei(): string {
       if (this.selectedGasData === undefined) {
-        return 'No data';
+        return this.$t('lblNoData') as string;
       }
 
       return `${this.selectedGasData.price} Gwei`;
@@ -142,7 +142,7 @@ export default Vue.extend({
         this.txnGasLimit === undefined ||
         this.ethPrice === undefined
       ) {
-        return 'No data';
+        return this.$t('lblNoData') as string;
       }
 
       const selectedGasPriceInWEI = Web3.utils.toWei(
@@ -166,7 +166,7 @@ export default Vue.extend({
     },
     estimatedTimeValue(): string {
       if (this.selectedGasData === undefined) {
-        return 'No data';
+        return this.$t('lblNoData') as string;
       }
       return String(this.selectedGasData.estTime);
     },

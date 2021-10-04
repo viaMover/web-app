@@ -35,7 +35,7 @@
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           {{ token.symbol }}
         </h2>
-        <span> {{ formatAmount }} </span>
+        <span> {{ formattedAmount }} </span>
       </div>
       <div class="item">
         <h2>{{ $t('savings.deposit.lblAndTotalOf') }}</h2>
@@ -60,7 +60,7 @@
       <div class="items">
         <div class="item">
           <h2>{{ $t('savings.deposit.lblEstimatedGasCost') }}</h2>
-          <span>{{ formatEstimatedGasCost }}</span>
+          <span>{{ formattedEstimatedGasCost }}</span>
         </div>
       </div>
     </div>
@@ -141,18 +141,18 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', ['networkInfo']),
-    formatAmount(): string {
+    formattedAmount(): string {
       if (this.isSelectedUSDCToken) {
         return `${formatToNative(this.amount)} ${this.outputUSDCAsset.symbol}`;
       }
       return `${formatToDecimals(this.amount, 4)} ${this.token.symbol}`;
     },
-    formatEstimatedGasCost(): string {
+    formattedEstimatedGasCost(): string {
       if (this.isSmartTreasury) {
         return '$0.00';
       }
       if (this.estimatedGasCost === undefined) {
-        return 'No data';
+        return this.$t('lblNoData') as string;
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
     },

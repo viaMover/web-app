@@ -28,11 +28,6 @@ export default Vue.extend({
     SavingsYearlyChartWrapper,
     StatementNavList
   },
-  data() {
-    return {
-      popoverParentId: 'savings-manage-action-buttons'
-    };
-  },
   computed: {
     ...mapGetters('account', {
       savingsMonthStatsOptions: 'savingsMonthStatsOptions'

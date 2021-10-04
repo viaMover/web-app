@@ -7,11 +7,11 @@
     <div class="arrow">
       <div class="item">
         <custom-picture
-          :alt="savings.alt"
+          :alt="savingsImages.alt"
           class="shadow"
-          :sources="savings.sources"
-          :src="savings.src"
-          :webp-sources="savings.webpSources"
+          :sources="savingsImages.sources"
+          :src="savingsImages.src"
+          :webp-sources="savingsImages.webpSources"
         />
       </div>
       <div class="item">
@@ -58,7 +58,7 @@
       <div class="items">
         <div class="item">
           <h2>{{ $t('savings.withdraw.lblEstimatedGasCost') }}</h2>
-          <span>{{ formatEstimatedGasCost }}</span>
+          <span>{{ formattedEstimatedGasCost }}</span>
         </div>
       </div>
     </div>
@@ -109,8 +109,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      isSmartTreasury: true as boolean,
-      savings: {
+      isSmartTreasury: true,
+      savingsImages: {
         alt: '',
         src: require('@/assets/images/Savings@1x.png'),
         sources: [
@@ -131,12 +131,12 @@ export default Vue.extend({
     };
   },
   computed: {
-    formatEstimatedGasCost(): string {
+    formattedEstimatedGasCost(): string {
       if (this.isSmartTreasury) {
         return '$0.00';
       }
       if (this.estimatedGasCost === undefined) {
-        return 'No data';
+        return this.$t('lblNoData') as string;
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
     }

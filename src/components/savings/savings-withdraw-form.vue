@@ -113,7 +113,7 @@ export default Vue.extend({
   data() {
     return {
       amountToWithdraw: '' as string,
-      process: false
+      isProcessing: false
     };
   },
   computed: {
@@ -128,7 +128,6 @@ export default Vue.extend({
       'currentAddress',
       'gasPrices'
     ]),
-    ...mapGetters('account', ['usdcNativePrice']),
     ...mapGetters('account', [
       'treasuryBonusNative',
       'getTokenColor',
@@ -258,7 +257,7 @@ export default Vue.extend({
       let subsidizedTxPrice = undefined;
       let actionGasLimit = '0';
       let approveGasLimit = '0';
-      this.process = true;
+      this.isProcessing = true;
       try {
         const gasLimits = await this.estimateAction(
           this.amountToWithdraw,
@@ -280,7 +279,7 @@ export default Vue.extend({
         console.error(err);
         Sentry.captureException("can't estimate savings deposit for subs");
       } finally {
-        this.process = false;
+        this.isProcessing = false;
       }
 
       this.$emit('tx-review', {
