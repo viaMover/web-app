@@ -1,8 +1,6 @@
 <template>
-  <div>
-    <savings-manage v-if="hasActiveSavings" />
-    <savings-empty v-else />
-  </div>
+  <savings-manage v-if="hasActiveSavings" />
+  <savings-empty v-else />
 </template>
 
 <script lang="ts">

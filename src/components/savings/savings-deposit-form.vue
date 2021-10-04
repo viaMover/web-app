@@ -177,7 +177,7 @@ export default Vue.extend({
 
       return !sameAddress(this.asset.address, this.outputUSDCAsset.address);
     },
-    descripton(): string {
+    description(): string {
       return (
         this.isSwapNeeded
           ? this.$t('savings.deposit.txtAssetWillBeConverted')

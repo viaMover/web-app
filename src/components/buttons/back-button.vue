@@ -1,5 +1,5 @@
 <template>
-  <action-button :button-class="[buttonClass]" @button-click="handleClick">
+  <action-button :button-class="buttonClass" @button-click="handleClick">
     <img
       v-if="mode === 'CLOSE-BLACK'"
       :alt="$t('icon.txtCloseIconAlt')"

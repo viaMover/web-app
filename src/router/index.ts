@@ -57,7 +57,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/savings',
-    name: 'savings-root',
+    name: '',
     component: () =>
       import(
         /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
