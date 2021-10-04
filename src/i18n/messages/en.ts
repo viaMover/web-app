@@ -15,6 +15,7 @@ export default {
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',
+  lblEnterAmount: 'Enter amount',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
@@ -194,8 +195,7 @@ export default {
         'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:
         'Estimated lost annual yield based on your withdrawal amount is {amount} at the current rate of {apy}% APY.'
-    },
-    btnEnterAmount: 'Enter amount'
+    }
   },
   treasury: {
     icon: '🐷',

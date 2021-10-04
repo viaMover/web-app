@@ -9,7 +9,7 @@
   >
     <template v-slot:left-rail>
       <keep-alive>
-        <component :is="'savings-left-rail'" />
+        <savings-left-rail />
       </keep-alive>
     </template>
 

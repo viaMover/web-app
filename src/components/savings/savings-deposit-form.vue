@@ -31,7 +31,7 @@
         <button
           class="button-active button-arrow"
           type="button"
-          @click.capture.stop.prevent="handleOpenSelectModal"
+          @click.stop.prevent="handleOpenSelectModal"
         >
           <arrow-down-icon stroke="#fff" />
         </button>
@@ -44,14 +44,10 @@
       </div>
       <div class="description">
         <p>
-          {{
-            isNeedTransfer
-              ? $t('savings.deposit.txtAssetWillBeConverted')
-              : $t('savings.txtUSDCCoinIsAStable')
-          }}
+          {{ description }}
         </p>
       </div>
-      <form action="#" autocomplete="off" class="form">
+      <form autocomplete="off" class="form" @submit.prevent.stop="">
         <p>
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           <span class="form-button" @click.capture.stop.prevent="swapTokens">
@@ -59,7 +55,7 @@
           </span>
         </p>
         <dynamic-input
-          :disabled="loading"
+          :disabled="isLoading"
           input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
@@ -69,9 +65,7 @@
           @update-value="handleUpdateValue"
         />
         <div
-          v-if="
-            isNeedTransfer && formattedUSDCTotal && selectedMode === 'TOKEN'
-          "
+          v-if="isSwapNeeded && formattedUSDCTotal && selectedMode === 'TOKEN'"
           class="form-swap"
         >
           <p>
@@ -155,7 +149,7 @@ export default Vue.extend({
       usdcAmount: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
-      loading: false,
+      isLoading: false,
       process: false
     };
   },
@@ -176,12 +170,19 @@ export default Vue.extend({
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
-    isNeedTransfer(): boolean {
+    isSwapNeeded(): boolean {
       if (this.asset === undefined) {
         return true;
       }
 
       return !sameAddress(this.asset.address, this.outputUSDCAsset.address);
+    },
+    descripton(): string {
+      return (
+        this.isSwapNeeded
+          ? this.$t('savings.deposit.txtAssetWillBeConverted')
+          : this.$t('savings.txtUSDCCoinIsAStable')
+      ) as string;
     },
     currentInputAsset(): SmallTokenInfoWithIcon {
       if (this.selectedMode === 'TOKEN') {
@@ -203,15 +204,15 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (this.asset === undefined) {
-        return 'Choose Token';
+        return this.$t('swaps.lblChooseToken') as string;
       }
 
       if (!notZero(this.amount)) {
-        return this.$t('savings.deposit.lblChooseAmount').toString();
+        return this.$t('savings.deposit.lblChooseAmount') as string;
       }
 
       if (greaterThan(this.amount, this.maxInputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {
@@ -223,7 +224,7 @@ export default Vue.extend({
       return this.selectedMode === 'TOKEN' ? this.amount : this.usdcAmount;
     },
     isButtonActive(): boolean {
-      return this.error === undefined && !this.loading;
+      return this.error === undefined && !this.isLoading;
     },
     estimatedAnnualEarning(): string {
       let possibleSavingsBalance = '0';
@@ -266,12 +267,12 @@ export default Vue.extend({
       if (this.asset === undefined) {
         return '0';
       }
-      let buyedUSDC = '0';
+      let boughtUSDC = '0';
 
       if (sameAddress(this.asset.address, this.outputUSDCAsset.address)) {
-        buyedUSDC = this.amount;
+        boughtUSDC = this.amount;
       } else if (this.transferData !== undefined) {
-        buyedUSDC = fromWei(
+        boughtUSDC = fromWei(
           this.transferData.buyAmount,
           this.outputUSDCAsset.decimals
         );
@@ -279,7 +280,7 @@ export default Vue.extend({
         return '';
       }
 
-      return `${formatToNative(buyedUSDC)} USDC`;
+      return `${formatToNative(boughtUSDC)} USDC`;
     }
   },
   mounted() {
@@ -295,16 +296,14 @@ export default Vue.extend({
       await this.updatingValue(val, this.selectedMode);
     },
     async updatingValue(value: string, mode: 'TOKEN' | 'USDC'): Promise<void> {
-      console.log('Trying to update value', value, mode);
-
-      if (this.asset === undefined || this.loading) {
+      if (this.asset === undefined || this.isLoading) {
         return;
       }
 
-      this.loading = true;
+      this.isLoading = true;
 
       try {
-        if (!this.isNeedTransfer) {
+        if (!this.isSwapNeeded) {
           console.log('Dont need transfer, token is USDC');
           this.transferData = undefined;
           this.amount = value;
@@ -361,7 +360,7 @@ export default Vue.extend({
           this.amount = '0';
         }
       } finally {
-        this.loading = false;
+        this.isLoading = false;
       }
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
@@ -470,7 +469,7 @@ export default Vue.extend({
       });
     },
     swapTokens(): void {
-      if (this.isNeedTransfer) {
+      if (this.isSwapNeeded) {
         if (this.selectedMode === 'TOKEN') {
           this.selectedMode = 'USDC';
         } else {
@@ -489,7 +488,7 @@ export default Vue.extend({
         this.maxInUSDC = token.balance;
         this.selectedMode = 'USDC';
       } else {
-        this.loading = true;
+        this.isLoading = true;
         try {
           const inputInWei = toWei(token.balance, token.decimals);
           const transferData = await getTransferData(
@@ -509,7 +508,7 @@ export default Vue.extend({
           console.error(`transfer error: ${err}`);
           this.maxInUSDC = '0';
         } finally {
-          this.loading = false;
+          this.isLoading = false;
         }
 
         this.selectedMode = 'TOKEN';

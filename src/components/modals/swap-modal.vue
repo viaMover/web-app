@@ -229,15 +229,15 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
-        return 'Choose Token';
+        return this.$t('swaps.lblChooseToken') as string;
       }
 
       if (!notZero(this.input.amount)) {
-        return 'Enter Amount';
+        return this.$t('lblEnterAmount') as string;
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {

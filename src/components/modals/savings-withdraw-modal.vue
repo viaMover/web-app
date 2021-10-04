@@ -190,11 +190,11 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (!notZero(this.output.amount)) {
-        return 'Enter Amount';
+        return this.$t('lblEnterAmount') as string;
       }
 
       if (greaterThan(this.output.amount, this.maxOutputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {
