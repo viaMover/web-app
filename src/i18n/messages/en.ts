@@ -498,7 +498,8 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
           maxLength: 'Maximum length should be less than {boundary}'
         }
       }
-    }
+    },
+    ipfsLink: 'You have successfully voted, here is your link:'
   };
 }
 

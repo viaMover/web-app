@@ -124,3 +124,21 @@ export type ServerInfo = {
   tag: string;
   relater: string;
 };
+
+export type VoteResponse = {
+  id: string;
+  ipfsHash: string;
+  relayer: {
+    address: string;
+    receipt: string;
+  };
+};
+
+export type CreateProposalResponse = {
+  id: string;
+  ipfsHash: string;
+  relayer: {
+    address: string;
+    receipt: string;
+  };
+};

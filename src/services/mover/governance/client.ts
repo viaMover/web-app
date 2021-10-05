@@ -11,7 +11,9 @@ import {
   Space,
   Strategy,
   VoteParams,
-  ServerInfo
+  ServerInfo,
+  CreateProposalResponse,
+  VoteResponse
 } from './types';
 
 export default class Client {
@@ -61,8 +63,14 @@ export default class Client {
     accountAddress: string,
     spaceId: string,
     voteParams: VoteParams
-  ): Promise<void> => {
-    return this.broadcast(web3, accountAddress, spaceId, 'vote', voteParams);
+  ): Promise<VoteResponse> => {
+    return this.broadcast<VoteResponse>(
+      web3,
+      accountAddress,
+      spaceId,
+      'vote',
+      voteParams
+    );
   };
 
   public createProposal = async (
@@ -70,11 +78,17 @@ export default class Client {
     accountAddress: string,
     spaceId: string,
     proposalParams: CreateProposalParams
-  ): Promise<void> => {
-    return this.broadcast(web3, accountAddress, spaceId, 'proposal', {
-      type: 'single-choice',
-      ...proposalParams
-    });
+  ): Promise<CreateProposalResponse> => {
+    return this.broadcast<CreateProposalResponse>(
+      web3,
+      accountAddress,
+      spaceId,
+      'proposal',
+      {
+        type: 'single-choice',
+        ...proposalParams
+      }
+    );
   };
 
   public getScores = async (
@@ -132,13 +146,13 @@ export default class Client {
     return this.request<R>('message', message);
   };
 
-  private broadcast = async (
+  private broadcast = async <T>(
     web3: Web3,
     accountAddress: string,
     spaceId: string,
     type: string,
     payload: unknown
-  ): Promise<void> => {
+  ): Promise<T> => {
     if (!this.isInitialized) {
       // the server implicitly requires all the broadcast messages
       // to be signed with proper client version
@@ -163,7 +177,7 @@ export default class Client {
 
     const signature = await web3.eth.personal.sign(msg.msg, accountAddress, '');
 
-    await this.send({
+    return await this.send<T>({
       ...msg,
       sig: signature
     });

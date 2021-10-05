@@ -18,7 +18,9 @@ import {
   ProposalWithVotes,
   Scores,
   vote,
-  VoteParams
+  VoteParams,
+  VoteResponse,
+  CreateProposalResponse
 } from '@/services/mover/governance';
 
 import {
@@ -197,7 +199,7 @@ export default {
   async createProposal(
     { state, rootState, getters },
     { title, description, metadata = {} }: CreateProposalPayload
-  ): Promise<void> {
+  ): Promise<CreateProposalResponse> {
     try {
       if (rootState.account?.provider?.web3 === undefined) {
         throw new Error('failed to get web3 provider');
@@ -225,7 +227,7 @@ export default {
         metadata
       };
 
-      await createProposal(
+      return await createProposal(
         rootState.account.provider.web3,
         rootState.account.currentAddress,
         state.spaceId,
@@ -239,7 +241,7 @@ export default {
   async vote(
     { state, rootState, getters },
     payload: VoteParams
-  ): Promise<void> {
+  ): Promise<VoteResponse> {
     try {
       if (rootState.account?.provider?.web3 === undefined) {
         throw new Error('failed to get web3 provider');
@@ -257,7 +259,7 @@ export default {
         throw new GovernanceApiError('not enough power to vote');
       }
 
-      await vote(
+      return await vote(
         rootState.account.provider.web3,
         rootState.account.currentAddress,
         state.spaceId,

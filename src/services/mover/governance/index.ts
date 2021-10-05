@@ -22,7 +22,9 @@ export type {
   Scores,
   Vote,
   CreateProposalParams,
-  VoteParams
+  CreateProposalResponse,
+  VoteParams,
+  VoteResponse
 } from './types';
 
 export {

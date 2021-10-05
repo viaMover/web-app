@@ -21,6 +21,13 @@
     >
       {{ voteButtonText }}
     </button>
+    <p v-if="ipfsLink" class="description">
+      {{ $t('governance.ipfsLink') }}
+      &nbsp;
+      <a class="ipfs-link" :href="ipfsLink" target="_blank">
+        {{ ipfsLink }}
+      </a>
+    </p>
     <p v-if="errorText" class="error">
       {{ errorText }}
     </p>
@@ -37,7 +44,8 @@ import {
   Choice,
   Proposal,
   ProposalInfo,
-  VoteParams
+  VoteParams,
+  VoteResponse
 } from '@/services/mover/governance';
 import {
   isProviderRpcError,
@@ -65,6 +73,7 @@ export default Vue.extend({
   data() {
     return {
       errorText: '',
+      ipfsLink: '',
       isLoading: false
     };
   },
@@ -113,6 +122,7 @@ export default Vue.extend({
     isVoteFor: {
       handler() {
         this.errorText = '';
+        this.ipfsLink = '';
         this.isLoading = false;
       },
       immediate: true
@@ -132,15 +142,21 @@ export default Vue.extend({
       }
 
       this.isLoading = true;
+      this.ipfsLink = '';
+      this.errorText = '';
 
       try {
-        await this.vote({
+        const voteResult: VoteResponse = await this.vote({
           proposal: this.proposal.id,
           choice: this.isVoteFor ? Choice.For : Choice.Against
         } as VoteParams);
 
-        await this.loadProposalInfo({ id: this.proposal.id, refetch: true });
+        await this.loadProposalInfo({
+          id: voteResult?.id ?? this.proposal.id,
+          refetch: true
+        });
 
+        this.ipfsLink = this.formatIpfsLink(voteResult.ipfsHash);
         this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
@@ -169,6 +185,9 @@ export default Vue.extend({
         this.errorText = this.$t('governance.errors.default').toString();
         this.isLoading = false;
       }
+    },
+    formatIpfsLink(path: string): string {
+      return `https://gateway.ipfs.io/ipfs/${path}`;
     }
   }
 });

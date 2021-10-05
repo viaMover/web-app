@@ -141,12 +141,18 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import { required, maxLength } from 'vuelidate/lib/validators';
 
 import { formatToDecimals } from '@/utils/format';
-import { CreateProposalPayload } from '@/store/modules/governance/types';
+import {
+  CreateProposalPayload,
+  LoadProposalInfoPayload
+} from '@/store/modules/governance/types';
 import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/governance/utils';
-import { GovernanceApiError } from '@/services/mover/governance';
+import {
+  CreateProposalResponse,
+  GovernanceApiError
+} from '@/services/mover/governance';
 
 import {
   SecondaryPage,
@@ -197,7 +203,8 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('governance', {
-      createProposal: 'createProposal'
+      createProposal: 'createProposal',
+      loadProposalInfo: 'loadProposalInfo'
     }),
     handleBack(): void {
       this.$router.replace({ name: 'governance-view-all' });
@@ -216,17 +223,22 @@ export default Vue.extend({
       this.isLoading = true;
 
       try {
-        await this.createProposal({
-          title: this.proposalTemplate.title,
-          description: this.proposalTemplate.description
-        } as CreateProposalPayload);
+        const createdProposal: CreateProposalResponse =
+          await this.createProposal({
+            title: this.proposalTemplate.title,
+            description: this.proposalTemplate.description
+          } as CreateProposalPayload);
 
         this.proposalTemplate = { title: '', description: '' };
 
+        await this.loadProposalInfo({
+          id: createdProposal.id,
+          refetch: true
+        } as LoadProposalInfoPayload);
         await this.$router.replace({
           name: 'governance-view',
           params: {
-            id: '222'
+            id: createdProposal.id
           }
         });
 
