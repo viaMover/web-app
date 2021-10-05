@@ -1,8 +1,7 @@
 import { getEthPrice as getEthPriceFromCoingecko } from '@/services/coingecko/tokens';
 import { getEthPrice as getEthPriceFromEtherscan } from '@/services/etherscan/ethPrice';
 import { Network } from '@/utils/networkTypes';
-
-import { currentTimestamp } from './../utils/time';
+import { currentTimestamp } from '@/utils/time';
 
 const localStorageEthereumKey = 'ETH_USD_PRICE';
 

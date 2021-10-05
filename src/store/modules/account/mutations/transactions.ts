@@ -1,8 +1,9 @@
 import { MutationTree } from 'vuex';
 
+import { Transaction } from '@/wallet/types';
+
 import { AccountStoreState } from '../types';
 import { sortAndDeduplicateTransactions } from '../utils/transactions';
-import { Transaction } from './../../../../wallet/types';
 
 export default {
   addTransaction(state, newTransaction: Transaction): void {

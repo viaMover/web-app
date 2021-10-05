@@ -1,11 +1,13 @@
 import Web3 from 'web3';
 
 import store from '@/store/index';
-
-import { Network } from './../utils/networkTypes';
-import { getTransactionReceiptMined } from './../web3/transaction';
-import { CheckSubsidizedInQueueTx, QUEUED_STATUS } from './actions/subsidized';
-import { Transaction } from './types';
+import { Network } from '@/utils/networkTypes';
+import {
+  CheckSubsidizedInQueueTx,
+  QUEUED_STATUS
+} from '@/wallet/actions/subsidized';
+import { Transaction } from '@/wallet/types';
+import { getTransactionReceiptMined } from '@/web3/transaction';
 
 export type OffchainExplorerHanler = ReturnType<typeof setTimeout>;
 

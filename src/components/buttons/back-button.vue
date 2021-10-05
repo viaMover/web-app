@@ -37,9 +37,9 @@ export default Vue.extend({
   },
   computed: {
     buttonClass(): string {
-      return `"button ${
+      return `button ${
         this.mode === 'BACK' ? 'back-link' : 'escape-link'
-      } button-active"`;
+      } button-active`;
     }
   },
   methods: {

@@ -70,9 +70,11 @@
         >
           <p>
             {{ $t('savings.deposit.lblSwappingFor') }}
-            <picture>
-              <img alt="" src="@/assets/images/coin-icon1.png" />
-            </picture>
+            <custom-picture
+              alt="USDC"
+              :sources="usdcPicture.sources"
+              :src="usdcPicture.src"
+            />
             <span>{{ formattedUSDCTotal }}</span>
           </p>
         </div>
@@ -128,9 +130,9 @@ import {
 
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
-
 export default Vue.extend({
   name: 'SavingsDepositForm',
   components: {
@@ -138,10 +140,20 @@ export default Vue.extend({
     SecondaryPageSimpleTitle,
     ActionButton,
     ArrowDownIcon,
-    DynamicInput
+    DynamicInput,
+    CustomPicture
   },
   data() {
     return {
+      usdcPicture: {
+        src: require('@/assets/images/USDC.png'),
+        sources: [
+          {
+            src: require('@/assets/images/USDC@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor,
       selectedMode: 'TOKEN' as 'USDC' | 'TOKEN',
       asset: undefined as TokenWithBalance | undefined,
       maxInUSDC: '0' as string,

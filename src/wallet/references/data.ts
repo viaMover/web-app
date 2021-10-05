@@ -1,7 +1,7 @@
 import { Network } from '@/utils/networkTypes';
+import { SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 import { SmallTokenInfo } from '@/wallet/types';
 
-import { SmallTokenInfoWithIcon, Token } from './../types';
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';

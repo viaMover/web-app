@@ -96,7 +96,7 @@ export default Vue.extend({
   data() {
     return {
       savings: {
-        alt: '',
+        alt: 'Savings',
         src: require('@/assets/images/Savings@1x.png'),
         sources: [
           { src: require('@/assets/images/Savings@1x.png') },
@@ -115,7 +115,7 @@ export default Vue.extend({
       } as PictureDescriptor,
       global: {
         //TODO insert new image
-        alt: '',
+        alt: 'Savings',
         src: require('@/assets/images/Savings@1x.png'),
         sources: [
           { src: require('@/assets/images/Savings@1x.png') },

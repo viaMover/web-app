@@ -1,11 +1,8 @@
-import * as Sentry from '@sentry/vue';
-
+import { getGasPrices as getGasPricesFromEtherscan } from '@/services/etherscan/gas';
+import { getGasPrices as getGasPricesFromGasStation } from '@/services/gasstation/gas';
+import { isError, isSuccess } from '@/services/responses';
 import { Network } from '@/utils/networkTypes';
-
-import { getGasPrices as getGasPricesFromEtherscan } from './../services/etherscan/gas';
-import { getGasPrices as getGasPricesFromGasStation } from './../services/gasstation/gas';
-import { isError, isSuccess } from './../services/responses';
-import { GasData } from './types';
+import { GasData } from '@/wallet/types';
 
 export type GetGasErrors = 'RateReached' | 'NoEndpointForNetwork' | string;
 
