@@ -8,6 +8,14 @@ export const PROPOSALS_QUERY = gql`
   }
 `;
 
+export const LAST_PROPOSAL_QUERY = gql`
+  query LastProposal {
+    proposals(first: 1, orderBy: "end", orderDirection: desc) {
+      id
+    }
+  }
+`;
+
 export const PROPOSAL_VOTES_QUERY = gql`
   query ($id: String!) {
     proposal(id: $id) {

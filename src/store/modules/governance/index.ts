@@ -33,7 +33,8 @@ export default {
     communityVotingPower: 0,
     votingPowerSelf: 0,
     spaceId: moverSpaceId,
-    cachePeriodSeconds: defaultCachePeriodSeconds
+    cachePeriodSeconds: defaultCachePeriodSeconds,
+    isLoadingLastProposal: false
   },
   actions,
   getters,

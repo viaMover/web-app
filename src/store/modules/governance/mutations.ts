@@ -6,8 +6,11 @@ import { ProposalInfo, Space } from '@/services/mover/governance';
 import { GovernanceStoreState } from './types';
 
 export default {
-  setIsLoading(state, isLoading): void {
+  setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
+  },
+  setIsLoadingLastProposal(state, isLoadingLastProposal: boolean): void {
+    state.isLoadingLastProposal = isLoadingLastProposal;
   },
   setError(state, error: string | Error | undefined): void {
     state.error = error;

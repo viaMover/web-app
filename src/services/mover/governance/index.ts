@@ -2,7 +2,8 @@ export { default as Client } from './client';
 export {
   getSpaceList,
   getSpace,
-  getProposalIdsList as getProposalsList,
+  getProposalIdsList,
+  getLastProposalId,
   getProposal,
   createProposal,
   vote,

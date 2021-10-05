@@ -8,7 +8,8 @@ import {
   CreateProposalParams,
   getCommunityVotingPower,
   getProposal,
-  getProposalsList,
+  getProposalIdsList,
+  getLastProposalId,
   getScores,
   getSpace,
   getVotingPower,
@@ -29,6 +30,44 @@ import {
 import { isValidCacheItem } from './utils';
 
 export default {
+  async loadMinimalGovernanceInfo(
+    { commit, dispatch, state, getters },
+    refetch = false
+  ): Promise<ProposalInfo | undefined> {
+    try {
+      commit('setIsLoadingLastProposal', true);
+
+      try {
+        if (!refetch && (state.isLoading || state.loadingPromise)) {
+          await state.loadingPromise;
+
+          commit('setIsLoadingLastProposal', false);
+          return getters.lastProposal;
+        }
+      } catch (moduleLoadingError) {
+        return dispatch('loadLastProposalMinimal', true);
+      }
+
+      let spaceInfoPromise = Promise.resolve(state.spaceInfo);
+      if (state.spaceInfo === undefined) {
+        spaceInfoPromise = dispatch('loadPowerInfo');
+      }
+
+      const resultPromise = dispatch('loadProposalInfo', {
+        id: await getLastProposalId(),
+        refetch
+      });
+
+      const [result] = await Promise.all([resultPromise, spaceInfoPromise]);
+
+      commit('setIsLoadingLastProposal', false);
+      return result;
+    } catch (error) {
+      Sentry.captureException(error);
+      commit('setIsLoadingLastProposal', false);
+      return undefined;
+    }
+  },
   async loadGovernanceInfo(
     { state, commit, dispatch },
     refetch = false
@@ -45,7 +84,7 @@ export default {
         commit('setError', undefined);
         commit('setLoadingPromise', undefined);
 
-        const proposalsListPromise = getProposalsList(state.spaceId);
+        const proposalsListPromise = getProposalIdsList(state.spaceId);
         const powerInfoPromise = dispatch('loadPowerInfo');
 
         const [proposalIds] = await Promise.all([

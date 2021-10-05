@@ -45,7 +45,7 @@ export type Proposal = {
 };
 
 export type ProposalsResponse = {
-  proposals: Array<{ id: string }>;
+  proposals: Array<{ id: string }> | null;
 };
 
 export type Vote = {

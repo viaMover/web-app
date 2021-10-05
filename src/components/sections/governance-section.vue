@@ -48,13 +48,17 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('governance', {
-      isLoading: 'isLoading'
+      isGovernanceModuleLoading: 'isLoading',
+      isLoadingLastProposal: 'isLoadingLastProposal'
     }),
     ...mapGetters('governance', {
       lastProposalRaw: 'lastProposal'
     }),
     lastProposal(): Proposal | undefined {
       return this.lastProposalRaw?.proposal;
+    },
+    isLoading(): boolean {
+      return this.isGovernanceModuleLoading || this.isLoadingLastProposal;
     },
     statusText(): string {
       if (this.lastProposal === undefined) {
@@ -70,11 +74,11 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    await this.loadGovernanceInfo();
+    await this.loadMinimalGovernanceInfo();
   },
   methods: {
     ...mapActions('governance', {
-      loadGovernanceInfo: 'loadGovernanceInfo'
+      loadMinimalGovernanceInfo: 'loadMinimalGovernanceInfo'
     })
   }
 });

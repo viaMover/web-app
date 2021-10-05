@@ -15,6 +15,7 @@ export type GovernanceStoreState = {
   minimumVotingThresholdMultiplier: number;
   spaceId: string;
   cachePeriodSeconds: number;
+  isLoadingLastProposal: boolean;
 };
 
 export interface CacheInfo {

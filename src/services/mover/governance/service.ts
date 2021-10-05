@@ -2,7 +2,11 @@ import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { voteHubBaseUrl, graphqlUrl, scoresApiBaseUrl } from './consts';
-import { PROPOSALS_QUERY, PROPOSAL_VOTES_QUERY } from './queries';
+import {
+  PROPOSALS_QUERY,
+  PROPOSAL_VOTES_QUERY,
+  LAST_PROPOSAL_QUERY
+} from './queries';
 import Client from './client';
 import { ProposalsResponse, ProposalWithVotes } from './types';
 
@@ -29,7 +33,23 @@ export const getProposalIdsList = async (
     }
   });
 
+  if (result.data?.proposals === undefined || result.data.proposals === null) {
+    return [];
+  }
+
   return result.data.proposals.map((item) => item.id);
+};
+
+export const getLastProposalId = async (): Promise<string | undefined> => {
+  const result = await graphqlClient.query<ProposalsResponse>({
+    query: LAST_PROPOSAL_QUERY
+  });
+
+  if (result.data?.proposals === undefined || result.data.proposals === null) {
+    return undefined;
+  }
+
+  return result.data.proposals[0]?.id ?? undefined;
 };
 
 export const getProposal = async (id: string): Promise<ProposalWithVotes> => {
