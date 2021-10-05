@@ -7,12 +7,12 @@ import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
+import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
-import { multiply, toWei } from './../../../utils/bigmath';
-import { executeTransactionWithApprove } from './../actionWithApprove';
 import { swapSubsidized } from './swapSubsidized';
 
 export const swapCompound = async (

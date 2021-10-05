@@ -97,11 +97,10 @@ import { getUnexpectedMoveClaimSignature } from '@/services/chain';
 import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
 import { formatToDecimals } from '@/utils/format';
 
-import ActionButton from '@/components/buttons/action-button.vue';
-import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
+import { ActionButton, EmojiTextButton } from '@/components/buttons';
 import { Step } from '@/components/controls/form-loader';
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewUnexpectedMove',

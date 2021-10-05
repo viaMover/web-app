@@ -172,10 +172,12 @@ import { mapActions, mapState } from 'vuex';
 import { DiceType } from '@/services/chain';
 import { DicePayload } from '@/store/modules/nft/actions/claim';
 
-import ActionButton from '@/components/buttons/action-button.vue';
-import ContextButton from '@/components/buttons/context-button/context-button.vue';
-import ContextButtonItem from '@/components/buttons/context-button/context-button-item.vue';
-import EmojiTextButton from '@/components/buttons/emoji-text-button.vue';
+import {
+  ActionButton,
+  ContextButton,
+  ContextButtonItem,
+  EmojiTextButton
+} from '@/components/buttons';
 import { Step } from '@/components/controls/form-loader';
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';

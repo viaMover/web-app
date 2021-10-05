@@ -5,9 +5,8 @@ import {
   SweetAndSourData,
   UnexpectedMoveData
 } from '@/services/chain';
-import { VaultsData } from '@/services/chain/nft/vaults/types';
+import { DiceData, VaultsData } from '@/services/chain';
 
-import { DiceData } from './../../../services/chain/nft/dice/types';
 import { NftAsset, NFTStoreState } from './types';
 
 export default {

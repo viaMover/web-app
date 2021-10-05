@@ -1,11 +1,10 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
+import { isEth } from '@/utils/address';
+import { fromWei, greaterThan } from '@/utils/bigmath';
 import { ERC20_ABI } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
-
-import { isEth } from './../../../utils/address';
-import { fromWei, greaterThan } from './../../../utils/bigmath';
 
 const getAllowance = async (
   owner: string,
