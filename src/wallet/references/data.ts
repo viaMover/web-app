@@ -13,6 +13,7 @@ import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
+import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -428,5 +429,6 @@ export {
   NFT_SWEET_AND_SOUR_ABI,
   NFT_OLYMPUS_ABI,
   NFT_VAULTS_ABI,
-  NFT_DICE_ABI
+  NFT_DICE_ABI,
+  SUSHI_UNI_PAIR_V2_ABI
 };
