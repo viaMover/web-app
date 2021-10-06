@@ -49,10 +49,10 @@ export default {
   setPowerNeededToBecomeAProposer(state, value: number): void {
     state.powerNeededToBecomeAProposer = value;
   },
-  setCommunityVotingPower(state, value: number): void {
+  setCommunityVotingPower(state, value: string): void {
     state.communityVotingPower = value;
   },
-  setVotingPowerSelf(state, value: number): void {
+  setVotingPowerSelf(state, value: string): void {
     state.votingPowerSelf = value;
     state.cacheGenericInfoMap['votingPowerSelf'] = {
       updatedAt: dayjs().unix()

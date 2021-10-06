@@ -30,8 +30,8 @@ export default {
     proposalDurationDays: defaultProposalDurationDays,
     powerNeededToBecomeAProposer: defaultPowerNeededToBecomeAProposer,
     minimumVotingThresholdMultiplier: minimumVotingThresholdMultiplier,
-    communityVotingPower: 0,
-    votingPowerSelf: 0,
+    communityVotingPower: '0',
+    votingPowerSelf: '0',
     spaceId: moverSpaceId,
     cachePeriodSeconds: defaultCachePeriodSeconds,
     isLoadingLastProposal: false

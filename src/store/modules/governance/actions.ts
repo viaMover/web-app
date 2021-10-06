@@ -22,6 +22,7 @@ import {
   VoteResponse,
   CreateProposalResponse
 } from '@/services/mover/governance';
+import { getCommunityVotingPower as getCommunityVotingPowerFromChain } from '@/services/chain';
 
 import {
   CreateProposalPayload,
@@ -166,7 +167,7 @@ export default {
           self: scoresSelf
         },
         communityVotingPower
-      };
+      } as ProposalInfo;
 
       commit('upsertItems', newItem);
 
@@ -292,12 +293,12 @@ export default {
       const spaceInfoPromise = getSpace(state.spaceId);
 
       // current community voting power
-      const votingPowerPromise = getCommunityVotingPower();
+      const votingPowerPromise = dispatch('loadCommunityVotingPower');
 
       // current self voting power
       const votingPowerSelfPromise = dispatch('loadVotingPowerSelf');
 
-      const [spaceInfo, votingPower] = await Promise.all([
+      const [spaceInfo, communityVotingPower] = await Promise.all([
         spaceInfoPromise,
         votingPowerPromise,
         votingPowerSelfPromise
@@ -305,16 +306,54 @@ export default {
 
       commit('setSpaceInfo', spaceInfo);
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
-      commit('setCommunityVotingPower', votingPower);
+      commit('setCommunityVotingPower', communityVotingPower);
     } catch (error) {
       Sentry.captureException(error);
       throw error;
     }
   },
+  async loadCommunityVotingPower({ commit, rootState }): Promise<string> {
+    try {
+      const communityVotingPower = await getCommunityVotingPower();
+
+      commit('setCommunityVotingPower', communityVotingPower);
+      return communityVotingPower;
+    } catch (error) {
+      Sentry.captureException(error);
+      Sentry.addBreadcrumb({
+        message: 'trying to use fallback community voting power scenario'
+      });
+
+      try {
+        if (rootState.account?.currentAddress === undefined) {
+          throw new Error('failed to get current address');
+        }
+
+        if (rootState.account?.networkInfo === undefined) {
+          throw new Error('failed to get network info');
+        }
+
+        if (rootState.account?.provider?.web3 === undefined) {
+          throw new Error('failed to get web3 provider');
+        }
+
+        const communityVotingPower = await getCommunityVotingPowerFromChain(
+          rootState.account.currentAddress,
+          rootState.account.networkInfo.network,
+          rootState.account.provider.web3
+        );
+        commit('setCommunityVotingPower', communityVotingPower);
+        return communityVotingPower;
+      } catch (fallbackError) {
+        Sentry.captureException(fallbackError);
+        throw error;
+      }
+    }
+  },
   async loadVotingPowerSelf(
     { commit, state, rootState },
     refetch = false
-  ): Promise<number> {
+  ): Promise<string> {
     try {
       if (
         !refetch &&
@@ -362,18 +401,21 @@ export default {
           'latest'
         );
 
-        const votingPowerSelf = scores.reduce((acc, score) => {
-          return (
-            acc +
-            (score[rootState.account?.currentAddress ?? 'missing_address'] ?? 0)
-          );
-        }, 0);
+        const votingPowerSelf = scores
+          .reduce((acc, score) => {
+            return (
+              acc +
+              (score[rootState.account?.currentAddress ?? 'missing_address'] ??
+                0)
+            );
+          }, 0)
+          .toString();
         commit('setVotingPowerSelf', votingPowerSelf);
 
         return votingPowerSelf;
       } catch (fallbackError) {
         Sentry.captureException(fallbackError);
-        return 0;
+        throw fallbackError;
       }
     }
   }

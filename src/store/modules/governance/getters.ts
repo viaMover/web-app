@@ -10,6 +10,12 @@ import {
   GovernanceStoreState,
   ProposalCumulativeInfo
 } from './types';
+import {
+  divide,
+  greaterThan,
+  greaterThanOrEqual,
+  multiply
+} from '@/utils/bigmath';
 
 export default {
   proposalsOrderedByEndingDesc(state): Array<ProposalInfo> {
@@ -110,17 +116,20 @@ export default {
         );
       }, 0);
 
-      const votingActivity =
-        (100 * (votesCountFor + votesCountAgainst)) / item.communityVotingPower;
-      const isQuorumReached =
-        votesCountFor + votesCountAgainst >
-        item.communityVotingPower * state.minimumVotingThresholdMultiplier;
+      const votingActivity = divide(
+        100 * (votesCountFor + votesCountAgainst),
+        item.communityVotingPower
+      );
+      const isQuorumReached = greaterThan(
+        votesCountFor + votesCountAgainst,
+        multiply(
+          item.communityVotingPower,
+          state.minimumVotingThresholdMultiplier
+        )
+      );
       const hasOutweight = votesCountFor > votesCountAgainst;
-      const isVoted = item.scores.all.some(
-        (score) =>
-          ![0, undefined].includes(
-            score[rootState.account?.currentAddress ?? 'missing_address']
-          )
+      const isVoted = item.votes.some((vote) =>
+        sameAddress(vote.voter, rootState.account?.currentAddress)
       );
       const hasEnoughVotingPowerToVote =
         isVoted || votingPowerSelf > state.powerNeededToBecomeAProposer;
@@ -151,12 +160,12 @@ export default {
 
     return (id: string) => source[id]?.votesCountAgainst ?? 0;
   },
-  proposalCommunityVotingPower(state, getters): (id: string) => number {
+  proposalCommunityVotingPower(state, getters): (id: string) => string {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
 
     return (id: string) => source[id]?.communityVotingPower ?? 0;
   },
-  proposalVotingActivity(state, getters): (id: string) => number {
+  proposalVotingActivity(state, getters): (id: string) => string {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
 
     return (id: string) => source[id]?.votingActivity ?? 0;
@@ -185,8 +194,11 @@ export default {
       return 'quorumNotReached';
     };
   },
-  minimumVotingThreshold(state): number {
-    return state.communityVotingPower * state.minimumVotingThresholdMultiplier;
+  minimumVotingThreshold(state): string {
+    return multiply(
+      state.communityVotingPower,
+      state.minimumVotingThresholdMultiplier
+    );
   },
   isAlreadyVoted(state, getters): (id: string) => boolean {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
@@ -199,6 +211,9 @@ export default {
     return (id: string) => source[id]?.hasEnoughVotingPowerToVote ?? false;
   },
   hasEnoughVotingPowerToBecomeAProposer(state): boolean {
-    return state.votingPowerSelf >= state.powerNeededToBecomeAProposer;
+    return greaterThanOrEqual(
+      state.votingPowerSelf,
+      state.powerNeededToBecomeAProposer
+    );
   }
 } as GetterTree<GovernanceStoreState, RootStoreState>;

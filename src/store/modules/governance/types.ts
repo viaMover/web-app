@@ -8,8 +8,8 @@ export type GovernanceStoreState = {
   items: Array<ProposalInfo>;
   cacheInfoMap: Record<string, CacheInfo>;
   cacheGenericInfoMap: Record<string, CacheInfo>;
-  communityVotingPower: number;
-  votingPowerSelf: number;
+  communityVotingPower: string;
+  votingPowerSelf: string;
   proposalDurationDays: number;
   powerNeededToBecomeAProposer: number;
   minimumVotingThresholdMultiplier: number;
@@ -30,8 +30,8 @@ export type ProposalCumulativeInfo = Record<
     votesCountAgainst: number;
     isSucceded: boolean;
     isQuorumReached: boolean;
-    communityVotingPower: number;
-    votingActivity: number;
+    communityVotingPower: string;
+    votingActivity: string;
     isVoted: boolean;
     hasEnoughVotingPowerToVote: boolean;
   }
