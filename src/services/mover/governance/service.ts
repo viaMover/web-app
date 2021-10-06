@@ -65,16 +65,16 @@ export const getProposal = async (id: string): Promise<ProposalWithVotes> => {
 
 export const getCommunityVotingPower = async (
   snapshot?: number
-): Promise<number> => {
+): Promise<string> => {
   return getVotingPower('all', snapshot);
 };
 
 export const getVotingPower = async (
   address: string,
   snapshot?: number
-): Promise<number> => {
+): Promise<string> => {
   console.log('TODO: just to use snapshot parameter', snapshot);
-  return Promise.resolve(123456);
+  return Promise.reject('not_implemented');
 };
 
 export const getSpaceList = snapshotClient.getSpaces;
