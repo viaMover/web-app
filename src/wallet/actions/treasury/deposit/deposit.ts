@@ -1,16 +1,17 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
-import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const depositCompound = async (
   inputAsset: SmallToken,
@@ -32,8 +33,6 @@ export const depositCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         await deposit(
           inputAsset,
@@ -46,7 +45,9 @@ export const depositCompound = async (
           changeStepToProcess
         );
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't treasury deposit: ${err}`);

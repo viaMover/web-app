@@ -1,4 +1,5 @@
 import { Network } from '@/utils/networkTypes';
+
 import { Token } from '../types';
 
 const assets = {

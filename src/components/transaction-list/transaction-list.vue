@@ -32,12 +32,13 @@ import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import TransactionGroup from './transaction-group.vue';
-import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
-import { Transaction, TransactionTypes } from '@/wallet/types';
 import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
-import { isValidTxHash, sameAddress } from '@/utils/address';
+import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
 import { tryToGetTransactionAssetSymbol } from '@/store/modules/account/utils/transactions';
+import { isValidTxHash, sameAddress } from '@/utils/address';
+import { Transaction, TransactionTypes } from '@/wallet/types';
+
+import TransactionGroup from './transaction-group.vue';
 
 export default Vue.extend({
   name: 'TransactionList',

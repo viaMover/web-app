@@ -24,12 +24,13 @@
 //
 import Vue from 'vue';
 
+import { isMobileDevice } from '@/utils/commonHelpers';
+
 import toggleEventBus, {
   subToggle,
   TogglePayload,
   unsubToggle
 } from './toggle-root';
-import { isMobileDevice } from '@/utils/commonHelpers';
 
 export default Vue.extend({
   name: 'ToggleAction',

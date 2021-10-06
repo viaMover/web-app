@@ -31,8 +31,9 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
+
+import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
 
 export default Vue.extend({
   name: 'TreasuryStats',

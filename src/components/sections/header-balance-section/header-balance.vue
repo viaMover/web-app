@@ -55,12 +55,13 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
 import { isFeatureEnabled } from '@/settings';
+import { formatToNative } from '@/utils/format';
 
-import { ArrowDownIcon } from '@/components/controls';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { ArrowDownIcon } from '@/components/controls';
 import { NavBar, NavBarItem } from '@/components/controls';
+
 import HeaderBalanceAvatar from './header-balance-avatar.vue';
 
 export default Vue.extend({

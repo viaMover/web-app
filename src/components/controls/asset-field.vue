@@ -67,17 +67,19 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
+
 import { BigNumber } from 'bignumber.js';
 import { Properties } from 'csstype';
 
-import { TokenWithBalance } from '@/wallet/types';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import { formatToDecimals } from '@/utils/format';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { TokenImage } from '@/components/tokens';
-import PriceInputField from './price-input-field.vue';
+
 import PlusIcon from './plus-icon.vue';
+import PriceInputField from './price-input-field.vue';
 
 export default Vue.extend({
   name: 'AssetField',

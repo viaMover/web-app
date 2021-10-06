@@ -6,7 +6,7 @@
     has-header
     header-html-class="swaps__wrapper-search-form"
     :modal-id="modalId"
-    show-close-button
+    :show-close-button="showCloseButton"
     @close="handleSelect(undefined)"
   >
     <template v-slot:header>
@@ -61,19 +61,20 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { StateChanger } from 'vue-infinite-loading';
+import { mapActions, mapGetters, mapState } from 'vuex';
+
 import filter from 'lodash-es/filter';
 
 import {
   Modal as ModalType,
   TModalPayload
 } from '@/store/modules/modals/types';
-
-import SearchModalTokenList from './search-modal-token-list.vue';
-import { Token, TokenWithBalance } from '@/wallet/types';
 import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
+import { Token, TokenWithBalance } from '@/wallet/types';
+
 import Modal from '../modal.vue';
-import { StateChanger } from 'vue-infinite-loading';
+import SearchModalTokenList from './search-modal-token-list.vue';
 
 export default Vue.extend({
   name: 'SearchModal',
@@ -92,7 +93,8 @@ export default Vue.extend({
       forcedTokenArrayData: [] as Array<Token>,
       globalTokensData: [] as Array<Token>,
       globalsTokensDataOffset: 0,
-      marketCapSortLimit: 1000000
+      marketCapSortLimit: 1000000,
+      showCloseButton: true
     };
   },
   computed: {
@@ -232,10 +234,12 @@ export default Vue.extend({
         });
       }, debounceTimeout);
     },
-    modalPayload(newVal: TModalPayload<ModalType.Swap> | undefined) {
+    modalPayload(newVal: TModalPayload<ModalType.SearchToken> | undefined) {
       if (newVal === undefined) {
         return;
       }
+
+      this.showCloseButton = !newVal.hideCloseButton;
 
       this.globalTokensData = [];
       this.globalsTokensDataOffset = 0;

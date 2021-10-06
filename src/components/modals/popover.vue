@@ -23,12 +23,14 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
+import { Placement } from '@popperjs/core/lib/enums';
+import offset from '@popperjs/core/lib/modifiers/offset';
 import {
   createPopper,
   Instance as Popper
 } from '@popperjs/core/lib/popper-lite';
-import offset from '@popperjs/core/lib/modifiers/offset';
-import { Placement } from '@popperjs/core/lib/enums';
+
 import { subToggle, unsubToggle } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({

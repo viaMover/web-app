@@ -21,10 +21,21 @@
       >
         {{ buttonText }}
       </action-button>
-      <close-button
-        :is-black="isBlackCloseBtn"
-        @close="handleCloseButton"
-      ></close-button>
+      <action-button
+        button-class="close-button button-active"
+        @button-click="handleCloseButton"
+      >
+        <img
+          v-if="isBlackCloseBtn"
+          :alt="$t('icon.txtCloseIconAlt')"
+          src="@/assets/images/back_cross.svg"
+        />
+        <img
+          v-else
+          :alt="$t('icon.txtCloseIconAlt')"
+          src="@/assets/images/cross.svg"
+        />
+      </action-button>
     </div>
   </div>
 </template>
@@ -32,17 +43,15 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
+import { ActionButton } from '@/components/buttons';
 import { PictureDescriptor } from '@/components/html5';
-
-import { ActionButton, CloseButton } from '@/components/buttons';
 import CustomPicture from '@/components/html5/custom-picture.vue';
 
 export default Vue.extend({
   name: 'Card',
   components: {
     CustomPicture,
-    ActionButton,
-    CloseButton
+    ActionButton
   },
   props: {
     title: {

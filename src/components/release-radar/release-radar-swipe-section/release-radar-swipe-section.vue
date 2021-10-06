@@ -38,11 +38,12 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { Swiper } from '@/components/swiper';
-import ReleaseRadarPageSection from '@/components/release-radar/release-radar-page-section.vue';
-import ReleaseRadarSwipeSectionItem from './release-radar-swipe-section-item.vue';
-
 import { Asset } from '@/store/modules/radar/types';
+
+import ReleaseRadarPageSection from '@/components/release-radar/release-radar-page-section.vue';
+import { Swiper } from '@/components/swiper';
+
+import ReleaseRadarSwipeSectionItem from './release-radar-swipe-section-item.vue';
 
 export default Vue.extend({
   name: 'ReleaseRadarSwipeSection',

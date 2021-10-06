@@ -17,6 +17,7 @@ import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
 
 import { NftAsset } from '@/store/modules/nft/types';
+
 import { CustomPicture } from '@/components/html5';
 
 export default Vue.extend({

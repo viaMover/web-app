@@ -11,8 +11,9 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import dayjs from 'dayjs';
 import { mapState } from 'vuex';
+
+import dayjs from 'dayjs';
 
 import { LineChart } from '@/components/charts';
 

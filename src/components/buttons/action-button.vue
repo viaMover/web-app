@@ -1,6 +1,6 @@
 <template>
   <button
-    :class="[buttonClass]"
+    :class="[classes]"
     :disabled="disabled"
     :style="customStyle"
     @click.prevent.stop="handleClick"
@@ -8,12 +8,13 @@
     <template v-if="text">
       {{ text }}
     </template>
-    <slot></slot>
+    <slot v-else></slot>
   </button>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import { Properties as CssProperties } from 'csstype';
 
 export default Vue.extend({
@@ -34,6 +35,11 @@ export default Vue.extend({
     customStyle: {
       type: Object as PropType<CssProperties>,
       default: undefined
+    }
+  },
+  computed: {
+    classes(): string {
+      return `${this.buttonClass} ${this.disabled ? 'disabled' : ''}`;
     }
   },
   methods: {

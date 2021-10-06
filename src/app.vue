@@ -49,20 +49,23 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
-import Web3ModalVue from 'web3modal-vue';
+
 import MewConnect from '@myetherwallet/mewconnect-web-client';
 import Portis from '@portis/web3';
+import Web3ModalVue from 'web3modal-vue';
+
+import { greaterThan } from '@/utils/bigmath';
+import { formatToNative } from '@/utils/format';
+import Preload from '@/views/preload.vue';
 
 import '@/styles/_common.less';
 import '@/styles/_modal.less';
 import '@/styles/_execute_modal.less';
 import '@/styles/_search_modal.less';
-import Preload from '@/views/preload.vue';
-import { greaterThan } from '@/utils/bigmath';
-import { formatToNative } from '@/utils/format';
+
 import { APIKeys } from './settings';
-import { InitCallbacks } from './web3/callbacks';
 import { InitWalletPayload } from './store/modules/account/actions/wallet';
+import { InitCallbacks } from './web3/callbacks';
 
 export default Vue.extend({
   name: 'App',

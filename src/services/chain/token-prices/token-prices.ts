@@ -2,7 +2,6 @@ import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
 import { add, divide, fromWei, multiply } from '@/utils/bigmath';
-
 import { Network } from '@/utils/networkTypes';
 import {
   ERC20_ABI,

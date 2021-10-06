@@ -1,14 +1,15 @@
-import { toWei, floorDivide } from '@/utils/bigmath';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { Network } from '@/utils/networkTypes';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
 import {
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export type CompoundEstimateResponse = {
   error: boolean;

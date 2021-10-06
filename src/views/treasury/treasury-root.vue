@@ -4,6 +4,7 @@
     has-left-rail
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="smart-treasury"
+    @back="handleClose"
     @close="handleClose"
   >
     <template v-slot:left-rail>
@@ -29,16 +30,16 @@ import { mapGetters } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  TreasuryOverview,
-  TreasuryStats,
-  TreasuryReservedAssets
-} from '@/components/treasury';
-import {
   SearchModal,
-  TreasuryIncreaseBoostModal,
+  TreasuryClaimAndBurnModal,
   TreasuryDecreaseBoostModal,
-  TreasuryClaimAndBurnModal
+  TreasuryIncreaseBoostModal
 } from '@/components/modals';
+import {
+  TreasuryOverview,
+  TreasuryReservedAssets,
+  TreasuryStats
+} from '@/components/treasury';
 
 import '@/styles/_treasury.less';
 import '@/styles/_general.less';

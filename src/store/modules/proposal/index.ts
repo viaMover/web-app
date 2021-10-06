@@ -1,10 +1,11 @@
 import { Module } from 'vuex';
 
-import actions from './actions';
-import mutations from './mutations';
-import getters from './getters';
-import { ProposalStoreState } from './types';
 import { RootStoreState } from '@/store/types';
+
+import actions from './actions';
+import getters from './getters';
+import mutations from './mutations';
+import { ProposalStoreState } from './types';
 
 export default {
   namespaced: true,

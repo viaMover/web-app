@@ -60,13 +60,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+
 import { Properties } from 'csstype';
 
 import { Asset } from '@/store/modules/shop/types';
 
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import { EmojiTextButton, ActionButton } from '@/components/buttons';
+import { ActionButton, EmojiTextButton } from '@/components/buttons';
 import { Step } from '@/components/controls/form-loader';
+import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 
 export default Vue.extend({
   name: 'NibbleShopView',

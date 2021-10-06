@@ -1,19 +1,21 @@
-import { needApprove } from '../approve/needApprove';
-import { toWei, floorDivide } from '@/utils/bigmath';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { Network } from '@/utils/networkTypes';
 import { BigNumber } from 'bignumber.js';
-import {
-  getPureEthAddress,
-  convertStringToHexWithPrefix
-} from '@/utils/address';
-import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
+import {
+  convertStringToHexWithPrefix,
+  getPureEthAddress
+} from '@/utils/address';
+import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
 import { estimateApprove } from '../approve/approveEstimate';
+import { needApprove } from '../approve/needApprove';
 
 export type CompoudEstimateResponse = {
   error: boolean;

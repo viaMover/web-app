@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
+
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
@@ -62,11 +63,35 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        path: 'empty',
-        name: 'savings-empty',
+        path: '',
+        name: 'savings-manage',
         component: () =>
           import(
-            /* webpackChunkName: "savings" */ '@/views/savings/savings-empty.vue'
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
+          )
+      },
+      {
+        path: 'deposit',
+        name: 'savings-deposit',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit-wrapper.vue'
+          )
+      },
+      {
+        path: 'withdraw',
+        name: 'savings-withdraw',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw-wrapper.vue'
+          )
+      },
+      {
+        path: 'analytics',
+        name: 'savings-global-analytics',
+        component: () =>
+          import(
+            /* webpackChunkName: "savings"*/ '@/views/savings/savings-global-analytics.vue'
           )
       },
       {
@@ -75,14 +100,6 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
-          )
-      },
-      {
-        path: '',
-        name: 'savings-manage',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage.vue'
           )
       }
     ]

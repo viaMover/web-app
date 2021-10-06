@@ -1,3 +1,6 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { fromWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
@@ -5,8 +8,6 @@ import {
   BALANCE_CHECKER_ADDRESS
 } from '@/wallet/references/data';
 import { Token, TokenWithBalance, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
 
 const ETH_ADDRESS = '0x0000000000000000000000000000000000000000';
 

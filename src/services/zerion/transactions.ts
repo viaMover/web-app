@@ -1,19 +1,20 @@
+import * as Sentry from '@sentry/vue';
+import find from 'lodash-es/find';
+
+import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
+import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
 import {
   HOLY_HAND_ADDRESS,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
-import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
-import { isError } from './../responses';
-import { TransactionMoveTypeData } from './../mover/transactions/types';
-import { getMoverTransactionsTypes } from './../mover/transactions/service';
 import { FeeData, TransactionStatus, TransactionUnknown } from '@/wallet/types';
-import { ZerionTransaction, ZerionTransactionsReceived } from './responses';
-import find from 'lodash-es/find';
-
 import { Transaction, TransactionTypes } from '@/wallet/types';
-import { sameAddress } from '@/utils/address';
-import * as Sentry from '@sentry/vue';
+
+import { getMoverTransactionsTypes } from './../mover/transactions/service';
+import { TransactionMoveTypeData } from './../mover/transactions/types';
+import { isError } from './../responses';
+import { ZerionTransaction, ZerionTransactionsReceived } from './responses';
 
 const mapStatus = (status: string): TransactionStatus => {
   switch (status) {

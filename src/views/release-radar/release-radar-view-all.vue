@@ -39,16 +39,16 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { Token } from '@/wallet/types';
 import { Modal as ModalType } from '@/store/modules/modals/types';
+import { Token } from '@/wallet/types';
 
 import { ContentWrapper } from '@/components/layout';
-import {
-  ReleaseRadarSwipeSection,
-  ReleaseRadarTokenOfTheDay,
-  ReleaseRadarLiveUpdates
-} from '@/components/release-radar';
 import SearchModal from '@/components/modals/search-modal/search-modal.vue';
+import {
+  ReleaseRadarLiveUpdates,
+  ReleaseRadarSwipeSection,
+  ReleaseRadarTokenOfTheDay
+} from '@/components/release-radar';
 
 export default Vue.extend({
   name: 'ReleaseRadarViewAll',

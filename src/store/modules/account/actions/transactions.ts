@@ -1,7 +1,8 @@
-import { Transaction } from '@/wallet/types';
-import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
+
+import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
+import { Transaction } from '@/wallet/types';
 
 export default {
   addTransaction({ commit }, transaction: Transaction): void {

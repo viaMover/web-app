@@ -8,9 +8,10 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { formatPictureSources } from './utils';
-import { PictureSourceDescriptor } from './types';
 import { Properties } from 'csstype';
+
+import { PictureSourceDescriptor } from './types';
+import { formatPictureSources } from './utils';
 
 export default Vue.extend({
   name: 'CustomPicture',

@@ -14,10 +14,10 @@
       :style="dimmerStyles"
       @click="handleDimmerClick"
     />
-    <close-button
+    <back-button
       v-if="showCloseButton"
       class="modal__close-button"
-      is-black
+      mode="CLOSE-BLACK"
       :style="buttonStyles"
       @close="handleClose"
     />
@@ -53,16 +53,17 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapActions, mapState } from 'vuex';
+
 import { Properties as CssProperties } from 'csstype';
 
 import { TModalKey } from '@/store/modules/modals/types';
 
-import { CloseButton } from '@/components/buttons';
+import { BackButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'Modal',
   components: {
-    CloseButton
+    BackButton
   },
   props: {
     modalId: {

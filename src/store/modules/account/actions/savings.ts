@@ -1,10 +1,12 @@
-import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
-import { RootStoreState } from '@/store/types';
-import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
-import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
-import { isError } from '@/services/responses';
+
 import * as Sentry from '@sentry/vue';
+
+import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
+import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
+import { isError } from '@/services/responses';
+import { AccountStoreState } from '@/store/modules/account/types';
+import { RootStoreState } from '@/store/types';
 
 export type SavingsGetReceiptPayload = {
   year: number;
