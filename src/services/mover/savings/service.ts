@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-import { Result } from '../../responses';
-import { baseUrl } from '../consts';
 import {
   SavingsInfo,
   SavingsInfoResponse,
   SavingsReceipt,
   SavingsReceiptResponse
 } from '@/services/mover/savings/types';
+
+import { Result } from '../../responses';
+import { baseUrl } from '../consts';
 
 export const getSavingsInfo = async (
   address: string

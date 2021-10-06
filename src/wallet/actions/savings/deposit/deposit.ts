@@ -1,21 +1,23 @@
+import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
 import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { BigNumber } from 'bignumber.js';
 import { multiply, toWei } from '@/utils/bigmath';
-import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { TransferData } from '@/services/0x/api';
-import Web3 from 'web3';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import {
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
 import { depositSubsidized } from './depositSubsidized';
 
 export const depositCompound = async (
@@ -26,11 +28,11 @@ export const depositCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
-  swapGasLimit: string,
-  approveGasLimit: string,
-  gasPriceInGwei: string,
   useSubsidized: boolean,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  actionGasLimit: string,
+  approveGasLimit: string,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
@@ -41,8 +43,6 @@ export const depositCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         if (useSubsidized) {
           await depositSubsidized(
@@ -64,13 +64,15 @@ export const depositCompound = async (
             network,
             web3,
             accountAddress,
-            swapGasLimit,
-            gasPriceInGwei,
-            changeStepToProcess
+            changeStepToProcess,
+            actionGasLimit,
+            gasPriceInGwei
           );
         }
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't savings deposit: ${err}`);
@@ -86,9 +88,9 @@ export const deposit = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
+  changeStepToProcess: () => Promise<void>,
   gasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  gasPriceInGwei?: string
 ): Promise<void> => {
   console.log('Executing savings deposit...');
 
@@ -120,9 +122,11 @@ export const deposit = async (
       from: accountAddress,
       value: value,
       gas: web3.utils.toBN(gasLimit).toNumber(),
-      gasPrice: web3.utils
-        .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-        .toString()
+      gasPrice: gasPriceInGwei
+        ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+        : undefined,
+      maxFeePerGas: gasPriceInGwei ? undefined : null,
+      maxPrioiryFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);

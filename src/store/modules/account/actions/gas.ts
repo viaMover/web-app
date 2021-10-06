@@ -1,8 +1,10 @@
-import { getGasPrices } from '@/wallet/gas';
-import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
-import { RootStoreState } from '@/store/types';
+
 import * as Sentry from '@sentry/vue';
+
+import { AccountStoreState } from '@/store/modules/account/types';
+import { RootStoreState } from '@/store/types';
+import { getGasPrices } from '@/wallet/gas';
 
 const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload

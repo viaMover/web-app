@@ -1,16 +1,18 @@
+import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
-import * as Sentry from '@sentry/vue';
 
-import { TransactionsParams } from '@/wallet/types';
+import { floorDivide, multiply, sub } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   NFT_UNEXPECTED_MOVE_ABI,
   NFT_UNEXPECTED_MOVE_ADDRESS
 } from '@/wallet/references/data';
-import { floorDivide, sub, multiply } from '@/utils/bigmath';
-import { UnexpectedMoveData } from './types';
+import { TransactionsParams } from '@/wallet/types';
+
 import { Step } from '@/components/controls/form-loader/types';
+
+import { UnexpectedMoveData } from './types';
 
 export const getUnexpectedMoveData = async (
   accountAddress: string,

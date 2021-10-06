@@ -25,10 +25,11 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import InfiniteLoading, { StateChanger } from 'vue-infinite-loading';
+
+import { Token, TokenWithBalance } from '@/wallet/types';
 
 import SearchModalTokenItem from './search-modal-token-item.vue';
-import { Token, TokenWithBalance } from '@/wallet/types';
-import InfiniteLoading, { StateChanger } from 'vue-infinite-loading';
 
 export default Vue.extend({
   name: 'SearchModalTokenList',

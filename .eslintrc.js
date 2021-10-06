@@ -11,12 +11,25 @@ module.exports = {
     '@vue/prettier/@typescript-eslint',
     'plugin:@intlify/vue-i18n/recommended'
   ],
-  plugins: ['html'],
+  plugins: ['html', 'simple-import-sort'],
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2020
   },
   rules: {
+    'simple-import-sort/imports': [
+      'error',
+      {
+        groups: [
+          ['^\\u0000'],
+          ['^vue'],
+          ['^@?\\w'],
+          ['^@/\\w'],
+          ['^@/components'],
+          ['^.+\\.less$']
+        ]
+      }
+    ],
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     quotes: [

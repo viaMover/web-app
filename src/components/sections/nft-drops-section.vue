@@ -29,9 +29,10 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import SectionBase from './section-base/section-base.vue';
-import Swiper from '@/components/swiper/swiper.vue';
 import { NftAssetCardMini } from '@/components/nft';
+import Swiper from '@/components/swiper/swiper.vue';
+
+import SectionBase from './section-base/section-base.vue';
 
 export default Vue.extend({
   name: 'NftDropsSection',

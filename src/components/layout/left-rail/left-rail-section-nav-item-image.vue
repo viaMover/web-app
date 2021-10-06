@@ -23,6 +23,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
+
 import { Properties } from 'csstype';
 
 import '@/styles/_left_rail_section_nav_item.less';

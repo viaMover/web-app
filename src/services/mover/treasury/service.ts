@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-import { Result } from '../../responses';
-import { baseUrl } from '../consts';
 import {
   TreasuryInfo,
   TreasuryInfoResponse,
   TreasuryReceipt,
   TreasuryReceiptResponse
 } from '@/services/mover/treasury/types';
+
+import { Result } from '../../responses';
+import { baseUrl } from '../consts';
 
 export const getTreasuryInfo = async (
   address: string

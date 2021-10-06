@@ -4,13 +4,13 @@ import { AbiItem } from 'web3-utils';
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   SMART_TREASURY_ABI,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const withdrawCompound = async (
   outputAsset: SmallToken,

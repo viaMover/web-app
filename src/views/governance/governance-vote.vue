@@ -20,12 +20,12 @@ import Vue from 'vue';
 
 import { formatToNative } from '@/utils/format';
 
-import { SecondaryPage } from '@/components/layout';
+import { ActionButton } from '@/components/buttons';
 import {
   GovernanceOverviewSection,
   GovernanceOverviewSectionItem
 } from '@/components/governance';
-import { ActionButton } from '@/components/buttons';
+import { SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceVote',

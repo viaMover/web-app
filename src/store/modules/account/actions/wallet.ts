@@ -1,29 +1,21 @@
-import * as Sentry from '@sentry/vue';
-import {
-  initOffchainExplorer,
-  clearOffchainExplorer
-} from '@/wallet/offchainExplorer';
-import { InitExplorer } from '@/services/zerion/explorer';
 import { ActionTree } from 'vuex';
-import { RootStoreState } from '@/store/types';
-import {
-  AccountStoreState,
-  AccountData,
-  ProviderData,
-  Avatar
-} from './../types';
-import { Network } from '@/utils/networkTypes';
-import { provider } from 'web3-core';
+
+import * as Sentry from '@sentry/vue';
+import sample from 'lodash-es/sample';
 import Web3 from 'web3';
-import { TokenWithBalance, Transaction } from '@/wallet/types';
-import { getTestnetAssets } from '@/wallet/references/testnetAssets';
+import { provider } from 'web3-core';
+
+import {
+  bootIntercomSession,
+  disconnectIntercomSession
+} from '@/router/intercom-utils';
 import { getWalletTokens } from '@/services/balancer';
-import { getAllTokens } from '@/wallet/allTokens';
 import {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/chain';
+import { InitExplorer } from '@/services/zerion/explorer';
 import {
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
@@ -31,13 +23,23 @@ import {
   setAvatarToPersist,
   setIsOlympusAvatarKnownToPersist
 } from '@/settings';
-import sample from 'lodash-es/sample';
-import {
-  bootIntercomSession,
-  disconnectIntercomSession
-} from '@/router/intercom-utils';
+import { RootStoreState } from '@/store/types';
+import { Network } from '@/utils/networkTypes';
+import { getAllTokens } from '@/wallet/allTokens';
 import { getEthereumPrice } from '@/wallet/ethPrice';
+import {
+  clearOffchainExplorer,
+  initOffchainExplorer
+} from '@/wallet/offchainExplorer';
+import { getTestnetAssets } from '@/wallet/references/testnetAssets';
+import { TokenWithBalance, Transaction } from '@/wallet/types';
 
+import {
+  AccountData,
+  AccountStoreState,
+  Avatar,
+  ProviderData
+} from './../types';
 import allAvatars from '@/../data/avatars.json';
 import { getOlympusAvatar, isOlympusAvatar } from '@/../data/olympus-avatar';
 

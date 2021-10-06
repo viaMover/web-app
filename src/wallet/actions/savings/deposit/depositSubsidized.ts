@@ -1,22 +1,23 @@
-import { waitOffchainTransactionReceipt } from './../../../offchainExplorer';
-import { currentTimestamp } from './../../../../utils/time';
-import { Transaction } from './../../../types';
+import Web3 from 'web3';
+
+import { TransferData } from '@/services/0x/api';
 import store from '@/store/index';
 import { toWei } from '@/utils/bigmath';
-import { createSavingsDepositActionString } from '@/wallet/actions/subsidized';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionTypes } from '@/wallet/types';
-import { TransferData } from '@/services/0x/api';
-import Web3 from 'web3';
+import { currentTimestamp } from '@/utils/time';
+import { createSavingsDepositActionString } from '@/wallet/actions/subsidized';
 import {
   ACTION,
   sendSubsidizedRequest,
   SubsidizedRequestError
 } from '@/wallet/actions/subsidized';
+import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
-  HOLY_SAVINGS_POOL_ADDRESS,
-  HOLY_HAND_ADDRESS
+  HOLY_HAND_ADDRESS,
+  HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionTypes } from '@/wallet/types';
+import { Transaction } from '@/wallet/types';
 
 export const depositSubsidized = async (
   inputAsset: SmallToken,

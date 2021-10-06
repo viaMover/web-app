@@ -23,18 +23,18 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapState } from 'vuex';
 
-import { Transaction, TransactionTypes } from '@/wallet/types';
+import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { fromWei, multiply } from '@/utils/bigmath';
 import {
   formatToDecimals,
   formatToNative,
   getSignIfNeeded
 } from '@/utils/format';
+import { Transaction, TransactionTypes } from '@/wallet/types';
 
 import { TokenImage } from '@/components/tokens';
-import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'TransactionItem',

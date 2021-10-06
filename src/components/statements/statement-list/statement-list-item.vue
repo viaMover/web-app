@@ -1,8 +1,8 @@
 <template>
-  <li>
-    <p class="description">
+  <li class="item">
+    <h3 class="description">
       <slot name="description">{{ description }}</slot>
-    </p>
+    </h3>
     <span class="value">
       <slot>{{ value }}</slot>
     </span>

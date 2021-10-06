@@ -1,17 +1,16 @@
-import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
-import Web3 from 'web3';
 import Fuse from 'fuse.js';
+import Web3 from 'web3';
 
-import { NetworkInfo } from '@/utils/networkTypes';
-import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
-
-import { Explorer } from '@/services/zerion/explorer';
 import {
   SavingsInfo,
   SavingsReceipt,
   TreasuryInfo,
   TreasuryReceipt
 } from '@/services/mover';
+import { Explorer } from '@/services/zerion/explorer';
+import { NetworkInfo } from '@/utils/networkTypes';
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 export type ChartPair = [number, number];
 

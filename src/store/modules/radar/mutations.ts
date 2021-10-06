@@ -1,4 +1,5 @@
 import { MutationTree } from 'vuex';
+
 import { Asset, RadarStoreState } from './types';
 
 export default {
