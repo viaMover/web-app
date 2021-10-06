@@ -5,11 +5,14 @@
     </template>
 
     <div class="content">
-      <markdown
-        v-if="!isLoading"
-        :text="proposal ? proposal.proposal.body : ''"
-      />
-      <pu-skeleton v-else :count="8"></pu-skeleton>
+      <template v-if="!isLoading">
+        <markdown
+          v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
+          :text="proposal ? proposal.proposal.body : ''"
+        />
+        <p v-else>{{ proposal ? proposal.proposal.body : '' }}</p>
+      </template>
+      <pu-skeleton v-else :count="8" />
     </div>
   </secondary-page>
 </template>
@@ -19,6 +22,7 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 
 import { ProposalWithVotes } from '@/services/mover/governance';
+import { isFeatureEnabled } from '@/settings';
 
 import { SecondaryPage, Markdown } from '@/components/layout';
 
@@ -40,6 +44,7 @@ export default Vue.extend({
     }
   },
   methods: {
+    isFeatureEnabled,
     handleClose(): void {
       this.$router.back();
     }

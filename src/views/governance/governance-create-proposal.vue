@@ -72,6 +72,7 @@
             <label>
               {{ $t('governance.lblProposalDescription') }}
               <span
+                v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
                 class="toggle-preview"
                 :title="$t('governance.txtTogglePreview')"
                 @click.prevent.stop="togglePreview"
@@ -153,6 +154,7 @@ import {
   CreateProposalResponse,
   GovernanceApiError
 } from '@/services/mover/governance';
+import { isFeatureEnabled } from '@/settings';
 
 import {
   SecondaryPage,
@@ -206,6 +208,7 @@ export default Vue.extend({
       createProposal: 'createProposal',
       loadProposalInfo: 'loadProposalInfo'
     }),
+    isFeatureEnabled,
     handleBack(): void {
       this.$router.replace({ name: 'governance-view-all' });
     },
