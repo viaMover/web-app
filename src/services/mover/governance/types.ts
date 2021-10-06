@@ -66,7 +66,7 @@ export type ProposalInfo = ProposalWithVotes & {
     all: Scores;
     self: Scores;
   };
-  communityVotingPower: number;
+  communityVotingPower: string;
 };
 
 export interface VoteParams {
