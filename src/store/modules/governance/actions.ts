@@ -6,10 +6,11 @@ import { RootStoreState } from '@/store/types';
 import {
   createProposal,
   CreateProposalParams,
+  CreateProposalResponse,
   getCommunityVotingPower,
+  getLastProposalId,
   getProposal,
   getProposalIdsList,
-  getLastProposalId,
   getScores,
   getSpace,
   getVotingPower,
@@ -19,16 +20,15 @@ import {
   Scores,
   vote,
   VoteParams,
-  VoteResponse,
-  CreateProposalResponse
+  VoteResponse
 } from '@/services/mover/governance';
 import { getCommunityVotingPower as getCommunityVotingPowerFromChain } from '@/services/chain';
 
 import {
   CreateProposalPayload,
+  GovernanceStoreState,
   LoadProposalInfoPayload,
-  LoadScoresPayload,
-  GovernanceStoreState
+  LoadScoresPayload
 } from './types';
 import { isValidCacheItem } from './utils';
 
@@ -66,6 +66,7 @@ export default {
       commit('setIsLoadingLastProposal', false);
       return result;
     } catch (error) {
+      console.error('failed to get minimal info', error);
       Sentry.captureException(error);
       commit('setIsLoadingLastProposal', false);
       return undefined;
@@ -108,6 +109,7 @@ export default {
         commit('setIsLoading', false);
         return result;
       } catch (error) {
+        console.error('failed to get info', error);
         Sentry.captureException(error);
         commit('setError', error);
         commit('setIsLoading', false);
@@ -149,7 +151,8 @@ export default {
         );
       }
 
-      const communityVotingPowerPromise = getCommunityVotingPower(
+      const communityVotingPowerPromise = dispatch(
+        'loadCommunityVotingPower',
         Number.parseInt(proposalWithVotes.proposal.snapshot)
       );
 
@@ -193,6 +196,8 @@ export default {
 
       return state.items[existingItemIdx];
     } catch (error) {
+      console.error('failed to get single proposal', error);
+
       Sentry.captureException(error);
       return undefined;
     }
@@ -284,6 +289,7 @@ export default {
         snapshot
       );
     } catch (error) {
+      console.debug('failed to load scores', error);
       Sentry.captureException(error);
       return new Array(proposal.strategies.length).fill({});
     }
@@ -308,16 +314,17 @@ export default {
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
       commit('setCommunityVotingPower', communityVotingPower);
     } catch (error) {
+      console.debug('failed to load power info', error);
       Sentry.captureException(error);
       throw error;
     }
   },
-  async loadCommunityVotingPower({ commit, rootState }): Promise<string> {
+  async loadCommunityVotingPower(
+    { rootState },
+    snapshot?: number
+  ): Promise<string> {
     try {
-      const communityVotingPower = await getCommunityVotingPower();
-
-      commit('setCommunityVotingPower', communityVotingPower);
-      return communityVotingPower;
+      return await getCommunityVotingPower(snapshot);
     } catch (error) {
       Sentry.captureException(error);
       Sentry.addBreadcrumb({
@@ -337,14 +344,14 @@ export default {
           throw new Error('failed to get web3 provider');
         }
 
-        const communityVotingPower = await getCommunityVotingPowerFromChain(
+        return await getCommunityVotingPowerFromChain(
           rootState.account.currentAddress,
           rootState.account.networkInfo.network,
-          rootState.account.provider.web3
+          rootState.account.provider.web3,
+          snapshot
         );
-        commit('setCommunityVotingPower', communityVotingPower);
-        return communityVotingPower;
       } catch (fallbackError) {
+        console.debug('failed to load communityVotingPower', fallbackError);
         Sentry.captureException(fallbackError);
         throw error;
       }
@@ -414,6 +421,7 @@ export default {
 
         return votingPowerSelf;
       } catch (fallbackError) {
+        console.debug('failed to load votingPowerSelf', fallbackError);
         Sentry.captureException(fallbackError);
         throw fallbackError;
       }

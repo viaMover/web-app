@@ -13,7 +13,8 @@ import { add, fromWei, multiply } from '@/utils/bigmath';
 export const getCommunityVotingPower = async (
   accountAddress: string,
   network: Network,
-  web3: Web3
+  web3: Web3,
+  snapshot?: number
 ): Promise<string> => {
   const transactionParams: TransactionsParams = {
     from: accountAddress
@@ -26,7 +27,7 @@ export const getCommunityVotingPower = async (
   );
   const moveTotalSupplyInWei = await moveToken.methods
     .totalSupply()
-    .call(transactionParams);
+    .call(transactionParams, snapshot);
 
   const sushiPoolAddress = SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network);
   const sushiPool = new web3.eth.Contract(
@@ -35,7 +36,7 @@ export const getCommunityVotingPower = async (
   );
   const sushiReservesInWei = await sushiPool.methods
     .getReserves()
-    .call(transactionParams);
+    .call(transactionParams, snapshot);
 
   const moveTotalSupply = fromWei(moveTotalSupplyInWei, 18);
   const sushiReserveMovePart = fromWei(sushiReservesInWei._reserve0, 18);
