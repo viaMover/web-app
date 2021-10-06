@@ -1,6 +1,4 @@
-import * as Sentry from '@sentry/vue';
-
-import { isError, isSuccess } from './../services/responses';
+import { isError, isSuccess } from '@/services/responses';
 import { Network } from '@/utils/networkTypes';
 import { getGasPrices as getGasPricesFromEtherscan } from './../services/etherscan/gas';
 import { GasData } from './types';

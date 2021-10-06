@@ -34,7 +34,7 @@ import dayjs from 'dayjs';
 
 import TransactionGroup from './transaction-group.vue';
 import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
-import { Transaction, TransactionTypes } from '@/wallet/types';
+import { Transaction } from '@/wallet/types';
 import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { isValidTxHash, sameAddress } from '@/utils/address';
 import { tryToGetTransactionAssetSymbol } from '@/store/modules/account/utils/transactions';

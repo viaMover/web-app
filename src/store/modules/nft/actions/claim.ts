@@ -40,10 +40,7 @@ export default {
       greaterThan(currentTimestamp(), state.OlympusStartTs)
     );
   },
-  async claimOlympus(
-    { rootState, state },
-    payload: ChangePayload
-  ): Promise<void> {
+  async claimOlympus({ rootState }, payload: ChangePayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
     }
@@ -58,10 +55,7 @@ export default {
       payload.changeStep
     );
   },
-  async claimVaults(
-    { rootState, state },
-    payload: ChangePayload
-  ): Promise<void> {
+  async claimVaults({ rootState }, payload: ChangePayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
     }
@@ -76,7 +70,7 @@ export default {
       payload.changeStep
     );
   },
-  async claimDice({ rootState, state }, payload: DicePayload): Promise<void> {
+  async claimDice({ rootState }, payload: DicePayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
     }

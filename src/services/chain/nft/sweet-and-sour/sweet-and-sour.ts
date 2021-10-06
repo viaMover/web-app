@@ -9,7 +9,6 @@ import {
   NFT_SWEET_AND_SOUR_ABI,
   NFT_SWEET_AND_SOUR_ADDRESS
 } from '@/wallet/references/data';
-import store from '@/store/index';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Step } from '@/components/controls/form-loader/types';
 
@@ -62,7 +61,7 @@ export const claimSweetAndSour = async (
     from: accountAddress
   };
 
-  let gasLimit = undefined;
+  let gasLimit;
   try {
     const gasLimitObj = await sweetAndSour.methods
       .claimNFT(signature)
@@ -104,7 +103,7 @@ export const claimSweetAndSour = async (
         console.log(`Claim txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: unknown) => {
         console.log(`Claim txn receipt: ${receipt}`);
         resolve();
       })

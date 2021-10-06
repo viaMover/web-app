@@ -1,5 +1,5 @@
-import { getTransactionReceiptMined } from './../web3/transaction';
-import { Network } from './../utils/networkTypes';
+import { getTransactionReceiptMined } from '@/web3/transaction';
+import { Network } from '@/utils/networkTypes';
 import { CheckSubsidizedInQueueTx, QUEUED_STATUS } from './actions/subsidized';
 import { Transaction } from './types';
 import store from '@/store/index';
@@ -10,7 +10,7 @@ export type OffchainExplorerHanler = ReturnType<typeof setTimeout>;
 const REFRESH_OFFCHAIN_TRANSACTIONS_FREQUENCY = 10000; // 10 sec
 const REFRESH_OFFCHAIN_RECEIPT_TIMEOUT = 10000;
 
-export const initOffchainExplorer = (network: Network) => {
+export const initOffchainExplorer = (network: Network): void => {
   const refreshOffchainTxns = async () => {
     console.log('[offchainExplorer] Refreshing offchain txns...');
 
@@ -102,7 +102,7 @@ export const initOffchainExplorer = (network: Network) => {
   refreshOffchainTxns();
 };
 
-export const clearOffchainExplorer = () => {
+export const clearOffchainExplorer = (): void => {
   const offchainTransactionsHandle =
     store.getters['account/getOffchainExplorerHanlder'];
   if (offchainTransactionsHandle !== undefined) {

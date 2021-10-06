@@ -116,7 +116,7 @@ import {
 import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { sameAddress } from '@/utils/address';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import { Properties as CssProperties } from 'csstype';
 import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
