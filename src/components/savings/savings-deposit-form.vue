@@ -83,7 +83,12 @@
           :disabled="!isButtonActive"
           @button-click="handleTxReview"
         >
-          {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
+          <div v-if="isLoading || isProcessing" class="loader-icon">
+            <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
+          </div>
+          <template v-else>
+            {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
+          </template>
         </action-button>
       </form>
     </div>
@@ -161,8 +166,9 @@ export default Vue.extend({
       usdcAmount: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
-      isLoading: false,
-      process: false
+      isLoading: true,
+      isProcessing: false,
+      tokenSelectedByUser: false
     };
   },
   computed: {
@@ -295,11 +301,24 @@ export default Vue.extend({
       return `${formatToNative(boughtUSDC)} USDC`;
     }
   },
-  mounted() {
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.asset = eth;
-      this.calcTokenMaxInUSDC(eth);
+  watch: {
+    tokens: {
+      immediate: true,
+      handler(newVal: Array<TokenWithBalance>) {
+        try {
+          if (!this.tokenSelectedByUser) {
+            const eth = newVal.find(
+              (t: TokenWithBalance) => t.address === 'eth'
+            );
+            if (eth) {
+              this.asset = eth;
+              this.calcTokenMaxInUSDC(eth);
+            }
+          }
+        } finally {
+          this.isLoading = false;
+        }
+      }
     }
   },
   methods: {
@@ -443,7 +462,7 @@ export default Vue.extend({
       let subsidizedTxPrice = undefined;
       let actionGasLimit = '0';
       let approveGasLimit = '0';
-      this.process = true;
+      this.isProcessing = true;
       try {
         const gasLimits = await this.estimateAction(
           this.amount,
@@ -466,7 +485,7 @@ export default Vue.extend({
         console.error(err);
         Sentry.captureException("can't estimate savings deposit for subs");
       } finally {
-        this.process = false;
+        this.isProcessing = false;
       }
 
       this.$emit('tx-review', {
@@ -535,6 +554,7 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       } else {
+        this.tokenSelectedByUser = true;
         this.asset = token;
         this.transferData = undefined;
         this.transferError = undefined;

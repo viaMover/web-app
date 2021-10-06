@@ -8,7 +8,7 @@
     <template v-if="text">
       {{ text }}
     </template>
-    <slot></slot>
+    <slot v-else></slot>
   </button>
 </template>
 
