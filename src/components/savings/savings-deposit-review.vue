@@ -140,11 +140,11 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['networkInfo']),
+    ...mapState('account', ['networkInfo', 'nativeCurrency']),
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
     formattedAmount(): string {
-      if (this.isSelectedUSDCToken) {
-        return `${formatToNative(this.amount)} ${this.outputUSDCAsset.symbol}`;
-      }
       return `${formatToDecimals(this.amount, 4)} ${this.token.symbol}`;
     },
     formattedEstimatedGasCost(): string {
@@ -158,14 +158,8 @@ export default Vue.extend({
     },
     formatNativeAmount(): string {
       return `${formatToNative(this.nativeAmount)} ${
-        this.outputUSDCAsset.symbol
+        this.nativeCurrencySymbol
       }`;
-    },
-    outputUSDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
-    },
-    isSelectedUSDCToken(): boolean {
-      return sameAddress(this.token.address, this.outputUSDCAsset.address);
     }
   },
   methods: {

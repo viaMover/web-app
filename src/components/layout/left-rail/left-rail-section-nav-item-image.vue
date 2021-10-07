@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="left-rail-section-nav-item button-active image"
+    class="left-rail-section-nav-item image"
     :class="containerClass"
     exact-active-class="active"
     :style="containerStyles"

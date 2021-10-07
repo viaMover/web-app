@@ -82,7 +82,7 @@ export const withdraw = async (
         ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
         : undefined,
       maxFeePerGas: gasPriceInGwei ? undefined : null,
-      maxPrioiryFeePerGas: gasPriceInGwei ? undefined : null
+      maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
     const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);

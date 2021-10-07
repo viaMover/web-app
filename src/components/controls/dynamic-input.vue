@@ -33,7 +33,7 @@ export default Vue.extend({
     },
     debounceTimeout: {
       type: Number,
-      default: 700
+      default: 1000
     },
     inputClass: {
       type: String,
@@ -82,6 +82,9 @@ export default Vue.extend({
         }
       }, debounceTimeout);
     }
+  },
+  mounted() {
+    this.calcWidth('0.00');
   },
   methods: {
     calcWidth(newVal: string): void {

@@ -26,7 +26,7 @@ export const approve = async (
         gasPrice: gasPrice
           ? web3.utils.toWei(web3.utils.toBN(gasPrice), 'gwei').toString()
           : undefined,
-        maxPrioiryFeePerGas: gasPrice ? undefined : null,
+        maxPriorityFeePerGas: gasPrice ? undefined : null,
         maxFeePerGas: gasPrice ? undefined : null
       } as TransactionsParams;
 
