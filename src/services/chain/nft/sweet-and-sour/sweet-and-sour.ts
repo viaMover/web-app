@@ -3,7 +3,6 @@ import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
 import { floorDivide, multiply } from '@/utils/bigmath';
-import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   NFT_SWEET_AND_SOUR_ABI,
