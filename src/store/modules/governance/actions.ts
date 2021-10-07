@@ -24,6 +24,7 @@ import {
   VoteResponse
 } from '@/services/mover/governance';
 import { RootStoreState } from '@/store/types';
+import { fromWei } from '@/utils/bigmath';
 
 import {
   CreateProposalPayload,
@@ -325,12 +326,24 @@ export default {
     snapshot?: number
   ): Promise<string> {
     try {
-      const communityVotingPower = await getCommunityVotingPower(snapshot);
-      if (communityVotingPower.isError) {
-        throw new Error(communityVotingPower.error);
+      let blockNumber: number = snapshot ?? 0;
+      if (snapshot === undefined) {
+        if (rootState.account?.provider?.web3 === undefined) {
+          throw new Error('failed to get web3 provider');
+        }
+
+        blockNumber =
+          await rootState.account.provider.web3.eth.getBlockNumber();
       }
 
-      return communityVotingPower.result.votingPower.toString();
+      const communityVotingPowerInWei = await getCommunityVotingPower(
+        blockNumber
+      );
+      if (communityVotingPowerInWei.isError) {
+        throw new Error(communityVotingPowerInWei.error);
+      }
+
+      return fromWei(communityVotingPowerInWei.result.votingPower, 18);
     } catch (error) {
       Sentry.captureException(error);
       Sentry.addBreadcrumb({
@@ -383,17 +396,27 @@ export default {
         throw new Error('failed to get current address');
       }
 
-      const votingPowerSelf = await getVotingPower(
-        rootState.account.currentAddress
-      );
-
-      if (votingPowerSelf.isError) {
-        throw new Error(votingPowerSelf.error);
+      if (rootState.account?.provider?.web3 === undefined) {
+        throw new Error('failed to get web3 provider');
       }
 
-      commit('setVotingPowerSelf', votingPowerSelf.result.votingPower);
+      const snapshot =
+        await rootState.account.provider.web3.eth.getBlockNumber();
 
-      return votingPowerSelf.result.votingPower.toString();
+      const votingPowerSelfInWei = await getVotingPower(
+        rootState.account.currentAddress,
+        snapshot
+      );
+
+      if (votingPowerSelfInWei.isError) {
+        throw new Error(votingPowerSelfInWei.error);
+      }
+
+      const votingPower = fromWei(votingPowerSelfInWei.result.votingPower, 18);
+
+      commit('setVotingPowerSelf', votingPower);
+
+      return votingPower;
     } catch (error) {
       Sentry.captureException(error);
       Sentry.addBreadcrumb({

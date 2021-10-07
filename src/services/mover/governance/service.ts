@@ -92,14 +92,14 @@ export const createProposal = snapshotClient.createProposal;
 export const getScores = snapshotClient.getScores;
 
 export const getCommunityVotingPower = async (
-  snapshot?: number
+  snapshot: number
 ): Promise<Result<VotingPowerInfo, string>> => {
   try {
     const response = (
       await moverApiClient.post<VotingPowerInfoResponse>(
-        '/v1/governance/voting_power/self',
+        '/v1/voting/communityPower',
         {
-          ...(snapshot !== undefined && { snapshot })
+          blockNumber: snapshot
         },
         {
           headers: {
@@ -137,15 +137,15 @@ export const getCommunityVotingPower = async (
 
 export const getVotingPower = async (
   address: string,
-  snapshot?: number
+  snapshot: number
 ): Promise<Result<VotingPowerInfo, string>> => {
   try {
     const response = (
-      await axios.post<VotingPowerInfoResponse>(
-        '/v1/governance/voting_power/address',
+      await moverApiClient.post<VotingPowerInfoResponse>(
+        '/v1/voting/addressPower',
         {
           address,
-          ...(snapshot !== undefined && { snapshot })
+          blockNumber: snapshot
         },
         {
           headers: {

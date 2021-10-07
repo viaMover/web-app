@@ -146,6 +146,7 @@ export type CreateProposalResponse = {
 };
 
 export type VotingPowerInfo = {
-  votingPower: number;
+  blockNumber: number;
+  votingPower: string;
 };
 export type VotingPowerInfoResponse = MoverResponse<VotingPowerInfo>;
