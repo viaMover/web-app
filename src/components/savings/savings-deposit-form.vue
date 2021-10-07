@@ -289,9 +289,9 @@ export default Vue.extend({
           this.asset.symbol
         }`;
       } else {
-        return `${formatToDecimals(
+        return `$${formatToDecimals(
           multiply(this.asset.balance, this.asset.priceUSD),
-          4
+          2
         )} ${this.nativeCurrencySymbol}`;
       }
     },

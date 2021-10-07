@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="left-rail-section-nav-item button-active emoji"
+    class="left-rail-section-nav-item emoji"
     :class="containerClass"
     exact-active-class="active"
     :style="containerStyles"

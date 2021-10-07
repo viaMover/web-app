@@ -10,7 +10,7 @@
         disable-selecting
         :is-loading="false"
       />
-      <p>{{ $t('savings.txtIfYouDeposit') }}</p>
+      <p class="margin-top">{{ $t('savings.txtIfYouDeposit') }}</p>
       <div class="savings__menu-wrapper-body">
         <span class="title">{{ currentVariableAPY }}</span>
         <p class="description black">{{ $t('savings.lblAPYOnAllSavings') }}</p>
