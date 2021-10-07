@@ -324,7 +324,12 @@ export default {
     snapshot?: number
   ): Promise<string> {
     try {
-      return await getCommunityVotingPower(snapshot);
+      const communityVotingPower = await getCommunityVotingPower(snapshot);
+      if (communityVotingPower.isError) {
+        throw new Error(communityVotingPower.error);
+      }
+
+      return communityVotingPower.result.votingPower.toString();
     } catch (error) {
       Sentry.captureException(error);
       Sentry.addBreadcrumb({
@@ -380,9 +385,14 @@ export default {
       const votingPowerSelf = await getVotingPower(
         rootState.account.currentAddress
       );
-      commit('setVotingPowerSelf', votingPowerSelf);
 
-      return votingPowerSelf;
+      if (votingPowerSelf.isError) {
+        throw new Error(votingPowerSelf.error);
+      }
+
+      commit('setVotingPowerSelf', votingPowerSelf.result.votingPower);
+
+      return votingPowerSelf.result.votingPower.toString();
     } catch (error) {
       Sentry.captureException(error);
       Sentry.addBreadcrumb({

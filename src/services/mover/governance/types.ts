@@ -1,3 +1,5 @@
+import { MoverResponse } from '../responses';
+
 export type Strategy = {
   name: string;
   params: unknown;
@@ -142,3 +144,8 @@ export type CreateProposalResponse = {
     receipt: string;
   };
 };
+
+export type VotingPowerInfo = {
+  votingPower: number;
+};
+export type VotingPowerInfoResponse = MoverResponse<VotingPowerInfo>;

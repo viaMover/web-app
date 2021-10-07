@@ -1,6 +1,10 @@
+import axios, { AxiosError } from 'axios';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
+
+import { Result } from '@/services/responses';
+
 import { voteHubBaseUrl, graphqlUrl, scoresApiBaseUrl } from './consts';
 import {
   PROPOSALS_QUERY,
@@ -8,7 +12,15 @@ import {
   LAST_PROPOSAL_QUERY
 } from './queries';
 import Client from './client';
-import { ProposalsResponse, ProposalWithVotes } from './types';
+import {
+  GovernanceApiError,
+  ProposalsResponse,
+  ProposalWithVotes,
+  VotingPowerInfo,
+  VotingPowerInfoResponse
+} from './types';
+import { baseUrl as moverApiBaseUrl } from '../consts';
+import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 
 const snapshotClient = new Client(voteHubBaseUrl, scoresApiBaseUrl);
 const graphqlClient = new ApolloClient({
@@ -20,6 +32,12 @@ const graphqlClient = new ApolloClient({
     query: {
       fetchPolicy: 'no-cache'
     }
+  }
+});
+const moverApiClient = axios.create({
+  baseURL: moverApiBaseUrl,
+  headers: {
+    Accept: 'application/json'
   }
 });
 
@@ -63,20 +81,6 @@ export const getProposal = async (id: string): Promise<ProposalWithVotes> => {
   return (await result).data;
 };
 
-export const getCommunityVotingPower = async (
-  snapshot?: number
-): Promise<string> => {
-  return getVotingPower('all', snapshot);
-};
-
-export const getVotingPower = async (
-  address: string,
-  snapshot?: number
-): Promise<string> => {
-  console.log('TODO: just to use snapshot parameter', snapshot);
-  return Promise.reject('not_implemented');
-};
-
 export const getSpaceList = snapshotClient.getSpaces;
 
 export const getSpace = snapshotClient.getSpace;
@@ -86,3 +90,93 @@ export const vote = snapshotClient.vote;
 export const createProposal = snapshotClient.createProposal;
 
 export const getScores = snapshotClient.getScores;
+
+export const getCommunityVotingPower = async (
+  snapshot?: number
+): Promise<Result<VotingPowerInfo, string>> => {
+  try {
+    const response = (
+      await moverApiClient.post<VotingPowerInfoResponse>(
+        '/v1/governance/voting_power/self',
+        {
+          ...(snapshot !== undefined && { snapshot })
+        },
+        {
+          headers: {
+            Accept: 'application/json'
+          }
+        }
+      )
+    ).data;
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
+    }
+
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new GovernanceApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(
+        `the request is failed, no response: ${axiosError.toJSON()}`
+      );
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
+};
+
+export const getVotingPower = async (
+  address: string,
+  snapshot?: number
+): Promise<Result<VotingPowerInfo, string>> => {
+  try {
+    const response = (
+      await axios.post<VotingPowerInfoResponse>(
+        '/v1/governance/voting_power/address',
+        {
+          address,
+          ...(snapshot !== undefined && { snapshot })
+        },
+        {
+          headers: {
+            Accept: 'application/json'
+          }
+        }
+      )
+    ).data;
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
+    }
+
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new GovernanceApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(
+        `the request is failed, no response: ${axiosError.toJSON()}`
+      );
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
+};
