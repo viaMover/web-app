@@ -11,10 +11,8 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <left-rail-section>
-        <governance-nav-my-governance />
-        <governance-nav-manage-governance />
-      </left-rail-section>
+      <governance-nav-my-governance />
+      <governance-nav-manage-governance />
     </template>
 
     <secondary-page :title="$t('governance.lblGovernanceOverview')">
@@ -99,11 +97,7 @@ import {
   GovernanceOverviewSectionItemSkeleton,
   GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
-import {
-  ContentWrapper,
-  LeftRailSection,
-  SecondaryPage
-} from '@/components/layout';
+import { ContentWrapper, SecondaryPage } from '@/components/layout';
 
 import '@/styles/_overview.less';
 
@@ -112,7 +106,6 @@ export default Vue.extend({
   components: {
     ContentWrapper,
     SecondaryPage,
-    LeftRailSection,
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
     GovernanceOverviewSection,

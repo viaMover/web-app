@@ -124,6 +124,14 @@ export default Vue.extend({
       loadGovernanceInfo: 'loadGovernanceInfo'
     }),
     handleBack(): void {
+      if (this.$route.name !== 'governance-view') {
+        this.$router.replace({
+          name: 'governance-view',
+          params: { id: this.pageProposalId }
+        });
+        return;
+      }
+
       this.$router.replace({ name: 'governance-view-all' });
     },
     handleClose(): void {

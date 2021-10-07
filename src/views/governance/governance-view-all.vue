@@ -9,10 +9,8 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <left-rail-section>
-        <governance-nav-my-governance />
-        <governance-nav-manage-governance />
-      </left-rail-section>
+      <governance-nav-my-governance />
+      <governance-nav-manage-governance />
     </template>
 
     <secondary-page :title="$t('governance.lblGetInvolved')">
@@ -31,18 +29,13 @@ import {
   GovernanceNavMyGovernance,
   GovernanceProposals
 } from '@/components/governance';
-import {
-  ContentWrapper,
-  LeftRailSection,
-  SecondaryPage
-} from '@/components/layout';
+import { ContentWrapper, SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceViewAll',
   components: {
     ContentWrapper,
     SecondaryPage,
-    LeftRailSection,
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
     GovernanceProposals

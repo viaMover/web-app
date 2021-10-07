@@ -11,10 +11,8 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <left-rail-section>
-        <governance-nav-my-governance />
-        <governance-nav-manage-governance />
-      </left-rail-section>
+      <governance-nav-my-governance />
+      <governance-nav-manage-governance />
     </template>
 
     <secondary-page :title="$t('governance.lblCreateAProposal')">
@@ -160,19 +158,13 @@ import {
   GovernanceNavManageGovernance,
   GovernanceNavMyGovernance
 } from '@/components/governance';
-import {
-  ContentWrapper,
-  LeftRailSection,
-  Markdown,
-  SecondaryPage
-} from '@/components/layout';
+import { ContentWrapper, Markdown, SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceCreateProposal',
   components: {
     SecondaryPage,
     ContentWrapper,
-    LeftRailSection,
     Markdown,
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance
