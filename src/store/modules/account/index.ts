@@ -1,28 +1,25 @@
 import { Module } from 'vuex';
 
+import { isProduction } from '@/settings';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 
 import chartsActions from './actions/charts';
 import gasActions from './actions/gas';
 import savingsActions from './actions/savings';
-import treasuryActions from './actions/treasury';
 import transactionActions from './actions/transactions';
-
+import treasuryActions from './actions/treasury';
 import utilityActions from './actions/utility';
 import walletActions from './actions/wallet';
-
 import savingsGetters from './getters/savings';
 import transactionsGetters from './getters/transactions';
 import treasuryGetters from './getters/treasury';
 import walletGetters from './getters/wallet';
-
 import savingsMutations from './mutations/savings';
 import transactionMutations from './mutations/transactions';
 import treasuryMutations from './mutations/treasury';
 import utilityMutations from './mutations/utility';
 import walletMutations from './mutations/wallet';
-import { isProduction } from '@/settings';
 
 export default {
   namespaced: true,

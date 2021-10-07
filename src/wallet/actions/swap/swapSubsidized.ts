@@ -1,19 +1,21 @@
-import { waitOffchainTransactionReceipt } from './../../offchainExplorer';
-import store from '@/store/index';
-import { currentTimestamp } from './../../../utils/time';
-import { Transaction } from './../../types';
 import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
+
+import { TransferData } from '@/services/0x/api';
+import store from '@/store/index';
 import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { SmallToken, TransactionTypes } from '@/wallet/types';
-import { TransferData } from '@/services/0x/api';
-import Web3 from 'web3';
+
 import {
   ACTION,
   createSwapActionString,
   sendSubsidizedRequest,
   SubsidizedRequestError
 } from '../subsidized';
+import { currentTimestamp } from './../../../utils/time';
+import { waitOffchainTransactionReceipt } from './../../offchainExplorer';
+import { Transaction } from './../../types';
 
 export const swapSubsidized = async (
   inputAsset: SmallToken,

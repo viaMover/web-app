@@ -1,20 +1,21 @@
 import Vue from 'vue';
-import Vuelidate from 'vuelidate';
-import Skeleton from 'vue-loading-skeleton';
-import App from './app.vue';
-import router from './router';
-import store from './store';
-import i18n from './i18n';
 import ImageFallback from 'vue-image-fallback';
-import * as Sentry from '@sentry/vue';
-import { Integrations } from '@sentry/tracing';
+import Skeleton from 'vue-loading-skeleton';
+import Vuelidate from 'vuelidate';
 
-import * as dayjs from './dayjs';
-import * as bignumber from './bignumber';
+import { Integrations } from '@sentry/tracing';
+import * as Sentry from '@sentry/vue';
 
 import '@/styles/_fonts.less';
 import '@/styles/_page_transitions.less';
+
+import App from './app.vue';
+import * as bignumber from './bignumber';
+import * as dayjs from './dayjs';
+import i18n from './i18n';
+import router from './router';
 import { isDevelop, isProduction } from './settings';
+import store from './store';
 
 if (isProduction()) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function

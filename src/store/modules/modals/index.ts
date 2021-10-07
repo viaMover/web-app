@@ -1,10 +1,11 @@
-import { RootStoreState } from '@/store/types';
 import { Module } from 'vuex';
-import { Modal, ModalsStoreState } from './types';
+
+import { isProduction } from '@/settings';
+import { RootStoreState } from '@/store/types';
 
 import actions from './actions';
 import mutations from './mutations';
-import { isProduction } from '@/settings';
+import { Modal, ModalsStoreState } from './types';
 
 export default {
   namespaced: true,

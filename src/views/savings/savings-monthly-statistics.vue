@@ -15,17 +15,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions } from 'vuex';
+
 import dayjs from 'dayjs';
 
-import { SecondaryPage } from '@/components/layout';
+import { isFeatureEnabled } from '@/settings';
 import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 
+import { SecondaryPage } from '@/components/layout';
 import {
   SavingsMonthlyChartWrapper,
   SavingsMonthlyStatement
 } from '@/components/savings';
-import { dateFromExplicitPair } from '@/utils/time';
-import { isFeatureEnabled } from '@/settings';
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {

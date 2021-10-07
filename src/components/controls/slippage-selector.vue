@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import { formatPercents } from '@/utils/format';
 import Vue from 'vue';
+
+import { formatPercents } from '@/utils/format';
 
 export type Slippage = '1' | '0.5' | '0.1';
 

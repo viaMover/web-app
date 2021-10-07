@@ -23,8 +23,9 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import SectionBase from './section-base/section-base.vue';
 import { NibbleShopProductMini } from '@/components/nibble-shop';
+
+import SectionBase from './section-base/section-base.vue';
 
 export default Vue.extend({
   name: 'NibbleShopSection',

@@ -1,22 +1,25 @@
 <template>
   <content-wrapper
-    has-back-button
+    has-close-button
     has-left-rail
+    is-black-close-button
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="savings"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <savings-overview />
-      <savings-stats />
-      <savings-estimation />
+      <keep-alive>
+        <savings-left-rail />
+      </keep-alive>
     </template>
 
     <router-view />
 
-    <savings-deposit-modal />
-    <savings-withdraw-modal />
-    <search-modal />
+    <template v-slot:modals>
+      <savings-deposit-modal />
+      <savings-withdraw-modal />
+      <search-modal />
+    </template>
   </content-wrapper>
 </template>
 
@@ -25,59 +28,26 @@ import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  SavingsOverview,
-  SavingsStats,
-  SavingsEstimation
-} from '@/components/savings';
-import {
-  SearchModal,
   SavingsDepositModal,
-  SavingsWithdrawModal
+  SavingsWithdrawModal,
+  SearchModal
 } from '@/components/modals';
+import { SavingsLeftRail } from '@/components/savings';
 
 import '@/styles/_savings.less';
-import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'SavingsRoot',
   components: {
+    SavingsLeftRail,
     ContentWrapper,
-    SavingsOverview,
-    SavingsStats,
-    SavingsEstimation,
     SavingsDepositModal,
     SavingsWithdrawModal,
     SearchModal
   },
-  computed: {
-    ...mapGetters('account', {
-      hasActiveSavings: 'hasActiveSavings',
-      savingsMonthStatsOptions: 'savingsMonthStatsOptions'
-    }),
-    isReplaceRouteNeeded(): boolean {
-      return this.$route.name !== 'savings-empty' && !this.hasActiveSavings;
-    }
-  },
-  watch: {
-    isReplaceRouteNeeded(newVal: boolean) {
-      if (newVal) {
-        this.replaceInactiveSavingsRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (this.isReplaceRouteNeeded) {
-      this.replaceInactiveSavingsRoute();
-    }
-  },
   methods: {
     handleClose(): void {
-      this.$router.back();
-    },
-    replaceInactiveSavingsRoute(): void {
-      this.$router.replace({
-        name: 'savings-empty'
-      });
+      this.$router.replace({ name: 'home' });
     }
   }
 });

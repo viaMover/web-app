@@ -3,6 +3,7 @@
     base-class="more"
     has-back-button
     wrapper-class="more__wrapper"
+    @back="handleClose"
     @close="handleClose"
   >
     <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
@@ -19,8 +20,8 @@ import { isFeatureEnabled } from '@/settings';
 import { ContentWrapper } from '@/components/layout';
 import {
   GovernanceSection,
-  NibbleShopSection,
-  NftDropsSection
+  NftDropsSection,
+  NibbleShopSection
 } from '@/components/sections';
 
 import '@/styles/_more.less';

@@ -1,16 +1,15 @@
+import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import { BigNumber } from 'bignumber.js';
 import { fromWei, multiply } from '@/utils/bigmath';
-
 import { Network } from '@/utils/networkTypes';
-import { TransactionsParams } from '@/wallet/types';
 import {
   getUSDCAssetData,
   HOLY_POOL_ABI,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { TransactionsParams } from '@/wallet/types';
 
 import { GetSavingsAPYReturn } from './types';
 

@@ -1,16 +1,18 @@
-import Web3 from 'web3';
-import { GetGasErrors } from '@/wallet/gas';
-import { Result, isError } from './../responses';
-import { Network } from '@/utils/networkTypes';
-import { APIKeys } from '@/settings';
 import axios from 'axios';
+import Web3 from 'web3';
+
+import { APIKeys } from '@/settings';
+import { Network } from '@/utils/networkTypes';
+import { GetGasErrors } from '@/wallet/gas';
+import { GasData } from '@/wallet/types';
+
+import { isError, Result } from './../responses';
 import { apiEndpoints } from './endpoints';
 import {
-  EtherScanResponse,
   EtherScanErrorResponse,
+  EtherScanResponse,
   isErrorResponse
 } from './response';
-import { GasData } from '@/wallet/types';
 
 type EtherScanGasData = {
   LastBlock: string;

@@ -1,5 +1,6 @@
-import { RootStoreState } from '@/store/types';
 import * as Sentry from '@sentry/vue';
+
+import { RootStoreState } from '@/store/types';
 
 export const checkAccountStateIsReady = (
   rootState: RootStoreState

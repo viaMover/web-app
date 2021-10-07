@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { Properties } from 'csstype';
 
 export default Vue.extend({

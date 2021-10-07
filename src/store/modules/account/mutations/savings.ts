@@ -1,7 +1,8 @@
 import { MutationTree } from 'vuex';
 
-import { AccountStoreState } from '../types';
 import { SavingsInfo, SavingsReceipt } from '@/services/mover';
+
+import { AccountStoreState } from '../types';
 
 export default {
   setSavingsAPY(state, apy: string): void {

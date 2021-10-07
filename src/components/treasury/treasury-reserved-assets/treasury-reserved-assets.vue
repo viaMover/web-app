@@ -15,14 +15,14 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { ReservedAsset } from '@/components/treasury/treasury-reserved-assets/types';
+import { formatToDecimals } from '@/utils/format';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
-import { formatToDecimals } from '@/utils/format';
 
 import { LeftRailSection, LeftRailSectionItem } from '@/components/layout';
+import { ReservedAsset } from '@/components/treasury/treasury-reserved-assets/types';
 
 export default Vue.extend({
   name: 'TreasuryReservedAssets',

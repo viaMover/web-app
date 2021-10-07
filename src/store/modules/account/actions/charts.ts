@@ -1,6 +1,8 @@
-import { AccountStoreState } from '@/store/modules/account/types';
 import { ActionTree } from 'vuex';
+
 import * as Sentry from '@sentry/vue';
+
+import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 
 export type EmitChartRequestPayload = {

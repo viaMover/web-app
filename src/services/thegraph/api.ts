@@ -1,7 +1,7 @@
 import { sameAddress } from './../../utils/address';
 import { multiply } from './../../utils/bigmath';
-import { SUSHISWAP_PRICES_QUERY } from './queries';
 import { sushiswapClient } from './client';
+import { SUSHISWAP_PRICES_QUERY } from './queries';
 
 type SushiSwapPriceResponse = {
   bundle: {

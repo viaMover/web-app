@@ -27,15 +27,15 @@
 import Vue from 'vue';
 
 import {
-  SecondaryPage,
-  ContentWrapper,
-  LeftRailSection
-} from '@/components/layout';
-import {
-  GovernanceProposals,
+  GovernanceNavManageGovernance,
   GovernanceNavMyGovernance,
-  GovernanceNavManageGovernance
+  GovernanceProposals
 } from '@/components/governance';
+import {
+  ContentWrapper,
+  LeftRailSection,
+  SecondaryPage
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceViewAll',

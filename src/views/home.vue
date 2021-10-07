@@ -21,23 +21,24 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { isFeatureEnabled } from '@/settings';
 
 import { ContentWrapper } from '@/components/layout';
-import { TransactionList } from '@/components/transaction-list';
+import {
+  SavingsDepositModal,
+  SavingsWithdrawModal,
+  SearchModal,
+  SwapModal,
+  TreasuryIncreaseBoostModal
+} from '@/components/modals';
 import {
   DebitCardSection,
   HeaderBalance,
   MenuSection,
   SavingsDepositCardSection
 } from '@/components/sections';
-import {
-  SearchModal,
-  SwapModal,
-  SavingsDepositModal,
-  SavingsWithdrawModal,
-  TreasuryIncreaseBoostModal
-} from '@/components/modals';
+import { TransactionList } from '@/components/transaction-list';
 
 import '@/styles/_general.less';
 

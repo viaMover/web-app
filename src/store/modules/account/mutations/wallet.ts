@@ -1,7 +1,12 @@
-import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { MutationTree } from 'vuex';
+
 import Fuse from 'fuse.js';
+
+import { Explorer } from '@/services/zerion/explorer';
 import { getNetworkByChainId } from '@/utils/networkTypes';
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { GasData, Token, TokenWithBalance } from '@/wallet/types';
+
 import {
   AccountData,
   AccountStoreState,
@@ -9,9 +14,7 @@ import {
   ChartPair,
   ProviderData
 } from '../types';
-import { GasData, Token, TokenWithBalance } from '@/wallet/types';
 import { sortAndDeduplicateTokens } from '../utils/tokens';
-import { Explorer } from '@/services/zerion/explorer';
 
 export default {
   setEthPrice(state, ethPrice: string): void {

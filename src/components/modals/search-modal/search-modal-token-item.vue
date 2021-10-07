@@ -33,11 +33,13 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import BigNumber from 'bignumber.js';
 
 import { isTokenWithBalance, Token, TokenWithBalance } from '@/wallet/types';
-import { TokenImage } from '@/components/tokens';
+
 import { CustomPicture, PictureSourceDescriptor } from '@/components/html5';
+import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'SearchModalTokenItem',

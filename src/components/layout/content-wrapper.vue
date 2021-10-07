@@ -9,11 +9,10 @@
     >
       <slot name="left-rail"></slot>
     </left-rail>
-
-    <close-button
+    <back-button
       v-if="hasCloseButton"
       class="page-close-button"
-      :is-black="isBlackCloseButton"
+      :mode="isBlackCloseButton ? 'CLOSE-BLACK' : 'CLOSE'"
       @close="handleClose"
     />
 
@@ -26,9 +25,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { Properties } from 'csstype';
 
-import { BackButton, CloseButton } from '@/components/buttons';
+import { BackButton } from '@/components/buttons';
+
 import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
 
@@ -37,8 +38,7 @@ export default Vue.extend({
   components: {
     PageContainer,
     LeftRail,
-    BackButton,
-    CloseButton
+    BackButton
   },
   props: {
     hasLeftRail: {
@@ -86,7 +86,7 @@ export default Vue.extend({
       return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
     },
     leftRailStyle(): Properties {
-      if (this.hasBackButton || this.hasCloseButton) {
+      if (this.hasBackButton) {
         return {
           paddingTop: '104px'
         };

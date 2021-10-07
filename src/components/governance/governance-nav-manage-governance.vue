@@ -42,12 +42,12 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
   LeftRailSection,
   LeftRailSectionNavItemImage,
   LeftRailSectionNavItemImageSkeleton
 } from '@/components/layout';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'GovernanceNavManageGovernance',

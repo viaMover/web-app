@@ -41,18 +41,19 @@
 </template>
 
 <script lang="ts">
-import '@/styles/_general.less';
-
 import Vue from 'vue';
-import QRCode from 'qrcode';
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import QRCode from 'qrcode';
+
+import { APIKeys } from '@/settings';
 import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
 import { InitCallbacks } from '@/web3/callbacks';
 
 import { ContentWrapper } from '@/components/layout';
-import { APIKeys } from '@/settings';
+
+import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'ConnectWallet',

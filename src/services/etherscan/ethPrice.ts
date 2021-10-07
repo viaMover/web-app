@@ -1,7 +1,9 @@
 import axios from 'axios';
-import { Result } from './../responses';
-import { Network } from '@/utils/networkTypes';
+
 import { APIKeys } from '@/settings';
+import { Network } from '@/utils/networkTypes';
+
+import { Result } from './../responses';
 import { apiEndpoints } from './endpoints';
 import {
   EtherScanErrorResponse,

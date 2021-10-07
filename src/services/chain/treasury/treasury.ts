@@ -1,9 +1,8 @@
+import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import { BigNumber } from 'bignumber.js';
 import { divide, fromWei, isFinite, isNaN, toWei } from '@/utils/bigmath';
-
 import { Network } from '@/utils/networkTypes';
 import {
   getMoveAssetData,
