@@ -51,7 +51,7 @@
         <p>
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           <span class="form-button" @click.capture.stop.prevent="swapTokens">
-            {{ currentInputAsset.symbol }}
+            {{ currentInputSymbo }}
           </span>
         </p>
         <dynamic-input
@@ -59,7 +59,7 @@
           input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
-          :symbol="currentInputAsset.symbol"
+          :symbol="currentInputSymbo"
           type="text"
           :value="inputValue"
           @update-value="handleUpdateValue"
@@ -100,6 +100,7 @@ import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
+import BigNumber from 'bignumber.js';
 
 import {
   getTransferData,
@@ -111,6 +112,8 @@ import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import {
   add,
+  convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
   divide,
   fromWei,
   greaterThan,
@@ -138,6 +141,9 @@ import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
+
+type INPUT_MODE = 'NATIVE' | 'TOKEN';
+
 export default Vue.extend({
   name: 'SavingsDepositForm',
   components: {
@@ -159,11 +165,11 @@ export default Vue.extend({
           }
         ]
       } as PictureDescriptor,
-      selectedMode: 'TOKEN' as 'USDC' | 'TOKEN',
+      selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
-      maxInUSDC: '0' as string,
+      maxInNative: '0' as string,
       amount: '',
-      usdcAmount: '',
+      nativeAmount: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       isLoading: true,
@@ -182,11 +188,15 @@ export default Vue.extend({
       'savingsAPY',
       'usdcPriceInWeth',
       'ethPrice',
-      'savingsBalance'
+      'savingsBalance',
+      'nativeCurrency'
     ]),
     ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
+    },
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
     },
     isSwapNeeded(): boolean {
       if (this.asset === undefined) {
@@ -202,16 +212,11 @@ export default Vue.extend({
           : this.$t('savings.txtUSDCCoinIsAStable')
       ) as string;
     },
-    currentInputAsset(): SmallTokenInfoWithIcon {
+    currentInputSymbo(): string {
       if (this.selectedMode === 'TOKEN') {
-        return {
-          address: this.asset?.address ?? '',
-          decimals: this.asset?.decimals ?? 18,
-          symbol: this.asset?.symbol ?? '',
-          iconURL: this.asset?.logo ?? ''
-        };
+        return this.asset?.symbol ?? '';
       } else {
-        return this.outputUSDCAsset;
+        return this.nativeCurrencySymbol;
       }
     },
     maxInputAmount(): string {
@@ -239,15 +244,23 @@ export default Vue.extend({
       return undefined;
     },
     inputValue(): string {
-      return this.selectedMode === 'TOKEN' ? this.amount : this.usdcAmount;
+      return this.selectedMode === 'TOKEN' ? this.amount : this.nativeAmount;
     },
     isButtonActive(): boolean {
       return this.error === undefined && !this.isLoading;
     },
     estimatedAnnualEarning(): string {
       let possibleSavingsBalance = '0';
-      if (this.usdcAmount !== '') {
-        possibleSavingsBalance = this.usdcAmount;
+      if (
+        this.asset &&
+        sameAddress(this.asset.address, this.outputUSDCAsset.address)
+      ) {
+        possibleSavingsBalance = this.amount;
+      } else if (this.transferData !== undefined) {
+        possibleSavingsBalance = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
       }
 
       if (this.savingsBalance !== undefined) {
@@ -276,9 +289,10 @@ export default Vue.extend({
           this.asset.symbol
         }`;
       } else {
-        return `${formatToDecimals(this.maxInUSDC, 4)} ${
-          this.outputUSDCAsset.symbol
-        }`;
+        return `${formatToDecimals(
+          multiply(this.asset.balance, this.asset.priceUSD),
+          4
+        )} ${this.nativeCurrencySymbol}`;
       }
     },
     formattedUSDCTotal(): string {
@@ -312,7 +326,6 @@ export default Vue.extend({
             );
             if (eth) {
               this.asset = eth;
-              this.calcTokenMaxInUSDC(eth);
             }
           }
         } finally {
@@ -326,7 +339,7 @@ export default Vue.extend({
     async handleUpdateValue(val: string): Promise<void> {
       await this.updatingValue(val, this.selectedMode);
     },
-    async updatingValue(value: string, mode: 'TOKEN' | 'USDC'): Promise<void> {
+    async updatingValue(value: string, mode: INPUT_MODE): Promise<void> {
       if (this.asset === undefined || this.isLoading) {
         return;
       }
@@ -337,11 +350,26 @@ export default Vue.extend({
         if (!this.isSwapNeeded) {
           console.log('Dont need transfer, token is USDC');
           this.transferData = undefined;
-          this.amount = value;
-          this.usdcAmount = value;
+          if (mode === 'TOKEN') {
+            this.amount = value;
+            this.nativeAmount = convertNativeAmountFromAmount(
+              value,
+              this.asset.priceUSD
+            );
+          } else {
+            this.amount = convertAmountFromNativeValue(
+              value,
+              this.asset.priceUSD,
+              this.asset.decimals
+            );
+            this.nativeAmount = value;
+          }
         } else {
           if (mode === 'TOKEN') {
             this.amount = value;
+            this.nativeAmount = new BigNumber(
+              convertNativeAmountFromAmount(value, this.asset.priceUSD)
+            ).toFixed(2);
             const inputInWei = toWei(value, this.asset.decimals);
             const transferData = await getTransferData(
               this.outputUSDCAsset.address,
@@ -353,18 +381,21 @@ export default Vue.extend({
             );
             this.transferData = transferData;
             this.transferError = undefined;
-            this.usdcAmount = fromWei(
-              this.transferData.buyAmount,
-              this.outputUSDCAsset.decimals
-            );
           } else {
-            this.usdcAmount = value;
-            const inputInWei = toWei(value, this.outputUSDCAsset.decimals);
+            this.nativeAmount = value;
+            const inputInWei = toWei(
+              convertAmountFromNativeValue(
+                value,
+                this.asset.priceUSD,
+                this.asset.decimals
+              ),
+              this.asset.decimals
+            );
             const transferData = await getTransferData(
               this.outputUSDCAsset.address,
               this.asset.address,
               inputInWei,
-              false,
+              true,
               '0.01',
               this.networkInfo.network
             );
@@ -386,7 +417,7 @@ export default Vue.extend({
         console.error(`transfer error: ${err}`);
         this.transferData = undefined;
         if (mode === 'TOKEN') {
-          this.usdcAmount = '0';
+          this.nativeAmount = '0';
         } else {
           this.amount = '0';
         }
@@ -491,7 +522,7 @@ export default Vue.extend({
       this.$emit('tx-review', {
         token: this.asset,
         amount: this.amount,
-        nativeAmount: this.usdcAmount,
+        nativeAmount: this.nativeAmount,
         subsidizedEnabled: subsidizedEnabled,
         estimatedGasCost: subsidizedTxPrice,
         transferData: this.transferData,
@@ -500,49 +531,25 @@ export default Vue.extend({
       });
     },
     swapTokens(): void {
-      if (this.isSwapNeeded) {
-        if (this.selectedMode === 'TOKEN') {
-          this.selectedMode = 'USDC';
-        } else {
-          this.selectedMode = 'TOKEN';
-        }
+      if (this.selectedMode === 'TOKEN') {
+        this.selectedMode = 'NATIVE';
+      } else {
+        this.selectedMode = 'TOKEN';
       }
     },
     async handleSelectMaxAmount(): Promise<void> {
       if (this.asset === undefined) {
         return;
       }
-      await this.updatingValue(this.asset.balance, 'TOKEN');
-    },
-    async calcTokenMaxInUSDC(token: TokenWithBalance): Promise<void> {
-      if (sameAddress(token.address, this.outputUSDCAsset.address)) {
-        this.maxInUSDC = token.balance;
-        this.selectedMode = 'USDC';
+      if (this.selectedMode === 'TOKEN') {
+        await this.updatingValue(this.asset.balance, 'TOKEN');
       } else {
-        this.isLoading = true;
-        try {
-          const inputInWei = toWei(token.balance, token.decimals);
-          const transferData = await getTransferData(
-            this.outputUSDCAsset.address,
-            token.address,
-            inputInWei,
-            true,
-            '0.01',
-            this.networkInfo.network
-          );
-          this.maxInUSDC = fromWei(
-            transferData.buyAmount,
-            this.outputUSDCAsset.decimals
-          );
-        } catch (err) {
-          Sentry.captureException(err);
-          console.error(`transfer error: ${err}`);
-          this.maxInUSDC = '0';
-        } finally {
-          this.isLoading = false;
-        }
-
-        this.selectedMode = 'TOKEN';
+        await this.updatingValue(
+          new BigNumber(
+            multiply(this.asset.balance, this.asset.priceUSD)
+          ).toFixed(2),
+          'NATIVE'
+        );
       }
     },
     async handleOpenSelectModal(): Promise<void> {
@@ -559,8 +566,7 @@ export default Vue.extend({
         this.transferData = undefined;
         this.transferError = undefined;
         this.amount = '';
-        this.usdcAmount = '';
-        this.calcTokenMaxInUSDC(token);
+        this.nativeAmount = '';
       }
     }
   }
