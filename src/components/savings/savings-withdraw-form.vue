@@ -180,13 +180,6 @@ export default Vue.extend({
         possibleSavingsBalance = this.savingsBalance;
       }
 
-      if (this.amountToWithdraw !== '') {
-        possibleSavingsBalance = sub(
-          possibleSavingsBalance,
-          this.amountToWithdraw
-        );
-      }
-
       const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
       let apyNative = multiply(divide(this.savingsAPY, 100), usdcAmountNative);
