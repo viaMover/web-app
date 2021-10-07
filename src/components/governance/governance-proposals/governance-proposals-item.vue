@@ -28,6 +28,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
+
 import dayjs from 'dayjs';
 
 import { Proposal } from '@/services/mover/governance';

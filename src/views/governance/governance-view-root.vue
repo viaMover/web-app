@@ -45,8 +45,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
 import { RawLocation } from 'vue-router';
+import { mapActions, mapState } from 'vuex';
+
+import { ProposalInfo } from '@/services/mover/governance';
 
 import {
   ContentWrapper,
@@ -54,7 +56,6 @@ import {
   LeftRailSectionNavItemEmoji,
   LeftRailSectionNavItemEmojiSkeleton
 } from '@/components/layout';
-import { ProposalInfo } from '@/services/mover/governance';
 
 import '@/styles/_overview.less';
 

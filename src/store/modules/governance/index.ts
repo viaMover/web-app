@@ -1,8 +1,5 @@
 import { Module } from 'vuex';
 
-import { RootStoreState } from '@/store/types';
-import { isProduction } from '@/settings';
-
 import {
   defaultCachePeriodSeconds,
   defaultPowerNeededToBecomeAProposer,
@@ -10,10 +7,12 @@ import {
   minimumVotingThresholdMultiplier,
   moverSpaceId
 } from '@/services/mover/governance';
+import { isProduction } from '@/settings';
+import { RootStoreState } from '@/store/types';
 
 import actions from './actions';
-import mutations from './mutations';
 import getters from './getters';
+import mutations from './mutations';
 import { GovernanceStoreState } from './types';
 
 export default {

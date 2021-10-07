@@ -138,10 +138,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { maxLength, required } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { required, maxLength } from 'vuelidate/lib/validators';
 
-import { formatToDecimals } from '@/utils/format';
+import {
+  CreateProposalResponse,
+  GovernanceApiError
+} from '@/services/mover/governance';
+import { isFeatureEnabled } from '@/settings';
 import {
   CreateProposalPayload,
   LoadProposalInfoPayload
@@ -150,22 +154,18 @@ import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/governance/utils';
-import {
-  CreateProposalResponse,
-  GovernanceApiError
-} from '@/services/mover/governance';
-import { isFeatureEnabled } from '@/settings';
+import { formatToDecimals } from '@/utils/format';
 
 import {
-  SecondaryPage,
+  GovernanceNavManageGovernance,
+  GovernanceNavMyGovernance
+} from '@/components/governance';
+import {
   ContentWrapper,
   LeftRailSection,
-  Markdown
+  Markdown,
+  SecondaryPage
 } from '@/components/layout';
-import {
-  GovernanceNavMyGovernance,
-  GovernanceNavManageGovernance
-} from '@/components/governance';
 
 export default Vue.extend({
   name: 'GovernanceCreateProposal',

@@ -1,8 +1,9 @@
 import { ActionTree } from 'vuex';
+
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
-import { RootStoreState } from '@/store/types';
+import { getCommunityVotingPower as getCommunityVotingPowerFromChain } from '@/services/chain';
 import {
   createProposal,
   CreateProposalParams,
@@ -22,7 +23,7 @@ import {
   VoteParams,
   VoteResponse
 } from '@/services/mover/governance';
-import { getCommunityVotingPower as getCommunityVotingPowerFromChain } from '@/services/chain';
+import { RootStoreState } from '@/store/types';
 
 import {
   CreateProposalPayload,

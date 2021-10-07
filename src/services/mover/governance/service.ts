@@ -1,17 +1,19 @@
-import axios, { AxiosError } from 'axios';
-import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
+import axios, { AxiosError } from 'axios';
 
 import { Result } from '@/services/responses';
 
-import { voteHubBaseUrl, graphqlUrl, scoresApiBaseUrl } from './consts';
-import {
-  PROPOSALS_QUERY,
-  PROPOSAL_VOTES_QUERY,
-  LAST_PROPOSAL_QUERY
-} from './queries';
+import { baseUrl as moverApiBaseUrl } from '../consts';
+import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 import Client from './client';
+import { graphqlUrl, scoresApiBaseUrl, voteHubBaseUrl } from './consts';
+import {
+  LAST_PROPOSAL_QUERY,
+  PROPOSAL_VOTES_QUERY,
+  PROPOSALS_QUERY
+} from './queries';
 import {
   GovernanceApiError,
   ProposalsResponse,
@@ -19,8 +21,6 @@ import {
   VotingPowerInfo,
   VotingPowerInfoResponse
 } from './types';
-import { baseUrl as moverApiBaseUrl } from '../consts';
-import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 
 const snapshotClient = new Client(voteHubBaseUrl, scoresApiBaseUrl);
 const graphqlClient = new ApolloClient({

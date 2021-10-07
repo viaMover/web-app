@@ -1,17 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import actions from './actions';
-import mutations from './mutations';
-
-import account from './modules/account';
-import shop from './modules/shop';
-import nft from './modules/nft';
-import governance from './modules/governance';
-import radar from './modules/radar';
-import modals from './modules/modals';
-import { RootStoreState } from './types';
 import { isFeatureEnabled } from '@/settings';
+
+import actions from './actions';
+import account from './modules/account';
+import governance from './modules/governance';
+import modals from './modules/modals';
+import nft from './modules/nft';
+import radar from './modules/radar';
+import shop from './modules/shop';
+import mutations from './mutations';
+import { RootStoreState } from './types';
 
 Vue.use(Vuex);
 

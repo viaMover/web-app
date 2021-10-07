@@ -1,21 +1,20 @@
 import { GetterTree } from 'vuex';
 
-import { RootStoreState } from '@/store/types';
-
-import { sameAddress } from '@/utils/address';
 import { Choice, ProposalInfo } from '@/services/mover/governance';
-
-import {
-  ProposalState,
-  GovernanceStoreState,
-  ProposalCumulativeInfo
-} from './types';
+import { RootStoreState } from '@/store/types';
+import { sameAddress } from '@/utils/address';
 import {
   divide,
   greaterThan,
   greaterThanOrEqual,
   multiply
 } from '@/utils/bigmath';
+
+import {
+  GovernanceStoreState,
+  ProposalCumulativeInfo,
+  ProposalState
+} from './types';
 
 export default {
   proposalsOrderedByEndingDesc(state): Array<ProposalInfo> {

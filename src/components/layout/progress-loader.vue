@@ -25,6 +25,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import gsap from 'gsap';
 
 export default Vue.extend({

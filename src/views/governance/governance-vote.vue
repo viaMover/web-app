@@ -38,8 +38,6 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
-
 import {
   Choice,
   Proposal,
@@ -47,19 +45,20 @@ import {
   VoteParams,
   VoteResponse
 } from '@/services/mover/governance';
+import { GovernanceApiError } from '@/services/mover/governance';
 import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/governance/utils';
-import { GovernanceApiError } from '@/services/mover/governance';
+import { formatToNative } from '@/utils/format';
 
-import { SecondaryPage } from '@/components/layout';
 import {
   GovernanceOverviewSection,
-  GovernanceOverviewSectionSkeleton,
   GovernanceOverviewSectionItem,
-  GovernanceOverviewSectionItemSkeleton
+  GovernanceOverviewSectionItemSkeleton,
+  GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
+import { SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceVote',

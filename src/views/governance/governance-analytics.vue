@@ -65,18 +65,19 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
+
 import dayjs from 'dayjs';
 
 import { ProposalInfo } from '@/services/mover/governance';
 import { formatToDecimals } from '@/utils/format';
 
-import { SecondaryPage } from '@/components/layout';
 import {
   GovernanceOverviewSection,
-  GovernanceOverviewSectionSkeleton,
   GovernanceOverviewSectionItem,
-  GovernanceOverviewSectionItemSkeleton
+  GovernanceOverviewSectionItemSkeleton,
+  GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
+import { SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceAnalytics',

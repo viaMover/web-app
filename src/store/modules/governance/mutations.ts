@@ -1,4 +1,5 @@
 import { MutationTree } from 'vuex';
+
 import dayjs from 'dayjs';
 
 import { ProposalInfo, Space } from '@/services/mover/governance';

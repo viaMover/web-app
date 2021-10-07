@@ -27,17 +27,19 @@
 </template>
 
 <script lang="ts">
-import { Proposal } from '@/services/mover/governance';
 import Vue from 'vue';
-import { mapActions, mapState, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import SectionBase from './section-base/section-base.vue';
+import { Proposal } from '@/services/mover/governance';
+
 import {
   GovernanceProposalsItem,
   GovernanceProposalsItemSkeleton
 } from '@/components/governance';
 
 import '@/styles/_governance-proposals-item.less';
+
+import SectionBase from './section-base/section-base.vue';
 
 export default Vue.extend({
   name: 'GovernanceSection',

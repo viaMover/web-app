@@ -92,18 +92,18 @@ import { mapGetters, mapState } from 'vuex';
 import { formatToDecimals } from '@/utils/format';
 
 import {
-  SecondaryPage,
-  ContentWrapper,
-  LeftRailSection
-} from '@/components/layout';
-import {
-  GovernanceNavMyGovernance,
   GovernanceNavManageGovernance,
+  GovernanceNavMyGovernance,
   GovernanceOverviewSection,
-  GovernanceOverviewSectionSkeleton,
   GovernanceOverviewSectionItem,
-  GovernanceOverviewSectionItemSkeleton
+  GovernanceOverviewSectionItemSkeleton,
+  GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
+import {
+  ContentWrapper,
+  LeftRailSection,
+  SecondaryPage
+} from '@/components/layout';
 
 import '@/styles/_overview.less';
 

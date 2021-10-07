@@ -1,18 +1,19 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 import Web3 from 'web3';
+
 import { defaultClientVersion } from './consts';
 import {
   BroadcastMessage,
   CreateProposalParams,
+  CreateProposalResponse,
   ErrorResponse,
   GovernanceApiError,
   Scores,
   ScoresResponse,
+  ServerInfo,
   Space,
   Strategy,
   VoteParams,
-  ServerInfo,
-  CreateProposalResponse,
   VoteResponse
 } from './types';
 

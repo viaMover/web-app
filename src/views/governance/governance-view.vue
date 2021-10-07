@@ -24,7 +24,7 @@ import { mapState } from 'vuex';
 import { ProposalWithVotes } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
 
-import { SecondaryPage, Markdown } from '@/components/layout';
+import { Markdown, SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceView',

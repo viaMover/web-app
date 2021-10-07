@@ -1,14 +1,15 @@
 import Web3 from 'web3';
-import { Network } from '@/utils/networkTypes';
-import { TransactionsParams } from '@/wallet/types';
-import {
-  MOVE_ADDRESS,
-  ERC20_ABI,
-  SUSHISWAP_MOVE_WETH_POOL_ADDRESS,
-  SUSHI_UNI_PAIR_V2_ABI
-} from '@/wallet/references/data';
 import { AbiItem } from 'web3-utils';
+
 import { add, fromWei, multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
+import {
+  ERC20_ABI,
+  MOVE_ADDRESS,
+  SUSHI_UNI_PAIR_V2_ABI,
+  SUSHISWAP_MOVE_WETH_POOL_ADDRESS
+} from '@/wallet/references/data';
+import { TransactionsParams } from '@/wallet/types';
 
 export const getCommunityVotingPower = async (
   accountAddress: string,

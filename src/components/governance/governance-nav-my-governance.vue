@@ -28,16 +28,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { formatToDecimals } from '@/utils/format';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
   LeftRailSection,
   LeftRailSectionNavItemImage,
   LeftRailSectionNavItemImageSkeleton
 } from '@/components/layout';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'GovernanceNavMyGovernance',
