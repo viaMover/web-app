@@ -1,5 +1,5 @@
 <template>
-  <statement-list wrapper-class="savings-statements__wrapper-list">
+  <statement-list>
     <statement-list-item
       :description="$t('savings.statement.lblBalance', { month: monthName })"
       :value="balanceNative"

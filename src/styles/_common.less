@@ -554,8 +554,14 @@ body {
 }
 
 .secondary-page-wrapper {
+  .page-body {
+    margin-left: 20px;
+  }
+
   .back-link {
-    left: -50px;
+    margin-left: -50px;
+    left: unset;
+    position: sticky;
   }
 }
 
@@ -758,7 +764,7 @@ body {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .dashboard-mobile__wrapper h1 {
@@ -848,4 +854,11 @@ body {
 
 button > .loader-icon > img {
   vertical-align: middle;
+}
+
+.progressive-left-rail {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: space-between;
+  height: 85vh;
 }
