@@ -1,4 +1,5 @@
 import { GetterTree } from 'vuex';
+
 import { GamesStoreState, VaultRaceAccount } from '@/store/modules/games/types';
 import { RootStoreState } from '@/store/types';
 

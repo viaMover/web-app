@@ -1,14 +1,16 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { getPureEthAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
-import { AbiItem } from 'web3-utils';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
 import {
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
 import { withdrawSubsidized } from './withdrawSubsidized';
 
 export const withdrawCompound = async (
@@ -18,9 +20,9 @@ export const withdrawCompound = async (
   web3: Web3,
   accountAddress: string,
   actionGasLimit: string,
-  gasPriceInGwei: string,
   useSubsidized: boolean,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   try {
     if (useSubsidized) {
@@ -40,8 +42,8 @@ export const withdrawCompound = async (
         web3,
         accountAddress,
         actionGasLimit,
-        gasPriceInGwei,
-        changeStepToProcess
+        changeStepToProcess,
+        gasPriceInGwei
       );
     }
   } catch (err) {
@@ -57,8 +59,8 @@ export const withdraw = async (
   web3: Web3,
   accountAddress: string,
   gasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   console.log('Executing savings withdraw...');
 
@@ -76,9 +78,11 @@ export const withdraw = async (
     const transactionParams = {
       from: accountAddress,
       gas: web3.utils.toBN(gasLimit).toNumber(),
-      gasPrice: web3.utils
-        .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-        .toString()
+      gasPrice: gasPriceInGwei
+        ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+        : undefined,
+      maxFeePerGas: gasPriceInGwei ? undefined : null,
+      maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
     const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);

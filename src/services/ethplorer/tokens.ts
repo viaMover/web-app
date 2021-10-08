@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { Result } from '../responses';
 
 export type EthplorerToken = {

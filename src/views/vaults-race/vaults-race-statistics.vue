@@ -57,14 +57,14 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import {
+  SecondaryPage,
+  SecondaryPageSimpleTitle
+} from '@/components/layout/secondary-page';
+import ProgressLoader from '@/components/statements/progress-loader.vue';
+import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
-import {
-  SecondaryPageSimpleTitle,
-  SecondaryPage
-} from '@/components/layout/secondary-page';
-import ProgressLoader from '@/components/statements/progress-loader.vue';
 
 export default Vue.extend({
   name: 'VaultsRaceStatistics',

@@ -1,21 +1,23 @@
 /* eslint-disable  @typescript-eslint/no-non-null-assertion */
 
-import { checkAccountStateIsReady } from './../../account/utils/state';
 import { ActionTree } from 'vuex';
+
+import { logger } from '@sentry/utils';
 import * as Sentry from '@sentry/vue';
 
 import {
+  getDiceData,
   getOlympusData,
   getSweetAndSourData,
   getUnexpectedMoveData,
-  getDiceData,
   getVaultsData,
   VaultsData
 } from '@/services/chain';
-import { RootStoreState } from '@/store/types';
-import { NftAsset, NFTStoreState } from './../types';
 import { isFeatureEnabled } from '@/settings';
-import { logger } from '@sentry/utils';
+import { RootStoreState } from '@/store/types';
+
+import { checkAccountStateIsReady } from './../../account/utils/state';
+import { NftAsset, NFTStoreState } from './../types';
 
 export default {
   async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {

@@ -14,6 +14,9 @@ export default {
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
+  lblInsufficientBalance: 'Insufficient Balance',
+  lblEnterAmount: 'Enter amount',
+  lblNoData: 'No data',
   releaseRadar: {
     lblReleaseRadar: 'Release Radar',
     lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
@@ -149,7 +152,7 @@ export default {
     deposit: {
       lblChooseAmount: 'Choose the amount to deposit',
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
-      txtDepositShortDescription: 'Get 8.3% APY on simple savings in USDC',
+      txtDepositShortDescription: 'Get {apy}% APY on simple savings in USDC',
       txtYouCouldEarnInYear:
         'You could earn in a year. Considering all changes.',
       txtDepositDescription:
@@ -159,7 +162,7 @@ export default {
       txtAssetWillBeConverted:
         'You chose a non USDC asset. It means that it will be converted ' +
         'to USDC at the time of the deposit at the current market rate.',
-      lblWhatDoWeDeposit: 'What we do deposit',
+      lblWhatDoWeDeposit: 'What do we deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
       lblSwappingFor: 'Swapping for',
@@ -173,8 +176,9 @@ export default {
     },
     withdraw: {
       lblChooseAmount: 'Choose the amount to withdraw',
-      lblAmountWeDepositIn: 'Amount we withdraw in',
+      lblAmountWeWithdrawIn: 'Amount we withdraw in',
       lblWhatDoWeWithdraw: 'What we do withdraw',
+      lblAndTotalOf: 'And it will be a total of',
       lblWithdrawFromSavings: 'Withdraw from @:savings.lblSavingsPrefix',
       txtWithdrawShortDescription:
         'Remove your assets from savings fully or partially',
@@ -183,14 +187,16 @@ export default {
         'Available balance consists of principal amount you deposited ' +
         'together with the accumulated yield.',
       lblWhatToWithdraw: 'What to withdraw',
+      lblReviewYourWithdraw: 'Review your withdrawal',
       btnWithdraw: 'Withdraw',
       lblWhatAboutTheYield: 'What about the yield?',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
       txtIfYouKeepSavings:
         'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:
         'Estimated lost annual yield based on your withdrawal amount is {amount} at the current rate of {apy}% APY.'
-    },
-    btnEnterAmount: 'Enter amount'
+    }
   },
   treasury: {
     icon: '🐷',

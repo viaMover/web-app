@@ -1,23 +1,25 @@
 /* eslint-disable  @typescript-eslint/no-non-null-assertion */
 
-import { greaterThan, lessThan } from '@/utils/bigmath';
-import { currentTimestamp } from '@/utils/time';
 import { ActionTree } from 'vuex';
 
 import {
+  claimAndExchangeUnexpectedMove,
+  claimDice,
+  claimOlympus,
   claimSweetAndSour,
   claimUnexpectedMove,
-  claimAndExchangeUnexpectedMove,
-  exchangeUnexpectedMove,
-  claimOlympus,
   DiceType,
-  claimDice
+  exchangeUnexpectedMove
 } from '@/services/chain';
-import { RootStoreState } from '@/store/types';
-import { NFTStoreState } from './../types';
-import { checkAccountStateIsReady } from '../../account/utils/state';
-import { Step } from '@/components/controls/form-loader';
 import { claimVaults } from '@/services/chain/nft/vaults/vaults';
+import { RootStoreState } from '@/store/types';
+import { greaterThan, lessThan } from '@/utils/bigmath';
+import { currentTimestamp } from '@/utils/time';
+
+import { Step } from '@/components/controls/form-loader';
+
+import { checkAccountStateIsReady } from '../../account/utils/state';
+import { NFTStoreState } from './../types';
 
 export type ClaimPayload = {
   signature: string;

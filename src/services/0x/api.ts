@@ -1,8 +1,10 @@
-import { Network } from '@/utils/networkTypes';
-import { zeroXResponse, zeroXErrorResponse, isErrorResponse } from './response';
 import axios from 'axios';
 import { CustomError } from 'ts-custom-error';
+
 import { multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
+
+import { isErrorResponse, zeroXErrorResponse, zeroXResponse } from './response';
 
 export class ZeroXSwapError extends CustomError {
   public publicMessage: string;

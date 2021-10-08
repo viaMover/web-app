@@ -8,12 +8,13 @@
     <template v-if="text">
       {{ text }}
     </template>
-    <slot></slot>
+    <slot v-else></slot>
   </button>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import { Properties as CssProperties } from 'csstype';
 
 export default Vue.extend({

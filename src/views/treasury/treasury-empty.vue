@@ -32,17 +32,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapGetters } from 'vuex';
 
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { Modal as ModalType } from '@/store/modules/modals/types';
 
 import {
   ActionButton,
   ContextButton,
   ContextButtonItem
 } from '@/components/buttons';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
+
 import { SecondaryPage, SecondaryPageTitle } from '../../components/layout';
-import { Modal as ModalType } from '@/store/modules/modals/types';
-import { mapActions, mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'TreasuryEmpty',

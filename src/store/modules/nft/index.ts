@@ -1,11 +1,12 @@
 import { Module } from 'vuex';
 
-import actionsInit from './actions/init';
-import actionsClaim from './actions/claim';
-import mutations from './mutations';
-import getters from './getters';
-import { NFTStoreState } from './types';
 import { RootStoreState } from '@/store/types';
+
+import actionsClaim from './actions/claim';
+import actionsInit from './actions/init';
+import getters from './getters';
+import mutations from './mutations';
+import { NFTStoreState } from './types';
 
 export default {
   namespaced: true,

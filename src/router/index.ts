@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
+
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
@@ -92,7 +93,6 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/savings',
-    name: 'savings-root',
     component: () =>
       import(
         /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'

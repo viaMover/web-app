@@ -9,7 +9,7 @@
   >
     <template v-slot:left-rail>
       <keep-alive>
-        <component :is="'savings-left-rail'" />
+        <savings-left-rail />
       </keep-alive>
     </template>
 
@@ -28,9 +28,9 @@ import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
 import {
-  SearchModal,
   SavingsDepositModal,
-  SavingsWithdrawModal
+  SavingsWithdrawModal,
+  SearchModal
 } from '@/components/modals';
 import { SavingsLeftRail } from '@/components/savings';
 

@@ -7,7 +7,7 @@
         :title="$t('savings.deposit.lblDepositInSavings')"
       />
       <div class="savings_secondary_page-token-info">
-        <span>~ $0.00</span>
+        <span>{{ estimatedAnnualEarning }}</span>
         <p>{{ $t('savings.deposit.txtYouCouldEarnInYear') }}</p>
       </div>
     </div>
@@ -15,23 +15,23 @@
       <h2>{{ $t('savings.deposit.lblWhatDoWeDeposit') }}</h2>
       <div class="info">
         <token-image
-          :address="token ? token.address : ''"
-          :src="token ? token.logo : ''"
-          :symbol="token ? token.symbol : ''"
+          :address="asset ? asset.address : ''"
+          :src="asset ? asset.logo : ''"
+          :symbol="asset ? asset.symbol : ''"
           wrapper-class="icon"
         />
         <div class="coin">
           <p>
-            {{ token ? token.name : '' }}
+            {{ asset ? asset.name : '' }}
             <span>
-              {{ token ? token.symbol : '' }}
+              {{ asset ? asset.symbol : '' }}
             </span>
           </p>
         </div>
         <button
           class="button-active button-arrow"
           type="button"
-          @click.capture.stop.prevent="handleOpenSelectModal"
+          @click.stop.prevent="handleOpenSelectModal"
         >
           <arrow-down-icon stroke="#fff" />
         </button>
@@ -44,38 +44,38 @@
       </div>
       <div class="description">
         <p>
-          {{
-            isSelectedUSDCToken
-              ? $t('savings.txtUSDCCoinIsAStable')
-              : $t('savings.deposit.txtAssetWillBeConverted')
-          }}
+          {{ description }}
         </p>
       </div>
-      <form action="#" autocomplete="off" class="form">
+      <form autocomplete="off" class="form" @submit.prevent.stop="">
         <p>
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
-          <span
-            class="form-button"
-            @click.capture.stop.prevent="swapSelectedDepositIn"
-          >
-            {{ selectedDepositIn }}
+          <span class="form-button" @click.capture.stop.prevent="swapTokens">
+            {{ currentInputSymbo }}
           </span>
         </p>
-        <input
-          v-model.trim="amountToDeposit"
-          class="deposit__form-input eth-input"
+        <dynamic-input
+          :disabled="isLoading"
+          input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
+          :symbol="currentInputSymbo"
           type="text"
+          :value="inputValue"
+          @update-value="handleUpdateValue"
         />
-        <span>{{ selectedDepositIn }}</span>
-        <div v-if="isShowSwappingBlock" class="form-swap">
+        <div
+          v-if="isSwapNeeded && formattedUSDCTotal && selectedMode === 'TOKEN'"
+          class="form-swap"
+        >
           <p>
             {{ $t('savings.deposit.lblSwappingFor') }}
-            <picture>
-              <img alt="" src="@/assets/images/coin-icon1.png" />
-            </picture>
-            <span>{{ formattedNativeTotal }}</span>
+            <custom-picture
+              alt="USDC"
+              :sources="usdcPicture.sources"
+              :src="usdcPicture.src"
+            />
+            <span>{{ formattedUSDCTotal }}</span>
           </p>
         </div>
         <action-button
@@ -83,11 +83,12 @@
           :disabled="!isButtonActive"
           @button-click="handleTxReview"
         >
-          {{
-            isButtonActive
-              ? $t('savings.lblReviewTransaction')
-              : $t('savings.deposit.lblChooseAmount')
-          }}
+          <div v-if="isLoading || isProcessing" class="loader-icon">
+            <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
+          </div>
+          <template v-else>
+            {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
+          </template>
         </action-button>
       </form>
     </div>
@@ -96,24 +97,52 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { TokenWithBalance } from '@/wallet/types';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import * as Sentry from '@sentry/vue';
+import BigNumber from 'bignumber.js';
+
 import {
+  getTransferData,
+  TransferData,
+  ZeroXSwapError
+} from '@/services/0x/api';
+import { mapError } from '@/services/0x/errors';
+import { Modal as ModalType } from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
+import {
+  add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
-  isFinite,
-  isNaN,
-  notZero
+  divide,
+  fromWei,
+  greaterThan,
+  isZero,
+  multiply,
+  notZero,
+  toWei
 } from '@/utils/bigmath';
-import { Modal as ModalType } from '@/store/modules/modals/types';
+import { formatToDecimals, formatToNative } from '@/utils/format';
+import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
+import { CompoudEstimateResponse } from '@/wallet/actions/savings/deposit/depositEstimate';
+import {
+  calcTransactionFastNativePrice,
+  isSubsidizedAllowed
+} from '@/wallet/actions/subsidized';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import {
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
 
-import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import { ArrowDownIcon } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
+import { ArrowDownIcon, DynamicInput } from '@/components/controls';
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
+import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
-import { isUSDCAssetData } from '@/wallet/references/data';
+
+type INPUT_MODE = 'NATIVE' | 'TOKEN';
 
 export default Vue.extend({
   name: 'SavingsDepositForm',
@@ -121,143 +150,406 @@ export default Vue.extend({
     TokenImage,
     SecondaryPageSimpleTitle,
     ActionButton,
-    ArrowDownIcon
+    ArrowDownIcon,
+    DynamicInput,
+    CustomPicture
   },
   data() {
     return {
-      selectedDepositIn: 'USDC' as string,
-      amountToDeposit: '' as string,
-      token: undefined as TokenWithBalance | undefined
+      usdcPicture: {
+        src: require('@/assets/images/USDC.png'),
+        sources: [
+          {
+            src: require('@/assets/images/USDC@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor,
+      selectedMode: 'TOKEN' as INPUT_MODE,
+      asset: undefined as TokenWithBalance | undefined,
+      maxInNative: '0' as string,
+      amount: '',
+      nativeAmount: '',
+      transferData: undefined as TransferData | undefined,
+      transferError: undefined as undefined | string,
+      isLoading: true,
+      isProcessing: false,
+      tokenSelectedByUser: false
     };
   },
   computed: {
-    ...mapState('account', ['tokens', 'networkInfo']),
-    isSelectedUSDCToken(): boolean {
-      return isUSDCAssetData(
-        this.networkInfo.network,
-        this.token?.address ?? ''
-      );
+    ...mapState('account', [
+      'networkInfo',
+      'currentAddress',
+      'provider',
+      'gasPrices',
+      'tokens',
+      'ethPrice',
+      'savingsAPY',
+      'usdcPriceInWeth',
+      'ethPrice',
+      'savingsBalance',
+      'nativeCurrency'
+    ]),
+    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
+    outputUSDCAsset(): SmallTokenInfoWithIcon {
+      return getUSDCAssetData(this.networkInfo.network);
     },
-    isShowSwappingBlock(): boolean {
-      if (this.isSelectedUSDCToken) {
-        return false;
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    isSwapNeeded(): boolean {
+      if (this.asset === undefined) {
+        return true;
+      }
+
+      return !sameAddress(this.asset.address, this.outputUSDCAsset.address);
+    },
+    description(): string {
+      return (
+        this.isSwapNeeded
+          ? this.$t('savings.deposit.txtAssetWillBeConverted')
+          : this.$t('savings.txtUSDCCoinIsAStable')
+      ) as string;
+    },
+    currentInputSymbo(): string {
+      if (this.selectedMode === 'TOKEN') {
+        return this.asset?.symbol ?? '';
       } else {
-        return this.selectedDepositIn !== 'USDC';
+        return this.nativeCurrencySymbol;
       }
     },
+    maxInputAmount(): string {
+      if (this.asset === undefined) {
+        return '0';
+      }
+      return this.asset.balance;
+    },
+    error(): string | undefined {
+      if (this.asset === undefined) {
+        return this.$t('swaps.lblChooseToken') as string;
+      }
+
+      if (!notZero(this.amount)) {
+        return this.$t('savings.deposit.lblChooseAmount') as string;
+      }
+
+      if (greaterThan(this.amount, this.maxInputAmount)) {
+        return this.$t('lblInsufficientBalance') as string;
+      }
+
+      if (this.transferError !== undefined) {
+        return this.transferError;
+      }
+      return undefined;
+    },
+    inputValue(): string {
+      return this.selectedMode === 'TOKEN' ? this.amount : this.nativeAmount;
+    },
     isButtonActive(): boolean {
-      return (
-        this.token !== undefined &&
-        this.amountToDeposit !== '' &&
-        !isNaN(this.amountToDeposit) &&
-        notZero(this.amountToDeposit) &&
-        isFinite(this.amountToDeposit)
+      return this.error === undefined && !this.isLoading;
+    },
+    estimatedAnnualEarning(): string {
+      let possibleSavingsBalance = '0';
+      if (
+        this.asset &&
+        sameAddress(this.asset.address, this.outputUSDCAsset.address)
+      ) {
+        possibleSavingsBalance = this.amount;
+      } else if (this.transferData !== undefined) {
+        possibleSavingsBalance = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
+      }
+
+      if (this.savingsBalance !== undefined) {
+        possibleSavingsBalance = add(
+          this.savingsBalance,
+          possibleSavingsBalance
+        );
+      }
+
+      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
+      const apyNative = multiply(
+        divide(this.savingsAPY, 100),
+        usdcAmountNative
       );
+
+      return `~ $${formatToNative(apyNative)}`;
     },
     formattedMaxAmount(): string {
-      if (this.token === undefined) {
+      if (this.asset === undefined) {
         return `0`;
       }
 
-      return `${formatToDecimals(this.token.balance, 4)} ${this.token.symbol}`;
+      if (this.selectedMode === 'TOKEN') {
+        return `${formatToDecimals(this.asset.balance, 4)} ${
+          this.asset.symbol
+        }`;
+      } else {
+        return `$${formatToDecimals(
+          multiply(this.asset.balance, this.asset.priceUSD),
+          2
+        )} ${this.nativeCurrencySymbol}`;
+      }
     },
-    formattedNativeTotal(): string {
-      if (this.token === undefined) {
+    formattedUSDCTotal(): string {
+      if (this.asset === undefined) {
         return '0';
       }
-      const native = convertNativeAmountFromAmount(
-        this.amountToDeposit,
-        this.token.priceUSD
-      );
+      let boughtUSDC = '0';
 
-      if (native === 'NaN') {
-        return '0 USDC';
+      if (sameAddress(this.asset.address, this.outputUSDCAsset.address)) {
+        boughtUSDC = this.amount;
+      } else if (this.transferData !== undefined) {
+        boughtUSDC = fromWei(
+          this.transferData.buyAmount,
+          this.outputUSDCAsset.decimals
+        );
       } else {
-        return `${formatToNative(native)} USDC`;
+        return '';
       }
+
+      return `${formatToNative(boughtUSDC)} USDC`;
     }
   },
-  mounted() {
-    const eth = this.tokens.find((t: TokenWithBalance) => t.address === 'eth');
-    if (eth) {
-      this.token = eth;
+  watch: {
+    tokens: {
+      immediate: true,
+      handler(newVal: Array<TokenWithBalance>) {
+        try {
+          if (!this.tokenSelectedByUser) {
+            const eth = newVal.find(
+              (t: TokenWithBalance) => t.address === 'eth'
+            );
+            if (eth) {
+              this.asset = eth;
+            }
+          }
+        } finally {
+          this.isLoading = false;
+        }
+      }
     }
   },
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
-    handleTxReview(): void {
-      if (this.token === undefined) {
+    async handleUpdateValue(val: string): Promise<void> {
+      await this.updatingValue(val, this.selectedMode);
+    },
+    async updatingValue(value: string, mode: INPUT_MODE): Promise<void> {
+      if (this.asset === undefined || this.isLoading) {
         return;
       }
-      let nativeAmount = '';
-      let amount = '';
 
-      if (this.isSelectedUSDCToken) {
-        nativeAmount = this.amountToDeposit;
-        amount = this.amountToDeposit;
-      } else {
-        if (this.selectedDepositIn === 'USDC') {
-          nativeAmount = this.amountToDeposit;
-          amount = convertAmountFromNativeValue(
-            this.amountToDeposit,
-            this.token.priceUSD,
-            this.token.decimals
-          );
+      this.isLoading = true;
+
+      try {
+        if (!this.isSwapNeeded) {
+          console.log('Dont need transfer, token is USDC');
+          this.transferData = undefined;
+          if (mode === 'TOKEN') {
+            this.amount = value;
+            this.nativeAmount = convertNativeAmountFromAmount(
+              value,
+              this.asset.priceUSD
+            );
+          } else {
+            this.amount = convertAmountFromNativeValue(
+              value,
+              this.asset.priceUSD,
+              this.asset.decimals
+            );
+            this.nativeAmount = value;
+          }
         } else {
-          amount = this.amountToDeposit;
-          nativeAmount = convertNativeAmountFromAmount(
-            this.amountToDeposit,
-            this.token.priceUSD
-          );
+          if (mode === 'TOKEN') {
+            this.amount = value;
+            this.nativeAmount = new BigNumber(
+              convertNativeAmountFromAmount(value, this.asset.priceUSD)
+            ).toFixed(2);
+            const inputInWei = toWei(value, this.asset.decimals);
+            const transferData = await getTransferData(
+              this.outputUSDCAsset.address,
+              this.asset.address,
+              inputInWei,
+              true,
+              '0.01',
+              this.networkInfo.network
+            );
+            this.transferData = transferData;
+            this.transferError = undefined;
+          } else {
+            this.nativeAmount = value;
+            const inputInWei = toWei(
+              convertAmountFromNativeValue(
+                value,
+                this.asset.priceUSD,
+                this.asset.decimals
+              ),
+              this.asset.decimals
+            );
+            const transferData = await getTransferData(
+              this.outputUSDCAsset.address,
+              this.asset.address,
+              inputInWei,
+              true,
+              '0.01',
+              this.networkInfo.network
+            );
+            this.transferData = transferData;
+            this.transferError = undefined;
+            this.amount = fromWei(
+              this.transferData.sellAmount,
+              this.asset.decimals
+            );
+          }
         }
+      } catch (err) {
+        if (err instanceof ZeroXSwapError) {
+          this.transferError = mapError(err.publicMessage);
+        } else {
+          this.transferError = 'Exchange error';
+          Sentry.captureException(err);
+        }
+        console.error(`transfer error: ${err}`);
+        this.transferData = undefined;
+        if (mode === 'TOKEN') {
+          this.nativeAmount = '0';
+        } else {
+          this.amount = '0';
+        }
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we can't calculate subsidized tx native price"
+        );
+        return undefined;
+      }
+      return calcTransactionFastNativePrice(
+        gasPrice,
+        actionGasLimit,
+        this.ethPrice
+      );
+    },
+    checkSubsidizedAvailability(actionGasLimit: string): boolean {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we don't allow subsidized transaction"
+        );
+        return false;
+      }
+
+      if (this.asset?.address === 'eth') {
+        console.info('Subsidizing for deposit ETH denied');
+        return false;
+      }
+
+      return isSubsidizedAllowed(
+        gasPrice,
+        actionGasLimit,
+        this.ethPrice,
+        this.treasuryBonusNative
+      );
+    },
+    async estimateAction(
+      inputAmount: string,
+      inputAsset: SmallToken,
+      transferData: TransferData | undefined
+    ): Promise<CompoudEstimateResponse> {
+      const resp = await estimateDepositCompound(
+        inputAsset,
+        this.outputUSDCAsset,
+        inputAmount,
+        transferData,
+        this.networkInfo.network,
+        this.provider.web3,
+        this.currentAddress
+      );
+      if (resp.error) {
+        console.error(resp.error);
+        this.transferError = 'Estimate error';
+        Sentry.captureException("can't estimate savings deposit");
+        throw new Error(`Can't estimate action ${resp.error}`);
+      }
+      return resp;
+    },
+    async handleTxReview(): Promise<void> {
+      if (this.asset === undefined) {
+        return;
+      }
+
+      let subsidizedEnabled = false;
+      let subsidizedTxPrice = undefined;
+      let actionGasLimit = '0';
+      let approveGasLimit = '0';
+      this.isProcessing = true;
+      try {
+        const gasLimits = await this.estimateAction(
+          this.amount,
+          this.asset,
+          this.transferData
+        );
+
+        actionGasLimit = gasLimits.actionGasLimit;
+        approveGasLimit = gasLimits.approveGasLimit;
+
+        console.info('Savings deposit action gaslimit:', actionGasLimit);
+        console.info('Savings deposit approve gaslimit:', approveGasLimit);
+
+        if (!isZero(actionGasLimit)) {
+          subsidizedEnabled = this.checkSubsidizedAvailability(actionGasLimit);
+          subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
+        }
+      } catch (err) {
+        subsidizedEnabled = false;
+        console.error(err);
+        Sentry.captureException("can't estimate savings deposit for subs");
+      } finally {
+        this.isProcessing = false;
       }
 
       this.$emit('tx-review', {
-        token: this.token,
-        amount: amount,
-        nativeAmount: nativeAmount,
-        selectedDepositIn: this.selectedDepositIn
+        token: this.asset,
+        amount: this.amount,
+        nativeAmount: this.nativeAmount,
+        subsidizedEnabled: subsidizedEnabled,
+        estimatedGasCost: subsidizedTxPrice,
+        transferData: this.transferData,
+        actionGasLimit: actionGasLimit,
+        approveGasLimit: approveGasLimit
       });
     },
-    swapSelectedDepositIn(): void {
-      if (this.selectedDepositIn === 'USDC') {
-        if (this.token !== undefined) {
-          if (this.isSelectedUSDCToken) {
-            return;
-          }
-
-          this.selectedDepositIn = this.token.symbol;
-          this.amountToDeposit = convertAmountFromNativeValue(
-            this.amountToDeposit,
-            this.token.priceUSD,
-            this.token.decimals
-          );
-        }
+    swapTokens(): void {
+      if (this.selectedMode === 'TOKEN') {
+        this.selectedMode = 'NATIVE';
       } else {
-        this.selectedDepositIn = 'USDC';
-        if (this.token !== undefined) {
-          this.amountToDeposit = convertNativeAmountFromAmount(
-            this.amountToDeposit,
-            this.token.priceUSD
-          );
-        }
-      }
-
-      if (this.amountToDeposit === 'NaN') {
-        this.amountToDeposit = '0';
+        this.selectedMode = 'TOKEN';
       }
     },
-    handleSelectMaxAmount(): void {
-      if (!this.token) {
+    async handleSelectMaxAmount(): Promise<void> {
+      if (this.asset === undefined) {
         return;
       }
-      if (this.selectedDepositIn === 'USDC') {
-        this.amountToDeposit = convertNativeAmountFromAmount(
-          this.token.balance,
-          this.token.priceUSD
-        );
+      if (this.selectedMode === 'TOKEN') {
+        await this.updatingValue(this.asset.balance, 'TOKEN');
       } else {
-        this.amountToDeposit = this.token.balance;
+        await this.updatingValue(
+          new BigNumber(
+            multiply(this.asset.balance, this.asset.priceUSD)
+          ).toFixed(2),
+          'NATIVE'
+        );
       }
     },
     async handleOpenSelectModal(): Promise<void> {
@@ -269,14 +561,12 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       } else {
-        this.token = token;
-      }
-      this.amountToDeposit = '';
-
-      if (this.selectedDepositIn !== 'USDC' && this.token !== undefined) {
-        this.selectedDepositIn = this.token.symbol;
-      } else {
-        this.selectedDepositIn = 'USDC';
+        this.tokenSelectedByUser = true;
+        this.asset = token;
+        this.transferData = undefined;
+        this.transferError = undefined;
+        this.amount = '';
+        this.nativeAmount = '';
       }
     }
   }

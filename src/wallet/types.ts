@@ -128,4 +128,6 @@ export type TransactionsParams = {
   gas?: number;
   gasPrice?: string;
   value?: string;
+  maxPriorityFeePerGas?: string | null;
+  maxFeePerGas?: string | null;
 };

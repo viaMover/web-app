@@ -1,10 +1,11 @@
-import { greaterThan, greaterThanOrEqual } from '@/utils/bigmath';
-import { getNetwork } from '@/utils/networkTypes';
-import Web3 from 'web3';
-import { Network } from '@/utils/networkTypes';
 import axios from 'axios';
-import { fromWei, multiply } from '@/utils/bigmath';
 import { CustomError } from 'ts-custom-error';
+import Web3 from 'web3';
+
+import { greaterThan, greaterThanOrEqual } from '@/utils/bigmath';
+import { fromWei, multiply } from '@/utils/bigmath';
+import { getNetwork } from '@/utils/networkTypes';
+import { Network } from '@/utils/networkTypes';
 
 export class SubsidizedRequestError extends CustomError {
   public publicMessage: string;
@@ -218,12 +219,11 @@ export const CheckSubsidizedInQueueTx = async (
   }
 };
 
-export const isSubsidizedAllowed = (
+export const calcTransactionFastNativePrice = (
   fastGasPriceGWEI: string,
   txGasLimit: string,
-  ethPrice: string,
-  treasuryBonus: string
-): boolean => {
+  ethPrice: string
+): string => {
   console.log('gassless transaction mode available');
   console.log('fastGasPriceGWEI;', fastGasPriceGWEI);
   const fastGasPriceWEI = Web3.utils.toWei(fastGasPriceGWEI, 'Gwei');
@@ -243,8 +243,22 @@ export const isSubsidizedAllowed = (
     fastTransactionPriceEth,
     ethPrice
   );
-  console.log('fastTransactionPriceNative:', fastTransactionPriceNative);
+  return fastTransactionPriceNative;
+};
+
+export const isSubsidizedAllowed = (
+  fastGasPriceGWEI: string,
+  txGasLimit: string,
+  ethPrice: string,
+  treasuryBonus: string
+): boolean => {
   console.log('treasuryBonus (native):', treasuryBonus);
+  const fastTransactionPriceNative = calcTransactionFastNativePrice(
+    fastGasPriceGWEI,
+    txGasLimit,
+    ethPrice
+  );
+  console.log('fastTransactionPriceNative:', fastTransactionPriceNative);
 
   if (process.env.NODE_ENV !== 'production') {
     console.log('Subsidized allowed for DEV');

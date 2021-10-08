@@ -35,16 +35,16 @@
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           {{ token.symbol }}
         </h2>
-        <span> {{ formatAmount }} </span>
+        <span> {{ formattedAmount }} </span>
       </div>
       <div class="item">
         <h2>{{ $t('savings.deposit.lblAndTotalOf') }}</h2>
         <span>
-          {{ formatToNative(nativeAmount) }} {{ $t('savings.USDC') }}
+          {{ formatNativeAmount }}
         </span>
       </div>
     </div>
-    <div v-if="isSubsidy">
+    <div v-if="subsidizedEnabled">
       <div class="switch">
         <p>{{ $t('savings.deposit.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
@@ -60,7 +60,7 @@
       <div class="items">
         <div class="item">
           <h2>{{ $t('savings.deposit.lblEstimatedGasCost') }}</h2>
-          <span>{{ gasCost }}</span>
+          <span>{{ formattedEstimatedGasCost }}</span>
         </div>
       </div>
     </div>
@@ -78,13 +78,14 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
-import { TokenWithBalance } from '@/wallet/types';
+import { sameAddress } from '@/utils/address';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { isUSDCAssetData } from '@/wallet/references/data';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'SavingsDepositReview',
@@ -106,9 +107,13 @@ export default Vue.extend({
       type: String,
       required: true
     },
-    amountType: {
+    subsidizedEnabled: {
+      type: Boolean,
+      default: false
+    },
+    estimatedGasCost: {
       type: String,
-      required: true
+      default: undefined
     }
   },
   data() {
@@ -135,33 +140,26 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['networkInfo']),
-    formatAmount(): string {
-      if (this.isSelectedUSDCToken) {
-        return `${formatToNative(this.amount)} ${this.$t('savings.USDC')}`;
-      }
+    ...mapState('account', ['networkInfo', 'nativeCurrency']),
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    formattedAmount(): string {
       return `${formatToDecimals(this.amount, 4)} ${this.token.symbol}`;
     },
-    formatNativeAmount(): string {
-      return `${formatToNative(this.nativeAmount)} ${this.$t('savings.USDC')}`;
-    },
-    isSelectedUSDCToken(): boolean {
-      return isUSDCAssetData(
-        this.networkInfo.network,
-        this.token?.address ?? ''
-      );
-    },
-    isSubsidy(): boolean {
-      //TODO
-      return true;
-    },
-    gasCost(): string {
-      //TODO
+    formattedEstimatedGasCost(): string {
       if (this.isSmartTreasury) {
         return '$0.00';
-      } else {
-        return '$123.02';
       }
+      if (this.estimatedGasCost === undefined) {
+        return this.$t('lblNoData') as string;
+      }
+      return `$${formatToNative(this.estimatedGasCost)}`;
+    },
+    formatNativeAmount(): string {
+      return `${formatToNative(this.nativeAmount)} ${
+        this.nativeCurrencySymbol
+      }`;
     }
   },
   methods: {
@@ -169,7 +167,7 @@ export default Vue.extend({
     formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
-        isSmartTreasury: this.isSmartTreasury
+        isSmartTreasury: this.isSmartTreasury && this.subsidizedEnabled
       });
     }
   }

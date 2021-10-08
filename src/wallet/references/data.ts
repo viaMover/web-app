@@ -1,18 +1,19 @@
-import { SmallTokenInfoWithIcon, Token } from './../types';
-import { SmallTokenInfo } from '@/wallet/types';
 import { Network } from '@/utils/networkTypes';
+import { SmallTokenInfoWithIcon, Token } from '@/wallet/types';
+import { SmallTokenInfo } from '@/wallet/types';
+
+import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import ERC20_ABI from './abi/erc20-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
-import SMART_TREASURY_ABI from './abi/smart-treasury.json';
-import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
-import ERC20_ABI from './abi/erc20-abi.json';
-import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
-import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
-import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
-import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
+import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
+import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
+import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
+import NFT_VAULTS_ABI from './abi/nft-vaults.json';
+import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -384,15 +385,6 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
-const isUSDCAssetData = (network: Network, address: string): boolean => {
-  const USDcAddress = USDC_TOKEN_ADDRESS(network);
-  if (USDcAddress === '0x1') {
-    return false;
-  } else {
-    return USDcAddress.trim().toLowerCase() === address.trim().toLowerCase();
-  }
-};
-
 const formatSwapSources = (swapSource: string): string => {
   return SWAP_SOURCES_ICON[swapSource]
     ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
@@ -406,7 +398,6 @@ export {
   getUSDCAssetData,
   getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
-  isUSDCAssetData,
   formatSwapSources,
   SUSHI_ADDRESS,
   MOBO_ADDRESS,

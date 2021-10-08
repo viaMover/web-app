@@ -42,12 +42,13 @@
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 
-import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
-import { ContextButton, ContextButtonItem } from '@/components/buttons';
-import { StatementNavList } from '@/components/statements/statement-nav-list';
-import { TreasuryYearlyChartWrapper } from '@/components/treasury';
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 import { Modal as ModalType } from '@/store/modules/modals/types';
+
+import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { toggleSingleItem } from '@/components/toggle/toggle-root';
+import { TreasuryYearlyChartWrapper } from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryManage',

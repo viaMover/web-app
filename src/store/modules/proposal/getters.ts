@@ -1,5 +1,7 @@
 import { GetterTree } from 'vuex';
+
 import { RootStoreState } from '@/store/types';
+
 import { Proposal, ProposalStoreState } from './types';
 
 export default {

@@ -1,6 +1,7 @@
-import { Transaction, TransactionTypes } from '@/wallet/types';
-import uniqBy from 'lodash-es/uniqBy';
 import orderBy from 'lodash-es/orderBy';
+import uniqBy from 'lodash-es/uniqBy';
+
+import { Transaction, TransactionTypes } from '@/wallet/types';
 
 export const sortAndDeduplicateTransactions = (
   txns: Array<Transaction>

@@ -30,9 +30,9 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
 import { NibbleShopProduct } from '@/components/nibble-shop';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'NibbleShopViewAll',

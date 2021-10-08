@@ -1,4 +1,5 @@
 import { MutationTree } from 'vuex';
+
 import { Asset, ShopStoreState } from './types';
 
 export default {

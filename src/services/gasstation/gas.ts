@@ -1,7 +1,9 @@
-import { GasPriceResponse } from './types';
-import { APIKeys } from '@/settings';
 import axios from 'axios';
+
+import { APIKeys } from '@/settings';
 import { GasData } from '@/wallet/types';
+
+import { GasPriceResponse } from './types';
 
 const API_ENDPOINT_GAS_PRICES = 'https://ethgasstation.info/api/ethgasAPI.json';
 

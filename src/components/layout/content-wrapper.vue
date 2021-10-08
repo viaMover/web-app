@@ -9,9 +9,9 @@
     >
       <slot name="left-rail"></slot>
     </left-rail>
-    <close-button
+    <back-button
       v-if="hasCloseButton"
-      :is-black="isBlackCloseButton"
+      :mode="isBlackCloseButton ? 'CLOSE-BLACK' : 'CLOSE'"
       @close="handleClose"
     />
 
@@ -24,9 +24,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { Properties } from 'csstype';
 
-import { BackButton, CloseButton } from '@/components/buttons';
+import { BackButton } from '@/components/buttons';
+
 import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
 
@@ -35,8 +37,7 @@ export default Vue.extend({
   components: {
     PageContainer,
     LeftRail,
-    BackButton,
-    CloseButton
+    BackButton
   },
   props: {
     hasLeftRail: {

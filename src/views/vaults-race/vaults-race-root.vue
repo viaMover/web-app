@@ -21,7 +21,6 @@
 import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
-
 import { VaultsRaceLeftRail } from '@/components/vaults-race';
 
 import '@/styles/_games.less';

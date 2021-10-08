@@ -1,9 +1,10 @@
-import { fromWei, greaterThan } from './../../../utils/bigmath';
-import { isEth } from './../../../utils/address';
-import { AbiItem } from 'web3-utils';
-import { ERC20_ABI } from '@/wallet/references/data';
 import Web3 from 'web3';
-import { TransactionsParams, SmallToken } from '@/wallet/types';
+import { AbiItem } from 'web3-utils';
+
+import { isEth } from '@/utils/address';
+import { fromWei, greaterThan } from '@/utils/bigmath';
+import { ERC20_ABI } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 const getAllowance = async (
   owner: string,

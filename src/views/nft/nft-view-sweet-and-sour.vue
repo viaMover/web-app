@@ -63,13 +63,14 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import ActionButton from '@/components/buttons/action-button.vue';
-import { Step } from '@/components/controls/form-loader';
 import { getSweetAndSourClaimSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/actions/claim';
-import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
 import { formatToDecimals } from '@/utils/format';
+
+import { ActionButton } from '@/components/buttons';
+import { Step } from '@/components/controls/form-loader';
+import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
+import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewSweetAndSour',

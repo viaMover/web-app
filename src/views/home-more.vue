@@ -21,12 +21,12 @@ import { isFeatureEnabled } from '@/settings';
 import { ContentWrapper } from '@/components/layout';
 import {
   GovernanceSection,
-  NibbleShopSection,
-  NftDropsSection
+  NftDropsSection,
+  NibbleShopSection
 } from '@/components/sections';
+import VaultsRaceSection from '@/components/sections/vaults-race-section.vue';
 
 import '@/styles/_more.less';
-import VaultsRaceSection from '@/components/sections/vaults-race-section.vue';
 
 export default Vue.extend({
   name: 'HomeMore',

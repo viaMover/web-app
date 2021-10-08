@@ -1,4 +1,5 @@
 import { MutationTree } from 'vuex';
+
 import { GamesStoreState } from '@/store/modules/games/types';
 
 export default {

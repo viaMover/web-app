@@ -19,9 +19,9 @@
 import Vue from 'vue';
 
 import { PictureDescriptor } from '@/components/html5';
+import CustomPicture from '@/components/html5/custom-picture.vue';
 
 import SectionBase from './section-base/section-base.vue';
-import CustomPicture from '@/components/html5/custom-picture.vue';
 
 export default Vue.extend({
   name: 'VaultsRaceSection',

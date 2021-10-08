@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import { Properties } from 'csstype';
 
 export default Vue.extend({
