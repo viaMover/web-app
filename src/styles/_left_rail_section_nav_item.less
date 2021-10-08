@@ -1,3 +1,5 @@
+@import "./_variables.less";
+
 .left-rail-section-nav-item {
   display: flex;
   flex-flow: row nowrap;
@@ -26,11 +28,14 @@
 
       h3,
       .title {
-        font-family: 'Regular', sans-serif;
-        font-weight: 700;
         font-size: 14px;
         line-height: 22px;
         margin-bottom: 4px;
+        @font-regular();
+
+        &.bold {
+          @font-bold();
+        }
 
         &.disabled {
           color: rgba(60, 60, 67, 0.6);
@@ -40,15 +45,13 @@
       p,
       .description {
         color: rgba(60, 60, 67, 0.6);
-        font-family: 'Medium', sans-serif;
-        font-weight: 500;
         font-size: 14px;
         line-height: 22px;
+        @font-medium();
 
         &.bold {
           color: #000;
-          font-family: 'Bold', sans-serif;
-          font-weight: 700;
+          @font-bold();
         }
       }
     }
@@ -61,11 +64,10 @@
       span {
         flex-shrink: 0;
         flex-grow: 0;
-        font-family: 'Roboto-Regular', sans-serif;
-        font-weight: 400;
         font-size: 16px;
         line-height: 24px;
         margin-right: 16px;
+        @font-regular();
       }
 
     .info {
@@ -73,10 +75,9 @@
 
       p,
       .description {
-        font-family: 'Medium', sans-serif;
-        font-weight: 500;
         font-size: 16px;
         line-height: 24px;
+        @font-medium();
       }
     }
   }

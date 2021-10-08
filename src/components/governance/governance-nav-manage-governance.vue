@@ -12,6 +12,7 @@
         :description="$t('governance.txtCreateAProposal')"
         navigate-to="governance-create"
         :title="$t('governance.lblCreateAProposal')"
+        title-class="bold"
       >
         <template v-slot:picture>
           <custom-picture
@@ -25,6 +26,7 @@
         :description="$t('governance.txtGlobalAnalytics')"
         navigate-to="governance-global-analytics"
         :title="$t('governance.lblGlobalAnalytics')"
+        title-class="bold"
       >
         <template v-slot:picture>
           <custom-picture
