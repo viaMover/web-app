@@ -242,7 +242,7 @@ export default {
         params
       );
     } catch (error) {
-      console.debug('failed to create a proposal', error);
+      console.error('failed to create a proposal', error);
 
       Sentry.captureException(error);
       throw error;
@@ -295,7 +295,7 @@ export default {
         snapshot
       );
     } catch (error) {
-      console.debug('failed to load scores', error);
+      console.error('failed to load scores', error);
       Sentry.captureException(error);
       return new Array(proposal.strategies.length).fill({});
     }
@@ -320,7 +320,7 @@ export default {
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
       commit('setCommunityVotingPower', communityVotingPower);
     } catch (error) {
-      console.debug('failed to load power info', error);
+      console.error('failed to load power info', error);
       Sentry.captureException(error);
       throw error;
     }
@@ -378,7 +378,7 @@ export default {
           snapshot
         );
       } catch (fallbackError) {
-        console.debug('failed to load communityVotingPower', fallbackError);
+        console.error('failed to load communityVotingPower', fallbackError);
         Sentry.captureException(fallbackError);
         throw error;
       }
@@ -467,7 +467,7 @@ export default {
 
         return votingPowerSelf;
       } catch (fallbackError) {
-        console.debug('failed to load votingPowerSelf', fallbackError);
+        console.error('failed to load votingPowerSelf', fallbackError);
         Sentry.captureException(fallbackError);
         throw fallbackError;
       }
