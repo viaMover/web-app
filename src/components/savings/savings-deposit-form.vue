@@ -320,7 +320,7 @@ export default Vue.extend({
       return `${formatToNative(boughtUSDC)} USDC`;
     },
     selectorStyle(): CssProperties {
-      if (this.asset === undefined || this.asset.color === undefined) {
+      if (this.asset?.color === undefined) {
         return {
           backgroundColor: '#687EE3',
           boxShadow: '0 0 8px #687EE3'
