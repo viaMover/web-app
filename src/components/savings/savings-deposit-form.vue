@@ -573,7 +573,10 @@ export default Vue.extend({
     async handleOpenSelectModal(): Promise<void> {
       const token = await this.setIsModalDisplayed({
         id: ModalType.SearchToken,
-        value: true
+        value: true,
+        payload: {
+          useWalletTokens: true
+        }
       });
 
       if (token === undefined) {
