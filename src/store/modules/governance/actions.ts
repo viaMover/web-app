@@ -242,6 +242,8 @@ export default {
         params
       );
     } catch (error) {
+      console.debug('failed to create a proposal', error);
+
       Sentry.captureException(error);
       throw error;
     }
@@ -274,6 +276,8 @@ export default {
         payload
       );
     } catch (error) {
+      console.error('failed to vote', error);
+
       Sentry.captureException(error);
       throw error;
     }
@@ -345,6 +349,10 @@ export default {
 
       return fromWei(communityVotingPowerInWei.result.votingPower, 18);
     } catch (error) {
+      console.warn(
+        'failed to load communityVotingPower, trying a fallback',
+        error
+      );
       Sentry.captureException(error);
       Sentry.addBreadcrumb({
         message: 'trying to use fallback community voting power scenario'
@@ -418,6 +426,10 @@ export default {
 
       return votingPower;
     } catch (error) {
+      console.warn(
+        'failed to load voting power self, trying a fallback',
+        error
+      );
       Sentry.captureException(error);
       Sentry.addBreadcrumb({
         message: 'trying to use fallback self voting power scenario'

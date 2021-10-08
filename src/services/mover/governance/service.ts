@@ -125,9 +125,7 @@ export const getCommunityVotingPower = async (
     } else if (axiosError.request !== undefined) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest
-      throw new Error(
-        `the request is failed, no response: ${axiosError.toJSON()}`
-      );
+      throw new Error(`the request is failed, no response: ${axiosError}`);
     } else {
       // Something happened in setting up the request that triggered an Error
       throw error;
@@ -171,9 +169,7 @@ export const getVotingPower = async (
     } else if (axiosError.request !== undefined) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest
-      throw new Error(
-        `the request is failed, no response: ${axiosError.toJSON()}`
-      );
+      throw new Error(`the request is failed, no response: ${axiosError}`);
     } else {
       // Something happened in setting up the request that triggered an Error
       throw error;
