@@ -1,5 +1,5 @@
 <template>
-  <secondary-page hide-title :title="$t('savings.lblSavings')">
+  <secondary-page has-back-button hide-title @back="handleBack">
     <div class="savings-statements__wrapper-title">
       <h2>{{ pageTitle }}</h2>
       <p>{{ pageSubtitle }}</p>
@@ -63,7 +63,10 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' }),
-    isFeatureEnabled
+    isFeatureEnabled,
+    handleBack(): void {
+      this.$router.back();
+    }
   },
   async beforeRouteUpdate(to, from, next) {
     if (
