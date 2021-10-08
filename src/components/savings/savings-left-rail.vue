@@ -6,7 +6,7 @@
         description-class="bold"
         navigate-to="savings-manage"
         :title="$t('savings.lblSavings')"
-        title-class="disabled"
+        title-class="disabled medium"
       >
         <template v-slot:picture>
           <custom-picture
