@@ -144,7 +144,7 @@ export default Vue.extend({
         address: this.USDCAsset.address,
         decimals: this.USDCAsset.decimals,
         symbol: this.USDCAsset.symbol,
-        name: 'USDc',
+        name: 'USD Coin',
         priceUSD: this.usdcNativePrice,
         logo: this.USDCAsset.iconURL,
         isFavorite: true,
@@ -178,13 +178,6 @@ export default Vue.extend({
 
       if (this.savingsBalance !== undefined) {
         possibleSavingsBalance = this.savingsBalance;
-      }
-
-      if (this.amountToWithdraw !== '') {
-        possibleSavingsBalance = sub(
-          possibleSavingsBalance,
-          this.amountToWithdraw
-        );
       }
 
       const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);

@@ -5,14 +5,19 @@
         <span class="balance">{{ savingsBalance }}</span>
         <p class="black">{{ $t('savings.txtYouCouldApproximately') }}</p>
       </div>
-      <bar-chart :chart-data-source="chartDataSource" />
-      <p>{{ $t('savings.txtIfYouDeposit') }}</p>
+      <bar-chart
+        :chart-data-source="chartDataSource"
+        disable-selecting
+        :is-loading="false"
+      />
+      <p class="margin-top">{{ $t('savings.txtIfYouDeposit') }}</p>
       <div class="savings__menu-wrapper-body">
         <span class="title">{{ currentVariableAPY }}</span>
         <p class="description black">{{ $t('savings.lblAPYOnAllSavings') }}</p>
         <action-button
           button-class="button button-active"
           :text="$t('savings.lblStartSaving')"
+          @button-click="handleDepositClick"
         />
       </div>
     </div>
@@ -92,12 +97,9 @@ export default Vue.extend({
         payload: {}
       });
     },
-    handleDepositClick(): void {
-      toggleSingleItem(this.popoverParentId + '__popover');
-      this.setModalIsDisplayed({
-        id: ModalType.SavingsDeposit,
-        value: true,
-        payload: {}
+    async handleDepositClick(): Promise<void> {
+      await this.$router.push({
+        name: 'savings-deposit'
       });
     }
   }

@@ -117,7 +117,6 @@ export const deposit = async (
     if (transferData) {
       value = Web3.utils.toHex(transferData.value);
     }
-
     const transactionParams = {
       from: accountAddress,
       value: value,
@@ -126,9 +125,10 @@ export const deposit = async (
         ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
         : undefined,
       maxFeePerGas: gasPriceInGwei ? undefined : null,
-      maxPrioiryFeePerGas: gasPriceInGwei ? undefined : null
+      maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
+    console.log(JSON.stringify(transactionParams));
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
     console.log('[savings deposit] input amount in WEI:', inputAmountInWEI);
