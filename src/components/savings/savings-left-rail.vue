@@ -1,12 +1,12 @@
 <template>
-  <left-rail-section>
+  <left-rail-section items-container-class="progressive-left-rail">
     <left-rail-section :section-name="$t('savings.lblMySavings')">
       <left-rail-section-nav-item-image
         :description="savingsBalance"
         description-class="bold"
         navigate-to="savings-manage"
         :title="$t('savings.lblSavings')"
-        title-class="disabled"
+        title-class="disabled medium"
       >
         <template v-slot:picture>
           <custom-picture
@@ -47,10 +47,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="savings.alt"
-            :sources="savings.sources"
-            :src="savings.src"
-            :webp-sources="savings.webpSources"
+            :alt="withdraw.alt"
+            :sources="withdraw.sources"
+            :src="withdraw.src"
+            :webp-sources="withdraw.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -62,10 +62,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="savings.alt"
-            :sources="savings.sources"
-            :src="savings.src"
-            :webp-sources="savings.webpSources"
+            :alt="global.alt"
+            :sources="global.sources"
+            :src="global.src"
+            :webp-sources="global.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -77,7 +77,6 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { isZero } from '@/utils/bigmath';
 import { formatPercents, formatToNative } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
@@ -114,23 +113,28 @@ export default Vue.extend({
         ]
       } as PictureDescriptor,
       global: {
-        //TODO insert new image
-        alt: 'Savings',
-        src: require('@/assets/images/Savings@1x.png'),
+        alt: 'Global',
+        src: require('@/assets/images/Global@1x.png'),
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
+          { src: require('@/assets/images/Global@1x.png') },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
+            src: require('@/assets/images/Global@2x.png')
           }
         ],
-        webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
+        webpSources: []
+      } as PictureDescriptor,
+      withdraw: {
+        alt: 'Withdraw',
+        src: require('@/assets/images/Withdraw@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Withdraw@1x.png') },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: require('@/assets/images/Withdraw@2x.png')
           }
-        ]
+        ],
+        webpSources: []
       } as PictureDescriptor
     };
   },

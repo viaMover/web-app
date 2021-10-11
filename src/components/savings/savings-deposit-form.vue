@@ -30,6 +30,7 @@
         </div>
         <button
           class="button-active button-arrow"
+          :style="selectorStyle"
           type="button"
           @click.stop.prevent="handleOpenSelectModal"
         >
@@ -72,6 +73,7 @@
             {{ $t('savings.deposit.lblSwappingFor') }}
             <custom-picture
               alt="USDC"
+              class="token"
               :sources="usdcPicture.sources"
               :src="usdcPicture.src"
             />
@@ -101,6 +103,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
+import { Properties as CssProperties } from 'csstype';
 
 import {
   getTransferData,
@@ -123,8 +126,10 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
-import { CompoudEstimateResponse } from '@/wallet/actions/savings/deposit/depositEstimate';
+import {
+  CompoudEstimateResponse,
+  estimateDepositCompound
+} from '@/wallet/actions/savings/deposit/depositEstimate';
 import {
   calcTransactionFastNativePrice,
   isSubsidizedAllowed
@@ -291,7 +296,8 @@ export default Vue.extend({
       } else {
         return `$${formatToDecimals(
           multiply(this.asset.balance, this.asset.priceUSD),
-          2
+          2,
+          BigNumber.ROUND_DOWN
         )} ${this.nativeCurrencySymbol}`;
       }
     },
@@ -313,6 +319,19 @@ export default Vue.extend({
       }
 
       return `${formatToNative(boughtUSDC)} USDC`;
+    },
+    selectorStyle(): CssProperties {
+      if (this.asset?.color === undefined) {
+        return {
+          backgroundColor: '#687EE3',
+          boxShadow: '0 0 8px #687EE3'
+        };
+      }
+
+      return {
+        backgroundColor: this.asset.color,
+        boxShadow: `0 0 8px ${this.asset.color}`
+      };
     }
   },
   watch: {
@@ -547,7 +566,7 @@ export default Vue.extend({
         await this.updatingValue(
           new BigNumber(
             multiply(this.asset.balance, this.asset.priceUSD)
-          ).toFixed(2),
+          ).toFixed(2, BigNumber.ROUND_DOWN),
           'NATIVE'
         );
       }
@@ -555,7 +574,10 @@ export default Vue.extend({
     async handleOpenSelectModal(): Promise<void> {
       const token = await this.setIsModalDisplayed({
         id: ModalType.SearchToken,
-        value: true
+        value: true,
+        payload: {
+          useWalletTokens: true
+        }
       });
 
       if (token === undefined) {
