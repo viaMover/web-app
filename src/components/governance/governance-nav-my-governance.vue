@@ -12,7 +12,7 @@
         description-class="bold"
         navigate-to="governance-view-all"
         :title="$t('governance.lblGovernance')"
-        title-class="disabled"
+        title-class="medium disabled"
       >
         <template v-slot:picture>
           <custom-picture

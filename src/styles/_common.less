@@ -88,7 +88,7 @@ button {
 
 .sidebar-wrapper {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   position: relative;
   width: 412px;
   margin: 0 auto;
@@ -153,6 +153,7 @@ html,
 body {
   height: 100%;
   background-color: #fff;
+  overflow: hidden;
 }
 
 .preload {
@@ -182,7 +183,7 @@ body {
 
 .preload-wrapper__sidebar .sidebar-wrapper {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   position: relative;
   width: 412px;
   margin: 0 auto;
@@ -581,7 +582,7 @@ body {
 
 .info__wrapper-menu {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   width: 100%;
   background-color: #fafafc;
 }
@@ -729,8 +730,7 @@ body {
   height: 40px;
   color: #fff;
   background: #fff;
-  background:
- linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~'0 / 12px 12px',
+  background: linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~'0 / 12px 12px',
     linear-gradient(-135deg, transparent 9px, #fff 0);
   filter: drop-shadow(0 0 16px #ccc);
   border-radius: 3px;
