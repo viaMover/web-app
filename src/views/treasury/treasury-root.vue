@@ -1,16 +1,16 @@
 <template>
   <content-wrapper
-    has-back-button
+    has-close-button
     has-left-rail
+    is-black-close-button
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="smart-treasury"
-    @back="handleClose"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <treasury-overview />
-      <treasury-stats />
-      <treasury-reserved-assets />
+      <keep-alive>
+        <treasury-left-rail />
+      </keep-alive>
     </template>
 
     <router-view />
@@ -26,7 +26,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
 
 import { ContentWrapper } from '@/components/layout';
 import {
@@ -35,11 +34,7 @@ import {
   TreasuryDecreaseBoostModal,
   TreasuryIncreaseBoostModal
 } from '@/components/modals';
-import {
-  TreasuryOverview,
-  TreasuryReservedAssets,
-  TreasuryStats
-} from '@/components/treasury';
+import TreasuryLeftRail from '@/components/treasury/treasury-left-rail.vue';
 
 import '@/styles/_treasury.less';
 import '@/styles/_general.less';
@@ -47,41 +42,16 @@ import '@/styles/_general.less';
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
+    TreasuryLeftRail,
     ContentWrapper,
-    TreasuryOverview,
-    TreasuryStats,
-    TreasuryReservedAssets,
     TreasuryIncreaseBoostModal,
     TreasuryDecreaseBoostModal,
     TreasuryClaimAndBurnModal,
     SearchModal
   },
-  computed: {
-    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),
-    isReplaceRouteNeeded(): boolean {
-      return this.$route.name !== 'treasury-empty' && !this.hasActiveTreasury;
-    }
-  },
-  watch: {
-    isReplaceRouteNeeded(newVal: boolean) {
-      if (newVal) {
-        this.replaceInactiveTreasuryRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (this.isReplaceRouteNeeded) {
-      this.replaceInactiveTreasuryRoute();
-    }
-  },
   methods: {
     handleClose(): void {
-      this.$router.back();
-    },
-    replaceInactiveTreasuryRoute(): void {
-      this.$router.replace({
-        name: 'treasury-empty'
-      });
+      this.$router.replace({ name: 'home' });
     }
   }
 });

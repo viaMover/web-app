@@ -1,11 +1,9 @@
 <template>
-  <secondary-page>
-    <template v-slot:title>
-      <div class="smart-treasury-statements__wrapper-title">
-        <h2>{{ pageTitle }}</h2>
-        <p>{{ pageSubtitle }}</p>
-      </div>
-    </template>
+  <secondary-page has-back-button @back="handleBack">
+    <div class="savings-statements__wrapper-title">
+      <h2>{{ pageTitle }}</h2>
+      <p>{{ pageSubtitle }}</p>
+    </div>
     <treasury-monthly-chart-wrapper
       v-if="isFeatureEnabled('isTreasuryMonthlyChartEnabled')"
     />
@@ -65,7 +63,10 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('account', { fetchTreasuryReceipt: 'fetchTreasuryReceipt' }),
-    isFeatureEnabled
+    isFeatureEnabled,
+    handleBack(): void {
+      this.$router.back();
+    }
   }
 });
 </script>
