@@ -31,6 +31,7 @@ export interface TModalParams {
       excludeTokens: Array<Token>;
       treasuryOnly: boolean;
       forceTokenArray: Array<Token>;
+      hideCloseButton: boolean;
     };
     returnType: Token | undefined;
   };

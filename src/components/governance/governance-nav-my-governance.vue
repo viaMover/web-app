@@ -26,11 +26,11 @@ import Vue from 'vue';
 
 import { formatToNative } from '@/utils/format';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
   LeftRailSection,
   LeftRailSectionNavItemImage
 } from '@/components/layout';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'GovernanceNavMyGovernance',

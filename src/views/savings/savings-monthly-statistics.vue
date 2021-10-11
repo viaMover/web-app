@@ -1,5 +1,5 @@
 <template>
-  <secondary-page hide-title :title="$t('savings.lblSavings')">
+  <secondary-page has-back-button hide-title @back="handleBack">
     <div class="savings-statements__wrapper-title">
       <h2>{{ pageTitle }}</h2>
       <p>{{ pageSubtitle }}</p>
@@ -15,17 +15,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions } from 'vuex';
+
 import dayjs from 'dayjs';
 
-import { SecondaryPage } from '@/components/layout';
+import { isFeatureEnabled } from '@/settings';
 import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 
+import { SecondaryPage } from '@/components/layout';
 import {
   SavingsMonthlyChartWrapper,
   SavingsMonthlyStatement
 } from '@/components/savings';
-import { dateFromExplicitPair } from '@/utils/time';
-import { isFeatureEnabled } from '@/settings';
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
@@ -62,7 +63,10 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('account', { fetchMonthlyStats: 'fetchSavingsReceipt' }),
-    isFeatureEnabled
+    isFeatureEnabled,
+    handleBack(): void {
+      this.$router.back();
+    }
   },
   async beforeRouteUpdate(to, from, next) {
     if (

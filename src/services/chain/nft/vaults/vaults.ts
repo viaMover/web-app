@@ -1,12 +1,14 @@
-import { Network } from '@/utils/networkTypes';
-import Web3 from 'web3';
-import { VaultsData } from '@/services/chain';
-import { TransactionsParams } from '@/wallet/types';
-import { NFT_VAULTS_ABI, NFT_VAULTS_ADDRESS } from '@/wallet/references/data';
-import { AbiItem } from 'web3-utils';
-import { Step } from '@/components/controls/form-loader';
-import { floorDivide, multiply } from '@/utils/bigmath';
 import * as Sentry from '@sentry/vue';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
+import { VaultsData } from '@/services/chain';
+import { floorDivide, multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
+import { NFT_VAULTS_ABI, NFT_VAULTS_ADDRESS } from '@/wallet/references/data';
+import { TransactionsParams } from '@/wallet/types';
+
+import { Step } from '@/components/controls/form-loader';
 
 export const getVaultsData = async (
   accountAddress: string,

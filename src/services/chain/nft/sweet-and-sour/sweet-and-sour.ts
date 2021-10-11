@@ -1,17 +1,19 @@
+import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
-import * as Sentry from '@sentry/vue';
 
-import { TransactionsParams } from '@/wallet/types';
-import { SweetAndSourData } from './types';
+import store from '@/store/index';
+import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   NFT_SWEET_AND_SOUR_ABI,
   NFT_SWEET_AND_SOUR_ADDRESS
 } from '@/wallet/references/data';
-import store from '@/store/index';
-import { floorDivide, multiply } from '@/utils/bigmath';
+import { TransactionsParams } from '@/wallet/types';
+
 import { Step } from '@/components/controls/form-loader/types';
+
+import { SweetAndSourData } from './types';
 
 export const getSweetAndSourData = async (
   accountAddress: string,

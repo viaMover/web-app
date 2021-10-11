@@ -1,8 +1,8 @@
-import { TransactionMoveTypeData, TransationsResponse } from './types';
 import axios from 'axios';
 
 import { Result } from '../../responses';
 import { baseUrl } from '../consts';
+import { TransactionMoveTypeData, TransationsResponse } from './types';
 
 export const getMoverTransactionsTypes = async (
   txs: string[]

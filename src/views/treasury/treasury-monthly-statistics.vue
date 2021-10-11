@@ -15,12 +15,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import dayjs from 'dayjs';
 import { mapActions } from 'vuex';
 
+import dayjs from 'dayjs';
+
 import { isFeatureEnabled } from '@/settings';
-import { dateFromExplicitPair } from '@/utils/time';
 import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 
 import { SecondaryPage } from '@/components/layout';
 import {

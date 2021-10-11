@@ -1,7 +1,8 @@
 import { MutationTree } from 'vuex';
 
-import { AccountStoreState } from '../types';
 import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
+
+import { AccountStoreState } from '../types';
 
 export default {
   setTreasuryBalanceMove(state, moveBalance: string): void {

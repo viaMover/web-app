@@ -1,6 +1,6 @@
 <template>
   <div :class="baseClass">
-    <back-button v-if="hasBackButton" @close="handleClose" />
+    <back-button v-if="hasBackButton" @close="handleBack" />
     <left-rail
       v-if="hasLeftRail"
       :container-class="leftRailClass"
@@ -8,19 +8,12 @@
       :inner-wrapper-style="leftRailStyle"
     >
       <slot name="left-rail"></slot>
-      <close-button
-        v-if="hasCloseButton"
-        :is-black="isBlackCloseButton"
-        @close="handleClose"
-      />
     </left-rail>
-    <template v-else>
-      <close-button
-        v-if="hasCloseButton"
-        :is-black="isBlackCloseButton"
-        @close="handleClose"
-      />
-    </template>
+    <back-button
+      v-if="hasCloseButton"
+      :mode="isBlackCloseButton ? 'CLOSE-BLACK' : 'CLOSE'"
+      @close="handleClose"
+    />
 
     <page-container :container-class="pageContainerClassDerived">
       <slot></slot>
@@ -31,9 +24,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 import { Properties } from 'csstype';
 
-import { BackButton, CloseButton } from '@/components/buttons';
+import { BackButton } from '@/components/buttons';
+
 import LeftRail from './left-rail/left-rail.vue';
 import PageContainer from './page-container.vue';
 
@@ -42,8 +37,7 @@ export default Vue.extend({
   components: {
     PageContainer,
     LeftRail,
-    BackButton,
-    CloseButton
+    BackButton
   },
   props: {
     hasLeftRail: {
@@ -91,7 +85,7 @@ export default Vue.extend({
       return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
     },
     leftRailStyle(): Properties {
-      if (this.hasBackButton || this.hasCloseButton) {
+      if (this.hasBackButton) {
         return {
           paddingTop: '104px'
         };
@@ -102,6 +96,9 @@ export default Vue.extend({
   methods: {
     handleClose(): void {
       this.$emit('close');
+    },
+    handleBack(): void {
+      this.$emit('back');
     }
   }
 });

@@ -1,18 +1,20 @@
-import { Network } from '@/utils/networkTypes';
+import findIndex from 'lodash-es/findIndex';
+import io from 'socket.io-client';
+
 import { APIKeys } from '@/settings';
 import { sameAddress } from '@/utils/address';
-import { mapZerionTokens } from './tokens';
+import { Network } from '@/utils/networkTypes';
+import { TokenWithBalance, Transaction } from '@/wallet/types';
+
+import { GetTokensPrice } from '../thegraph/api';
+import { messages, TRANSACTIONS_LIMIT } from './messages';
 import {
   ZerionAssetsReceived,
   ZerionChartsReceived,
   ZerionTransactionsReceived
 } from './responses';
-import io from 'socket.io-client';
-import { messages, TRANSACTIONS_LIMIT } from './messages';
-import { TokenWithBalance, Transaction } from '@/wallet/types';
+import { mapZerionTokens } from './tokens';
 import { mapZerionTxns } from './transactions';
-import { GetTokensPrice } from '../thegraph/api';
-import findIndex from 'lodash-es/findIndex';
 
 export type Explorer = {
   GetChartData: (

@@ -58,11 +58,9 @@ export default Vue.extend({
     ...mapActions('modals', {
       setIsModalDisplayed: 'setIsDisplayed'
     }),
-    handleButtonClick(): void {
-      this.setIsModalDisplayed({
-        id: ModalType.SavingsDeposit,
-        value: true,
-        payload: {}
+    async handleButtonClick(): Promise<void> {
+      await this.$router.push({
+        name: 'savings-deposit'
       });
     }
   }

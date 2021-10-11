@@ -72,17 +72,17 @@ import Vue from 'vue';
 import { formatToNative } from '@/utils/format';
 
 import {
-  SecondaryPage,
-  SecondaryPageTitle,
-  ContentWrapper,
-  LeftRailSection
-} from '@/components/layout';
-import {
-  GovernanceNavMyGovernance,
   GovernanceNavManageGovernance,
+  GovernanceNavMyGovernance,
   GovernanceOverviewSection,
   GovernanceOverviewSectionItem
 } from '@/components/governance';
+import {
+  ContentWrapper,
+  LeftRailSection,
+  SecondaryPage,
+  SecondaryPageTitle
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceGlobalAnalytics',

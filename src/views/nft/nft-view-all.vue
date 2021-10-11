@@ -3,6 +3,7 @@
     base-class="nft-drops"
     has-back-button
     page-container-class="nft-drops"
+    @back="handleClose"
     @close="handleClose"
   >
     <custom-picture
@@ -34,8 +35,8 @@ import Vue from 'vue';
 import { RawLocation } from 'vue-router';
 import { mapState } from 'vuex';
 
-import { ContentWrapper } from '@/components/layout';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
+import { ContentWrapper } from '@/components/layout';
 
 export default Vue.extend({
   name: 'NftViewAll',

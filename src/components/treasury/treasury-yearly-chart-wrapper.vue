@@ -22,15 +22,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
+
 import dayjs from 'dayjs';
 
-import { formatToNative, getSignIfNeeded } from '@/utils/format';
-
-import { BarChart } from '@/components/charts';
 import { TreasuryMonthBonusesItem } from '@/services/mover';
+import { fromWei, multiply } from '@/utils/bigmath';
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import { fromWei, multiply } from '@/utils/bigmath';
+
+import { BarChart } from '@/components/charts';
 
 export default Vue.extend({
   name: 'TreasuryYearlyChart',

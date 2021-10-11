@@ -1,5 +1,5 @@
-import { Network } from '@/utils/networkTypes';
 import { sameAddress } from '@/utils/address';
+import { Network } from '@/utils/networkTypes';
 import { MOBO_ADDRESS, SUSHI_ADDRESS } from '@/wallet/references/data';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 

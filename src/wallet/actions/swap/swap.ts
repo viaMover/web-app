@@ -1,16 +1,18 @@
+import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { BigNumber } from 'bignumber.js';
-import { multiply, toWei } from './../../../utils/bigmath';
-import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from './../actionWithApprove';
+import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { TransferData } from '@/services/0x/api';
-import Web3 from 'web3';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
 import { swapSubsidized } from './swapSubsidized';
 
 export const swapCompound = async (
@@ -36,8 +38,6 @@ export const swapCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         if (useSubsidized) {
           await swapSubsidized(
@@ -65,7 +65,9 @@ export const swapCompound = async (
           );
         }
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't swap: ${err}`);

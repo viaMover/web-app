@@ -1,13 +1,15 @@
+import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
-import * as Sentry from '@sentry/vue';
 
-import { TransactionsParams } from '@/wallet/types';
-import { DiceData, DiceType } from './types';
+import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { NFT_DICE_ABI, NFT_DICE_ADDRESS } from '@/wallet/references/data';
-import { floorDivide, multiply } from '@/utils/bigmath';
+import { TransactionsParams } from '@/wallet/types';
+
 import { Step } from '@/components/controls/form-loader/types';
+
+import { DiceData, DiceType } from './types';
 
 export const getDiceData = async (
   accountAddress: string,

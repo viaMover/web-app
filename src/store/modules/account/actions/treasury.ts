@@ -1,10 +1,7 @@
 import { ActionTree } from 'vuex';
 
-import { RootStoreState } from '@/store/types';
-import { AccountStoreState } from '@/store/modules/account/types';
+import * as Sentry from '@sentry/vue';
 
-import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
-import { isError } from '@/services/responses';
 import {
   getTotalStakedMove,
   getTotalStakedMoveEthLP,
@@ -12,7 +9,10 @@ import {
   getTreasuryBalance,
   getTreasuryBonus
 } from '@/services/chain';
-import * as Sentry from '@sentry/vue';
+import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
+import { isError } from '@/services/responses';
+import { AccountStoreState } from '@/store/modules/account/types';
+import { RootStoreState } from '@/store/types';
 
 export type TreasuryGetReceiptPayload = {
   year: number;

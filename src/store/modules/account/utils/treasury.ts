@@ -1,4 +1,4 @@
-import { divide, multiply, add, isNaN, isFinite } from '@/utils/bigmath';
+import { add, divide, isFinite, isNaN, multiply } from '@/utils/bigmath';
 export const calcTreasuryBoost = (
   treasuryBalanceMove: string,
   treasuryBalanceLP: string,

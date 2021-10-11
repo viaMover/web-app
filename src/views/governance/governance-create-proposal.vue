@@ -17,8 +17,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { SecondaryPage, ContentWrapper } from '@/components/layout';
 import { GovernanceProposalCreateOverview } from '@/components/governance';
+import { ContentWrapper, SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceCreateProposal',

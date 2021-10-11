@@ -1,6 +1,8 @@
 import { GetterTree } from 'vuex';
-import { AccountStoreState } from '../types';
+
 import { RootStoreState } from '@/store/types';
+
+import { AccountStoreState } from '../types';
 
 export default {
   toggleIsDebitCardSectionVisible(state): void {
