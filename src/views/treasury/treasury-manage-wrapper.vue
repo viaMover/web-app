@@ -7,8 +7,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import TreasuryEmpty from '@/components/treasury/treasury-empty.vue';
-import TreasuryManage from '@/components/treasury/treasury-manage.vue';
+import { TreasuryEmpty, TreasuryManage } from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryManageWrapper',

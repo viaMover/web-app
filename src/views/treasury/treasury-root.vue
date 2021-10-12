@@ -34,7 +34,7 @@ import {
   TreasuryDecreaseBoostModal,
   TreasuryIncreaseBoostModal
 } from '@/components/modals';
-import TreasuryLeftRail from '@/components/treasury/treasury-left-rail.vue';
+import { TreasuryLeftRail } from '@/components/treasury';
 
 import '@/styles/_treasury.less';
 import '@/styles/_general.less';

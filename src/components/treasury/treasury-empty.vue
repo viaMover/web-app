@@ -11,7 +11,7 @@
         :is-loading="false"
       />
       <p class="margin-top">{{ $t('treasury.lblIfYouReserveMoveInST') }}</p>
-      <div class="treasury__menu-wrapper-body">
+      <div class="treasury__menu-wrapper-body margin-top-20">
         <div class="line">
           <div>
             <span class="title">{{ currentMaxBoost }}</span>

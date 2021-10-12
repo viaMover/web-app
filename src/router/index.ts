@@ -144,6 +144,14 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'powercard',
+        name: 'treasury-powercard',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-powercard-wrapper.vue'
+          )
+      },
+      {
         path: 'analytics',
         name: 'treasury-global-analytics',
         component: () =>

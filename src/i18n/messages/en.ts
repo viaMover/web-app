@@ -270,6 +270,21 @@ export default {
       'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
     lblReviewTransaction: 'Review transaction',
+    powercard: {
+      lblThePowercard: 'The Powercard',
+      txtThePowercardPageDescription:
+        'The Powercard allows it’s owner to temporary increase the boost ' +
+        'in the treasury. Think of it as a superpower perk. It activates ' +
+        'extra double boost for 30 days, and then it cools down for 60 days.',
+      lblAdditionalBoost: 'Additional boost',
+      lblActive: 'Active',
+      lblCooldown: 'Cooldown',
+      lblPowercardStatus: 'Powercard Status',
+      lblRemainingTime: 'Remaining time',
+      btnActivateThePowercard: 'Activate the Powercard',
+      btnRemoveThePowercard: 'Remove the Powercard',
+      lblIfYouActivateCard: 'If you activate the Powercard now, you are getting'
+    },
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',

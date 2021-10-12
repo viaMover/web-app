@@ -30,8 +30,10 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 import { Step } from '@/components/controls/full-page-form-loader';
 import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
 import { SecondaryPage } from '@/components/layout/secondary-page';
-import { TreasuryIncreaseForm } from '@/components/treasury';
-import TreasuryIncreaseReview from '@/components/treasury/treasury-increase-review.vue';
+import {
+  TreasuryIncreaseForm,
+  TreasuryIncreaseReview
+} from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseWrapper',

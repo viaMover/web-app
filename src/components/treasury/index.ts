@@ -9,4 +9,6 @@ export { default as TreasuryDecreaseReview } from './treasury-decrease-review.vu
 export { default as TreasuryDecreaseForm } from './treasury-decrease-form.vue';
 export { default as TreasuryClaimAndBurnForm } from './treasury-claim-and-burn-form.vue';
 export { default as TreasuryClaimAndBurnReview } from './treasury-claim-and-burn-review.vue';
+export { default as TreasuryPowercardEmpty } from './treasury-powercard-empty.vue';
+export { default as TreasuryPowercardManage } from './treasury-powercard-manage.vue';
 export { default as TreasuryManage } from './treasury-manage.vue';
