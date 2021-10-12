@@ -1,5 +1,5 @@
 <template>
-  <secondary-page :title="pageTitle">
+  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
     <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
     <template v-if="isLoading">
@@ -166,8 +166,11 @@ export default Vue.extend({
     ...mapActions('governance', {
       loadProposal: 'loadProposalInfo'
     }),
-    handleClose(): void {
-      this.$router.back();
+    handleBack(): void {
+      this.$router.replace({
+        name: 'governance-view',
+        params: { id: this.$route.params.id }
+      });
     }
   }
 });

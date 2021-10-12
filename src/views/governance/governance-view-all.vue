@@ -9,11 +9,16 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <governance-nav-my-governance />
-      <governance-nav-manage-governance />
+      <div class="progressive-left-rail">
+        <governance-nav-my-governance />
+        <governance-nav-manage-governance />
+      </div>
     </template>
 
-    <secondary-page :title="$t('governance.lblGetInvolved')">
+    <secondary-page
+      :title="$t('governance.lblGetInvolved')"
+      title-class="extra-margin"
+    >
       <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
       <governance-proposals />

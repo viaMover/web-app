@@ -1,5 +1,9 @@
 <template>
-  <secondary-page :title="proposal ? proposal.proposal.title : ''">
+  <secondary-page
+    has-back-button
+    :title="proposal ? proposal.proposal.title : ''"
+    @back="handleBack"
+  >
     <template v-if="isLoading" v-slot:title>
       <pu-skeleton class="title page-title" tag="h2" />
     </template>
@@ -45,8 +49,10 @@ export default Vue.extend({
   },
   methods: {
     isFeatureEnabled,
-    handleClose(): void {
-      this.$router.back();
+    handleBack(): void {
+      this.$router.replace({
+        name: 'governance-view-all'
+      });
     }
   }
 });

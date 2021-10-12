@@ -1,21 +1,25 @@
 <template>
   <content-wrapper
     base-class="info__wrapper"
-    has-back-button
     has-close-button
     has-left-rail
     is-black-close-button
     page-container-class="overview__wrapper governance-overview__menu-wrapper"
     wrapper-class="governance-overview"
-    @back="handleBack"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <governance-nav-my-governance />
-      <governance-nav-manage-governance />
+      <div class="progressive-left-rail">
+        <governance-nav-my-governance />
+        <governance-nav-manage-governance />
+      </div>
     </template>
 
-    <secondary-page :title="$t('governance.lblGovernanceOverview')">
+    <secondary-page
+      has-back-button
+      :title="$t('governance.lblGovernanceOverview')"
+      @back="handleBack"
+    >
       <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
       <template v-if="isLoading">

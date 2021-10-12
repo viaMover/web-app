@@ -1,21 +1,25 @@
 <template>
   <content-wrapper
     base-class="info__wrapper"
-    has-back-button
     has-close-button
     has-left-rail
     is-black-close-button
     page-container-class="product-item__wrapper create-a-proposal__wrapper"
     wrapper-class="create-a-proposal"
-    @back="handleBack"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <governance-nav-my-governance />
-      <governance-nav-manage-governance />
+      <div class="progressive-left-rail">
+        <governance-nav-my-governance />
+        <governance-nav-manage-governance />
+      </div>
     </template>
 
-    <secondary-page :title="$t('governance.lblCreateAProposal')">
+    <secondary-page
+      has-back-button
+      :title="$t('governance.lblCreateAProposal')"
+      @back="handleBack"
+    >
       <p class="description">{{ $t('governance.txtCreateAProposal') }}</p>
       <div class="column">
         <div class="item">
@@ -224,6 +228,7 @@ export default Vue.extend({
             description: this.proposalTemplate.description
           } as CreateProposalPayload);
 
+        this.$v.proposalTemplate.$reset();
         this.proposalTemplate = { title: '', description: '' };
 
         await this.loadProposalInfo({

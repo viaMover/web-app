@@ -17,6 +17,9 @@ import {
 } from './types';
 
 export default {
+  proposalsIds(state): Array<string> {
+    return state.items.map((proposalInfo) => proposalInfo.proposal.id);
+  },
   proposalsOrderedByEndingDesc(state): Array<ProposalInfo> {
     return state.items.slice().sort((a, b) => b.proposal.end - a.proposal.end);
   },
@@ -203,6 +206,21 @@ export default {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
 
     return (id: string) => source[id]?.isVoted ?? false;
+  },
+  ipfsLink(state, getters, rootState): (id: string) => string | undefined {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+    const accountAddress =
+      rootState.account?.currentAddress ?? 'missing_address';
+
+    return (id: string) => {
+      if (!source[id]?.isVoted) {
+        return undefined;
+      }
+
+      return state.items
+        .find((proposalInfo) => proposalInfo.proposal.id === id)
+        ?.votes.find((vote) => vote.voter === accountAddress)?.ipfs;
+    };
   },
   hasEnoughVotingPowerToVote(state, getters): (id: string) => boolean {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;

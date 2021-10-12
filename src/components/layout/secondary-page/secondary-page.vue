@@ -3,7 +3,7 @@
     <back-button v-if="hasBackButton" @close="handleBack" />
     <div v-if="!hideTitle" class="heading page-secondary page-heading">
       <slot name="title">
-        <h2 class="title page-title">{{ title }}</h2>
+        <h2 class="title page-title" :class="[titleClass]">{{ title }}</h2>
       </slot>
     </div>
     <div class="page-body">
@@ -32,6 +32,10 @@ export default Vue.extend({
     hasBackButton: {
       type: Boolean,
       default: false
+    },
+    titleClass: {
+      type: String,
+      default: ''
     }
   },
   methods: {

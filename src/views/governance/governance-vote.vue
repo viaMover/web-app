@@ -1,5 +1,5 @@
 <template>
-  <secondary-page :title="pageTitle">
+  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
     <p class="description">{{ explanatoryText }}</p>
 
     <governance-overview-section-skeleton v-if="isProposalLoading">
@@ -21,11 +21,11 @@
     >
       {{ voteButtonText }}
     </button>
-    <p v-if="ipfsLink" class="description">
+    <p v-if="ipfsLinkText" class="description">
       {{ $t('governance.ipfsLink') }}
       &nbsp;
-      <a class="ipfs-link" :href="ipfsLink" target="_blank">
-        {{ ipfsLink }}
+      <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
+        {{ ipfsLinkText }}
       </a>
     </p>
     <p v-if="errorText" class="error">
@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import {
   Choice,
@@ -50,7 +50,7 @@ import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/governance/utils';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 
 import {
   GovernanceOverviewSection,
@@ -81,6 +81,10 @@ export default Vue.extend({
       isProposalLoading: 'isLoading',
       votingPowerSelf: 'votingPowerSelf',
       proposals: 'items'
+    }),
+    ...mapGetters('governance', {
+      isAlreadyVoted: 'isAlreadyVoted',
+      alreadyVotedIpfsLink: 'ipfsLink'
     }),
     pageTitle(): string {
       if (this.proposal === undefined) {
@@ -116,6 +120,14 @@ export default Vue.extend({
       }
 
       return this.$t('governance.btnVoteAgainst.txt') as string;
+    },
+    ipfsLinkText(): string {
+      const alreadyVotedIpfsLink = this.alreadyVotedIpfsLink(this.proposal?.id);
+      if (alreadyVotedIpfsLink) {
+        return this.formatIpfsLink(alreadyVotedIpfsLink);
+      }
+
+      return this.ipfsLink;
     }
   },
   watch: {
@@ -152,7 +164,7 @@ export default Vue.extend({
         } as VoteParams);
 
         await this.loadProposalInfo({
-          id: voteResult?.id ?? this.proposal.id,
+          id: this.proposal.id,
           refetch: true
         });
 
@@ -188,6 +200,12 @@ export default Vue.extend({
     },
     formatIpfsLink(path: string): string {
       return `https://gateway.ipfs.io/ipfs/${path}`;
+    },
+    handleBack(): void {
+      this.$router.replace({
+        name: 'governance-view',
+        params: { id: this.$route.params.id }
+      });
     }
   }
 });

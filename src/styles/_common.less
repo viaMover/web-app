@@ -561,6 +561,10 @@ body {
 }
 
 .secondary-page-wrapper {
+  .title.page-title.extra-margin {
+    margin-top: 80px;
+  }
+
   .page-body {
     margin-left: 20px;
   }
@@ -867,6 +871,8 @@ button > .loader-icon > img {
 .progressive-left-rail {
   display: flex;
   flex-flow: row wrap;
+  flex-shrink: 0;
+  flex-grow: 0;
   align-content: space-between;
   height: 85vh;
 }
