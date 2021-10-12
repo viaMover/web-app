@@ -1,7 +1,7 @@
 <template>
   <div class="review__wrapper">
     <secondary-page-simple-title
-      class="savings_secondary_page-title"
+      class="page-title max-width"
       :title="$t('savings.deposit.lblReviewYourDeposit')"
     />
     <div class="arrow">
@@ -78,10 +78,8 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
-import { sameAddress } from '@/utils/address';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';

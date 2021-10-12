@@ -2,17 +2,19 @@
   <div>
     <div>
       <secondary-page-simple-title
-        class="savings_secondary_page-title"
-        :description="$t('savings.deposit.txtDepositDescription')"
-        :title="$t('savings.deposit.lblDepositInSavings')"
+        class="page-title max-width"
+        :description="
+          $t('treasury.increaseBoost.txtIncreaseBoostPageDescription')
+        "
+        :title="$t('treasury.increaseBoost.lblIncreaseBoost')"
       />
-      <div class="savings_secondary_page-token-info">
+      <div class="secondary_page-token-info">
         <span>{{ estimatedAnnualEarning }}</span>
-        <p>{{ $t('savings.deposit.txtYouCouldEarnInYear') }}</p>
+        <p>{{ $t('treasury.increaseBoost.txtYouApproximateBoost') }}</p>
       </div>
     </div>
-    <div class="savings_secondary_page-body">
-      <h2>{{ $t('savings.deposit.lblWhatDoWeDeposit') }}</h2>
+    <div class="secondary_page-body">
+      <h2>{{ $t('treasury.increaseBoost.lblWhatDoWeReserve') }}</h2>
       <div class="info">
         <token-image
           :address="asset ? asset.address : ''"
@@ -39,7 +41,7 @@
       </div>
       <div class="available">
         <p>
-          {{ $t('savings.lblAvailable') }}
+          {{ $t('treasury.increaseBoost.lblAvailable') }}
           <span @click="handleSelectMaxAmount">{{ formattedMaxAmount }}</span>
         </p>
       </div>
@@ -50,7 +52,7 @@
       </div>
       <form autocomplete="off" class="form" @submit.prevent.stop="">
         <p>
-          {{ $t('savings.deposit.lblAmountWeDepositIn') }}
+          {{ $t('treasury.increaseBoost.lblAmountWeReserveIn') }}
           <span class="form-button" @click.capture.stop.prevent="swapTokens">
             {{ currentInputSymbo }}
           </span>
@@ -65,21 +67,6 @@
           :value="inputValue"
           @update-value="handleUpdateValue"
         />
-        <div
-          v-if="isSwapNeeded && formattedUSDCTotal && selectedMode === 'TOKEN'"
-          class="form-swap"
-        >
-          <p>
-            {{ $t('savings.deposit.lblSwappingFor') }}
-            <custom-picture
-              alt="USDC"
-              class="token"
-              :sources="usdcPicture.sources"
-              :src="usdcPicture.src"
-            />
-            <span>{{ formattedUSDCTotal }}</span>
-          </p>
-        </div>
         <action-button
           button-class="black-link button-active"
           :disabled="!isButtonActive"
@@ -89,7 +76,7 @@
             <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
           </div>
           <template v-else>
-            {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
+            {{ isButtonActive ? $t('treasury.lblReviewTransaction') : error }}
           </template>
         </action-button>
       </form>
@@ -143,33 +130,22 @@ import {
 
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import TokenImage from '@/components/tokens/token-image/token-image.vue';
 
 type INPUT_MODE = 'NATIVE' | 'TOKEN';
 
 export default Vue.extend({
-  name: 'SavingsDepositForm',
+  name: 'TreasuryIncreaseForm',
   components: {
     TokenImage,
     SecondaryPageSimpleTitle,
     ActionButton,
     ArrowDownIcon,
-    DynamicInput,
-    CustomPicture
+    DynamicInput
   },
   data() {
     return {
-      usdcPicture: {
-        src: require('@/assets/images/USDC.png'),
-        sources: [
-          {
-            src: require('@/assets/images/USDC@2x.png'),
-            variant: '2x'
-          }
-        ]
-      } as PictureDescriptor,
       selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
       maxInNative: '0' as string,
@@ -213,8 +189,8 @@ export default Vue.extend({
     description(): string {
       return (
         this.isSwapNeeded
-          ? this.$t('savings.deposit.txtAssetWillBeConverted')
-          : this.$t('savings.txtUSDCCoinIsAStable')
+          ? this.$t('treasury.increaseBoost.txtYouChooseMove')
+          : this.$t('treasury.increaseBoost.txtYouChooseMoveETHLp')
       ) as string;
     },
     currentInputSymbo(): string {
@@ -236,7 +212,7 @@ export default Vue.extend({
       }
 
       if (!notZero(this.amount)) {
-        return this.$t('savings.deposit.lblChooseAmount') as string;
+        return this.$t('treasury.increaseBoost.lblChooseAmount') as string;
       }
 
       if (greaterThan(this.amount, this.maxInputAmount)) {

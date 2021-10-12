@@ -8,14 +8,13 @@
     <savings-deposit-review
       v-else-if="txStep === undefined"
       :amount="amount"
-      :amount-type="selectedDepositIn"
       :estimated-gas-cost="estimatedGasCost"
       :native-amount="nativeAmount"
       :subsidized-enabled="subsidizedEnabled"
       :token="token"
       @tx-start="handleTxStart"
     />
-    <savings-form-loader v-else :step="txStep" />
+    <full-page-form-loader v-else :step="txStep" />
   </secondary-page>
 </template>
 
@@ -32,17 +31,14 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import { Step } from '@/components/controls/form-loader/types';
+import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
 import { SecondaryPage } from '@/components/layout/secondary-page';
-import {
-  SavingsDepositForm,
-  SavingsDepositReview,
-  SavingsFormLoader
-} from '@/components/savings';
+import { SavingsDepositForm, SavingsDepositReview } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsDepositWrapper',
   components: {
-    SavingsFormLoader,
+    FullPageFormLoader,
     SecondaryPage,
     SavingsDepositReview,
     SavingsDepositForm
@@ -55,7 +51,6 @@ export default Vue.extend({
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,
       nativeAmount: undefined as string | undefined,
-      selectedDepositIn: undefined as string | undefined,
       subsidizedEnabled: false as boolean,
       estimatedGasCost: undefined as string | undefined,
       transferData: undefined as TransferData | undefined,
@@ -91,7 +86,6 @@ export default Vue.extend({
       token: TokenWithBalance;
       amount: string;
       nativeAmount: string;
-      selectedDepositIn: string;
       subsidizedEnabled: boolean;
       estimatedGasCost: string;
       actionGasLimit: string;
@@ -101,7 +95,6 @@ export default Vue.extend({
       this.token = args.token;
       this.amount = args.amount;
       this.nativeAmount = args.nativeAmount;
-      this.selectedDepositIn = args.selectedDepositIn;
       this.transferData = args.transferData;
       this.subsidizedEnabled = args.subsidizedEnabled;
       this.estimatedGasCost = args.estimatedGasCost;

@@ -269,6 +269,7 @@ export default {
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
       'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
+    lblReviewTransaction: 'Review transaction',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -282,6 +283,11 @@ export default {
     },
     increaseBoost: {
       lblIncreaseBoost: 'Increase boost',
+      txtYouApproximateBoost: 'Your approximate boost in the Smart Treasury.',
+      txtIncreaseBoostPageDescription:
+        'The larger your share of the Smart Treasury is, the more rewards ' +
+        'you can get. To increase your share, use increase boost. Reserve ' +
+        'MOVE or MOVE-ETH LP tokens to increase your boost.',
       txtIncreaseBoostDescription: {
         part1: 'There are two boost options. Reserving ',
         part2:
@@ -291,7 +297,22 @@ export default {
           ' MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share ' +
           'based on the total amount of LP tokens you have reserved.'
       },
+      txtYouChooseMove:
+        'You chose MOVE token. It means that the maximum boost can be 1x.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblAvailable: 'Available',
+      lblWhatDoWeReserve: 'What do we reserve',
+      lblAmountWeReserveIn: 'Amount we reserve in',
+      lblChooseAmount: 'Choose the amount to reserve',
+      lblReviewYourIncrease: 'Review your increase',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      lblAndTotalOf: 'And it will be a total of',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
       lblWhatToReserve: 'What to reserve',
+      btnIncreaseBoostInSmartTreasury: 'Increase boost in Smart Treasury',
       btnIncreaseBoost: 'Increase Boost',
       lblEstimatedBoost: 'Estimated boost',
       txtEstimatedBoost:
@@ -300,9 +321,29 @@ export default {
     },
     decreaseBoost: {
       lblDecreaseBoost: 'Decrease Boost',
+      txtYouApproximateBoost: 'Your approximate boost in the Smart Treasury.',
+      txtDecreaseBoostPageDescription:
+        'Decrease the boost will return your reserved assets, but will also ' +
+        'decrease your Smart Treasury share and future rewards. ' +
+        'Earned rewards always stay with you.',
       txtDecreaseBoostDescription:
         'Decrease the boost, will return your reserved assets, ' +
         'but will also decrease your Treasury share.',
+      txtYouChooseMove:
+        'You chose to remove MOVE token. It means that your new ' +
+        'boost value will be up to 1x lower.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblAvailable: 'Available',
+      lblWhatDoWeRemove: 'What do we remove',
+      lblAmountWeRemoveIn: 'Amount we remove in',
+      lblChooseAmount: 'Choose the amount to remove',
+      lblReviewYourDecrease: 'Review your decrease',
+      lblAndTotalOf: 'And it will be a total of',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
+      btnDecreaseBoostInSmartTreasury: 'Decrease boost in Smart Treasury',
       lblWhatToReturn: 'What to return',
       btnDecreaseBoost: 'Decrease Boost',
       lblWhatAboutTheBoost: 'What about the boost?',

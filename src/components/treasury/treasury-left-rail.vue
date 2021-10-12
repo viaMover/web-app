@@ -37,7 +37,7 @@
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
         :description="$t('treasury.leftRail.lblDecreaseBoostDescription')"
-        navigate-to="treasury-manage"
+        navigate-to="treasury-decrease"
         :title="$t('treasury.leftRail.lblDecreaseBoost')"
       >
         <template v-slot:picture>

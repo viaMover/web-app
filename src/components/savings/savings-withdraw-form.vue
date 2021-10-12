@@ -2,16 +2,16 @@
   <div>
     <div>
       <secondary-page-simple-title
-        class="savings_secondary_page-title"
+        class="page-title max-width"
         :description="$t('savings.withdraw.txtWithdrawDescription')"
         :title="$t('savings.withdraw.lblWithdrawFromSavings')"
       />
-      <div class="savings_secondary_page-token-info">
+      <div class="secondary_page-token-info">
         <span>{{ estimatedAnnualEarning }}</span>
         <p>{{ $t('savings.withdraw.txtIfYouKeepSavings') }}</p>
       </div>
     </div>
-    <div class="savings_secondary_page-body">
+    <div class="secondary_page-body">
       <h2>{{ $t('savings.withdraw.lblWhatDoWeWithdraw') }}</h2>
       <div class="info">
         <token-image
@@ -85,8 +85,7 @@ import {
   isZero,
   lessThan,
   multiply,
-  notZero,
-  sub
+  notZero
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';

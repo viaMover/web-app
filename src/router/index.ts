@@ -128,6 +128,14 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'decrease',
+        name: 'treasury-decrease',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-wrapper.vue'
+          )
+      },
+      {
         path: 'analytics',
         name: 'treasury-global-analytics',
         component: () =>

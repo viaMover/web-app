@@ -13,7 +13,7 @@
       :token="token"
       @tx-start="handleTxStart"
     />
-    <savings-form-loader v-else :step="txStep" />
+    <full-page-form-loader v-else :step="txStep" />
   </secondary-page>
 </template>
 
@@ -26,9 +26,9 @@ import * as Sentry from '@sentry/vue';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { TokenWithBalance } from '@/wallet/types';
 
+import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
 import { SecondaryPage } from '@/components/layout/secondary-page';
 import {
-  SavingsFormLoader,
   SavingsWithdrawForm,
   SavingsWithdrawReview
 } from '@/components/savings';
@@ -36,7 +36,7 @@ import {
 export default Vue.extend({
   name: 'SavingsWithdrawWrapper',
   components: {
-    SavingsFormLoader,
+    FullPageFormLoader,
     SavingsWithdrawReview,
     SavingsWithdrawForm,
     SecondaryPage

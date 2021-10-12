@@ -4,8 +4,8 @@
     hide-title
     @back="handleBack"
   >
-    <treasury-increase-form v-if="!isShowReview" @tx-review="handleTxReview" />
-    <treasury-increase-review
+    <treasury-decrease-form v-if="!isShowReview" @tx-review="handleTxReview" />
+    <treasury-decrease-review
       v-else-if="txStep === undefined"
       :amount="amount"
       :estimated-gas-cost="estimatedGasCost"
@@ -30,16 +30,18 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 import { Step } from '@/components/controls/full-page-form-loader';
 import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
 import { SecondaryPage } from '@/components/layout/secondary-page';
-import { TreasuryIncreaseForm } from '@/components/treasury';
-import TreasuryIncreaseReview from '@/components/treasury/treasury-increase-review.vue';
+import {
+  TreasuryDecreaseForm,
+  TreasuryDecreaseReview
+} from '@/components/treasury';
 
 export default Vue.extend({
-  name: 'TreasuryIncreaseWrapper',
+  name: 'TreasuryDecreaseWrapper',
   components: {
-    TreasuryIncreaseReview,
+    TreasuryDecreaseReview,
+    TreasuryDecreaseForm,
     FullPageFormLoader,
-    SecondaryPage,
-    TreasuryIncreaseForm
+    SecondaryPage
   },
   data() {
     return {
