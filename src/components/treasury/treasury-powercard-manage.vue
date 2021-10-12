@@ -20,8 +20,8 @@
             />
           </div>
           <div class="item__info-label">
-            <p>The Powercard</p>
-            <span>Active</span>
+            <p>{{ $t('treasury.powercard.lblThePowercard') }}</p>
+            <span>{{ status }}</span>
           </div>
         </div>
       </div>

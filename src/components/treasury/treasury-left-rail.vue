@@ -28,10 +28,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="st.alt"
-            :sources="st.sources"
-            :src="st.src"
-            :webp-sources="st.webpSources"
+            :alt="increase.alt"
+            :sources="increase.sources"
+            :src="increase.src"
+            :webp-sources="increase.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -42,10 +42,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="st.alt"
-            :sources="st.sources"
-            :src="st.src"
-            :webp-sources="st.webpSources"
+            :alt="decrease.alt"
+            :sources="decrease.sources"
+            :src="decrease.src"
+            :webp-sources="decrease.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -56,10 +56,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="st.alt"
-            :sources="st.sources"
-            :src="st.src"
-            :webp-sources="st.webpSources"
+            :alt="claimAndBurn.alt"
+            :sources="claimAndBurn.sources"
+            :src="claimAndBurn.src"
+            :webp-sources="claimAndBurn.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -70,10 +70,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="st.alt"
-            :sources="st.sources"
-            :src="st.src"
-            :webp-sources="st.webpSources"
+            :alt="powercard.alt"
+            :sources="powercard.sources"
+            :src="powercard.src"
+            :webp-sources="powercard.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -84,10 +84,10 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="st.alt"
-            :sources="st.sources"
-            :src="st.src"
-            :webp-sources="st.webpSources"
+            :alt="analytics.alt"
+            :sources="analytics.sources"
+            :src="analytics.src"
+            :webp-sources="analytics.webpSources"
           />
         </template>
       </left-rail-section-nav-item-image>
@@ -131,6 +131,66 @@ export default Vue.extend({
             src: require('@/assets/images/SmartTreasury@2x.webp')
           }
         ]
+      } as PictureDescriptor,
+      powercard: {
+        alt: '',
+        src: require('@/assets/images/Powercard_icon@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Powercard_icon@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Powercard_icon@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor,
+      increase: {
+        alt: '',
+        src: require('@/assets/images/IncreaseBoost@1x.png'),
+        sources: [
+          { src: require('@/assets/images/IncreaseBoost@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/IncreaseBoost@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor,
+      decrease: {
+        alt: '',
+        src: require('@/assets/images/DecreaseBoost@1x.png'),
+        sources: [
+          { src: require('@/assets/images/DecreaseBoost@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/DecreaseBoost@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor,
+      claimAndBurn: {
+        alt: '',
+        src: require('@/assets/images/Claim&Burn@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Claim&Burn@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Claim&Burn@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor,
+      analytics: {
+        alt: '',
+        src: require('@/assets/images/GlobalAnalytics@1x.png'),
+        sources: [
+          { src: require('@/assets/images/GlobalAnalytics@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/GlobalAnalytics@2x.png')
+          }
+        ],
+        webpSources: []
       } as PictureDescriptor
     };
   },
