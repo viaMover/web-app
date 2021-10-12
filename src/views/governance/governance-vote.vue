@@ -50,7 +50,7 @@ import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/governance/utils';
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 
 import {
   GovernanceOverviewSection,
@@ -79,6 +79,7 @@ export default Vue.extend({
   computed: {
     ...mapState('governance', {
       isProposalLoading: 'isLoading',
+      votingPowerSelf: 'votingPowerSelf',
       proposals: 'items'
     }),
     pageTitle(): string {
@@ -107,7 +108,7 @@ export default Vue.extend({
       return this.$t('governance.txtVoteAgainst') as string;
     },
     myVotingPower(): string {
-      return formatToNative('123190.24');
+      return formatToDecimals(this.votingPowerSelf, 0);
     },
     voteButtonText(): string {
       if (this.isVoteFor) {
