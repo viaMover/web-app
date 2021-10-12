@@ -7,4 +7,6 @@ export { default as TreasuryIncreaseForm } from './treasury-increase-form.vue';
 export { default as TreasuryIncreaseReview } from './treasury-increase-review.vue';
 export { default as TreasuryDecreaseReview } from './treasury-decrease-review.vue';
 export { default as TreasuryDecreaseForm } from './treasury-decrease-form.vue';
+export { default as TreasuryClaimAndBurnForm } from './treasury-claim-and-burn-form.vue';
+export { default as TreasuryClaimAndBurnReview } from './treasury-claim-and-burn-review.vue';
 export { default as TreasuryManage } from './treasury-manage.vue';

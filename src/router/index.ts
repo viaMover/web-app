@@ -136,6 +136,14 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'claim-and-burn',
+        name: 'treasury-claim-and-burn',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-wrapper.vue'
+          )
+      },
+      {
         path: 'analytics',
         name: 'treasury-global-analytics',
         component: () =>

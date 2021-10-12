@@ -353,11 +353,31 @@ export default {
     },
     claimAndBurn: {
       lblClaimAndBurn: 'Claim & Burn',
+      txtYouApproximateBoost: 'Your approximate exit one-time payout.',
+      txtClaimAndBurnPageDescription:
+        'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
+        'portion of the Smart Treasury. You will burn your MOVE tokens, and ' +
+        'receive a one-time payout in USDC.',
       txtClaimAndBurnDescription:
         'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
         'portion of the Smart Treasury. You will burn your MOVE tokens, ' +
         'and receive four times (4x) of your treasury share in a one-time payout.',
+      txtYouChooseMove:
+        'You chose MOVE. You will burn your MOVE tokens in exchange ' +
+        'for a one-time payout from the Treasury.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblWhatDoWeBurn: 'What do we burn',
       lblWhatToBurn: 'What to burn',
+      lblAvailable: 'Available',
+      lblAmountWeBurnIn: 'Amount we burn in',
+      lblChooseAmount: 'Choose the amount to burn',
+      lblReviewYourClaim: 'Review your claim',
+      lblAndTotalOf: 'The amount you will receive',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
+      btnClaimAndBurnWithAssets: 'Claim {asset1} and burn {asset2}}',
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:

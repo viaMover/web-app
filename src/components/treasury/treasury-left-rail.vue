@@ -51,7 +51,7 @@
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
         :description="$t('treasury.leftRail.lblClaimAndBurnDescription')"
-        navigate-to="treasury-manage"
+        navigate-to="treasury-claim-and-burn"
         :title="$t('treasury.leftRail.lblClaimAndBurn')"
       >
         <template v-slot:picture>
@@ -65,7 +65,7 @@
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
         :description="$t('treasury.leftRail.lblPowerCardDescription')"
-        navigate-to="treasury-manage"
+        navigate-to="treasury-powercard"
         :title="$t('treasury.leftRail.lblPowerCard')"
       >
         <template v-slot:picture>
