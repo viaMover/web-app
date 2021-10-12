@@ -24,7 +24,7 @@ const values: Globals = {
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
   isGovernanceEnabled: true,
-  isGovernanceMarkdownEnabled: true,
+  isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isCardEnabled: false,
   isMoreEnabled: true,
