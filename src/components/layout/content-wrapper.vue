@@ -11,6 +11,7 @@
     </left-rail>
     <back-button
       v-if="hasCloseButton"
+      class="page-close-button"
       :mode="isBlackCloseButton ? 'CLOSE-BLACK' : 'CLOSE'"
       @close="handleClose"
     />
@@ -94,11 +95,11 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleClose(): void {
-      this.$emit('close');
-    },
     handleBack(): void {
       this.$emit('back');
+    },
+    handleClose(): void {
+      this.$emit('close');
     }
   }
 });

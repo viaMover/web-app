@@ -1,28 +1,43 @@
 <template>
   <content-wrapper
-    has-back-button
+    base-class="info__wrapper"
     has-close-button
     has-left-rail
+    is-black-close-button
+    page-container-class="governance__menu-wrapper overview__wrapper overview"
+    wrapper-class="governance"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <left-rail-section>
-        <left-rail-section-nav-item-emoji
-          :emoji="$t('governance.btnVoteFor.emoji')"
-          :navigate-to="voteForPage"
-          :text="$t('governance.btnVoteFor.txt')"
-        />
-        <left-rail-section-nav-item-emoji
-          :emoji="$t('governance.btnVoteAgainst.emoji')"
-          :navigate-to="voteAgainstPage"
-          :text="$t('governance.btnVoteAgainst.txt')"
-        />
-        <left-rail-section-nav-item-emoji
-          :emoji="$t('governance.btnProposalAnalytics.emoji')"
-          :navigate-to="analyticsPage"
-          :text="$t('governance.btnProposalAnalytics.txt')"
-        />
-      </left-rail-section>
+      <div class="progressive-left-rail">
+        <left-rail-section>
+          <template v-if="isLoading">
+            <left-rail-section-nav-item-emoji-skeleton
+              v-for="idx in 3"
+              :key="idx"
+            />
+          </template>
+          <template v-else>
+            <left-rail-section-nav-item-emoji
+              v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
+              :emoji="$t('governance.btnVoteFor.emoji')"
+              :navigate-to="voteForPage"
+              :text="$t('governance.btnVoteFor.txt')"
+            />
+            <left-rail-section-nav-item-emoji
+              v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
+              :emoji="$t('governance.btnVoteAgainst.emoji')"
+              :navigate-to="voteAgainstPage"
+              :text="$t('governance.btnVoteAgainst.txt')"
+            />
+            <left-rail-section-nav-item-emoji
+              :emoji="$t('governance.btnProposalAnalytics.emoji')"
+              :navigate-to="analyticsPage"
+              :text="$t('governance.btnProposalAnalytics.txt')"
+            />
+          </template>
+        </left-rail-section>
+      </div>
     </template>
     <router-view />
   </content-wrapper>
@@ -31,77 +46,94 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
+import { mapActions, mapGetters, mapState } from 'vuex';
+
+import { ProposalInfo } from '@/services/mover/governance';
 
 import {
   ContentWrapper,
   LeftRailSection,
-  LeftRailSectionNavItemEmoji
+  LeftRailSectionNavItemEmoji,
+  LeftRailSectionNavItemEmojiSkeleton
 } from '@/components/layout';
+
+import '@/styles/_overview.less';
 
 export default Vue.extend({
   name: 'GovernanceViewRoot',
   components: {
     LeftRailSection,
     LeftRailSectionNavItemEmoji,
+    LeftRailSectionNavItemEmojiSkeleton,
     ContentWrapper
   },
-  data() {
-    return {
-      // todo: should be in the store some day
-      proposal: {
-        id: 'CIP10-1',
-        name: 'Governance Analysis Period',
-        status: 'open',
-        text:
-          'Summary:\n\n' +
-          'This post outlines a framework for funding Uniswap ecosystem development ' +
-          'with grants from the UNI Community Treasury. The program starts small—sponsoring ' +
-          'hackathons, for example—but could grow in significance over time ' +
-          '(with renewals approved by governance) to fund core protocol development. ' +
-          'Grants administration is a subjective process that cannot be easily automated, ' +
-          'and thus we propose a nimble committee of 6 members —1 lead and 5 reviewers—to ' +
-          'deliver an efficient, predictable process to applicants, such that funding can be ' +
-          'administered without having to put each application to a vote. We propose the program ' +
-          'start with an initial cap of $750K per quarter and a limit of 2 quarters before renewal—a ' +
-          'sum that we feel is appropriate for an MVP relative to the size of the treasury that UNI ' +
-          'token holders are entrusted with allocating.\n\n' +
-          'Purpose:\n\n' +
-          'The mission of the UGP is to provide valuable resources to help grow the Uniswap ecosystem. ' +
-          'Through public discourse and inbound applications, the community will get first-hand exposure to ' +
-          'identify and respond to the most pressing needs of the ecosystem, as well as the ability to support ' +
-          'innovative projects expanding the capabilities of Uniswap. By rewarding talent early with developer ' +
-          'incentives, bounties, and infrastructure support, UGP acts as a catalyst for growth and helps to maintain ' +
-          'Uniswap as a nexus for DeFi on Ethereum.',
-        proposer:
-          '0x806cb7767eb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        ends: 1621609904,
-        votingActivity: 27,
-        votesFor: 8194000,
-        votesAgainst: 46000,
-        currentOutcome: 'quorumNotReached'
-      }
-    };
-  },
   computed: {
+    ...mapState('governance', {
+      items: 'items',
+      isLoading: 'isLoading'
+    }),
+    ...mapGetters('governance', {
+      proposalsIds: 'proposalsIds'
+    }),
+    pageProposalId(): string {
+      return this.$route.params.id;
+    },
+    proposalInfo(): ProposalInfo | undefined {
+      return this.items.find(
+        (proposal: ProposalInfo) => proposal.proposal.id === this.pageProposalId
+      );
+    },
     voteForPage(): RawLocation {
+      if (this.proposalInfo === undefined) {
+        return { name: 'not-found-route' };
+      }
+
       return {
         name: 'governance-vote',
-        params: { id: this.proposal.id, decision: 'for' }
+        params: { id: this.proposalInfo.proposal.id, decision: 'for' }
       };
     },
     voteAgainstPage(): RawLocation {
+      if (this.proposalInfo === undefined) {
+        return { name: 'not-found-route' };
+      }
+
       return {
         name: 'governance-vote',
-        params: { id: this.proposal.id, decision: 'against' }
+        params: { id: this.proposalInfo.proposal.id, decision: 'against' }
       };
     },
     analyticsPage(): RawLocation {
-      return { name: 'governance-analytics', params: { id: this.proposal.id } };
+      if (this.proposalInfo === undefined) {
+        return { name: 'not-found-route' };
+      }
+
+      return {
+        name: 'governance-analytics',
+        params: { id: this.proposalInfo.proposal.id }
+      };
     }
   },
+  async mounted() {
+    await this.loadGovernanceInfo();
+    if (this.proposalsIds.includes(this.pageProposalId)) {
+      return;
+    }
+    console.debug('going to refresh the page');
+
+    // const governanceInfo: Array<ProposalInfo> = await this.loadGovernanceInfo();
+    // if (
+    // !governanceInfo.some((info) => info.proposal.id === this.pageProposalId)
+    // ) {
+    // await this.$router.replace({ name: 'governance-view-all' });
+    // }
+  },
   methods: {
+    ...mapActions('governance', {
+      loadGovernanceInfo: 'loadGovernanceInfo'
+    }),
     handleClose(): void {
-      this.$router.back();
+      this.$router.replace({ name: 'home' });
     }
   }
 });

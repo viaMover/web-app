@@ -14,6 +14,7 @@ import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
+import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -429,5 +430,6 @@ export {
   NFT_SWEET_AND_SOUR_ABI,
   NFT_OLYMPUS_ABI,
   NFT_VAULTS_ABI,
-  NFT_DICE_ABI
+  NFT_DICE_ABI,
+  SUSHI_UNI_PAIR_V2_ABI
 };
