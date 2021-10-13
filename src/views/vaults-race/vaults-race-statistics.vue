@@ -29,11 +29,7 @@
           <div class="item__info-icon">
             <span>💼</span>
           </div>
-          <progress-loader
-            class="progress-loader"
-            :is-animated="true"
-            :value="100"
-          />
+          <progress-loader class="progress-loader" is-animated :value="100" />
           <div class="item__info-label">
             <p>{{ leaderAccountTitle }}</p>
             <span>{{ leaderAccountDescription }}</span>
@@ -78,10 +74,18 @@ export default Vue.extend({
   computed: {
     ...mapGetters('games', { account: 'leaderVaultsRaceAccount' }),
     leaderAccountTitle(): string {
-      return this.account ? `Account ${this.account.address}` : '';
+      return this.account
+        ? this.$t('vaultsRace.lblAccount', {
+            address: this.account.address
+          }).toString()
+        : '';
     },
     leaderAccountDescription(): string {
-      return this.account ? `${this.account.points} Points` : '';
+      return this.account
+        ? this.$t('vaultsRace.lblPoints', {
+            points: this.account.points
+          }).toString()
+        : '';
     },
     challengeDates(): string {
       return '01 September - 08 September';

@@ -1,15 +1,15 @@
 import { MutationTree } from 'vuex';
 
-import { GamesStoreState } from '@/store/modules/games/types';
+import { GamesStoreState, VaultRaceAccount } from '@/store/modules/games/types';
 
 export default {
-  setVaultsRaceAccounts(state, accounts): void {
+  setVaultsRaceAccounts(state, accounts: Array<VaultRaceAccount>): void {
     state.vaultsRaceAccounts = accounts;
   },
-  setIsLoading(state, isLoading): void {
+  setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
-  rollDice(state, address): void {
+  rollDice(state, address: string): void {
     const idx = state.vaultsRaceAccounts.findIndex(
       (item) => item.address === address
     );

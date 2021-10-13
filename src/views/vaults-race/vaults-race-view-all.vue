@@ -6,6 +6,7 @@
       :title="$t('vaultsRace.lblWeeklyChallenge')"
     />
     <account-list
+      hide-title
       icon="💼"
       :items="vaultsRaceAccounts"
       @button-click="handleButton"

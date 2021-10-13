@@ -9,7 +9,7 @@
   >
     <template v-slot:left-rail>
       <keep-alive>
-        <component :is="'vaults-race-left-rail'" />
+        <vaults-race-left-rail />
       </keep-alive>
     </template>
 

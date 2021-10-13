@@ -1,8 +1,10 @@
 <template>
   <div>
-    <h2 v-if="title !== ''">
-      <slot name="title">{{ title }}</slot>
-    </h2>
+    <slot v-if="hideTitle" name="title">
+      <h2>
+        {{ title }}
+      </h2>
+    </slot>
     <div class="list">
       <account-list-item
         v-for="item in items"
@@ -24,7 +26,7 @@ import Vue, { PropType } from 'vue';
 
 import { VaultRaceAccount } from '@/store/modules/games/types';
 
-import AccountListItem from '@/components/vaults-race/account-list/account-list-item.vue';
+import AccountListItem from './account-list-item.vue';
 
 export default Vue.extend({
   name: 'AccountList',
@@ -43,6 +45,10 @@ export default Vue.extend({
     icon: {
       type: String,
       default: ''
+    },
+    hideTitle: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -57,13 +63,19 @@ export default Vue.extend({
       ) as string;
     },
     titleText(item: VaultRaceAccount): string {
-      return `Account ${item.address}`;
+      return this.$t('vaultsRace.lblAccount', {
+        address: item.address
+      }).toString();
     },
     descriptionText(item: VaultRaceAccount): string {
-      return `${item.points} Points`;
+      return this.$t('vaultsRace.lblPoints', {
+        points: item.points
+      }).toString();
     },
     tagText(item: VaultRaceAccount): string {
-      return `#${item.position} Position`;
+      return this.$t('vaultsRace.lblPosition', {
+        position: item.position
+      }).toString();
     }
   }
 });

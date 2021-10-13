@@ -101,7 +101,9 @@ export default Vue.extend({
       vaultsRaceAccountsCount: 'vaultsRaceAccountsCount'
     }),
     vaultsDescription(): string {
-      return `${this.vaultsRaceAccountsCount} accounts`;
+      return this.$t('vaultsRace.lblAccountCount', {
+        count: this.vaultsRaceAccountsCount
+      }).toString();
     }
   }
 });
