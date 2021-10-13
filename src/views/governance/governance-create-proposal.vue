@@ -129,7 +129,7 @@
           >
             {{ $t('governance.lblCreateAProposal') }}
           </button>
-          <span v-if="errorText" class="error-message">
+          <span class="error-message">
             {{ errorText }}
           </span>
         </form>

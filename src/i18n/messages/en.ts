@@ -545,7 +545,8 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
         }
       }
     },
-    ipfsLink: 'You have successfully voted, here is your link:'
+    lblIpfsLink: 'Your registered vote',
+    txtIpfsLink: 'Link'
   };
 }
 

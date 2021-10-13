@@ -10,6 +10,16 @@
         :description="$t('governance.lblMyVotingPower')"
         :value="myVotingPower"
       />
+      <governance-overview-section-item
+        v-if="ipfsLinkText"
+        :description="$t('governance.lblIpfsLink')"
+      >
+        <template>
+          <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
+            {{ $t('governance.txtIpfsLink') }}
+          </a>
+        </template>
+      </governance-overview-section-item>
     </governance-overview-section>
 
     <button
@@ -21,13 +31,6 @@
     >
       {{ voteButtonText }}
     </button>
-    <p v-if="ipfsLinkText" class="description">
-      {{ $t('governance.ipfsLink') }}
-      &nbsp;
-      <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
-        {{ ipfsLinkText }}
-      </a>
-    </p>
     <p v-if="errorText" class="error">
       {{ errorText }}
     </p>
