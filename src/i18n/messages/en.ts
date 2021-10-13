@@ -365,7 +365,8 @@ const messages: VueI18n.LocaleMessageObject = {
     txtNavigationLinkAlt: 'navigation link',
     txtSwapDetailsIconAlt: 'swap details',
     txtTokenInfoAlt: '{name} info on Etherscan',
-    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus'
+    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus',
+    txtPendingIconAlt: 'pending'
   },
   more: {
     lblMore: 'More'
