@@ -129,10 +129,7 @@
             border: none;
             margin-top: 8px;
 
-            &::-webkit-input-placeholder,
-            &::-moz-placeholder,
-            &:-moz-placeholder,
-            &:-ms-input-placeholder {
+            &::placeholder {
               color: @black;
               opacity: 0.2;
             }
@@ -142,6 +139,10 @@
             font-size: 24px;
             line-height: 32px;
             @font-bold();
+
+            &::placeholder {
+              @font-bold();
+            }
           }
 
           textarea {
@@ -149,7 +150,11 @@
             font-size: 14px;
             line-height: 22px;
             overflow: hidden;
-            @font-regular();
+            @font-medium();
+
+            &::placeholder {
+              @font-medium();
+            }
           }
         }
 
