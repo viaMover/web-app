@@ -46,7 +46,7 @@ export async function loadLanguageAsync(lang?: string): Promise<string> {
     loadedLanguages.push(lang);
     return setI18nLanguage(lang);
   } catch {
-    return await Promise.resolve(setI18nLanguage(i18n.locale));
+    return Promise.resolve(setI18nLanguage(i18n.locale));
   }
 }
 
