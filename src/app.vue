@@ -33,13 +33,10 @@
                 src="@/assets/videos/welcome.webm"
               ></video>
             </div>
-            <h1>Oh no!</h1>
-            <p>
-              Mover web app is for the big screens. We’ve got mobile apps for
-              all the smaller screens.
-            </p>
+            <h1>{{ $t('lblDashboardMobile') }}</h1>
+            <p>{{ $t('txtDashboardMobile') }}</p>
             <a class="black-link button-active" href="https://viamover.com/">
-              Got it. Take me home
+              {{ $t('btnDashboardMobile') }}
             </a>
           </div>
         </div>

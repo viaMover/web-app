@@ -21,6 +21,10 @@ const messages: VueI18n.LocaleMessageObject = {
   lblInsufficientBalance: 'Insufficient Balance',
   lblEnterAmount: 'Enter amount',
   lblNoData: 'No data',
+  lblDashboardMobile: 'Oh no!',
+  txtDashboardMobile:
+    'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
+  btnDashboardMobile: 'Got it. Take me home',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
