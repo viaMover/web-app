@@ -88,11 +88,12 @@ button {
 
 .sidebar-wrapper {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   position: relative;
   width: 412px;
   margin: 0 auto;
   padding: 0 40px 24px;
+  min-height: 100vh;
 }
 
 .sidebar-wrapper::-webkit-scrollbar {
@@ -152,6 +153,7 @@ html,
 body {
   height: 100%;
   background-color: #fff;
+  overflow: hidden;
 }
 
 .preload {
@@ -181,7 +183,7 @@ body {
 
 .preload-wrapper__sidebar .sidebar-wrapper {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   position: relative;
   width: 412px;
   margin: 0 auto;
@@ -465,6 +467,11 @@ body {
   line-height: 17px;
   color: #fff;
   border-radius: 40px;
+
+  &.disabled {
+    pointer-events: none;
+    background-color: #e5e5e5;
+  }
 }
 
 .link-icon {
@@ -554,6 +561,14 @@ body {
 }
 
 .secondary-page-wrapper {
+  .title.page-title.extra-margin {
+    margin-top: 80px;
+  }
+
+  .page-heading {
+    margin-left: 20px;
+  }
+
   .page-body {
     margin-left: 20px;
   }
@@ -575,7 +590,7 @@ body {
 
 .info__wrapper-menu {
   max-height: 100vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   width: 100%;
   background-color: #fafafc;
 }
@@ -723,7 +738,8 @@ body {
   height: 40px;
   color: #fff;
   background: #fff;
-  background: linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~"0 / 12px 12px", linear-gradient(-135deg, transparent 9px, #fff 0);
+  background: linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~'0 / 12px 12px',
+    linear-gradient(-135deg, transparent 9px, #fff 0);
   filter: drop-shadow(0 0 16px #ccc);
   border-radius: 3px;
 }
@@ -859,6 +875,8 @@ button > .loader-icon > img {
 .progressive-left-rail {
   display: flex;
   flex-flow: row wrap;
+  flex-shrink: 0;
+  flex-grow: 0;
   align-content: space-between;
   height: 85vh;
 }

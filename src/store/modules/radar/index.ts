@@ -1,5 +1,6 @@
 import { Module } from 'vuex';
 
+import { isProduction } from '@/settings';
 import { RootStoreState } from '@/store/types';
 
 import actions from './actions';
@@ -9,7 +10,7 @@ import { RadarStoreState } from './types';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     isLoadingCuratedList: false,
     isLoadingPersonalList: false,
