@@ -10,12 +10,12 @@
 
 .overview {
   position: relative;
-  padding-bottom: 200px;
 
   &__wrapper {
     .g-wrapper {
       position: static;
       padding: unset;
+      padding-bottom: 200px;
     }
 
     .title {
@@ -57,6 +57,7 @@
       p {
         color: rgba(60, 60, 67, 0.6);
         margin-top: 22px;
+        word-break: break-all;
         @font-medium();
 
         &:first-child {
@@ -88,13 +89,18 @@
           @font-medium();
         }
 
-        span {
+        span,
+        .ipfs-link {
           font-size: 16px;
           line-height: 24px;
           color: rgba(60, 60, 67, 0.6);
           margin-top: 7px;
           display: block;
           @font-medium();
+        }
+
+        .ipfs-link {
+          text-decoration: underline;
         }
       }
     }

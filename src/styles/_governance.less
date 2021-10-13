@@ -86,12 +86,13 @@
           font-size: 16px;
           line-height: 24px;
           color: #d72c33;
-          @font-bold();
+          margin-top: 24px;
+          @font-medium();
         }
 
         &.error {
           span.error-message {
-            display: inline;
+            display: inline-block;
           }
         }
 
@@ -106,7 +107,7 @@
           color: rgba(60, 60, 67, 0.6);
           margin-top: 40px;
           display: block;
-          @font-medium();
+          @font-regular();
 
           span.toggle-preview {
             padding: 2px 8px;
@@ -129,10 +130,7 @@
             border: none;
             margin-top: 8px;
 
-            &::-webkit-input-placeholder,
-            &::-moz-placeholder,
-            &:-moz-placeholder,
-            &:-ms-input-placeholder {
+            &::placeholder {
               color: @black;
               opacity: 0.2;
             }
@@ -142,6 +140,10 @@
             font-size: 24px;
             line-height: 32px;
             @font-bold();
+
+            &::placeholder {
+              @font-bold();
+            }
           }
 
           textarea {
@@ -149,7 +151,11 @@
             font-size: 14px;
             line-height: 22px;
             overflow: hidden;
-            @font-regular();
+            @font-medium();
+
+            &::placeholder {
+              @font-medium();
+            }
           }
         }
 
