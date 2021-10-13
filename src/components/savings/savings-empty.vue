@@ -15,7 +15,7 @@
         <span class="title">{{ currentVariableAPY }}</span>
         <p class="description black">{{ $t('savings.lblAPYOnAllSavings') }}</p>
         <action-button
-          button-class="button button-active"
+          button-class="button button-active bold"
           :text="$t('savings.lblStartSaving')"
           @button-click="handleDepositClick"
         />

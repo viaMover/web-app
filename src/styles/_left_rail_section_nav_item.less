@@ -3,6 +3,7 @@
   flex-flow: row nowrap;
   border-radius: 8px;
   margin-bottom: 8px;
+  width: 332px;
 
   &.image {
     align-items: flex-start;
@@ -13,6 +14,7 @@
       flex-shrink: 0;
       margin-top: 4px;
       margin-right: 18px;
+      filter: drop-shadow(0px 4px 16px #CCCCCC);
 
       & picture,
       & img {
@@ -26,7 +28,7 @@
 
       h3,
       .title {
-        font-family: 'Regular', sans-serif;
+        font-family: 'Bold', sans-serif;
         font-weight: 700;
         font-size: 14px;
         line-height: 22px;
@@ -34,6 +36,11 @@
 
         &.disabled {
           color: rgba(60, 60, 67, 0.6);
+        }
+
+        &.medium {
+          font-family: 'Medium', sans-serif;
+          font-weight: 500;
         }
       }
 
