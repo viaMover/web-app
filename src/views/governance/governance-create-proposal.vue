@@ -127,7 +127,15 @@
             tabindex="4"
             type="submit"
           >
-            {{ $t('governance.lblCreateAProposal') }}
+            <div v-if="isLoading" class="loader-icon">
+              <img
+                :alt="$t('icon.txtPendingIconAlt')"
+                src="@/assets/images/ios-spinner-white.svg"
+              />
+            </div>
+            <template v-else>
+              {{ $t('governance.lblCreateAProposal') }}
+            </template>
           </button>
           <span class="error-message">
             {{ errorText }}
