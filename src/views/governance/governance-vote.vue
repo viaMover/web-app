@@ -14,11 +14,9 @@
         v-if="ipfsLinkText"
         :description="$t('governance.lblIpfsLink')"
       >
-        <template>
-          <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
-            {{ $t('governance.txtIpfsLink') }}
-          </a>
-        </template>
+        <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
+          {{ $t('governance.txtIpfsLink') }}
+        </a>
       </governance-overview-section-item>
     </governance-overview-section>
 
