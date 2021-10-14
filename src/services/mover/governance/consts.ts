@@ -6,4 +6,4 @@ export const moverSpaceId = 'mover';
 export const defaultCachePeriodSeconds = 60;
 export const minimumVotingThresholdMultiplier = 0.4;
 export const defaultProposalDurationDays = 3;
-export const defaultPowerNeededToBecomeAProposer = 10000;
+export const defaultPowerNeededToBecomeAProposer = 100000;
