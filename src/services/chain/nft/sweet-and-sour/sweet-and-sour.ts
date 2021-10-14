@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import store from '@/store/index';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
@@ -64,7 +63,7 @@ export const claimSweetAndSour = async (
     from: accountAddress
   };
 
-  let gasLimit = undefined;
+  let gasLimit;
   try {
     const gasLimitObj = await sweetAndSour.methods
       .claimNFT(signature)
@@ -106,7 +105,7 @@ export const claimSweetAndSour = async (
         console.log(`Claim txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: unknown) => {
         console.log(`Claim txn receipt: ${receipt}`);
         resolve();
       })

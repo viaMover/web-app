@@ -1,11 +1,11 @@
 <template>
-  <div class="overview-section">
-    <div v-if="hasTitle" class="header">
+  <div>
+    <div v-if="hasTitle">
       <slot name="header">
-        <h2>{{ title }}</h2>
+        <h2 class="subtitle">{{ title }}</h2>
       </slot>
     </div>
-    <div class="items-container">
+    <div class="overview__wrapper-items">
       <ul>
         <slot></slot>
       </ul>

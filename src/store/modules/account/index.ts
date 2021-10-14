@@ -1,5 +1,6 @@
 import { Module } from 'vuex';
 
+import { isProduction } from '@/settings';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 
@@ -22,7 +23,7 @@ import walletMutations from './mutations/wallet';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     web3Modal: undefined,
 

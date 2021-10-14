@@ -1,4 +1,8 @@
-export default {
+import VueI18n from 'vue-i18n';
+
+import { isFeatureEnabled } from '@/settings';
+
+const messages: VueI18n.LocaleMessageObject = {
   lblPageTitleDefault: 'Mover App',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
@@ -17,10 +21,10 @@ export default {
   lblInsufficientBalance: 'Insufficient Balance',
   lblEnterAmount: 'Enter amount',
   lblNoData: 'No data',
-  releaseRadar: {
-    lblReleaseRadar: 'Release Radar',
-    lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
-  },
+  lblDashboardMobile: 'Oh no!',
+  txtDashboardMobile:
+    'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
+  btnDashboardMobile: 'Got it. Take me home',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -299,7 +303,124 @@ export default {
         'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.'
     }
   },
-  governance: {
+  asset: {
+    txtAlt: '{name} icon',
+    txtFallbackAlt: '{fieldRole} asset icon',
+    lblSelectMax: 'Use Max',
+    lblBalance: 'Balance'
+  },
+  transaction: {
+    lblState: {
+      waiting: {
+        header: 'Waiting for confirmation',
+        description: 'Confirm this transaction in your wallet'
+      },
+      pending: {
+        header: 'Your transaction is processing',
+        description: 'Waiting for transaction to be confirmed'
+      },
+      processed: {
+        header: 'Success!',
+        description: 'Your transaction was processed!'
+      },
+      reverted: {
+        header: 'Transaction was reverted',
+        description: 'Your transaction failed'
+      }
+    }
+  },
+  card: {
+    lblCard: 'Card'
+  },
+  search: {
+    lblSearch: 'Search',
+    lblSearchBar: 'Search tokens',
+    lblSearchBarPlaceholder: 'Search any token',
+    lblSearchTransaction: 'Search any transaction',
+    lblFavorite: 'Favorite',
+    lblVerified: 'Verified',
+    lblTokensInTheWallet: 'Tokens in the wallet',
+    lblGlobalSearch: 'Global search'
+  },
+  gas: {
+    lblNetworkFee: 'Network fee',
+    lblSelector: {
+      low: '🐌 Slow',
+      normal: '⏱ Normal',
+      high: '🚀 Fast',
+      treasury: '🐷 Smart Treasury'
+    }
+  },
+  dates: {
+    sameDay: '[Today]',
+    lastDay: '[Yesterday]'
+  },
+  icon: {
+    txtFlipAssetsIconAlt: 'flip',
+    txtBackLinkIconAlt: 'back',
+    txtCloseIconAlt: 'close',
+    txtContextButtonAlt: 'open menu',
+    txtLogoAlt: 'Mover logo',
+    txtSelectAssetButtonAlt: 'select asset',
+    txtNavigationLinkAlt: 'navigation link',
+    txtSwapDetailsIconAlt: 'swap details',
+    txtTokenInfoAlt: '{name} info on Etherscan',
+    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus',
+    txtPendingIconAlt: 'pending'
+  },
+  more: {
+    lblMore: 'More'
+  },
+  provider: {
+    errors: {
+      4001: 'Oh no. You have rejected the provider request. Please try again',
+      4100: 'Oh no. Something is wrong with your provider. Please try again or use different provider instead',
+      4200: 'Oh no. Your provider does not support this method. Please use different provider instead',
+      4900: 'Oh no. Your provider is disconnected from all chains. Please refresh the page or use different provider instead',
+      4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
+    }
+  }
+};
+
+if (isFeatureEnabled('isReleaseRadarEnabled')) {
+  messages.radar = {
+    lblTokenOfTheDay: 'Token of the day',
+    liveUpdates: {
+      lblLiveUpdates: 'Live updates',
+      lblTopMovers: 'Top Movers',
+      lblTopLosers: 'Top losers',
+      lblNewTokens: 'New tokens',
+      lblDeFi: 'DeFi',
+      lblStablecoins: 'Stablecoins'
+    },
+    lblPersonalLists: 'Personal Lists',
+    lblCuratedLists: 'Curated Lists',
+    lblRune: 'RUNE',
+    txtRuneAlt: '{name} coin icon',
+    txtRadar: {
+      runeDescription:
+        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
+        'THORChain allows for native swaps between various blockchains e.g. a ' +
+        'native swap between ETH and BTC.'
+    },
+    btnGet: {
+      simple: 'Get'
+    },
+    btnSearch: {
+      emoji: '🔍'
+    }
+  };
+}
+
+if (isFeatureEnabled('isBondsEnabled')) {
+  messages.bonds = {
+    icon: '🏦',
+    lblBonds: 'Bonds'
+  };
+}
+
+if (isFeatureEnabled('isGovernanceEnabled')) {
+  messages.governance = {
     lblGovernance: 'Governance',
     lblGetInvolved: 'Get involved',
     lblGovernancePrefix: 'Governance',
@@ -319,7 +440,7 @@ export default {
       emoji: '🗳 @:governance.btnCreateAProposal.simple'
     },
     lblVotingStatus: {
-      open: 'Voting is open',
+      active: 'Voting is open',
       closed: 'Voting is closed'
     },
     btnVote: {
@@ -338,7 +459,7 @@ export default {
       emoji: '🌍'
     },
     btnView: {
-      simple: 'View'
+      text: 'View'
     },
     btnSeeAll: {
       simple: 'See All'
@@ -353,7 +474,7 @@ export default {
     lblCreateAProposal: 'Create a proposal',
     lblProposalOverview: 'Proposal overview',
     lblVotingPeriod: 'Voting period',
-    txtVotingPeriod: '{days} days',
+    lblDaysToRun: 'Days to run',
     lblMinimumVotingThreshold: 'Minimum voting threshold',
     lblProposer: 'Proposer',
     lblProposalId: '@:governance.lblProposal ID',
@@ -368,7 +489,6 @@ export default {
     txtGovernanceImageAlt: 'Governance icon image',
     lblMyGovernance: 'My Governance',
     lblManageGovernance: 'Manage Governance',
-    txtCreateAProposal: 'Community Voting',
     txtCreateAProposalAlt: 'Create a proposal icon image',
     txtGlobalAnalytics: 'All information about Governance',
     lblGlobalAnalytics: 'Global analytics',
@@ -387,100 +507,52 @@ export default {
       'It means that you want this proposal to pass.',
     txtVoteAgainst:
       'You are about to vote AGAINST. ' +
-      'It means that you want this proposal to defeat.'
-  },
-  nibbleShop: {
-    lblNibbleShop: 'Nibble shop',
-    lblNoSweetAndSourNFTHeading: "That's sour! You have no Sweet & Sour",
-    lblNoSweetAndSourNFTSubheading:
-      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop",
-    lblAssetOverview: '{name} Overview',
-    lblTotalTrades: 'Total trades',
-    lblQuantity: {
-      initial: 'Initial quantity',
-      redeemed: 'Redeemed',
-      remaining: 'Remaining quantity',
-      available: 'Available to purchase'
+      'It means that you want this proposal to defeat.',
+    lblProposalStats: 'Proposal Stats',
+    txtCreateAProposal:
+      'You are about to create a governance proposal. Make it count.',
+    txtCreateAProposalTip:
+      'A small tip. To make it easier for other community members a proposal should be answered as simple ' +
+      'yes or no. Make a descriptive title, and an accurate explanation. The more details you provide, the ' +
+      'easier it will be to make a decision for others.',
+    lblProposalTitle: 'Proposal title',
+    txtProposalTitlePlaceholder: 'My title',
+    lblProposalDescription: 'Proposal description',
+    txtProposalDescriptionPlaceholder: 'My proposal description',
+    errors: {
+      default: 'Oh no. Something went wrong',
+      'too large message': 'The description is too large',
+      'no voting power': 'You have no voting power to do this',
+      'not in voting window': 'The voting is already closed',
+      'too many requests':
+        'You are making too many requests, please wait at least 10 seconds then try again',
+      'already voted': 'Oh no. Seems like you already voted',
+      'not enough power to vote':
+        "Oh no. Seems like you don't have enough power to vote",
+      'not enough power to create a proposal':
+        "Oh no. Seems like you don't have enough power to create a proposal"
     },
-    lblCurrentPrice: 'Current price',
-    lblAssetActions: {
-      buy: 'Buy {title}',
-      sell: 'Sell {title}',
-      redeem: 'Redeem {title}'
-    },
-    txtTokenizedAsset:
-      '{name} is a tokenized asset. When buying a tokenized asset, you are buying a token that can be redeemed for a physical asset. ' +
-      "Buying and selling affects the current price of the asset. Purchasing a token doesn't require redemption",
-    lblBuyWith: 'Buy with',
-    lblBalance: 'Balance',
-    lblRedeem: 'Redeem',
-    lblSell: 'Sell',
-    lblFullName: 'Full name',
-    lblEmail: 'Email',
-    lblCountry: 'Country',
-    lblFullAddress: 'Full address',
-    lblTownOrCity: 'Town or city',
-    lblPostalCode: 'Postal code',
-    lblPlaceholders: {
-      fullName: 'Antoshi Nakamoto',
-      email: 'your@email.com',
-      country: 'Nakamoto Land',
-      fullAddress: 'Street name, house or apartment number',
-      townOrCity: 'Nakamoto Town',
-      postalCode: 'Just a code'
-    },
-    txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
-    txtProductAlt: '{title} product image',
-    lblTotalAvailable: 'Total available',
-    lblPrice: 'Price',
-    lblWhatElseCanDo: 'What else can you do',
-    btn: {
-      get: {
-        txt: 'Purchase the {item}'
-      },
-      redeem: {
-        emoji: '📦',
-        txt: 'Reedem'
-      },
-      sell: {
-        emoji: '🚪',
-        txt: 'Sell'
-      },
-      buy: {
-        emoji: '🛍',
-        txt: 'Buy'
+    btnTogglePreview: 'Toggle preview',
+    txtTogglePreview: 'Toggle markdown preview',
+    createProposal: {
+      validations: {
+        title: {
+          required: 'This field is required. Please provide a title',
+          maxLength: 'Maximum length should be less than {boundary}'
+        },
+        description: {
+          required: 'This field is required. Please provide a description',
+          maxLength: 'Maximum length should be less than {boundary}'
+        }
       }
     },
-    lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
-    txtNoNFT:
-      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop.",
-    txtAssets: {
-      $CEO1: {
-        description:
-          'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
-          'CEOs are very busy, thus it is a limited addition with only 30 caps ever to be made. ' +
-          'This is a genesis limited addition with only 30 caps ever to be made. One size fits all CEOs.'
-      },
-      $SJ1: {
-        description:
-          'The face mask is stylish and cool, and it’s also hand-made. It’s how you can be different from ' +
-          'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
-          'This mask is also a limited edition with only 30 ever to be released.'
-      },
-      $IC1: {
-        description:
-          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
-          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
-          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
-      },
-      $PWR01: {
-        description:
-          'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
-          'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
-      }
-    }
-  },
-  NFTs: {
+    lblIpfsLink: 'Your registered vote',
+    txtIpfsLink: 'Link'
+  };
+}
+
+if (isFeatureEnabled('isNftDropsEnabled')) {
+  messages.NFTs = {
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
@@ -631,103 +703,101 @@ export default {
         }
       }
     }
-  },
-  asset: {
-    txtAlt: '{name} icon',
-    txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: 'Use Max',
-    lblBalance: 'Balance'
-  },
-  transaction: {
-    lblState: {
-      waiting: {
-        header: 'Waiting for confirmation',
-        description: 'Confirm this transaction in your wallet'
+  };
+}
+
+if (isFeatureEnabled('isNibbleShopEnabled')) {
+  messages.nibbleShop = {
+    lblNibbleShop: 'Nibble shop',
+    lblNoSweetAndSourNFTHeading: "That's sour! You have no Sweet & Sour",
+    lblNoSweetAndSourNFTSubheading:
+      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop",
+    lblAssetOverview: '{name} Overview',
+    lblTotalTrades: 'Total trades',
+    lblQuantity: {
+      initial: 'Initial quantity',
+      redeemed: 'Redeemed',
+      remaining: 'Remaining quantity',
+      available: 'Available to purchase'
+    },
+    lblCurrentPrice: 'Current price',
+    lblAssetActions: {
+      buy: 'Buy {title}',
+      sell: 'Sell {title}',
+      redeem: 'Redeem {title}'
+    },
+    txtTokenizedAsset:
+      '{name} is a tokenized asset. When buying a tokenized asset, you are buying a token that can be redeemed for a physical asset. ' +
+      "Buying and selling affects the current price of the asset. Purchasing a token doesn't require redemption",
+    lblBuyWith: 'Buy with',
+    lblBalance: 'Balance',
+    lblRedeem: 'Redeem',
+    lblSell: 'Sell',
+    lblFullName: 'Full name',
+    lblEmail: 'Email',
+    lblCountry: 'Country',
+    lblFullAddress: 'Full address',
+    lblTownOrCity: 'Town or city',
+    lblPostalCode: 'Postal code',
+    lblPlaceholders: {
+      fullName: 'Antoshi Nakamoto',
+      email: 'your@email.com',
+      country: 'Nakamoto Land',
+      fullAddress: 'Street name, house or apartment number',
+      townOrCity: 'Nakamoto Town',
+      postalCode: 'Just a code'
+    },
+    txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
+    txtProductAlt: '{title} product image',
+    lblTotalAvailable: 'Total available',
+    lblPrice: 'Price',
+    lblWhatElseCanDo: 'What else can you do',
+    btn: {
+      get: {
+        txt: 'Purchase the {item}'
       },
-      pending: {
-        header: 'Your transaction is processing',
-        description: 'Waiting for transaction to be confirmed'
+      redeem: {
+        emoji: '📦',
+        txt: 'Reedem'
       },
-      processed: {
-        header: 'Success!',
-        description: 'Your transaction was processed!'
+      sell: {
+        emoji: '🚪',
+        txt: 'Sell'
       },
-      reverted: {
-        header: 'Transaction was reverted',
-        description: 'Your transaction failed'
+      buy: {
+        emoji: '🛍',
+        txt: 'Buy'
+      }
+    },
+    lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
+    txtNoNFT:
+      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop.",
+    txtAssets: {
+      $CEO1: {
+        description:
+          'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
+          'CEOs are very busy, thus it is a limited addition with only 30 caps ever to be made. ' +
+          'This is a genesis limited addition with only 30 caps ever to be made. One size fits all CEOs.'
+      },
+      $SJ1: {
+        description:
+          'The face mask is stylish and cool, and it’s also hand-made. It’s how you can be different from ' +
+          'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
+          'This mask is also a limited edition with only 30 ever to be released.'
+      },
+      $IC1: {
+        description:
+          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
+          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
+          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
+      },
+      $PWR01: {
+        description:
+          'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
+          'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
       }
     }
-  },
-  radar: {
-    lblTokenOfTheDay: 'Token of the day',
-    liveUpdates: {
-      lblLiveUpdates: 'Live updates',
-      lblTopMovers: 'Top Movers',
-      lblTopLosers: 'Top losers',
-      lblNewTokens: 'New tokens',
-      lblDeFi: 'DeFi',
-      lblStablecoins: 'Stablecoins'
-    },
-    lblPersonalLists: 'Personal Lists',
-    lblCuratedLists: 'Curated Lists',
-    lblRune: 'RUNE',
-    txtRuneAlt: '{name} coin icon',
-    txtRadar: {
-      runeDescription:
-        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
-        'THORChain allows for native swaps between various blockchains e.g. a ' +
-        'native swap between ETH and BTC.'
-    },
-    btnGet: {
-      simple: 'Get'
-    },
-    btnSearch: {
-      emoji: '🔍'
-    }
-  },
-  bonds: {
-    icon: '🏦',
-    lblBonds: 'Bonds'
-  },
-  card: {
-    lblCard: 'Card'
-  },
-  search: {
-    lblSearch: 'Search',
-    lblSearchBar: 'Search tokens',
-    lblSearchBarPlaceholder: 'Search any token',
-    lblSearchTransaction: 'Search any transaction',
-    lblFavorite: 'Favorite',
-    lblVerified: 'Verified',
-    lblTokensInTheWallet: 'Tokens in the wallet',
-    lblGlobalSearch: 'Global search'
-  },
-  gas: {
-    lblNetworkFee: 'Network fee',
-    lblSelector: {
-      low: '🐌 Slow',
-      normal: '⏱ Normal',
-      high: '🚀 Fast',
-      treasury: '🐷 Smart Treasury'
-    }
-  },
-  dates: {
-    sameDay: '[Today]',
-    lastDay: '[Yesterday]'
-  },
-  icon: {
-    txtFlipAssetsIconAlt: 'flip',
-    txtBackLinkIconAlt: 'back',
-    txtCloseIconAlt: 'close',
-    txtContextButtonAlt: 'open menu',
-    txtLogoAlt: 'Mover logo',
-    txtSelectAssetButtonAlt: 'select asset',
-    txtNavigationLinkAlt: 'navigation link',
-    txtSwapDetailsIconAlt: 'swap details',
-    txtTokenInfoAlt: '{name} info on Etherscan',
-    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus'
-  },
-  more: {
-    lblMore: 'More'
-  }
-};
+  };
+}
+
+export default messages;

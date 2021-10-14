@@ -40,7 +40,7 @@ import {
 } from '@/services/mover';
 import { dateFromExplicitPair } from '@/utils/time';
 
-import ProgressLoader from '../progress-loader.vue';
+import { ProgressLoader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'StatementNavListItem',

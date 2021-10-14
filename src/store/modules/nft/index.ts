@@ -1,5 +1,6 @@
 import { Module } from 'vuex';
 
+import { isProduction } from '@/settings';
 import { RootStoreState } from '@/store/types';
 
 import actionsClaim from './actions/claim';
@@ -10,7 +11,7 @@ import { NFTStoreState } from './types';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     isLoading: false,
 

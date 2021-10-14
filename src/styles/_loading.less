@@ -1,0 +1,66 @@
+@import './_animations.less';
+
+.loading {
+  width: 38px;
+  height: 38px;
+  position: relative;
+
+  &::before {
+    position: absolute;
+    content: '';
+    width: 34px;
+    height: 34px;
+    background-color: #fafafc;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    z-index: 5;
+  }
+
+  .hold {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip: rect(0, 38px, 38px, 19px);
+    border-radius: 100%;
+  }
+
+  .fill,
+  .dot span {
+    background-color: #000;
+  }
+
+  .fill {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    clip: rect(0, 19px, 38px, 0);
+  }
+
+  .left {
+    .fill {
+      z-index: 1;
+      -webkit-animation: left 1s linear;
+      animation: left 1s linear both;
+    }
+  }
+
+  .right {
+    z-index: 3;
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+
+    .fill {
+      z-index: 3;
+      -webkit-animation: right 1s linear;
+      animation: right 1s linear both;
+      -webkit-animation-delay: 1s;
+      animation-delay: 1s;
+    }
+  }
+}
+
+@keyframes-left();
+@keyframes-right();
