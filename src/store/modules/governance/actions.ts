@@ -4,6 +4,8 @@ import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
 import { getCommunityVotingPower as getCommunityVotingPowerFromChain } from '@/services/chain';
+import { getBlockNumberByUnixTs as getBlockNumberByUnixTsEtherscan } from '@/services/etherscan/block-number';
+import { getBlockNumber as getBlockNumberInfura } from '@/services/infura/block-number';
 import {
   createProposal,
   CreateProposalParams,
@@ -85,8 +87,16 @@ export default {
         }
 
         commit('setIsLoading', true);
-        commit('clearItems');
-        commit('setSpaceInfo', undefined);
+        // initial load, refetch or previous fetch failure
+        if (refetch || state.items.length < 1) {
+          commit('clearItems');
+        }
+
+        // initial load, refetch or previous fetch failure
+        if (refetch || state.spaceInfo === undefined) {
+          commit('setSpaceInfo', undefined);
+        }
+
         commit('setError', undefined);
         commit('setLoadingPromise', undefined);
 
@@ -302,7 +312,10 @@ export default {
   },
   async loadPowerInfo({ state, commit, dispatch }): Promise<void> {
     try {
-      const spaceInfoPromise = getSpace(state.spaceId);
+      // resolve with existing spaceInfo or fetch the new one
+      const spaceInfoPromise = state.spaceInfo
+        ? Promise.resolve(state.spaceInfo)
+        : getSpace(state.spaceId);
 
       // current community voting power
       const votingPowerPromise = dispatch('loadCommunityVotingPower');
@@ -326,19 +339,12 @@ export default {
     }
   },
   async loadCommunityVotingPower(
-    { rootState },
+    { dispatch, rootState },
     snapshot?: number
   ): Promise<string> {
     try {
-      let blockNumber: number = snapshot ?? 0;
-      if (snapshot === undefined) {
-        if (rootState.account?.provider?.web3 === undefined) {
-          throw new Error('failed to get web3 provider');
-        }
-
-        blockNumber =
-          await rootState.account.provider.web3.eth.getBlockNumber();
-      }
+      const blockNumber: number =
+        snapshot !== undefined ? snapshot : await dispatch('getBlockNumber');
 
       const communityVotingPowerInWei = await getCommunityVotingPower(
         blockNumber
@@ -385,7 +391,7 @@ export default {
     }
   },
   async loadVotingPowerSelf(
-    { commit, state, rootState },
+    { commit, dispatch, state, rootState },
     refetch = false
   ): Promise<string> {
     try {
@@ -404,16 +410,11 @@ export default {
         throw new Error('failed to get current address');
       }
 
-      if (rootState.account?.provider?.web3 === undefined) {
-        throw new Error('failed to get web3 provider');
-      }
-
-      const snapshot =
-        await rootState.account.provider.web3.eth.getBlockNumber();
+      const blockNumber: number = await dispatch('getBlockNumber');
 
       const votingPowerSelfInWei = await getVotingPower(
         rootState.account.currentAddress,
-        snapshot
+        blockNumber
       );
 
       if (votingPowerSelfInWei.isError) {
@@ -470,6 +471,75 @@ export default {
         console.error('failed to load votingPowerSelf', fallbackError);
         Sentry.captureException(fallbackError);
         throw fallbackError;
+      }
+    }
+  },
+  async getBlockNumber({ rootState }): Promise<number> {
+    try {
+      if (rootState.account?.provider?.web3 === undefined) {
+        throw new Error('failed to get web3 provider');
+      }
+
+      const res: unknown =
+        await rootState.account.provider.web3.eth.getBlockNumber();
+      if (typeof res !== 'number') {
+        throw new Error('failed to get a valid answer from web3');
+      }
+
+      return res;
+    } catch (error) {
+      console.warn(
+        'failed to get blockNumber, trying an etherscan fallback',
+        error
+      );
+      Sentry.captureException(error);
+      Sentry.addBreadcrumb({
+        message: 'trying to use fallback blockNumber etherscan scenario'
+      });
+
+      try {
+        if (rootState.account?.networkInfo?.network === undefined) {
+          throw new Error('failed to get network info');
+        }
+
+        const nowTs = dayjs().unix();
+        const result = await getBlockNumberByUnixTsEtherscan(
+          nowTs,
+          rootState.account.networkInfo.network
+        );
+        if (!result.isError) {
+          return result.result;
+        }
+
+        throw error;
+      } catch (fallbackErrorEtherscan) {
+        console.warn(
+          'failed to get blockNumber from etherscan, trying an infura fallback',
+          fallbackErrorEtherscan
+        );
+        Sentry.addBreadcrumb({
+          message: 'trying to use fallback blockNumber infura scenario'
+        });
+        Sentry.captureException(fallbackErrorEtherscan);
+
+        try {
+          if (rootState.account?.networkInfo?.network === undefined) {
+            throw new Error('failed to get network info');
+          }
+
+          const result = await getBlockNumberInfura(
+            rootState.account.networkInfo.network
+          );
+          if (!result.isError) {
+            return result.result;
+          }
+
+          throw error;
+        } catch (fallbackErrorInfura) {
+          console.error('failed to get blockNumber', fallbackErrorInfura);
+          Sentry.captureException(fallbackErrorInfura);
+          throw fallbackErrorInfura;
+        }
       }
     }
   }
