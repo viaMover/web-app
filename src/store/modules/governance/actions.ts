@@ -380,7 +380,7 @@ export default {
       } catch (fallbackError) {
         console.error('failed to load communityVotingPower', fallbackError);
         Sentry.captureException(fallbackError);
-        throw error;
+        throw fallbackError;
       }
     }
   },
