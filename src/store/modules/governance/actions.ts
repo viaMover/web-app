@@ -507,11 +507,11 @@ export default {
           nowTs,
           rootState.account.networkInfo.network
         );
-        if (!result.isError) {
-          return result.result;
+        if (result.isError) {
+          throw new Error(result.error);
         }
 
-        throw error;
+        return result.result;
       } catch (fallbackErrorEtherscan) {
         console.warn(
           'failed to get blockNumber from etherscan, trying an infura fallback',
@@ -530,11 +530,11 @@ export default {
           const result = await getBlockNumberInfura(
             rootState.account.networkInfo.network
           );
-          if (!result.isError) {
-            return result.result;
+          if (result.isError) {
+            throw new Error(result.error);
           }
 
-          throw error;
+          return result.result;
         } catch (fallbackErrorInfura) {
           console.error('failed to get blockNumber', fallbackErrorInfura);
           Sentry.captureException(fallbackErrorInfura);
