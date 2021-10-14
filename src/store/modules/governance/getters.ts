@@ -134,7 +134,7 @@ export default {
         sameAddress(vote.voter, rootState.account?.currentAddress)
       );
       const hasEnoughVotingPowerToVote =
-        isVoted || votingPowerSelf > state.powerNeededToBecomeAProposer;
+        isVoted || greaterThan(votingPowerSelf, 0);
 
       return {
         ...acc,
