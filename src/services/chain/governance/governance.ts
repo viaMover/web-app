@@ -40,7 +40,9 @@ export const getCommunityVotingPower = async (
     .call(transactionParams, snapshot);
 
   const moveTotalSupply = fromWei(moveTotalSupplyInWei, 18);
-  const sushiReserveMovePart = fromWei(sushiReservesInWei._reserve0, 18);
+  const sushiReserveMovePartInWei =
+    sushiReservesInWei._reserve0 ?? sushiReservesInWei[0];
+  const sushiReserveMovePart = fromWei(sushiReserveMovePartInWei, 18);
 
   return add(moveTotalSupply, multiply(sushiReserveMovePart, '1.5'));
 };
