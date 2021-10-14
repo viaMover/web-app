@@ -27,7 +27,15 @@
       type="button"
       @click="handleVote"
     >
-      {{ voteButtonText }}
+      <div v-if="isLoading" class="loader-icon">
+        <img
+          :alt="$t('icon.txtPendingIconAlt')"
+          src="@/assets/images/ios-spinner-white.svg"
+        />
+      </div>
+      <template v-else>
+        {{ voteButtonText }}
+      </template>
     </button>
     <p v-if="errorText" class="error">
       {{ errorText }}
