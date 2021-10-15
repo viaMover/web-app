@@ -22,6 +22,15 @@
           pic="SmartTreasury"
           :title="$t('treasury.lblSmartTreasury')"
         />
+        <!-- TODO: replace earnings section asset -->
+        <menu-list-emoji-card-item
+          v-if="isFeatureEnabled('isEarningsEnabled')"
+          corner-color="#000000"
+          :description="earningsBalance"
+          navigate-to-name="earnings-manage"
+          pic="SmartTreasury"
+          :title="$t('earnings.lblEarnings')"
+        />
         <menu-list-emoji-card-item
           v-if="isFeatureEnabled('isBondsEnabled')"
           description="$942,184.11"
@@ -71,7 +80,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
@@ -103,8 +112,19 @@ export default Vue.extend({
       'treasuryBonusNative',
       'treasuryStakedBalanceNative'
     ]),
+    ...(isFeatureEnabled('isEarningsEnabled') &&
+      mapGetters('earnings', {
+        earningsBalanceNative: 'earningsBalanceNative'
+      })),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
+    },
+    earningsBalance(): string {
+      if (this.earningsBalanceNative === undefined) {
+        return '';
+      }
+
+      return `$${formatToNative(this.earningsBalanceNative)}`;
     },
     treasuryBalance(): string {
       const treasuryAllBalance = add(
@@ -114,7 +134,14 @@ export default Vue.extend({
       return `$${formatToNative(treasuryAllBalance)}`;
     }
   },
+  async mounted() {
+    await this.loadMinimalInfo?.();
+  },
   methods: {
+    ...(isFeatureEnabled('isEarningsEnabled') &&
+      mapActions('earnings', {
+        loadMinimalInfo: 'loadMinimalInfo'
+      })),
     isFeatureEnabled,
     async openDepositInSavings(): Promise<void> {
       await this.$router.push({
