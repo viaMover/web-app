@@ -1,10 +1,11 @@
 import Vue from 'vue';
-import VueRouter, { RouteConfig } from 'vue-router';
+import VueRouter, { RawLocation, RouteConfig } from 'vue-router';
 
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
+import { ActiveProviders } from '@/store/modules/earnings/utils';
 
 Vue.use(VueRouter);
 
@@ -308,12 +309,6 @@ const routes: Array<RouteConfig> = [
     meta: {
       skipPreloadScreen: true
     }
-  },
-  {
-    path: '*',
-    redirect: {
-      name: 'not-found-route'
-    }
   }
 ];
 
@@ -321,6 +316,125 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+});
+
+if (isFeatureEnabled('isEarningsEnabled')) {
+  router.addRoute({
+    path: '/earnings',
+    component: () =>
+      import(
+        /* webpackChunkName: "earnings" */ '@/views/earnings/earnings-root.vue'
+      ),
+    children: [
+      {
+        path: 'ethereum',
+        component: () =>
+          import(
+            /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-root.vue'
+          ),
+        children: [
+          {
+            path: 'stake',
+            name: 'earnings-ethereum-stake',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-stake.vue'
+              )
+          },
+          {
+            path: 'withdraw',
+            name: 'earnings-ethereum-withdraw',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-withdraw.vue'
+              )
+          },
+          {
+            path: 'global-analytics',
+            name: 'earnings-ethereum-global-analytics',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-global-analytics.vue'
+              )
+          },
+          {
+            path: '',
+            name: 'earnings-ethereum-manage',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-manage.vue'
+              )
+          }
+        ],
+        beforeEnter: checkFeatureFlag('isEarningsEthereumEnabled', {
+          name: 'earnings-manage'
+        })
+      },
+      {
+        path: 'olympus',
+        component: () =>
+          import(
+            /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-root.vue'
+          ),
+        children: [
+          {
+            path: 'stake',
+            name: 'earnings-olympus-stake',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-stake.vue'
+              )
+          },
+          {
+            path: 'withdraw',
+            name: 'earnings-olympus-withdraw',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-withdraw.vue'
+              )
+          },
+          {
+            path: 'global-analytics',
+            name: 'earnings-olympus-global-analytics',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-global-analytics.vue'
+              )
+          },
+          {
+            path: '',
+            name: 'earnings-olympus-manage',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-manage.vue'
+              )
+          }
+        ],
+        beforeEnter: checkFeatureFlag('isEarningsOlympusEnabled', {
+          name: 'earnings-manage'
+        })
+      },
+      {
+        path: '',
+        name: 'earnings-manage',
+        redirect: (): RawLocation => {
+          if (ActiveProviders.length < 1) {
+            return { name: 'not-found-route' };
+          }
+
+          return { name: `earnings-${ActiveProviders[0]}-manage` };
+        }
+      }
+    ]
+  });
+}
+
+router.addRoute({
+  path: '*',
+  name: 'any-route',
+  redirect: {
+    name: 'not-found-route'
+  }
 });
 
 if (isFeatureEnabled('isNavigationFallbackEnabled')) {

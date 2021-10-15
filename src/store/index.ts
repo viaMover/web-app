@@ -5,6 +5,10 @@ import { isFeatureEnabled } from '@/settings';
 
 import actions from './actions';
 import account from './modules/account';
+import {
+  earningsModule as earnings,
+  registerNestedModules as earningsRegisterNestedModules
+} from './modules/earnings';
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
@@ -43,6 +47,11 @@ if (isFeatureEnabled('isReleaseRadarEnabled')) {
 
 if (isFeatureEnabled('isGovernanceEnabled')) {
   store.registerModule('governance', governance);
+}
+
+if (isFeatureEnabled('isEarningsEnabled')) {
+  store.registerModule('earnings', earnings);
+  earningsRegisterNestedModules(store);
 }
 
 export default store;

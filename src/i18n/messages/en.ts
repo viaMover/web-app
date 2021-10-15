@@ -800,4 +800,10 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
   };
 }
 
+if (isFeatureEnabled('isEarningsEnabled')) {
+  messages.earnings = {
+    lblEarnings: 'Earnings'
+  };
+}
+
 export default messages;
