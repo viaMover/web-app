@@ -5,35 +5,36 @@
         <menu-list-emoji-card-item
           :description="$t('menu.lblComingSoon')"
           disabled
+          has-webp-sources
           navigate-to-name="home"
           pic="BeautifulCard"
           :title="$t('menu.lblBeautifulCard')"
         />
         <menu-list-emoji-card-item
           :description="savingsBalance"
+          has-webp-sources
           navigate-to-name="savings-manage"
           pic="Savings"
           :title="$t('savings.lblSavings')"
         />
         <menu-list-emoji-card-item
-          corner-color="#ff57db"
           :description="treasuryBalance"
+          has-webp-sources
           navigate-to-name="treasury-manage"
           pic="SmartTreasury"
           :title="$t('treasury.lblSmartTreasury')"
         />
-        <!-- TODO: replace earnings section asset -->
         <menu-list-emoji-card-item
           v-if="isFeatureEnabled('isEarningsEnabled')"
-          corner-color="#000000"
           :description="earningsBalance"
           navigate-to-name="earnings-manage"
-          pic="SmartTreasury"
+          pic="earnings-ethereum-and-olympus"
           :title="$t('earnings.lblEarnings')"
         />
         <menu-list-emoji-card-item
           v-if="isFeatureEnabled('isBondsEnabled')"
           description="$942,184.11"
+          has-webp-sources
           navigate-to-name="bonds"
           pic="Bonds"
           :title="$t('menu.lblBonds')"

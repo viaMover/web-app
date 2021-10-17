@@ -45,6 +45,10 @@ export default Vue.extend({
     navigateToName: {
       type: String,
       required: true
+    },
+    hasWebpSources: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -60,14 +64,18 @@ export default Vue.extend({
         { src: require(`@/assets/images/${this.pic}@2x.png`), variant: '2x' }
       ];
     },
-    pictureWebpSources(): Array<PictureSourceDescriptor> {
+    pictureWebpSources(): Array<PictureSourceDescriptor> | undefined {
+      if (!this.hasWebpSources) {
+        return undefined;
+      }
+
       return [
         { src: require(`@/assets/images/${this.pic}@1x.webp`) },
         { src: require(`@/assets/images/${this.pic}@2x.webp`), variant: '2x' }
       ];
     },
     src(): string {
-      return `@/assets/images/${this.pic}@1x.png`;
+      return require(`@/assets/images/${this.pic}@1x.png`);
     }
   }
 });

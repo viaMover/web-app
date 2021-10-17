@@ -37,9 +37,9 @@ const values: Globals = {
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
   isNavigationFallbackEnabled: true,
-  isEarningsEnabled: false,
-  isEarningsEthereumEnabled: false,
-  isEarningsOlympusEnabled: false
+  isEarningsEnabled: true,
+  isEarningsEthereumEnabled: true,
+  isEarningsOlympusEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
