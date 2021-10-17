@@ -802,7 +802,34 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
 
 if (isFeatureEnabled('isEarningsEnabled')) {
   messages.earnings = {
-    lblEarnings: 'Earnings'
+    lblEarnings: 'Earnings',
+    lblMyEarnings: 'My Earnings',
+    ethereum: {
+      lblEthereum: 'Ethereum',
+      lblManage: 'Manage Ethereum',
+      lblStake: 'Stake Ethereum',
+      txtStake: 'Get {apy} APY on staking ETH in Ethereum 2.0',
+      txtStakePictureAlt: 'Stake Ethereum',
+      lblWithdraw: 'Withdraw Ethereum',
+      txtWithdraw: 'Remove your staked assets fully or partially',
+      txtWithdrawPictureAlt: 'Withdraw Ethereum',
+      lblGlobalAnalytics: 'Global analytics',
+      txtGlobalAnalytics: 'All information about Ethereum',
+      txtGlobalAnalyticsPictureAlt: 'Global analytics'
+    },
+    olympus: {
+      lblOlympus: 'Olympus',
+      lblManage: 'Manage Olympus',
+      lblStake: 'Stake Olympus',
+      txtStake: 'Get {apy} APY by staking your OHM',
+      txtStakePictureAlt: 'Stake Olympus',
+      lblWithdraw: 'Withdraw Olympus',
+      txtWithdraw: 'Remove your assets from Olympus fully or partially',
+      txtWithdrawPictureAlt: 'Withdraw Olympus',
+      lblGlobalAnalytics: 'Global analytics',
+      txtGlobalAnalytics: 'All information about Olympus',
+      txtGlobalAnalyticsPictureAlt: 'Global analytics'
+    }
   };
 }
 

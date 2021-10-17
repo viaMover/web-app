@@ -328,10 +328,16 @@ if (isFeatureEnabled('isEarningsEnabled')) {
     children: [
       {
         path: 'ethereum',
-        component: () =>
-          import(
-            /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-root.vue'
-          ),
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-root.vue'
+            ),
+          manage: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/components/earnings/ethereum/earnings-manage-ethereum-left-rail-item.vue'
+            )
+        },
         children: [
           {
             path: 'stake',
@@ -372,10 +378,16 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       },
       {
         path: 'olympus',
-        component: () =>
-          import(
-            /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-root.vue'
-          ),
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-root.vue'
+            ),
+          manage: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/components/earnings/olympus/earnings-manage-olympus-left-rail-item.vue'
+            )
+        },
         children: [
           {
             path: 'stake',
