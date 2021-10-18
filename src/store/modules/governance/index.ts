@@ -1,10 +1,12 @@
 import { Module } from 'vuex';
 
+import dayjs from 'dayjs';
+
 import {
   defaultCachePeriodSeconds,
-  defaultPowerNeededToBecomeAProposer,
   defaultProposalDurationDays,
-  minimumVotingThresholdMultiplier,
+  getDefaultMinimumVotingThresholdMultiplier,
+  getDefaultPowerNeededToBecomeAProposer,
   moverSpaceId
 } from '@/services/mover/governance';
 import { isProduction } from '@/settings';
@@ -14,6 +16,8 @@ import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';
 import { GovernanceStoreState } from './types';
+
+const now = dayjs().unix();
 
 export default {
   namespaced: true,
@@ -27,13 +31,15 @@ export default {
     cacheInfoMap: {},
     cacheGenericInfoMap: {},
     proposalDurationDays: defaultProposalDurationDays,
-    powerNeededToBecomeAProposer: defaultPowerNeededToBecomeAProposer,
-    minimumVotingThresholdMultiplier: minimumVotingThresholdMultiplier,
+    powerNeededToBecomeAProposer: getDefaultPowerNeededToBecomeAProposer(now),
+    minimumVotingThresholdMultiplier:
+      getDefaultMinimumVotingThresholdMultiplier(now),
     communityVotingPower: '0',
     votingPowerSelf: '0',
     spaceId: moverSpaceId,
     cachePeriodSeconds: defaultCachePeriodSeconds,
-    isLoadingLastProposal: false
+    isLoadingLastProposal: false,
+    blockNumberCached: undefined
   },
   actions,
   getters,
