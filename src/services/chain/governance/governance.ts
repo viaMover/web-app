@@ -57,9 +57,13 @@ export const getVotingPower = async (
   const smartTreasuryMoveBalance = fromWei(smartTreasuryMoveBalanceInWei, 18);
 
   // smart treasury balance of MOVE SLP
-  const smartTreasuryMoveSlpBalanceInWei = await smartTreasuryContract.methods
-    .userInfoMoveLP(accountAddress)
-    .call(transactionParams, snapshot);
+  const smartTreasuryMoveSlpBalanceResponse =
+    await smartTreasuryContract.methods
+      .userInfoMoveLP(accountAddress)
+      .call(transactionParams, snapshot);
+  const smartTreasuryMoveSlpBalanceInWei =
+    smartTreasuryMoveSlpBalanceResponse.amount ??
+    smartTreasuryMoveSlpBalanceResponse[0];
   const smartTreasuryMoveSlpBalance = fromWei(
     smartTreasuryMoveSlpBalanceInWei,
     18
@@ -95,8 +99,8 @@ export const getVotingPower = async (
   // sum of all MOVE from different sources
   const movePart = add(moveBalance, smartTreasuryMoveBalance);
 
-  // MOVE SLP weight multiplier
-  const slpMultiplier = multiply(2.5, movePerSlp);
+  // MOVE SLP weight multiplier (2.5)
+  const slpMultiplier = divide(multiply(5, movePerSlp), 2);
 
   // sum of all MOVE SLP from different sources
   const moveSlpPartWithoutMultiplier = add(
@@ -141,5 +145,5 @@ export const getCommunityVotingPower = async (
     sushiReservesInWei._reserve0 ?? sushiReservesInWei[0];
   const sushiReserveMovePart = fromWei(sushiReserveMovePartInWei, 18);
 
-  return add(moveTotalSupply, multiply(sushiReserveMovePart, 1.5));
+  return add(moveTotalSupply, divide(multiply(sushiReserveMovePart, 3), 2));
 };
