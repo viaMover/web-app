@@ -535,9 +535,12 @@ export default {
   ): Promise<string> {
     if (
       !refetch &&
-      isValidCacheItem(state.cacheGenericInfoMap, 'votingPowerSelf', 5)
+      isValidCacheItem(
+        state.cacheGenericInfoMap,
+        'votingPowerSelf',
+        state.cachePeriodSeconds
+      )
     ) {
-      // cache is valid for 5 seconds (below average block time)
       return state.votingPowerSelf;
     }
 
