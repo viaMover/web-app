@@ -54,11 +54,11 @@ import Vue from 'vue';
 import ActionButton from '@/components/buttons/action-button.vue';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
+import { ProgressLoader } from '@/components/layout';
 import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
-import ProgressLoader from '@/components/statements/progress-loader.vue';
 
 export default Vue.extend({
   name: 'TreasuryPowercardManage',
