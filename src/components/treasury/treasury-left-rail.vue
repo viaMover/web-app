@@ -2,7 +2,7 @@
   <left-rail-section items-container-class="progressive-left-rail">
     <left-rail-section :section-name="$t('treasury.lblMySmartTreasury')">
       <left-rail-section-nav-item-image
-        :description="0"
+        :description="balance"
         description-class="bold"
         navigate-to="treasury-manage"
         :title="$t('treasury.lblSmartTreasury')"
@@ -97,6 +97,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
+import { formatToNative } from '@/utils/format';
 
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
@@ -194,6 +197,13 @@ export default Vue.extend({
       } as PictureDescriptor
     };
   },
-  computed: {}
+  computed: {
+    ...mapGetters('account', {
+      treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
+    }),
+    balance(): string {
+      return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
+    }
+  }
 });
 </script>

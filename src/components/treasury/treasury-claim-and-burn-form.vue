@@ -9,8 +9,8 @@
         :title="$t('treasury.claimAndBurn.lblClaimAndBurn')"
       />
       <div class="secondary_page-token-info">
-        <span>{{ estimatedAnnualEarning }}</span>
-        <p>{{ $t('treasury.claimAndBurn.txtYouApproximateBoost') }}</p>
+        <span>{{ claimingForStr }}</span>
+        <p>{{ $t('treasury.claimAndBurn.txtYouApproximateExit') }}</p>
       </div>
     </div>
     <div class="secondary_page-body">
@@ -92,36 +92,22 @@ import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 import { Properties as CssProperties } from 'csstype';
 
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
+import { getExitingAmount, getMaxBurn } from '@/services/chain';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import {
-  add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
-  divide,
-  fromWei,
   greaterThan,
-  isZero,
   multiply,
-  notZero,
-  toWei
+  notZero
 } from '@/utils/bigmath';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import {
   CompoudEstimateResponse,
-  estimateDepositCompound
-} from '@/wallet/actions/savings/deposit/depositEstimate';
-import {
-  calcTransactionFastNativePrice,
-  isSubsidizedAllowed
-} from '@/wallet/actions/subsidized';
-import { getUSDCAssetData } from '@/wallet/references/data';
+  estimateClaimAndBurnCompound
+} from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
+import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
   SmallTokenInfoWithIcon,
@@ -149,10 +135,11 @@ export default Vue.extend({
       selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
       maxInNative: '0' as string,
+      claimingFor: '0',
       amount: '',
       nativeAmount: '',
-      transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
+      maxBurnedAmount: undefined as undefined | string,
       isLoading: true,
       isProcessing: false,
       tokenSelectedByUser: false
@@ -166,31 +153,32 @@ export default Vue.extend({
       'gasPrices',
       'tokens',
       'ethPrice',
-      'savingsAPY',
-      'usdcPriceInWeth',
-      'ethPrice',
-      'savingsBalance',
       'nativeCurrency'
     ]),
-    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
-    outputUSDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
+    ...mapGetters('account', [
+      'treasuryBonusNative',
+      'getTokenColor',
+      'moveNativePrice'
+    ]),
+    moveTokenInfo(): SmallTokenInfoWithIcon {
+      return getMoveAssetData(this.networkInfo.network);
+    },
+    claimingForStr(): string {
+      if (this.asset === undefined) {
+        return '';
+      }
+      return `${formatToDecimals(this.claimingFor, 6)} ${
+        getUSDCAssetData(this.networkInfo.network).symbol
+      }`;
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
     },
-    isSwapNeeded(): boolean {
-      if (this.asset === undefined) {
-        return true;
-      }
-
-      return !sameAddress(this.asset.address, this.outputUSDCAsset.address);
-    },
     description(): string {
       return (
-        this.isSwapNeeded
+        this.asset !== undefined
           ? this.$t('treasury.claimAndBurn.txtYouChooseMove')
-          : this.$t('treasury.claimAndBurn.txtYouChooseMoveETHLp')
+          : ''
       ) as string;
     },
     currentInputSymbo(): string {
@@ -230,36 +218,6 @@ export default Vue.extend({
     isButtonActive(): boolean {
       return this.error === undefined && !this.isLoading;
     },
-    estimatedAnnualEarning(): string {
-      let possibleSavingsBalance = '0';
-      if (
-        this.asset &&
-        sameAddress(this.asset.address, this.outputUSDCAsset.address)
-      ) {
-        possibleSavingsBalance = this.amount;
-      } else if (this.transferData !== undefined) {
-        possibleSavingsBalance = fromWei(
-          this.transferData.buyAmount,
-          this.outputUSDCAsset.decimals
-        );
-      }
-
-      if (this.savingsBalance !== undefined) {
-        possibleSavingsBalance = add(
-          this.savingsBalance,
-          possibleSavingsBalance
-        );
-      }
-
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
-      const apyNative = multiply(
-        divide(this.savingsAPY, 100),
-        usdcAmountNative
-      );
-
-      return `~ $${formatToNative(apyNative)}`;
-    },
     formattedMaxAmount(): string {
       if (this.asset === undefined) {
         return `0`;
@@ -276,24 +234,30 @@ export default Vue.extend({
         )} ${this.nativeCurrencySymbol}`;
       }
     },
-    formattedUSDCTotal(): string {
-      if (this.asset === undefined) {
-        return '0';
-      }
-      let boughtUSDC = '0';
+    availableTokens(): Array<TokenWithBalance> {
+      const move = getMoveAssetData(this.networkInfo.network);
+      const moveWalletBalance =
+        this.tokens.find((t: TokenWithBalance) =>
+          sameAddress(t.address, move.address)
+        )?.balance ?? '0';
 
-      if (sameAddress(this.asset.address, this.outputUSDCAsset.address)) {
-        boughtUSDC = this.amount;
-      } else if (this.transferData !== undefined) {
-        boughtUSDC = fromWei(
-          this.transferData.buyAmount,
-          this.outputUSDCAsset.decimals
-        );
-      } else {
-        return '';
+      if (greaterThan(moveWalletBalance, '0')) {
+        return [
+          {
+            address: move.address,
+            decimals: move.decimals,
+            name: move.name,
+            symbol: move.symbol,
+            priceUSD: this.moveNativePrice,
+            logo: move.iconURL,
+            isFavorite: true,
+            isVerified: true,
+            balance: moveWalletBalance,
+            marketCap: Number.MAX_SAFE_INTEGER
+          }
+        ];
       }
-
-      return `${formatToNative(boughtUSDC)} USDC`;
+      return [];
     },
     selectorStyle(): CssProperties {
       if (this.asset?.color === undefined) {
@@ -312,16 +276,31 @@ export default Vue.extend({
   watch: {
     tokens: {
       immediate: true,
-      handler(newVal: Array<TokenWithBalance>) {
+      async handler(newVal: Array<TokenWithBalance>) {
         try {
           if (!this.tokenSelectedByUser) {
-            const eth = newVal.find(
-              (t: TokenWithBalance) => t.address === 'eth'
+            const move = newVal.find((t: TokenWithBalance) =>
+              sameAddress(t.address, this.moveTokenInfo.address)
             );
-            if (eth) {
-              this.asset = eth;
+            if (move) {
+              this.asset = move;
             }
           }
+        } finally {
+          this.isLoading = false;
+        }
+
+        this.isLoading = true;
+
+        try {
+          this.maxBurnedAmount = await getMaxBurn(
+            this.currentAddress,
+            this.networkInfo.network,
+            this.provider.web3
+          );
+        } catch (err) {
+          console.log(`can't load max burn: ${JSON.stringify(err)}`);
+          Sentry.captureException(err);
         } finally {
           this.isLoading = false;
         }
@@ -341,75 +320,59 @@ export default Vue.extend({
       this.isLoading = true;
 
       try {
-        if (!this.isSwapNeeded) {
-          console.log('Dont need transfer, token is USDC');
-          this.transferData = undefined;
-          if (mode === 'TOKEN') {
-            this.amount = value;
-            this.nativeAmount = convertNativeAmountFromAmount(
-              value,
-              this.asset.priceUSD
-            );
-          } else {
-            this.amount = convertAmountFromNativeValue(
-              value,
-              this.asset.priceUSD,
-              this.asset.decimals
-            );
-            this.nativeAmount = value;
+        if (mode === 'TOKEN') {
+          this.amount = value;
+          this.nativeAmount = new BigNumber(
+            convertNativeAmountFromAmount(value, this.asset.priceUSD)
+          ).toFixed(2);
+
+          if (this.maxBurnedAmount === undefined) {
+            this.transferError = 'Burn conditions error';
+            return;
           }
+
+          if (greaterThan(this.amount, this.maxBurnedAmount)) {
+            this.transferError = 'Burn limit reached';
+            return;
+          }
+
+          this.claimingFor = await getExitingAmount(
+            this.currentAddress,
+            this.amount,
+            this.networkInfo.network,
+            this.provider.web3
+          );
+
+          this.transferError = undefined;
         } else {
-          if (mode === 'TOKEN') {
-            this.amount = value;
-            this.nativeAmount = new BigNumber(
-              convertNativeAmountFromAmount(value, this.asset.priceUSD)
-            ).toFixed(2);
-            const inputInWei = toWei(value, this.asset.decimals);
-            const transferData = await getTransferData(
-              this.outputUSDCAsset.address,
-              this.asset.address,
-              inputInWei,
-              true,
-              '0.01',
-              this.networkInfo.network
-            );
-            this.transferData = transferData;
-            this.transferError = undefined;
-          } else {
-            this.nativeAmount = value;
-            const inputInWei = toWei(
-              convertAmountFromNativeValue(
-                value,
-                this.asset.priceUSD,
-                this.asset.decimals
-              ),
-              this.asset.decimals
-            );
-            const transferData = await getTransferData(
-              this.outputUSDCAsset.address,
-              this.asset.address,
-              inputInWei,
-              true,
-              '0.01',
-              this.networkInfo.network
-            );
-            this.transferData = transferData;
-            this.transferError = undefined;
-            this.amount = fromWei(
-              this.transferData.sellAmount,
-              this.asset.decimals
-            );
+          this.amount = convertAmountFromNativeValue(
+            value,
+            this.asset.priceUSD,
+            this.asset.decimals
+          );
+          this.nativeAmount = value;
+
+          if (this.maxBurnedAmount === undefined) {
+            this.transferError = 'Burn conditions error';
+            return;
           }
+
+          if (greaterThan(this.amount, this.maxBurnedAmount)) {
+            this.transferError = 'Burn limit reached';
+            return;
+          }
+          this.claimingFor = await getExitingAmount(
+            this.currentAddress,
+            this.amount,
+            this.networkInfo.network,
+            this.provider.web3
+          );
+          this.transferError = undefined;
         }
       } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
-        } else {
-          this.transferError = 'Exchange error';
-          Sentry.captureException(err);
-        }
+        this.transferError = 'Exchange error';
         console.error(`transfer error: ${err}`);
-        this.transferData = undefined;
+        Sentry.captureException(err);
         if (mode === 'TOKEN') {
           this.nativeAmount = '0';
         } else {
@@ -419,53 +382,13 @@ export default Vue.extend({
         this.isLoading = false;
       }
     },
-    subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
-      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we can't calculate subsidized tx native price"
-        );
-        return undefined;
-      }
-      return calcTransactionFastNativePrice(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice
-      );
-    },
-    checkSubsidizedAvailability(actionGasLimit: string): boolean {
-      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we don't allow subsidized transaction"
-        );
-        return false;
-      }
-
-      if (this.asset?.address === 'eth') {
-        console.info('Subsidizing for deposit ETH denied');
-        return false;
-      }
-
-      return isSubsidizedAllowed(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice,
-        this.treasuryBonusNative
-      );
-    },
     async estimateAction(
       inputAmount: string,
-      inputAsset: SmallToken,
-      transferData: TransferData | undefined
+      inputAsset: SmallToken
     ): Promise<CompoudEstimateResponse> {
-      const resp = await estimateDepositCompound(
+      const resp = await estimateClaimAndBurnCompound(
         inputAsset,
-        this.outputUSDCAsset,
         inputAmount,
-        transferData,
         this.networkInfo.network,
         this.provider.web3,
         this.currentAddress
@@ -473,7 +396,7 @@ export default Vue.extend({
       if (resp.error) {
         console.error(resp.error);
         this.transferError = 'Estimate error';
-        Sentry.captureException("can't estimate savings deposit");
+        Sentry.captureException("can't estimate claim and burn");
         throw new Error(`Can't estimate action ${resp.error}`);
       }
       return resp;
@@ -489,26 +412,17 @@ export default Vue.extend({
       let approveGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.amount,
-          this.asset,
-          this.transferData
-        );
+        const gasLimits = await this.estimateAction(this.amount, this.asset);
 
         actionGasLimit = gasLimits.actionGasLimit;
         approveGasLimit = gasLimits.approveGasLimit;
 
-        console.info('Savings deposit action gaslimit:', actionGasLimit);
-        console.info('Savings deposit approve gaslimit:', approveGasLimit);
-
-        if (!isZero(actionGasLimit)) {
-          subsidizedEnabled = this.checkSubsidizedAvailability(actionGasLimit);
-          subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
-        }
+        console.info('Claim and burn action gaslimit:', actionGasLimit);
+        console.info('Claim and burn approve gaslimit:', approveGasLimit);
       } catch (err) {
         subsidizedEnabled = false;
         console.error(err);
-        Sentry.captureException("can't estimate savings deposit for subs");
+        Sentry.captureException("can't estimate claim and burn for subs");
       } finally {
         this.isProcessing = false;
       }
@@ -516,10 +430,9 @@ export default Vue.extend({
       this.$emit('tx-review', {
         token: this.asset,
         amount: this.amount,
-        nativeAmount: this.nativeAmount,
+        nativeAmount: this.claimingFor,
         subsidizedEnabled: subsidizedEnabled,
         estimatedGasCost: subsidizedTxPrice,
-        transferData: this.transferData,
         actionGasLimit: actionGasLimit,
         approveGasLimit: approveGasLimit
       });
@@ -541,7 +454,7 @@ export default Vue.extend({
         await this.updatingValue(
           new BigNumber(
             multiply(this.asset.balance, this.asset.priceUSD)
-          ).toFixed(2),
+          ).toFixed(2, BigNumber.ROUND_DOWN),
           'NATIVE'
         );
       }
@@ -551,7 +464,7 @@ export default Vue.extend({
         id: ModalType.SearchToken,
         value: true,
         payload: {
-          useWalletTokens: true
+          forceTokenArray: this.availableTokens
         }
       });
 
@@ -560,7 +473,6 @@ export default Vue.extend({
       } else {
         this.tokenSelectedByUser = true;
         this.asset = token;
-        this.transferData = undefined;
         this.transferError = undefined;
         this.amount = '';
         this.nativeAmount = '';

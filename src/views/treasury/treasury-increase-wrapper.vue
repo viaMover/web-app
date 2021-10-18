@@ -24,10 +24,8 @@ import { mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { sameAddress } from '@/utils/address';
 import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { Step } from '@/components/controls/full-page-form-loader';
 import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';

@@ -92,12 +92,6 @@ import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 import { Properties as CssProperties } from 'csstype';
 
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
@@ -105,30 +99,18 @@ import {
   add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
-  divide,
-  fromWei,
   greaterThan,
-  isZero,
   multiply,
   notZero,
-  sub,
-  toWei
+  sub
 } from '@/utils/bigmath';
-import { formatToDecimals, formatToNative } from '@/utils/format';
-import {
-  calcTransactionFastNativePrice,
-  isSubsidizedAllowed
-} from '@/wallet/actions/subsidized';
-import {
-  CompoudEstimateResponse,
-  estimateDepositCompound
-} from '@/wallet/actions/treasury/deposit/depositEstimate';
+import { formatToDecimals } from '@/utils/format';
+import { CompoudEstimateResponse } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
 import {
   getAssetsForTreasury,
   getMoveAssetData,
-  getMoveWethLPAssetData,
-  getUSDCAssetData
+  getMoveWethLPAssetData
 } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -473,7 +455,7 @@ export default Vue.extend({
         await this.updatingValue(
           new BigNumber(
             multiply(this.maxInputAmount, this.asset.priceUSD)
-          ).toFixed(2),
+          ).toFixed(2, BigNumber.ROUND_DOWN),
           'NATIVE'
         );
       }

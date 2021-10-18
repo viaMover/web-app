@@ -366,10 +366,10 @@ export default Vue.extend({
           this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
-          this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {

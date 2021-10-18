@@ -455,7 +455,7 @@ export default Vue.extend({
         await this.updatingValue(
           new BigNumber(
             multiply(this.asset.balance, this.asset.priceUSD)
-          ).toFixed(2),
+          ).toFixed(2, BigNumber.ROUND_DOWN),
           'NATIVE'
         );
       }
