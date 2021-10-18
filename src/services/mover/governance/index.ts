@@ -28,9 +28,9 @@ export type {
 } from './types';
 
 export {
-  minimumVotingThresholdMultiplier,
+  getDefaultMinimumVotingThresholdMultiplier,
   defaultProposalDurationDays,
-  defaultPowerNeededToBecomeAProposer,
+  getDefaultPowerNeededToBecomeAProposer,
   defaultCachePeriodSeconds,
   moverSpaceId
 } from './consts';
