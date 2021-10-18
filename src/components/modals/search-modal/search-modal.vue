@@ -29,6 +29,7 @@
         <search-modal-token-list
           v-if="forceTokenArray.length > 0"
           :items="forcedTokens"
+          show-balances
           @select="handleSelect"
         />
         <template v-else>
@@ -171,6 +172,8 @@ export default Vue.extend({
       if (this.forceTokenArray.length === 0) {
         return [];
       }
+
+      console.log(this.forceTokenArray);
 
       return this.filterTokens(
         this.searchInForcedTokenArray(this.searchTermDebounced).sort((a, b) => {

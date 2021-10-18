@@ -112,7 +112,7 @@ import {
   notZero,
   sub
 } from '@/utils/bigmath';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import {
@@ -167,10 +167,6 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
-      'ethPrice',
-      'savingsAPY',
-      'usdcPriceInWeth',
-      'ethPrice',
       'treasuryBalanceMove',
       'treasuryBalanceLP'
     ]),
@@ -388,10 +384,10 @@ export default Vue.extend({
           this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
-          this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {

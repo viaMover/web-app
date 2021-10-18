@@ -22,10 +22,10 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import { TransferData } from '@/services/0x/api';
-import { sameAddress } from '@/utils/address';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+import * as Sentry from '@sentry/vue';
+
+import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { Step } from '@/components/controls/full-page-form-loader';
 import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
@@ -53,7 +53,6 @@ export default Vue.extend({
       nativeAmount: undefined as string | undefined,
       subsidizedEnabled: false as boolean,
       estimatedGasCost: undefined as string | undefined,
-      transferData: undefined as TransferData | undefined,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined
     };
@@ -62,16 +61,6 @@ export default Vue.extend({
     ...mapState('account', ['networkInfo', 'currentAddress', 'provider']),
     hasBackButton(): boolean {
       return this.txStep === undefined;
-    },
-    outputUSDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
-    },
-    isNeedTransfer(): boolean {
-      if (this.token === undefined) {
-        return true;
-      }
-
-      return !sameAddress(this.token.address, this.outputUSDCAsset.address);
     }
   },
   methods: {
@@ -90,12 +79,10 @@ export default Vue.extend({
       estimatedGasCost: string;
       actionGasLimit: string;
       approveGasLimit: string;
-      transferData?: TransferData;
     }): void {
       this.token = args.token;
       this.amount = args.amount;
       this.nativeAmount = args.nativeAmount;
-      this.transferData = args.transferData;
       this.subsidizedEnabled = args.subsidizedEnabled;
       this.estimatedGasCost = args.estimatedGasCost;
       this.actionGasLimit = args.actionGasLimit;
@@ -104,8 +91,52 @@ export default Vue.extend({
       this.isShowReview = true;
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
-      //TODO
+      if (this.token === undefined) {
+        console.error('token is empty during `handleTxStart`');
+        Sentry.captureException("can't start treasury deposit TX");
+        return;
+      }
+
+      if (this.amount === undefined) {
+        console.error('amount is empty during `handleTxStart`');
+        Sentry.captureException("can't start treasury deposit TX");
+        return;
+      }
+
+      if (this.actionGasLimit === undefined) {
+        console.error('action gas limit is empty during `handleTxStart`');
+        Sentry.captureException("can't start treasury deposit TX");
+        return;
+      }
+
+      if (this.approveGasLimit === undefined) {
+        console.error('approve gas limit is empty during `handleTxStart`');
+        Sentry.captureException("can't start treasury deposit TX");
+        return;
+      }
+
+      console.log('is smart treasury:', args.isSmartTreasury);
+
       this.txStep = 'Confirm';
+      try {
+        await withdrawCompound(
+          this.token,
+          this.amount,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress,
+          this.actionGasLimit,
+          async () => {
+            this.txStep = 'Process';
+          },
+          this.approveGasLimit
+        );
+        this.txStep = 'Success';
+      } catch (err) {
+        this.txStep = 'Reverted';
+        console.log('Treasury deposit txn reverted');
+        Sentry.captureException(err);
+      }
     }
   }
 });
