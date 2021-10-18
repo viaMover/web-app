@@ -3,7 +3,7 @@
     base-class="not-found"
     has-back-button
     wrapper-class="not-found"
-    @close="handleClose"
+    @back="handleBack"
   >
     <h1>404</h1>
     <p>{{ $t('txtNotFound') }}</p>
@@ -23,7 +23,7 @@ export default Vue.extend({
     ContentWrapper
   },
   methods: {
-    handleClose(): void {
+    handleBack(): void {
       this.$router.replace({
         name: 'home'
       });
