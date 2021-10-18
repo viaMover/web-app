@@ -8,6 +8,7 @@ import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
+import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
@@ -37,7 +38,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x129b9083a9f02aed65e31644a8103d5aa2c73701',
     NFT_OLYMPUS: '0x2733a766d2d79d26b2d23343db5bf38290f67f22',
     NFT_VAULTS: '0x0B7438606a13f4e91305b36B7596dDA4679689e3',
-    NFT_DICE: '0xB75acecE1F77fe7059cFff8eF76F73b7E999EDD2'
+    NFT_DICE: '0xB75acecE1F77fe7059cFff8eF76F73b7E999EDD2',
+    MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
+    MASTER_CHEF_POOL_INDEX: 257
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -57,7 +60,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x1',
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1'
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -77,7 +82,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x1',
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
-    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134'
+    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -98,7 +105,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x164c1cc343b6a45eDb37F0dD7558FdCddF173c82',
     NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf',
     NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1'
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -118,7 +127,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x1',
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1'
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x1',
@@ -138,7 +149,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x1',
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1'
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x1',
@@ -158,7 +171,9 @@ const ADDRESSES = {
     NFT_SWEET_AND_SOUR: '0x1',
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1'
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0
   }
 };
 
@@ -267,6 +282,14 @@ const SUSHISWAP_MOVE_WETH_POOL_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].SUSHISWAP_MOVE_WETH_POOL_ADDRESS
     ? ADDRESSES[network].SUSHISWAP_MOVE_WETH_POOL_ADDRESS
     : '0x1';
+};
+
+const MASTER_CHEF_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].MASTER_CHEF_ADDRESS ?? '0x1';
+};
+
+const MASTER_CHEF_POOL_INDEX = (network: Network): number => {
+  return ADDRESSES[network].MASTER_CHEF_POOL_INDEX ?? 0;
 };
 
 const BALANCE_CHECKER_ADDRESS = (network: Network): string => {
@@ -431,5 +454,8 @@ export {
   NFT_OLYMPUS_ABI,
   NFT_VAULTS_ABI,
   NFT_DICE_ABI,
-  SUSHI_UNI_PAIR_V2_ABI
+  SUSHI_UNI_PAIR_V2_ABI,
+  MASTER_CHEF_ADDRESS,
+  MASTER_CHEF_POOL_INDEX,
+  MASTER_CHEF_ABI
 };

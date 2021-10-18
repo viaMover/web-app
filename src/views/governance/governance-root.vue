@@ -23,7 +23,7 @@ export default Vue.extend({
   methods: {
     ...mapActions('governance', {
       loadGovernanceInfo: 'loadGovernanceInfo',
-      loadVotingPowerSelf: 'loadVotingPowerSelf'
+      loadVotingPowerSelf: 'loadCurrentVotingPowerSelf'
     })
   }
 });
