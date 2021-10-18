@@ -58,5 +58,11 @@ export default {
     state.cacheGenericInfoMap['votingPowerSelf'] = {
       updatedAt: dayjs().unix()
     };
+  },
+  setBlockNumberCached(state, value: number): void {
+    state.blockNumberCached = value;
+    state.cacheGenericInfoMap['blockNumber'] = {
+      updatedAt: dayjs().unix()
+    };
   }
 } as MutationTree<GovernanceStoreState>;

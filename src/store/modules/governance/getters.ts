@@ -75,7 +75,7 @@ export default {
     return state.items.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
-      if (proposal.proposal.state === 'closed' && proposalStats.isSucceded) {
+      if (proposal.proposal.state === 'closed' && proposalStats.isSucceeded) {
         return count + 1;
       }
 
@@ -87,7 +87,7 @@ export default {
     return state.items.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
-      if (proposal.proposal.state === 'closed' && !proposalStats.isSucceded) {
+      if (proposal.proposal.state === 'closed' && !proposalStats.isSucceeded) {
         return count + 1;
       }
 
@@ -124,10 +124,7 @@ export default {
       );
       const isQuorumReached = greaterThan(
         votesCountFor + votesCountAgainst,
-        multiply(
-          item.communityVotingPower,
-          state.minimumVotingThresholdMultiplier
-        )
+        getters.minimumVotingThreshold
       );
       const hasOutweight = votesCountFor > votesCountAgainst;
       const isVoted = item.votes.some((vote) =>
@@ -182,7 +179,7 @@ export default {
       }
 
       if (item.state === 'closed') {
-        if (item.isSucceded) {
+        if (item.isSucceeded) {
           return 'accepted';
         } else {
           return 'defeated';
