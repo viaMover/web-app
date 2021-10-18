@@ -51,9 +51,12 @@ export const getVotingPower = async (
   const moveBalance = fromWei(moveBalanceInWei, 18);
 
   // smart treasury balance of MOVE
-  const smartTreasuryMoveBalanceInWei = await smartTreasuryContract.methods
+  const smartTreasuryMoveBalanceResponse = await smartTreasuryContract.methods
     .userInfoMove(accountAddress)
     .call(transactionParams, snapshot);
+  const smartTreasuryMoveBalanceInWei =
+    smartTreasuryMoveBalanceResponse.amount ??
+    smartTreasuryMoveBalanceResponse[0];
   const smartTreasuryMoveBalance = fromWei(smartTreasuryMoveBalanceInWei, 18);
 
   // smart treasury balance of MOVE SLP
