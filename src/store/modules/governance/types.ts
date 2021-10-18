@@ -29,7 +29,7 @@ export type ProposalCumulativeInfo = Record<
     state: 'active' | 'pending' | 'closed' | 'core';
     votesCountFor: number;
     votesCountAgainst: number;
-    isSucceded: boolean;
+    isSucceeded: boolean;
     isQuorumReached: boolean;
     communityVotingPower: string;
     votingActivity: string;
