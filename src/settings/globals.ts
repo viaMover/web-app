@@ -5,6 +5,7 @@ export interface Globals {
   isReleaseRadarEnabled: boolean;
   isDebitCardEnabled: boolean;
   isGovernanceEnabled: boolean;
+  isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
   isCardEnabled: boolean;
   isMoreEnabled: boolean;
@@ -22,7 +23,8 @@ const values: Globals = {
   isVaultsEnabled: true,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
-  isGovernanceEnabled: false,
+  isGovernanceEnabled: true,
+  isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isCardEnabled: false,
   isMoreEnabled: true,
@@ -36,3 +38,11 @@ const values: Globals = {
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
   !!values[key];
+
+export const isProduction = (): boolean => {
+  return process.env.NODE_ENV === 'production';
+};
+
+export const isDevelop = (): boolean => {
+  return process.env.NODE_ENV === 'development';
+};

@@ -40,3 +40,5 @@ export type { VaultsData } from './nft/vaults/types';
 
 export { getDiceData, claimDice } from './nft/dice/dice';
 export type { DiceData, DiceType } from './nft/dice/types';
+
+export { getCommunityVotingPower } from './governance/governance';

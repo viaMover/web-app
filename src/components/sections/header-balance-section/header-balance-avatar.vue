@@ -1,7 +1,10 @@
 <template>
-  <pu-skeleton-theme v-if="avatar === undefined" color="#dcdcdc">
-    <pu-skeleton circle class="user user-loading" tag="div" />
-  </pu-skeleton-theme>
+  <pu-skeleton
+    v-if="avatar === undefined"
+    circle
+    class="user user-loading"
+    tag="div"
+  />
   <div v-else class="user" :class="userClass" @click="toggleAvatar">
     <span v-if="avatar.type === 'symbol'" class="icon">
       {{ avatar.symbol }}

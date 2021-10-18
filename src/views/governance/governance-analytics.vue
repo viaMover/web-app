@@ -1,67 +1,176 @@
 <template>
-  <secondary-page>
-    <template v-slot:title>
-      <secondary-page-title :title="proposal.name" />
+  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
+    <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
+
+    <template v-if="isLoading">
+      <governance-overview-section-skeleton>
+        <governance-overview-section-item-skeleton
+          v-for="idx in 4"
+          :key="idx"
+        />
+      </governance-overview-section-skeleton>
+
+      <governance-overview-section-skeleton has-title>
+        <governance-overview-section-item-skeleton
+          v-for="idx in 4"
+          :key="idx"
+        />
+      </governance-overview-section-skeleton>
+    </template>
+    <template v-else-if="proposalInfo !== undefined">
+      <governance-overview-section>
+        <governance-overview-section-item
+          :description="$t('governance.lblProposalId')"
+          :value="proposalInfo.proposal.id"
+        />
+        <governance-overview-section-item
+          :description="$t('governance.lblVotingEnds')"
+          :value="votingEndsText"
+        />
+        <governance-overview-section-item
+          :description="$t('governance.lblProposer')"
+          :value="proposalInfo.proposal.author"
+        />
+        <governance-overview-section-item
+          :description="$t('governance.lblVotingActivity')"
+          :value="votingActivity"
+        />
+      </governance-overview-section>
+
+      <governance-overview-section
+        has-title
+        :title="$t('governance.lblProposalStats')"
+      >
+        <governance-overview-section-item
+          :description="$t('governance.lblCommunityVotingPower')"
+          :value="communityVotingPower"
+        />
+        <governance-overview-section-item
+          :description="$t('governance.lblVotesFor')"
+          :value="votesFor"
+        />
+        <governance-overview-section-item
+          :description="$t('governance.lblVotesAgainst')"
+          :value="votesAgainst"
+        />
+        <governance-overview-section-item
+          :description="$t('governance.lblCurrentOutcome')"
+          :value="currentOutcome"
+        />
+      </governance-overview-section>
     </template>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { SecondaryPage, SecondaryPageTitle } from '@/components/layout';
+import dayjs from 'dayjs';
+
+import { ProposalInfo } from '@/services/mover/governance';
+import { formatToDecimals } from '@/utils/format';
+
+import {
+  GovernanceOverviewSection,
+  GovernanceOverviewSectionItem,
+  GovernanceOverviewSectionItemSkeleton,
+  GovernanceOverviewSectionSkeleton
+} from '@/components/governance';
+import { SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceAnalytics',
   components: {
     SecondaryPage,
-    SecondaryPageTitle
-  },
-  data() {
-    return {
-      // todo: should be in the store some day
-      proposal: {
-        id: 'CIP10-1',
-        name: 'Governance Analysis Period',
-        status: 'open',
-        text:
-          'Summary:\n\n' +
-          'This post outlines a framework for funding Uniswap ecosystem development ' +
-          'with grants from the UNI Community Treasury. The program starts small—sponsoring ' +
-          'hackathons, for example—but could grow in significance over time ' +
-          '(with renewals approved by governance) to fund core protocol development. ' +
-          'Grants administration is a subjective process that cannot be easily automated, ' +
-          'and thus we propose a nimble committee of 6 members —1 lead and 5 reviewers—to ' +
-          'deliver an efficient, predictable process to applicants, such that funding can be ' +
-          'administered without having to put each application to a vote. We propose the program ' +
-          'start with an initial cap of $750K per quarter and a limit of 2 quarters before renewal—a ' +
-          'sum that we feel is appropriate for an MVP relative to the size of the treasury that UNI ' +
-          'token holders are entrusted with allocating.\n\n' +
-          'Purpose:\n\n' +
-          'The mission of the UGP is to provide valuable resources to help grow the Uniswap ecosystem. ' +
-          'Through public discourse and inbound applications, the community will get first-hand exposure to ' +
-          'identify and respond to the most pressing needs of the ecosystem, as well as the ability to support ' +
-          'innovative projects expanding the capabilities of Uniswap. By rewarding talent early with developer ' +
-          'incentives, bounties, and infrastructure support, UGP acts as a catalyst for growth and helps to maintain ' +
-          'Uniswap as a nexus for DeFi on Ethereum.',
-        proposer:
-          '0x806cb7767eb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        ends: 1621609904,
-        votingActivity: 27,
-        votesFor: 8194000,
-        votesAgainst: 46000,
-        currentOutcome: 'quorumNotReached'
-      }
-    };
+    GovernanceOverviewSection,
+    GovernanceOverviewSectionSkeleton,
+    GovernanceOverviewSectionItem,
+    GovernanceOverviewSectionItemSkeleton
   },
   computed: {
-    hasBackButton(): boolean {
-      return this.$route.path.split('/').filter((part) => !!part).length > 1;
+    ...mapState('governance', {
+      isLoading: 'isLoading',
+      items: 'items'
+    }),
+    ...mapGetters('governance', {
+      proposalCommunityVotingPower: 'proposalCommunityVotingPower',
+      proposalVotedFor: 'proposalVotedFor',
+      proposalVotedAgainst: 'proposalVotedAgainst',
+      proposalState: 'proposalState',
+      proposalVotingActivity: 'proposalVotingActivity'
+    }),
+    proposalId(): string {
+      return this.$route.params.id;
+    },
+    proposalInfo(): ProposalInfo | undefined {
+      return this.items.find(
+        (proposalInfo: ProposalInfo) =>
+          proposalInfo.proposal.id === this.proposalId
+      );
+    },
+    pageTitle(): string {
+      if (this.proposalInfo === undefined) {
+        return this.$t('governance.lblProposal').toString();
+      }
+
+      return this.proposalInfo.proposal.title;
+    },
+    votingEndsText(): string {
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
+      return dayjs
+        .unix(this.proposalInfo.proposal.end)
+        .utc()
+        .format('MMMM DD, HH:mm [UTC]');
+    },
+    communityVotingPower(): string {
+      return formatToDecimals(
+        this.proposalCommunityVotingPower(this.proposalId),
+        0
+      );
+    },
+    votingActivity(): string {
+      return `${Math.ceil(this.proposalVotingActivity(this.proposalId))}%`;
+    },
+    votesFor(): string {
+      return formatToDecimals(this.proposalVotedFor(this.proposalId), 0);
+    },
+    votesAgainst(): string {
+      return formatToDecimals(this.proposalVotedAgainst(this.proposalId), 0);
+    },
+    currentOutcome(): string {
+      const proposalState = this.proposalState(this.proposalId);
+      if (this.$te(`governance.lblOutcome.${proposalState}`)) {
+        return this.$t(`governance.lblOutcome.${proposalState}`).toString();
+      }
+
+      return this.$t('governance.lblOutcome.quorumNotReached').toString();
+    }
+  },
+  watch: {
+    proposalId: {
+      async handler(newVal: string | undefined): Promise<void> {
+        if (newVal === undefined) {
+          return;
+        }
+
+        await this.loadProposal({ id: newVal });
+      },
+      immediate: true
     }
   },
   methods: {
-    handleClose(): void {
-      this.$router.back();
+    ...mapActions('governance', {
+      loadProposal: 'loadProposalInfo'
+    }),
+    handleBack(): void {
+      this.$router.replace({
+        name: 'governance-view',
+        params: { id: this.$route.params.id }
+      });
     }
   }
 });
