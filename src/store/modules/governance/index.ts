@@ -33,7 +33,8 @@ export default {
     votingPowerSelf: '0',
     spaceId: moverSpaceId,
     cachePeriodSeconds: defaultCachePeriodSeconds,
-    isLoadingLastProposal: false
+    isLoadingLastProposal: false,
+    blockNumberCached: undefined
   },
   actions,
   getters,

@@ -3,7 +3,10 @@ import { ActionTree } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
-import { getCommunityVotingPower as getCommunityVotingPowerFromChain } from '@/services/chain';
+import {
+  getCommunityVotingPower as getCommunityVotingPowerFromChain,
+  getVotingPower as getVotingPowerSelfFromChain
+} from '@/services/chain';
 import { getBlockNumberByUnixTs as getBlockNumberByUnixTsEtherscan } from '@/services/etherscan/block-number';
 import { getBlockNumber as getBlockNumberInfura } from '@/services/infura/block-number';
 import {
@@ -154,13 +157,38 @@ export default {
         new Array(proposalWithVotes.proposal.strategies.length).fill({})
       );
       if (rootState.account?.currentAddress !== undefined) {
-        scoresSelfPromise = scoresSelfPromise.then(() =>
-          dispatch('loadScores', {
-            proposal: proposalWithVotes.proposal,
-            addresses: [rootState.account?.currentAddress],
-            snapshot: Number.parseInt(proposalWithVotes.proposal.snapshot)
-          } as LoadScoresPayload)
-        );
+        scoresSelfPromise = scoresSelfPromise
+          .then(async () =>
+            dispatch('loadScores', {
+              proposal: proposalWithVotes.proposal,
+              addresses: [rootState.account?.currentAddress],
+              snapshot: Number.parseInt(proposalWithVotes.proposal.snapshot)
+            } as LoadScoresPayload)
+          )
+          .catch(async (error) => {
+            console.warn(
+              'failed to get self scores, using fallback scenario',
+              error
+            );
+            Sentry.captureException(error);
+
+            if (proposalWithVotes.proposal.strategies.length < 1) {
+              return [];
+            }
+
+            const votingPowerSelf = await dispatch(
+              'loadVotingPowerSelfAtSnapshot',
+              Number.parseInt(proposalWithVotes.proposal.snapshot)
+            );
+
+            const res = new Array(
+              proposalWithVotes.proposal.strategies.length
+            ).fill({});
+            res[0] = {
+              [rootState.account?.currentAddress ?? 'missing_address']:
+                Number.parseFloat(votingPowerSelf)
+            };
+          });
       }
 
       const communityVotingPowerPromise = dispatch(
@@ -321,7 +349,7 @@ export default {
       const votingPowerPromise = dispatch('loadCommunityVotingPower');
 
       // current self voting power
-      const votingPowerSelfPromise = dispatch('loadVotingPowerSelf');
+      const votingPowerSelfPromise = dispatch('loadCurrentVotingPowerSelf');
 
       const [spaceInfo, communityVotingPower] = await Promise.all([
         spaceInfoPromise,
@@ -390,27 +418,19 @@ export default {
       }
     }
   },
-  async loadVotingPowerSelf(
-    { commit, dispatch, state, rootState },
-    refetch = false
+  async loadVotingPowerSelfAtSnapshot(
+    { dispatch, state, rootState },
+    snapshot?: number
   ): Promise<string> {
+    // no need for an extra cache as consumers know how to treat
+    // results with persistence
     try {
-      if (
-        !refetch &&
-        isValidCacheItem(
-          state.cacheGenericInfoMap,
-          'votingPowerSelf',
-          state.cachePeriodSeconds
-        )
-      ) {
-        return state.votingPowerSelf;
-      }
-
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
       }
 
-      const blockNumber: number = await dispatch('getBlockNumber');
+      const blockNumber: number =
+        snapshot !== undefined ? snapshot : await dispatch('getBlockNumber');
 
       const votingPowerSelfInWei = await getVotingPower(
         rootState.account.currentAddress,
@@ -423,17 +443,15 @@ export default {
 
       const votingPower = fromWei(votingPowerSelfInWei.result.votingPower, 18);
 
-      commit('setVotingPowerSelf', votingPower);
-
       return votingPower;
     } catch (error) {
       console.warn(
-        'failed to load voting power self, trying a fallback',
+        'failed to load self voting power, trying a votehub fallback',
         error
       );
       Sentry.captureException(error);
       Sentry.addBreadcrumb({
-        message: 'trying to use fallback self voting power scenario'
+        message: 'trying to use fallback self voting power votehub api scenario'
       });
 
       try {
@@ -447,12 +465,15 @@ export default {
           spaceInfo = await getSpace(state.spaceId);
         }
 
+        const scoreSnapshot: number | string =
+          snapshot !== undefined ? snapshot : 'latest';
+
         const scores = await getScores(
           state.spaceId,
           spaceInfo.strategies,
           spaceInfo.network,
           [rootState.account.currentAddress],
-          'latest'
+          scoreSnapshot
         );
 
         const votingPowerSelf = scores
@@ -464,18 +485,79 @@ export default {
             );
           }, 0)
           .toString();
-        commit('setVotingPowerSelf', votingPowerSelf);
 
         return votingPowerSelf;
-      } catch (fallbackError) {
-        console.error('failed to load votingPowerSelf', fallbackError);
-        Sentry.captureException(fallbackError);
-        throw fallbackError;
+      } catch (fallbackErrorVoteApi) {
+        console.warn(
+          'failed to load self voting power from votehub api, trying a fallback',
+          fallbackErrorVoteApi
+        );
+        Sentry.captureException(error);
+        Sentry.addBreadcrumb({
+          message: 'trying to use fallback self voting power on-chain scenario'
+        });
+
+        try {
+          if (rootState.account?.currentAddress === undefined) {
+            throw new Error('failed to get current address');
+          }
+
+          if (rootState.account?.networkInfo?.network === undefined) {
+            throw new Error('failed to get network info');
+          }
+
+          if (rootState.account?.provider?.web3 === undefined) {
+            throw new Error('failed to get web3 provider');
+          }
+
+          const votingPowerSelf = await getVotingPowerSelfFromChain(
+            rootState.account.currentAddress,
+            rootState.account.networkInfo.network,
+            rootState.account.provider.web3,
+            snapshot
+          );
+
+          return votingPowerSelf;
+        } catch (fallbackErrorOnChain) {
+          console.error(
+            'failed to load self voting power',
+            fallbackErrorOnChain
+          );
+          Sentry.captureException(fallbackErrorOnChain);
+          throw fallbackErrorOnChain;
+        }
       }
     }
   },
-  async getBlockNumber({ rootState }): Promise<number> {
+  async loadCurrentVotingPowerSelf(
+    { commit, dispatch, state },
+    refetch = false
+  ): Promise<string> {
+    if (
+      !refetch &&
+      isValidCacheItem(state.cacheGenericInfoMap, 'votingPowerSelf', 5)
+    ) {
+      // cache is valid for 5 seconds (below average block time)
+      return state.votingPowerSelf;
+    }
+
+    const votingPowerSelf = await dispatch(
+      'loadVotingPowerSelfAtSnapshot',
+      undefined
+    );
+    commit('setVotingPowerSelf', votingPowerSelf);
+
+    return votingPowerSelf;
+  },
+  async getBlockNumber({ state, commit, rootState }): Promise<number> {
     try {
+      if (
+        isValidCacheItem(state.cacheGenericInfoMap, 'blockNumber', 5) &&
+        state.blockNumberCached !== undefined
+      ) {
+        return state.blockNumberCached;
+      }
+
       if (rootState.account?.provider?.web3 === undefined) {
         throw new Error('failed to get web3 provider');
       }
@@ -483,8 +565,15 @@ export default {
       const res: unknown =
         await rootState.account.provider.web3.eth.getBlockNumber();
       if (typeof res !== 'number') {
+        // for some reason sometimes provider returns not a number
+        // but rather some other null-ish value (or an error pehaps)
+        //
+        // so we try to avoid using this invalid value and use a fallback
+        // method instead
         throw new Error('failed to get a valid answer from web3');
       }
+
+      commit('setBlockNumberCached', res);
 
       return res;
     } catch (error) {
@@ -511,6 +600,8 @@ export default {
           throw new Error(result.error);
         }
 
+        commit('setBlockNumberCached', result.result);
+
         return result.result;
       } catch (fallbackErrorEtherscan) {
         console.warn(
@@ -534,11 +625,28 @@ export default {
             throw new Error(result.error);
           }
 
+          commit('setBlockNumberCached', result.result);
+
           return result.result;
         } catch (fallbackErrorInfura) {
-          console.error('failed to get blockNumber', fallbackErrorInfura);
+          if (state.blockNumberCached === undefined) {
+            console.error(
+              'failed to get blockNumber',
+              fallbackErrorInfura,
+              'no cached value available'
+            );
+            Sentry.captureException(fallbackErrorInfura);
+            throw fallbackErrorInfura;
+          }
+
+          console.warn(
+            'failed to get blockNumber',
+            fallbackErrorInfura,
+            'using cached blockNumber as a last fallback',
+            state.blockNumberCached
+          );
           Sentry.captureException(fallbackErrorInfura);
-          throw fallbackErrorInfura;
+          return state.blockNumberCached;
         }
       }
     }

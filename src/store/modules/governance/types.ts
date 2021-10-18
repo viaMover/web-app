@@ -16,6 +16,7 @@ export type GovernanceStoreState = {
   spaceId: string;
   cachePeriodSeconds: number;
   isLoadingLastProposal: boolean;
+  blockNumberCached: number | undefined;
 };
 
 export interface CacheInfo {
