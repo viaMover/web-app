@@ -10,6 +10,15 @@ export {
   getTreasuryBonus
 } from './treasury/treasury';
 
+export { PowercardState, PowerCarTimings } from './treasury/types';
+
+export {
+  hasPowercard,
+  stakePowercard,
+  unstakePowercard,
+  getPowercardState
+} from './treasury/powercard';
+
 export {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
