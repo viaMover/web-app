@@ -8,7 +8,9 @@ const defaultMinimumVotingThresholdMultiplier = 0.4;
 export const defaultProposalDurationDays = 3;
 const defaultPowerNeededToBecomeAProposer = 100000;
 
-const minimumVotingThresholdHistory: { [timestamp: number]: number } = {};
+const minimumVotingThresholdHistory: { [timestamp: number]: number } = {
+  1634726823: 0.2
+};
 export const getDefaultMinimumVotingThresholdMultiplier = (
   timestamp: number
 ): number => {
