@@ -1,6 +1,10 @@
 import { GetterTree } from 'vuex';
 
-import { Choice, ProposalInfo } from '@/services/mover/governance';
+import {
+  Choice,
+  getDefaultMinimumVotingThresholdMultiplier,
+  ProposalInfo
+} from '@/services/mover/governance';
 import { RootStoreState } from '@/store/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -124,7 +128,10 @@ export default {
       );
       const isQuorumReached = greaterThan(
         votesCountFor + votesCountAgainst,
-        getters.minimumVotingThreshold
+        multiply(
+          item.communityVotingPower,
+          getDefaultMinimumVotingThresholdMultiplier(item.proposal.start)
+        )
       );
       const hasOutweight = votesCountFor > votesCountAgainst;
       const isVoted = item.votes.some((vote) =>
