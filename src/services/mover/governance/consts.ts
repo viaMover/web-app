@@ -8,7 +8,9 @@ const defaultMinimumVotingThresholdMultiplier = 0.4;
 export const defaultProposalDurationDays = 3;
 const defaultPowerNeededToBecomeAProposer = 100000;
 
-const minimumVotingThresholdHistory: { [timestamp: number]: number } = {};
+const minimumVotingThresholdHistory: { [timestamp: number]: number } = {
+  1634621634: 0.2
+};
 export const getDefaultMinimumVotingThresholdMultiplier = (
   timestamp: number
 ): number => {
@@ -16,7 +18,7 @@ export const getDefaultMinimumVotingThresholdMultiplier = (
     .slice()
     .sort()
     .map((key) => Number.parseInt(key));
-  if (boundaries.length < 1) {
+  if (boundaries.length < 1 || timestamp < boundaries[0]) {
     return defaultMinimumVotingThresholdMultiplier;
   }
 
@@ -37,7 +39,7 @@ export const getDefaultPowerNeededToBecomeAProposer = (
     .slice()
     .sort()
     .map((key) => Number.parseInt(key));
-  if (boundaries.length < 1) {
+  if (boundaries.length < 1 || timestamp < boundaries[0]) {
     return defaultPowerNeededToBecomeAProposer;
   }
 
