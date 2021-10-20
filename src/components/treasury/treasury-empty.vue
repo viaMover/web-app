@@ -62,7 +62,7 @@ export default Vue.extend({
       return `3.5x`;
     },
     currentCostCoverage(): string {
-      return `up to 100%`;
+      return this.$t('treasury.lblCurrentCostCoverage') as string;
     },
     chartDataSource(): Array<TreasuryMonthBonusesItem> {
       return Array.from(Array(10).keys()).map((n) => ({
@@ -75,8 +75,10 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleStartBoosting(): void {
-      //TODO
+    async handleStartBoosting(): Promise<void> {
+      await this.$router.push({
+        name: 'treasury-increase'
+      });
     }
   }
 });

@@ -116,7 +116,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      isSmartTreasury: true as boolean,
+      isSmartTreasury: true,
       savings: {
         alt: '',
         src: require('@/assets/images/Savings@1x.png'),

@@ -239,6 +239,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSpentThisMonth: 'Spent this month',
     lblSpentInTotal: 'Spent in total',
     lblReservedAssets: 'Reserved assets',
+    lblCurrentCostCoverage: 'up to 100%',
     leftRail: {
       lblManageSmartTreasury: 'Manage Smart Treasury',
       lblIncreaseBoost: 'Increase Boost',
@@ -397,7 +398,9 @@ const messages: VueI18n.LocaleMessageObject = {
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:
-        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.'
+        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
+      lblBurnError: 'Burn conditions error',
+      lblBurnLimitReached: 'Burn limit reached'
     }
   },
   asset: {

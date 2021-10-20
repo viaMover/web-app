@@ -8,9 +8,7 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <keep-alive>
-        <treasury-left-rail />
-      </keep-alive>
+      <treasury-left-rail />
     </template>
 
     <router-view />

@@ -121,7 +121,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      isSmartTreasury: true as boolean,
+      isSmartTreasury: true,
       st: {
         alt: this.$t('treasury.lblSmartTreasury'),
         src: require('@/assets/images/SmartTreasury@1x.png'),
@@ -166,8 +166,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    formatToDecimals,
-    formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
         isSmartTreasury: this.isSmartTreasury && this.subsidizedEnabled

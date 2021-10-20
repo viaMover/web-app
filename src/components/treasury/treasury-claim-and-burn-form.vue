@@ -115,7 +115,7 @@ import {
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { TokenImage } from '@/components/tokens';
 
 type INPUT_MODE = 'NATIVE' | 'TOKEN';
 
@@ -275,6 +275,7 @@ export default Vue.extend({
     tokens: {
       immediate: true,
       async handler(newVal: Array<TokenWithBalance>) {
+        this.isLoading = true;
         try {
           if (!this.tokenSelectedByUser) {
             const move = newVal.find((t: TokenWithBalance) =>
@@ -284,13 +285,7 @@ export default Vue.extend({
               this.asset = move;
             }
           }
-        } finally {
-          this.isLoading = false;
-        }
 
-        this.isLoading = true;
-
-        try {
           this.maxBurnedAmount = await getMaxBurn(
             this.currentAddress,
             this.networkInfo.network,
@@ -325,12 +320,14 @@ export default Vue.extend({
           ).toFixed(2);
 
           if (this.maxBurnedAmount === undefined) {
-            this.transferError = 'Burn conditions error';
+            this.transferError = this.$t('treasury.claimAndBurn.lblBurnError');
             return;
           }
 
           if (greaterThan(this.amount, this.maxBurnedAmount)) {
-            this.transferError = 'Burn limit reached';
+            this.transferError = this.$t(
+              'treasury.claimAndBurn.lblBurnLimitReached'
+            );
             return;
           }
 
@@ -351,12 +348,14 @@ export default Vue.extend({
           this.nativeAmount = value;
 
           if (this.maxBurnedAmount === undefined) {
-            this.transferError = 'Burn conditions error';
+            this.transferError = this.$t('treasury.claimAndBurn.lblBurnError');
             return;
           }
 
           if (greaterThan(this.amount, this.maxBurnedAmount)) {
-            this.transferError = 'Burn limit reached';
+            this.transferError = this.$t(
+              'treasury.claimAndBurn.lblBurnLimitReached'
+            );
             return;
           }
           this.claimingFor = await getExitingAmount(

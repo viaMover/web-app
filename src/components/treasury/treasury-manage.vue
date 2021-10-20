@@ -28,11 +28,6 @@ export default Vue.extend({
     TreasuryYearlyChartWrapper,
     StatementNavList
   },
-  data() {
-    return {
-      popoverParentId: 'treasury-manage-action-buttons'
-    };
-  },
   computed: {
     ...mapGetters('account', {
       treasuryMonthStatsOptions: 'treasuryMonthStatsOptions'

@@ -173,8 +173,6 @@ export default Vue.extend({
         return [];
       }
 
-      console.log(this.forceTokenArray);
-
       return this.filterTokens(
         this.searchInForcedTokenArray(this.searchTermDebounced).sort((a, b) => {
           if (
