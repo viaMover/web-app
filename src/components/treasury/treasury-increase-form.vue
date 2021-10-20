@@ -107,10 +107,8 @@ import {
 } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
-import {
-  CompoudEstimateResponse,
-  estimateDepositCompound
-} from '@/wallet/actions/treasury/deposit/depositEstimate';
+import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData
@@ -382,7 +380,7 @@ export default Vue.extend({
     async estimateAction(
       inputAmount: string,
       inputAsset: SmallToken
-    ): Promise<CompoudEstimateResponse> {
+    ): Promise<CompoundEstimateResponse> {
       const resp = await estimateDepositCompound(
         inputAsset,
         inputAmount,

@@ -35,3 +35,17 @@ export const executeTransactionWithApprove = async (
   }
   await action();
 };
+export const executeTransactionWithApproveExt = async (
+  actionFunc: () => Promise<void>,
+  checkAppproveFunc: () => Promise<boolean>,
+  approveFunc: () => Promise<void>
+): Promise<void | never> => {
+  try {
+    if (await checkAppproveFunc()) {
+      await approveFunc();
+    }
+  } catch (err) {
+    throw new Error(`can't approve ext due to: ${err}`);
+  }
+  await actionFunc();
+};

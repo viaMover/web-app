@@ -12,12 +12,7 @@ export {
 
 export { PowercardState, PowerCarTimings } from './treasury/types';
 
-export {
-  hasPowercard,
-  stakePowercard,
-  unstakePowercard,
-  getPowercardState
-} from './treasury/powercard';
+export { hasPowercard, getPowercardState } from './treasury/powercard';
 
 export {
   getMOVEPriceInWETH,

@@ -103,10 +103,8 @@ import {
   notZero
 } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
-import {
-  CompoudEstimateResponse,
-  estimateClaimAndBurnCompound
-} from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
+import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -385,7 +383,7 @@ export default Vue.extend({
     async estimateAction(
       inputAmount: string,
       inputAsset: SmallToken
-    ): Promise<CompoudEstimateResponse> {
+    ): Promise<CompoundEstimateResponse> {
       const resp = await estimateClaimAndBurnCompound(
         inputAsset,
         inputAmount,

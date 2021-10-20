@@ -105,8 +105,8 @@ import {
   sub
 } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
-import { CompoudEstimateResponse } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import {
   getAssetsForTreasury,
   getMoveAssetData,
@@ -379,7 +379,7 @@ export default Vue.extend({
     async estimateAction(
       inputAmount: string,
       inputAsset: SmallToken
-    ): Promise<CompoudEstimateResponse> {
+    ): Promise<CompoundEstimateResponse> {
       const resp = await estimateWithdrawCompound(
         inputAsset,
         inputAmount,

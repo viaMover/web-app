@@ -126,14 +126,12 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import {
-  CompoudEstimateResponse,
-  estimateDepositCompound
-} from '@/wallet/actions/savings/deposit/depositEstimate';
+import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import {
   calcTransactionFastNativePrice,
   isSubsidizedAllowed
 } from '@/wallet/actions/subsidized';
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -485,7 +483,7 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken,
       transferData: TransferData | undefined
-    ): Promise<CompoudEstimateResponse> {
+    ): Promise<CompoundEstimateResponse> {
       const resp = await estimateDepositCompound(
         inputAsset,
         this.outputUSDCAsset,

@@ -21,10 +21,7 @@ export const hasPowercard = async (
   web3: Web3
 ): Promise<boolean> => {
   if (network !== Network.mainnet) {
-    console.log(
-      'Powercard is disabled for not ethereum mainnet or kovan: ',
-      network
-    );
+    console.log('Powercard is disabled for not ethereum mainnet: ', network);
     return false;
   }
 
@@ -53,87 +50,13 @@ export const hasPowercard = async (
   }
 };
 
-export const stakePowercard = async (
-  accountAddress: string,
-  network: Network,
-  web3: Web3
-): Promise<void> => {
-  if (network !== Network.mainnet) {
-    console.log(
-      'Powercard is disabled for not ethereum mainnet or kovan: ',
-      network
-    );
-    return;
-  }
-
-  const contractAddress = POWERCARD_STAKER(network);
-  const contractABI = POWERCARD_STAKER_ABI;
-
-  const powercardStaker = new web3.eth.Contract(
-    contractABI as AbiItem[],
-    contractAddress
-  );
-
-  try {
-    console.log('staking powercard...');
-
-    const transactionParams = {
-      from: accountAddress
-    } as TransactionsParams;
-
-    await powercardStaker.methods.stakePowercard().call(transactionParams);
-
-    return;
-  } catch (error) {
-    throw new Error(`error powercard stake: ${error}`);
-  }
-};
-
-export const unstakePowercard = async (
-  accountAddress: string,
-  network: Network,
-  web3: Web3
-): Promise<void> => {
-  if (network !== Network.mainnet) {
-    console.log(
-      'Powercard is disabled for not ethereum mainnet or kovan: ',
-      network
-    );
-    return;
-  }
-
-  const contractAddress = POWERCARD_STAKER(network);
-  const contractABI = POWERCARD_STAKER_ABI;
-
-  const powercardStaker = new web3.eth.Contract(
-    contractABI as AbiItem[],
-    contractAddress
-  );
-
-  try {
-    console.log('unstaking powercard...');
-
-    const transactionParams = {
-      from: accountAddress
-    } as TransactionsParams;
-
-    await powercardStaker.methods.unstakePowercard().call(transactionParams);
-
-    return;
-  } catch (error) {
-    throw new Error(`error powercard unstake: ${error}`);
-  }
-};
 export const getPowercardState = async (
   accountAddress: string,
   network: Network,
   web3: Web3
 ): Promise<PowercardState> => {
   if (network !== Network.mainnet) {
-    console.log(
-      'Powercard is disabled for not ethereum mainnet or kovan: ',
-      network
-    );
+    console.log('Powercard is disabled for not ethereum mainnet: ', network);
     return 'NotStaked';
   }
 
@@ -182,10 +105,7 @@ export const getPowercardTimings = async (
   web3: Web3
 ): Promise<PowerCarTimings> => {
   if (network !== Network.mainnet) {
-    console.log(
-      'Powercard is disabled for not ethereum mainnet or kovan: ',
-      network
-    );
+    console.log('Powercard is disabled for not ethereum mainnet: ', network);
     return { activeTime: '0', cooldownTime: '0' };
   }
 
