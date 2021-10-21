@@ -243,8 +243,6 @@ export default Vue.extend({
     -ms-flex-align: center;
     align-items: center;
     position: fixed;
-    top: 24px;
-    right: 24px;
   }
 
   &__body {
