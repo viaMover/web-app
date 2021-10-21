@@ -35,6 +35,7 @@ export type ProposalCumulativeInfo = Record<
     votingActivity: string;
     isVoted: boolean;
     hasEnoughVotingPowerToVote: boolean;
+    votingPowerSelf: string;
   }
 >;
 
@@ -43,11 +44,14 @@ export type LoadProposalInfoPayload = {
   refetch: boolean;
 };
 
-export type LoadScoresPayload = {
+export type LoadScoresSelfPayload = {
   proposal: Proposal;
-  addresses: Array<string>;
   snapshot?: number | string;
 };
+
+export type LoadScoresPayload = {
+  addresses: Array<string>;
+} & LoadScoresSelfPayload;
 
 export type CreateProposalPayload = {
   title: string;
