@@ -3,6 +3,7 @@
     :class="[classes]"
     :disabled="disabled"
     :style="customStyle"
+    :type="type"
     @click.prevent.stop="handleClick"
   >
     <template v-if="text">
@@ -35,6 +36,10 @@ export default Vue.extend({
     customStyle: {
       type: Object as PropType<CssProperties>,
       default: undefined
+    },
+    type: {
+      type: String,
+      default: 'button'
     }
   },
   computed: {
