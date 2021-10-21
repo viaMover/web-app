@@ -41,7 +41,7 @@ export const executeTransactionWithApproveExt = async (
   approveFunc: () => Promise<void>
 ): Promise<void | never> => {
   try {
-    if (await checkAppproveFunc()) {
+    if (!(await checkAppproveFunc())) {
       await approveFunc();
     }
   } catch (err) {

@@ -1,7 +1,6 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import { notZero } from '@/utils/bigmath';
 import { greaterThanOrEqual, isEqual, lessThanOrEqual } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
@@ -13,16 +12,16 @@ import {
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { PowercardState, PowerCarTimings } from './types';
+import { PowercardState, PowerCardTimings } from './types';
 
-export const hasPowercard = async (
+export const powercardBalance = async (
   accountAddress: string,
   network: Network,
   web3: Web3
-): Promise<boolean> => {
+): Promise<string> => {
   if (network !== Network.mainnet) {
     console.log('Powercard is disabled for not ethereum mainnet: ', network);
-    return false;
+    return '0';
   }
 
   const contractAddress = POWERCARD_ADDRESS(network);
@@ -44,7 +43,7 @@ export const hasPowercard = async (
     const powercardBalance = powercardBalanceResponse.toString();
     console.log('Powercard balance: ', powercardBalance);
 
-    return notZero(powercardBalance);
+    return powercardBalance;
   } catch (error) {
     throw new Error(`error powercard balance checking: ${error}`);
   }
@@ -103,7 +102,7 @@ export const getPowercardTimings = async (
   accountAddress: string,
   network: Network,
   web3: Web3
-): Promise<PowerCarTimings> => {
+): Promise<PowerCardTimings> => {
   if (network !== Network.mainnet) {
     console.log('Powercard is disabled for not ethereum mainnet: ', network);
     return { activeTime: '0', cooldownTime: '0' };

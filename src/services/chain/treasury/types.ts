@@ -5,7 +5,7 @@ export type TreasuryBalancesReturn = {
 
 export type PowercardState = 'Staked' | 'NotStaked' | 'NotStakedCooldown';
 
-export type PowerCarTimings = {
+export type PowerCardTimings = {
   activeTime: string;
   cooldownTime: string;
 };

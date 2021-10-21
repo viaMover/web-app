@@ -19,7 +19,7 @@ export const stakePowercardCompound = async (
   accountAddress: string,
   actionGasLimit: string,
   approveGasLimit: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: (step: Step) => Promise<void>
 ): Promise<void> => {
   if (network !== Network.mainnet) {
     throw new Error(

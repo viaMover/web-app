@@ -214,6 +214,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblTreasuryBonusBalance: '@:treasury.lblSmartTreasury Bonus Balance',
     lblTreasuryBalance: '@:treasury.lblSmartTreasury Balance',
     lblTreasury: 'Treasury',
+    lblRemainingDays: '{days} days',
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',
     lblIfYouReserveMoveInST:

@@ -1,10 +1,13 @@
 <template>
-  <treasury-powercard-manage v-if="hasPowercard" />
+  <treasury-powercard-manage v-if="hasActivePowercard" />
   <treasury-powercard-empty v-else />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
+
+import { greaterThan } from '@/utils/bigmath';
 
 import {
   TreasuryPowercardEmpty,
@@ -18,8 +21,16 @@ export default Vue.extend({
     TreasuryPowercardEmpty
   },
   computed: {
-    hasPowercard(): boolean {
-      return true;
+    ...mapState('account', {
+      powercardBalance: 'powercardBalance',
+      powercardState: 'powercardState'
+    }),
+    hasActivePowercard(): boolean {
+      return (
+        (greaterThan(this.powercardBalance, '0') &&
+          this.powercardState === 'Staked') ||
+        this.powercardState === 'NotStakedCooldown'
+      );
     }
   }
 });

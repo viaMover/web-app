@@ -116,6 +116,7 @@ export default Vue.extend({
       treasuryStakedMoveLP: 'treasuryStakedMoveLP'
     }),
     ...mapState('account', [
+      'powercardBalance',
       'networkInfo',
       'treasuryTotalStakedMove',
       'treasuryTotalStakedMoveEthLP'
@@ -137,7 +138,6 @@ export default Vue.extend({
 
       const moveAsset = getMoveAssetData(network);
       const moveEthLPAsset = getMoveWethLPAssetData(network);
-
       return [
         {
           name: 'MOVE',
@@ -155,7 +155,7 @@ export default Vue.extend({
           name: 'The Powercard',
           symbol: 'RARIBLE 1155',
           displaySymbol: false,
-          amount: '0'
+          amount: this.powercardBalance
         }
       ];
     },

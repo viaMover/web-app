@@ -340,6 +340,8 @@ export default {
       throw e;
     }
 
+    dispatch('fetchPowercardData');
+
     const savingsFreshData = dispatch('fetchSavingsFreshData');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
 
