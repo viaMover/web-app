@@ -35,7 +35,8 @@ import {
   CreateProposalPayload,
   GovernanceStoreState,
   LoadProposalInfoPayload,
-  LoadScoresPayload
+  LoadScoresPayload,
+  LoadScoresSelfPayload
 } from './types';
 import { isValidCacheItem } from './utils';
 
@@ -138,7 +139,7 @@ export default {
     return info;
   },
   async loadProposalInfo(
-    { state, commit, dispatch, rootState },
+    { state, commit, dispatch },
     { id, refetch = false }: LoadProposalInfoPayload
   ): Promise<ProposalInfo | undefined> {
     const loadFreshData = async (): Promise<ProposalInfo | undefined> => {
@@ -153,43 +154,10 @@ export default {
         snapshot: Number.parseInt(proposalWithVotes.proposal.snapshot)
       } as LoadScoresPayload);
 
-      let scoresSelfPromise = Promise.resolve(
-        new Array(proposalWithVotes.proposal.strategies.length).fill({})
-      );
-      if (rootState.account?.currentAddress !== undefined) {
-        scoresSelfPromise = scoresSelfPromise
-          .then(async () =>
-            dispatch('loadScores', {
-              proposal: proposalWithVotes.proposal,
-              addresses: [rootState.account?.currentAddress],
-              snapshot: Number.parseInt(proposalWithVotes.proposal.snapshot)
-            } as LoadScoresPayload)
-          )
-          .catch(async (error) => {
-            console.warn(
-              'failed to get self scores, using fallback scenario',
-              error
-            );
-            Sentry.captureException(error);
-
-            if (proposalWithVotes.proposal.strategies.length < 1) {
-              return [];
-            }
-
-            const votingPowerSelf = await dispatch(
-              'loadVotingPowerSelfAtSnapshot',
-              Number.parseInt(proposalWithVotes.proposal.snapshot)
-            );
-
-            const res = new Array(
-              proposalWithVotes.proposal.strategies.length
-            ).fill({});
-            res[0] = {
-              [rootState.account?.currentAddress ?? 'missing_address']:
-                Number.parseFloat(votingPowerSelf)
-            };
-          });
-      }
+      const scoresSelfPromise = dispatch('loadScoresSelf', {
+        proposal: proposalWithVotes.proposal,
+        snapshot: Number.parseInt(proposalWithVotes.proposal.snapshot)
+      } as LoadScoresSelfPayload);
 
       const communityVotingPowerPromise = dispatch(
         'loadCommunityVotingPower',
@@ -243,7 +211,7 @@ export default {
     }
   },
   async createProposal(
-    { state, rootState, getters },
+    { state, dispatch, rootState, getters },
     { title, description, metadata = {} }: CreateProposalPayload
   ): Promise<CreateProposalResponse> {
     try {
@@ -260,8 +228,7 @@ export default {
       }
 
       const now = dayjs();
-      const blockNumber =
-        await rootState.account.provider.web3.eth.getBlockNumber();
+      const blockNumber: number = await dispatch('getBlockNumber');
 
       const params: CreateProposalParams = {
         name: title,
@@ -320,6 +287,73 @@ export default {
       throw error;
     }
   },
+  async loadScoresSelf(
+    { dispatch, rootState },
+    { proposal, snapshot = 'latest' }: LoadScoresSelfPayload
+  ) {
+    try {
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
+      }
+
+      return await dispatch('loadScores', {
+        proposal,
+        addresses: [rootState.account.currentAddress],
+        snapshot
+      } as LoadScoresPayload);
+    } catch (error) {
+      console.warn('failed to get self scores, using fallback scenario', error);
+      Sentry.captureException(error);
+
+      try {
+        if (proposal.strategies.length < 1) {
+          return [];
+        }
+
+        if (rootState.account?.currentAddress === undefined) {
+          throw new Error('failed to get current address');
+        }
+
+        let votingPowerSelf;
+        if (typeof snapshot === 'number') {
+          votingPowerSelf = await dispatch(
+            'loadVotingPowerSelfAtSnapshot',
+            snapshot
+          );
+        } else {
+          const possibleBlockNumber = Number.parseInt(snapshot);
+          // other representations of snapshot as
+          // 'latest', etc
+          if (Number.isNaN(possibleBlockNumber)) {
+            const blockNumber: number = await dispatch('getBlockNumber');
+
+            votingPowerSelf = await dispatch(
+              'loadVotingPowerSelfAtSnapshot',
+              blockNumber
+            );
+          } else {
+            votingPowerSelf = await dispatch(
+              'loadVotingPowerSelfAtSnapshot',
+              possibleBlockNumber
+            );
+          }
+        }
+
+        const res = new Array(proposal.strategies.length).fill({});
+        res[0] = {
+          [rootState.account?.currentAddress ?? 'missing_address']:
+            Number.parseFloat(votingPowerSelf)
+        };
+
+        return res;
+      } catch (fallbackError) {
+        console.error('failed to get self scores', fallbackError);
+        Sentry.captureException(fallbackError);
+
+        throw fallbackError;
+      }
+    }
+  },
   async loadScores(
     { state },
     { proposal, addresses, snapshot = 'latest' }: LoadScoresPayload
@@ -335,7 +369,7 @@ export default {
     } catch (error) {
       console.error('failed to load scores', error);
       Sentry.captureException(error);
-      return new Array(proposal.strategies.length).fill({});
+      throw error;
     }
   },
   async loadPowerInfo({ state, commit, dispatch }): Promise<void> {

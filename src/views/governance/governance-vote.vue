@@ -88,12 +88,12 @@ export default Vue.extend({
   computed: {
     ...mapState('governance', {
       isProposalLoading: 'isLoading',
-      votingPowerSelf: 'votingPowerSelf',
       proposals: 'items'
     }),
     ...mapGetters('governance', {
       isAlreadyVoted: 'isAlreadyVoted',
-      alreadyVotedIpfsLink: 'ipfsLink'
+      alreadyVotedIpfsLink: 'ipfsLink',
+      votingPowerSelfOnProposal: 'votingPowerSelfOnProposal'
     }),
     pageTitle(): string {
       if (this.proposal === undefined) {
@@ -121,7 +121,10 @@ export default Vue.extend({
       return this.$t('governance.txtVoteAgainst') as string;
     },
     myVotingPower(): string {
-      return formatToDecimals(this.votingPowerSelf, 0);
+      return formatToDecimals(
+        this.votingPowerSelfOnProposal(this.proposal?.id),
+        0
+      );
     },
     voteButtonText(): string {
       if (this.isVoteFor) {
