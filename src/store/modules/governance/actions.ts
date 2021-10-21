@@ -341,8 +341,7 @@ export default {
 
         const res = new Array(proposal.strategies.length).fill({});
         res[0] = {
-          [rootState.account?.currentAddress ?? 'missing_address']:
-            Number.parseFloat(votingPowerSelf)
+          [rootState.account.currentAddress]: Number.parseFloat(votingPowerSelf)
         };
 
         return res;
