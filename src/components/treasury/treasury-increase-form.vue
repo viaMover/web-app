@@ -399,7 +399,7 @@ export default Vue.extend({
         return;
       }
 
-      let subsidizedEnabled = false;
+      let isSubsidizedEnabled = false;
       let subsidizedTxPrice = undefined;
       let actionGasLimit = '0';
       let approveGasLimit = '0';
@@ -414,11 +414,12 @@ export default Vue.extend({
         console.info('Treasury deposit approve gaslimit:', approveGasLimit);
 
         if (!isZero(actionGasLimit)) {
-          subsidizedEnabled = this.checkSubsidizedAvailability(actionGasLimit);
+          isSubsidizedEnabled =
+            this.checkSubsidizedAvailability(actionGasLimit);
           subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
         }
       } catch (err) {
-        subsidizedEnabled = false;
+        isSubsidizedEnabled = false;
         console.error(err);
         Sentry.captureException("can't estimate treasury deposit for subs");
         return;
@@ -430,7 +431,7 @@ export default Vue.extend({
         token: this.asset,
         amount: this.amount,
         nativeAmount: this.nativeAmount,
-        subsidizedEnabled: subsidizedEnabled,
+        isSubsidizedEnabled: isSubsidizedEnabled,
         estimatedGasCost: subsidizedTxPrice,
         actionGasLimit: actionGasLimit,
         approveGasLimit: approveGasLimit

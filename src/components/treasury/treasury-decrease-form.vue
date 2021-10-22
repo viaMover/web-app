@@ -393,7 +393,7 @@ export default Vue.extend({
         return;
       }
 
-      let subsidizedEnabled = false;
+      let isSubsidizedEnabled = false;
       let subsidizedTxPrice = undefined;
       let actionGasLimit = '0';
       let approveGasLimit = '0';
@@ -413,7 +413,7 @@ export default Vue.extend({
           approveGasLimit
         );
       } catch (err) {
-        subsidizedEnabled = false;
+        isSubsidizedEnabled = false;
         console.error(err);
         Sentry.captureException(
           "can't estimate treasury decrease boost for subs"
@@ -427,7 +427,7 @@ export default Vue.extend({
         token: this.asset,
         amount: this.amount,
         nativeAmount: this.nativeAmount,
-        subsidizedEnabled: subsidizedEnabled,
+        isSubsidizedEnabled: isSubsidizedEnabled,
         estimatedGasCost: subsidizedTxPrice,
         actionGasLimit: actionGasLimit,
         approveGasLimit: approveGasLimit

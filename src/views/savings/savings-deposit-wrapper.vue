@@ -9,8 +9,8 @@
       v-else-if="txStep === undefined"
       :amount="amount"
       :estimated-gas-cost="estimatedGasCost"
+      :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="nativeAmount"
-      :subsidized-enabled="subsidizedEnabled"
       :token="token"
       @tx-start="handleTxStart"
     />

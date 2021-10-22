@@ -12,8 +12,8 @@
       v-else-if="txStep === undefined"
       :amount="amount"
       :estimated-gas-cost="estimatedGasCost"
+      :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="nativeAmount"
-      :subsidized-enabled="subsidizedEnabled"
       :token="token"
       @tx-start="handleTxStart"
     />
@@ -54,7 +54,7 @@ export default Vue.extend({
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,
       nativeAmount: undefined as string | undefined,
-      subsidizedEnabled: false as boolean,
+      isSubsidizedEnabled: false as boolean,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined
@@ -78,7 +78,7 @@ export default Vue.extend({
       token: TokenWithBalance;
       amount: string;
       nativeAmount: string;
-      subsidizedEnabled: boolean;
+      isSubsidizedEnabled: boolean;
       estimatedGasCost: string;
       actionGasLimit: string;
       approveGasLimit: string;
@@ -86,7 +86,7 @@ export default Vue.extend({
       this.token = args.token;
       this.amount = args.amount;
       this.nativeAmount = args.nativeAmount;
-      this.subsidizedEnabled = args.subsidizedEnabled;
+      this.isSubsidizedEnabled = args.isSubsidizedEnabled;
       this.estimatedGasCost = args.estimatedGasCost;
       this.actionGasLimit = args.actionGasLimit;
       this.approveGasLimit = args.approveGasLimit;

@@ -42,7 +42,7 @@
         <span> {{ formatToNative(amount) }} {{ $t('savings.USDC') }} </span>
       </div>
     </div>
-    <div v-if="subsidizedEnabled">
+    <div v-if="isSubsidizedEnabled">
       <div class="switch">
         <p>{{ $t('savings.withdraw.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
@@ -98,7 +98,7 @@ export default Vue.extend({
       type: String,
       required: true
     },
-    subsidizedEnabled: {
+    isSubsidizedEnabled: {
       type: Boolean,
       default: false
     },

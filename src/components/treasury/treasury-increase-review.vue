@@ -44,7 +44,7 @@
         </span>
       </div>
     </div>
-    <div v-if="subsidizedEnabled">
+    <div v-if="isSubsidizedEnabled">
       <div class="switch">
         <p>{{ $t('treasury.increaseBoost.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
@@ -105,7 +105,7 @@ export default Vue.extend({
       type: String,
       required: true
     },
-    subsidizedEnabled: {
+    isSubsidizedEnabled: {
       type: Boolean,
       default: false
     },
@@ -163,7 +163,7 @@ export default Vue.extend({
   methods: {
     handleCreateTx(): void {
       this.$emit('tx-start', {
-        isSmartTreasury: this.isSmartTreasury && this.subsidizedEnabled
+        isSmartTreasury: this.isSmartTreasury && this.isSubsidizedEnabled
       });
     }
   }
