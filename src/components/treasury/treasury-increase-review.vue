@@ -35,7 +35,7 @@
           {{ $t('treasury.increaseBoost.lblAmountWeDepositIn') }}
           {{ token.symbol }}
         </h2>
-        <span> {{ formattedAmount }} </span>
+        <span>{{ formattedAmount }}</span>
       </div>
       <div class="item">
         <h2>{{ $t('treasury.increaseBoost.lblAndTotalOf') }}</h2>

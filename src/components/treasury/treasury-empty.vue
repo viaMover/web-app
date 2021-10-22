@@ -5,7 +5,11 @@
         <span class="balance">{{ treasuryBalance }}</span>
         <p class="black">{{ $t('treasury.txtTreasuryEmptyDescription') }}</p>
       </div>
-      <bar-chart :chart-data-source="chartDataSource" disable-selecting />
+      <bar-chart
+        :chart-data-source="chartDataSource"
+        disable-selecting
+        :is-loading="false"
+      />
       <p class="margin-top">{{ $t('treasury.lblIfYouReserveMoveInST') }}</p>
       <div class="treasury__menu-wrapper-body margin-top-20">
         <div class="line">

@@ -55,7 +55,7 @@ export const stakePowercardCompound = async (
       }
     );
   } catch (err) {
-    console.error(`Can't swap: ${err}`);
+    console.error(`Can't stake powercard: ${err}`);
     throw err;
   }
 };
