@@ -128,8 +128,7 @@ export default Vue.extend({
           this.actionGasLimit,
           async () => {
             this.txStep = 'Process';
-          },
-          this.approveGasLimit
+          }
         );
         this.txStep = 'Success';
       } catch (err) {

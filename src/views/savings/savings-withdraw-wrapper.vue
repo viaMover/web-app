@@ -74,6 +74,7 @@ export default Vue.extend({
       estimatedGasCost: string;
       actionGasLimit: string;
     }): void {
+      console.log('TX REVIEW ');
       this.token = args.token;
       this.amount = args.amount;
       this.isSubsidizedEnabled = args.isSubsidizedEnabled;
