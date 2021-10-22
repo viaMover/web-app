@@ -92,15 +92,15 @@ export const unstake = async (
         .unstakePowercard()
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
-          console.log(`Swap txn hash: ${hash}`);
+          console.log(`Powercard unstake txn hash: ${hash}`);
           changeStepToProcess('Process');
         })
         .once('receipt', (receipt: any) => {
-          console.log(`Swap txn receipt: ${receipt}`);
+          console.log(`Powercard unstake txn receipt: ${receipt}`);
           resolve();
         })
         .once('error', (error: Error) => {
-          console.log(`Swap txn error: ${error}`);
+          console.log(`Powercard unstake txn error: ${error}`);
           reject(error);
         });
     });

@@ -50,15 +50,15 @@ export const approvePowercard = async (
         .setApprovalForAll(contractAddress, true)
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
-          console.log(`Swap txn hash: ${hash}`);
+          console.log(`Powercard approve txn hash: ${hash}`);
           changeStepToProcess('Process');
         })
         .once('receipt', (receipt: any) => {
-          console.log(`Swap txn receipt: ${receipt}`);
+          console.log(`Powercard approve txn receipt: ${receipt}`);
           resolve();
         })
         .once('error', (error: Error) => {
-          console.log(`Swap txn error: ${error}`);
+          console.log(`Powercard approve txn error: ${error}`);
           reject(error);
         });
     });
