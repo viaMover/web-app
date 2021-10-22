@@ -52,7 +52,7 @@
         <p>
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           <span class="form-button" @click.capture.stop.prevent="swapTokens">
-            {{ currentInputSymbo }}
+            {{ currentInputSymbol }}
           </span>
         </p>
         <dynamic-input
@@ -60,7 +60,7 @@
           input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
-          :symbol="currentInputSymbo"
+          :symbol="currentInputSymbol"
           type="text"
           :value="inputValue"
           @update-value="handleUpdateValue"
@@ -170,7 +170,6 @@ export default Vue.extend({
       } as PictureDescriptor,
       selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
-      maxInNative: '0' as string,
       amount: '',
       nativeAmount: '',
       transferData: undefined as TransferData | undefined,
@@ -187,7 +186,6 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
-      'ethPrice',
       'savingsAPY',
       'usdcPriceInWeth',
       'ethPrice',
@@ -215,7 +213,7 @@ export default Vue.extend({
           : this.$t('savings.txtUSDCCoinIsAStable')
       ) as string;
     },
-    currentInputSymbo(): string {
+    currentInputSymbol(): string {
       if (this.selectedMode === 'TOKEN') {
         return this.asset?.symbol ?? '';
       } else {

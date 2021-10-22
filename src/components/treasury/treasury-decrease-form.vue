@@ -138,7 +138,6 @@ export default Vue.extend({
     return {
       selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
-      maxInNative: '0' as string,
       amount: '',
       nativeAmount: '',
       isLoading: true,
@@ -151,13 +150,7 @@ export default Vue.extend({
       'networkInfo',
       'currentAddress',
       'provider',
-      'gasPrices',
       'tokens',
-      'ethPrice',
-      'savingsAPY',
-      'usdcPriceInWeth',
-      'ethPrice',
-      'savingsBalance',
       'nativeCurrency',
       'treasuryBalanceMove',
       'treasuryBalanceLP'

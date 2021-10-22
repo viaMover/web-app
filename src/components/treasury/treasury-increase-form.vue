@@ -54,7 +54,7 @@
         <p>
           {{ $t('treasury.increaseBoost.lblAmountWeReserveIn') }}
           <span class="form-button" @click.capture.stop.prevent="swapTokens">
-            {{ currentInputSymbo }}
+            {{ currentInputSymbol }}
           </span>
         </p>
         <dynamic-input
@@ -62,7 +62,7 @@
           input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
-          :symbol="currentInputSymbo"
+          :symbol="currentInputSymbol"
           type="text"
           :value="inputValue"
           @update-value="handleUpdateValue"
@@ -140,7 +140,6 @@ export default Vue.extend({
     return {
       selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
-      maxInNative: '0' as string,
       amount: '',
       nativeAmount: '',
       isLoading: true,
@@ -156,9 +155,6 @@ export default Vue.extend({
       'gasPrices',
       'tokens',
       'ethPrice',
-      'usdcPriceInWeth',
-      'ethPrice',
-      'savingsBalance',
       'nativeCurrency',
       'treasuryBalanceMove',
       'treasuryBalanceLP'
@@ -180,7 +176,7 @@ export default Vue.extend({
           : this.$t('treasury.increaseBoost.txtYouChooseMoveETHLp')
       ) as string;
     },
-    currentInputSymbo(): string {
+    currentInputSymbol(): string {
       if (this.selectedMode === 'TOKEN') {
         return this.asset?.symbol ?? '';
       } else {

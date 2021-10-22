@@ -43,8 +43,7 @@ export const approvePowercard = async (
       powercardRariAddress
     );
 
-    console.log('approving powercard for all...');
-    console.log('[powercard stake] transactionParams:', transactionParams);
+    console.log('[powercard approve] transactionParams:', transactionParams);
 
     await new Promise<void>((resolve, reject) => {
       rari.methods
@@ -83,8 +82,6 @@ export const isPowercardApproved = async (
   const rari = new web3.eth.Contract(contractABI as AbiItem[], contractAddress);
 
   try {
-    console.log('checking powercard approval...');
-
     const transactionParams = {
       from: accountAddress
     } as TransactionsParams;

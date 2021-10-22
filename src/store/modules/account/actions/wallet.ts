@@ -340,7 +340,12 @@ export default {
       throw e;
     }
 
-    dispatch('fetchPowercardData');
+    try {
+      await dispatch('fetchPowercardData');
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
+    }
 
     const savingsFreshData = dispatch('fetchSavingsFreshData');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
