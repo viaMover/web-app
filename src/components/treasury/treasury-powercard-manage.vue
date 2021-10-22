@@ -119,11 +119,11 @@ export default Vue.extend({
     unstakeAvailable(): boolean {
       return (
         greaterThan(this.powercardBalance, '0') &&
-        this.powercardState === 'NotStakedCooldownsta'
+        this.powercardState === 'NotStakedCooldown'
       );
     },
     status(): string {
-      if (this.powercardState === 'stacked') {
+      if (this.powercardState === 'Stacked') {
         return 'Active';
       } else {
         return 'Cooldown';
@@ -143,7 +143,9 @@ export default Vue.extend({
   },
   methods: {
     handleBack(): void {
-      this.$router.back();
+      this.$router.replace({
+        name: 'treasury-manage'
+      });
     },
     async handleRemoveCard(): Promise<void> {
       const resp = await estimateUnstakePowercardCompound(

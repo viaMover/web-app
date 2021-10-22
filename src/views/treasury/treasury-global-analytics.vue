@@ -195,7 +195,9 @@ export default Vue.extend({
   },
   methods: {
     handleBack(): void {
-      this.$router.back();
+      this.$router.replace({
+        name: 'treasury-manage'
+      });
     }
   }
 });

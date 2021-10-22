@@ -11,12 +11,11 @@ import {
   getTreasuryBonus,
   powercardBalance
 } from '@/services/chain';
+import { getPowercardTimings } from '@/services/chain/treasury/powercard';
 import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
-
-import { getPowercardTimings } from './../../../../services/chain/treasury/powercard';
 
 export type TreasuryGetReceiptPayload = {
   year: number;

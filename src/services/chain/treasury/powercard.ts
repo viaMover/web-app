@@ -30,8 +30,6 @@ export const powercardBalance = async (
   const rari = new web3.eth.Contract(contractABI as AbiItem[], contractAddress);
 
   try {
-    console.log('checking that user has powercard...');
-
     const transactionParams = {
       from: accountAddress
     } as TransactionsParams;
@@ -68,8 +66,6 @@ export const getPowercardState = async (
   );
 
   try {
-    console.log('getting powercard state...');
-
     const transactionParams = {
       from: accountAddress
     } as TransactionsParams;
@@ -117,19 +113,26 @@ export const getPowercardTimings = async (
   );
 
   try {
-    console.log('getting powercard timings...');
-
     const transactionParams = {
       from: accountAddress
     } as TransactionsParams;
 
-    const powercardTimingsResponse = await powercardStaker.methods
-      .getRemainingTimings(accountAddress)
-      .call(transactionParams);
+    const [activeTimeResponse, cooldownTimeResponse] =
+      await powercardStaker.methods
+        .getRemainingTimings(accountAddress)
+        .call(transactionParams);
 
-    console.log('Powercard timings: ', powercardTimingsResponse);
+    console.log(
+      'Powercard timings: active - ',
+      activeTimeResponse,
+      ' cooldown - ',
+      cooldownTimeResponse
+    );
 
-    return { activeTime: '0', cooldownTime: '0' };
+    return {
+      activeTime: activeTimeResponse.toString(),
+      cooldownTime: cooldownTimeResponse.toString()
+    };
   } catch (error) {
     console.error(error);
     throw new Error(`error powercard timings: ${error}`);
