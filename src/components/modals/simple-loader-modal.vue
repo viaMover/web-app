@@ -24,7 +24,7 @@
 import Vue from 'vue';
 
 import { BackButton } from '@/components/buttons';
-import { FormLoader } from '@/components/controls';
+import { FormLoader } from '@/components/forms';
 
 export default Vue.extend({
   name: 'SimpleLoaderModal',

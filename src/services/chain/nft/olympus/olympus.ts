@@ -8,7 +8,7 @@ import { Network } from '@/utils/networkTypes';
 import { NFT_OLYMPUS_ABI, NFT_OLYMPUS_ADDRESS } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
+import { Step } from '@/components/forms/form-loader/types';
 
 import { OlympusData } from './types';
 

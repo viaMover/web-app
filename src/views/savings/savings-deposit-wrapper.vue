@@ -31,7 +31,7 @@ import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
+import { Step } from '@/components/forms/form-loader/types';
 import { SecondaryPage } from '@/components/layout/secondary-page';
 import {
   SavingsDepositForm,

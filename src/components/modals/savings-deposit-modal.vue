@@ -128,9 +128,9 @@ import {
 } from '@/wallet/types';
 
 import { ActionButton } from '@/components/buttons';
-import { AssetField, FormLoader, GasSelector } from '@/components/controls';
-import { Step } from '@/components/controls/form-loader';
+import { AssetField, GasSelector } from '@/components/controls';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { FormLoader, Step } from '@/components/forms/form-loader';
 
 import DetailsPicture from './details-picture.vue';
 import Modal from './modal.vue';
