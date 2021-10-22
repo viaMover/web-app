@@ -15,7 +15,7 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="navPicture.alt"
+            :alt="$t('earnings.ethereum.txtNavIconAlt')"
             :sources="navPicture.sources"
             :src="navPicture.src"
           />
@@ -29,7 +29,7 @@
       >
         <template v-slot:picture>
           <custom-picture
-            :alt="navPicture.alt"
+            :alt="$t('earnings.olympus.txtNavIconAlt')"
             :sources="navPicture.sources"
             :src="navPicture.src"
           />
@@ -65,7 +65,7 @@ export default Vue.extend({
     return {
       navPicture: {
         src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
-        alt: this.$t('earnings.ethereum.txtEthereumNavIconAlt') as string,
+        alt: 'unused' as string,
         sources: [
           {
             src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png'),

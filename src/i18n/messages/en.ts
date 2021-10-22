@@ -379,6 +379,14 @@ const messages: VueI18n.LocaleMessageObject = {
       4900: 'Oh no. Your provider is disconnected from all chains. Please refresh the page or use different provider instead',
       4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
     }
+  },
+  forms: {
+    lblAvailable: 'Available',
+    lblChooseToken: 'Choose token',
+    lblChooseAmount: 'Choose amount',
+    lblReviewTransaction: 'Review transaction',
+    lblUseSmartTreasury: 'Use Smart Treasury',
+    lblEstimatedGasCost: 'Estimated gas cost'
   }
 };
 
@@ -804,6 +812,13 @@ if (isFeatureEnabled('isEarningsEnabled')) {
   messages.earnings = {
     lblEarnings: 'Earnings',
     lblMyEarnings: 'My Earnings',
+    lblWhatDoWeDeposit: 'What do we deposit',
+    lblAmountWeDepositIn: 'Amount we deposit in',
+    lblReviewYourStake: 'Review your stake',
+    txtNotNativeAsset:
+      'You chose a non {targetSymbol} asset. It means that it will be converted to {targetSymbol} at the time of the deposit at the current market rate.',
+    btnStake: 'Stake {symbol}',
+    lblAndItWillBe: 'And it will be a total of',
     ethereum: {
       lblEthereum: 'Ethereum',
       lblManage: 'Manage Ethereum',
@@ -815,7 +830,8 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtWithdrawPictureAlt: 'Withdraw Ethereum',
       lblGlobalAnalytics: 'Global analytics',
       txtGlobalAnalytics: 'All information about Ethereum',
-      txtGlobalAnalyticsPictureAlt: 'Global analytics'
+      txtGlobalAnalyticsPictureAlt: 'Global analytics',
+      txtNavIconAlt: 'Ethereum'
     },
     olympus: {
       lblOlympus: 'Olympus',
@@ -828,7 +844,16 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtWithdrawPictureAlt: 'Withdraw Olympus',
       lblGlobalAnalytics: 'Global analytics',
       txtGlobalAnalytics: 'All information about Olympus',
-      txtGlobalAnalyticsPictureAlt: 'Global analytics'
+      txtGlobalAnalyticsPictureAlt: 'Global analytics',
+      txtStakeDescription:
+        'Once you stake your assets in Ethereum 2.0, Mover is constantly searching for the highest paying option. ' +
+        'Mover does automatic rebalancing, yield collection, and capital optimization.',
+      txtPotentialEarnings:
+        'You could earn in a year. Considering all changes.',
+      txtNativeAsset:
+        '{symbol} is a native asset of Olympus DAO. It is a rebase token, ' +
+        'so your interest is automatically incremented into your principal amount.',
+      txtNavIconAlt: 'Olympus'
     }
   };
 }

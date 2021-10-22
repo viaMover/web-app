@@ -16,6 +16,10 @@
     </template>
 
     <router-view />
+
+    <template v-slot:modals>
+      <search-modal key="search-modal" />
+    </template>
   </content-wrapper>
 </template>
 
@@ -25,12 +29,14 @@ import { mapActions } from 'vuex';
 
 import { EarningsNavLeftRailItem } from '@/components/earnings';
 import { ContentWrapper } from '@/components/layout';
+import { SearchModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'EarningsRoot',
   components: {
     ContentWrapper,
-    EarningsNavLeftRailItem
+    EarningsNavLeftRailItem,
+    SearchModal
   },
   async mounted() {
     await this.loadMinimalInfo();

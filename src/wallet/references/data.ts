@@ -40,7 +40,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x0B7438606a13f4e91305b36B7596dDA4679689e3',
     NFT_DICE: '0xB75acecE1F77fe7059cFff8eF76F73b7E999EDD2',
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
-    MASTER_CHEF_POOL_INDEX: 257
+    MASTER_CHEF_POOL_INDEX: 257,
+    OHM_ADDRESS: '0x383518188c0c6d7730d91b2c03a03c837814a899'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -62,7 +63,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -84,7 +86,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -107,7 +110,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -129,7 +133,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1'
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x1',
@@ -151,7 +156,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x1',
@@ -173,7 +179,8 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1'
   }
 };
 
@@ -316,6 +323,10 @@ const NFT_DICE_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].NFT_DICE ?? '0x1';
 };
 
+const OHM_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].OHM_ADDRESS ?? '0x1';
+};
+
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
 
 const isTokenValidForTreasuryDeposit = (
@@ -363,6 +374,16 @@ const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
     address: SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network),
     decimals: 18,
     symbol: 'SLP'
+  };
+};
+
+const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: OHM_ADDRESS(network),
+    symbol: 'OHM',
+    decimals: 9,
+    iconURL:
+      'https://assets.coingecko.com/coins/images/14483/large/token_OHM_%281%29.png?1628311611'
   };
 };
 
@@ -421,6 +442,7 @@ export {
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
+  getOhmAssetData,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
   SUSHI_ADDRESS,

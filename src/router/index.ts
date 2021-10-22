@@ -390,12 +390,31 @@ if (isFeatureEnabled('isEarningsEnabled')) {
         },
         children: [
           {
-            path: 'stake',
+            path: 'stake/step/:step?',
             name: 'earnings-olympus-stake',
             component: () =>
               import(
                 /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-stake.vue'
-              )
+              ),
+            props: (to) => ({
+              currentStep: to.params.step
+            }),
+            beforeEnter: (to, from, next) => {
+              if (to.params.step === 'prepare') {
+                next();
+                return;
+              }
+
+              if (from.name !== 'earnings-olympus-stake') {
+                next({
+                  name: 'earnings-olympus-stake',
+                  params: { step: 'prepare' }
+                });
+                return;
+              }
+
+              next();
+            }
           },
           {
             path: 'withdraw',
