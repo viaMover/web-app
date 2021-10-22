@@ -420,7 +420,7 @@ export default Vue.extend({
         }
       } catch (err) {
         isSubsidizedEnabled = false;
-        console.error(err);
+        console.error(`can't estimate treasury deposit for subs: ${err}`);
         Sentry.captureException("can't estimate treasury deposit for subs");
         return;
       } finally {

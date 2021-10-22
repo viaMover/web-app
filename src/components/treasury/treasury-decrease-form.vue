@@ -159,7 +159,6 @@ export default Vue.extend({
       'treasuryBalanceLP'
     ]),
     ...mapGetters('account', [
-      'treasuryBonusNative',
       'getTokenColor',
       'moveNativePrice',
       'slpNativePrice'
@@ -337,7 +336,8 @@ export default Vue.extend({
     getTreasuryTokenBalance(address: string): string {
       if (sameAddress(address, this.moveTokenInfo.address)) {
         return this.treasuryBalanceMove;
-      } else if (sameAddress(address, this.slpTokenInfo.address)) {
+      }
+      if (sameAddress(address, this.slpTokenInfo.address)) {
         return this.treasuryBalanceLP;
       }
       return '0';
@@ -414,7 +414,9 @@ export default Vue.extend({
         );
       } catch (err) {
         isSubsidizedEnabled = false;
-        console.error(err);
+        console.error(
+          `can't estimate treasury decrease boost for subs: ${err}`
+        );
         Sentry.captureException(
           "can't estimate treasury decrease boost for subs"
         );

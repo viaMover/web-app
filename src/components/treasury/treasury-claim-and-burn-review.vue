@@ -54,7 +54,7 @@
             hidden="hidden"
             type="checkbox"
           />
-          <label class="switch-button" for="switch-shadow"></label>
+          <label class="switch-button" for="switch-shadow" />
         </form>
       </div>
       <div class="items">

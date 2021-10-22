@@ -1,5 +1,5 @@
 <template>
-  <left-rail-section items-container-class="progressive-left-rail">
+  <div class="progressive-left-rail">
     <left-rail-section :section-name="$t('treasury.lblMySmartTreasury')">
       <left-rail-section-nav-item-image
         :description="balance"
@@ -92,7 +92,7 @@
         </template>
       </left-rail-section-nav-item-image>
     </left-rail-section>
-  </left-rail-section>
+  </div>
 </template>
 
 <script lang="ts">

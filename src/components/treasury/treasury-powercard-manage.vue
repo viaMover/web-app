@@ -136,9 +136,7 @@ export default Vue.extend({
       } else {
         days = dayjs.duration(this.powercardCooldownTime, 'seconds').asDays();
       }
-      return this.$t('treasury.lblRemainingDays', {
-        days: days
-      }) as string;
+      return this.$t('treasury.lblRemainingDays', { days }) as string;
     }
   },
   methods: {

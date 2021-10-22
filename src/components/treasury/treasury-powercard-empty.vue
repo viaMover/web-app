@@ -120,10 +120,10 @@ export default Vue.extend({
       return `2x`;
     },
     cooldownTime(): string {
-      return `60 days`;
+      return this.$t('treasury.lblRemainingDays', { days: 60 }) as string;
     },
     activeTime(): string {
-      return `30 days`;
+      return this.$t('treasury.lblRemainingDays', { days: 30 }) as string;
     }
   },
   methods: {
