@@ -107,7 +107,11 @@ export const estimatePowercardUnstake = async (
       );
       return { error: false, gasLimit: gasLimitWithBuffer };
     } else {
-      throw new Error('empty gas limit');
+      console.error(`Empty gas limit`);
+      return {
+        error: true,
+        gasLimit: '0'
+      };
     }
   } catch (error) {
     console.error(`can't estimate powercard unstake due to: ${error}`);
