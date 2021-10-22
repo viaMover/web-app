@@ -76,7 +76,7 @@ export const withdraw = async (
     const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);
 
     console.log('[treasury withdraw] output amount in WEI:', outputAmountInWEI);
-    console.log('[treasury deposit] transactionParams:', transactionParams);
+    console.log('[treasury withdraw] transactionParams:', transactionParams);
 
     let withdrawFunc: any;
     if (sameAddress(outputAsset.address, move.address)) {
