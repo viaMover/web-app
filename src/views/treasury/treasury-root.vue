@@ -14,9 +14,6 @@
     <router-view />
 
     <template v-slot:modals>
-      <treasury-increase-boost-modal />
-      <treasury-decrease-boost-modal />
-      <treasury-claim-and-burn-modal />
       <search-modal />
     </template>
   </content-wrapper>
@@ -26,12 +23,7 @@
 import Vue from 'vue';
 
 import { ContentWrapper } from '@/components/layout';
-import {
-  SearchModal,
-  TreasuryClaimAndBurnModal,
-  TreasuryDecreaseBoostModal,
-  TreasuryIncreaseBoostModal
-} from '@/components/modals';
+import { SearchModal } from '@/components/modals';
 import { TreasuryLeftRail } from '@/components/treasury';
 
 import '@/styles/_treasury.less';
@@ -42,9 +34,6 @@ export default Vue.extend({
   components: {
     TreasuryLeftRail,
     ContentWrapper,
-    TreasuryIncreaseBoostModal,
-    TreasuryDecreaseBoostModal,
-    TreasuryClaimAndBurnModal,
     SearchModal
   },
   methods: {
