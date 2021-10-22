@@ -35,12 +35,12 @@
           {{ $t('treasury.claimAndBurn.lblAmountWeBurnIn') }}
           {{ token.symbol }}
         </h2>
-        <span> {{ formattedAmount }} </span>
+        <span>{{ formattedAmount }}</span>
       </div>
       <div class="item">
         <h2>{{ $t('treasury.claimAndBurn.lblAndTotalOf') }}</h2>
         <span>
-          {{ formatNativeAmount }}
+          {{ formattedNativeAmount }}
         </span>
       </div>
     </div>
@@ -159,7 +159,7 @@ export default Vue.extend({
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
     },
-    formatNativeAmount(): string {
+    formattedNativeAmount(): string {
       return `${formatToNative(this.nativeAmount)} ${
         this.nativeCurrencySymbol
       }`;

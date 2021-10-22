@@ -72,7 +72,10 @@
           @button-click="handleTxReview"
         >
           <div v-if="isLoading || isProcessing" class="loader-icon">
-            <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
           </div>
           <template v-else>
             {{ isButtonActive ? $t('treasury.lblReviewTransaction') : error }}
@@ -121,7 +124,7 @@ import {
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { TokenImage } from '@/components/tokens';
 
 type INPUT_MODE = 'NATIVE' | 'TOKEN';
 
@@ -142,7 +145,7 @@ export default Vue.extend({
       nativeAmount: '',
       isLoading: true,
       isProcessing: false,
-      tokenSelectedByUser: false
+      isTokenSelectedByUser: false
     };
   },
   computed: {
@@ -306,7 +309,7 @@ export default Vue.extend({
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
-          if (!this.tokenSelectedByUser) {
+          if (!this.isTokenSelectedByUser) {
             const move = newVal.find((t: TokenWithBalance) =>
               sameAddress(
                 t.address,
@@ -465,7 +468,7 @@ export default Vue.extend({
         return;
       }
 
-      this.tokenSelectedByUser = true;
+      this.isTokenSelectedByUser = true;
       this.asset = token;
       this.amount = '';
       this.nativeAmount = '';

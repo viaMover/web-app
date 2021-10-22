@@ -86,7 +86,10 @@
           @button-click="handleTxReview"
         >
           <div v-if="isLoading || isProcessing" class="loader-icon">
-            <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
           </div>
           <template v-else>
             {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
@@ -176,7 +179,7 @@ export default Vue.extend({
       transferError: undefined as undefined | string,
       isLoading: true,
       isProcessing: false,
-      tokenSelectedByUser: false
+      isTokenSelectedByUser: false
     };
   },
   computed: {
@@ -335,7 +338,7 @@ export default Vue.extend({
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
-          if (!this.tokenSelectedByUser) {
+          if (!this.isTokenSelectedByUser) {
             const eth = newVal.find(
               (t: TokenWithBalance) => t.address === 'eth'
             );
@@ -578,7 +581,7 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       } else {
-        this.tokenSelectedByUser = true;
+        this.isTokenSelectedByUser = true;
         this.asset = token;
         this.transferData = undefined;
         this.transferError = undefined;

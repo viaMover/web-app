@@ -142,7 +142,7 @@ export default Vue.extend({
       maxBurnedAmount: undefined as undefined | string,
       isLoading: true,
       isProcessing: false,
-      tokenSelectedByUser: false
+      isTokenSelectedByUser: false
     };
   },
   computed: {
@@ -278,7 +278,7 @@ export default Vue.extend({
       async handler(newVal: Array<TokenWithBalance>) {
         this.isLoading = true;
         try {
-          if (!this.tokenSelectedByUser) {
+          if (!this.isTokenSelectedByUser) {
             const move = newVal.find((t: TokenWithBalance) =>
               sameAddress(t.address, this.moveTokenInfo.address)
             );
@@ -470,7 +470,7 @@ export default Vue.extend({
         return;
       }
 
-      this.tokenSelectedByUser = true;
+      this.isTokenSelectedByUser = true;
       this.asset = token;
       this.transferError = undefined;
       this.amount = '';

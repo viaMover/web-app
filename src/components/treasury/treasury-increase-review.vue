@@ -40,7 +40,7 @@
       <div class="item">
         <h2>{{ $t('treasury.increaseBoost.lblAndTotalOf') }}</h2>
         <span>
-          {{ formatNativeAmount }}
+          {{ formattedNativeAmount }}
         </span>
       </div>
     </div>
@@ -83,7 +83,7 @@ import { TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseReview',
@@ -154,7 +154,7 @@ export default Vue.extend({
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
     },
-    formatNativeAmount(): string {
+    formattedNativeAmount(): string {
       return `${formatToNative(this.nativeAmount)} ${
         this.nativeCurrencySymbol
       }`;

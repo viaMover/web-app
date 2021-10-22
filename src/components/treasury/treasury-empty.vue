@@ -43,7 +43,7 @@ import { TreasuryMonthBonusesItem } from '@/services/mover';
 import { formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
-import BarChart from '@/components/charts/bar-chart.vue';
+import { BarChart } from '@/components/charts';
 
 import { SecondaryPage } from '../layout';
 
@@ -56,7 +56,7 @@ export default Vue.extend({
   },
   computed: {
     treasuryBalance(): string {
-      return `~ $${formatToNative(10000)}`;
+      return `~ $${formatToNative(10184)}`;
     },
     currentMaxBoost(): string {
       return `3.5x`;
