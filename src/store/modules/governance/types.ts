@@ -16,6 +16,7 @@ export type GovernanceStoreState = {
   spaceId: string;
   cachePeriodSeconds: number;
   isLoadingLastProposal: boolean;
+  blockNumberCached: number | undefined;
 };
 
 export interface CacheInfo {
@@ -28,12 +29,13 @@ export type ProposalCumulativeInfo = Record<
     state: 'active' | 'pending' | 'closed' | 'core';
     votesCountFor: number;
     votesCountAgainst: number;
-    isSucceded: boolean;
+    isSucceeded: boolean;
     isQuorumReached: boolean;
     communityVotingPower: string;
     votingActivity: string;
     isVoted: boolean;
     hasEnoughVotingPowerToVote: boolean;
+    votingPowerSelf: string;
   }
 >;
 
@@ -42,11 +44,14 @@ export type LoadProposalInfoPayload = {
   refetch: boolean;
 };
 
-export type LoadScoresPayload = {
+export type LoadScoresSelfPayload = {
   proposal: Proposal;
-  addresses: Array<string>;
   snapshot?: number | string;
 };
+
+export type LoadScoresPayload = {
+  addresses: Array<string>;
+} & LoadScoresSelfPayload;
 
 export type CreateProposalPayload = {
   title: string;

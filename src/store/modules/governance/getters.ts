@@ -1,6 +1,10 @@
 import { GetterTree } from 'vuex';
 
-import { Choice, ProposalInfo } from '@/services/mover/governance';
+import {
+  Choice,
+  getDefaultMinimumVotingThresholdMultiplier,
+  ProposalInfo
+} from '@/services/mover/governance';
 import { RootStoreState } from '@/store/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -75,7 +79,7 @@ export default {
     return state.items.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
-      if (proposal.proposal.state === 'closed' && proposalStats.isSucceded) {
+      if (proposal.proposal.state === 'closed' && proposalStats.isSucceeded) {
         return count + 1;
       }
 
@@ -87,7 +91,7 @@ export default {
     return state.items.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
-      if (proposal.proposal.state === 'closed' && !proposalStats.isSucceded) {
+      if (proposal.proposal.state === 'closed' && !proposalStats.isSucceeded) {
         return count + 1;
       }
 
@@ -126,7 +130,7 @@ export default {
         votesCountFor + votesCountAgainst,
         multiply(
           item.communityVotingPower,
-          state.minimumVotingThresholdMultiplier
+          getDefaultMinimumVotingThresholdMultiplier(item.proposal.start)
         )
       );
       const hasOutweight = votesCountFor > votesCountAgainst;
@@ -147,7 +151,8 @@ export default {
           isQuorumReached,
           isSucceeded: isQuorumReached && hasOutweight,
           isVoted,
-          hasEnoughVotingPowerToVote
+          hasEnoughVotingPowerToVote,
+          votingPowerSelf
         }
       };
     }, {});
@@ -182,7 +187,7 @@ export default {
       }
 
       if (item.state === 'closed') {
-        if (item.isSucceded) {
+        if (item.isSucceeded) {
           return 'accepted';
         } else {
           return 'defeated';
@@ -232,5 +237,10 @@ export default {
       state.votingPowerSelf,
       state.powerNeededToBecomeAProposer
     );
+  },
+  votingPowerSelfOnProposal(state, getters): (id: string) => string {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.votingPowerSelf ?? '0';
   }
 } as GetterTree<GovernanceStoreState, RootStoreState>;
