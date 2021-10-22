@@ -45,13 +45,13 @@ export default Vue.extend({
   },
   data() {
     return {
-      isShowReview: false as boolean,
+      isShowReview: false,
       txStep: undefined as Step | undefined,
 
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,
       nativeAmount: undefined as string | undefined,
-      subsidizedEnabled: false as boolean,
+      subsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       transferData: undefined as TransferData | undefined,
       actionGasLimit: undefined as string | undefined,

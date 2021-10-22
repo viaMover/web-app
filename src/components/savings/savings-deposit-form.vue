@@ -429,7 +429,7 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         console.error(`transfer error: ${err}`);

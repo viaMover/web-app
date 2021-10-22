@@ -469,7 +469,7 @@ export default Vue.extend({
           this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
@@ -514,7 +514,7 @@ export default Vue.extend({
           this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;

@@ -36,6 +36,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblChooseProvider: 'Choose from Metamask and other popular wallets'
   },
   estimationError: 'Estimation error',
+  exchangeError: 'Exchange error',
   menu: {
     lblSwapTokenEmoji: '🔄',
     lblSwapToken: 'Swap Tokens',

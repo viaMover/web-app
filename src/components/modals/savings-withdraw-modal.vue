@@ -380,7 +380,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -407,7 +407,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;

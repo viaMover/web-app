@@ -368,7 +368,7 @@ export default Vue.extend({
           this.transferError = undefined;
         }
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`transfer error: ${err}`);
         Sentry.captureException(err);
         if (mode === 'TOKEN') {
