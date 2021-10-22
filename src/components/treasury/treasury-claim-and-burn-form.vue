@@ -258,16 +258,17 @@ export default Vue.extend({
       return [];
     },
     selectorStyle(): CssProperties {
-      if (this.asset?.color === undefined) {
+      if (this.asset === undefined) {
         return {
-          backgroundColor: '#687EE3',
-          boxShadow: '0 0 8px #687EE3'
+          backgroundColor: '#f1f1f1',
+          boxShadow: '0 0 8px rgb(0, 0, 0, 0.5)'
         };
       }
 
+      const assetColor = this.getTokenColor(this.asset.address);
       return {
-        backgroundColor: this.asset.color,
-        boxShadow: `0 0 8px ${this.asset.color}`
+        backgroundColor: assetColor,
+        boxShadow: `0 0 8px ${assetColor}`
       };
     }
   },
@@ -303,9 +304,9 @@ export default Vue.extend({
   methods: {
     ...mapActions('modals', { setIsModalDisplayed: 'setIsDisplayed' }),
     async handleUpdateValue(val: string): Promise<void> {
-      await this.updatingValue(val, this.selectedMode);
+      await this.updateValue(val, this.selectedMode);
     },
-    async updatingValue(value: string, mode: INPUT_MODE): Promise<void> {
+    async updateValue(value: string, mode: INPUT_MODE): Promise<void> {
       if (this.asset === undefined || this.isLoading) {
         return;
       }
@@ -391,8 +392,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate claim and burn");
         throw new Error(`Can't estimate action ${resp.error}`);
       }
@@ -420,6 +420,7 @@ export default Vue.extend({
         subsidizedEnabled = false;
         console.error(err);
         Sentry.captureException("can't estimate claim and burn for subs");
+        return;
       } finally {
         this.isProcessing = false;
       }
@@ -446,9 +447,9 @@ export default Vue.extend({
         return;
       }
       if (this.selectedMode === 'TOKEN') {
-        await this.updatingValue(this.asset.balance, 'TOKEN');
+        await this.updateValue(this.asset.balance, 'TOKEN');
       } else {
-        await this.updatingValue(
+        await this.updateValue(
           new BigNumber(
             multiply(this.asset.balance, this.asset.priceUSD)
           ).toFixed(2, BigNumber.ROUND_DOWN),
@@ -467,13 +468,13 @@ export default Vue.extend({
 
       if (token === undefined) {
         return;
-      } else {
-        this.tokenSelectedByUser = true;
-        this.asset = token;
-        this.transferError = undefined;
-        this.amount = '';
-        this.nativeAmount = '';
       }
+
+      this.tokenSelectedByUser = true;
+      this.asset = token;
+      this.transferError = undefined;
+      this.amount = '';
+      this.nativeAmount = '';
     }
   }
 });

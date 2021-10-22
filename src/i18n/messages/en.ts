@@ -35,6 +35,7 @@ const messages: VueI18n.LocaleMessageObject = {
       'Or use another compatible mobile wallet with WalletConnect.',
     lblChooseProvider: 'Choose from Metamask and other popular wallets'
   },
+  estimationError: 'Estimation error',
   menu: {
     lblSwapTokenEmoji: '🔄',
     lblSwapToken: 'Swap Tokens',

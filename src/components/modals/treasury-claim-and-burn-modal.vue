@@ -462,7 +462,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -497,7 +497,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate burn");
         return;
       }

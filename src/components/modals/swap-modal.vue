@@ -928,9 +928,8 @@ export default Vue.extend({
       );
 
       if (resp.error) {
-        console.error(resp.error);
         Sentry.captureException("Can't estimate swap");
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         return;
       }
 
