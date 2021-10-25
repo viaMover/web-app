@@ -11,7 +11,7 @@
       <div class="treasury__menu-wrapper-body margin-top-80">
         <div class="token__item">
           <div class="item__info">
-            <progress-loader class="loading" value="100" />
+            <progress-loader class="loading" :value="powercardProgress" />
             <div class="item__info-icon">
               <custom-picture
                 :alt="powercard.alt"
@@ -62,6 +62,10 @@ import { mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
+import {
+  MAX_ACTIVE_TIME,
+  MAX_COOLDOWN_TIME
+} from '@/services/chain/treasury/powercard';
 import { greaterThan } from '@/utils/bigmath';
 import { unstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstake';
 import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstakeEstimate';
@@ -129,6 +133,17 @@ export default Vue.extend({
         return 'Cooldown';
       }
     },
+    powercardProgress(): number {
+      if (this.powercardActiveTime > 0) {
+        return Math.round((this.powercardActiveTime / MAX_ACTIVE_TIME) * 100);
+      } else if (this.powercardCooldownTime > 0) {
+        return Math.round(
+          (MAX_COOLDOWN_TIME / this.powercardCooldownTime) * 100
+        );
+      } else {
+        return 0;
+      }
+    },
     remainingTime(): string {
       let days = 0;
       if (this.powercardActiveTime > 0) {
@@ -136,6 +151,7 @@ export default Vue.extend({
       } else {
         days = dayjs.duration(this.powercardCooldownTime, 'seconds').asDays();
       }
+      days = Math.round(days);
       return this.$t('treasury.lblRemainingDays', { days }) as string;
     }
   },

@@ -116,7 +116,7 @@ export default Vue.extend({
       treasuryStakedMoveLP: 'treasuryStakedMoveLP'
     }),
     ...mapState('account', [
-      'powercardBalance',
+      'powercardState',
       'networkInfo',
       'treasuryTotalStakedMove',
       'treasuryTotalStakedMoveEthLP'
@@ -128,6 +128,9 @@ export default Vue.extend({
     formattedMoveEthLPAmount(): string {
       const moveEthLPAmountNative = this.treasuryStakedMoveLP;
       return formatToDecimals(moveEthLPAmountNative, 4);
+    },
+    isPowercardStaked(): boolean {
+      return this.powercardState === 'Staked';
     },
     assets(): Array<ReservedAsset> {
       if (this.networkInfo === undefined) {
@@ -155,7 +158,7 @@ export default Vue.extend({
           name: 'The Powercard',
           symbol: 'RARIBLE 1155',
           displaySymbol: false,
-          amount: this.powercardBalance
+          amount: this.isPowercardStaked ? '1' : '0'
         }
       ];
     },

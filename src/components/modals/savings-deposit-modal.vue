@@ -578,7 +578,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        this.transferError = 'estimationError';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate savings deposit");
         return;
       }

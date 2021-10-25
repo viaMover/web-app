@@ -1,6 +1,6 @@
 <template>
   <secondary-page has-back-button hide-title @back="handleBack">
-    <div class="savings-statements__wrapper-title">
+    <div class="treasury-statements__wrapper-title">
       <h2>{{ pageTitle }}</h2>
       <p>{{ pageSubtitle }}</p>
     </div>

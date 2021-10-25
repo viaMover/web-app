@@ -47,7 +47,6 @@ export default Vue.extend({
     return {
       isShowReview: false,
       txStep: undefined as Step | undefined,
-
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,
       nativeAmount: undefined as string | undefined,
@@ -68,7 +67,9 @@ export default Vue.extend({
       if (this.isShowReview) {
         this.isShowReview = !this.isShowReview;
       } else {
-        this.$router.back();
+        this.$router.replace({
+          name: 'treasury-manage'
+        });
       }
     },
     handleTxReview(args: {
