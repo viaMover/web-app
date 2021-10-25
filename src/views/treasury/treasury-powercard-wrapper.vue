@@ -26,7 +26,7 @@ export default Vue.extend({
       powercardState: 'powercardState'
     }),
     hasActivePowercard(): boolean {
-      return !(
+      return (
         (greaterThan(this.powercardBalance, '0') &&
           this.powercardState === 'Staked') ||
         this.powercardState === 'NotStakedCooldown'
