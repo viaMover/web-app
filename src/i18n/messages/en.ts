@@ -484,7 +484,9 @@ const messages: VueI18n.LocaleMessageObject = {
       4900: 'Oh no. Your provider is disconnected from all chains. Please refresh the page or use different provider instead',
       4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
     }
-  }
+  },
+  lblOhSnap: 'Oh, snap!',
+  txtCouldNotFindToken: 'We couldn’t find this token anywhere'
 };
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
