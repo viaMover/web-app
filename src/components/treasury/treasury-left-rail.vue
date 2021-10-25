@@ -36,6 +36,7 @@
         </template>
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
+        v-if="hasActiveTreasury"
         :description="$t('treasury.leftRail.lblDecreaseBoostDescription')"
         navigate-to="treasury-decrease"
         :title="$t('treasury.leftRail.lblDecreaseBoost')"
@@ -198,6 +199,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),
     ...mapGetters('account', {
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
     }),

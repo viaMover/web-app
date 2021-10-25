@@ -1,5 +1,5 @@
 <template>
-  <secondary-page>
+  <secondary-page hide-title>
     <div class="treasury__menu-wrapper-graph">
       <div class="treasury__menu-wrapper-balance">
         <span class="balance">{{ treasuryBalance }}</span>

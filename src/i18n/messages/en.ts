@@ -228,6 +228,7 @@ const messages: VueI18n.LocaleMessageObject = {
       'It is a piggy bank that automatically distributes Mover performance ' +
       'rewards to you, and covers your costs.',
     lblTreasuryStatements: '@:treasury.lblTreasuryPrefix Statements',
+    lblSmartTreasuryStatements: 'Smart Treasury Statements',
     lblReservedAssetsValue: 'My reserved boost value',
     lblCurrentBoost: 'My current boost',
     lblMaximumBoost: 'Maximum boost',

@@ -9,7 +9,7 @@
         />
         <custom-picture
           :alt="powercard.alt"
-          class="margin-top-80"
+          picture-class="margin-top-60"
           :sources="powercard.sources"
           :src="powercard.src"
           :webp-sources="powercard.webpSources"
@@ -18,7 +18,7 @@
           {{ $t('treasury.powercard.lblIfYouActivateCard') }}
         </p>
       </div>
-      <div class="treasury__menu-wrapper-body margin-top-20">
+      <div class="treasury__menu-wrapper-body power-card-empty-body">
         <div class="line">
           <div>
             <span class="title">{{ additionalBoost }}</span>

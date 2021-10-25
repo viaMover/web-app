@@ -1,5 +1,5 @@
 <template>
-  <secondary-page>
+  <secondary-page hide-title>
     <treasury-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('treasury.btnView.simple')"
@@ -7,7 +7,7 @@
       :in-progress-text="$t('treasury.lblInProgress')"
       :items="treasuryMonthStatsOptions"
       navigate-to-name="treasury-month-stats"
-      :title="$t('treasury.lblTreasuryStatements')"
+      :title="$t('treasury.lblSmartTreasuryStatements')"
       wrapper-class="smart-treasury__menu-wrapper-statements"
     />
   </secondary-page>
