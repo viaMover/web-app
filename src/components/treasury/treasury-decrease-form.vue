@@ -161,7 +161,8 @@ export default Vue.extend({
     ...mapGetters('account', [
       'getTokenColor',
       'moveNativePrice',
-      'slpNativePrice'
+      'slpNativePrice',
+      'treasuryBoost'
     ]),
     moveTokenInfo(): SmallTokenInfoWithIcon {
       return getMoveAssetData(this.networkInfo.network);
@@ -228,7 +229,7 @@ export default Vue.extend({
     },
     newBoost(): string {
       if (this.asset === undefined) {
-        return '0x';
+        return `${formatToDecimals(this.treasuryBoost, 1)}x`;
       }
 
       const move = getMoveAssetData(this.networkInfo.network);

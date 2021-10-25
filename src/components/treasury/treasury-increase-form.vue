@@ -162,7 +162,11 @@ export default Vue.extend({
       'treasuryBalanceMove',
       'treasuryBalanceLP'
     ]),
-    ...mapGetters('account', ['treasuryBonusNative', 'getTokenColor']),
+    ...mapGetters('account', [
+      'treasuryBonusNative',
+      'getTokenColor',
+      'treasuryBoost'
+    ]),
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
     },
@@ -215,7 +219,7 @@ export default Vue.extend({
     },
     newBoost(): string {
       if (this.asset === undefined) {
-        return '0x';
+        return `${formatToDecimals(this.treasuryBoost, 1)}x`;
       }
 
       const move = getMoveAssetData(this.networkInfo.network);
