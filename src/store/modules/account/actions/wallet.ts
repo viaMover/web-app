@@ -340,13 +340,6 @@ export default {
       throw e;
     }
 
-    try {
-      await dispatch('fetchPowercardData');
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
-
     const savingsFreshData = dispatch('fetchSavingsFreshData');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
 
@@ -366,6 +359,7 @@ export default {
       );
     }
     const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
+    const loadPowercardPromise = dispatch('fetchPowercardData');
 
     try {
       await Promise.allSettled([
@@ -375,7 +369,8 @@ export default {
         treasuryFreshData,
         nftInfoPromise,
         loadAvatarPromise,
-        nibbleShopInfoPromise
+        nibbleShopInfoPromise,
+        loadPowercardPromise
       ]);
     } catch (e) {
       Sentry.captureException(e);
