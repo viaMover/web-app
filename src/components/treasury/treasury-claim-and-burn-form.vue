@@ -24,7 +24,7 @@
         />
         <div class="coin">
           <p>
-            {{ asset ? asset.name : '' }}
+            {{ asset ? asset.name : $t('treasury.lblChooseToken') }}
             <span>
               {{ asset ? asset.symbol : '' }}
             </span>
@@ -163,7 +163,7 @@ export default Vue.extend({
     },
     claimingForStr(): string {
       if (this.asset === undefined) {
-        return '';
+        return '~ $0';
       }
       return `~ $${formatToNative(this.claimingFor)}`;
     },
@@ -237,23 +237,20 @@ export default Vue.extend({
           sameAddress(t.address, move.address)
         )?.balance ?? '0';
 
-      if (greaterThan(moveWalletBalance, '0')) {
-        return [
-          {
-            address: move.address,
-            decimals: move.decimals,
-            name: move.name,
-            symbol: move.symbol,
-            priceUSD: this.moveNativePrice,
-            logo: move.iconURL,
-            isFavorite: true,
-            isVerified: true,
-            balance: moveWalletBalance,
-            marketCap: Number.MAX_SAFE_INTEGER
-          }
-        ];
-      }
-      return [];
+      return [
+        {
+          address: move.address,
+          decimals: move.decimals,
+          name: move.name,
+          symbol: move.symbol,
+          priceUSD: this.moveNativePrice,
+          logo: move.iconURL,
+          isFavorite: true,
+          isVerified: true,
+          balance: moveWalletBalance,
+          marketCap: Number.MAX_SAFE_INTEGER
+        }
+      ];
     },
     selectorStyle(): CssProperties {
       if (this.asset === undefined) {

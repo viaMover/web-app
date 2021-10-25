@@ -405,7 +405,8 @@ const messages: VueI18n.LocaleMessageObject = {
         'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
       lblBurnError: 'Burn conditions error',
       lblBurnLimitReached: 'Burn limit reached'
-    }
+    },
+    lblChooseToken: 'Choose Token'
   },
   asset: {
     txtAlt: '{name} icon',

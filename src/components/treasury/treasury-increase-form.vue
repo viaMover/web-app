@@ -24,7 +24,7 @@
         />
         <div class="coin">
           <p>
-            {{ asset ? asset.name : '' }}
+            {{ asset ? asset.name : $t('treasury.lblChooseToken') }}
             <span>
               {{ asset ? asset.symbol : '' }}
             </span>
@@ -215,7 +215,7 @@ export default Vue.extend({
     },
     newBoost(): string {
       if (this.asset === undefined) {
-        return '';
+        return '0x';
       }
 
       const move = getMoveAssetData(this.networkInfo.network);
