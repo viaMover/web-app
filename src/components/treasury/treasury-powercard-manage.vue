@@ -138,7 +138,7 @@ export default Vue.extend({
         return Math.round((this.powercardActiveTime / MAX_ACTIVE_TIME) * 100);
       } else if (this.powercardCooldownTime > 0) {
         return Math.round(
-          (MAX_COOLDOWN_TIME / this.powercardCooldownTime) * 100
+          (this.powercardCooldownTime / MAX_COOLDOWN_TIME) * 100
         );
       } else {
         return 0;
