@@ -22,7 +22,7 @@
         />
         <div class="coin">
           <p>
-            {{ asset ? asset.name : '' }}
+            {{ asset ? asset.name : $t('savings.lblChooseToken') }}
             <span>
               {{ asset ? asset.symbol : '' }}
             </span>
@@ -34,7 +34,7 @@
           type="button"
           @click.stop.prevent="handleOpenSelectModal"
         >
-          <arrow-down-icon stroke="#fff" />
+          <arrow-down-icon :stroke="asset ? '#fff' : '#000'" />
         </button>
       </div>
       <div class="available">
@@ -320,16 +320,17 @@ export default Vue.extend({
       return `${formatToNative(boughtUSDC)} USDC`;
     },
     selectorStyle(): CssProperties {
-      if (this.asset?.color === undefined) {
+      if (this.asset === undefined) {
         return {
-          backgroundColor: '#687EE3',
-          boxShadow: '0 0 8px #687EE3'
+          backgroundColor: '#f1f1f1',
+          boxShadow: '0 0 8px rgb(0, 0, 0, 0.5)'
         };
       }
 
+      const assetColor = this.getTokenColor(this.asset.address);
       return {
-        backgroundColor: this.asset.color,
-        boxShadow: `0 0 8px ${this.asset.color}`
+        backgroundColor: assetColor,
+        boxShadow: `0 0 8px ${assetColor}`
       };
     }
   },
