@@ -49,6 +49,7 @@ export default {
     movePriceInWeth: undefined,
     usdcPriceInWeth: undefined,
     slpPriceInWeth: undefined,
+    eursPriceInWeth: undefined,
 
     //explorers
     explorer: undefined,

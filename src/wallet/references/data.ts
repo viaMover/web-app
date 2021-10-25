@@ -40,7 +40,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x0B7438606a13f4e91305b36B7596dDA4679689e3',
     NFT_DICE: '0xB75acecE1F77fe7059cFff8eF76F73b7E999EDD2',
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
-    MASTER_CHEF_POOL_INDEX: 257
+    MASTER_CHEF_POOL_INDEX: 257,
+    EURS_TOKEN_ADDRESS: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x7cc34ea5d7103d01b76e0dccf1ddad9f376801e9'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -62,7 +64,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -84,7 +88,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -107,7 +113,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -129,7 +137,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x1',
@@ -151,7 +161,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x1',
@@ -173,7 +185,9 @@ const ADDRESSES = {
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   }
 };
 
@@ -218,10 +232,15 @@ const USDC_TOKEN_ADDRESS = (network: Network): string => {
     ? ADDRESSES[network].USDC_TOKEN_ADDRESS
     : '0x1';
 };
+
 const WETH_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].WETH_TOKEN_ADDRESS
     ? ADDRESSES[network].WETH_TOKEN_ADDRESS
     : '0x1';
+};
+
+const EURS_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].EURS_TOKEN_ADDRESS ?? '0x1';
 };
 
 const MOVE_ADDRESS = (network: Network): string => {
@@ -276,6 +295,10 @@ const UNISWAP_USDC_WETH_POOL_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].UNSIWAP_USDC_WETH_POOL_ADDRESS
     ? ADDRESSES[network].UNSIWAP_USDC_WETH_POOL_ADDRESS
     : '0x1';
+};
+
+const UNISWAP_EURS_WETH_POOL_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].UNISWAP_EURS_WETH_POOL_ADDRESS ?? '0x1';
 };
 
 const SUSHISWAP_MOVE_WETH_POOL_ADDRESS = (network: Network): string => {
@@ -409,6 +432,16 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: EURS_TOKEN_ADDRESS(network),
+    decimals: 2,
+    symbol: 'EURS',
+    iconURL:
+      'https://token-icons.s3.amazonaws.com/0xdb25f211ab05b1c97d595516f45794528a807ad8.png'
+  };
+};
+
 const formatSwapSources = (swapSource: string): string => {
   return SWAP_SOURCES_ICON[swapSource]
     ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
@@ -423,6 +456,7 @@ export {
   getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
+  getEURSAssetData,
   SUSHI_ADDRESS,
   MOBO_ADDRESS,
   HOLY_PASSAGE_ADDRESS,
@@ -457,5 +491,7 @@ export {
   SUSHI_UNI_PAIR_V2_ABI,
   MASTER_CHEF_ADDRESS,
   MASTER_CHEF_POOL_INDEX,
-  MASTER_CHEF_ABI
+  MASTER_CHEF_ABI,
+  EURS_TOKEN_ADDRESS,
+  UNISWAP_EURS_WETH_POOL_ADDRESS
 };
