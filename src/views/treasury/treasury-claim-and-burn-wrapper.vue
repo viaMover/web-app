@@ -71,7 +71,9 @@ export default Vue.extend({
       if (this.isShowReview) {
         this.isShowReview = !this.isShowReview;
       } else {
-        this.$router.back();
+        this.$router.replace({
+          name: 'treasury-manage'
+        });
       }
     },
     handleTxReview(args: {

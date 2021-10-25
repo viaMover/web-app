@@ -14,6 +14,9 @@ import { TransactionsParams } from '@/wallet/types';
 
 import { PowercardState, PowerCardTimings } from './types';
 
+export const MAX_ACTIVE_TIME = 2592000; // seconds
+export const MAX_COOLDOWN_TIME = 5184000; // seconds
+
 export const powercardBalance = async (
   accountAddress: string,
   network: Network,

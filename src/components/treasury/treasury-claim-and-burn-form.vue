@@ -105,10 +105,10 @@ import {
   multiply,
   notZero
 } from '@/utils/bigmath';
-import { formatToDecimals } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
-import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import { getMoveAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
   SmallTokenInfoWithIcon,
@@ -165,9 +165,7 @@ export default Vue.extend({
       if (this.asset === undefined) {
         return '';
       }
-      return `${formatToDecimals(this.claimingFor, 6)} ${
-        getUSDCAssetData(this.networkInfo.network).symbol
-      }`;
+      return `~ $${formatToNative(this.claimingFor)}`;
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
