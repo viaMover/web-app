@@ -36,7 +36,7 @@
           type="button"
           @click.stop.prevent="handleOpenSelectModal"
         >
-          <arrow-down-icon stroke="#fff" />
+          <arrow-down-icon :stroke="asset ? '#fff' : '#000'" />
         </button>
       </div>
       <div class="available">
