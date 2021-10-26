@@ -21,11 +21,12 @@
         </div>
       </div>
       <div class="item">
-        <token-image
-          :address="token.address"
-          :src="token.logo"
-          :symbol="token.symbol"
-          wrapper-class="item-coin"
+        <custom-picture
+          :alt="usd.alt"
+          class="shadow"
+          :sources="usd.sources"
+          :src="usd.src"
+          :webp-sources="usd.webpSources"
         />
       </div>
     </div>
@@ -88,12 +89,10 @@ import { TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'TreasuryClaimAndBurnReview',
   components: {
-    TokenImage,
     SecondaryPageSimpleTitle,
     CustomPicture
   },
@@ -139,6 +138,18 @@ export default Vue.extend({
             src: require('@/assets/images/SmartTreasury@2x.webp')
           }
         ]
+      } as PictureDescriptor,
+      usd: {
+        alt: this.$t('treasury.claimAndBurn.lblUSDcTokenAlt'),
+        src: require('@/assets/images/USDC.png'),
+        sources: [
+          { src: require('@/assets/images/USDC.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/USDC@2x.png')
+          }
+        ],
+        webpSources: []
       } as PictureDescriptor
     };
   },

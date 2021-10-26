@@ -20,19 +20,19 @@
       </div>
       <div class="treasury__menu-wrapper-body power-card-empty-body">
         <div class="line">
-          <div>
+          <div class="item">
             <span class="title">{{ additionalBoost }}</span>
             <p class="description black">
               {{ $t('treasury.powercard.lblAdditionalBoost') }}
             </p>
           </div>
-          <div>
+          <div class="item">
             <span class="title">{{ activeTime }}</span>
             <p class="description black">
               {{ $t('treasury.powercard.lblActive') }}
             </p>
           </div>
-          <div>
+          <div class="item">
             <span class="title">{{ cooldownTime }}</span>
             <p class="description black">
               {{ $t('treasury.powercard.lblCooldown') }}
