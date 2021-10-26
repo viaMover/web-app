@@ -44,10 +44,10 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { StepData } from '@/components/controls/form-loader/types';
+import { StepData } from './types';
 
 export default Vue.extend({
-  name: 'SavingsFormLoader',
+  name: 'FullPageFormLoader',
   props: {
     step: {
       type: String,

@@ -112,7 +112,7 @@ import {
   notZero,
   sub
 } from '@/utils/bigmath';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import {
@@ -167,12 +167,9 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
-      'ethPrice',
-      'savingsAPY',
-      'usdcPriceInWeth',
-      'ethPrice',
       'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'treasuryBalanceLP',
+      'powercardState'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -246,7 +243,8 @@ export default Vue.extend({
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
-        walletBalanceLP
+        walletBalanceLP,
+        this.powercardState ?? 'NotStaked'
       );
       return `${formatToDecimals(futureBoost, 1)}x`;
     },
@@ -388,10 +386,10 @@ export default Vue.extend({
           this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
-          this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {
@@ -420,7 +418,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -450,7 +448,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -484,7 +482,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate treasury deposit");
         return;
       }

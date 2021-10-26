@@ -37,15 +37,8 @@ export default {
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;
   },
-  isWalletReady(state, getters, rootState): boolean {
-    return (
-      getters.isWalletConnected &&
-      state.provider !== undefined &&
-      !state.isDetecting &&
-      !state.isSavingsInfoLoading &&
-      !state.isTreasuryInfoLoading &&
-      !rootState.nft?.isLoading
-    );
+  isWalletReady(state): boolean {
+    return !state.isWalletLoading;
   },
   entireBalance(state, getters): string {
     let balance = '0';

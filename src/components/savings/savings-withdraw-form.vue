@@ -2,16 +2,16 @@
   <div>
     <div>
       <secondary-page-simple-title
-        class="savings_secondary_page-title"
+        class="page-title max-width"
         :description="$t('savings.withdraw.txtWithdrawDescription')"
         :title="$t('savings.withdraw.lblWithdrawFromSavings')"
       />
-      <div class="savings_secondary_page-token-info">
+      <div class="secondary_page-token-info">
         <span>{{ estimatedAnnualEarning }}</span>
         <p>{{ $t('savings.withdraw.txtIfYouKeepSavings') }}</p>
       </div>
     </div>
-    <div class="savings_secondary_page-body">
+    <div class="secondary_page-body">
       <h2>{{ $t('savings.withdraw.lblWhatDoWeWithdraw') }}</h2>
       <div class="info">
         <token-image
@@ -62,7 +62,10 @@
           @button-click="handleTxReview"
         >
           <div v-if="isProcessing" class="loader-icon">
-            <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
           </div>
           <template v-else>
             {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
@@ -85,8 +88,7 @@ import {
   isZero,
   lessThan,
   multiply,
-  notZero,
-  sub
+  notZero
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
@@ -208,7 +210,6 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
         Sentry.captureException("can't estimate savings deposit");
         throw new Error(`Can't estimate action ${resp.error}`);
       }
@@ -251,7 +252,7 @@ export default Vue.extend({
         return;
       }
 
-      let subsidizedEnabled = false;
+      let isSubsidizedEnabled = false;
       let subsidizedTxPrice = undefined;
       let actionGasLimit = '0';
       let approveGasLimit = '0';
@@ -269,11 +270,12 @@ export default Vue.extend({
         console.info('Savings withdraw approve gaslimit:', approveGasLimit);
 
         if (!isZero(actionGasLimit)) {
-          subsidizedEnabled = this.checkSubsidizedAvailability(actionGasLimit);
+          isSubsidizedEnabled =
+            this.checkSubsidizedAvailability(actionGasLimit);
           subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
         }
       } catch (err) {
-        subsidizedEnabled = false;
+        isSubsidizedEnabled = false;
         console.error(err);
         Sentry.captureException("can't estimate savings deposit for subs");
       } finally {
@@ -283,7 +285,7 @@ export default Vue.extend({
       this.$emit('tx-review', {
         token: this.token,
         amount: this.amountToWithdraw,
-        subsidizedEnabled: subsidizedEnabled,
+        isSubsidizedEnabled: isSubsidizedEnabled,
         estimatedGasCost: subsidizedTxPrice,
         actionGasLimit: actionGasLimit
       });

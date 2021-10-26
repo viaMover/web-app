@@ -1,7 +1,7 @@
 <template>
   <div class="review__wrapper">
     <secondary-page-simple-title
-      class="savings_secondary_page-title"
+      class="page-title max-width"
       :title="$t('savings.deposit.lblReviewYourDeposit')"
     />
     <div class="arrow">
@@ -44,7 +44,7 @@
         </span>
       </div>
     </div>
-    <div v-if="subsidizedEnabled">
+    <div v-if="isSubsidizedEnabled">
       <div class="switch">
         <p>{{ $t('savings.deposit.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
@@ -78,10 +78,8 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
-import { sameAddress } from '@/utils/address';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
@@ -107,7 +105,7 @@ export default Vue.extend({
       type: String,
       required: true
     },
-    subsidizedEnabled: {
+    isSubsidizedEnabled: {
       type: Boolean,
       default: false
     },
@@ -118,7 +116,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      isSmartTreasury: true as boolean,
+      isSmartTreasury: true,
       savings: {
         alt: '',
         src: require('@/assets/images/Savings@1x.png'),
@@ -167,7 +165,7 @@ export default Vue.extend({
     formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
-        isSmartTreasury: this.isSmartTreasury && this.subsidizedEnabled
+        isSmartTreasury: this.isSmartTreasury && this.isSubsidizedEnabled
       });
     }
   }

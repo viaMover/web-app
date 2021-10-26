@@ -150,7 +150,8 @@ export default Vue.extend({
       'usdcPriceInWeth',
       'ethPrice',
       'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'treasuryBalanceLP',
+      'powercardState'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -234,7 +235,8 @@ export default Vue.extend({
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
-        walletBalanceLP
+        walletBalanceLP,
+        this.powercardState ?? 'NotStaked'
       );
 
       return `${formatToDecimals(futureBoost, 1)}x`;
@@ -385,10 +387,10 @@ export default Vue.extend({
           this.provider.web3,
           this.currentAddress,
           this.actionGasLimit,
-          this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {
@@ -429,7 +431,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.output.asset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -460,7 +462,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.output.asset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -483,8 +485,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate treasury withdraw");
         return;
       }

@@ -151,7 +151,8 @@ export default {
           isQuorumReached,
           isSucceeded: isQuorumReached && hasOutweight,
           isVoted,
-          hasEnoughVotingPowerToVote
+          hasEnoughVotingPowerToVote,
+          votingPowerSelf
         }
       };
     }, {});
@@ -236,5 +237,10 @@ export default {
       state.votingPowerSelf,
       state.powerNeededToBecomeAProposer
     );
+  },
+  votingPowerSelfOnProposal(state, getters): (id: string) => string {
+    const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
+
+    return (id: string) => source[id]?.votingPowerSelf ?? '0';
   }
 } as GetterTree<GovernanceStoreState, RootStoreState>;

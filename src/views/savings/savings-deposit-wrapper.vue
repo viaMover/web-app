@@ -8,20 +8,19 @@
     <savings-deposit-review
       v-else-if="txStep === undefined"
       :amount="amount"
-      :amount-type="selectedDepositIn"
       :estimated-gas-cost="estimatedGasCost"
+      :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="nativeAmount"
-      :subsidized-enabled="subsidizedEnabled"
       :token="token"
       @tx-start="handleTxStart"
     />
-    <savings-form-loader v-else :step="txStep" />
+    <full-page-form-loader v-else :step="txStep" />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
@@ -32,31 +31,27 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import { Step } from '@/components/controls/form-loader/types';
+import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
 import { SecondaryPage } from '@/components/layout/secondary-page';
-import {
-  SavingsDepositForm,
-  SavingsDepositReview,
-  SavingsFormLoader
-} from '@/components/savings';
+import { SavingsDepositForm, SavingsDepositReview } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsDepositWrapper',
   components: {
-    SavingsFormLoader,
+    FullPageFormLoader,
     SecondaryPage,
     SavingsDepositReview,
     SavingsDepositForm
   },
   data() {
     return {
-      isShowReview: false as boolean,
+      isShowReview: false,
       txStep: undefined as Step | undefined,
 
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,
       nativeAmount: undefined as string | undefined,
-      selectedDepositIn: undefined as string | undefined,
-      subsidizedEnabled: false as boolean,
+      isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       transferData: undefined as TransferData | undefined,
       actionGasLimit: undefined as string | undefined,
@@ -80,6 +75,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      updateWalletAfterTxn: 'updateWalletAfterTxn'
+    }),
     handleBack(): void {
       if (this.isShowReview) {
         this.isShowReview = !this.isShowReview;
@@ -91,8 +89,7 @@ export default Vue.extend({
       token: TokenWithBalance;
       amount: string;
       nativeAmount: string;
-      selectedDepositIn: string;
-      subsidizedEnabled: boolean;
+      isSubsidizedEnabled: boolean;
       estimatedGasCost: string;
       actionGasLimit: string;
       approveGasLimit: string;
@@ -101,9 +98,8 @@ export default Vue.extend({
       this.token = args.token;
       this.amount = args.amount;
       this.nativeAmount = args.nativeAmount;
-      this.selectedDepositIn = args.selectedDepositIn;
       this.transferData = args.transferData;
-      this.subsidizedEnabled = args.subsidizedEnabled;
+      this.isSubsidizedEnabled = args.isSubsidizedEnabled;
       this.estimatedGasCost = args.estimatedGasCost;
       this.actionGasLimit = args.actionGasLimit;
       this.approveGasLimit = args.approveGasLimit;
@@ -163,6 +159,7 @@ export default Vue.extend({
           this.approveGasLimit
         );
         this.txStep = 'Success';
+        this.updateWalletAfterTxn();
       } catch (err) {
         this.txStep = 'Reverted';
         console.log('Savings deposit swap reverted');

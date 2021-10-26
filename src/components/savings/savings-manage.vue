@@ -1,5 +1,5 @@
 <template>
-  <secondary-page>
+  <secondary-page hide-title>
     <savings-yearly-chart-wrapper />
     <statement-nav-list
       :button-text="$t('savings.btnView.simple')"
