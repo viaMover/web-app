@@ -2,7 +2,7 @@
   <div class="">
     <div class="smart-treasury__menu-wrapper-balance">
       <span class="balance">{{ bonusBalance }}</span>
-      <p>{{ $t('treasury.lblTreasuryBonusBalance') }}</p>
+      <p>{{ $t('treasury.lblTreasuryBalance') }}</p>
     </div>
     <div class="smart-treasury__menu-wrapper-graph">
       <bar-chart

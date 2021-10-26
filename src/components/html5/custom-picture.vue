@@ -1,7 +1,13 @@
 <template>
   <picture :style="containerStyle">
     <source v-if="webpSrcset !== ''" :srcset="webpSrcset" type="image/webp" />
-    <img :alt="alt" :src="src" :srcset="imageSrcSet" :style="pictureStyle" />
+    <img
+      :alt="alt"
+      :class="pictureClass"
+      :src="src"
+      :srcset="imageSrcSet"
+      :style="pictureStyle"
+    />
   </picture>
 </template>
 
@@ -39,6 +45,10 @@ export default Vue.extend({
     pictureStyle: {
       type: [String, Object] as PropType<string | Properties>,
       default: undefined
+    },
+    pictureClass: {
+      type: String,
+      default: ''
     }
   },
   computed: {

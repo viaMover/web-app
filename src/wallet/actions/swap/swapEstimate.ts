@@ -10,23 +10,16 @@ import {
 import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
+import {
+  CompoundEstimateResponse,
+  EstimateResponse
+} from '@/wallet/actions/types';
 import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { estimateApprove } from '../approve/approveEstimate';
 import { needApprove } from '../approve/needApprove';
-
-export type CompoudEstimateResponse = {
-  error: boolean;
-  approveGasLimit: string;
-  actionGasLimit: string;
-};
-
-type EstimateResponse = {
-  error: boolean;
-  gasLimit: string;
-};
 
 export const estimateSwapCompound = async (
   inputAsset: SmallToken,
@@ -36,7 +29,7 @@ export const estimateSwapCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string
-): Promise<CompoudEstimateResponse> => {
+): Promise<CompoundEstimateResponse> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
   let isApproveNeeded = true;

@@ -2,7 +2,10 @@
   <div class="general-desktop__sidebar-wrapper-info-item">
     <div class="label transaction-label" @click="onClick">
       <div v-if="isLoading" class="loader-icon">
-        <img alt="pending" src="@/assets/images/ios-spinner.svg" />
+        <img
+          :alt="$t('icon.txtPendingIconAlt')"
+          src="@/assets/images/ios-spinner.svg"
+        />
       </div>
       <token-image
         v-else

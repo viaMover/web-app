@@ -2,16 +2,16 @@
   <div>
     <div>
       <secondary-page-simple-title
-        class="savings_secondary_page-title"
+        class="page-title max-width"
         :description="$t('savings.deposit.txtDepositDescription')"
         :title="$t('savings.deposit.lblDepositInSavings')"
       />
-      <div class="savings_secondary_page-token-info">
+      <div class="secondary_page-token-info">
         <span>{{ estimatedAnnualEarning }}</span>
         <p>{{ $t('savings.deposit.txtYouCouldEarnInYear') }}</p>
       </div>
     </div>
-    <div class="savings_secondary_page-body">
+    <div class="secondary_page-body">
       <h2>{{ $t('savings.deposit.lblWhatDoWeDeposit') }}</h2>
       <div class="info">
         <token-image
@@ -22,7 +22,7 @@
         />
         <div class="coin">
           <p>
-            {{ asset ? asset.name : '' }}
+            {{ asset ? asset.name : $t('savings.lblChooseToken') }}
             <span>
               {{ asset ? asset.symbol : '' }}
             </span>
@@ -34,7 +34,7 @@
           type="button"
           @click.stop.prevent="handleOpenSelectModal"
         >
-          <arrow-down-icon stroke="#fff" />
+          <arrow-down-icon :stroke="asset ? '#fff' : '#000'" />
         </button>
       </div>
       <div class="available">
@@ -52,7 +52,7 @@
         <p>
           {{ $t('savings.deposit.lblAmountWeDepositIn') }}
           <span class="form-button" @click.capture.stop.prevent="swapTokens">
-            {{ currentInputSymbo }}
+            {{ currentInputSymbol }}
           </span>
         </p>
         <dynamic-input
@@ -60,7 +60,7 @@
           input-class="deposit__form-input eth-input"
           name="text"
           placeholder="0.00"
-          :symbol="currentInputSymbo"
+          :symbol="currentInputSymbol"
           type="text"
           :value="inputValue"
           @update-value="handleUpdateValue"
@@ -86,7 +86,10 @@
           @button-click="handleTxReview"
         >
           <div v-if="isLoading || isProcessing" class="loader-icon">
-            <img alt="pending" src="@/assets/images/ios-spinner-white.svg" />
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
           </div>
           <template v-else>
             {{ isButtonActive ? $t('savings.lblReviewTransaction') : error }}
@@ -126,14 +129,12 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import {
-  CompoudEstimateResponse,
-  estimateDepositCompound
-} from '@/wallet/actions/savings/deposit/depositEstimate';
+import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import {
   calcTransactionFastNativePrice,
   isSubsidizedAllowed
 } from '@/wallet/actions/subsidized';
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -172,14 +173,13 @@ export default Vue.extend({
       } as PictureDescriptor,
       selectedMode: 'TOKEN' as INPUT_MODE,
       asset: undefined as TokenWithBalance | undefined,
-      maxInNative: '0' as string,
       amount: '',
       nativeAmount: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       isLoading: true,
       isProcessing: false,
-      tokenSelectedByUser: false
+      isTokenSelectedByUser: false
     };
   },
   computed: {
@@ -189,7 +189,6 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
-      'ethPrice',
       'savingsAPY',
       'usdcPriceInWeth',
       'ethPrice',
@@ -217,7 +216,7 @@ export default Vue.extend({
           : this.$t('savings.txtUSDCCoinIsAStable')
       ) as string;
     },
-    currentInputSymbo(): string {
+    currentInputSymbol(): string {
       if (this.selectedMode === 'TOKEN') {
         return this.asset?.symbol ?? '';
       } else {
@@ -321,16 +320,17 @@ export default Vue.extend({
       return `${formatToNative(boughtUSDC)} USDC`;
     },
     selectorStyle(): CssProperties {
-      if (this.asset?.color === undefined) {
+      if (this.asset === undefined) {
         return {
-          backgroundColor: '#687EE3',
-          boxShadow: '0 0 8px #687EE3'
+          backgroundColor: '#f1f1f1',
+          boxShadow: '0 0 8px rgb(0, 0, 0, 0.5)'
         };
       }
 
+      const assetColor = this.getTokenColor(this.asset.address);
       return {
-        backgroundColor: this.asset.color,
-        boxShadow: `0 0 8px ${this.asset.color}`
+        backgroundColor: assetColor,
+        boxShadow: `0 0 8px ${assetColor}`
       };
     }
   },
@@ -339,7 +339,7 @@ export default Vue.extend({
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
-          if (!this.tokenSelectedByUser) {
+          if (!this.isTokenSelectedByUser) {
             const eth = newVal.find(
               (t: TokenWithBalance) => t.address === 'eth'
             );
@@ -430,7 +430,7 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         console.error(`transfer error: ${err}`);
@@ -485,7 +485,7 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken,
       transferData: TransferData | undefined
-    ): Promise<CompoudEstimateResponse> {
+    ): Promise<CompoundEstimateResponse> {
       const resp = await estimateDepositCompound(
         inputAsset,
         this.outputUSDCAsset,
@@ -496,8 +496,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate savings deposit");
         throw new Error(`Can't estimate action ${resp.error}`);
       }
@@ -508,7 +507,7 @@ export default Vue.extend({
         return;
       }
 
-      let subsidizedEnabled = false;
+      let isSubsidizedEnabled = false;
       let subsidizedTxPrice = undefined;
       let actionGasLimit = '0';
       let approveGasLimit = '0';
@@ -527,11 +526,12 @@ export default Vue.extend({
         console.info('Savings deposit approve gaslimit:', approveGasLimit);
 
         if (!isZero(actionGasLimit)) {
-          subsidizedEnabled = this.checkSubsidizedAvailability(actionGasLimit);
+          isSubsidizedEnabled =
+            this.checkSubsidizedAvailability(actionGasLimit);
           subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
         }
       } catch (err) {
-        subsidizedEnabled = false;
+        isSubsidizedEnabled = false;
         console.error(err);
         Sentry.captureException("can't estimate savings deposit for subs");
       } finally {
@@ -542,7 +542,7 @@ export default Vue.extend({
         token: this.asset,
         amount: this.amount,
         nativeAmount: this.nativeAmount,
-        subsidizedEnabled: subsidizedEnabled,
+        isSubsidizedEnabled: isSubsidizedEnabled,
         estimatedGasCost: subsidizedTxPrice,
         transferData: this.transferData,
         actionGasLimit: actionGasLimit,
@@ -583,7 +583,7 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       } else {
-        this.tokenSelectedByUser = true;
+        this.isTokenSelectedByUser = true;
         this.asset = token;
         this.transferData = undefined;
         this.transferError = undefined;
