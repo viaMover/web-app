@@ -135,10 +135,14 @@ export default Vue.extend({
     },
     powercardProgress(): number {
       if (this.powercardActiveTime > 0) {
-        return Math.round((this.powercardActiveTime / MAX_ACTIVE_TIME) * 100);
+        return Math.round(
+          ((MAX_ACTIVE_TIME - this.powercardActiveTime) / MAX_ACTIVE_TIME) * 100
+        );
       } else if (this.powercardCooldownTime > 0) {
         return Math.round(
-          (this.powercardCooldownTime / MAX_COOLDOWN_TIME) * 100
+          ((MAX_COOLDOWN_TIME - this.powercardCooldownTime) /
+            MAX_COOLDOWN_TIME) *
+            100
         );
       } else {
         return 0;
