@@ -1,9 +1,11 @@
+import { PowercardState } from '@/services/chain';
 import { add, divide, isFinite, isNaN, multiply } from '@/utils/bigmath';
 export const calcTreasuryBoost = (
   treasuryBalanceMove: string,
   treasuryBalanceLP: string,
   walletBalanceMove: string,
-  walletBalanceLP: string
+  walletBalanceLP: string,
+  powercardState: PowercardState
 ): string => {
   const tokenWeight = '1';
   const lpWeight = '2.5';
@@ -29,6 +31,10 @@ export const calcTreasuryBoost = (
   let boost = add(boostMove, boostLP);
   if (isNaN(+boost)) {
     boost = '0';
+  }
+
+  if (powercardState === 'Staked') {
+    return multiply(boost, 2);
   }
 
   return boost;

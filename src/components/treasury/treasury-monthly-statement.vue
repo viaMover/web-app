@@ -1,5 +1,5 @@
 <template>
-  <statement-list wrapper-class="smart-treasury-statements__wrapper-list">
+  <statement-list>
     <statement-list-item
       :description="$t('treasury.statement.lblBalance', { month: monthName })"
       :value="balance"

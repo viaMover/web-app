@@ -469,7 +469,7 @@ export default Vue.extend({
           this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
@@ -514,7 +514,7 @@ export default Vue.extend({
           this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
@@ -578,8 +578,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate savings deposit");
         return;
       }

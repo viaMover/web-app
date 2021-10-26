@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
 
+import { PowercardState } from '@/services/chain';
 import {
   SavingsInfo,
   SavingsReceipt,
@@ -100,6 +101,11 @@ export type AccountStoreState = {
   treasuryAPY: string | undefined;
   treasuryTotalStakedMove: string | undefined;
   treasuryTotalStakedMoveEthLP: string | undefined;
+
+  powercardBalance: string | undefined;
+  powercardState: PowercardState | undefined;
+  powercardActiveTime: number;
+  powercardCooldownTime: number;
 
   isTreasuryInfoLoading: boolean;
   treasuryInfo: TreasuryInfo | undefined;

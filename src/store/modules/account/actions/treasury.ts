@@ -3,12 +3,15 @@ import { ActionTree } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import {
+  getPowercardState,
   getTotalStakedMove,
   getTotalStakedMoveEthLP,
   getTreasuryAPY,
   getTreasuryBalance,
-  getTreasuryBonus
+  getTreasuryBonus,
+  powercardBalance
 } from '@/services/chain';
+import { getPowercardTimings } from '@/services/chain/treasury/powercard';
 import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { AccountStoreState } from '@/store/modules/account/types';
@@ -20,6 +23,42 @@ export type TreasuryGetReceiptPayload = {
 };
 
 export default {
+  async fetchPowercardData({ commit, state }): Promise<void> {
+    if (
+      state.currentAddress === undefined ||
+      state.networkInfo === undefined ||
+      state.provider === undefined
+    ) {
+      return;
+    }
+
+    const powercardBalanceData = await powercardBalance(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    commit('setPowercardBalance', powercardBalanceData);
+
+    const getPowercardStateData = await getPowercardState(
+      state.currentAddress,
+      state.networkInfo.network,
+      state.provider.web3
+    );
+
+    commit('setPowercardState', getPowercardStateData);
+
+    if (getPowercardStateData === 'Staked') {
+      const getPowercardTimingsData = await getPowercardTimings(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+
+      commit('setPowercardActiveTime', getPowercardTimingsData.activeTime);
+      commit('setPowercardCooldownTime', getPowercardTimingsData.cooldownTime);
+    }
+  },
   async fetchTreasuryFreshData({ commit, state, getters }): Promise<void> {
     if (
       state.currentAddress === undefined ||

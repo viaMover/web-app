@@ -15,10 +15,7 @@
       </div>
     </template>
 
-    <secondary-page
-      :title="$t('governance.lblGetInvolved')"
-      title-class="extra-margin"
-    >
+    <secondary-page :title="$t('governance.lblGetInvolved')">
       <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
       <governance-proposals />

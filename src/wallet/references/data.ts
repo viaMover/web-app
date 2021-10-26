@@ -11,9 +11,11 @@ import HOLY_VISOR_ABI from './abi/holy-visor.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
+import NFT_RARI_ABI from './abi/nft-rari.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
+import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 
@@ -39,6 +41,8 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x2733a766d2d79d26b2d23343db5bf38290f67f22',
     NFT_VAULTS: '0x0B7438606a13f4e91305b36B7596dDA4679689e3',
     NFT_DICE: '0xB75acecE1F77fe7059cFff8eF76F73b7E999EDD2',
+    POWERCARD: '0xd07dc4262bcdbf85190c01c996b4c06a461d2430',
+    POWERCARD_STAKER: '0xa8AFB8272434f76f9cD0Fd483F15C69AAF9a2E68',
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
     MASTER_CHEF_POOL_INDEX: 257
   },
@@ -61,6 +65,8 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0
   },
@@ -83,6 +89,8 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0
   },
@@ -106,6 +114,8 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0
   },
@@ -128,6 +138,8 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0
   },
@@ -150,6 +162,8 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0
   },
@@ -172,10 +186,14 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0
   }
 };
+
+const POWERCARD_RARI_ID = 107150;
 
 const SWAP_SOURCES_ICON = {
   '0x': '',
@@ -314,6 +332,14 @@ const NFT_VAULTS_ADDRESS = (network: Network): string => {
 
 const NFT_DICE_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].NFT_DICE ?? '0x1';
+};
+
+const POWERCARD_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].POWERCARD ?? '0x1';
+};
+
+const POWERCARD_STAKER = (network: Network): string => {
+  return ADDRESSES[network].POWERCARD_STAKER ?? '0x1';
 };
 
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
@@ -455,6 +481,11 @@ export {
   NFT_VAULTS_ABI,
   NFT_DICE_ABI,
   SUSHI_UNI_PAIR_V2_ABI,
+  NFT_RARI_ABI,
+  POWERCARD_RARI_ID,
+  POWERCARD_ADDRESS,
+  POWERCARD_STAKER,
+  POWERCARD_STAKER_ABI,
   MASTER_CHEF_ADDRESS,
   MASTER_CHEF_POOL_INDEX,
   MASTER_CHEF_ABI

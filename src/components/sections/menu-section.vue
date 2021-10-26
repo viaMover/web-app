@@ -56,8 +56,8 @@
         />
         <menu-list-icon-item
           :icon="$t('menu.lblIncreaseBoostEmoji')"
-          :modal-id="ModalType.TreasuryIncreaseBoost"
           :text="$t('menu.lblIncreaseBoost')"
+          @button-click="openDepositInTreasury"
         />
         <menu-list-icon-item
           v-if="isFeatureEnabled('isBondsEnabled')"
@@ -119,6 +119,11 @@ export default Vue.extend({
     async openDepositInSavings(): Promise<void> {
       await this.$router.push({
         name: 'savings-deposit'
+      });
+    },
+    async openDepositInTreasury(): Promise<void> {
+      await this.$router.push({
+        name: 'treasury-increase'
       });
     }
   }

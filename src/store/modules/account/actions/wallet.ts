@@ -359,6 +359,7 @@ export default {
       );
     }
     const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
+    const loadPowercardPromise = dispatch('fetchPowercardData');
 
     try {
       await Promise.allSettled([
@@ -368,7 +369,8 @@ export default {
         treasuryFreshData,
         nftInfoPromise,
         loadAvatarPromise,
-        nibbleShopInfoPromise
+        nibbleShopInfoPromise,
+        loadPowercardPromise
       ]);
     } catch (e) {
       Sentry.captureException(e);
