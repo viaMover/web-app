@@ -62,6 +62,7 @@ export type AccountStoreState = {
   tokenInfoMap: Record<string, TokenInfo> | undefined;
   provider: ProviderData | undefined;
   isDetecting: boolean;
+  isWalletLoading: boolean;
   refreshError: undefined | string;
 
   nativeCurrency: 'usd';

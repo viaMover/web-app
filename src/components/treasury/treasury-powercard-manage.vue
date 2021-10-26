@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
@@ -66,7 +66,6 @@ import {
   MAX_ACTIVE_TIME,
   MAX_COOLDOWN_TIME
 } from '@/services/chain/treasury/powercard';
-import { greaterThan } from '@/utils/bigmath';
 import { unstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstake';
 import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstakeEstimate';
 
@@ -121,13 +120,10 @@ export default Vue.extend({
       powercardCooldownTime: 'powercardCooldownTime'
     }),
     unstakeAvailable(): boolean {
-      return (
-        greaterThan(this.powercardBalance, '0') &&
-        this.powercardState === 'NotStakedCooldown'
-      );
+      return this.powercardState === 'NotStakedCooldown';
     },
     status(): string {
-      if (this.powercardState === 'Stacked') {
+      if (this.powercardState === 'Staked') {
         return 'Active';
       } else {
         return 'Cooldown';
@@ -160,6 +156,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      updateWalletAfterTxn: 'updateWalletAfterTxn'
+    }),
     handleBack(): void {
       this.$router.replace({
         name: 'treasury-manage'
@@ -191,6 +190,7 @@ export default Vue.extend({
           }
         );
         this.txStep = 'Success';
+        this.updateWalletAfterTxn();
       } catch (err) {
         this.txStep = 'Reverted';
         Sentry.captureException(err);

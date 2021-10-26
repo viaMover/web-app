@@ -7,8 +7,6 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import { greaterThan } from '@/utils/bigmath';
-
 import {
   TreasuryPowercardEmpty,
   TreasuryPowercardManage
@@ -27,8 +25,7 @@ export default Vue.extend({
     }),
     hasActivePowercard(): boolean {
       return (
-        (greaterThan(this.powercardBalance, '0') &&
-          this.powercardState === 'Staked') ||
+        this.powercardState === 'Staked' ||
         this.powercardState === 'NotStakedCooldown'
       );
     }

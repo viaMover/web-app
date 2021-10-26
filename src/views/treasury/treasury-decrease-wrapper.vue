@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
@@ -63,6 +63,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      updateWalletAfterTxn: 'updateWalletAfterTxn'
+    }),
     handleBack(): void {
       if (this.isShowReview) {
         this.isShowReview = !this.isShowReview;
@@ -132,6 +135,7 @@ export default Vue.extend({
           }
         );
         this.txStep = 'Success';
+        this.updateWalletAfterTxn();
       } catch (err) {
         this.txStep = 'Reverted';
         console.log('Treasury deposit txn reverted');
