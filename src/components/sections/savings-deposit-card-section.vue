@@ -16,8 +16,6 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { Modal as ModalType } from '@/store/modules/modals/types';
-
 import { Card } from '@/components/controls';
 import { PictureDescriptor } from '@/components/html5';
 

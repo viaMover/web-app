@@ -1,5 +1,6 @@
 import { MutationTree } from 'vuex';
 
+import { PowercardState } from '@/services/chain';
 import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
 
 import { AccountStoreState } from '../types';
@@ -40,5 +41,17 @@ export default {
   },
   setTreasuryReceipt(state, receipt: TreasuryReceipt): void {
     state.treasuryReceipt = receipt;
+  },
+  setPowercardBalance(state, balance: string): void {
+    state.powercardBalance = balance;
+  },
+  setPowercardState(state, powercardState: PowercardState): void {
+    state.powercardState = powercardState;
+  },
+  setPowercardActiveTime(state, activeTime: number): void {
+    state.powercardActiveTime = activeTime;
+  },
+  setPowercardCooldownTime(state, cooldownTime: number): void {
+    state.powercardCooldownTime = cooldownTime;
   }
 } as MutationTree<AccountStoreState>;

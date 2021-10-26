@@ -29,6 +29,7 @@
         <search-modal-token-list
           v-if="forceTokenArray.length > 0"
           :items="forcedTokens"
+          show-balances
           @select="handleSelect"
         />
         <template v-else>
@@ -52,8 +53,8 @@
       </template>
       <div v-else class="no-tokens">
         <span class="icon">👻</span>
-        <h4>Oh, snap!</h4>
-        <p>We couldn’t find this token anywhere</p>
+        <h4>{{ $t('lblOhSnap') }}</h4>
+        <p>{{ $t('txtCouldNotFindToken') }}</p>
       </div>
     </div>
   </modal>

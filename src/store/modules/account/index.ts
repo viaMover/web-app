@@ -86,6 +86,11 @@ export default {
     treasuryTotalStakedMove: undefined,
     treasuryTotalStakedMoveEthLP: undefined,
 
+    powercardBalance: undefined,
+    powercardState: undefined,
+    powercardActiveTime: 0,
+    powercardCooldownTime: 0,
+
     isTreasuryInfoLoading: false,
     treasuryInfo: undefined,
     treasuryInfoError: undefined,

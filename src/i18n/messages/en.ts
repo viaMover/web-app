@@ -35,6 +35,8 @@ const messages: VueI18n.LocaleMessageObject = {
       'Or use another compatible mobile wallet with WalletConnect.',
     lblChooseProvider: 'Choose from Metamask and other popular wallets'
   },
+  estimationError: 'Estimation error',
+  exchangeError: 'Exchange error',
   menu: {
     lblSwapTokenEmoji: '🔄',
     lblSwapToken: 'Swap Tokens',
@@ -206,19 +208,32 @@ const messages: VueI18n.LocaleMessageObject = {
     icon: '🐷',
     lblTreasuryHeader: '{amount} @:treasury.lblTreasuryBonuses',
     lblSmartTreasury: 'Smart Treasury',
+    lblMySmartTreasury: 'My Smart Treasury',
     lblNothingInTreasury: 'Nothing in @:treasury.lblTreasury',
     txtNothingInTreasury: 'Looks like you don’t have Treasury Boost, yet',
     lblTreasuryEarnedToday: '@:treasury.lblTreasury brought you {amount} today',
     lblTreasuryBonuses: 'Treasury Bonuses',
     lblTreasuryBonusBalance: '@:treasury.lblSmartTreasury Bonus Balance',
+    lblTreasuryBalance: '@:treasury.lblSmartTreasury Balance',
     lblTreasury: 'Treasury',
+    lblRemainingDays: '{days} days',
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',
-    lblTreasuryOverview: '@:treasury.lblTreasuryPrefix Overview',
+    lblIfYouReserveMoveInST:
+      'If you reserve MOVE in Smart Treasury now, you are getting',
+    txtTreasuryEmptyDescription:
+      'Movers save on gas every year with the rewards from Treasury',
+    lblTreasuryOverview: '@:treasury.lblSmartTreasury Overview',
+    txtTreasuryOverviewDescription:
+      'It is a piggy bank that automatically distributes Mover performance ' +
+      'rewards to you, and covers your costs.',
     lblTreasuryStatements: '@:treasury.lblTreasuryPrefix Statements',
-    lblReservedAssetsValue: 'Reserved assets value',
-    lblCurrentBoost: 'Current boost',
+    lblSmartTreasuryStatements: 'Smart Treasury Statements',
+    lblReservedAssetsValue: 'My reserved boost value',
+    lblCurrentBoost: 'My current boost',
     lblMaximumBoost: 'Maximum boost',
+    lblStartBoosting: 'Start boosting',
+    lblGasCostCoverage: 'Gas cost coverage',
     lblSmartTreasurySize: 'Smart Treasury Size',
     lblTreasuryStats: '@:treasury.lblTreasuryPrefix Stats',
     lblEarnedToday: 'Earned today',
@@ -227,7 +242,21 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSpentToday: 'Spent today',
     lblSpentThisMonth: 'Spent this month',
     lblSpentInTotal: 'Spent in total',
-    lblReservedAssets: 'Reserved Assets',
+    lblReservedAssets: 'Reserved assets',
+    lblCurrentCostCoverage: 'up to 100%',
+    leftRail: {
+      lblManageSmartTreasury: 'Manage Smart Treasury',
+      lblIncreaseBoost: 'Increase Boost',
+      lblIncreaseBoostDescription: 'Increase your Treasury rewards',
+      lblDecreaseBoost: 'Decrease Boost',
+      lblDecreaseBoostDescription: 'Remove assets from Treasury',
+      lblClaimAndBurn: 'Claim & Burn',
+      lblClaimAndBurnDescription: 'Burn MOVE and claim USDC',
+      lblPowerCard: 'Powercard',
+      lblPowerCardDescription: 'NFT with benefits',
+      lblGlobalAnalytics: 'Global analytics',
+      lblGlobalAnalyticsDescription: 'All information about Treasury'
+    },
     btnDeposit: {
       simple: 'Increase Boost',
       emoji: '📈 @:treasury.btnDeposit.simple'
@@ -249,6 +278,22 @@ const messages: VueI18n.LocaleMessageObject = {
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
       'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
+    lblReviewTransaction: 'Review transaction',
+    powercard: {
+      lblThePowercard: 'The Powercard',
+      txtThePowercardPageDescription:
+        'The Powercard allows it’s owner to temporary increase the boost ' +
+        'in the treasury. Think of it as a superpower perk. It activates ' +
+        'extra double boost for 30 days, and then it cools down for 60 days.',
+      lblAdditionalBoost: 'Additional boost',
+      lblActive: 'Active',
+      lblCooldown: 'Cooldown',
+      lblPowercardStatus: 'Powercard Status',
+      lblRemainingTime: 'Remaining time',
+      btnActivateThePowercard: 'Activate the Powercard',
+      btnRemoveThePowercard: 'Remove the Powercard',
+      lblIfYouActivateCard: 'If you activate the Powercard now, you are getting'
+    },
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -262,6 +307,11 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     increaseBoost: {
       lblIncreaseBoost: 'Increase boost',
+      txtYouApproximateBoost: 'Your approximate boost in the Smart Treasury.',
+      txtIncreaseBoostPageDescription:
+        'The larger your share of the Smart Treasury is, the more rewards ' +
+        'you can get. To increase your share, use increase boost. Reserve ' +
+        'MOVE or MOVE-ETH LP tokens to increase your boost.',
       txtIncreaseBoostDescription: {
         part1: 'There are two boost options. Reserving ',
         part2:
@@ -271,7 +321,22 @@ const messages: VueI18n.LocaleMessageObject = {
           ' MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share ' +
           'based on the total amount of LP tokens you have reserved.'
       },
+      txtYouChooseMove:
+        'You chose MOVE token. It means that the maximum boost can be 1x.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblAvailable: 'Available',
+      lblWhatDoWeReserve: 'What do we reserve',
+      lblAmountWeReserveIn: 'Amount we reserve in',
+      lblChooseAmount: 'Choose the amount to reserve',
+      lblReviewYourIncrease: 'Review your increase',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      lblAndTotalOf: 'And it will be a total of',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
       lblWhatToReserve: 'What to reserve',
+      btnIncreaseBoostInSmartTreasury: 'Increase boost in Smart Treasury',
       btnIncreaseBoost: 'Increase Boost',
       lblEstimatedBoost: 'Estimated boost',
       txtEstimatedBoost:
@@ -280,9 +345,29 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     decreaseBoost: {
       lblDecreaseBoost: 'Decrease Boost',
+      txtYouApproximateBoost: 'Your approximate boost in the Smart Treasury.',
+      txtDecreaseBoostPageDescription:
+        'Decrease the boost will return your reserved assets, but will also ' +
+        'decrease your Smart Treasury share and future rewards. ' +
+        'Earned rewards always stay with you.',
       txtDecreaseBoostDescription:
         'Decrease the boost, will return your reserved assets, ' +
         'but will also decrease your Treasury share.',
+      txtYouChooseMove:
+        'You chose to remove MOVE token. It means that your new ' +
+        'boost value will be up to 1x lower.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblAvailable: 'Available',
+      lblWhatDoWeRemove: 'What do we remove',
+      lblAmountWeRemoveIn: 'Amount we remove in',
+      lblChooseAmount: 'Choose the amount to remove',
+      lblReviewYourDecrease: 'Review your decrease',
+      lblAndTotalOf: 'And it will be a total of',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
+      btnDecreaseBoostInSmartTreasury: 'Decrease boost in Smart Treasury',
       lblWhatToReturn: 'What to return',
       btnDecreaseBoost: 'Decrease Boost',
       lblWhatAboutTheBoost: 'What about the boost?',
@@ -292,16 +377,36 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     claimAndBurn: {
       lblClaimAndBurn: 'Claim & Burn',
+      txtYouApproximateExit: 'Your approximate exit one-time payout.',
+      txtClaimAndBurnPageDescription:
+        'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
+        'portion of the Smart Treasury. You will burn your MOVE tokens, and ' +
+        'receive a one-time payout in USDC.',
       txtClaimAndBurnDescription:
         'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
         'portion of the Smart Treasury. You will burn your MOVE tokens, ' +
         'and receive four times (4x) of your treasury share in a one-time payout.',
+      txtYouChooseMove:
+        'You chose MOVE. You will burn your MOVE tokens in exchange ' +
+        'for a one-time payout from the Treasury.',
+      lblWhatDoWeBurn: 'What do we burn',
       lblWhatToBurn: 'What to burn',
+      lblAvailable: 'Available',
+      lblAmountWeBurnIn: 'Amount we burn in',
+      lblChooseAmount: 'Choose the amount to burn',
+      lblReviewYourClaim: 'Review your claim',
+      lblAndTotalOf: 'The amount you will receive',
+      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+      lblEstimatedGasCost: 'Estimated gas cost',
+      btnClaimAndBurnWithAssets: 'Claim {asset1} and burn {asset2}',
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:
-        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.'
-    }
+        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
+      lblBurnError: 'Burn conditions error',
+      lblBurnLimitReached: 'Burn limit reached'
+    },
+    lblChooseToken: 'Choose Token'
   },
   asset: {
     txtAlt: '{name} icon',
@@ -379,7 +484,9 @@ const messages: VueI18n.LocaleMessageObject = {
       4900: 'Oh no. Your provider is disconnected from all chains. Please refresh the page or use different provider instead',
       4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
     }
-  }
+  },
+  lblOhSnap: 'Oh, snap!',
+  txtCouldNotFindToken: 'We couldn’t find this token anywhere'
 };
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {

@@ -9,11 +9,11 @@
       v-else-if="txStep === undefined"
       :amount="amount"
       :estimated-gas-cost="estimatedGasCost"
-      :subsidized-enabled="subsidizedEnabled"
+      :is-subsidized-enabled="isSubsidizedEnabled"
       :token="token"
       @tx-start="handleTxStart"
     />
-    <savings-form-loader v-else :step="txStep" />
+    <full-page-form-loader v-else :step="txStep" />
   </secondary-page>
 </template>
 
@@ -26,9 +26,9 @@ import * as Sentry from '@sentry/vue';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { TokenWithBalance } from '@/wallet/types';
 
+import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
 import { SecondaryPage } from '@/components/layout/secondary-page';
 import {
-  SavingsFormLoader,
   SavingsWithdrawForm,
   SavingsWithdrawReview
 } from '@/components/savings';
@@ -36,19 +36,19 @@ import {
 export default Vue.extend({
   name: 'SavingsWithdrawWrapper',
   components: {
-    SavingsFormLoader,
+    FullPageFormLoader,
     SavingsWithdrawReview,
     SavingsWithdrawForm,
     SecondaryPage
   },
   data() {
     return {
-      isShowReview: false as boolean,
+      isShowReview: false,
       txStep: undefined as string | undefined,
 
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,
-      subsidizedEnabled: false as boolean,
+      isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined
     };
@@ -70,14 +70,14 @@ export default Vue.extend({
     handleTxReview(args: {
       token: TokenWithBalance;
       amount: string;
-      subsidizedEnabled: boolean;
+      isSubsidizedEnabled: boolean;
       estimatedGasCost: string;
       actionGasLimit: string;
     }): void {
       console.log('TX REVIEW ');
       this.token = args.token;
       this.amount = args.amount;
-      this.subsidizedEnabled = args.subsidizedEnabled;
+      this.isSubsidizedEnabled = args.isSubsidizedEnabled;
       this.estimatedGasCost = args.estimatedGasCost;
       this.actionGasLimit = args.actionGasLimit;
 
