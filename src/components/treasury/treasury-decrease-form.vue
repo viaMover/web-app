@@ -24,7 +24,7 @@
         />
         <div class="coin">
           <p>
-            {{ asset ? asset.name : '' }}
+            {{ asset ? asset.name : $t('treasury.lblChooseToken') }}
             <span>
               {{ asset ? asset.symbol : '' }}
             </span>
@@ -36,7 +36,7 @@
           type="button"
           @click.stop.prevent="handleOpenSelectModal"
         >
-          <arrow-down-icon stroke="#fff" />
+          <arrow-down-icon :stroke="asset ? '#fff' : '#000'" />
         </button>
       </div>
       <div class="available">
@@ -161,7 +161,8 @@ export default Vue.extend({
     ...mapGetters('account', [
       'getTokenColor',
       'moveNativePrice',
-      'slpNativePrice'
+      'slpNativePrice',
+      'treasuryBoost'
     ]),
     moveTokenInfo(): SmallTokenInfoWithIcon {
       return getMoveAssetData(this.networkInfo.network);
@@ -228,7 +229,7 @@ export default Vue.extend({
     },
     newBoost(): string {
       if (this.asset === undefined) {
-        return '';
+        return `${formatToDecimals(this.treasuryBoost, 1)}x`;
       }
 
       const move = getMoveAssetData(this.networkInfo.network);
