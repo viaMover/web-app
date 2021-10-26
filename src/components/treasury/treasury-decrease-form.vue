@@ -156,7 +156,8 @@ export default Vue.extend({
       'tokens',
       'nativeCurrency',
       'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'treasuryBalanceLP',
+      'powercardState'
     ]),
     ...mapGetters('account', [
       'getTokenColor',
@@ -187,6 +188,10 @@ export default Vue.extend({
         .filter((t) => greaterThan(t.balance, '0'));
     },
     description(): string {
+      if (this.asset === undefined) {
+        return '';
+      }
+
       return (
         sameAddress(this.asset?.address, this.moveTokenInfo.address)
           ? this.$t('treasury.increaseBoost.txtYouChooseMove')
@@ -268,7 +273,8 @@ export default Vue.extend({
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
-        walletBalanceLP
+        walletBalanceLP,
+        this.powercardState ?? 'NotStaked'
       );
 
       return `${formatToDecimals(futureBoost, 1)}x`;

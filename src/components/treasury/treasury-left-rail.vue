@@ -51,6 +51,7 @@
         </template>
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
+        v-if="hasMoveOnBalance"
         :description="$t('treasury.leftRail.lblClaimAndBurnDescription')"
         navigate-to="treasury-claim-and-burn"
         :title="$t('treasury.leftRail.lblClaimAndBurn')"
@@ -98,9 +99,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
+import { sameAddress } from '@/utils/address';
+import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { getMoveAssetData } from '@/wallet/references/data';
+import { Token } from '@/wallet/types';
 
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
@@ -199,10 +204,21 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('account', ['networkInfo', 'tokens']),
     ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),
     ...mapGetters('account', {
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
     }),
+    hasMoveOnBalance(): boolean {
+      const walletBalanceMove =
+        this.tokens.find((t: Token) =>
+          sameAddress(
+            t.address,
+            getMoveAssetData(this.networkInfo.network).address
+          )
+        )?.balance ?? '0';
+      return greaterThan(walletBalanceMove, '0');
+    },
     balance(): string {
       return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
     }

@@ -160,7 +160,8 @@ export default Vue.extend({
       'ethPrice',
       'nativeCurrency',
       'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'treasuryBalanceLP',
+      'powercardState'
     ]),
     ...mapGetters('account', [
       'treasuryBonusNative',
@@ -177,6 +178,10 @@ export default Vue.extend({
       return getMoveWethLPAssetData(this.networkInfo.network);
     },
     description(): string {
+      if (this.asset === undefined) {
+        return '';
+      }
+
       return (
         sameAddress(this.asset?.address, this.moveTokenInfo.address)
           ? this.$t('treasury.increaseBoost.txtYouChooseMove')
@@ -258,7 +263,8 @@ export default Vue.extend({
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
-        walletBalanceLP
+        walletBalanceLP,
+        this.powercardState ?? 'NotStaked'
       );
       return `${formatToDecimals(futureBoost, 1)}x`;
     },

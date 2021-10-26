@@ -168,7 +168,8 @@ export default Vue.extend({
       'gasPrices',
       'tokens',
       'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'treasuryBalanceLP',
+      'powercardState'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -242,7 +243,8 @@ export default Vue.extend({
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
-        walletBalanceLP
+        walletBalanceLP,
+        this.powercardState ?? 'NotStaked'
       );
       return `${formatToDecimals(futureBoost, 1)}x`;
     },
