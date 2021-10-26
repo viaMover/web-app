@@ -192,177 +192,181 @@ export default {
     { dispatch, commit, state },
     payload: RefreshWalletPayload
   ): Promise<void> {
-    if (state.provider === undefined) {
-      console.info("can't refresh wallet due to empty provider");
-      return;
-    }
+    state.isWalletLoading = true;
 
-    console.info('getting accounts...');
-    let accounts;
-    if (payload.injected) {
-      accounts = await state.provider.web3.eth.requestAccounts();
-    } else {
-      accounts = await state.provider.web3.eth.getAccounts();
-    }
-    console.info('accounts: ', accounts);
+    try {
+      if (state.provider === undefined) {
+        console.info("can't refresh wallet due to empty provider");
+        return;
+      }
 
-    let balance = '';
-    if (accounts) {
-      balance = await state.provider.web3.eth.getBalance(accounts[0]);
-    }
-    console.info('balance of the current account:', balance);
+      console.info('getting accounts...');
+      let accounts;
+      if (payload.injected) {
+        accounts = await state.provider.web3.eth.requestAccounts();
+      } else {
+        accounts = await state.provider.web3.eth.getAccounts();
+      }
+      console.info('accounts: ', accounts);
 
-    const chainId = await state.provider.web3.eth.getChainId();
+      let balance = '';
+      if (accounts) {
+        balance = await state.provider.web3.eth.getBalance(accounts[0]);
+      }
+      console.info('balance of the current account:', balance);
 
-    commit('setAccountData', {
-      addresses: accounts,
-      balance: balance,
-      networkId: chainId
-    } as AccountData);
+      const chainId = await state.provider.web3.eth.getChainId();
 
-    if (!state.currentAddress || !state.networkInfo) {
-      console.info("can't refresh wallet due to empty address");
-      return;
-    }
-    if (!state.networkInfo) {
-      console.info("can't refresh wallet due to empty networkInfo");
-      return;
-    }
+      commit('setAccountData', {
+        addresses: accounts,
+        balance: balance,
+        networkId: chainId
+      } as AccountData);
 
-    Sentry.setContext('crypto_person', {
-      address: state.currentAddress,
-      network: state.networkInfo.network
-    });
-    Sentry.setTag('crypto_person_address', state.currentAddress);
+      if (!state.currentAddress || !state.networkInfo) {
+        console.info("can't refresh wallet due to empty address");
+        return;
+      }
+      if (!state.networkInfo) {
+        console.info("can't refresh wallet due to empty networkInfo");
+        return;
+      }
 
-    if (payload.init) {
-      bootIntercomSession(state.currentAddress, {
+      Sentry.setContext('crypto_person', {
+        address: state.currentAddress,
         network: state.networkInfo.network
       });
+      Sentry.setTag('crypto_person_address', state.currentAddress);
 
-      console.info('getting all tokens...');
-      const allTokens = getAllTokens(state.networkInfo.network);
-      commit('setAllTokens', allTokens);
-    }
-
-    console.info('Updating wallet tokens from Etherscan...');
-    if (state.networkInfo.network === Network.mainnet) {
       if (payload.init) {
-        console.log('Starting Offchain Explorer...');
-        initOffchainExplorer(state.networkInfo.network);
-        console.log('Starting Zerion...');
-        const explorer = InitExplorer(
-          state.currentAddress,
-          'usd',
-          state.networkInfo.network,
-          (txns: Array<Transaction>) => {
-            commit('setWalletTransactions', txns);
-          },
-          (txns: Array<Transaction>) => {
-            commit('updateWalletTransactions', txns);
-          },
-          (txnsHashes: Array<string>) => {
-            commit('removeWalletTransaction', txnsHashes);
-          },
-          (tokens: Array<TokenWithBalance>) => {
-            commit('setWalletTokens', tokens);
-          },
-          (tokens: Array<TokenWithBalance>) => {
-            commit('updateWalletTokens', tokens);
-          },
-          (tokens: Array<string>) => {
-            commit('removeWalletTokens', tokens);
-          },
-          (chartData: Record<string, [number, number][]>) => {
-            commit('setChartData', chartData);
-          }
-        );
-        commit('setExplorer', explorer);
+        bootIntercomSession(state.currentAddress, {
+          network: state.networkInfo.network
+        });
+
+        console.info('getting all tokens...');
+        const allTokens = getAllTokens(state.networkInfo.network);
+        commit('setAllTokens', allTokens);
       }
-    } else {
-      console.info('Not mainnet - should use balancer');
-      const tokensList = getTestnetAssets(state.networkInfo.network);
-      console.info('tokensList: ', tokensList);
-      const tokensWithAmount = await getWalletTokens(
-        tokensList,
-        state.currentAddress,
-        state.provider.web3,
-        state.networkInfo.network
-      );
-      console.info('tokensWithAmount: ', tokensWithAmount);
-      commit('setWalletTokens', tokensWithAmount);
-    }
 
-    console.info('refresh eth price...');
-    // TODO: works only for USD
-    try {
-      const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
-      commit('setEthPrice', ethPriceInUSD);
-    } catch (e) {
-      console.error("Can't get ETH price, stop loading data");
-      Sentry.captureException(e);
-      return;
-    }
+      console.info('Updating wallet tokens from Etherscan...');
+      if (state.networkInfo.network === Network.mainnet) {
+        if (payload.init) {
+          console.log('Starting Offchain Explorer...');
+          initOffchainExplorer(state.networkInfo.network);
+          console.log('Starting Zerion...');
+          const explorer = InitExplorer(
+            state.currentAddress,
+            'usd',
+            state.networkInfo.network,
+            (txns: Array<Transaction>) => {
+              commit('setWalletTransactions', txns);
+            },
+            (txns: Array<Transaction>) => {
+              commit('updateWalletTransactions', txns);
+            },
+            (txnsHashes: Array<string>) => {
+              commit('removeWalletTransaction', txnsHashes);
+            },
+            (tokens: Array<TokenWithBalance>) => {
+              commit('setWalletTokens', tokens);
+            },
+            (tokens: Array<TokenWithBalance>) => {
+              commit('updateWalletTokens', tokens);
+            },
+            (tokens: Array<string>) => {
+              commit('removeWalletTokens', tokens);
+            },
+            (chartData: Record<string, [number, number][]>) => {
+              commit('setChartData', chartData);
+            }
+          );
+          commit('setExplorer', explorer);
+        }
+      } else {
+        console.info('Not mainnet - should use balancer');
+        const tokensList = getTestnetAssets(state.networkInfo.network);
+        console.info('tokensList: ', tokensList);
+        const tokensWithAmount = await getWalletTokens(
+          tokensList,
+          state.currentAddress,
+          state.provider.web3,
+          state.networkInfo.network
+        );
+        console.info('tokensWithAmount: ', tokensWithAmount);
+        commit('setWalletTokens', tokensWithAmount);
+      }
 
-    const getMovePriceInWethPromise = getMOVEPriceInWETH(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
-    );
+      console.info('refresh eth price...');
+      // TODO: works only for USD
+      try {
+        const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
+        commit('setEthPrice', ethPriceInUSD);
+      } catch (e) {
+        console.error("Can't get ETH price, stop loading data");
+        Sentry.captureException(e);
+        return;
+      }
 
-    const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
-    );
-    try {
-      const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
-        getMovePriceInWethPromise,
-        getUSDCPriceInWETHPromise
-      ]);
-      commit('setMovePriceInWeth', moveInWethPrice);
-      commit('setUsdcPriceInWeth', usdcInWethPrice);
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
-
-    try {
-      const slpPriceInWETH = await getSLPPriceInWETH(
-        state.movePriceInWeth ?? '0',
+      const getMovePriceInWethPromise = getMOVEPriceInWETH(
         state.currentAddress,
         state.networkInfo.network,
         state.provider.web3
       );
-      commit('setSLPPriceInWETH', slpPriceInWETH);
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
 
-    const savingsFreshData = dispatch('fetchSavingsFreshData');
-    const savingsInfoPromise = dispatch('fetchSavingsInfo');
-
-    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
-    const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
-
-    const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
-      root: true
-    });
-
-    let nibbleShopInfoPromise = Promise.resolve();
-    if (isFeatureEnabled('isNibbleShopEnabled')) {
-      nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
-        dispatch('shop/loadAssetsInfoList', undefined, {
-          root: true
-        })
+      const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
       );
-    }
-    const loadAvatarPromise = nftInfoPromise.then(() => dispatch('loadAvatar'));
-    const loadPowercardPromise = dispatch('fetchPowercardData');
+      try {
+        const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
+          getMovePriceInWethPromise,
+          getUSDCPriceInWETHPromise
+        ]);
+        commit('setMovePriceInWeth', moveInWethPrice);
+        commit('setUsdcPriceInWeth', usdcInWethPrice);
+      } catch (e) {
+        Sentry.captureException(e);
+        throw e;
+      }
 
-    try {
-      await Promise.allSettled([
+      try {
+        const slpPriceInWETH = await getSLPPriceInWETH(
+          state.movePriceInWeth ?? '0',
+          state.currentAddress,
+          state.networkInfo.network,
+          state.provider.web3
+        );
+        commit('setSLPPriceInWETH', slpPriceInWETH);
+      } catch (e) {
+        Sentry.captureException(e);
+        throw e;
+      }
+
+      const savingsFreshData = dispatch('fetchSavingsFreshData');
+      const savingsInfoPromise = dispatch('fetchSavingsInfo');
+
+      const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+      const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
+
+      const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
+        root: true
+      });
+
+      let nibbleShopInfoPromise = Promise.resolve();
+      if (isFeatureEnabled('isNibbleShopEnabled')) {
+        nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
+          dispatch('shop/loadAssetsInfoList', undefined, {
+            root: true
+          })
+        );
+      }
+      const loadAvatarPromise = nftInfoPromise.then(() =>
+        dispatch('loadAvatar')
+      );
+      const loadPowercardPromise = dispatch('fetchPowercardData');
+
+      const promisesResults = await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
         savingsFreshData,
@@ -372,12 +376,41 @@ export default {
         nibbleShopInfoPromise,
         loadPowercardPromise
       ]);
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
 
-    console.info('Wallet refreshed');
+      const promisesErrors = promisesResults
+        .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+        .map((p) => p.reason);
+
+      if (promisesErrors.length > 0) {
+        Sentry.captureException(promisesErrors);
+      }
+
+      console.info('Wallet refreshed');
+    } finally {
+      state.isWalletLoading = false;
+    }
+  },
+  async updateWalletAfterTxn({ dispatch }): Promise<void> {
+    const loadPowercardPromise = dispatch('fetchPowercardData');
+    const savingsFreshData = dispatch('fetchSavingsFreshData');
+    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+    const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
+      root: true
+    });
+
+    const promisesResults = await Promise.allSettled([
+      savingsFreshData,
+      treasuryFreshData,
+      nftInfoPromise,
+      loadPowercardPromise
+    ]);
+    const promisesErrors = promisesResults
+      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+      .map((p) => p.reason);
+
+    if (promisesErrors.length > 0) {
+      Sentry.captureException(promisesErrors);
+    }
   },
   async waitWallet({ commit, state }): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
