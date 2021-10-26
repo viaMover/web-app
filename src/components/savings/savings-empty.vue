@@ -1,5 +1,5 @@
 <template>
-  <secondary-page>
+  <secondary-page hide-title>
     <div class="savings__menu-wrapper-graph">
       <div class="savings__menu-wrapper-balance">
         <span class="balance">{{ savingsBalance }}</span>

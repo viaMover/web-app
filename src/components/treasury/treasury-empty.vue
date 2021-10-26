@@ -12,14 +12,14 @@
       />
       <p class="margin-top">{{ $t('treasury.lblIfYouReserveMoveInST') }}</p>
       <div class="treasury__menu-wrapper-body margin-top-20">
-        <div class="line">
-          <div>
+        <div class="line short">
+          <div class="item">
             <span class="title">{{ currentMaxBoost }}</span>
             <p class="description black">
               {{ $t('treasury.lblMaximumBoost') }}
             </p>
           </div>
-          <div>
+          <div class="item">
             <span class="title">{{ currentCostCoverage }}</span>
             <p class="description black">
               {{ $t('treasury.lblGasCostCoverage') }}
