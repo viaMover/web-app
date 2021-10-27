@@ -49,13 +49,6 @@ const routes: Array<RouteConfig> = [
     beforeEnter: checkFeatureFlag('isReleaseRadarEnabled')
   },
   {
-    path: '/debit-card',
-    name: 'debit-card',
-    component: () =>
-      import(/* webpackChunkName: "debit-card" */ '@/views/home.vue'),
-    beforeEnter: checkFeatureFlag('isDebitCardEnabled')
-  },
-  {
     path: '/savings',
     component: () =>
       import(
@@ -354,6 +347,61 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+if (isFeatureEnabled('isCardEnabled')) {
+  router.addRoute({
+    path: 'debit-card',
+    component: () =>
+      import(
+        /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
+      ),
+    children: [
+      {
+        path: 'top-up/step/:step?',
+        name: 'debit-card-top-up',
+        component: () =>
+          import(
+            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
+          ),
+        props: (to) => ({
+          currentStep: to.params.step
+        }),
+        beforeEnter: (to, from, next) => {
+          if (to.params.step === 'prepare') {
+            next();
+            return;
+          }
+
+          if (from.name !== 'debit-card-top-up') {
+            next({
+              name: 'debit-card-top-up',
+              params: { step: 'prepare' }
+            });
+            return;
+          }
+
+          next();
+        }
+      },
+      {
+        path: 'change-skin',
+        name: 'debit-card-change-skin',
+        component: () =>
+          import(
+            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-change-skin.vue'
+          )
+      },
+      {
+        path: '',
+        name: 'debit-card-manage',
+        component: () =>
+          import(
+            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-manage.vue'
+          )
+      }
+    ]
+  });
+}
 
 if (isFeatureEnabled('isNavigationFallbackEnabled')) {
   // detect initial navigation
