@@ -908,4 +908,92 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
   };
 }
 
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  messages.debitCard = {
+    lblMyCard: 'My Card',
+    lblBeautifulCard: 'Beautiful card',
+    txtBeautifulCard:
+      'The beautiful card is brought to you by Mover and our partner Trastra',
+    txtBeautifulCardBenifits: 'Your Beautiful card has the following benefits',
+    lblFree: 'Free',
+    txtFree: 'Crypto to EUR for free',
+    lblNoLimit: 'No limit',
+    txtNoLimit: 'No monthly or annual limit',
+    lblEUR: 'EUR',
+    txtEUR: 'Personal EUR IBAN',
+    lblYourEmailAddress: 'Your email address',
+    txtYourEmailAddressPlaceholder: 'your@email.com',
+    btnValidateOrOrderCard: 'Validate or order card',
+    txtCardStatus: {
+      orderNow: 'Order now',
+      pending: 'Pending',
+      active: 'Active',
+      frozen: 'Frozen',
+      expired: 'Expired'
+    },
+    txtHistoryMessage: {
+      cardOrdered: 'You have started your Beautiful card order process',
+      kycStarted: 'You have started your KYC process. Beautiful day!',
+      documentsVerified: 'Your documents have been verified. Lovely!',
+      cardShipped: 'Your Beautiful card has been shipped to you'
+    },
+    txtVisaDebitCard: 'Visa Debit Card',
+    lblLast4Digits: 'Last 4-digits',
+    lblExpiryDate: 'Expiry date',
+    lblIBAN: 'IBAN',
+    lblBIC: 'BIC',
+    topUp: {
+      nav: {
+        lblTopUp: 'Card top up',
+        txtTopUp: 'Top up your debit card with crypto'
+      },
+      lblTopUp: 'Card top up',
+      txtTopUp:
+        'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
+      txtApproximateEUREstimation: 'That would be approximately in Euro',
+      lblWhatDoWeTopUp: 'What do we top up',
+      lblAmountWeDepositIn: '',
+      btnChooseAmount: 'Choose the amount to top up',
+      btnReviewTransaction: 'Review transaction',
+      txtNativeAsset:
+        'Ethereum is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
+      txtNonNativeAsset:
+        'You chose a non ETH asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
+      lblReviewYourTopUp: 'Review your top up',
+      lblAmountWeTopUpIn: 'Amount we top up in',
+      lblAndItWillBeTotalOf: 'And it will be total of',
+      btnTopUpCard: 'Top up Beautiful card'
+    },
+    changeSkin: {
+      nav: {
+        lblChangeSkin: 'Change skin',
+        txtChangeSkin: 'Your digital NFT card skin'
+      },
+      lblDigitalCardSkin: 'Digital card skin',
+      txtDigitalCardSkin:
+        'If you hold a special NFT skin, you can change it at any point of time for free. There is no expiry date or limitations. Make it your card!',
+      lblWhatSkinDoWeChoose: 'What skin do we choose',
+      skins: {
+        default: {
+          name: 'Default skin',
+          symbol: 'DEF',
+          description: 'This is a default skin. It means that you are a mover!'
+        },
+        catAss: {
+          name: 'Cat Ass',
+          symbol: 'ASS',
+          description:
+            'You see the world from a non-conventional angle. You are different. We are different.'
+        }
+      },
+      btnChooseAnotherCardSkin: 'Choose another card skin',
+      btnApplySkin: 'Apply skin',
+      lblSkin: 'Skin',
+      lblSearchAnySkin: 'Search any skin',
+      lblAvailableSkins: 'Available skins',
+      lblWeCouldNotFindThisSkinAnywhere: "We couldn't find this skin anywhere"
+    }
+  };
+}
+
 export default messages;
