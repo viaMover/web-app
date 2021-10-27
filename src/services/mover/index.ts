@@ -15,3 +15,5 @@ export type {
   TreasuryHourlyBalancesItem,
   TreasuryActionHistoryItem
 } from './treasury/types';
+
+export { DebitCardApiError } from './debit-card';
