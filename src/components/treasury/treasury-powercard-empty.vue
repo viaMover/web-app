@@ -20,19 +20,19 @@
       </div>
       <div class="treasury__menu-wrapper-body power-card-empty-body">
         <div class="line">
-          <div>
+          <div class="item">
             <span class="title">{{ additionalBoost }}</span>
             <p class="description black">
               {{ $t('treasury.powercard.lblAdditionalBoost') }}
             </p>
           </div>
-          <div>
+          <div class="item">
             <span class="title">{{ activeTime }}</span>
             <p class="description black">
               {{ $t('treasury.powercard.lblActive') }}
             </p>
           </div>
-          <div>
+          <div class="item">
             <span class="title">{{ cooldownTime }}</span>
             <p class="description black">
               {{ $t('treasury.powercard.lblCooldown') }}
@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
@@ -111,10 +111,7 @@ export default Vue.extend({
       currentAddress: 'currentAddress'
     }),
     stakeAvailable(): boolean {
-      return (
-        greaterThan(this.powercardBalance, '0') &&
-        this.powercardState === 'NotStaked'
-      );
+      return greaterThan(this.powercardBalance, '0');
     },
     additionalBoost(): string {
       return `2x`;
@@ -127,6 +124,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      updateWalletAfterTxn: 'updateWalletAfterTxn'
+    }),
     async handleActivateCard(): Promise<void> {
       const resp = await estimateStakePowercardCompound(
         this.networkInfo.network,
@@ -153,6 +153,7 @@ export default Vue.extend({
           }
         );
         this.txStep = 'Success';
+        this.updateWalletAfterTxn();
       } catch (err) {
         this.txStep = 'Reverted';
         Sentry.captureException(err);

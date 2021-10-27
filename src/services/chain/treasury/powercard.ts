@@ -120,10 +120,15 @@ export const getPowercardTimings = async (
       from: accountAddress
     } as TransactionsParams;
 
-    const [activeTimeResponse, cooldownTimeResponse] =
-      await powercardStaker.methods
-        .getRemainingTimings(accountAddress)
-        .call(transactionParams);
+    const remainingTimingsResponse = await powercardStaker.methods
+      .getRemainingTimings(accountAddress)
+      .call(transactionParams);
+
+    const activeTimeResponse =
+      remainingTimingsResponse.active ?? remainingTimingsResponse[0];
+
+    const cooldownTimeResponse =
+      remainingTimingsResponse.cooldown ?? remainingTimingsResponse[1];
 
     console.log(
       'Powercard timings: active - ',

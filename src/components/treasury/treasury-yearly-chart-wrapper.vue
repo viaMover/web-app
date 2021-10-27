@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="smart-treasury__menu-wrapper-balance">
-      <span class="balance">{{ bonusBalance }}</span>
+      <span class="balance">{{ stakedBalance }}</span>
       <p>{{ $t('treasury.lblTreasuryBalance') }}</p>
     </div>
     <div class="smart-treasury__menu-wrapper-graph">
@@ -53,10 +53,11 @@ export default Vue.extend({
     ...mapGetters('account', {
       treasuryBonusNative: 'treasuryBonusNative',
       treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
-      usdcNativePrice: 'usdcNativePrice'
+      usdcNativePrice: 'usdcNativePrice',
+      treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
     }),
-    bonusBalance(): string {
-      return `$${formatToNative(this.treasuryBonusNative)}`;
+    stakedBalance(): string {
+      return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
     },
     earnedThisMonth(): string {
       return `$${formatToNative(this.treasuryEarnedThisMonthNative)}`;

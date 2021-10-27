@@ -37,6 +37,7 @@ export default {
     tokenInfoMap: undefined,
     provider: undefined,
     isDetecting: false,
+    isWalletLoading: false,
     balance: undefined,
     networkInfo: undefined,
 
