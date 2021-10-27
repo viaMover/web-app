@@ -1,0 +1,143 @@
+@import './_variables.less';
+
+.container {
+  &.manage {
+    .content {
+      .card-image-container {
+        width: 308px;
+        height: 184px;
+
+        &::before {
+          content: '';
+          display: inline-block;
+          width: 308px;
+          height: 184px;
+          position: absolute;
+          background-color: @black;
+          border-radius: 8px;
+          z-index: 1;
+        }
+
+        img {
+          position: absolute;
+          top: 2px;
+          z-index: 2;
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+        }
+
+        .logo {
+          position: absolute;
+          z-index: 3;
+          bottom: 23px;
+          right: 23px;
+        }
+      }
+    }
+
+    .description {
+      font-size: 14px;
+      line-height: 22px;
+      color: @muted;
+      @font-medium();
+
+      &.subtitle {
+        font-size: 16px;
+        line-height: 24px;
+      }
+
+      &.black {
+        color: @black;
+      }
+    }
+
+    .container {
+      &.info-group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .item {
+          flex: 0 0 200px;
+          margin-right: 24px;
+
+          &:last-child {
+            margin-right: 0;
+          }
+
+          .title {
+            font-size: 24px;
+            line-height: 32px;
+            color: @black;
+            @font-bold();
+          }
+
+          .description {
+            font-size: 16px;
+            line-height: 24px;
+            color: @black;
+          }
+        }
+      }
+
+      form {
+        &.form {
+          .input-group {
+            label {
+              width: 100%;
+              color: @muted;
+              display: block;
+              font-size: 12px;
+              line-height: 16px;
+              @font-regular();
+
+              input {
+                opacity: 1;
+                width: 100%;
+                background: none;
+                border: none;
+                margin-top: 8px;
+
+                &::placeholder {
+                  color: @black;
+                  opacity: 0.2;
+                }
+              }
+
+              input {
+                font-size: 24px;
+                line-height: 40px; // seems a bit odd as other inputs are 32px high
+                @font-bold();
+
+                &::placeholder {
+                  @font-bold();
+                }
+              }
+            }
+          }
+
+          button {
+            margin-top: 40px;
+          }
+
+          .error-message {
+            display: none;
+            font-style: normal;
+            font-size: 16px;
+            line-height: 24px;
+            color: @error;
+            margin-top: 24px;
+            @font-medium();
+          }
+
+          &.error {
+            .error-message {
+              display: inline-block;
+            }
+          }
+        }
+      }
+    }
+  }
+}

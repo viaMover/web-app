@@ -1,64 +1,62 @@
 <template>
-  <div class="body">
+  <div class="content">
     <div class="card-image-container">
       <debit-card-image :image="currentSkin" />
     </div>
-    <p class="small description">
+    <p class="description">
       {{ $t('debitCard.txtBeautifulCardBenifits') }}
     </p>
-    <div class="container info-group col3">
-      <div>
-        <span class="title">{{ $t('debitCard.lblFree') }}</span>
-        <p class="description black">{{ $t('debitCard.txtFree') }}</p>
+    <div class="container info-group">
+      <div class="item">
+        <div class="title">{{ $t('debitCard.lblFree') }}</div>
+        <p class="description bigger black">{{ $t('debitCard.txtFree') }}</p>
       </div>
-      <div>
-        <span class="title">{{ $t('debitCard.lblNoLimit') }}</span>
-        <p class="description black">{{ $t('debitCard.txtNoLimit') }}</p>
+      <div class="item">
+        <div class="title">{{ $t('debitCard.lblNoLimit') }}</div>
+        <p class="description bigger black">{{ $t('debitCard.txtNoLimit') }}</p>
       </div>
-      <div>
-        <span class="title">{{ $t('debitCard.lblEUR') }}</span>
-        <p class="description black">{{ $t('debitCard.txtEUR') }}</p>
+      <div class="item">
+        <div class="title">{{ $t('debitCard.lblEUR') }}</div>
+        <p class="description bigger black">{{ $t('debitCard.txtEUR') }}</p>
       </div>
     </div>
-    <div
-      class="form-wrapper"
+
+    <form
+      class="form order"
       :class="{ error: $v.$anyError || errorText !== '' }"
+      @submit.prevent="handleValidateOrOrderCard"
     >
-      <form class="form order" @submit.prevent="handleValidateOrOrderCard">
-        <div class="input-group" :class="{ error: $v.email.$error }">
-          <label>
-            {{ $t('debitCard.lblYourEmailAddress') }}
-            <input
-              v-model="email"
-              autocomplete="email"
-              autofocus
-              :name="$t('debitCard.lblYourEmailAddress')"
-              :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
-              tabindex="1"
-              type="text"
-            />
-          </label>
+      <div class="input-group" :class="{ error: $v.email.$error }">
+        <label>
+          {{ $t('debitCard.lblYourEmailAddress') }}
+          <input
+            v-model="email"
+            autocomplete="email"
+            autofocus
+            :name="$t('debitCard.lblYourEmailAddress')"
+            :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
+            tabindex="1"
+            type="text"
+          />
+        </label>
+      </div>
+      <action-button
+        button-class="black-link button-active"
+        :disabled="!isButtonActive"
+        propagate-original-event
+        type="submit"
+      >
+        <div v-if="isLoading || isProcessing" class="loader-icon">
+          <img
+            :alt="$t('txtPendingIconAlt')"
+            src="@/assets/images/ios-spinner-white.svg"
+          />
         </div>
-        <action-button
-          button-class="black-link button-active"
-          :disabled="!isButtonActive"
-          propagate-original-event
-          type="submit"
-        >
-          <div v-if="isLoading || isProcessing" class="loader-icon">
-            <img
-              :alt="$t('txtPendingIconAlt')"
-              src="@/assets/images/ios-spinner-white.svg"
-            />
-          </div>
-          <template v-else>
-            {{
-              isButtonActive ? $t('debitCard.btnValidateOrOrderCard') : error
-            }}
-          </template>
-        </action-button>
-      </form>
-    </div>
+        <template v-else>
+          {{ isButtonActive ? $t('debitCard.btnValidateOrOrderCard') : error }}
+        </template>
+      </action-button>
+    </form>
   </div>
 </template>
 
