@@ -15,6 +15,12 @@ export type Skin = {
   nftAddress: string | undefined;
 };
 
+export type HistoryItem = {
+  id: string;
+  icon: string;
+  description: string;
+};
+
 export type CardState = 'active' | 'frozen' | 'pending' | 'expired';
 
 export type ValidateOrOrderCardParams = {

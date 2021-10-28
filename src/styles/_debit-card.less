@@ -3,35 +3,101 @@
 .container {
   &.manage {
     .content {
-      .card-image-container {
-        width: 308px;
-        height: 184px;
+      .container {
+        margin-top: 40px;
 
-        &::before {
-          content: '';
-          display: inline-block;
+        .card-image {
           width: 308px;
           height: 184px;
-          position: absolute;
-          background-color: @black;
-          border-radius: 8px;
-          z-index: 1;
+
+          &::before {
+            content: '';
+            display: inline-block;
+            width: 308px;
+            height: 184px;
+            position: absolute;
+            background-color: @black;
+            border-radius: 8px;
+            z-index: 1;
+          }
+
+          img {
+            position: absolute;
+            top: 2px;
+            z-index: 2;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+          }
+
+          .logo {
+            position: absolute;
+            z-index: 3;
+            bottom: 23px;
+            right: 23px;
+          }
         }
 
-        img {
-          position: absolute;
-          top: 2px;
-          z-index: 2;
-          width: 100%;
-          height: auto;
-          object-fit: cover;
-        }
+        &.history {
+          .group {
+            margin-bottom: 40px;
 
-        .logo {
-          position: absolute;
-          z-index: 3;
-          bottom: 23px;
-          right: 23px;
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .header {
+              .date {
+                font-size: 16px;
+                line-height: 24px;
+                color: @muted;
+                @font-medium();
+              }
+            }
+
+            .content {
+              margin-top: 24px;
+
+              .item {
+                display: flex;
+                flex-flow: row nowrap;
+
+                .description {
+                  flex: 1 0 50%;
+                  align-items: center;
+                  word-break: break-all;
+                  overflow-wrap: break-word;
+                  word-wrap: break-word;
+                  font-size: 14px;
+                  line-height: 19px;
+                }
+
+                .icon {
+                  flex: 0 0 38px;
+                  width: 38px;
+                  height: 38px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-bottom: 16px;
+
+                  &:last-child {
+                    margin-bottom: 0;
+                  }
+
+                  &.action {
+                    background-color: @icon-background;
+                    box-shadow: 0 0 16px @icon-shadow;
+                    border-radius: 50%;
+                  }
+
+                  &.checkmark {
+                    color: @black;
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -79,8 +145,18 @@
             color: @black;
           }
         }
+
+        &.card-info {
+          margin-top: 24px;
+        }
       }
 
+      // form.form and its children are to be moved
+      // to the common style bundle (also textarea tag should be
+      // properly styled as well) during next major project internals
+      // update
+      // whereis form.form.order is to enable proper distancing
+      // on the given view
       form {
         &.form {
           .input-group {
@@ -107,7 +183,8 @@
 
               input {
                 font-size: 24px;
-                line-height: 40px; // seems a bit odd as other inputs are 32px high
+                line-height: 40px;
+                // seems a bit odd as other inputs are 32px high
                 @font-bold();
 
                 &::placeholder {
@@ -135,6 +212,10 @@
             .error-message {
               display: inline-block;
             }
+          }
+
+          &.order {
+            margin-top: 40px;
           }
         }
       }
