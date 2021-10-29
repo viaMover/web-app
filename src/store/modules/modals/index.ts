@@ -36,6 +36,14 @@ export default {
         payload: undefined,
         resolver: undefined
       },
+      [Modal.SearchSkin]: {
+        isDisplayed: false,
+        isVisible: false,
+        stackDepth: -1,
+        waitForResult: true,
+        payload: undefined,
+        resolver: undefined
+      },
       [Modal.Swap]: {
         isDisplayed: false,
         isVisible: false,

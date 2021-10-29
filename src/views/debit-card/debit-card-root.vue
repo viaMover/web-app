@@ -11,25 +11,25 @@
     <template v-slot:left-rail>
       <div class="progressive-left-rail">
         <debit-card-my-card />
-        <debit-card-manage-card />
+        <debit-card-manage-card v-if="cardState === 'active'" />
       </div>
     </template>
 
     <router-view />
 
     <template v-slot:modals>
-      <search-modal key="search-modal" />
+      <search-skin-modal key="search-skin-modal" />
     </template>
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { DebitCardManageCard, DebitCardMyCard } from '@/components/debit-card';
 import { ContentWrapper } from '@/components/layout';
-import { SearchModal } from '@/components/modals';
+import { SearchSkinModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'DebitCardRoot',
@@ -37,7 +37,12 @@ export default Vue.extend({
     ContentWrapper,
     DebitCardMyCard,
     DebitCardManageCard,
-    SearchModal
+    SearchSkinModal
+  },
+  computed: {
+    ...mapState('debitCard', {
+      cardState: 'cardState'
+    })
   },
   async mounted() {
     await this.loadInfo();

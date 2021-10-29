@@ -2,7 +2,7 @@
   <div v-if="displayOriginalImage" :class="wrapperClass">
     <img
       v-fallback="imageFallbackOpts"
-      :alt="$t('asset.txtAlt', { name: symbol })"
+      :alt="$t('debitCard.txtSymbolImageAlt', { name: symbol })"
       :src="src"
       :style="shadowStyles"
     />
@@ -20,16 +20,16 @@ import { mapGetters } from 'vuex';
 
 import { Properties } from 'csstype';
 
-import { IImageFallbackOpts } from '@/components/tokens/token-image/types';
+import { IImageFallbackOpts } from './types';
 
 export default Vue.extend({
-  name: 'TokenImage',
+  name: 'SkinImage',
   props: {
     wrapperClass: {
       type: String,
       default: 'label-icon'
     },
-    address: {
+    id: {
       type: String,
       required: true
     },
@@ -52,7 +52,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
+    ...mapGetters('debitCard', { getSkinColor: 'getSkinColor' }),
     truncatedSymbol(): string {
       if (this.symbol.length > 5) {
         return `${this.symbol.toUpperCase().substr(0, 4)}...`;
@@ -63,7 +63,7 @@ export default Vue.extend({
       return this.src !== '' && !this.loadingFailed;
     },
     color(): string | undefined {
-      return this.getTokenColor(this.address) ?? 'rgba(0, 0, 0, 50%)';
+      return this.getSkinColor(this.id) ?? 'rgba(0, 0, 0, 50%)';
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {

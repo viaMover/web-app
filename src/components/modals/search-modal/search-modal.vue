@@ -10,7 +10,7 @@
     @close="handleSelect(undefined)"
   >
     <template v-slot:header>
-      <h3 class="modal-wrapper-info-title">Search</h3>
+      <h3 class="modal-wrapper-info-title">{{ $t('lblSearch') }}</h3>
       <form class="search-form" @submit.prevent.stop="">
         <input
           v-model.trim="searchTerm"

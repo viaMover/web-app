@@ -486,6 +486,7 @@ const messages: VueI18n.LocaleMessageObject = {
       4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
     }
   },
+  lblSearch: 'Search',
   lblOhSnap: 'Oh, snap!',
   txtCouldNotFindToken: 'We couldn’t find this token anywhere'
 };
