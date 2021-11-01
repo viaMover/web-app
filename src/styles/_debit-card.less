@@ -7,13 +7,15 @@
         margin-top: 40px;
 
         .card-image {
-          width: 308px;
+          width: 312px;
           height: 184px;
+          position: relative;
+          box-shadow: 0 8px 32px @icon-shadow;
 
           &::before {
             content: '';
             display: inline-block;
-            width: 308px;
+            width: 312px;
             height: 184px;
             position: absolute;
             background-color: @black;
@@ -28,6 +30,7 @@
             width: 100%;
             height: auto;
             object-fit: cover;
+            border-radius: 8px;
           }
 
           .logo {
