@@ -12,15 +12,21 @@
           :title="$t('debitCard.lblLast4Digits')"
         />
         <statement-list-item
-          :description="expiryDate"
+          :description="
+            cardInfo ? cardInfo.expiryDate : $t('debitCard.lblNotAvailable')
+          "
           :title="$t('debitCard.lblExpiryDate')"
         />
         <statement-list-item
-          :description="iban"
+          :description="
+            cardInfo ? cardInfo.iban : $t('debitCard.lblNotAvailable')
+          "
           :title="$t('debitCard.lblIBAN')"
         />
         <statement-list-item
-          :description="bic"
+          :description="
+            cardInfo ? cardInfo.bic : $t('debitCard.lblNotAvailable')
+          "
           :title="$t('debitCard.lblBIC')"
         />
       </statement-list>
@@ -31,6 +37,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+
+import { CardInfo } from '@/store/modules/debit-card/types';
 
 import {
   StatementList,
@@ -45,13 +53,18 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('debitCard', {
-      cardNumber: 'cardNumber',
-      expiryDate: 'expiryDate',
-      iban: 'iban',
-      bic: 'bic'
+      currentSkin: 'currentSkin',
+      rawInfo: 'cardInfo'
     }),
-    last4Numbers(): string {
-      return (this.cardNumber as string).slice(-4);
+    cardInfo(): CardInfo | undefined {
+      return this.rawInfo;
+    },
+    last4Digits(): string {
+      if (this.cardInfo === undefined) {
+        return this.$t('debitCard.lblNotAvailable') as string;
+      }
+
+      return '*' + this.cardInfo.number.slice(-4);
     }
   }
 });

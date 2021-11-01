@@ -71,7 +71,7 @@ export default Vue.extend({
   data() {
     return {
       skinToBeApplied: undefined as Skin | undefined,
-      isLoading: true,
+      isLoading: false,
       isProcessing: false,
       isTokenSelectedByUser: false
     };
@@ -106,9 +106,15 @@ export default Vue.extend({
       immediate: true
     }
   },
+  async mounted() {
+    this.isLoading = true;
+    await this.loadAvailableSkins();
+    this.isLoading = false;
+  },
   methods: {
     ...mapActions('debitCard', {
-      changeSkin: 'changeSkin'
+      changeSkin: 'changeSkin',
+      loadAvailableSkins: 'loadAvailableSkins'
     }),
     ...mapActions('modals', {
       setModalIsDisplayed: 'setIsDisplayed'

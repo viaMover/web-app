@@ -4,6 +4,7 @@ import { SmallTokenInfo } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
+import ERC721_ABI from './abi/erc721-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
@@ -524,5 +525,6 @@ export {
   MASTER_CHEF_POOL_INDEX,
   MASTER_CHEF_ABI,
   EURS_TOKEN_ADDRESS,
-  UNISWAP_EURS_WETH_POOL_ADDRESS
+  UNISWAP_EURS_WETH_POOL_ADDRESS,
+  ERC721_ABI
 };

@@ -925,6 +925,7 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     lblYourEmailAddress: 'Your email address',
     txtYourEmailAddressPlaceholder: 'your@email.com',
     btnValidateOrOrderCard: 'Validate or order card',
+    lblNotAvailable: 'n/a',
     txtCardStatus: {
       orderNow: 'Order now',
       pending: 'Pending',
