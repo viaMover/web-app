@@ -12,6 +12,16 @@
           position: relative;
           box-shadow: 0 8px 32px @icon-shadow;
 
+          &.small {
+            width: 200px;
+            height: 120px;
+
+            &::before {
+              width: 200px;
+              height: 120px;
+            }
+          }
+
           &::before {
             content: '';
             display: inline-block;
