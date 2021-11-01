@@ -638,7 +638,11 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
       'not enough power to vote':
         "Oh no. Seems like you don't have enough power to vote",
       'not enough power to create a proposal':
-        "Oh no. Seems like you don't have enough power to create a proposal"
+        "Oh no. Seems like you don't have enough power to create a proposal",
+      'voting is not started yet': 'Oh no. Voting is not started yet',
+      'voting is closed': 'Oh no. Voting is already closed',
+      'wrong timestamp':
+        'Oh no. The request took too long or the system time on your device is out of sync. Please try again'
     },
     btnTogglePreview: 'Toggle preview',
     txtTogglePreview: 'Toggle markdown preview',
