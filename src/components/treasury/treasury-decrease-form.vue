@@ -24,7 +24,7 @@
         />
         <div class="coin">
           <p>
-            {{ asset ? asset.name : $t('treasury.lblChooseToken') }}
+            {{ asset ? asset.name : $t('forms.lblChooseToken') }}
             <span>
               {{ asset ? asset.symbol : '' }}
             </span>

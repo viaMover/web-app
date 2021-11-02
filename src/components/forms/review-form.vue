@@ -2,7 +2,7 @@
   <div class="review__wrapper">
     <secondary-page-simple-title
       class="page-title max-width"
-      :title="$t('treasury.increaseBoost.lblReviewYourIncrease')"
+      :title="headerTitle"
     />
     <div class="arrow">
       <div class="item">
@@ -21,32 +21,27 @@
       </div>
       <div class="item">
         <custom-picture
-          :alt="st.alt"
+          :alt="image.alt"
           class="shadow"
-          :sources="st.sources"
-          :src="st.src"
-          :webp-sources="st.webpSources"
+          :sources="image.sources"
+          :src="image.src"
+          :webp-sources="image.webpSources"
         />
       </div>
     </div>
     <div class="items">
       <div class="item">
-        <h2>
-          {{ $t('treasury.increaseBoost.lblAmountWeDepositIn') }}
-          {{ token.symbol }}
-        </h2>
+        <h2>{{ `${inputAmountTitle} ${token.symbol}` }}</h2>
         <span>{{ formattedAmount }}</span>
       </div>
       <div class="item">
-        <h2>{{ $t('treasury.increaseBoost.lblAndTotalOf') }}</h2>
-        <span>
-          {{ formattedNativeAmount }}
-        </span>
+        <h2>{{ inputAmountNativeTitle }}</h2>
+        <span>{{ formatNativeAmount }}</span>
       </div>
     </div>
     <div v-if="isSubsidizedEnabled">
       <div class="switch">
-        <p>{{ $t('treasury.increaseBoost.lblUseSmartTreasury') }}</p>
+        <p>{{ $t('forms.lblUseSmartTreasury') }}</p>
         <form class="switch__container">
           <input
             id="switch-shadow"
@@ -59,7 +54,7 @@
       </div>
       <div class="items">
         <div class="item">
-          <h2>{{ $t('treasury.increaseBoost.lblEstimatedGasCost') }}</h2>
+          <h2>{{ $t('forms.lblEstimatedGasCost') }}</h2>
           <span>{{ formattedEstimatedGasCost }}</span>
         </div>
       </div>
@@ -69,7 +64,7 @@
       type="button"
       @click="handleCreateTx"
     >
-      {{ $t('treasury.increaseBoost.btnIncreaseBoostInSmartTreasury') }}
+      {{ buttonText }}
     </button>
   </div>
 </template>
@@ -86,7 +81,7 @@ import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
-  name: 'TreasuryIncreaseReview',
+  name: 'ReviewForm',
   components: {
     TokenImage,
     SecondaryPageSimpleTitle,
@@ -97,6 +92,10 @@ export default Vue.extend({
       type: Object as PropType<TokenWithBalance>,
       required: true
     },
+    image: {
+      type: Object as PropType<PictureDescriptor>,
+      required: true
+    },
     amount: {
       type: String,
       required: true
@@ -104,6 +103,22 @@ export default Vue.extend({
     nativeAmount: {
       type: String,
       required: true
+    },
+    headerTitle: {
+      type: String,
+      default: ''
+    },
+    inputAmountTitle: {
+      type: String,
+      default: ''
+    },
+    inputAmountNativeTitle: {
+      type: String,
+      default: ''
+    },
+    buttonText: {
+      type: String,
+      default: ''
     },
     isSubsidizedEnabled: {
       type: Boolean,
@@ -116,25 +131,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      isSmartTreasury: true,
-      st: {
-        alt: this.$t('treasury.lblSmartTreasury'),
-        src: require('@/assets/images/SmartTreasury@1x.png'),
-        sources: [
-          { src: require('@/assets/images/SmartTreasury@1x.png') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/SmartTreasury@1x.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.webp')
-          }
-        ]
-      } as PictureDescriptor
+      isSmartTreasury: true
     };
   },
   computed: {
@@ -154,13 +151,15 @@ export default Vue.extend({
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
     },
-    formattedNativeAmount(): string {
+    formatNativeAmount(): string {
       return `${formatToNative(this.nativeAmount)} ${
         this.nativeCurrencySymbol
       }`;
     }
   },
   methods: {
+    formatToDecimals,
+    formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
         isSmartTreasury: this.isSmartTreasury && this.isSubsidizedEnabled

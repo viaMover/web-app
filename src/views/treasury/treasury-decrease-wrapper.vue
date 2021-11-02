@@ -5,10 +5,17 @@
     @back="handleBack"
   >
     <treasury-decrease-form v-if="!isShowReview" @tx-review="handleTxReview" />
-    <treasury-decrease-review
+    <review-form
       v-else-if="txStep === undefined"
       :amount="amount"
+      :button-text="
+        $t('treasury.decreaseBoost.btnDecreaseBoostInSmartTreasury')
+      "
       :estimated-gas-cost="estimatedGasCost"
+      :header-title="$t('treasury.decreaseBoost.lblReviewYourDecrease')"
+      :image="treasury"
+      :input-amount-native-title="$t('treasury.decreaseBoost.lblAndTotalOf')"
+      :input-amount-title="$t('treasury.decreaseBoost.lblAmountWeRemoveIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="nativeAmount"
       :token="token"
@@ -29,16 +36,15 @@ import { TokenWithBalance } from '@/wallet/types';
 
 import { Step } from '@/components/controls/full-page-form-loader';
 import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
+import ReviewForm from '@/components/forms/review-form.vue';
+import { PictureDescriptor } from '@/components/html5';
 import { SecondaryPage } from '@/components/layout/secondary-page';
-import {
-  TreasuryDecreaseForm,
-  TreasuryDecreaseReview
-} from '@/components/treasury';
+import { TreasuryDecreaseForm } from '@/components/treasury';
 
 export default Vue.extend({
   name: 'TreasuryDecreaseWrapper',
   components: {
-    TreasuryDecreaseReview,
+    ReviewForm,
     TreasuryDecreaseForm,
     FullPageFormLoader,
     SecondaryPage
@@ -53,7 +59,25 @@ export default Vue.extend({
       isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
-      approveGasLimit: undefined as string | undefined
+      approveGasLimit: undefined as string | undefined,
+      treasury: {
+        alt: this.$t('treasury.lblSmartTreasury'),
+        src: require('@/assets/images/SmartTreasury@1x.png'),
+        sources: [
+          { src: require('@/assets/images/SmartTreasury@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/SmartTreasury@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/SmartTreasury@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/SmartTreasury@2x.webp')
+          }
+        ]
+      } as PictureDescriptor
     };
   },
   computed: {
