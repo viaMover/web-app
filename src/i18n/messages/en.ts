@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import VueI18n, { LocaleMessage } from 'vue-i18n';
 
 import { isFeatureEnabled } from '@/settings';
 
@@ -911,6 +911,7 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
 
 if (isFeatureEnabled('isDebitCardEnabled')) {
   messages.debitCard = {
+    ...(messages.debitCard as Record<string, LocaleMessage>),
     lblMyCard: 'My Card',
     lblBeautifulCard: 'Beautiful card',
     txtBeautifulCard:
@@ -926,6 +927,20 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     txtYourEmailAddressPlaceholder: 'your@email.com',
     btnValidateOrOrderCard: 'Validate or order card',
     lblNotAvailable: 'n/a',
+    lblManageCard: 'Manage Card',
+    lblCardTopUp: 'Card top up',
+    txtCardTopUp: 'Top up your debit card with crypto',
+    lblChangeSkin: 'Change skin',
+    txtChangeSkin: 'Your digital NFT card skin',
+    lblSkins: 'Skins',
+    txtSymbolImageAlt: '{name} skin image',
+    state: {
+      active: 'Active',
+      order_now: 'Order now',
+      pending: 'Pending',
+      frozen: 'Frozen',
+      expired: 'Expired'
+    },
     txtCardStatus: {
       orderNow: 'Order now',
       pending: 'Pending',
@@ -934,10 +949,11 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       expired: 'Expired'
     },
     txtHistoryMessage: {
-      cardOrdered: 'You have started your Beautiful card order process',
-      kycStarted: 'You have started your KYC process. Beautiful day!',
-      documentsVerified: 'Your documents have been verified. Lovely!',
-      cardShipped: 'Your Beautiful card has been shipped to you'
+      order_process_started:
+        'You have started your Beautiful card order process',
+      kyc_process_started: 'You have started your KYC process. Beautiful day!',
+      documents_verified: 'Your documents have been verified. Lovely!',
+      card_shipped: 'Your Beautiful card has been shipped to you'
     },
     txtVisaDebitCard: 'Visa Debit Card',
     lblLast4Digits: 'Last 4-digits',
@@ -945,10 +961,6 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     lblIBAN: 'IBAN',
     lblBIC: 'BIC',
     topUp: {
-      nav: {
-        lblTopUp: 'Card top up',
-        txtTopUp: 'Top up your debit card with crypto'
-      },
       lblTopUp: 'Card top up',
       txtTopUp:
         'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
@@ -967,10 +979,6 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       btnTopUpCard: 'Top up Beautiful card'
     },
     changeSkin: {
-      nav: {
-        lblChangeSkin: 'Change skin',
-        txtChangeSkin: 'Your digital NFT card skin'
-      },
       lblDigitalCardSkin: 'Digital card skin',
       txtDigitalCardSkin:
         'If you hold a special NFT skin, you can change it at any point of time for free. There is no expiry date or limitations. Make it your card!',
@@ -978,15 +986,26 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       skins: {
         default: {
           name: 'Default skin',
-          symbol: 'DEF',
           description: 'This is a default skin. It means that you are a mover!'
         },
-        catAss: {
+        'cat-ass': {
           name: 'Cat Ass',
-          symbol: 'ASS',
           description:
             'You see the world from a non-conventional angle. You are different. We are different.'
-        }
+        },
+        'shiny-one': {
+          name: 'Shiny one'
+        },
+        gorilla: {
+          name: 'Gorilla'
+        },
+        badge: {
+          name: 'Badge'
+        },
+        horns: {
+          name: 'Horns'
+        },
+        txtSkinAlt: '{name} skin image'
       },
       btnChooseAnotherCardSkin: 'Choose another card skin',
       btnApplySkin: 'Apply skin',
@@ -994,6 +1013,13 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       lblSearchAnySkin: 'Search any skin',
       lblAvailableSkins: 'Available skins',
       lblWeCouldNotFindThisSkinAnywhere: "We couldn't find this skin anywhere"
+    },
+    errors: {
+      default: 'Oh no. Something went wrong',
+      email: {
+        required: 'Email is required',
+        invalid: 'Enter a valid email address'
+      }
     }
   };
 }
