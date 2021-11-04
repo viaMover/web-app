@@ -9,7 +9,7 @@
         {{ $t('debitCard.changeSkin.txtDigitalCardSkin') }}
       </p>
 
-      <div class="content secondary_page-body">
+      <div class="content secondary_page-body margin-top-0">
         <form class="form change-skin" @submit.prevent="handleChangeSkin">
           <h2>
             {{ $t('debitCard.changeSkin.lblWhatSkinDoWeChoose') }}
