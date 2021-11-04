@@ -3,7 +3,7 @@
     :class="[classes]"
     :disabled="disabled"
     :style="customStyle"
-    @click.prevent.stop="handleClick"
+    @click="handleClick($event)"
   >
     <template v-if="text">
       {{ text }}
@@ -35,6 +35,10 @@ export default Vue.extend({
     customStyle: {
       type: Object as PropType<CssProperties>,
       default: undefined
+    },
+    propagateOriginalEvent: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -43,7 +47,11 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleClick(): void {
+    handleClick(event: MouseEvent): void {
+      if (!this.propagateOriginalEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       this.$emit('button-click');
     }
   }
