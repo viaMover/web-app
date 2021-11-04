@@ -6,7 +6,7 @@
   >
     <prepare-form
       v-if="!isShowReview"
-      :asset="asset"
+      :asset="inputAsset"
       :header-description="
         $t('treasury.increaseBoost.txtIncreaseBoostPageDescription')
       "
@@ -33,7 +33,7 @@
     />
     <review-form
       v-else-if="txStep === undefined"
-      :amount="amount"
+      :amount="inputAmount"
       :button-text="
         $t('treasury.increaseBoost.btnIncreaseBoostInSmartTreasury')
       "
@@ -43,8 +43,8 @@
       :input-amount-native-title="$t('treasury.increaseBoost.lblAndTotalOf')"
       :input-amount-title="$t('treasury.increaseBoost.lblAmountWeDepositIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="nativeAmount"
-      :token="token"
+      :native-amount="inputAmountNative"
+      :token="inputAsset"
       @tx-start="handleTxStart"
     />
     <full-page-form-loader v-else :step="txStep" />
@@ -64,7 +64,6 @@ import {
   add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
-  divide,
   greaterThan,
   isZero,
   multiply,
@@ -105,7 +104,6 @@ export default Vue.extend({
     return {
       //prepare-form
       inputMode: 'TOKEN' as INPUT_MODE,
-      asset: undefined as TokenWithBalance | undefined,
       inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '' as string,
       inputAmountNative: '' as string,
@@ -136,7 +134,6 @@ export default Vue.extend({
       } as PictureDescriptor,
 
       //to tx
-      token: undefined as TokenWithBalance | undefined,
       isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
@@ -163,18 +160,18 @@ export default Vue.extend({
       return getMoveAssetData(this.networkInfo.network);
     },
     description(): string {
-      if (this.asset === undefined) {
+      if (this.inputAsset === undefined) {
         return '';
       }
 
       return (
-        sameAddress(this.asset?.address, this.moveTokenInfo.address)
+        sameAddress(this.inputAsset?.address, this.moveTokenInfo.address)
           ? this.$t('treasury.increaseBoost.txtYouChooseMove')
           : this.$t('treasury.increaseBoost.txtYouChooseMoveETHLp')
       ) as string;
     },
     newBoost(): string {
-      if (this.asset === undefined) {
+      if (this.inputAsset === undefined) {
         return `${formatToDecimals(this.treasuryBoost, 1)}x`;
       }
 
@@ -194,14 +191,14 @@ export default Vue.extend({
       let treasuryBalanceMove = this.treasuryBalanceMove;
       let treasuryBalanceLP = this.treasuryBalanceLP;
 
-      if (sameAddress(this.asset.address, move.address)) {
+      if (sameAddress(this.inputAsset.address, move.address)) {
         let inputedAmount = this.inputAmount || '0';
         if (greaterThan(inputedAmount, walletBalanceMove)) {
           inputedAmount = walletBalanceMove;
         }
         walletBalanceMove = sub(walletBalanceMove, inputedAmount);
         treasuryBalanceMove = add(treasuryBalanceMove, inputedAmount);
-      } else if (sameAddress(this.asset.address, slp.address)) {
+      } else if (sameAddress(this.inputAsset.address, slp.address)) {
         let inputedAmount = this.inputAmount || '0';
         if (greaterThan(inputedAmount, walletBalanceLP)) {
           inputedAmount = walletBalanceLP;
@@ -230,7 +227,7 @@ export default Vue.extend({
               sameAddress(t.address, this.moveTokenInfo.address)
             );
             if (move) {
-              this.asset = move;
+              this.inputAsset = move;
             }
           }
         } finally {
@@ -257,7 +254,7 @@ export default Vue.extend({
       await this.updateAmount(val, this.inputMode);
     },
     async updateAmount(value: string, mode: INPUT_MODE): Promise<void> {
-      if (this.asset === undefined || this.isLoading) {
+      if (this.inputAsset === undefined || this.isLoading) {
         return;
       }
 
@@ -268,13 +265,13 @@ export default Vue.extend({
           this.inputAmount = value;
           this.inputAmountNative = convertNativeAmountFromAmount(
             value,
-            this.asset.priceUSD
+            this.inputAsset.priceUSD
           );
         } else {
           this.inputAmount = convertAmountFromNativeValue(
             value,
-            this.asset.priceUSD,
-            this.asset.decimals
+            this.inputAsset.priceUSD,
+            this.inputAsset.decimals
           );
           this.inputAmountNative = value;
         }
@@ -296,7 +293,7 @@ export default Vue.extend({
       }
 
       this.isTokenSelectedByUser = true;
-      this.asset = token;
+      this.inputAsset = token;
       this.inputAmount = '';
       this.inputAmountNative = '';
     },
@@ -316,55 +313,6 @@ export default Vue.extend({
         this.inputAsset.balance,
         this.inputAsset.priceUSD
       );
-    },
-    // handleUpdateAmount(amount: string): void {
-    //   console.dir(amount);
-    //   if (this.inputAsset === undefined) {
-    //     return;
-    //   }
-    //   if (this.inputMode === 'TOKEN') {
-    //     this.inputAmount = amount;
-    //     this.inputAmountNative = multiply(amount, this.inputAsset.priceUSD);
-    //     return;
-    //   }
-    //   this.inputAmountNative = amount;
-    //   this.inputAmount = divide(amount, this.inputAsset.priceUSD);
-    // },
-    async handleCreateTx(): Promise<void> {
-      if (this.asset === undefined) {
-        return;
-      }
-
-      let isSubsidizedEnabled = false;
-      let subsidizedTxPrice = undefined;
-      let actionGasLimit = '0';
-      let approveGasLimit = '0';
-      this.isProcessing = true;
-      try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
-          this.asset
-        );
-
-        actionGasLimit = gasLimits.actionGasLimit;
-        approveGasLimit = gasLimits.approveGasLimit;
-
-        console.info('Treasury deposit action gaslimit:', actionGasLimit);
-        console.info('Treasury deposit approve gaslimit:', approveGasLimit);
-
-        if (!isZero(actionGasLimit)) {
-          isSubsidizedEnabled =
-            this.checkSubsidizedAvailability(actionGasLimit);
-          subsidizedTxPrice = this.subsidizedTxNativePrice(actionGasLimit);
-        }
-      } catch (err) {
-        isSubsidizedEnabled = false;
-        console.error(`can't estimate treasury deposit for subs: ${err}`);
-        Sentry.captureException("can't estimate treasury deposit for subs");
-        return;
-      } finally {
-        this.isProcessing = false;
-      }
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
@@ -391,7 +339,7 @@ export default Vue.extend({
         return false;
       }
 
-      if (this.asset?.address === 'eth') {
+      if (this.inputAsset?.address === 'eth') {
         console.info('Subsidizing for deposit ETH denied');
         return false;
       }
@@ -421,18 +369,57 @@ export default Vue.extend({
       }
       return resp;
     },
-    handleTxReview(): void {
+    async handleTxReview(): Promise<void> {
+      if (this.inputAsset === undefined) {
+        return;
+      }
+
+      this.isSubsidizedEnabled = false;
+      this.estimatedGasCost = undefined;
+      this.isProcessing = true;
+      try {
+        const gasLimits = await this.estimateAction(
+          this.inputAmount,
+          this.inputAsset
+        );
+
+        this.actionGasLimit = gasLimits.actionGasLimit;
+        this.approveGasLimit = gasLimits.approveGasLimit;
+
+        console.info('Treasury deposit action gaslimit:', this.actionGasLimit);
+        console.info(
+          'Treasury deposit approve gaslimit:',
+          this.approveGasLimit
+        );
+
+        if (!isZero(this.actionGasLimit)) {
+          this.isSubsidizedEnabled = this.checkSubsidizedAvailability(
+            this.actionGasLimit
+          );
+          this.estimatedGasCost = this.subsidizedTxNativePrice(
+            this.actionGasLimit
+          );
+        }
+      } catch (err) {
+        this.isSubsidizedEnabled = false;
+        this.isProcessing = false;
+        console.error(`can't estimate treasury deposit for subs: ${err}`);
+        Sentry.captureException("can't estimate treasury deposit for subs");
+        return;
+      }
+
+      this.isProcessing = false;
       this.isShowReview = true;
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
-      if (this.token === undefined) {
-        console.error('token is empty during `handleTxStart`');
+      if (this.inputAsset === undefined) {
+        console.error('inputAsset is empty during `handleTxStart`');
         Sentry.captureException("can't start treasury deposit TX");
         return;
       }
 
-      if (this.inputAmount === undefined) {
-        console.error('amount is empty during `handleTxStart`');
+      if (this.inputAmount === '') {
+        console.error('inputAmount is empty during `handleTxStart`');
         Sentry.captureException("can't start treasury deposit TX");
         return;
       }
@@ -454,7 +441,7 @@ export default Vue.extend({
       this.txStep = 'Confirm';
       try {
         await depositCompound(
-          this.token,
+          this.inputAsset,
           this.inputAmount,
           this.networkInfo.network,
           this.provider.web3,
