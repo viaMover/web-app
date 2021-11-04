@@ -5,6 +5,10 @@ import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
+import ConnectWallet from '@/views/connect-wallet.vue';
+import Home from '@/views/home.vue';
+import HomeMore from '@/views/home-more.vue';
+import View404 from '@/views/view-404.vue';
 
 Vue.use(VueRouter);
 
@@ -12,20 +16,18 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'home',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
+    component: Home
   },
   {
     path: '/more',
     name: 'home-more',
-    component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/home-more.vue'),
+    component: HomeMore,
     beforeEnter: checkFeatureFlag('isMoreEnabled')
   },
   {
     path: '/connect-wallet',
     name: 'connect-wallet',
-    component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue'),
+    component: ConnectWallet,
     meta: {
       skipPreloadScreen: true
     }
@@ -328,8 +330,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/404',
     name: 'not-found-route',
-    component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/view-404.vue'),
+    component: View404,
     meta: {
       skipPreloadScreen: true
     }
@@ -348,9 +349,9 @@ const router = new VueRouter({
   routes
 });
 
-if (isFeatureEnabled('isCardEnabled')) {
+if (isFeatureEnabled('isDebitCardEnabled')) {
   router.addRoute({
-    path: 'debit-card',
+    path: '/debit-card',
     component: () =>
       import(
         /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
