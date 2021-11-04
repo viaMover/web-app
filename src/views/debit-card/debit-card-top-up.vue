@@ -60,15 +60,14 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 // import { RawLocation } from 'vue-router';
 // import { mapActions, mapState } from 'vuex';
-
 // import { Modal as ModalType } from '@/store/modules/modals/types';
 // import { isEth } from '@/utils/address';
 // import { divide, multiply } from '@/utils/bigmath';
 // import { formatToNative } from '@/utils/format';
 // import { TokenWithBalance } from '@/wallet/types';
-
 // import {
 //   DepositForm,
 //   DepositReviewForm,
@@ -76,17 +75,20 @@ import Vue, { PropType } from 'vue';
 //   INPUT_MODE
 // } from '@/components/forms';
 // import { Step as TransactionStep } from '@/components/forms/form-loader';
-// import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import {
+  SecondaryPage //,
+  // SecondaryPageSimpleTitle
+} from '@/components/layout';
 type processStep = 'prepare' | 'review' | 'loader';
 export default Vue.extend({
   name: 'DebitCardTopUp',
-  //   components: {
-  //     DepositForm,
-  //     DepositReviewForm,
-  //     FormLoader,
-  //     SecondaryPage,
-  //     SecondaryPageSimpleTitle
-  //   },
+  components: {
+    //     DepositForm,
+    //     DepositReviewForm,
+    //     FormLoader,
+    SecondaryPage
+    //     SecondaryPageSimpleTitle
+  },
   props: {
     currentStep: {
       type: String as PropType<processStep>,
@@ -193,7 +195,7 @@ export default Vue.extend({
     //       }
     //       return `${formatToNative(this.inputAmount)}`;
     //     }
-  }
+  },
   //   watch: {
   //     tokens: {
   //       handler(newVal: Array<TokenWithBalance>) {
@@ -214,84 +216,84 @@ export default Vue.extend({
   //       immediate: true
   //     }
   //   },
-  //   methods: {
-  //     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
-  //     async handleOpenSelectModal(): Promise<void> {
-  //       this.isLoading = true;
-  //       const newAsset = await this.setModalIsDisplayed({
-  //         id: ModalType.SearchToken,
-  //         value: true,
-  //         payload: {
-  //           useWalletTokens: true
-  //         }
-  //       });
-  //       if (newAsset !== undefined) {
-  //         this.inputAsset = newAsset;
-  //         this.inputAmount = '';
-  //         this.inputAmountNative = '';
-  //         this.isTokenSelectedByUser = true;
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     handleReviewTx(): void {
-  //       this.changeStep('review');
-  //     },
-  //     handleToggleInputMode(): void {
-  //       if (this.inputMode === 'NATIVE') {
-  //         this.inputMode = 'TOKEN';
-  //         return;
-  //       }
-  //       this.inputMode = 'NATIVE';
-  //     },
-  //     handleSelectMaxAmount(): void {
-  //       if (this.inputAsset === undefined) {
-  //         return;
-  //       }
-  //       this.inputAmount = this.inputAsset.balance;
-  //       this.inputAmountNative = multiply(
-  //         this.inputAsset.balance,
-  //         this.inputAsset.priceUSD
-  //       );
-  //     },
-  //     handleUpdateAmount(amount: string): void {
-  //       if (this.inputAsset === undefined) {
-  //         return;
-  //       }
-  //       if (this.inputMode === 'TOKEN') {
-  //         this.inputAmount = amount;
-  //         this.inputAmountNative = multiply(amount, this.inputAsset.priceUSD);
-  //         return;
-  //       }
-  //       this.inputAmountNative = amount;
-  //       this.inputAmount = divide(amount, this.inputAsset.priceUSD);
-  //     },
-  //     handleCreateTx(): void {
-  //       this.changeStep('loader');
-  //     },
-  //     handleUpdateIsSmartTreasury(value: boolean): void {
-  //       this.isSmartTreasury = value;
-  //     },
-  //     handleBack(): void {
-  //       if (this.currentStep === 'review') {
-  //         this.$router.back();
-  //         return;
-  //       }
-  //       this.$router.replace({ name: 'debit-card-manage' });
-  //     },
-  //     changeStep(target: processStep): void {
-  //       const routerArgs: RawLocation = {
-  //         name: 'debit-card-top-up',
-  //         params: { step: target }
-  //       };
-  //       if (this.currentStep === 'review') {
-  //         this.$router.replace(routerArgs);
-  //         return;
-  //       }
-  //       this.$router.push(routerArgs);
-  //     },
-  //     changeTransactionStep(target: TransactionStep): void {
-  //       this.transactionStep = target;
-  //     }
-  //   }
+  methods: {
+    //     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
+    //     async handleOpenSelectModal(): Promise<void> {
+    //       this.isLoading = true;
+    //       const newAsset = await this.setModalIsDisplayed({
+    //         id: ModalType.SearchToken,
+    //         value: true,
+    //         payload: {
+    //           useWalletTokens: true
+    //         }
+    //       });
+    //       if (newAsset !== undefined) {
+    //         this.inputAsset = newAsset;
+    //         this.inputAmount = '';
+    //         this.inputAmountNative = '';
+    //         this.isTokenSelectedByUser = true;
+    //       }
+    //       this.isLoading = false;
+    //     },
+    //     handleReviewTx(): void {
+    //       this.changeStep('review');
+    //     },
+    //     handleToggleInputMode(): void {
+    //       if (this.inputMode === 'NATIVE') {
+    //         this.inputMode = 'TOKEN';
+    //         return;
+    //       }
+    //       this.inputMode = 'NATIVE';
+    //     },
+    //     handleSelectMaxAmount(): void {
+    //       if (this.inputAsset === undefined) {
+    //         return;
+    //       }
+    //       this.inputAmount = this.inputAsset.balance;
+    //       this.inputAmountNative = multiply(
+    //         this.inputAsset.balance,
+    //         this.inputAsset.priceUSD
+    //       );
+    //     },
+    //     handleUpdateAmount(amount: string): void {
+    //       if (this.inputAsset === undefined) {
+    //         return;
+    //       }
+    //       if (this.inputMode === 'TOKEN') {
+    //         this.inputAmount = amount;
+    //         this.inputAmountNative = multiply(amount, this.inputAsset.priceUSD);
+    //         return;
+    //       }
+    //       this.inputAmountNative = amount;
+    //       this.inputAmount = divide(amount, this.inputAsset.priceUSD);
+    //     },
+    //     handleCreateTx(): void {
+    //       this.changeStep('loader');
+    //     },
+    //     handleUpdateIsSmartTreasury(value: boolean): void {
+    //       this.isSmartTreasury = value;
+    //     },
+    handleBack(): void {
+      if (this.currentStep === 'review') {
+        this.$router.back();
+        return;
+      }
+      this.$router.replace({ name: 'debit-card-manage' });
+    }
+    //     changeStep(target: processStep): void {
+    //       const routerArgs: RawLocation = {
+    //         name: 'debit-card-top-up',
+    //         params: { step: target }
+    //       };
+    //       if (this.currentStep === 'review') {
+    //         this.$router.replace(routerArgs);
+    //         return;
+    //       }
+    //       this.$router.push(routerArgs);
+    //     },
+    //     changeTransactionStep(target: TransactionStep): void {
+    //       this.transactionStep = target;
+    //     }
+  }
 });
 </script>

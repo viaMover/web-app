@@ -1,72 +1,93 @@
 <template>
-  <secondary-page
-    has-back-button
-    :title="$t('debitCard.changeSkin.lblChangeSkin')"
-    @back="handleBack"
-  >
-    <p class="description">{{ $t('debitCard.changeSkin.txtChangeSkin') }}</p>
+  <div class="container">
+    <secondary-page
+      has-back-button
+      :title="$t('debitCard.changeSkin.lblDigitalCardSkin')"
+      @back="handleBack"
+    >
+      <p class="description">
+        {{ $t('debitCard.changeSkin.txtDigitalCardSkin') }}
+      </p>
 
-    <div class="content">
-      <form class="form" @submit.prevent="handleChangeSkin">
-        <h2>{{ $t('debitCard.changeSkin.lblWhatSkinDoWeChoose') }}</h2>
-        <div class="info">
-          <skin-image
-            :id="skinToBeApplied.id"
-            :src="skinToBeApplied.src"
-            :symbol="skinToBeApplied.symbol"
-            wrapper-class="icon"
-          />
-          <div class="coin">
-            <p>
-              {{ skinToBeApplied.name }}
-              <span>
-                {{ skinToBeApplied.symbol }}
-              </span>
-            </p>
-          </div>
-          <button
-            class="button-active button-arrow"
-            :style="selectorStyle"
-            type="button"
-            @click.stop.prevent="handleOpenSelectModal"
-          >
-            <arrow-down-icon stroke="#000" />
-          </button>
-        </div>
-        <action-button
-          button-class="black-link button-active"
-          :disabled="!isButtonActive"
-          propagate-original-event
-          type="submit"
-        >
-          <div v-if="isLoading || isProcessing" class="loader-icon">
-            <img
-              :alt="$t('txtPendingIconAlt')"
-              src="@/assets/images/ios-spinner-white.svg"
+      <div class="content secondary_page-body">
+        <form class="form change-skin" @submit.prevent="handleChangeSkin">
+          <h2>
+            {{ $t('debitCard.changeSkin.lblWhatSkinDoWeChoose') }}
+          </h2>
+          <div class="info">
+            <skin-image
+              :id="skinToBeApplied ? skinToBeApplied.id : ''"
+              :color="skinToBeApplied ? skinToBeApplied.color : undefined"
+              :fallback-src-list="skinImageFallbackSrcList"
+              :src="skinImageSrc"
+              :symbol="skinToBeApplied ? skinToBeApplied.symbol : ''"
+              wrapper-class="icon"
             />
+            <div class="coin">
+              <p>
+                {{ skinToBeApplied ? skinToBeApplied.name : '' }}
+                <span>
+                  {{ skinToBeApplied ? skinToBeApplied.symbol : '' }}
+                </span>
+              </p>
+            </div>
+            <button
+              class="button-active button-arrow"
+              :style="selectorStyle"
+              type="button"
+              @click.stop.prevent="handleOpenSelectModal"
+            >
+              <arrow-down-icon stroke="#000" />
+            </button>
           </div>
-          <template v-else>
-            {{ isButtonActive ? $t('debitCard.btnApplySkin') : error }}
-          </template>
-        </action-button>
-      </form>
-    </div>
-  </secondary-page>
+          <div class="description">
+            {{ skinToBeApplied ? skinToBeApplied.description : '' }}
+          </div>
+          <action-button
+            button-class="black-link button-active action-button"
+            :disabled="!isButtonActive"
+            propagate-original-event
+            type="submit"
+          >
+            <div v-if="isLoading || isProcessing" class="loader-icon">
+              <img
+                :alt="$t('icon.txtPendingIconAlt')"
+                src="@/assets/images/ios-spinner-white.svg"
+              />
+            </div>
+            <template v-else>
+              {{
+                isButtonActive ? $t('debitCard.changeSkin.btnApplySkin') : error
+              }}
+            </template>
+          </action-button>
+        </form>
+      </div>
+    </secondary-page>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+
+import { Properties as CssProperties } from 'csstype';
 
 import { Skin } from '@/store/modules/debit-card/types';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 
+import { ActionButton } from '@/components/buttons';
+import { ArrowDownIcon } from '@/components/controls';
 import { SecondaryPage } from '@/components/layout';
+import { SkinImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'DebitCardChangeSkin',
   components: {
-    SecondaryPage
+    SecondaryPage,
+    SkinImage,
+    ArrowDownIcon,
+    ActionButton
   },
   data() {
     return {
@@ -77,11 +98,11 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('debitCard', {
-      currentSkin: 'cardSkin'
+    ...mapGetters('debitCard', {
+      currentSkin: 'currentSkin'
     }),
     skinIsUnsaved(): boolean {
-      return this.skinToBeApplied?.id !== this.currentSkin;
+      return this.skinToBeApplied?.id !== this.currentSkin.id;
     },
     error(): string | undefined {
       if (!this.skinIsUnsaved) {
@@ -94,6 +115,35 @@ export default Vue.extend({
     },
     isButtonActive(): boolean {
       return this.error === undefined && !this.isLoading;
+    },
+    skinImageSrc(): string {
+      if (this.skinToBeApplied === undefined) {
+        return '';
+      }
+
+      return this.skinToBeApplied.previewPicture.src;
+    },
+    skinImageFallbackSrcList(): Array<string> | undefined {
+      if (this.skinToBeApplied === undefined) {
+        return undefined;
+      }
+      return this.skinToBeApplied.previewPicture.sources?.map(
+        (source) => source.src
+      );
+    },
+    selectorStyle(): CssProperties {
+      if (this.skinToBeApplied === undefined) {
+        return {
+          backgroundColor: '#f1f1f1',
+          boxShadow: '0 0 8px rgb(0, 0, 0, 0.5)'
+        };
+      }
+
+      const assetColor = this.skinToBeApplied.color;
+      return {
+        backgroundColor: assetColor,
+        boxShadow: `0 0 8px ${assetColor}`
+      };
     }
   },
   watch: {

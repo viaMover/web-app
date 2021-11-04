@@ -65,7 +65,7 @@ export default {
     allTokensSearcher: undefined,
     refreshError: undefined,
 
-    isDebitCardSectionVisible: false,
+    isDebitCardSectionVisible: true,
     isDepositCardSectionVisible: true,
 
     isSavingsInfoLoading: false,

@@ -11,7 +11,7 @@
     <template v-slot:left-rail>
       <div class="progressive-left-rail">
         <debit-card-my-card />
-        <debit-card-manage-card v-if="cardState === 'active'" />
+        <debit-card-manage-card v-if="showManageCard" />
       </div>
     </template>
 
@@ -31,6 +31,8 @@ import { DebitCardManageCard, DebitCardMyCard } from '@/components/debit-card';
 import { ContentWrapper } from '@/components/layout';
 import { SearchSkinModal } from '@/components/modals';
 
+import '@/styles/_debit-card.less';
+
 export default Vue.extend({
   name: 'DebitCardRoot',
   components: {
@@ -42,7 +44,10 @@ export default Vue.extend({
   computed: {
     ...mapState('debitCard', {
       cardState: 'cardState'
-    })
+    }),
+    showManageCard(): boolean {
+      return ['active', 'frozen', 'expired'].includes(this.cardState);
+    }
   },
   async mounted() {
     await this.loadInfo();

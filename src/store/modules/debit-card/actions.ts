@@ -4,7 +4,10 @@ import * as Sentry from '@sentry/vue';
 
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
 import { DebitCardApiError } from '@/services/mover';
-import { getCardInfo } from '@/services/mover/debit-card/service';
+import {
+  getCardInfo,
+  validateOrOrderCard
+} from '@/services/mover/debit-card/service';
 import {
   getAvailableSkinsFromPersist,
   getCurrentSkinFromPersist,
@@ -14,7 +17,7 @@ import {
 
 import { RootStoreState } from '../../types';
 import { allSkins, defaultSkin } from './consts';
-import { DebitCardStoreState, Skin } from './types';
+import { DebitCardStoreState, Skin, ValidateOrOrderCardParams } from './types';
 
 export default {
   async loadInfo({ commit, dispatch, rootState }): Promise<void> {
@@ -22,7 +25,7 @@ export default {
       commit('setIsLoading', true);
       commit('setError', undefined);
 
-      const currentSkinPromise = dispatch('loadSkins');
+      const currentSkinPromise = dispatch('loadCurrentSkin');
 
       await Promise.all([currentSkinPromise]);
 
@@ -191,5 +194,24 @@ export default {
       skinToBeApplied.id !== defaultSkin.id &&
         skinToBeApplied.nftAddress !== undefined
     );
+  },
+  async validateOrOrderCard(
+    { state },
+    params: ValidateOrOrderCardParams
+  ): Promise<void> {
+    if (state.cardState !== 'order_now') {
+      return;
+    }
+
+    try {
+      const res = await validateOrOrderCard(params);
+      if (res.isError) {
+        throw new DebitCardApiError(res.error);
+      }
+    } catch (error) {
+      console.error('failed to validate or order card', error);
+      Sentry.captureException(error);
+      throw error;
+    }
   }
 } as ActionTree<DebitCardStoreState, RootStoreState>;

@@ -6,7 +6,7 @@
     <div class="description">
       {{ description }}
     </div>
-    <div class="icon checkmark">✔</div>
+    <div class="icon checkmark">✔️</div>
   </div>
 </template>
 

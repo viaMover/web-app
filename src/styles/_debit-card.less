@@ -1,234 +1,283 @@
 @import './_variables.less';
 
-.container {
-  &.manage {
-    .content {
+.debit-card {
+  &__sidebar {
+    .sidebar-wrapper {
+      padding-top: 80px;
+    }
+  }
+
+  &__menu {
+    .page-body {
+      padding-bottom: 200px;
+    }
+
+    &-wrapper {
+      .page-heading {
+        .page-title {
+          color: @black;
+          font-size: 24px;
+          line-height: 32px;
+          @font-bold();
+        }
+      }
+
       .container {
-        margin-top: 40px;
+        .page-body > .description {
+          font-size: 14px;
+          line-height: 22px;
+          color: @muted;
+          @font-medium();
 
-        .card-image {
-          width: 312px;
-          height: 184px;
-          position: relative;
-          box-shadow: 0 8px 32px @icon-shadow;
-
-          &.small {
-            width: 200px;
-            height: 120px;
-
-            &::before {
-              width: 200px;
-              height: 120px;
-            }
+          &.subtitle {
+            font-size: 16px;
+            line-height: 24px;
           }
 
-          &::before {
-            content: '';
-            display: inline-block;
-            width: 312px;
-            height: 184px;
-            position: absolute;
-            background-color: @black;
-            border-radius: 8px;
-            z-index: 1;
-          }
-
-          img {
-            position: absolute;
-            top: 2px;
-            z-index: 2;
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            border-radius: 8px;
-          }
-
-          .logo {
-            position: absolute;
-            z-index: 3;
-            bottom: 23px;
-            right: 23px;
+          &.black {
+            color: @black;
           }
         }
 
-        &.history {
-          .group {
-            margin-bottom: 40px;
+        .content {
+          .container {
+            margin-top: 40px;
 
-            &:last-child {
-              margin-bottom: 0;
-            }
+            .card-image {
+              width: 312px;
+              height: 184px;
+              position: relative;
+              box-shadow: 0 8px 32px @icon-shadow;
+              border-radius: 8px;
 
-            .header {
-              .date {
-                font-size: 16px;
-                line-height: 24px;
-                color: @muted;
-                @font-medium();
+              &.small {
+                width: 200px;
+                height: 120px;
+
+                &::before {
+                  width: 200px;
+                  height: 120px;
+                }
+              }
+
+              &::before {
+                content: '';
+                display: inline-block;
+                width: 312px;
+                height: 184px;
+                position: absolute;
+                background-color: @black;
+                border-radius: 8px;
+                z-index: 1;
+              }
+
+              img,
+              .pu-skeleton {
+                position: absolute;
+                top: 0;
+                z-index: 2;
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                border-radius: 8px;
+              }
+
+              &.skeleton {
+                &::before {
+                  content: unset;
+                }
+
+                .pu-skeleton {
+                  height: 100%;
+                }
               }
             }
 
-            .content {
-              margin-top: 24px;
+            &.history {
+              .group {
+                margin-bottom: 40px;
+
+                &:last-child {
+                  margin-bottom: 0;
+                }
+
+                .header {
+                  .date {
+                    font-size: 16px;
+                    line-height: 24px;
+                    color: @muted;
+                    @font-medium();
+                  }
+                }
+
+                .content {
+                  margin-top: 24px;
+
+                  .item {
+                    display: flex;
+                    flex-flow: row nowrap;
+                    align-items: center;
+                    margin-bottom: 16px;
+
+                    &:last-child {
+                      margin-bottom: 0;
+                    }
+
+                    .description {
+                      flex: 1 0 50%;
+                      word-break: break-all;
+                      overflow-wrap: break-word;
+                      word-wrap: break-word;
+                      font-size: 14px;
+                      line-height: 19px;
+                      margin-left: 16px;
+                      margin-right: 16px;
+                      @font-medium();
+                    }
+
+                    .icon {
+                      flex: 0 0 38px;
+                      width: 38px;
+                      height: 38px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+
+                      &.action {
+                        background-color: @icon-background;
+                        box-shadow: 0 0 16px @icon-shadow;
+                        border-radius: 50%;
+                      }
+
+                      &.checkmark {
+                        color: @black;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            &.info-group {
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
 
               .item {
-                display: flex;
-                flex-flow: row nowrap;
+                flex: 0 0 200px;
+                margin-right: 24px;
 
-                .description {
-                  flex: 1 0 50%;
-                  align-items: center;
-                  word-break: break-all;
-                  overflow-wrap: break-word;
-                  word-wrap: break-word;
-                  font-size: 14px;
-                  line-height: 19px;
+                &:last-child {
+                  margin-right: 0;
                 }
 
-                .icon {
-                  flex: 0 0 38px;
-                  width: 38px;
-                  height: 38px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  margin-bottom: 16px;
-
-                  &:last-child {
-                    margin-bottom: 0;
-                  }
-
-                  &.action {
-                    background-color: @icon-background;
-                    box-shadow: 0 0 16px @icon-shadow;
-                    border-radius: 50%;
-                  }
-
-                  &.checkmark {
-                    color: @black;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .description {
-      font-size: 14px;
-      line-height: 22px;
-      color: @muted;
-      @font-medium();
-
-      &.subtitle {
-        font-size: 16px;
-        line-height: 24px;
-      }
-
-      &.black {
-        color: @black;
-      }
-    }
-
-    .container {
-      &.info-group {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        .item {
-          flex: 0 0 200px;
-          margin-right: 24px;
-
-          &:last-child {
-            margin-right: 0;
-          }
-
-          .title {
-            font-size: 24px;
-            line-height: 32px;
-            color: @black;
-            @font-bold();
-          }
-
-          .description {
-            font-size: 16px;
-            line-height: 24px;
-            color: @black;
-          }
-        }
-
-        &.card-info {
-          margin-top: 24px;
-        }
-      }
-
-      // form.form and its children are to be moved
-      // to the common style bundle (also textarea tag should be
-      // properly styled as well) during next major project internals
-      // update
-      // whereis form.form.order is to enable proper distancing
-      // on the given view
-      form {
-        &.form {
-          .input-group {
-            label {
-              width: 100%;
-              color: @muted;
-              display: block;
-              font-size: 12px;
-              line-height: 16px;
-              @font-regular();
-
-              input {
-                opacity: 1;
-                width: 100%;
-                background: none;
-                border: none;
-                margin-top: 8px;
-
-                &::placeholder {
+                .title {
+                  font-size: 24px;
+                  line-height: 32px;
                   color: @black;
-                  opacity: 0.2;
-                }
-              }
-
-              input {
-                font-size: 24px;
-                line-height: 40px;
-                // seems a bit odd as other inputs are 32px high
-                @font-bold();
-
-                &::placeholder {
                   @font-bold();
                 }
+
+                .description {
+                  font-size: 16px;
+                  line-height: 24px;
+                  color: @black;
+                  @font-medium();
+                }
+              }
+
+              &.card-info {
+                margin-top: 24px;
               }
             }
           }
 
-          button {
-            margin-top: 40px;
-          }
+          // form.form and its children are to be moved
+          // to the common style bundle (also textarea tag should be
+          // properly styled as well) during next major project internals
+          // update
+          // whereis form.form.order is to enable proper distancing
+          // on the given view
+          form {
+            &.form {
+              margin-top: 40px;
 
-          .error-message {
-            display: none;
-            font-style: normal;
-            font-size: 16px;
-            line-height: 24px;
-            color: @error;
-            margin-top: 24px;
-            @font-medium();
-          }
+              .input-group {
+                label {
+                  width: 100%;
+                  color: @muted;
+                  display: block;
+                  font-size: 12px;
+                  line-height: 16px;
+                  @font-regular();
 
-          &.error {
-            .error-message {
-              display: inline-block;
+                  input {
+                    opacity: 1;
+                    width: 100%;
+                    background: none;
+                    border: none;
+                    margin-top: 8px;
+
+                    &::placeholder {
+                      color: @black;
+                      opacity: 0.2;
+                    }
+                  }
+
+                  input {
+                    font-size: 24px;
+                    line-height: 40px;
+                    // seems a bit odd as other inputs are 32px high
+                    @font-bold();
+
+                    &::placeholder {
+                      @font-bold();
+                    }
+                  }
+                }
+              }
+
+              .action-button {
+                margin-top: 40px;
+              }
+
+              .error-message {
+                display: none;
+                font-style: normal;
+                font-size: 16px;
+                line-height: 24px;
+                color: @error;
+                margin-top: 24px;
+                @font-medium();
+              }
+
+              &.error {
+                .error-message {
+                  display: inline-block;
+                }
+              }
+
+              &.order {
+                margin-top: 40px;
+              }
             }
           }
 
-          &.order {
+          & > .description {
             margin-top: 40px;
+            font-size: 14px;
+            line-height: 22px;
+            color: @muted;
+            @font-medium();
+
+            &.subtitle {
+              font-size: 16px;
+              line-height: 24px;
+            }
+
+            &.black {
+              color: @black;
+            }
           }
         }
       }

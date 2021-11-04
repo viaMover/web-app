@@ -1,21 +1,15 @@
 <template>
   <secondary-page :title="$t('debitCard.lblBeautifulCard')">
-    <p class="description">{{ $t('debitCard.txtBeautifulCard') }}</p>
+    <p class="description black">{{ $t('debitCard.txtBeautifulCard') }}</p>
 
     <div class="content">
       <div class="container history">
-        <template v-if="isLoading">
-          <debit-card-history-group-skeleton :items-count="2" />
-          <debit-card-history-group-skeleton :items-count="1" />
-        </template>
-        <template v-else>
-          <debit-card-history-group
-            v-for="group in actionHistory"
-            :key="group.timestamp"
-            :date="formatDate(group.date)"
-            :items="group.items"
-          />
-        </template>
+        <debit-card-history-group
+          v-for="group in actionHistory"
+          :key="group.timestamp"
+          :date="formatDate(group.timestamp)"
+          :items="group.events"
+        />
       </div>
     </div>
   </secondary-page>
@@ -23,29 +17,36 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
+import { SecondaryPage } from '@/components/layout';
+
+import DebitCardHistoryGroup from '../debit-card-history/debit-card-history-group.vue';
+
 export default Vue.extend({
   name: 'DebitCardManagePending',
+  components: {
+    SecondaryPage,
+    DebitCardHistoryGroup
+  },
   computed: {
-    ...mapState('debitCard', {
-      isLoading: 'isActionHistoryLoading'
-    }),
     ...mapGetters('debitCard', {
       actionHistory: 'actionHistoryGroupedByDay'
     })
   },
-  async mounted() {
-    await this.loadActionHistory();
-  },
   methods: {
-    ...mapActions('debitCard', {
-      loadActionHistory: 'loadActionHistory'
-    }),
     formatDate(timestamp: number): string {
-      return dayjs.unix(timestamp).format('MMMM DD');
+      const date = dayjs.unix(timestamp);
+
+      if (dayjs().diff(date, 'days') <= 1) {
+        return date.calendar(undefined, {
+          sameDay: this.$t('dates.sameDay'),
+          lastDay: this.$t('dates.lastDay')
+        });
+      }
+      return date.format('MMMM DD');
     }
   }
 });

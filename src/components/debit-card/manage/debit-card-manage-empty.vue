@@ -1,10 +1,12 @@
 <template>
   <secondary-page :title="$t('debitCard.lblBeautifulCard')">
-    <p class="description">{{ $t('debitCard.txtBeautifulCard') }}</p>
+    <p class="description subtitle black">
+      {{ $t('debitCard.txtBeautifulCard') }}
+    </p>
 
     <div class="content">
-      <div class="container card-image">
-        <debit-card-image :image="currentSkin" />
+      <div class="container">
+        <debit-card-image :skin="currentSkin" />
       </div>
       <p class="description">
         {{ $t('debitCard.txtBeautifulCardBenifits') }}
@@ -46,25 +48,33 @@
               type="text"
             />
           </label>
+          <span v-if="!$v.email.required" class="error-message">{{
+            $t('debitCard.errors.email.required')
+          }}</span>
+          <span v-if="!$v.email.isValidEmail" class="error-message">{{
+            $t('debitCard.errors.email.invalid')
+          }}</span>
         </div>
         <action-button
-          button-class="black-link button-active"
-          :disabled="!isButtonActive"
+          ref="button"
+          button-class="black-link button-active action-button"
+          :disabled="isLoading"
           propagate-original-event
           type="submit"
         >
-          <div v-if="isLoading || isProcessing" class="loader-icon">
+          <div v-if="isLoading" class="loader-icon">
             <img
-              :alt="$t('txtPendingIconAlt')"
+              :alt="$t('icon.txtPendingIconAlt')"
               src="@/assets/images/ios-spinner-white.svg"
             />
           </div>
           <template v-else>
-            {{
-              isButtonActive ? $t('debitCard.btnValidateOrOrderCard') : error
-            }}
+            {{ $t('debitCard.btnValidateOrOrderCard') }}
           </template>
         </action-button>
+        <span v-if="errorText !== ''" class="error-message">{{
+          errorText
+        }}</span>
       </form>
     </div>
   </secondary-page>
@@ -73,12 +83,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { email, required } from 'vuelidate/lib/validators';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import { DebitCardApiError } from '@/services/mover';
 import { ValidateOrOrderCardParams } from '@/store/modules/debit-card/types';
 
 import { ActionButton } from '@/components/buttons';
+import { SecondaryPage } from '@/components/layout';
 
 import DebitCardImage from '../debit-card-image.vue';
 
@@ -86,7 +97,8 @@ export default Vue.extend({
   name: 'DebitCardManageEmpty',
   components: {
     ActionButton,
-    DebitCardImage
+    DebitCardImage,
+    SecondaryPage
   },
   data() {
     return {
@@ -95,13 +107,20 @@ export default Vue.extend({
       errorText: ''
     };
   },
+  computed: {
+    ...mapGetters('debitCard', {
+      currentSkin: 'currentSkin'
+    })
+  },
   methods: {
     ...mapActions('debitCard', {
       validateOrOrderCard: 'validateOrOrderCard'
     }),
     async handleValidateOrOrderCard(): Promise<void> {
+      this.errorText = '';
       this.$v.$touch();
-      if (!this.$v.$invalid) {
+      if (this.$v.$invalid) {
+        this.scrollButtonIntoView();
         return;
       }
 
@@ -110,6 +129,7 @@ export default Vue.extend({
         await this.validateOrOrderCard({
           email: this.email
         } as ValidateOrOrderCardParams);
+        this.isLoading = false;
       } catch (error) {
         if (
           error instanceof DebitCardApiError &&
@@ -118,13 +138,20 @@ export default Vue.extend({
           this.errorText = this.$t(
             `debitCard.errors.${error.message}`
           ) as string;
+          this.scrollButtonIntoView();
           this.isLoading = false;
           return;
         }
 
         this.errorText = this.$t('debitCard.errors.default') as string;
+        this.scrollButtonIntoView();
         this.isLoading = false;
       }
+    },
+    scrollButtonIntoView(): void {
+      this.$nextTick(() => {
+        ((this.$refs.button as Vue).$el as HTMLElement).scrollIntoView();
+      });
     }
   },
   validations: {

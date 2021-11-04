@@ -1,8 +1,10 @@
 <template>
-  <debit-card-manage-active-skeleton v-if="isLoading" />
-  <debit-card-manage-active v-else-if="cardState === 'active'" />
-  <debit-card-manage-pending v-else-if="cardState === 'pending'" />
-  <debit-card-manage-empty v-else />
+  <div class="container manage">
+    <debit-card-manage-active-skeleton v-if="isLoading" />
+    <debit-card-manage-pending v-else-if="cardState === 'pending'" />
+    <debit-card-manage-empty v-else-if="cardState === 'order_now'" />
+    <debit-card-manage-active v-else />
+  </div>
 </template>
 
 <script lang="ts">

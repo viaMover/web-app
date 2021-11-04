@@ -7,7 +7,7 @@
     </div>
     <search-skin-modal-list-item
       v-for="item in items"
-      :key="item.address"
+      :key="item.id"
       :item="item"
       @select="handleSelect"
     />
@@ -17,7 +17,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { Token, TokenWithBalance } from '@/wallet/types';
+import { Skin } from '@/store/modules/debit-card/types';
 
 import SearchSkinModalListItem from './search-skin-modal-list-item.vue';
 
@@ -28,7 +28,7 @@ export default Vue.extend({
   },
   props: {
     items: {
-      type: Array as PropType<Array<Token | TokenWithBalance>>,
+      type: Array as PropType<Array<Skin>>,
       required: true
     },
     showHeader: {
@@ -45,7 +45,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleSelect(selected: Token): void {
+    handleSelect(selected: Skin): void {
       this.$emit('select', selected);
     }
   }

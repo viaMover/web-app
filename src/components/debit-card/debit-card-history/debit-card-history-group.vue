@@ -17,17 +17,22 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { HistoryItem } from '@/store/modules/debit-card/types';
+import { EventHistoryItem } from '@/store/modules/debit-card/types';
+
+import DebitCardHistoryGroupItem from './debit-card-history-group-item.vue';
 
 export default Vue.extend({
   name: 'DebitCardHistoryGroup',
+  components: {
+    DebitCardHistoryGroupItem
+  },
   props: {
     date: {
       type: String,
       required: true
     },
     items: {
-      type: Array as PropType<Array<HistoryItem>>,
+      type: Array as PropType<Array<EventHistoryItem>>,
       required: true
     }
   }

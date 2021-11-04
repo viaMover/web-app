@@ -4,7 +4,7 @@ export class DebitCardApiError extends Error {
   }
 }
 
-export type EventHistoryItem = {
+export type EventHistoryItemMinimal = {
   timestamp: number;
   type:
     | 'order_process_started'
@@ -21,5 +21,5 @@ export type CardAggregatedInfo = {
     bic: string;
   };
   state: 'active' | 'frozen' | 'pending' | 'expired' | 'order_now';
-  eventHistory: Array<EventHistoryItem>;
+  eventHistory: Array<EventHistoryItemMinimal>;
 };

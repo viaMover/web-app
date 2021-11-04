@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapGetters } from 'vuex';
 
 import { Properties } from 'csstype';
 
@@ -44,6 +43,10 @@ export default Vue.extend({
     fallbackSrcList: {
       type: Array as PropType<Array<string>>,
       default: undefined
+    },
+    color: {
+      type: String,
+      default: 'rgba(0, 0, 0, 50%)'
     }
   },
   data() {
@@ -52,7 +55,6 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('debitCard', { getSkinColor: 'getSkinColor' }),
     truncatedSymbol(): string {
       if (this.symbol.length > 5) {
         return `${this.symbol.toUpperCase().substr(0, 4)}...`;
@@ -61,9 +63,6 @@ export default Vue.extend({
     },
     displayOriginalImage(): boolean {
       return this.src !== '' && !this.loadingFailed;
-    },
-    color(): string | undefined {
-      return this.getSkinColor(this.id) ?? 'rgba(0, 0, 0, 50%)';
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {

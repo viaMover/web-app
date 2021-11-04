@@ -35,7 +35,7 @@
       <div v-else class="no-tokens">
         <span class="icon">👻</span>
         <h4>{{ $t('lblOhSnap') }}</h4>
-        <p>{{ $t('debitCard.txtCouldNotFindSkin') }}</p>
+        <p>{{ $t('debitCard.lblWeCouldNotFindThisSkinAnywhere') }}</p>
       </div>
     </div>
   </modal>

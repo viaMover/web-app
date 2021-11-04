@@ -1,3 +1,8 @@
+import dayjs from 'dayjs';
+import Fuse from 'fuse.js';
+
+import { PictureDescriptor } from '@/components/html5';
+
 export type DebitCardStoreState = {
   isLoading: boolean;
   error: string | Error | undefined;
@@ -21,18 +26,25 @@ export type SkinMinimal = {
   id: string;
   symbol: string;
   nftAddress: string | undefined;
+  color: string;
 };
 
 export type Skin = {
   name: string;
   description: string;
+  picture: PictureDescriptor;
+  previewPicture: PictureDescriptor;
 } & SkinMinimal;
 
-export type HistoryItem = {
-  id: string;
+export type EventHistoryItem = {
   icon: string;
-  timestamp: undefined;
+  timestamp: number;
   description: string;
+};
+
+export type EventHistoryItemGroup = {
+  timestamp: number;
+  events: Array<EventHistoryItem>;
 };
 
 export type EventHistoryItemMinimal = {

@@ -107,7 +107,7 @@ import {
 import { ActionButton } from '@/components/buttons';
 import { DynamicInput } from '@/components/controls';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'SavingsWithdrawForm',

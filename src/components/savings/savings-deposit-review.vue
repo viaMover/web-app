@@ -83,7 +83,7 @@ import { TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
-import TokenImage from '@/components/tokens/token-image/token-image.vue';
+import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'SavingsDepositReview',

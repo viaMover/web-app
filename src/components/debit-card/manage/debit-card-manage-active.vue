@@ -3,31 +3,27 @@
     <p class="description">{{ $t('debitCard.txtVisaDebitCard') }}</p>
 
     <div class="content">
-      <div class="container card-image">
+      <div class="container">
         <debit-card-image :skin="currentSkin" />
       </div>
       <statement-list class="container">
         <statement-list-item
-          :description="last4Digits"
-          :title="$t('debitCard.lblLast4Digits')"
+          :description="$t('debitCard.lblLast4Digits')"
+          :value="last4Digits"
         />
         <statement-list-item
-          :description="
+          :description="$t('debitCard.lblExpiryDate')"
+          :value="
             cardInfo ? cardInfo.expiryDate : $t('debitCard.lblNotAvailable')
           "
-          :title="$t('debitCard.lblExpiryDate')"
         />
         <statement-list-item
-          :description="
-            cardInfo ? cardInfo.iban : $t('debitCard.lblNotAvailable')
-          "
-          :title="$t('debitCard.lblIBAN')"
+          :description="$t('debitCard.lblIBAN')"
+          :value="cardInfo ? cardInfo.iban : $t('debitCard.lblNotAvailable')"
         />
         <statement-list-item
-          :description="
-            cardInfo ? cardInfo.bic : $t('debitCard.lblNotAvailable')
-          "
-          :title="$t('debitCard.lblBIC')"
+          :description="$t('debitCard.lblBIC')"
+          :value="cardInfo ? cardInfo.bic : $t('debitCard.lblNotAvailable')"
         />
       </statement-list>
     </div>
@@ -36,25 +32,32 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { CardInfo } from '@/store/modules/debit-card/types';
 
+import { SecondaryPage } from '@/components/layout';
 import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
 
+import DebitCardImage from '../debit-card-image.vue';
+
 export default Vue.extend({
   name: 'DebitCardManageActive',
   components: {
     StatementList,
-    StatementListItem
+    StatementListItem,
+    SecondaryPage,
+    DebitCardImage
   },
   computed: {
     ...mapState('debitCard', {
-      currentSkin: 'currentSkin',
       rawInfo: 'cardInfo'
+    }),
+    ...mapGetters('debitCard', {
+      currentSkin: 'currentSkin'
     }),
     cardInfo(): CardInfo | undefined {
       return this.rawInfo;

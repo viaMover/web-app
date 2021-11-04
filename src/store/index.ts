@@ -5,11 +5,7 @@ import { isFeatureEnabled } from '@/settings';
 
 import actions from './actions';
 import account from './modules/account';
-import governance from './modules/governance';
 import modals from './modules/modals';
-import nft from './modules/nft';
-import radar from './modules/radar';
-import shop from './modules/shop';
 import mutations from './mutations';
 import { RootStoreState } from './types';
 
@@ -30,19 +26,33 @@ const store = new Vuex.Store<RootStoreState>({
 });
 
 if (isFeatureEnabled('isNibbleShopEnabled')) {
-  store.registerModule('shop', shop);
+  import(/* webpackChunkName: "nibble-shop-store" */ './modules/shop').then(
+    (module) => store.registerModule('shop', module.default)
+  );
 }
 
 if (isFeatureEnabled('isNftDropsEnabled')) {
-  store.registerModule('nft', nft);
+  import(/* webpackChunkName: "nft-drops-store" */ './modules/nft').then(
+    (module) => store.registerModule('nft', module.default)
+  );
 }
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  store.registerModule('radar', radar);
+  import(/* webpackChunkName: "release-radar-store" */ './modules/radar').then(
+    (module) => store.registerModule('radar', module.default)
+  );
 }
 
 if (isFeatureEnabled('isGovernanceEnabled')) {
-  store.registerModule('governance', governance);
+  import(
+    /* webpackChunkName: "governance-store" */ './modules/governance'
+  ).then((module) => store.registerModule('governance', module.default));
+}
+
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  import(
+    /* webpackChunkName: "debit-card-store" */ './modules/debit-card'
+  ).then((module) => store.registerModule('debitCard', module.default));
 }
 
 export default store;

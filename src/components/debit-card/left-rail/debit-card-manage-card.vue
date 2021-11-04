@@ -39,7 +39,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
   LeftRailSection,
   LeftRailSectionNavItemImage,
@@ -51,7 +53,37 @@ export default Vue.extend({
   components: {
     LeftRailSection,
     LeftRailSectionNavItemImage,
-    LeftRailSectionNavItemImageSkeleton
+    LeftRailSectionNavItemImageSkeleton,
+    CustomPicture
+  },
+  data() {
+    return {
+      topUpPicture: {
+        src: require('@/assets/images/CardTopUpPreview.png'),
+        alt: this.$t('debitCard.lblCardTopUp') as string,
+        sources: [
+          {
+            src: require('@/assets/images/CardTopUpPreview@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor,
+      changeSkinPicture: {
+        src: require('@/assets/images/CardChangeSkinPreview.png'),
+        alt: this.$t('debitCard.lblChangeSkin') as string,
+        sources: [
+          {
+            src: require('@/assets/images/CardChangeSkinPreview@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor
+    };
+  },
+  computed: {
+    ...mapState('debitCard', {
+      isLoading: 'isLoading'
+    })
   }
 });
 </script>

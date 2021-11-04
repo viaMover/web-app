@@ -1,5 +1,7 @@
 import { MutationTree } from 'vuex';
 
+import Fuse from 'fuse.js';
+
 import {
   CardInfo,
   CardState,

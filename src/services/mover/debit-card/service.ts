@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+import { ValidateOrOrderCardParams } from '@/store/modules/debit-card/types';
+
 import { Result } from '../../responses';
 import { CardAggregatedInfo } from './types';
 
@@ -26,7 +28,7 @@ export const getCardInfo = async (
         },
         {
           timestamp: now.unix(),
-          type: 'order_process_started'
+          type: 'card_shipped'
         }
       ],
       info: {
@@ -36,5 +38,14 @@ export const getCardInfo = async (
         number: '8097809780978097'
       }
     }
+  };
+};
+
+export const validateOrOrderCard = async (
+  params: ValidateOrOrderCardParams
+): Promise<Result<string, string>> => {
+  return {
+    isError: true,
+    error: 'not implemented yet'
   };
 };

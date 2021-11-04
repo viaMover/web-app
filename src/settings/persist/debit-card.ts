@@ -4,7 +4,7 @@ import { SkinMinimal } from '@/store/modules/debit-card/types';
 
 import { AccountBoundPersistedItem } from './types';
 
-const debitCardPersistKey = 'debit_card';
+const debitCardPersistKey = 'debit_card_current_skin';
 
 type DebitCardPersistItem = AccountBoundPersistedItem<SkinMinimal>;
 
@@ -44,6 +44,7 @@ export const getCurrentSkinFromPersist = async (
     id: addressBoundItem.id,
     nftAddress: addressBoundItem.nftAddress,
     symbol: addressBoundItem.symbol,
+    color: addressBoundItem.color,
     isExpired:
       addressBoundItem.expirationDate === undefined
         ? false
@@ -67,7 +68,7 @@ const getDebitCardPersistItem = async (): Promise<
   }
 };
 
-const debitCardAvailableSkinsPersistKey = 'debit_card_nft_existence';
+const debitCardAvailableSkinsPersistKey = 'debit_card_available_skins';
 
 type DebitCardAvailableSkinsPersistItem = {
   [accountAddress: string]: {

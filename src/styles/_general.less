@@ -1,3 +1,5 @@
+@import './_variables.less';
+
 .general-no-wallet-desktop {
   background-color: #fff;
   height: 100vh;
@@ -16,14 +18,14 @@
   display: flex;
   -webkit-box-pack: justify;
   -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 .general-no-wallet-desktop__wrapper-info {
   -webkit-flex-basis: 53.5%;
-      -ms-flex-preferred-size: 53.5%;
-          flex-basis: 53.5%;
+  -ms-flex-preferred-size: 53.5%;
+  flex-basis: 53.5%;
 }
 
 .general-no-wallet-desktop__wrapper-info .logo {
@@ -81,7 +83,7 @@
   background-color: #fcfcfc;
   border-radius: 8px;
   -webkit-box-shadow: 0 4px 16px #ccc;
-          box-shadow: 0 4px 16px #ccc;
+  box-shadow: 0 4px 16px #ccc;
 }
 
 .general-no-wallet-desktop__wrapper-qr .description {
@@ -1074,8 +1076,8 @@
   display: flex;
   -webkit-box-pack: justify;
   -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 .general-desktop__menu-wrapper-navigation-left {
@@ -1102,13 +1104,13 @@
   display: flex;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 .general-desktop__menu-wrapper-navigation-left ul li a .image {
   -webkit-filter: drop-shadow(0 0 16px #ccc);
-          filter: drop-shadow(0 0 16px #ccc);
+  filter: drop-shadow(0 0 16px #ccc);
   width: 54px;
   height: 40px;
 }
@@ -1143,6 +1145,10 @@
   font-size: 14px;
   line-height: 22px;
   color: #000;
+
+  &.error {
+    color: @error;
+  }
 }
 
 .general-desktop__menu-wrapper-navigation-left ul .disabled {
@@ -1181,8 +1187,8 @@
   display: flex;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 .general-desktop__menu-wrapper-navigation-right ul li button .icon {

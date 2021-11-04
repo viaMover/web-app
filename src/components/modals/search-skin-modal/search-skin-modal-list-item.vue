@@ -3,7 +3,8 @@
     <div class="swaps__wrapper-search-items-item-info">
       <skin-image
         :id="item.id"
-        :src="item.logo"
+        :color="item.color"
+        :src="item.previewPicture.src"
         :symbol="item.symbol"
         wrapper-class="icon"
       />

@@ -1,5 +1,12 @@
 <template>
-  <custom-picture />
+  <div class="card-image">
+    <custom-picture
+      :alt="skin.picture.alt"
+      :sources="skin.picture.sources"
+      :src="skin.picture.src"
+      :webp-sources="skin.picture.webpSources"
+    />
+  </div>
 </template>
 
 <script lang="ts">
