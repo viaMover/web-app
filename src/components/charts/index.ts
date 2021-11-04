@@ -9,12 +9,8 @@ import {
   BarElement,
   CategoryScale,
   Chart,
-  Legend,
   LinearScale,
-  SubTitle,
-  TimeScale,
-  Title,
-  Tooltip
+  TimeScale
 } from 'chart.js';
 // import { Chart, registerables, Interaction } from 'chart.js';
 // import { CrosshairPlugin, Interpolate } from 'chartjs-plugin-crosshair';
