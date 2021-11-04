@@ -41,7 +41,7 @@
             </button>
           </div>
           <div class="description">
-            {{ skinToBeApplied ? skinToBeApplied.description : '' }}
+            <p>{{ skinToBeApplied ? skinToBeApplied.description : '' }}</p>
           </div>
           <action-button
             button-class="black-link button-active action-button"
