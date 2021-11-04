@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 
 import { RootStoreState } from '../../types';
+import { defaultSkin } from './consts';
 import {
   DebitCardStoreState,
   EventHistoryItem,
@@ -15,9 +16,17 @@ import {
 
 export default {
   availableSkins(state, getters, rootState): Array<Skin> {
+    if (state.availableSkins === undefined) {
+      return [defaultSkin].map(mapSkin(rootState));
+    }
+
     return state.availableSkins.map(mapSkin(rootState));
   },
   currentSkin(state, getters, rootState): Skin {
+    if (state.currentSkin === undefined) {
+      return mapSkin(rootState)(defaultSkin);
+    }
+
     return mapSkin(rootState)(state.currentSkin);
   },
   cardStateText(state, getters, rootState): string {

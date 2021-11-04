@@ -20,37 +20,58 @@ import { allSkins, defaultSkin } from './consts';
 import { DebitCardStoreState, Skin, ValidateOrOrderCardParams } from './types';
 
 export default {
-  async loadInfo({ commit, dispatch, rootState }): Promise<void> {
-    try {
-      commit('setIsLoading', true);
-      commit('setError', undefined);
+  async loadInfo(
+    { state, commit, dispatch, rootState },
+    refetch = false
+  ): Promise<void> {
+    const load = async (): Promise<void> => {
+      try {
+        commit('setIsLoading', true);
+        commit('setError', undefined);
 
-      const currentSkinPromise = dispatch('loadCurrentSkin');
+        const currentSkinPromise = dispatch('loadCurrentSkin', refetch);
 
-      await Promise.all([currentSkinPromise]);
+        await Promise.all([currentSkinPromise]);
 
-      if (rootState.account?.currentAddress === undefined) {
-        throw new Error('failed to get current address');
+        if (rootState.account?.currentAddress === undefined) {
+          throw new Error('failed to get current address');
+        }
+
+        const cardInfo = await getCardInfo(rootState.account.currentAddress);
+        if (cardInfo.isError) {
+          throw new DebitCardApiError(cardInfo.error);
+        }
+
+        commit('setCardState', cardInfo.result.state);
+        commit('setCardEventHistory', cardInfo.result.eventHistory);
+        commit('setCardInfo', cardInfo.result.info);
+
+        commit('setIsLoading', false);
+      } catch (error) {
+        console.error('failed to load debit card module info', error);
+        Sentry.captureException(error);
+        commit('setIsLoading', false);
+        commit('setError', error);
+        commit('setLoadingPromise', undefined);
       }
+    };
 
-      const cardInfo = await getCardInfo(rootState.account.currentAddress);
-      if (cardInfo.isError) {
-        throw new DebitCardApiError(cardInfo.error);
-      }
-
-      commit('setCardState', cardInfo.result.state);
-      commit('setCardEventHistory', cardInfo.result.eventHistory);
-      commit('setCardInfo', cardInfo.result.info);
-
-      commit('setIsLoading', false);
-    } catch (error) {
-      console.error('failed to load debit card module info', error);
-      Sentry.captureException(error);
-      commit('setIsLoading', false);
-      commit('setError', error);
+    if (!refetch && state.loadingPromise !== undefined) {
+      return state.loadingPromise;
     }
+
+    const loadingPromise = load();
+    commit('setLoadingPromise', loadingPromise);
+    return loadingPromise;
   },
-  async loadCurrentSkin({ commit, rootState }): Promise<void> {
+  async loadCurrentSkin(
+    { state, commit, rootState },
+    refetch = false
+  ): Promise<void> {
+    if (!refetch && state.currentSkin !== undefined) {
+      return;
+    }
+
     if (rootState.account?.currentAddress === undefined) {
       throw new Error('failed to get current address');
     }
@@ -113,7 +134,14 @@ export default {
       }
     }
   },
-  async loadAvailableSkins({ commit, rootState }): Promise<void> {
+  async loadAvailableSkins(
+    { state, commit, rootState },
+    refetch = false
+  ): Promise<void> {
+    if (!refetch && state.availableSkins !== undefined) {
+      return;
+    }
+
     if (rootState.account?.currentAddress === undefined) {
       throw new Error('failed to get current address');
     }

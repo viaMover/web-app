@@ -1,14 +1,12 @@
-import dayjs from 'dayjs';
-import Fuse from 'fuse.js';
-
 import { PictureDescriptor } from '@/components/html5';
 
 export type DebitCardStoreState = {
   isLoading: boolean;
   error: string | Error | undefined;
+  loadingPromise: Promise<void> | undefined;
 
-  availableSkins: Array<SkinMinimal>;
-  currentSkin: SkinMinimal;
+  availableSkins: Array<SkinMinimal> | undefined;
+  currentSkin: SkinMinimal | undefined;
   cardState: CardState;
 
   cardInfo: CardInfo | undefined;

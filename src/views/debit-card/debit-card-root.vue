@@ -50,7 +50,7 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    await this.loadInfo();
+    await this.loadInfo(true);
   },
   methods: {
     ...mapActions('debitCard', {

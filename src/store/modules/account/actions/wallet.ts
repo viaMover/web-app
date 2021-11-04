@@ -408,12 +408,18 @@ export default {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
+    const debitCardAvailableSkinsPromise = isFeatureEnabled(
+      'isDebitCardEnabled'
+    )
+      ? dispatch('debitCard/loadAvailableSkins', true)
+      : Promise.resolve();
 
     const promisesResults = await Promise.allSettled([
       savingsFreshData,
       treasuryFreshData,
       nftInfoPromise,
-      loadPowercardPromise
+      loadPowercardPromise,
+      debitCardAvailableSkinsPromise
     ]);
     const promisesErrors = promisesResults
       .filter((p): p is PromiseRejectedResult => p.status === 'rejected')

@@ -32,5 +32,8 @@ export default {
   },
   setAvailableSkins(state, skins: Array<SkinMinimal>): void {
     state.availableSkins = skins;
+  },
+  setLoadingPromise(state, promise: Promise<void> | undefined): void {
+    state.loadingPromise = promise;
   }
 } as MutationTree<DebitCardStoreState>;
