@@ -24,7 +24,6 @@ import {
   ProposalInfo,
   ProposalWithVotes,
   Scores,
-  Vote,
   vote,
   VoteParams,
   VoteResponse
