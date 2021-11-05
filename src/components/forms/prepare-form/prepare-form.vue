@@ -7,14 +7,14 @@
         :title="headerTitle"
       />
       <div class="secondary_page-token-info">
-        <span>{{ tokenInfoTitle }}</span>
-        <p>{{ tokenInfoDescription }}</p>
+        <span>{{ operationTitle }}</span>
+        <p>{{ operationDescription }}</p>
       </div>
     </div>
-    <div class="secondary_page-body">
+    <form class="secondary_page-body" @submit.prevent="handleReviewTx">
       <h2>{{ inputAssetHeading }}</h2>
       <div class="info">
-        <PuSkeleton v-if="isLoading" class="icon" tag="div" />
+        <pu-skeleton v-if="isLoading" circle class="icon" tag="div" />
         <token-image
           v-else
           :address="asset ? asset.address : ''"
@@ -67,25 +67,12 @@
           :value="inputValue"
           @update-value="handleUpdateValue"
         />
-        <div
-          v-if="isSwapNeeded && formattedUsdcTotal && inputMode === 'TOKEN'"
-          class="form-swap"
-        >
-          <p>
-            {{ $t('forms.lblSwappingFor') }}
-            <custom-picture
-              alt="USDC"
-              class="token"
-              :sources="usdcPicture.sources"
-              :src="usdcPicture.src"
-            />
-            <span>{{ formattedUsdcTotal }}</span>
-          </p>
-        </div>
+        <slot name="swap-message" />
         <action-button
           button-class="black-link button-active"
           :disabled="!isButtonActive"
-          @button-click="handleReviewTx"
+          propagate-original-event
+          type="submit"
         >
           <div v-if="isLoading || isProcessing" class="loader-icon">
             <img
@@ -98,7 +85,7 @@
           </template>
         </action-button>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -108,7 +95,6 @@ import { mapGetters, mapState } from 'vuex';
 
 import { Properties as CssProperties } from 'csstype';
 
-import { sameAddress } from '@/utils/address';
 import { greaterThan, multiply, notZero } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -117,7 +103,6 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { InputMode } from '@/components/forms/prepare-form/types';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
 
@@ -128,8 +113,7 @@ export default Vue.extend({
     SecondaryPageSimpleTitle,
     ActionButton,
     ArrowDownIcon,
-    DynamicInput,
-    CustomPicture
+    DynamicInput
   },
   props: {
     isLoading: {
@@ -141,7 +125,7 @@ export default Vue.extend({
       required: true
     },
     asset: {
-      type: Object as PropType<TokenWithBalance>,
+      type: Object as PropType<TokenWithBalance | undefined>,
       default: undefined
     },
     headerTitle: {
@@ -152,11 +136,11 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    tokenInfoTitle: {
+    operationTitle: {
       type: String,
       default: ''
     },
-    tokenInfoDescription: {
+    operationDescription: {
       type: String,
       default: ''
     },
@@ -184,27 +168,10 @@ export default Vue.extend({
       type: String as PropType<string | undefined>,
       default: undefined
     },
-    formattedUsdcTotal: {
-      type: String,
-      default: undefined
-    },
     outputAssetHeadingText: {
       type: String,
       default: ''
     }
-  },
-  data() {
-    return {
-      usdcPicture: {
-        src: require('@/assets/images/USDC.png'),
-        sources: [
-          {
-            src: require('@/assets/images/USDC@2x.png'),
-            variant: '2x'
-          }
-        ]
-      } as PictureDescriptor
-    };
   },
   computed: {
     ...mapState('account', ['networkInfo', 'nativeCurrency']),
@@ -214,12 +181,6 @@ export default Vue.extend({
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
-    },
-    maxInputAmount(): string {
-      if (this.asset === undefined) {
-        return '0';
-      }
-      return this.asset.balance;
     },
     inputValue(): string {
       return this.inputMode === 'TOKEN'
@@ -279,20 +240,16 @@ export default Vue.extend({
         backgroundColor: assetColor,
         boxShadow: `0 0 8px ${assetColor}`
       };
-    },
-    isSwapNeeded(): boolean {
-      if (this.asset === undefined) {
-        return true;
-      }
-
-      return !sameAddress(this.asset.address, this.outputUSDCAsset.address);
     }
   },
   methods: {
-    handleOpenSelectModal() {
+    handleReviewTx(): void {
+      this.$emit('review-tx');
+    },
+    handleOpenSelectModal(): void {
       this.$emit('open-select-modal');
     },
-    handleSelectMaxAmount() {
+    handleSelectMaxAmount(): void {
       this.$emit('select-max-amount');
     },
     handleToggleInputMode(): void {
@@ -300,9 +257,6 @@ export default Vue.extend({
     },
     handleUpdateValue(val: string): void {
       this.$emit('update-amount', val);
-    },
-    handleReviewTx(): void {
-      this.$emit('review-tx');
     }
   }
 });

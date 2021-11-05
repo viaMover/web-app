@@ -17,12 +17,10 @@
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
+      :operation-description="$t('treasury.claimAndBurn.txtYouApproximateExit')"
+      :operation-title="claimingForStr"
       :output-asset-heading-text="$t('treasury.claimAndBurn.lblAmountWeBurnIn')"
       :selected-token-description="description"
-      :token-info-description="
-        $t('treasury.claimAndBurn.txtYouApproximateExit')
-      "
-      :token-info-title="claimingForStr"
       :transfer-error="transferError"
       @open-select-modal="handleOpenSelectModal"
       @review-tx="handleTxReview"
@@ -122,7 +120,7 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       treasury: {
-        alt: this.$t('treasury.lblSmartTreasury'),
+        alt: this.$t('treasury.lblSmartTreasury') as string,
         src: require('@/assets/images/SmartTreasury@1x.png'),
         sources: [
           { src: require('@/assets/images/SmartTreasury@1x.png') },
@@ -186,7 +184,7 @@ export default Vue.extend({
     description(): string {
       return (
         this.inputAsset !== undefined
-          ? this.$t('treasury.claimAndBurn.txtYouChooseMove')
+          ? (this.$t('treasury.claimAndBurn.txtYouChooseMove') as string)
           : ''
       ) as string;
     },
@@ -362,14 +360,16 @@ export default Vue.extend({
           ).toFixed(2);
 
           if (this.maxBurnedAmount === undefined) {
-            this.transferError = this.$t('treasury.claimAndBurn.lblBurnError');
+            this.transferError = this.$t(
+              'treasury.claimAndBurn.lblBurnError'
+            ) as string;
             return;
           }
 
           if (greaterThan(this.inputAmount, this.maxBurnedAmount)) {
             this.transferError = this.$t(
               'treasury.claimAndBurn.lblBurnLimitReached'
-            );
+            ) as string;
             return;
           }
 
@@ -390,14 +390,16 @@ export default Vue.extend({
           this.inputAmountNative = value;
 
           if (this.maxBurnedAmount === undefined) {
-            this.transferError = this.$t('treasury.claimAndBurn.lblBurnError');
+            this.transferError = this.$t(
+              'treasury.claimAndBurn.lblBurnError'
+            ) as string;
             return;
           }
 
           if (greaterThan(this.inputAmount, this.maxBurnedAmount)) {
             this.transferError = this.$t(
               'treasury.claimAndBurn.lblBurnLimitReached'
-            );
+            ) as string;
             return;
           }
           this.claimingFor = await getExitingAmount(

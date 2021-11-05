@@ -17,14 +17,14 @@
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
+      :operation-description="
+        $t('treasury.increaseBoost.txtYouApproximateBoost')
+      "
+      :operation-title="newBoost"
       :output-asset-heading-text="
         $t('treasury.increaseBoost.lblAmountWeReserveIn')
       "
       :selected-token-description="description"
-      :token-info-description="
-        $t('treasury.increaseBoost.txtYouApproximateBoost')
-      "
-      :token-info-title="newBoost"
       @open-select-modal="handleOpenSelectModal"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
@@ -226,13 +226,14 @@ export default Vue.extend({
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
-          if (!this.isTokenSelectedByUser) {
-            const move = newVal.find((t: TokenWithBalance) =>
-              sameAddress(t.address, this.moveTokenInfo.address)
-            );
-            if (move) {
-              this.inputAsset = move;
-            }
+          if (this.isTokenSelectedByUser) {
+            return;
+          }
+          const move = newVal.find((t: TokenWithBalance) =>
+            sameAddress(t.address, this.moveTokenInfo.address)
+          );
+          if (move) {
+            this.inputAsset = move;
           }
         } finally {
           this.isLoading = false;

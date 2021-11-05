@@ -17,14 +17,14 @@
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
+      :operation-description="
+        $t('treasury.decreaseBoost.txtYouApproximateBoost')
+      "
+      :operation-title="newBoost"
       :output-asset-heading-text="
         $t('treasury.decreaseBoost.lblAmountWeRemoveIn')
       "
       :selected-token-description="description"
-      :token-info-description="
-        $t('treasury.decreaseBoost.txtYouApproximateBoost')
-      "
-      :token-info-title="newBoost"
       @open-select-modal="handleOpenSelectModal"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
@@ -253,21 +253,22 @@ export default Vue.extend({
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
-          if (!this.isTokenSelectedByUser) {
-            const move = newVal.find((t: TokenWithBalance) =>
-              sameAddress(
-                t.address,
-                getMoveAssetData(this.networkInfo.network).address
-              )
-            );
-            if (move) {
-              this.inputAsset = move;
+          if (this.isTokenSelectedByUser) {
+            return;
+          }
+          const move = newVal.find((t: TokenWithBalance) =>
+            sameAddress(
+              t.address,
+              getMoveAssetData(this.networkInfo.network).address
+            )
+          );
+          if (move !== undefined) {
+            this.inputAsset = move;
+          } else {
+            if (newVal.length > 0) {
+              this.inputAsset = newVal[0];
             } else {
-              if (newVal.length > 0) {
-                this.inputAsset = newVal[0];
-              } else {
-                this.inputAsset = undefined;
-              }
+              this.inputAsset = undefined;
             }
           }
         } finally {

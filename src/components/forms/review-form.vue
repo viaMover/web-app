@@ -1,5 +1,5 @@
 <template>
-  <div class="review__wrapper">
+  <form class="review__wrapper">
     <secondary-page-simple-title
       class="page-title max-width"
       :title="headerTitle"
@@ -46,7 +46,7 @@
     <div v-if="isSubsidizedEnabled">
       <div class="switch">
         <p>{{ $t('forms.lblUseSmartTreasury') }}</p>
-        <form class="switch__container">
+        <div class="switch__container">
           <input
             id="switch-shadow"
             v-model="isSmartTreasury"
@@ -54,7 +54,7 @@
             type="checkbox"
           />
           <label class="switch-button" for="switch-shadow"></label>
-        </form>
+        </div>
       </div>
       <div class="items">
         <div class="item">
@@ -70,7 +70,7 @@
     >
       {{ buttonText }}
     </button>
-  </div>
+  </form>
 </template>
 
 <script lang="ts">
@@ -162,8 +162,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    formatToDecimals,
-    formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
         isSmartTreasury: this.isSmartTreasury && this.isSubsidizedEnabled
