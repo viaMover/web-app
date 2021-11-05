@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import dayjs from 'dayjs';
 import Web3 from 'web3';
 
 import { defaultClientVersion } from './consts';
@@ -167,7 +168,7 @@ export default class Client {
       address: accountAddress,
       msg: JSON.stringify({
         version: this.clientVersion,
-        timestamp: (Date.now() / 1e3).toFixed(),
+        timestamp: dayjs().unix().toFixed(),
         space: spaceId,
         type,
         payload
