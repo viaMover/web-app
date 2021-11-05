@@ -35,7 +35,7 @@
     </div>
     <div class="items">
       <div class="item">
-        <h2>{{ `${inputAmountTitle} ${token.symbol}` }}</h2>
+        <h2>{{ inputAmountTitle }} {{ token.symbol }}</h2>
         <span>{{ formattedAmount }}</span>
       </div>
       <div class="item">
