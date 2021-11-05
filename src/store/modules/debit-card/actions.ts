@@ -224,7 +224,7 @@ export default {
     );
   },
   async validateOrOrderCard(
-    { state },
+    { state, rootState },
     params: ValidateOrOrderCardParams
   ): Promise<void> {
     if (state.cardState !== 'order_now') {
@@ -232,7 +232,25 @@ export default {
     }
 
     try {
-      const res = await validateOrOrderCard(params);
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
+      }
+
+      if (rootState.account?.provider?.web3 === undefined) {
+        throw new Error('failed to get web3 provider');
+      }
+
+      const signature = await rootState.account.provider.web3.eth.personal.sign(
+        JSON.stringify(params),
+        rootState.account.currentAddress,
+        ''
+      );
+
+      const res = await validateOrOrderCard(
+        params,
+        rootState.account.currentAddress,
+        signature
+      );
       if (res.isError) {
         throw new DebitCardApiError(res.error);
       }

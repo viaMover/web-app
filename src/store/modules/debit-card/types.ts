@@ -63,4 +63,10 @@ export type CardState =
 
 export type ValidateOrOrderCardParams = {
   email: string;
+  phone: string;
+  gender: 'M' | 'F' | 'O';
+  lastName: string;
+  firstName: string;
+  dateOfBirth: string;
+  honorificPrefix: string;
 };

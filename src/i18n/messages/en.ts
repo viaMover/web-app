@@ -929,6 +929,21 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     txtEUR: 'Personal EUR IBAN',
     lblYourEmailAddress: 'Your email address',
     txtYourEmailAddressPlaceholder: 'your@email.com',
+    lblYourPhoneNumber: 'Your phone number',
+    txtYourPhoneNumberPlaceholder: '+441234567890',
+    lblYourGender: {
+      title: 'Your gender',
+      male: 'Male',
+      female: 'Female',
+      other: 'Other'
+    },
+    lblYourHonorificPrefix: 'Your honorific prefix',
+    txtYourHonorificPrefixPlaceholder: 'Mr. or Ms. or Mx.',
+    lblYourFamilyName: 'Your last name',
+    txtYourFamilyNamePlaceholder: 'Nakamoto',
+    lblYourGivenName: 'Your first name',
+    txtYourGivenNamePlaceholder: 'Antoshi',
+    lblYourDateOfBirth: 'Date of birth',
     btnValidateOrOrderCard: 'Validate or order card',
     lblNotAvailable: 'n/a',
     lblManageCard: 'Manage Card',
@@ -1023,6 +1038,22 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       email: {
         required: 'Email is required',
         invalid: 'Enter a valid email address'
+      },
+      phoneNumber: {
+        required: 'Phone number is required',
+        minLength:
+          'Phone number length should be at least {minLength} symbols (including +)',
+        maxLength:
+          'Phone number length should be {minLength} symbols maximum (including +)'
+      },
+      familyName: {
+        required: 'Last name is required'
+      },
+      givenName: {
+        required: 'First name is required'
+      },
+      dateOfBirth: {
+        required: 'Date of birth is required'
       }
     }
   };

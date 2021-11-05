@@ -12,7 +12,7 @@ export const getCardInfo = async (
   return {
     isError: false,
     result: {
-      state: 'active',
+      state: 'order_now',
       eventHistory: [
         {
           timestamp: 1630215570,
@@ -42,8 +42,18 @@ export const getCardInfo = async (
 };
 
 export const validateOrOrderCard = async (
-  params: ValidateOrOrderCardParams
+  data: ValidateOrOrderCardParams,
+  accountAddress: string,
+  signature: string
 ): Promise<Result<string, string>> => {
+  const payload = {
+    data,
+    accountAddress,
+    signature
+  };
+
+  console.debug(payload);
+
   return {
     isError: true,
     error: 'not implemented yet'
