@@ -106,7 +106,6 @@
 import Vue, { PropType } from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import BigNumber from 'bignumber.js';
 import { Properties as CssProperties } from 'csstype';
 
 import { sameAddress } from '@/utils/address';
@@ -117,7 +116,7 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
-import { INPUT_MODE } from '@/components/forms/types';
+import { InputMode } from '@/components/forms/prepare-form/types';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
@@ -166,7 +165,7 @@ export default Vue.extend({
       default: ''
     },
     inputMode: {
-      type: String as PropType<INPUT_MODE>,
+      type: String as PropType<InputMode>,
       required: true
     },
     inputAssetHeading: {

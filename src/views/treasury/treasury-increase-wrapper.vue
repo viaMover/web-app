@@ -5,7 +5,7 @@
     @back="handleBack"
   >
     <prepare-form
-      v-if="!isShowReview"
+      v-if="step === 'prepare'"
       :asset="inputAsset"
       :header-description="
         $t('treasury.increaseBoost.txtIncreaseBoostPageDescription')
@@ -32,7 +32,7 @@
       @update-amount="handleUpdateAmount"
     />
     <review-form
-      v-else-if="txStep === undefined"
+      v-else-if="step === 'review'"
       :amount="inputAmount"
       :button-text="
         $t('treasury.increaseBoost.btnIncreaseBoostInSmartTreasury')
@@ -47,7 +47,7 @@
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
-    <full-page-form-loader v-else :step="txStep" />
+    <loader-form v-else-if="step === 'loader'" :step="txStep" />
   </secondary-page>
 </template>
 
@@ -84,26 +84,30 @@ import {
   TokenWithBalance
 } from '@/wallet/types';
 
-import { Step } from '@/components/controls/full-page-form-loader';
-import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
-import PrepareForm from '@/components/forms/prepare-form.vue';
-import ReviewForm from '@/components/forms/review-form.vue';
-import { INPUT_MODE } from '@/components/forms/types';
+import {
+  InputMode,
+  LoaderForm,
+  LoaderStep,
+  PrepareForm,
+  ReviewForm
+} from '@/components/forms';
 import { PictureDescriptor } from '@/components/html5';
 import { SecondaryPage } from '@/components/layout/secondary-page';
+
+type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseWrapper',
   components: {
     PrepareForm,
     ReviewForm,
-    FullPageFormLoader,
+    LoaderForm,
     SecondaryPage
   },
   data() {
     return {
       //prepare-form
-      inputMode: 'TOKEN' as INPUT_MODE,
+      inputMode: 'TOKEN' as InputMode,
       inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '' as string,
       inputAmountNative: '' as string,
@@ -112,8 +116,8 @@ export default Vue.extend({
       isTokenSelectedByUser: false,
 
       //current
-      isShowReview: false,
-      txStep: undefined as Step | undefined,
+      step: 'prepare' as ProcessStep,
+      transactionStep: undefined as LoaderStep | undefined,
       treasury: {
         alt: this.$t('treasury.lblSmartTreasury'),
         src: require('@/assets/images/SmartTreasury@1x.png'),
@@ -154,7 +158,7 @@ export default Vue.extend({
       'powercardState'
     ]),
     hasBackButton(): boolean {
-      return this.txStep === undefined;
+      return this.step !== 'loader';
     },
     moveTokenInfo(): SmallTokenInfoWithIcon {
       return getMoveAssetData(this.networkInfo.network);
@@ -242,8 +246,8 @@ export default Vue.extend({
     }),
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleBack(): void {
-      if (this.isShowReview) {
-        this.isShowReview = !this.isShowReview;
+      if (this.step === 'review') {
+        this.step = 'prepare';
       } else {
         this.$router.replace({
           name: 'treasury-manage'
@@ -253,7 +257,7 @@ export default Vue.extend({
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
     },
-    async updateAmount(value: string, mode: INPUT_MODE): Promise<void> {
+    async updateAmount(value: string, mode: InputMode): Promise<void> {
       if (this.inputAsset === undefined || this.isLoading) {
         return;
       }
@@ -409,7 +413,7 @@ export default Vue.extend({
       }
 
       this.isProcessing = false;
-      this.isShowReview = true;
+      this.step = 'review';
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
       if (this.inputAsset === undefined) {
@@ -438,7 +442,8 @@ export default Vue.extend({
 
       console.log('is smart treasury:', args.isSmartTreasury);
 
-      this.txStep = 'Confirm';
+      this.step = 'loader';
+      this.transactionStep = 'Confirm';
       try {
         await depositCompound(
           this.inputAsset,
@@ -449,13 +454,13 @@ export default Vue.extend({
           this.actionGasLimit,
           this.approveGasLimit,
           async () => {
-            this.txStep = 'Process';
+            this.transactionStep = 'Process';
           }
         );
-        this.txStep = 'Success';
+        this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
       } catch (err) {
-        this.txStep = 'Reverted';
+        this.transactionStep = 'Reverted';
         console.log('Treasury deposit txn reverted');
         Sentry.captureException(err);
       }

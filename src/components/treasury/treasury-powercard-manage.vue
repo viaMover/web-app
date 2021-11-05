@@ -51,7 +51,7 @@
         </div>
       </div>
     </template>
-    <full-page-form-loader v-else :step="txStep" />
+    <loader-form v-else :step="txStep" />
   </secondary-page>
 </template>
 
@@ -70,7 +70,7 @@ import { unstakePowercardCompound } from '@/wallet/actions/treasury/powercard/un
 import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstakeEstimate';
 
 import ActionButton from '@/components/buttons/action-button.vue';
-import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
+import { LoaderForm, LoaderStep } from '@/components/forms';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
 import { ProgressLoader } from '@/components/layout';
@@ -78,8 +78,6 @@ import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
-
-import { Step } from '../controls/form-loader';
 
 export default Vue.extend({
   name: 'TreasuryPowercardManage',
@@ -89,12 +87,12 @@ export default Vue.extend({
     ProgressLoader,
     SecondaryPageSimpleTitle,
     SecondaryPage,
-    FullPageFormLoader
+    LoaderForm
   },
   data() {
     return {
       actionError: undefined as string | undefined,
-      txStep: undefined as Step | undefined,
+      txStep: undefined as LoaderStep | undefined,
       powercard: {
         alt: this.$t('treasury.lblSmartTreasury'),
         src: require('@/assets/images/Powercard@1x.png'),
@@ -185,7 +183,7 @@ export default Vue.extend({
           this.currentAddress,
           resp.actionGasLimit,
           resp.approveGasLimit,
-          async (step: Step) => {
+          async (step: LoaderStep) => {
             this.txStep = step;
           }
         );

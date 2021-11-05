@@ -8,4 +8,4 @@ export { default as SavingsDepositForm } from './savings-deposit-form.vue';
 export { default as SavingsWithdrawForm } from './savings-withdraw-form.vue';
 export { default as SavingsWithdrawReview } from './savings-withdraw-review.vue';
 export { default as SavingsDepositReview } from './savings-deposit-review.vue';
-export { default as SavingsFormLoader } from '../controls/full-page-form-loader/full-page-form-loader.vue';
+export { default as SavingsFormLoader } from '../forms/loader-form/loader-form.vue';

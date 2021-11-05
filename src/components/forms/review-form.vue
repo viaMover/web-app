@@ -6,12 +6,14 @@
     />
     <div class="arrow">
       <div class="item">
-        <token-image
-          :address="token.address"
-          :src="token.logo"
-          :symbol="token.symbol"
-          wrapper-class="item-coin"
-        />
+        <slot name="first-token-image">
+          <token-image
+            :address="token.address"
+            :src="token.logo"
+            :symbol="token.symbol"
+            wrapper-class="item-coin"
+          />
+        </slot>
       </div>
       <div class="item">
         <div class="item-arrow">
@@ -20,13 +22,15 @@
         </div>
       </div>
       <div class="item">
-        <custom-picture
-          :alt="image.alt"
-          class="shadow"
-          :sources="image.sources"
-          :src="image.src"
-          :webp-sources="image.webpSources"
-        />
+        <slot name="second-token-image">
+          <custom-picture
+            :alt="image ? image.alt : ''"
+            class="shadow"
+            :sources="image ? image.sources : []"
+            :src="image ? image.src : ''"
+            :webp-sources="image ? image.webpSources : []"
+          />
+        </slot>
       </div>
     </div>
     <div class="items">
@@ -94,7 +98,7 @@ export default Vue.extend({
     },
     image: {
       type: Object as PropType<PictureDescriptor>,
-      required: true
+      default: undefined
     },
     amount: {
       type: String,

@@ -14,7 +14,7 @@
       :token="token"
       @tx-start="handleTxStart"
     />
-    <full-page-form-loader v-else :step="txStep" />
+    <loader-form v-else :step="txStep" />
   </secondary-page>
 </template>
 
@@ -30,15 +30,14 @@ import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
-import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
+import { LoaderForm, LoaderStep } from '@/components/forms';
 import { SecondaryPage } from '@/components/layout/secondary-page';
 import { SavingsDepositForm, SavingsDepositReview } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsDepositWrapper',
   components: {
-    FullPageFormLoader,
+    LoaderForm,
     SecondaryPage,
     SavingsDepositReview,
     SavingsDepositForm
@@ -46,7 +45,7 @@ export default Vue.extend({
   data() {
     return {
       isShowReview: false,
-      txStep: undefined as Step | undefined,
+      txStep: undefined as LoaderStep | undefined,
 
       token: undefined as TokenWithBalance | undefined,
       amount: undefined as string | undefined,

@@ -5,7 +5,7 @@
     @back="handleBack"
   >
     <prepare-form
-      v-if="!isShowReview"
+      v-if="step === 'prepare'"
       :asset="inputAsset"
       :header-description="
         $t('treasury.claimAndBurn.txtClaimAndBurnPageDescription')
@@ -31,21 +31,38 @@
       @update-amount="handleUpdateAmount"
     />
     <review-form
-      v-else-if="txStep === undefined"
+      v-else-if="step === 'review'"
       :amount="inputAmount"
       :button-text="
         $t('treasury.decreaseBoost.btnDecreaseBoostInSmartTreasury')
       "
       :header-title="$t('treasury.decreaseBoost.lblReviewYourDecrease')"
-      :image="treasury"
       :input-amount-native-title="$t('treasury.decreaseBoost.lblAndTotalOf')"
       :input-amount-title="$t('treasury.decreaseBoost.lblAmountWeRemoveIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="inputAmountNative"
       :token="inputAsset"
       @tx-start="handleTxStart"
-    />
-    <full-page-form-loader v-else :step="txStep" />
+    >
+      <template v-slot:first-token-image>
+        <custom-picture
+          :alt="treasury.alt"
+          class="shadow"
+          :sources="treasury.sources"
+          :src="treasury.src"
+          :webp-sources="treasury.webpSources"
+        />
+      </template>
+      <template v-slot:second-token-image>
+        <token-image
+          :address="inputAsset.address"
+          :src="inputAsset.logo"
+          :symbol="inputAsset.symbol"
+          wrapper-class="item-coin"
+        />
+      </template>
+    </review-form>
+    <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
   </secondary-page>
 </template>
 
@@ -76,27 +93,34 @@ import {
   TokenWithBalance
 } from '@/wallet/types';
 
-import { Step } from '@/components/controls/full-page-form-loader';
-import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
-import PrepareForm from '@/components/forms/prepare-form.vue';
-import ReviewForm from '@/components/forms/review-form.vue';
-import { INPUT_MODE } from '@/components/forms/types';
-import { PictureDescriptor } from '@/components/html5';
+import {
+  InputMode,
+  LoaderForm,
+  LoaderStep,
+  PrepareForm,
+  ReviewForm
+} from '@/components/forms';
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPage } from '@/components/layout/secondary-page';
+import { TokenImage } from '@/components/tokens';
+
+type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   name: 'TreasuryClaimAndBurnWrapper',
   components: {
+    TokenImage,
+    CustomPicture,
     PrepareForm,
     ReviewForm,
-    FullPageFormLoader,
+    LoaderForm,
     SecondaryPage
   },
   data() {
     return {
       //current
-      isShowReview: false,
-      txStep: undefined as Step | undefined,
+      step: 'prepare' as ProcessStep,
+      transactionStep: undefined as LoaderStep | undefined,
       treasury: {
         alt: this.$t('treasury.lblSmartTreasury'),
         src: require('@/assets/images/SmartTreasury@1x.png'),
@@ -117,7 +141,7 @@ export default Vue.extend({
       } as PictureDescriptor,
 
       //prepare-form
-      inputMode: 'TOKEN' as INPUT_MODE,
+      inputMode: 'TOKEN' as InputMode,
       inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '',
       inputAmountNative: '',
@@ -148,7 +172,7 @@ export default Vue.extend({
       'moveNativePrice'
     ]),
     hasBackButton(): boolean {
-      return this.txStep === undefined;
+      return this.step !== 'loader';
     },
     moveTokenInfo(): SmallTokenInfoWithIcon {
       return getMoveAssetData(this.networkInfo.network);
@@ -224,8 +248,8 @@ export default Vue.extend({
     }),
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     handleBack(): void {
-      if (this.isShowReview) {
-        this.isShowReview = !this.isShowReview;
+      if (this.step === 'review') {
+        this.step = 'prepare';
       } else {
         this.$router.replace({
           name: 'treasury-manage'
@@ -318,12 +342,12 @@ export default Vue.extend({
       }
 
       this.isProcessing = false;
-      this.isShowReview = true;
+      this.step = 'review';
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
     },
-    async updateAmount(value: string, mode: INPUT_MODE): Promise<void> {
+    async updateAmount(value: string, mode: InputMode): Promise<void> {
       if (this.inputAsset === undefined || this.isLoading) {
         return;
       }
@@ -424,7 +448,8 @@ export default Vue.extend({
 
       console.log('is smart treasury:', args.isSmartTreasury);
 
-      this.txStep = 'Confirm';
+      this.step = 'loader';
+      this.transactionStep = 'Confirm';
       try {
         await claimAndBurnCompound(
           this.inputAsset,
@@ -435,13 +460,13 @@ export default Vue.extend({
           this.actionGasLimit,
           this.approveGasLimit,
           async () => {
-            this.txStep = 'Process';
+            this.transactionStep = 'Process';
           }
         );
-        this.txStep = 'Success';
+        this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
       } catch (err) {
-        this.txStep = 'Reverted';
+        this.transactionStep = 'Reverted';
         console.log('Treasury claim and burn txn reverted');
         Sentry.captureException(err);
       }
