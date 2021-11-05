@@ -7,6 +7,7 @@
     <prepare-form
       v-if="step === 'prepare'"
       :asset="inputAsset"
+      has-select-modal
       :header-description="
         $t('treasury.decreaseBoost.txtDecreaseBoostPageDescription')
       "

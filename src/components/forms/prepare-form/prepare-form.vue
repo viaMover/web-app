@@ -31,6 +31,7 @@
           </p>
         </div>
         <button
+          v-if="hasSelectModal"
           class="button-active button-arrow"
           :style="selectorStyle"
           type="button"
@@ -127,6 +128,10 @@ export default Vue.extend({
     asset: {
       type: Object as PropType<TokenWithBalance | undefined>,
       default: undefined
+    },
+    hasSelectModal: {
+      type: Boolean,
+      default: false
     },
     headerTitle: {
       type: String,

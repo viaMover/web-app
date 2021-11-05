@@ -7,6 +7,7 @@
     <prepare-form
       v-if="step === 'prepare'"
       :asset="inputAsset"
+      has-select-modal
       :header-description="
         $t('treasury.increaseBoost.txtIncreaseBoostPageDescription')
       "
@@ -47,7 +48,7 @@
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
-    <loader-form v-else-if="step === 'loader'" :step="txStep" />
+    <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
   </secondary-page>
 </template>
 
