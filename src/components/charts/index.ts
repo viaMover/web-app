@@ -4,9 +4,22 @@ export * from './types';
 
 import 'chartjs-adapter-dayjs';
 
-import { Chart, registerables } from 'chart.js';
+import {
+  BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LinearScale,
+  TimeScale
+} from 'chart.js';
 // import { Chart, registerables, Interaction } from 'chart.js';
 // import { CrosshairPlugin, Interpolate } from 'chartjs-plugin-crosshair';
 // Chart.register(...registerables, CrosshairPlugin);
 // Interaction.modes.interpolate = Interpolate;
-Chart.register(...registerables);
+Chart.register(
+  BarController,
+  BarElement,
+  LinearScale,
+  TimeScale,
+  CategoryScale
+);
