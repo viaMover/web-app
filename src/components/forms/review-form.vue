@@ -40,7 +40,7 @@
       </div>
       <div class="item">
         <h2>{{ inputAmountNativeTitle }}</h2>
-        <span>{{ formatNativeAmount }}</span>
+        <span>{{ formattedNativeAmount }}</span>
       </div>
     </div>
     <div v-if="isSubsidizedEnabled">
@@ -155,7 +155,7 @@ export default Vue.extend({
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
     },
-    formatNativeAmount(): string {
+    formattedNativeAmount(): string {
       return `${formatToNative(this.nativeAmount)} ${
         this.nativeCurrencySymbol
       }`;
