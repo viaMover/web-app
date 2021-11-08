@@ -89,7 +89,7 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       savings: {
-        alt: '',
+        alt: this.$t('savings.lblSavings'),
         src: require('@/assets/images/Savings@1x.png'),
         sources: [
           { src: require('@/assets/images/Savings@1x.png') },
@@ -157,8 +157,6 @@ export default Vue.extend({
         name: 'USD Coin',
         priceUSD: this.usdcNativePrice,
         logo: this.USDCAsset.iconURL,
-        isFavorite: true,
-        isVerified: true,
         balance: this.savingsBalance,
         marketCap: Number.MAX_SAFE_INTEGER
       };
@@ -173,10 +171,6 @@ export default Vue.extend({
       const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
       let apyNative = multiply(divide(this.savingsAPY, 100), usdcAmountNative);
-
-      if (lessThan(apyNative, '0')) {
-        apyNative = '0';
-      }
 
       return `~ $${formatToNative(apyNative)}`;
     }
@@ -275,21 +269,12 @@ export default Vue.extend({
       this.step = 'review';
     },
     handleSelectMaxAmount(): void {
-      if (!this.inputAsset) {
-        return;
-      }
       this.inputAmountNative = this.inputAsset.balance;
     },
     handleUpdateAmount(val: string): void {
       this.inputAmountNative = val;
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
-      if (this.inputAsset === undefined) {
-        console.error('inputAsset is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings withdraw TX");
-        return;
-      }
-
       if (this.inputAmountNative === '') {
         console.error('inputAmount is empty during `handleTxStart`');
         Sentry.captureException("can't start savings withdraw TX");

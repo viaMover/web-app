@@ -1,6 +1,6 @@
 <template>
   <secondary-page has-back-button hide-title @back="handleBack">
-    <template v-if="txStep === undefined">
+    <template v-if="transactionStep === undefined">
       <div>
         <secondary-page-simple-title
           class="page-title max-width"
@@ -51,7 +51,7 @@
         </div>
       </div>
     </template>
-    <loader-form v-else :step="txStep" />
+    <loader-form v-else :step="transactionStep" />
   </secondary-page>
 </template>
 
@@ -92,7 +92,7 @@ export default Vue.extend({
   data() {
     return {
       actionError: undefined as string | undefined,
-      txStep: undefined as LoaderStep | undefined,
+      transactionStep: undefined as LoaderStep | undefined,
       powercard: {
         alt: this.$t('treasury.lblSmartTreasury'),
         src: require('@/assets/images/Powercard@1x.png'),
@@ -175,7 +175,7 @@ export default Vue.extend({
         return;
       }
 
-      this.txStep = 'Confirm';
+      this.transactionStep = 'Confirm';
       try {
         await unstakePowercardCompound(
           this.networkInfo.network,
@@ -183,14 +183,14 @@ export default Vue.extend({
           this.currentAddress,
           resp.actionGasLimit,
           resp.approveGasLimit,
-          async (step: LoaderStep) => {
-            this.txStep = step;
+          async () => {
+            this.transactionStep = 'Process';
           }
         );
-        this.txStep = 'Success';
+        this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
       } catch (err) {
-        this.txStep = 'Reverted';
+        this.transactionStep = 'Reverted';
         Sentry.captureException(err);
       }
     }

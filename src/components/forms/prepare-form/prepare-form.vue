@@ -226,12 +226,11 @@ export default Vue.extend({
         return `${formatToDecimals(this.asset.balance, 4)} ${
           this.asset.symbol
         }`;
-      } else {
-        return `$${formatToDecimals(
-          multiply(this.asset.balance, this.asset.priceUSD),
-          2
-        )} ${this.nativeCurrencySymbol}`;
       }
+      return `$${formatToDecimals(
+        multiply(this.asset.balance, this.asset.priceUSD),
+        2
+      )} ${this.nativeCurrencySymbol}`;
     },
     selectorStyle(): CssProperties {
       if (this.asset === undefined) {

@@ -37,7 +37,7 @@
           <p>
             {{ $t('forms.lblSwappingFor') }}
             <custom-picture
-              alt="USDc"
+              :alt="$t('lblUSDcTokenAlt')"
               class="token"
               :sources="usdcPicture.sources"
               :src="usdcPicture.src"
@@ -132,7 +132,7 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       savings: {
-        alt: '',
+        alt: this.$t('savings.lblSavings'),
         src: require('@/assets/images/Savings@1x.png'),
         sources: [
           { src: require('@/assets/images/Savings@1x.png') },
@@ -249,7 +249,7 @@ export default Vue.extend({
     },
     formattedUSDCTotal(): string {
       if (this.inputAsset === undefined) {
-        return '0';
+        return '0 USDC';
       }
 
       if (sameAddress(this.inputAsset.address, this.outputUSDCAsset.address)) {

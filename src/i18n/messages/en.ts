@@ -25,6 +25,7 @@ const messages: VueI18n.LocaleMessageObject = {
   txtDashboardMobile:
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
+  lblUSDcTokenAlt: 'USDc token image',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -395,8 +396,7 @@ const messages: VueI18n.LocaleMessageObject = {
       txtThePayout:
         'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
       lblBurnError: 'Burn conditions error',
-      lblBurnLimitReached: 'Burn limit reached',
-      lblUSDcTokenAlt: 'USDC'
+      lblBurnLimitReached: 'Burn limit reached'
     }
   },
   asset: {
