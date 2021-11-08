@@ -1,13 +1,25 @@
 import dayjs from 'dayjs';
 
-import { ValidateOrOrderCardParams } from '@/store/modules/debit-card/types';
+import { OrderCardParams } from '@/store/modules/debit-card/types';
 
 import { Result } from '../../responses';
 import { CardAggregatedInfo } from './types';
 
 export const getCardInfo = async (
-  accountAddress: string
+  accountAddress: string,
+  email: string,
+  emailSignature: string
 ): Promise<Result<CardAggregatedInfo, string>> => {
+  const payload = {
+    accountAddress,
+    data: {
+      email: email
+    },
+    signature: emailSignature
+  };
+
+  console.debug(payload);
+
   const now = dayjs();
   return {
     isError: false,
@@ -41,14 +53,37 @@ export const getCardInfo = async (
   };
 };
 
-export const validateOrOrderCard = async (
-  data: ValidateOrOrderCardParams,
+export const orderCard = async (
+  data: OrderCardParams,
   accountAddress: string,
   signature: string
 ): Promise<Result<string, string>> => {
   const payload = {
     data,
     accountAddress,
+    signature
+  };
+
+  console.debug(payload);
+
+  return {
+    isError: true,
+    error: 'not implemented yet'
+  };
+};
+
+export const validateCard = async (
+  code: string,
+  accountAddress: string,
+  email: string,
+  signature: string
+): Promise<Result<void, string>> => {
+  const payload = {
+    code,
+    accountAddress,
+    data: {
+      email
+    },
     signature
   };
 

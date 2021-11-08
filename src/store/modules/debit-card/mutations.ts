@@ -35,5 +35,11 @@ export default {
   },
   setLoadingPromise(state, promise: Promise<void> | undefined): void {
     state.loadingPromise = promise;
+  },
+  setEmail(state, email: string): void {
+    state.email = email;
+  },
+  setEmailSignature(state, signature: string): void {
+    state.emailSignature = signature;
   }
 } as MutationTree<DebitCardStoreState>;

@@ -31,9 +31,59 @@
       </div>
 
       <form
+        v-if="cardState === 'request_email'"
+        class="form email"
+        :class="{ error: $v.email.$error || errorText !== '' }"
+        @submit.prevent="handleSetEmail"
+      >
+        <div class="input-group" :class="{ error: $v.email.$error }">
+          <label>
+            {{ $t('debitCard.lblYourEmailAddress') }}
+            <input
+              v-model.trim="email"
+              autocomplete="email"
+              autofocus
+              :name="$t('debitCard.lblYourEmailAddress')"
+              :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
+              tabindex="1"
+              type="text"
+            />
+          </label>
+          <span v-if="!$v.email.required" class="error-message">
+            {{ $t('debitCard.errors.email.required') }}
+          </span>
+          <span v-if="!$v.email.isValidEmail" class="error-message">
+            {{ $t('debitCard.errors.email.invalid') }}
+          </span>
+        </div>
+
+        <action-button
+          ref="button"
+          button-class="black-link button-active action-button"
+          :disabled="isLoading"
+          propagate-original-event
+          tabindex="9"
+          type="submit"
+        >
+          <div v-if="isLoading" class="loader-icon">
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
+          </div>
+          <template v-else>
+            {{ $t('debitCard.btnValidateOrOrderCard') }}
+          </template>
+        </action-button>
+        <span v-if="errorText !== ''" class="error-message">
+          {{ errorText }}
+        </span>
+      </form>
+      <form
+        v-else
         class="form order"
         :class="{ error: $v.$anyError || errorText !== '' }"
-        @submit.prevent="handleValidateOrOrderCard"
+        @submit.prevent="handleOrderCard"
       >
         <div class="input-group" :class="{ error: $v.email.$error }">
           <label>
@@ -219,12 +269,12 @@ import {
   minLength,
   required
 } from 'vuelidate/lib/validators';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { DebitCardApiError } from '@/services/mover';
-import { ValidateOrOrderCardParams } from '@/store/modules/debit-card/types';
+import { DebitCardApiError } from '@/services/mover/debit-card';
+import { OrderCardParams } from '@/store/modules/debit-card/types';
 import {
   isProviderRpcError,
   ProviderRpcError
@@ -257,6 +307,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('debitCard', {
+      cardState: 'cardState',
+      savedEmail: 'email'
+    }),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
     }),
@@ -281,11 +335,67 @@ export default Vue.extend({
       }
     }
   },
+  watch: {
+    savedEmail: {
+      handler(newValue: string | undefined): void {
+        if (this.email === '' && newValue !== undefined) {
+          this.email = newValue;
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     ...mapActions('debitCard', {
-      validateOrOrderCard: 'validateOrOrderCard'
+      orderCard: 'orderCard',
+      setEmail: 'setEmail',
+      loadInfo: 'loadInfo'
     }),
-    async handleValidateOrOrderCard(): Promise<void> {
+    async handleSetEmail(): Promise<void> {
+      this.errorText = '';
+      this.$v.email.$touch();
+
+      if (this.$v.email.$invalid) {
+        this.scrollButtonIntoView();
+        return;
+      }
+
+      try {
+        this.isLoading = true;
+        await this.setEmail(this.email);
+        await this.loadInfo(true);
+        this.isLoading = false;
+      } catch (error) {
+        if (isProviderRpcError(error)) {
+          const providerError = error as ProviderRpcError;
+
+          if (this.$te(`provider.errors.${providerError.code}`)) {
+            this.errorText = this.$t(
+              `provider.errors.${providerError.code}`
+            ).toString();
+            this.isLoading = false;
+            return;
+          }
+        }
+
+        if (
+          error instanceof DebitCardApiError &&
+          this.$te(`debitCard.errors.${error.message}`)
+        ) {
+          this.errorText = this.$t(
+            `debitCard.errors.${error.message}`
+          ) as string;
+          this.scrollButtonIntoView();
+          this.isLoading = false;
+          return;
+        }
+
+        this.errorText = this.$t('debitCard.errors.default') as string;
+        this.scrollButtonIntoView();
+        this.isLoading = false;
+      }
+    },
+    async handleOrderCard(): Promise<void> {
       this.errorText = '';
       this.$v.$touch();
       if (this.$v.$invalid) {
@@ -295,7 +405,7 @@ export default Vue.extend({
 
       try {
         this.isLoading = true;
-        await this.validateOrOrderCard({
+        await this.orderCard({
           email: this.email,
           phone: `+${this.phoneNumber}`,
           gender: this.gender,
@@ -303,7 +413,7 @@ export default Vue.extend({
           firstName: this.givenName,
           dateOfBirth: dayjs(this.dateOfBirth).format('YYYY-MM-DD'),
           honorificPrefix: this.honorificPrefix
-        } as ValidateOrOrderCardParams);
+        } as OrderCardParams);
         this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {

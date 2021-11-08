@@ -12,12 +12,14 @@ export default {
   state: {
     availableSkins: undefined,
     cardInfo: undefined,
-    cardState: 'order_now',
+    cardState: 'request_email',
     currentSkin: undefined,
     error: undefined,
     eventHistory: [],
     isLoading: false,
-    loadingPromise: undefined
+    loadingPromise: undefined,
+    email: undefined,
+    emailSignature: undefined
   },
   actions,
   getters,

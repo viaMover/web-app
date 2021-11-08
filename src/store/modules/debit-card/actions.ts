@@ -3,21 +3,24 @@ import { ActionTree } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
-import { DebitCardApiError } from '@/services/mover';
 import {
+  DebitCardApiError,
   getCardInfo,
-  validateOrOrderCard
-} from '@/services/mover/debit-card/service';
+  orderCard,
+  validateCard
+} from '@/services/mover/debit-card';
 import {
   getAvailableSkinsFromPersist,
   getCurrentSkinFromPersist,
+  getEmailSignatureFromPersist,
   setAvailableSkinsToPersist,
-  setCurrentSkinToPersist
+  setCurrentSkinToPersist,
+  setEmailSignatureToPersist
 } from '@/settings';
 
 import { RootStoreState } from '../../types';
 import { allSkins, defaultSkin } from './consts';
-import { DebitCardStoreState, Skin, ValidateOrOrderCardParams } from './types';
+import { CardState, DebitCardStoreState, OrderCardParams, Skin } from './types';
 
 export default {
   async loadInfo(
@@ -29,15 +32,50 @@ export default {
         commit('setIsLoading', true);
         commit('setError', undefined);
 
-        const currentSkinPromise = dispatch('loadCurrentSkin', refetch);
+        if (rootState.account?.currentAddress === undefined) {
+          throw new Error('failed to get current address');
+        }
 
-        await Promise.all([currentSkinPromise]);
+        if (state.emailSignature === undefined) {
+          // user email + personal signed email signature (to be used by back-end)
+          const emailWithSignature = await getEmailSignatureFromPersist(
+            rootState.account.currentAddress
+          );
+          if (emailWithSignature === undefined) {
+            commit('setCardState', 'request_email' as CardState);
+            commit('setIsLoading', false);
+            commit('setError', undefined);
+            return;
+          }
+
+          commit('setEmail', emailWithSignature.email);
+          commit('setEmailSignature', emailWithSignature.signature);
+          // reapply cache valid time period
+          setEmailSignatureToPersist(
+            rootState.account.currentAddress,
+            emailWithSignature
+          );
+        }
+
+        await dispatch('loadCurrentSkin', refetch);
 
         if (rootState.account?.currentAddress === undefined) {
           throw new Error('failed to get current address');
         }
 
-        const cardInfo = await getCardInfo(rootState.account.currentAddress);
+        if (state.email === undefined) {
+          throw new Error('missing email');
+        }
+
+        if (state.emailSignature === undefined) {
+          throw new Error('missing email signature');
+        }
+
+        const cardInfo = await getCardInfo(
+          rootState.account.currentAddress,
+          state.email,
+          state.emailSignature
+        );
         if (cardInfo.isError) {
           throw new DebitCardApiError(cardInfo.error);
         }
@@ -223,14 +261,7 @@ export default {
         skinToBeApplied.nftAddress !== undefined
     );
   },
-  async validateOrOrderCard(
-    { state, rootState },
-    params: ValidateOrOrderCardParams
-  ): Promise<void> {
-    if (state.cardState !== 'order_now') {
-      return;
-    }
-
+  async setEmail({ commit, rootState }, email: string): Promise<void> {
     try {
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -240,22 +271,90 @@ export default {
         throw new Error('failed to get web3 provider');
       }
 
-      const signature = await rootState.account.provider.web3.eth.personal.sign(
-        JSON.stringify(params),
-        rootState.account.currentAddress,
-        ''
-      );
+      const payload = { email };
+      const emailSignature =
+        await rootState.account.provider.web3.eth.personal.sign(
+          JSON.stringify(payload),
+          rootState.account.currentAddress,
+          ''
+        );
 
-      const res = await validateOrOrderCard(
+      commit('setEmail', email);
+      commit('setEmailSignature', emailSignature);
+
+      setEmailSignatureToPersist(rootState.account.currentAddress, {
+        email: email,
+        signature: emailSignature
+      });
+    } catch (error) {
+      console.error('failed to set email signature', error);
+      Sentry.captureException(error);
+      throw error;
+    }
+  },
+  async orderCard(
+    { state, rootState },
+    params: OrderCardParams
+  ): Promise<void> {
+    try {
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
+      }
+
+      if (rootState.account?.provider?.web3 === undefined) {
+        throw new Error('failed to get web3 provider');
+      }
+
+      if (state.emailSignature === undefined) {
+        throw new Error('missing email signature');
+      }
+
+      const personalDataSignature =
+        await rootState.account.provider.web3.eth.personal.sign(
+          JSON.stringify(params),
+          rootState.account.currentAddress,
+          ''
+        );
+
+      const res = await orderCard(
         params,
         rootState.account.currentAddress,
-        signature
+        personalDataSignature
       );
       if (res.isError) {
         throw new DebitCardApiError(res.error);
       }
     } catch (error) {
-      console.error('failed to validate or order card', error);
+      console.error('failed to order card', error);
+      Sentry.captureException(error);
+      throw error;
+    }
+  },
+  async validateCard({ state, rootState }, code: string): Promise<void> {
+    try {
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
+      }
+
+      if (state.email === undefined) {
+        throw new Error('missing email');
+      }
+
+      if (state.emailSignature === undefined) {
+        throw new Error('missing email signature');
+      }
+
+      const res = await validateCard(
+        code,
+        rootState.account.currentAddress,
+        state.email,
+        state.emailSignature
+      );
+      if (res.isError) {
+        throw new DebitCardApiError(res.error);
+      }
+    } catch (error) {
+      console.error('failed to validate card');
       Sentry.captureException(error);
       throw error;
     }

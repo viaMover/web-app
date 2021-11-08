@@ -149,3 +149,80 @@ const getNFTExistenceInfoPersistItem = async (): Promise<
     return undefined;
   }
 };
+
+const debitCardEmailSignaturePersistKey = 'debit_card_email_signature';
+
+export type EmailWithSignature = { email: string; signature: string };
+type DebitCardEmailPersistItem = AccountBoundPersistedItem<EmailWithSignature>;
+
+export const setEmailSignatureToPersist = async (
+  address: string,
+  item: EmailWithSignature
+): Promise<void> => {
+  const persistedItem = await getEmailSignaturePersistItem();
+  if (persistedItem === undefined) {
+    const candidate = {
+      [address]: {
+        email: item.email,
+        signature: item.signature,
+        expirationDate: dayjs().add(1, 'month').toISOString()
+      }
+    } as DebitCardEmailPersistItem;
+
+    localStorage.setItem(
+      debitCardEmailSignaturePersistKey,
+      JSON.stringify(candidate)
+    );
+    return;
+  }
+
+  persistedItem[address] = {
+    email: item.email,
+    signature: item.signature,
+    expirationDate: dayjs().add(1, 'month').toISOString()
+  };
+
+  localStorage.setItem(
+    debitCardEmailSignaturePersistKey,
+    JSON.stringify(persistedItem)
+  );
+};
+
+export const getEmailSignatureFromPersist = async (
+  address: string
+): Promise<EmailWithSignature | undefined> => {
+  const persistedItem = await getEmailSignaturePersistItem();
+  if (persistedItem === undefined) {
+    return undefined;
+  }
+
+  const addressBoundItem = persistedItem[address];
+  if (addressBoundItem === undefined) {
+    return undefined;
+  }
+
+  if (dayjs().isAfter(dayjs(addressBoundItem.expirationDate))) {
+    return undefined;
+  }
+
+  return {
+    email: addressBoundItem.email,
+    signature: addressBoundItem.signature
+  };
+};
+
+const getEmailSignaturePersistItem = async (): Promise<
+  DebitCardEmailPersistItem | undefined
+> => {
+  const persistedItem = localStorage.getItem(debitCardEmailSignaturePersistKey);
+  if (persistedItem === null) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(persistedItem) as DebitCardEmailPersistItem;
+  } catch (e) {
+    localStorage.remove(debitCardEmailSignaturePersistKey);
+    return undefined;
+  }
+};

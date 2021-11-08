@@ -34,6 +34,13 @@ export default {
       return rootState.i18n.t(`debitCard.state.${state.cardState}`) as string;
     }
 
+    if (
+      state.cardState === 'request_email' &&
+      rootState.i18n?.te('debitCard.state.order_now')
+    ) {
+      return rootState.i18n.t('debitCard.state.order_now') as string;
+    }
+
     return state.cardState;
   },
   searchInAvailableSkins(state, getters): (searchTerm: string) => Array<Skin> {

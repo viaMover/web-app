@@ -11,6 +11,9 @@ export type DebitCardStoreState = {
 
   cardInfo: CardInfo | undefined;
   eventHistory: Array<EventHistoryItemMinimal>;
+
+  email: string | undefined;
+  emailSignature: string | undefined;
 };
 
 export type CardInfo = {
@@ -55,13 +58,14 @@ export type EventHistoryItemMinimal = {
 };
 
 export type CardState =
+  | 'request_email'
   | 'active'
   | 'frozen'
   | 'pending'
   | 'expired'
   | 'order_now';
 
-export type ValidateOrOrderCardParams = {
+export type OrderCardParams = {
   email: string;
   phone: string;
   gender: 'M' | 'F' | 'O';
