@@ -63,13 +63,12 @@
         </div>
       </div>
     </div>
-    <button
-      class="button-active black-link"
-      type="button"
-      @click="handleCreateTx"
+    <action-button
+      button-class="button-active black-link"
+      @button-click="handleCreateTx"
     >
       {{ buttonText }}
-    </button>
+    </action-button>
   </form>
 </template>
 
@@ -80,6 +79,7 @@ import { mapState } from 'vuex';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { TokenWithBalance } from '@/wallet/types';
 
+import ActionButton from '@/components/buttons/action-button.vue';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
@@ -87,6 +87,7 @@ import { TokenImage } from '@/components/tokens';
 export default Vue.extend({
   name: 'ReviewForm',
   components: {
+    ActionButton,
     TokenImage,
     SecondaryPageSimpleTitle,
     CustomPicture
