@@ -19,6 +19,7 @@
 
     <template v-slot:modals>
       <search-skin-modal key="search-skin-modal" />
+      <search-modal key="search-token-modal" />
     </template>
   </content-wrapper>
 </template>
@@ -29,7 +30,7 @@ import { mapActions, mapState } from 'vuex';
 
 import { DebitCardManageCard, DebitCardMyCard } from '@/components/debit-card';
 import { ContentWrapper } from '@/components/layout';
-import { SearchSkinModal } from '@/components/modals';
+import { SearchModal, SearchSkinModal } from '@/components/modals';
 
 import '@/styles/_debit-card.less';
 
@@ -39,7 +40,8 @@ export default Vue.extend({
     ContentWrapper,
     DebitCardMyCard,
     DebitCardManageCard,
-    SearchSkinModal
+    SearchSkinModal,
+    SearchModal
   },
   computed: {
     ...mapState('debitCard', {
