@@ -44,9 +44,8 @@
               autocomplete="email"
               autofocus
               :disabled="isLoading"
-              :name="$t('debitCard.lblYourEmailAddress')"
+              name="email"
               :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
-              tabindex="1"
               type="text"
             />
           </label>
@@ -63,7 +62,6 @@
           button-class="black-link button-active action-button"
           :disabled="isLoading"
           propagate-original-event
-          tabindex="9"
           type="submit"
         >
           <div v-if="isLoading" class="loader-icon">
@@ -94,9 +92,8 @@
               autocomplete="email"
               autofocus
               :disabled="isLoading"
-              :name="$t('debitCard.lblYourEmailAddress')"
+              name="email"
               :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
-              tabindex="1"
               type="text"
             />
           </label>
@@ -116,9 +113,8 @@
               autocomplete="tel"
               :disabled="isLoading"
               mask="+###############"
-              :name="$t('debitCard.lblYourPhoneNumber')"
+              name="phone"
               :placeholder="$t('debitCard.txtYourPhoneNumberPlaceholder')"
-              tabindex="2"
               type="tel"
             />
           </label>
@@ -148,9 +144,8 @@
               v-model.trim="givenName"
               autocomplete="given-name"
               :disabled="isLoading"
-              :name="$t('debitCard.lblYourGivenName')"
+              name="given-name"
               :placeholder="$t('debitCard.txtYourGivenNamePlaceholder')"
-              tabindex="3"
               type="text"
             />
           </label>
@@ -166,9 +161,8 @@
               v-model.trim="familyName"
               autocomplete="family-name"
               :disabled="isLoading"
-              :name="$t('debitCard.lblYourFamilyName')"
+              name="family-name"
               :placeholder="$t('debitCard.txtYourFamilyNamePlaceholder')"
-              tabindex="4"
               type="text"
             />
           </label>
@@ -185,8 +179,7 @@
               <input
                 v-model="gender"
                 :disabled="isLoading"
-                :name="$t('debitCard.lblYourGender.male')"
-                tabindex="5"
+                name="gender"
                 type="radio"
                 value="M"
               />
@@ -196,8 +189,7 @@
               <input
                 v-model="gender"
                 :disabled="isLoading"
-                :name="$t('debitCard.lblYourGender.female')"
-                tabindex="6"
+                name="gender"
                 type="radio"
                 value="F"
               />
@@ -207,8 +199,7 @@
               <input
                 v-model="gender"
                 :disabled="isLoading"
-                :name="$t('debitCard.lblYourGender.other')"
-                tabindex="7"
+                name="gender"
                 type="radio"
                 value="O"
               />
@@ -218,7 +209,7 @@
 
         <input
           disabled
-          :name="$t('debitCard.lblYourHonorificPrefix')"
+          name="honorific-prefix"
           :placeholder="$t('debitCard.txtYourHonorificPrefixPlaceholder')"
           type="hidden"
           :value="honorificPrefix"
@@ -233,8 +224,7 @@
               :disabled="isLoading"
               :max="dateOfBirthMax"
               :min="dateOfBirthMin"
-              :name="$t('debitCard.lblYourDateOfBirth')"
-              tabindex="8"
+              name="date-of-birth"
               type="date"
             />
           </label>
@@ -248,7 +238,6 @@
           button-class="black-link button-active action-button"
           :disabled="isLoading"
           propagate-original-event
-          tabindex="9"
           type="submit"
         >
           <div v-if="isLoading" class="loader-icon">
