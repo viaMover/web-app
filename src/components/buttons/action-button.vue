@@ -3,7 +3,8 @@
     :class="[classes]"
     :disabled="disabled"
     :style="customStyle"
-    @click="handleClick($event)"
+    :type="type"
+    @click="handleClick"
   >
     <template v-if="text">
       {{ text }}
@@ -35,6 +36,10 @@ export default Vue.extend({
     customStyle: {
       type: Object as PropType<CssProperties>,
       default: undefined
+    },
+    type: {
+      type: String,
+      default: 'button'
     },
     propagateOriginalEvent: {
       type: Boolean,

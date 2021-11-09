@@ -4,6 +4,7 @@
       <input
         ref="input"
         v-bind="$attrs"
+        autocomplete="off"
         :class="[inputClass, 'min-width']"
         :value="value"
         v-on="listeners"
