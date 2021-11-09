@@ -24,7 +24,7 @@ export const getCardInfo = async (
   return {
     isError: false,
     result: {
-      state: 'order_now',
+      state: 'active',
       eventHistory: [
         {
           timestamp: 1630215570,
