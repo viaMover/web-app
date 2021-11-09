@@ -25,6 +25,7 @@ const messages: VueI18n.LocaleMessageObject = {
   txtDashboardMobile:
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
+  lblUSDcTokenAlt: 'USDc token image',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -37,6 +38,15 @@ const messages: VueI18n.LocaleMessageObject = {
   },
   estimationError: 'Estimation error',
   exchangeError: 'Exchange error',
+  forms: {
+    lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+    lblEstimatedGasCost: 'Estimated gas cost',
+    lblAvailable: 'Available',
+    lblSwappingFor: 'Swapping for',
+    lblChooseToken: 'Choose Token',
+    lblChooseAmount: 'Choose amount',
+    lblReviewTransaction: 'Review transaction'
+  },
   menu: {
     lblSwapTokenEmoji: '🔄',
     lblSwapToken: 'Swap Tokens',
@@ -99,8 +109,6 @@ const messages: VueI18n.LocaleMessageObject = {
     txtIfYouDeposit: 'If you deposit in Savings now, you are getting',
     lblAPYOnAllSavings: 'APY on all savings',
     lblStartSaving: 'Start saving',
-    lblReviewTransaction: 'Review transaction',
-    lblChooseToken: 'Choose Token',
     lblNothingInSavings: 'Nothing in @:savings.lblSavings',
     txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
@@ -144,7 +152,6 @@ const messages: VueI18n.LocaleMessageObject = {
       'USD Coin is a stable asset and the easiest way to grow your ' +
       'savings. Your returns will also be in USDC.',
     lblInProgress: 'In progress',
-    lblAvailable: 'Available',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -171,12 +178,9 @@ const messages: VueI18n.LocaleMessageObject = {
       lblWhatDoWeDeposit: 'What do we deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
-      lblSwappingFor: 'Swapping for',
       lblAmountWeDepositIn: 'Amount we deposit in',
       lblReviewYourDeposit: 'Review your deposit',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       txtYieldEstimation:
         'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
     },
@@ -196,8 +200,6 @@ const messages: VueI18n.LocaleMessageObject = {
       lblReviewYourWithdraw: 'Review your withdrawal',
       btnWithdraw: 'Withdraw',
       lblWhatAboutTheYield: 'What about the yield?',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       txtIfYouKeepSavings:
         'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:
@@ -278,7 +280,6 @@ const messages: VueI18n.LocaleMessageObject = {
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
       'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
-    lblReviewTransaction: 'Review transaction',
     powercard: {
       lblThePowercard: 'The Powercard',
       txtThePowercardPageDescription:
@@ -326,15 +327,12 @@ const messages: VueI18n.LocaleMessageObject = {
       txtYouChooseMoveETHLp:
         'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
         'boost can be up to 2.5x.',
-      lblAvailable: 'Available',
       lblWhatDoWeReserve: 'What do we reserve',
       lblAmountWeReserveIn: 'Amount we reserve in',
       lblChooseAmount: 'Choose the amount to reserve',
       lblReviewYourIncrease: 'Review your increase',
       lblAmountWeDepositIn: 'Amount we deposit in',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       lblWhatToReserve: 'What to reserve',
       btnIncreaseBoostInSmartTreasury: 'Increase boost in Smart Treasury',
       btnIncreaseBoost: 'Increase Boost',
@@ -359,14 +357,11 @@ const messages: VueI18n.LocaleMessageObject = {
       txtYouChooseMoveETHLp:
         'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
         'boost can be up to 2.5x.',
-      lblAvailable: 'Available',
       lblWhatDoWeRemove: 'What do we remove',
       lblAmountWeRemoveIn: 'Amount we remove in',
       lblChooseAmount: 'Choose the amount to remove',
       lblReviewYourDecrease: 'Review your decrease',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       btnDecreaseBoostInSmartTreasury: 'Decrease boost in Smart Treasury',
       lblWhatToReturn: 'What to return',
       btnDecreaseBoost: 'Decrease Boost',
@@ -391,23 +386,18 @@ const messages: VueI18n.LocaleMessageObject = {
         'for a one-time payout from the Treasury.',
       lblWhatDoWeBurn: 'What do we burn',
       lblWhatToBurn: 'What to burn',
-      lblAvailable: 'Available',
       lblAmountWeBurnIn: 'Amount we burn in',
       lblChooseAmount: 'Choose the amount to burn',
       lblReviewYourClaim: 'Review your claim',
       lblAndTotalOf: 'The amount you will receive',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       btnClaimAndBurnWithAssets: 'Claim {asset1} and burn {asset2}',
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:
         'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
       lblBurnError: 'Burn conditions error',
-      lblBurnLimitReached: 'Burn limit reached',
-      lblUSDcTokenAlt: 'USDC'
-    },
-    lblChooseToken: 'Choose Token'
+      lblBurnLimitReached: 'Burn limit reached'
+    }
   },
   asset: {
     txtAlt: '{name} icon',
@@ -638,7 +628,11 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
       'not enough power to vote':
         "Oh no. Seems like you don't have enough power to vote",
       'not enough power to create a proposal':
-        "Oh no. Seems like you don't have enough power to create a proposal"
+        "Oh no. Seems like you don't have enough power to create a proposal",
+      'voting is not started yet': 'Oh no. Voting is not started yet',
+      'voting is closed': 'Oh no. Voting is already closed',
+      'wrong timestamp':
+        "Oh no. The request too long, or our system is out of sync. Looks like you'll have to try again later"
     },
     btnTogglePreview: 'Toggle preview',
     txtTogglePreview: 'Toggle markdown preview',

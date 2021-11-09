@@ -190,8 +190,6 @@ export default Vue.extend({
             symbol: move.symbol,
             priceUSD: this.moveNativePrice,
             logo: move.iconURL,
-            isFavorite: true,
-            isVerified: true,
             balance: moveWalletBalance,
             marketCap: Number.MAX_SAFE_INTEGER
           }
