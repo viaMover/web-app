@@ -975,9 +975,8 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
         'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
       txtApproximateEUREstimation: 'That would be approximately in Euro',
       lblWhatDoWeTopUp: 'What do we top up',
-      lblAmountWeDepositIn: '',
+      lblAmountWeDepositIn: 'Amount we deposit in',
       btnChooseAmount: 'Choose the amount to top up',
-      btnReviewTransaction: 'Review transaction',
       txtNativeAsset:
         'Ethereum is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
       txtNonNativeAsset:
