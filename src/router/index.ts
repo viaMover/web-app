@@ -10,6 +10,8 @@ import Home from '@/views/home.vue';
 import HomeMore from '@/views/home-more.vue';
 import View404 from '@/views/view-404.vue';
 
+import { formStepsGuard } from './form-steps-guard';
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -365,24 +367,9 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
             /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
           ),
         props: (to) => ({
-          currentStep: to.params.step
+          step: to.params.step
         }),
-        beforeEnter: (to, from, next) => {
-          if (to.params.step === 'prepare') {
-            next();
-            return;
-          }
-
-          if (from.name !== 'debit-card-top-up') {
-            next({
-              name: 'debit-card-top-up',
-              params: { step: 'prepare' }
-            });
-            return;
-          }
-
-          next();
-        }
+        beforeEnter: formStepsGuard('debit-card-top-up')
       },
       {
         path: 'change-skin',
