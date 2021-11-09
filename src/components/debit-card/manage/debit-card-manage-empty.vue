@@ -43,6 +43,7 @@
               v-model.trim="email"
               autocomplete="email"
               autofocus
+              :disabled="isLoading"
               :name="$t('debitCard.lblYourEmailAddress')"
               :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
               tabindex="1"
@@ -92,6 +93,7 @@
               v-model.trim="email"
               autocomplete="email"
               autofocus
+              :disabled="isLoading"
               :name="$t('debitCard.lblYourEmailAddress')"
               :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
               tabindex="1"
@@ -112,6 +114,7 @@
             <the-mask
               v-model="phoneNumber"
               autocomplete="tel"
+              :disabled="isLoading"
               mask="+###############"
               :name="$t('debitCard.lblYourPhoneNumber')"
               :placeholder="$t('debitCard.txtYourPhoneNumberPlaceholder')"
@@ -144,6 +147,7 @@
             <input
               v-model.trim="givenName"
               autocomplete="given-name"
+              :disabled="isLoading"
               :name="$t('debitCard.lblYourGivenName')"
               :placeholder="$t('debitCard.txtYourGivenNamePlaceholder')"
               tabindex="3"
@@ -161,6 +165,7 @@
             <input
               v-model.trim="familyName"
               autocomplete="family-name"
+              :disabled="isLoading"
               :name="$t('debitCard.lblYourFamilyName')"
               :placeholder="$t('debitCard.txtYourFamilyNamePlaceholder')"
               tabindex="4"
@@ -179,6 +184,7 @@
               <span>{{ $t('debitCard.lblYourGender.male') }}</span>
               <input
                 v-model="gender"
+                :disabled="isLoading"
                 :name="$t('debitCard.lblYourGender.male')"
                 tabindex="5"
                 type="radio"
@@ -189,6 +195,7 @@
               <span>{{ $t('debitCard.lblYourGender.female') }}</span>
               <input
                 v-model="gender"
+                :disabled="isLoading"
                 :name="$t('debitCard.lblYourGender.female')"
                 tabindex="6"
                 type="radio"
@@ -199,6 +206,7 @@
               <span>{{ $t('debitCard.lblYourGender.other') }}</span>
               <input
                 v-model="gender"
+                :disabled="isLoading"
                 :name="$t('debitCard.lblYourGender.other')"
                 tabindex="7"
                 type="radio"
@@ -222,6 +230,7 @@
             <input
               v-model="dateOfBirth"
               autocomplete="bday"
+              :disabled="isLoading"
               :max="dateOfBirthMax"
               :min="dateOfBirthMin"
               :name="$t('debitCard.lblYourDateOfBirth')"
