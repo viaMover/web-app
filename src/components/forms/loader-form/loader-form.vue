@@ -47,11 +47,11 @@ import Vue from 'vue';
 import { StepData } from './types';
 
 export default Vue.extend({
-  name: 'FullPageFormLoader',
+  name: 'LoaderForm',
   props: {
     step: {
       type: String,
-      default: 'Confirm'
+      required: true
     }
   },
   data() {
