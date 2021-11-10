@@ -120,6 +120,7 @@ workflows:
             branches:
               only:
                 - staging
+                - sentry-releases
           requires:
             - build
       - deploy_prod:
