@@ -28,20 +28,16 @@
       @update-amount="handleUpdateAmount"
     >
       <template v-slot:swap-message>
-        <div
-          v-if="isSwapNeeded && formattedUSDCTotal && inputMode === 'TOKEN'"
-          class="form-swap"
-        >
+        <div v-if="isSwapNeeded && formattedETHTotal" class="form-swap">
           <p>
             {{ $t('forms.lblSwappingFor') }}
-            <!-- ETH / USDC -->
             <custom-picture
-              :alt="$t('lblUSDcTokenAlt')"
+              :alt="$t('asset.txtAlt', { name: 'ETH' })"
               class="token"
-              :sources="usdcPicture.sources"
-              :src="usdcPicture.src"
+              :sources="ethPicture.sources"
+              :src="ethPicture.src"
             />
-            <span>{{ formattedUSDCTotal }}</span>
+            <span>{{ formattedETHTotal }}</span>
           </p>
         </div>
       </template>
@@ -52,7 +48,7 @@
       :button-text="$t('debitCard.topUp.btnTopUpCard')"
       :estimated-gas-cost="estimatedGasCost"
       :header-title="$t('debitCard.topUp.lblReviewYourTopUp')"
-      :image="savings"
+      :image="currentSkin.previewPicture"
       :input-amount-native-title="$t('debitCard.topUp.lblAndItWillBeTotalOf')"
       :input-amount-title="$t('debitCard.topUp.lblAmountWeTopUpIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
@@ -78,7 +74,7 @@ import {
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { isEth, sameAddress } from '@/utils/address';
+import { getPureEthAddress, isEth, sameAddress } from '@/utils/address';
 import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
@@ -134,24 +130,15 @@ export default Vue.extend({
     return {
       //current
       transactionStep: undefined as LoaderStep | undefined,
-      savings: {
-        alt: this.$t('savings.lblSavings'),
-        src: require('@/assets/images/Savings@1x.png'),
+      ethPicture: {
+        src: require('@/assets/images/ETH.png'),
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
           {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: require('@/assets/images/ETH@2x.png'),
+            variant: '2x'
           }
         ]
-      } as PictureDescriptor,
+      },
       usdcPicture: {
         src: require('@/assets/images/USDC.png'),
         sources: [
@@ -195,6 +182,9 @@ export default Vue.extend({
       'provider'
     ]),
     ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapGetters('debitCard', {
+      currentSkin: 'currentSkin'
+    }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
@@ -215,7 +205,9 @@ export default Vue.extend({
       return (
         this.isSwapNeeded
           ? this.$t('debitCard.topUp.txtNonNativeAsset')
-          : this.$t('debitCard.topUp.txtNativeAsset')
+          : this.$t('debitCard.topUp.txtNativeAsset', {
+              name: this.inputAsset?.name
+            })
       ) as string;
     },
     hasBackButton(): boolean {
@@ -235,21 +227,18 @@ export default Vue.extend({
 
       return `~ €${formatToNative(amountInEurs)}`;
     },
-    formattedUSDCTotal(): string {
+    formattedETHTotal(): string {
       if (this.inputAsset === undefined) {
-        return '0 USDC';
+        return '0 ETH';
       }
 
-      if (sameAddress(this.inputAsset.address, this.outputUSDCAsset.address)) {
-        return `${formatToNative(this.inputAmount)} USDC`;
+      if (isEth(this.inputAsset.address)) {
+        return `${formatToNative(this.inputAmount)} ETH`;
       }
 
       if (this.transferData !== undefined) {
-        const boughtUSDC = fromWei(
-          this.transferData.buyAmount,
-          this.outputUSDCAsset.decimals
-        );
-        return `${formatToNative(boughtUSDC)} USDC`;
+        const boughtETH = fromWei(this.transferData.buyAmount, 18);
+        return `${formatToNative(boughtETH)} ETH`;
       }
 
       return '';
@@ -418,7 +407,7 @@ export default Vue.extend({
 
       try {
         if (!this.isSwapNeeded) {
-          console.log('Dont need transfer, token is USDC');
+          console.log('Dont need transfer, token is ETH/USDC');
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -442,7 +431,7 @@ export default Vue.extend({
             ).toFixed(2);
             const inputInWei = toWei(value, this.inputAsset.decimals);
             this.transferData = await getTransferData(
-              this.outputUSDCAsset.address,
+              getPureEthAddress(),
               this.inputAsset.address,
               inputInWei,
               true,
@@ -461,7 +450,7 @@ export default Vue.extend({
               this.inputAsset.decimals
             );
             this.transferData = await getTransferData(
-              this.outputUSDCAsset.address,
+              'eth',
               this.inputAsset.address,
               inputInWei,
               true,
