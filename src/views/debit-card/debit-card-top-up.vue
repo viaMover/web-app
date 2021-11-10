@@ -231,7 +231,7 @@ export default Vue.extend({
       }
 
       const eursPerUsdc = divide(this.eursPriceInWeth, this.usdcPriceInWeth);
-      const amountInEurs = divide(this.inputAmountNative, eursPerUsdc);
+      const amountInEurs = multiply(this.inputAmountNative, eursPerUsdc);
 
       return `~ €${formatToNative(amountInEurs)}`;
     },
