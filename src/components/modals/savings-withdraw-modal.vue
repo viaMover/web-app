@@ -173,8 +173,6 @@ export default Vue.extend({
         name: 'USDc',
         priceUSD: this.usdcNativePrice,
         logo: this.outputUSDCAsset.iconURL,
-        isFavorite: true,
-        isVerified: true,
         balance: this.savingsBalance,
         marketCap: Number.MAX_SAFE_INTEGER
       };
