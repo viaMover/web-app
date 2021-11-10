@@ -1,4 +1,7 @@
 process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
 module.exports = {
-  transpileDependencies: ['web3modal-vue']
+  transpileDependencies: ['web3modal-vue'],
+  configureWebpack: {
+    devtool: 'source-map'
+  }
 };
