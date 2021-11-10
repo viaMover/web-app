@@ -17,7 +17,7 @@
       :is-loading="isLoading"
       :is-processing="isProcessing"
       :operation-description="$t('debitCard.topUp.txtApproximateEUREstimation')"
-      :operation-title="estimatedAnnualEarning"
+      :operation-title="approximateEUREstimation"
       :output-asset-heading-text="$t('debitCard.topUp.lblAmountWeDepositIn')"
       :selected-token-description="description"
       :transfer-error="transferError"
@@ -191,6 +191,7 @@ export default Vue.extend({
       'tokens',
       'savingsAPY',
       'usdcPriceInWeth',
+      'eursPriceInWeth',
       'savingsBalance',
       'provider'
     ]),
@@ -221,35 +222,19 @@ export default Vue.extend({
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },
-    estimatedAnnualEarning(): string {
-      let possibleSavingsBalance = '0';
+    approximateEUREstimation(): string {
       if (
-        this.inputAsset &&
-        sameAddress(this.inputAsset.address, this.outputUSDCAsset.address)
+        this.inputAmountNative === '' ||
+        this.usdcPriceInWeth === undefined ||
+        this.eursPriceInWeth === undefined
       ) {
-        possibleSavingsBalance = this.inputAmount;
-      } else if (this.transferData !== undefined) {
-        possibleSavingsBalance = fromWei(
-          this.transferData.buyAmount,
-          this.outputUSDCAsset.decimals
-        );
+        return '~ €0.00';
       }
 
-      if (this.savingsBalance !== undefined) {
-        possibleSavingsBalance = add(
-          this.savingsBalance,
-          possibleSavingsBalance
-        );
-      }
+      const eursPerUsdc = divide(this.eursPriceInWeth, this.usdcPriceInWeth);
+      const amountInEurs = divide(this.inputAmountNative, eursPerUsdc);
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
-      const apyNative = multiply(
-        divide(this.savingsAPY, 100),
-        usdcAmountNative
-      );
-
-      return `~ $${formatToNative(apyNative)}`;
+      return `~ €${formatToNative(amountInEurs)}`;
     },
     formattedUSDCTotal(): string {
       if (this.inputAsset === undefined) {
