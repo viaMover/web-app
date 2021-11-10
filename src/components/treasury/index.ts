@@ -3,12 +3,6 @@ export { default as TreasuryMonthlyStatement } from './treasury-monthly-statemen
 export { default as TreasuryYearlyChartWrapper } from './treasury-yearly-chart-wrapper.vue';
 export { default as TreasuryLeftRail } from './treasury-left-rail.vue';
 export { default as TreasuryEmpty } from './treasury-empty.vue';
-export { default as TreasuryIncreaseForm } from './treasury-increase-form.vue';
-export { default as TreasuryIncreaseReview } from './treasury-increase-review.vue';
-export { default as TreasuryDecreaseReview } from './treasury-decrease-review.vue';
-export { default as TreasuryDecreaseForm } from './treasury-decrease-form.vue';
-export { default as TreasuryClaimAndBurnForm } from './treasury-claim-and-burn-form.vue';
-export { default as TreasuryClaimAndBurnReview } from './treasury-claim-and-burn-review.vue';
 export { default as TreasuryPowercardEmpty } from './treasury-powercard-empty.vue';
 export { default as TreasuryPowercardManage } from './treasury-powercard-manage.vue';
 export { default as TreasuryManage } from './treasury-manage.vue';

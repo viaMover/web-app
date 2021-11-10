@@ -1,18 +1,19 @@
 <template>
-  <div class="review__wrapper">
+  <form class="review__wrapper">
     <secondary-page-simple-title
       class="page-title max-width"
-      :title="$t('treasury.claimAndBurn.lblReviewYourClaim')"
+      :title="headerTitle"
     />
     <div class="arrow">
       <div class="item">
-        <custom-picture
-          :alt="st.alt"
-          class="shadow"
-          :sources="st.sources"
-          :src="st.src"
-          :webp-sources="st.webpSources"
-        />
+        <slot name="first-token-image">
+          <token-image
+            :address="token.address"
+            :src="token.logo"
+            :symbol="token.symbol"
+            wrapper-class="item-coin"
+          />
+        </slot>
       </div>
       <div class="item">
         <div class="item-arrow">
@@ -21,62 +22,54 @@
         </div>
       </div>
       <div class="item">
-        <token-image
-          :address="token.address"
-          :src="token.logo"
-          :symbol="token.symbol"
-          wrapper-class="item-coin"
-        />
+        <slot name="second-token-image">
+          <custom-picture
+            :alt="image ? image.alt : ''"
+            class="shadow"
+            :sources="image ? image.sources : []"
+            :src="image ? image.src : ''"
+            :webp-sources="image ? image.webpSources : []"
+          />
+        </slot>
       </div>
     </div>
     <div class="items">
       <div class="item">
-        <h2>
-          {{ $t('treasury.claimAndBurn.lblAmountWeBurnIn') }}
-          {{ token.symbol }}
-        </h2>
+        <h2>{{ inputAmountTitle }} {{ token.symbol }}</h2>
         <span>{{ formattedAmount }}</span>
       </div>
       <div class="item">
-        <h2>{{ $t('treasury.claimAndBurn.lblAndTotalOf') }}</h2>
-        <span>
-          {{ formattedNativeAmount }}
-        </span>
+        <h2>{{ inputAmountNativeTitle }}</h2>
+        <span>{{ formattedNativeAmount }}</span>
       </div>
     </div>
     <div v-if="isSubsidizedEnabled">
       <div class="switch">
-        <p>{{ $t('treasury.claimAndBurn.lblUseSmartTreasury') }}</p>
-        <form class="switch__container">
+        <p>{{ $t('forms.lblUseSmartTreasury') }}</p>
+        <div class="switch__container">
           <input
             id="switch-shadow"
             v-model="isSmartTreasury"
             hidden="hidden"
             type="checkbox"
           />
-          <label class="switch-button" for="switch-shadow" />
-        </form>
+          <label class="switch-button" for="switch-shadow"></label>
+        </div>
       </div>
       <div class="items">
         <div class="item">
-          <h2>{{ $t('treasury.claimAndBurn.lblEstimatedGasCost') }}</h2>
+          <h2>{{ $t('forms.lblEstimatedGasCost') }}</h2>
           <span>{{ formattedEstimatedGasCost }}</span>
         </div>
       </div>
     </div>
-    <button
-      class="button-active black-link"
-      type="button"
-      @click="handleCreateTx"
+    <action-button
+      button-class="button-active black-link"
+      @button-click="handleCreateTx"
     >
-      {{
-        $t('treasury.claimAndBurn.btnClaimAndBurnWithAssets', {
-          asset1: 'USDC',
-          asset2: 'MOVE'
-        })
-      }}
-    </button>
-  </div>
+      {{ buttonText }}
+    </action-button>
+  </form>
 </template>
 
 <script lang="ts">
@@ -86,13 +79,15 @@ import { mapState } from 'vuex';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { TokenWithBalance } from '@/wallet/types';
 
+import ActionButton from '@/components/buttons/action-button.vue';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
-  name: 'TreasuryClaimAndBurnReview',
+  name: 'ReviewForm',
   components: {
+    ActionButton,
     TokenImage,
     SecondaryPageSimpleTitle,
     CustomPicture
@@ -102,6 +97,10 @@ export default Vue.extend({
       type: Object as PropType<TokenWithBalance>,
       required: true
     },
+    image: {
+      type: Object as PropType<PictureDescriptor>,
+      default: undefined
+    },
     amount: {
       type: String,
       required: true
@@ -109,6 +108,22 @@ export default Vue.extend({
     nativeAmount: {
       type: String,
       required: true
+    },
+    headerTitle: {
+      type: String,
+      default: ''
+    },
+    inputAmountTitle: {
+      type: String,
+      default: ''
+    },
+    inputAmountNativeTitle: {
+      type: String,
+      default: ''
+    },
+    buttonText: {
+      type: String,
+      default: ''
     },
     isSubsidizedEnabled: {
       type: Boolean,
@@ -121,25 +136,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      isSmartTreasury: true,
-      st: {
-        alt: this.$t('treasury.lblSmartTreasury'),
-        src: require('@/assets/images/SmartTreasury@1x.png'),
-        sources: [
-          { src: require('@/assets/images/SmartTreasury@1x.png') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/SmartTreasury@1x.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.webp')
-          }
-        ]
-      } as PictureDescriptor
+      isSmartTreasury: true
     };
   },
   computed: {
