@@ -1,6 +1,6 @@
-export { DepositForm, DepositReviewForm } from './deposit';
+export { default as PrepareForm } from './prepare-form/prepare-form.vue';
+export { default as ReviewForm } from './review-form.vue';
+export { default as LoaderForm } from './loader-form/loader-form.vue';
 
-export { FormLoader } from './form-loader';
-export type { Step } from './form-loader';
-
-export type { INPUT_MODE } from './types';
+export type { LoaderStep } from './loader-form/types';
+export type { InputMode } from './prepare-form/types';

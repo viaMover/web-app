@@ -44,14 +44,14 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { StepData } from '@/components/forms/form-loader/types';
+import { StepData } from './types';
 
 export default Vue.extend({
-  name: 'SavingsFormLoader',
+  name: 'LoaderForm',
   props: {
     step: {
       type: String,
-      default: 'Confirm'
+      required: true
     }
   },
   data() {

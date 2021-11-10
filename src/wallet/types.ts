@@ -14,10 +14,8 @@ export type Token = {
   name: string;
   priceUSD: string;
   logo: string;
-  isFavorite: boolean;
-  isVerified: boolean;
 
-  // @deprecated use getAssetColor() store function instead
+  // @deprecated use getTokenColor() store function instead
   color?: string;
 
   marketCap: number;

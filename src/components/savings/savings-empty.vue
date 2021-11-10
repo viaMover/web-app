@@ -1,5 +1,5 @@
 <template>
-  <secondary-page>
+  <secondary-page hide-title>
     <div class="savings__menu-wrapper-graph">
       <div class="savings__menu-wrapper-balance">
         <span class="balance">{{ savingsBalance }}</span>
@@ -36,7 +36,6 @@ import { formatPercents, formatToNative } from '@/utils/format';
 import ActionButton from '@/components/buttons/action-button.vue';
 import { BarChart } from '@/components/charts';
 import { SecondaryPage } from '@/components/layout';
-import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
 export default Vue.extend({
   name: 'SavingsEmpty',

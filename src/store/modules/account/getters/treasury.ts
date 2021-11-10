@@ -46,7 +46,8 @@ export default {
       state.treasuryBalanceMove,
       state.treasuryBalanceLP,
       walletBalanceMove,
-      walletBalanceLP
+      walletBalanceLP,
+      state.powercardState ?? 'NotStaked'
     );
   },
   hasActiveTreasury(state): boolean {

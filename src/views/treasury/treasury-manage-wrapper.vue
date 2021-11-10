@@ -1,0 +1,22 @@
+<template>
+  <treasury-manage v-if="hasActiveTreasury" />
+  <treasury-empty v-else />
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { mapGetters } from 'vuex';
+
+import { TreasuryEmpty, TreasuryManage } from '@/components/treasury';
+
+export default Vue.extend({
+  name: 'TreasuryManageWrapper',
+  components: {
+    TreasuryEmpty,
+    TreasuryManage
+  },
+  computed: {
+    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' })
+  }
+});
+</script>

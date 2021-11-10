@@ -4,7 +4,7 @@
     :disabled="disabled"
     :style="customStyle"
     :type="type"
-    @click="handleClick($event)"
+    @click="handleClick"
   >
     <template v-if="text">
       {{ text }}

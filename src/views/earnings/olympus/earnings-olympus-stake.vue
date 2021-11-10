@@ -4,57 +4,44 @@
     hide-title
     @back="handleBack"
   >
-    <div v-if="showPageTitle">
-      <secondary-page-simple-title
-        class="savings_secondary_page-title"
-        :description="pageDescription"
-        :title="pageTitle"
-      />
-      <div
-        v-if="showPotentialEarnings"
-        class="savings_secondary_page-token-info"
-      >
-        <span>{{ estimatedAnnualEarnings }}</span>
-        <p>{{ $t('earnings.olympus.txtPotentialEarnings') }}</p>
-      </div>
-    </div>
-    <deposit-form
+    <prepare-form
       v-if="currentStep === 'prepare'"
+      :asset="inputAsset"
+      has-select-modal
+      :header-description="$t('earnings.olympus.txtStakeDescription')"
+      :header-title="$t('earnings.olympus.lblStake')"
       :input-amount="inputAmount"
       :input-amount-native="inputAmountNative"
-      :input-asset="inputAsset"
-      :input-asset-description="inputAssetDescription"
       :input-asset-heading="$t('earnings.lblWhatDoWeDeposit')"
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
+      :operation-description="$t('earnings.olympus.txtPotentialEarnings')"
+      :operation-title="estimatedAnnualEarnings"
       :output-asset-heading-text="$t('earnings.lblAmountWeDepositIn')"
+      :selected-token-description="inputAssetDescription"
       :transfer-error="transferError"
       @open-select-modal="handleOpenSelectModal"
       @review-tx="handleReviewTx"
       @select-max-amount="handleSelectMaxAmount"
       @toggle-input-mode="handleToggleInputMode"
       @update-amount="handleUpdateAmount"
-    >
-    </deposit-form>
-    <deposit-review-form
+    />
+    <review-form
       v-else-if="currentStep === 'review'"
-      :action-button-text="reviewActionButtonText"
+      :amount="inputAmount"
+      :button-text="reviewActionButtonText"
       :estimated-gas-cost="estimatedGasCost"
-      :input-amount-text="reviewInputAmountText"
-      :input-asset="inputAsset"
-      :input-asset-heading="$t('earnings.lblAmountWeDepositIn')"
-      :input-asset-symbol="reviewInputAssetSymbol"
-      :is-smart-treasury="isSmartTreasury"
+      :header-title="$t('earnings.lblReviewYourStake')"
+      :image="olympus"
+      :input-amount-native-title="$t('earnings.lblAndTotalOf')"
+      :input-amount-title="$t('earnings.lblAmountWeDepositIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :output-amount-text="reviewOutputAmountText"
-      :output-asset-heading="$t('earnings.lblAndItWillBe')"
-      :output-asset-symbol="reviewOutputAssetSymbol"
-      @create-tx="handleCreateTx"
-      @update-is-smart-treasury="handleUpdateIsSmartTreasury"
-    >
-    </deposit-review-form>
-    <form-loader v-else-if="currentStep === 'loader'" :step="transactionStep" />
+      :native-amount="inputAmountNative"
+      :token="inputAsset"
+      @tx-start="handleCreateTx"
+    />
+    <loader-form v-else-if="currentStep === 'loader'" :step="transactionStep" />
   </secondary-page>
 </template>
 
@@ -71,24 +58,24 @@ import { getOhmAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
-  DepositForm,
-  DepositReviewForm,
-  FormLoader,
-  INPUT_MODE
+  InputMode,
+  LoaderForm,
+  PrepareForm,
+  ReviewForm
 } from '@/components/forms';
 import { Step as TransactionStep } from '@/components/forms/form-loader';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { PictureDescriptor } from '@/components/html5';
+import { SecondaryPage } from '@/components/layout';
 
 type processStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   name: 'EarningsOlympusStake',
   components: {
-    DepositForm,
-    DepositReviewForm,
-    FormLoader,
-    SecondaryPage,
-    SecondaryPageSimpleTitle
+    ReviewForm,
+    PrepareForm,
+    LoaderForm,
+    SecondaryPage
   },
   props: {
     currentStep: {
@@ -98,16 +85,33 @@ export default Vue.extend({
   },
   data() {
     return {
+      olympus: {
+        alt: this.$t('savings.lblSavings'),
+        src: require('@/assets/images/Savings@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.webp')
+          }
+        ]
+      } as PictureDescriptor,
       inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '' as string,
       inputAmountNative: '' as string,
-      inputMode: 'TOKEN' as INPUT_MODE,
+      inputMode: 'TOKEN' as InputMode,
       isTokenSelectedByUser: false,
       isLoading: false,
       isProcessing: false,
       transferError: undefined as string | undefined,
       estimatedGasCost: undefined as string | undefined,
-      isSmartTreasury: false,
       isSubsidizedEnabled: true,
       transactionStep: 'Confirm' as TransactionStep
     };
@@ -120,22 +124,6 @@ export default Vue.extend({
     }),
     showBackButton(): boolean {
       return this.currentStep === 'review';
-    },
-    showPotentialEarnings(): boolean {
-      return this.currentStep === 'prepare';
-    },
-    showPageTitle(): boolean {
-      return ['prepare', 'review'].includes(this.currentStep);
-    },
-    pageTitle(): string {
-      switch (this.currentStep) {
-        case 'prepare':
-          return this.$t('earnings.olympus.lblStake') as string;
-        case 'review':
-          return this.$t('earnings.lblReviewYourStake') as string;
-        default:
-          return '';
-      }
     },
     pageDescription(): string {
       if (this.currentStep === 'prepare') {
@@ -173,28 +161,6 @@ export default Vue.extend({
       return this.$t('earnings.btnStake', {
         symbol: this.inputAsset.symbol
       }) as string;
-    },
-    reviewInputAssetSymbol(): string {
-      return this.nativeCurrency.toUpperCase();
-    },
-    reviewOutputAssetSymbol(): string {
-      if (this.inputAsset === undefined) {
-        return '';
-      }
-
-      return this.inputAsset.symbol;
-    },
-    reviewInputAmountText(): string {
-      return `${formatToNative(
-        this.inputAmountNative
-      )} ${this.nativeCurrency.toUpperCase()}`;
-    },
-    reviewOutputAmountText(): string {
-      if (this.inputAsset === undefined) {
-        return '';
-      }
-
-      return `${formatToNative(this.inputAmount)}`;
     }
   },
   watch: {
@@ -279,11 +245,8 @@ export default Vue.extend({
       this.inputAmountNative = amount;
       this.inputAmount = divide(amount, this.inputAsset.priceUSD);
     },
-    handleCreateTx(): void {
+    handleCreateTx(args: { isSmartTreasury: boolean }): void {
       this.changeStep('loader');
-    },
-    handleUpdateIsSmartTreasury(value: boolean): void {
-      this.isSmartTreasury = value;
     },
     handleBack(): void {
       if (this.currentStep === 'review') {

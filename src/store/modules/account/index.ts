@@ -37,6 +37,7 @@ export default {
     tokenInfoMap: undefined,
     provider: undefined,
     isDetecting: false,
+    isWalletLoading: false,
     balance: undefined,
     networkInfo: undefined,
 
@@ -84,6 +85,11 @@ export default {
     treasuryAPY: undefined,
     treasuryTotalStakedMove: undefined,
     treasuryTotalStakedMoveEthLP: undefined,
+
+    powercardBalance: undefined,
+    powercardState: undefined,
+    powercardActiveTime: 0,
+    powercardCooldownTime: 0,
 
     isTreasuryInfoLoading: false,
     treasuryInfo: undefined,

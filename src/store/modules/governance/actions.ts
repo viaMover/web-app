@@ -202,6 +202,15 @@ export default {
         return await loadFreshData();
       }
 
+      const now = dayjs().unix();
+      if (
+        state.items[existingItemIdx].proposal.state !== 'closed' &&
+        now > state.items[existingItemIdx].proposal.end
+      ) {
+        // should be already closed but still is valid cached item
+        return await loadFreshData();
+      }
+
       return state.items[existingItemIdx];
     } catch (error) {
       console.error('failed to get single proposal', error);
@@ -254,7 +263,7 @@ export default {
     }
   },
   async vote(
-    { state, rootState, getters },
+    { state, commit, rootState, getters },
     payload: VoteParams
   ): Promise<VoteResponse> {
     try {
@@ -266,6 +275,25 @@ export default {
         throw new Error('failed to get current address');
       }
 
+      const storedProposal = state.items.find(
+        (info) => info.proposal.id === payload.proposal
+      );
+      if (storedProposal === undefined) {
+        // although should not happen, TypeScript doesn't know
+        // anything about that so throw an error like 'never' :)
+        throw new Error('failed to find stored proposal');
+      }
+
+      const now = dayjs().unix();
+
+      if (now < storedProposal.proposal.start) {
+        throw new GovernanceApiError('voting is not started yet');
+      }
+
+      if (now > storedProposal.proposal.end) {
+        throw new GovernanceApiError('voting is closed');
+      }
+
       if (getters.isAlreadyVoted(payload.proposal)) {
         throw new GovernanceApiError('already voted');
       }
@@ -274,12 +302,35 @@ export default {
         throw new GovernanceApiError('not enough power to vote');
       }
 
-      return await vote(
+      const result = await vote(
         rootState.account.provider.web3,
         rootState.account.currentAddress,
         state.spaceId,
         payload
       );
+
+      // manually add vote record in case of
+      // subsequent refetch request fails
+      commit('upsertItems', {
+        ...storedProposal,
+        votes: storedProposal.votes.concat({
+          choice: payload.choice,
+          created: now,
+          id: result.id,
+          ipfs: result.ipfsHash,
+          voter: rootState.account.currentAddress
+        }),
+        scores: {
+          ...storedProposal.scores,
+          all: storedProposal.scores.all.map((scoresGroup) => ({
+            ...scoresGroup,
+            [rootState.account?.currentAddress ?? 'missing_address']:
+              state.votingPowerSelf
+          }))
+        }
+      } as ProposalInfo);
+
+      return result;
     } catch (error) {
       console.error('failed to vote', error);
 

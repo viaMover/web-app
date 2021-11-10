@@ -131,7 +131,6 @@ export default Vue.extend({
         const providerWithCb = await InitCallbacks(provider);
         await this.initWallet({
           provider: providerWithCb.provider,
-          providerName: 'WalletConnect',
           providerBeforeCloseCb: providerWithCb.onDisconnectCb,
           injected: false
         } as InitWalletPayload);

@@ -173,8 +173,6 @@ export default Vue.extend({
         name: 'USDc',
         priceUSD: this.usdcNativePrice,
         logo: this.outputUSDCAsset.iconURL,
-        isFavorite: true,
-        isVerified: true,
         balance: this.savingsBalance,
         marketCap: Number.MAX_SAFE_INTEGER
       };
@@ -380,7 +378,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -407,7 +405,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -432,8 +430,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate saving withdraw");
         return;
       }
