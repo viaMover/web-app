@@ -11,6 +11,7 @@
         :description="$t('debitCard.txtCardTopUp')"
         navigate-to="debit-card-top-up"
         :title="$t('debitCard.lblCardTopUp')"
+        use-partial-match-active-class
       >
         <template v-slot:picture>
           <custom-picture
