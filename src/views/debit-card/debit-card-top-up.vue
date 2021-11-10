@@ -80,7 +80,6 @@ import { mapError } from '@/services/0x/errors';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isEth, sameAddress } from '@/utils/address';
 import {
-  add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
   divide,
