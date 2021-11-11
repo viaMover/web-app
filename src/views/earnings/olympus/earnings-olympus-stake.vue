@@ -48,12 +48,15 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
+
+import * as Sentry from '@sentry/vue';
 
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
-import { divide, multiply } from '@/utils/bigmath';
+import { divide, isZero, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 import { getOhmAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
@@ -112,6 +115,8 @@ export default Vue.extend({
       isProcessing: false,
       transferError: undefined as string | undefined,
       estimatedGasCost: undefined as string | undefined,
+      actionGasLimit: undefined as string | undefined,
+      approveGasLimit: undefined as string | undefined,
       isSubsidizedEnabled: true,
       transactionStep: 'Confirm' as TransactionStep
     };
@@ -120,8 +125,11 @@ export default Vue.extend({
     ...mapState('account', {
       networkInfo: 'networkInfo',
       nativeCurrency: 'nativeCurrency',
-      tokens: 'tokens'
+      tokens: 'tokens',
+      gasPrices: 'gasPrices',
+      ethPrice: 'ethPrice'
     }),
+    ...mapGetters('account', ['treasuryBonusNative']),
     showBackButton(): boolean {
       return this.currentStep === 'review';
     },
@@ -209,7 +217,48 @@ export default Vue.extend({
 
       this.isLoading = false;
     },
+    checkSubsidizedAvailability(actionGasLimit: string): boolean {
+      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
+      const ethPrice = this.ethPrice ?? '0';
+      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        console.log(
+          "With empty parameter we don't allow subsidized transaction"
+        );
+        return false;
+      }
+
+      if (this.inputAsset?.address === 'eth') {
+        console.info('Subsidizing for deposit ETH denied');
+        return false;
+      }
+
+      return isSubsidizedAllowed(
+        gasPrice,
+        actionGasLimit,
+        this.ethPrice,
+        this.treasuryBonusNative
+      );
+    },
     handleReviewTx(): void {
+      if (this.inputAsset === undefined) {
+        return;
+      }
+
+      this.isSubsidizedEnabled = false;
+      this.estimatedGasCost = undefined;
+      this.actionGasLimit = '0';
+      this.approveGasLimit = '0';
+      this.isProcessing = true;
+      try {
+        // plain code HERE
+      } catch (err) {
+        this.isSubsidizedEnabled = false;
+        console.error(err);
+        Sentry.captureException("can't estimate earnings deposit for subs");
+        return;
+      } finally {
+        this.isProcessing = false;
+      }
       this.changeStep('review');
     },
     handleToggleInputMode(): void {
