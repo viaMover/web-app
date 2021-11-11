@@ -10,6 +10,6 @@ export {
   setCurrentSkinToPersist,
   setAvailableSkinsToPersist,
   getAvailableSkinsFromPersist,
-  setEmailSignatureToPersist,
-  getEmailSignatureFromPersist
+  setEmailHashToPersist,
+  getEmailHashFromPersist
 } from './debit-card';

@@ -42,6 +42,7 @@
     "node-vibrant": "^3.2.1-alpha.1",
     "qrcode": "^1.4.4",
     "remarkable": "^2.0.1",
+    "sha3": "^2.1.4",
     "socket.io-client": "2.3.1",
     "swiper": "^6.7.5",
     "ts-custom-error": "^3.2.0",

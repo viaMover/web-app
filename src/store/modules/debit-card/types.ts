@@ -13,7 +13,10 @@ export type DebitCardStoreState = {
   eventHistory: Array<EventHistoryItemMinimal>;
 
   email: string | undefined;
+  emailHash: string | undefined;
   emailSignature: string | undefined;
+  phoneNumber: string | undefined;
+  orderState: OrderState | undefined;
 };
 
 export type CardInfo = {
@@ -65,12 +68,14 @@ export type CardState =
   | 'expired'
   | 'order_now';
 
+export type OrderState = 'order_form' | 'validate_phone' | 'change_phone';
+
 export type OrderCardParams = {
   email: string;
   phone: string;
-  gender: 'M' | 'F' | 'O';
+  gender: 'M' | 'F';
   lastName: string;
   firstName: string;
   dateOfBirth: string;
-  honorificPrefix: string;
+  title: string;
 };

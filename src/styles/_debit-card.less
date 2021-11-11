@@ -23,19 +23,37 @@
       }
 
       .container {
-        .page-body > .description {
-          font-size: 14px;
-          line-height: 22px;
-          color: @muted;
-          @font-medium();
+        .page-body {
+          .simple-title {
+            max-width: 480px;
 
-          &.subtitle {
-            font-size: 16px;
-            line-height: 24px;
+            .title {
+              font-size: 40px;
+              line-height: 54px;
+              @font-bold();
+            }
+
+            .description {
+              color: rgba(60, 60, 67, 0.6);
+              margin-top: 8px;
+              @font-medium();
+            }
           }
 
-          &.black {
-            color: @black;
+          & > .description {
+            font-size: 14px;
+            line-height: 22px;
+            color: @muted;
+            @font-medium();
+
+            &.subtitle {
+              font-size: 16px;
+              line-height: 24px;
+            }
+
+            &.black {
+              color: @black;
+            }
           }
         }
 
@@ -160,8 +178,7 @@
 
             &.info-group {
               display: flex;
-              flex-direction: row;
-              flex-wrap: wrap;
+              flex-flow: row wrap;
 
               .item {
                 flex: 0 0 200px;
@@ -190,6 +207,16 @@
                 margin-top: 24px;
               }
             }
+
+            &.floating {
+              position: fixed;
+              margin-top: 0;
+
+              &.right {
+                top: 120px;
+                right: 64px;
+              }
+            }
           }
 
           // form.form and its children are to be moved
@@ -200,6 +227,7 @@
           // on the given view
           form {
             &.form {
+              max-width: 480px;
               margin-top: 40px;
 
               .input-group {
@@ -271,7 +299,8 @@
                     }
                   }
 
-                  input {
+                  input,
+                  select {
                     font-size: 24px;
                     line-height: 40px;
                     // seems a bit odd as other inputs are 32px high
@@ -280,6 +309,11 @@
                     &::placeholder {
                       @font-bold();
                     }
+                  }
+
+                  select {
+                    display: block;
+                    width: 100%;
                   }
                 }
 
@@ -290,6 +324,31 @@
 
               .action-button {
                 margin-top: 40px;
+              }
+
+              .button {
+                &-image {
+                  img {
+                    height: 12px;
+                    width: auto;
+                    object-fit: cover;
+                  }
+
+                  font-size: 14px;
+                  line-height: 22px;
+                  color: @black;
+                  @font-medium();
+                }
+
+                &-transparent {
+                  background: none;
+                  border: none;
+                  outline: none;
+                }
+
+                &-change-number {
+                  margin-top: 16px;
+                }
               }
 
               .error-message {

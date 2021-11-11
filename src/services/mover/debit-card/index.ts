@@ -1,3 +1,8 @@
 export { DebitCardApiError } from './types';
 
-export { getCardInfo, orderCard, validateCard } from './service';
+export {
+  getCardInfo,
+  orderCard,
+  validatePhoneNumber,
+  changePhoneNumber
+} from './service';

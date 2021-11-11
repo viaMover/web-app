@@ -19,7 +19,10 @@ export default {
     isLoading: false,
     loadingPromise: undefined,
     email: undefined,
-    emailSignature: undefined
+    emailHash: undefined,
+    emailSignature: undefined,
+    orderState: undefined,
+    phoneNumber: undefined
   },
   actions,
   getters,

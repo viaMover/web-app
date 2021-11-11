@@ -922,19 +922,38 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     lblYourPhoneNumber: 'Your phone number',
     txtYourPhoneNumberPlaceholder: '+441234567890',
     lblYourGender: {
-      title: 'Your gender',
+      label: 'Your gender',
+      placeholder: 'Choose gender',
       male: 'Male',
-      female: 'Female',
-      other: 'Other'
+      female: 'Female'
     },
+    lblYourTitle: {
+      label: 'Your title',
+      placeholder: 'Choose title',
+      mr: 'Mr.',
+      mrs: 'Mrs.',
+      miss: 'Miss',
+      dr: 'Dr.'
+    },
+    lblOrderCard: 'gm! Order a card',
+    txtOrderCard:
+      'You can now order a beautiful card brought to you by our partner Trastra. ' +
+      'Keep in mind, this is a beautiful card, meaning that this type of a card is an “alpha” version. ' +
+      'It also means that Mover doesn’t store or collect your personal data, it is handled securely by licensed partner.',
     lblYourHonorificPrefix: 'Your honorific prefix',
     txtYourHonorificPrefixPlaceholder: 'Mr. or Ms. or Mx.',
     lblYourFamilyName: 'Your last name',
-    txtYourFamilyNamePlaceholder: 'Nakamoto',
+    txtYourFamilyNamePlaceholder: 'Movemoto',
     lblYourGivenName: 'Your first name',
     txtYourGivenNamePlaceholder: 'Antoshi',
     lblYourDateOfBirth: 'Date of birth',
+    lblYourSecurityCode: 'Security code',
+    txtYourSecurityCodePlaceholder: '1234',
     btnValidateOrOrderCard: 'Validate or order card',
+    btnOrderCard: 'Order beautiful card',
+    lblValidateYourNumber: 'Validate your number',
+    txtEnterSecurityCode: 'Enter a security code your received in the SMS',
+    btnChangePhoneNumber: 'Change your phone number',
     lblNotAvailable: 'n/a',
     lblManageCard: 'Manage Card',
     lblCardTopUp: 'Card top up',
@@ -1033,7 +1052,7 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
         minLength:
           'Phone number length should be at least {minLength} symbols (including +)',
         maxLength:
-          'Phone number length should be {minLength} symbols maximum (including +)'
+          'Phone number length should be {maxLength} symbols maximum (including +)'
       },
       familyName: {
         required: 'Last name is required'
@@ -1043,6 +1062,16 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       },
       dateOfBirth: {
         required: 'Date of birth is required'
+      },
+      code: {
+        required: 'One-time validation code is required',
+        numeric: 'Validation code should contain digits only (0-9)'
+      },
+      gender: {
+        required: 'Gender is requied'
+      },
+      title: {
+        required: 'Title is required'
       }
     }
   };

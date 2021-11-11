@@ -5,6 +5,7 @@ import {
   CardState,
   DebitCardStoreState,
   EventHistoryItemMinimal,
+  OrderState,
   SkinMinimal
 } from './types';
 
@@ -39,7 +40,16 @@ export default {
   setEmail(state, email: string): void {
     state.email = email;
   },
-  setEmailSignature(state, signature: string): void {
-    state.emailSignature = signature;
+  setEmailHash(state, emailHash: string): void {
+    state.emailHash = emailHash;
+  },
+  setEmailSignature(state, emailSignature: string): void {
+    state.emailSignature = emailSignature;
+  },
+  setPhoneNumber(state, phoneNumber: string): void {
+    state.phoneNumber = phoneNumber;
+  },
+  setOrderState(state, orderState: OrderState | undefined): void {
+    state.orderState = orderState;
   }
 } as MutationTree<DebitCardStoreState>;

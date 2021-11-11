@@ -1,30 +1,40 @@
 import dayjs from 'dayjs';
 
-import { OrderCardParams } from '@/store/modules/debit-card/types';
-
 import { Result } from '../../responses';
-import { CardAggregatedInfo } from './types';
+import {
+  CardAggregatedInfo,
+  CardInfoRequestPayload,
+  ChangePhoneNumberRequestPayload,
+  OrderCardPayload,
+  OrderCardRequestPayload,
+  ValidatePhoneNumberRequestPayload
+} from './types';
 
 export const getCardInfo = async (
   accountAddress: string,
-  email: string,
+  email: string | undefined,
+  emailHash: string,
   emailSignature: string
 ): Promise<Result<CardAggregatedInfo, string>> => {
-  const payload = {
-    accountAddress,
+  const payload: CardInfoRequestPayload = {
     data: {
-      email: email
+      email: email ?? null
     },
-    signature: emailSignature
+    meta: {
+      emailHash,
+      accountAddress,
+      emailSignature
+    }
   };
 
-  console.debug(payload);
+  console.debug('getCardInfo payload', payload);
 
   const now = dayjs();
   return {
     isError: false,
     result: {
-      state: 'active',
+      state: 'order_now',
+      orderState: 'order_form',
       eventHistory: [
         {
           timestamp: 1630215570,
@@ -54,17 +64,54 @@ export const getCardInfo = async (
 };
 
 export const orderCard = async (
-  data: OrderCardParams,
+  data: OrderCardPayload,
   accountAddress: string,
-  signature: string
-): Promise<Result<string, string>> => {
-  const payload = {
-    data,
-    accountAddress,
-    signature
+  signature: string,
+  emailHash: string,
+  emailSignature: string
+): Promise<Result<void, string>> => {
+  const payload: OrderCardRequestPayload = {
+    data: {
+      info: data,
+      signature: signature
+    },
+    meta: {
+      emailHash,
+      accountAddress,
+      emailSignature
+    }
   };
 
   console.debug(payload);
+
+  // return {
+  //   isError: true,
+  //   error: 'not implemented yet'
+  // };
+  return {
+    isError: false,
+    result: undefined
+  };
+};
+
+export const validatePhoneNumber = async (
+  code: string,
+  accountAddress: string,
+  emailHash: string,
+  emailSignature: string
+): Promise<Result<void, string>> => {
+  const payload: ValidatePhoneNumberRequestPayload = {
+    data: {
+      code
+    },
+    meta: {
+      accountAddress,
+      emailHash,
+      emailSignature
+    }
+  };
+
+  console.debug('validatePhoneNumber payload', payload);
 
   return {
     isError: true,
@@ -72,22 +119,24 @@ export const orderCard = async (
   };
 };
 
-export const validateCard = async (
-  code: string,
+export const changePhoneNumber = async (
+  phone: string,
   accountAddress: string,
-  email: string,
-  signature: string
+  emailHash: string,
+  emailSignature: string
 ): Promise<Result<void, string>> => {
-  const payload = {
-    code,
-    accountAddress,
+  const payload: ChangePhoneNumberRequestPayload = {
     data: {
-      email
+      phone
     },
-    signature
+    meta: {
+      accountAddress,
+      emailHash,
+      emailSignature
+    }
   };
 
-  console.debug(payload);
+  console.debug('changePhoneNumber payload', payload);
 
   return {
     isError: true,

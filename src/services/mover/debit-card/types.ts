@@ -22,4 +22,35 @@ export type CardAggregatedInfo = {
   };
   state: 'active' | 'frozen' | 'pending' | 'expired' | 'order_now';
   eventHistory: Array<EventHistoryItemMinimal>;
+  orderState: 'order_form' | 'validatePhone' | null;
 };
+
+type Request<T> = {
+  data: T;
+  meta: {
+    accountAddress: string;
+    emailHash: string;
+    emailSignature: string;
+  };
+};
+
+export type CardInfoRequestPayload = Request<{ email: string | null }>;
+
+export type OrderCardPayload = {
+  email: string;
+  phone: string;
+  gender: 'M' | 'F';
+  lastName: string;
+  firstName: string;
+  dateOfBirth: string;
+  title: string;
+};
+
+export type OrderCardRequestPayload = Request<{
+  info: OrderCardPayload;
+  signature: string;
+}>;
+
+export type ValidatePhoneNumberRequestPayload = Request<{ code: string }>;
+
+export type ChangePhoneNumberRequestPayload = Request<{ phone: string }>;

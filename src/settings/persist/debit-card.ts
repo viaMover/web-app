@@ -150,48 +150,51 @@ const getNFTExistenceInfoPersistItem = async (): Promise<
   }
 };
 
-const debitCardEmailSignaturePersistKey = 'debit_card_email_signature';
+const debitCardEmailHashPersistKey = 'debit_card_email_hash';
 
-export type EmailWithSignature = { email: string; signature: string };
-type DebitCardEmailPersistItem = AccountBoundPersistedItem<EmailWithSignature>;
+export type EmailHashItem = {
+  hash: string;
+  signature: string;
+};
+type DebitCardEmailHashPersistItem = AccountBoundPersistedItem<EmailHashItem>;
 
-export const setEmailSignatureToPersist = async (
+export const setEmailHashToPersist = async (
   address: string,
-  item: EmailWithSignature
+  item: EmailHashItem
 ): Promise<void> => {
-  const persistedItem = await getEmailSignaturePersistItem();
+  const persistedItem = await getEmailHashPersistItem();
   if (persistedItem === undefined) {
     const candidate = {
       [address]: {
-        email: item.email,
+        hash: item.hash,
         signature: item.signature,
         expirationDate: dayjs().add(1, 'month').toISOString()
       }
-    } as DebitCardEmailPersistItem;
+    } as DebitCardEmailHashPersistItem;
 
     localStorage.setItem(
-      debitCardEmailSignaturePersistKey,
+      debitCardEmailHashPersistKey,
       JSON.stringify(candidate)
     );
     return;
   }
 
   persistedItem[address] = {
-    email: item.email,
+    hash: item.hash,
     signature: item.signature,
     expirationDate: dayjs().add(1, 'month').toISOString()
   };
 
   localStorage.setItem(
-    debitCardEmailSignaturePersistKey,
+    debitCardEmailHashPersistKey,
     JSON.stringify(persistedItem)
   );
 };
 
-export const getEmailSignatureFromPersist = async (
+export const getEmailHashFromPersist = async (
   address: string
-): Promise<EmailWithSignature | undefined> => {
-  const persistedItem = await getEmailSignaturePersistItem();
+): Promise<EmailHashItem | undefined> => {
+  const persistedItem = await getEmailHashPersistItem();
   if (persistedItem === undefined) {
     return undefined;
   }
@@ -206,23 +209,23 @@ export const getEmailSignatureFromPersist = async (
   }
 
   return {
-    email: addressBoundItem.email,
+    hash: addressBoundItem.hash,
     signature: addressBoundItem.signature
   };
 };
 
-const getEmailSignaturePersistItem = async (): Promise<
-  DebitCardEmailPersistItem | undefined
+const getEmailHashPersistItem = async (): Promise<
+  DebitCardEmailHashPersistItem | undefined
 > => {
-  const persistedItem = localStorage.getItem(debitCardEmailSignaturePersistKey);
+  const persistedItem = localStorage.getItem(debitCardEmailHashPersistKey);
   if (persistedItem === null) {
     return undefined;
   }
 
   try {
-    return JSON.parse(persistedItem) as DebitCardEmailPersistItem;
+    return JSON.parse(persistedItem) as DebitCardEmailHashPersistItem;
   } catch (e) {
-    localStorage.remove(debitCardEmailSignaturePersistKey);
+    localStorage.remove(debitCardEmailHashPersistKey);
     return undefined;
   }
 };
