@@ -107,8 +107,8 @@
           <div class="input-group input-dropdown">
             <label>
               {{ $t('debitCard.lblYourTitle.label') }}
-              <select v-model="title">
-                <option disabled value="">
+              <select v-model="title" :class="{ placeholder: title === '' }">
+                <option disabled hidden value="">
                   {{ $t('debitCard.lblYourTitle.placeholder') }}
                 </option>
                 <option value="Mr.">
@@ -133,8 +133,8 @@
           <div v-show="title === 'Dr.'" class="input-group input-dropdown">
             <label>
               {{ $t('debitCard.lblYourGender.label') }}
-              <select v-model="gender">
-                <option disabled value="">
+              <select v-model="gender" :class="{ placeholder: gender === '' }">
+                <option disabled hidden value="">
                   {{ $t('debitCard.lblYourGender.placeholder') }}
                 </option>
                 <option value="M">
@@ -165,6 +165,9 @@
             </label>
             <span v-if="!$v.dateOfBirth.required" class="error-message">
               {{ $t('debitCard.errors.dateOfBirth.required') }}
+            </span>
+            <span v-if="!$v.dateOfBirth.valid" class="error-message">
+              {{ $t('debitCard.errors.dateOfBirth.invalid') }}
             </span>
           </div>
 
@@ -290,7 +293,7 @@ export default Vue.extend({
         this.isLoading = true;
         await this.orderCard({
           email: this.email,
-          phone: `+${this.phoneNumber}`,
+          phone: this.phoneNumber,
           gender: this.gender,
           lastName: this.familyName,
           firstName: this.givenName,
@@ -351,7 +354,8 @@ export default Vue.extend({
       required
     },
     dateOfBirth: {
-      required
+      required,
+      valid: (date: string) => dayjs(date).isValid()
     },
     title: {
       required

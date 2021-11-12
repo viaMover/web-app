@@ -329,6 +329,9 @@ export default {
 
       commit('setPhoneNumber', params.phone);
 
+      // prepend phone with '+' sign
+      params.phone = `+${params.phone}`;
+
       const personalDataSignature =
         await rootState.account.provider.web3.eth.personal.sign(
           JSON.stringify(params),
@@ -406,7 +409,7 @@ export default {
       commit('setPhoneNumber', newPhoneNumber);
 
       const res = await changePhoneNumber(
-        newPhoneNumber,
+        `+${newPhoneNumber}`, // prepend phone with '+' sign
         rootState.account.currentAddress,
         state.emailHash,
         state.emailSignature

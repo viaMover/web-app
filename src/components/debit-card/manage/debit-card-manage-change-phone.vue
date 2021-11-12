@@ -139,7 +139,7 @@ export default Vue.extend({
 
       try {
         this.isLoading = true;
-        await this.changePhoneNumber(`+${this.phoneNumber}`);
+        await this.changePhoneNumber(this.phoneNumber);
         this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {

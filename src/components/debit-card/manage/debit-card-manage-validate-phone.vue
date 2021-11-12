@@ -38,6 +38,13 @@
             <span v-if="!$v.code.numeric" class="error-message">
               {{ $t('debitCard.errors.code.numeric') }}
             </span>
+            <span v-if="!$v.code.length" class="error-message">
+              {{
+                $t('debitCard.errors.code.length', {
+                  length: $v.code.$params.length.sub[0].max
+                })
+              }}
+            </span>
           </div>
 
           <action-button
@@ -83,7 +90,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { numeric, required } from 'vuelidate/lib/validators';
+import {
+  and,
+  maxLength,
+  minLength,
+  numeric,
+  required
+} from 'vuelidate/lib/validators';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { DebitCardApiError } from '@/services/mover/debit-card';
@@ -193,7 +206,8 @@ export default Vue.extend({
   validations: {
     code: {
       required,
-      numeric
+      numeric,
+      length: and(maxLength(4), minLength(4))
     }
   }
 });

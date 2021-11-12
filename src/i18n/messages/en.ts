@@ -1061,11 +1061,13 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
         required: 'First name is required'
       },
       dateOfBirth: {
-        required: 'Date of birth is required'
+        required: 'Date of birth is required',
+        invalid: 'Value should represent a valid date (e.g. 1998/03/18)'
       },
       code: {
-        required: 'One-time validation code is required',
-        numeric: 'Validation code should contain digits only (0-9)'
+        required: 'Security code is required',
+        numeric: 'Security code should contain digits only (0-9)',
+        length: 'Security code should contain exactly {length} symbols'
       },
       gender: {
         required: 'Gender is requied'
