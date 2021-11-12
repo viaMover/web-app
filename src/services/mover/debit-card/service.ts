@@ -21,9 +21,9 @@ export const getCardInfo = async (
       email: email ?? null
     },
     meta: {
-      emailHash,
-      accountAddress,
-      emailSignature
+      hash: emailHash,
+      address: accountAddress,
+      sig: emailSignature
     }
   };
 
@@ -73,12 +73,12 @@ export const orderCard = async (
   const payload: OrderCardRequestPayload = {
     data: {
       info: data,
-      signature: signature
+      sig: signature
     },
     meta: {
-      emailHash,
-      accountAddress,
-      emailSignature
+      hash: emailHash,
+      address: accountAddress,
+      sig: emailSignature
     }
   };
 
@@ -105,9 +105,9 @@ export const validatePhoneNumber = async (
       code
     },
     meta: {
-      accountAddress,
-      emailHash,
-      emailSignature
+      address: accountAddress,
+      hash: emailHash,
+      sig: emailSignature
     }
   };
 
@@ -130,9 +130,9 @@ export const changePhoneNumber = async (
       phone
     },
     meta: {
-      accountAddress,
-      emailHash,
-      emailSignature
+      address: accountAddress,
+      hash: emailHash,
+      sig: emailSignature
     }
   };
 

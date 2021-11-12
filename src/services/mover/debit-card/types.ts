@@ -28,9 +28,9 @@ export type CardAggregatedInfo = {
 type Request<T> = {
   data: T;
   meta: {
-    accountAddress: string;
-    emailHash: string;
-    emailSignature: string;
+    address: string;
+    hash: string;
+    sig: string;
   };
 };
 
@@ -48,7 +48,7 @@ export type OrderCardPayload = {
 
 export type OrderCardRequestPayload = Request<{
   info: OrderCardPayload;
-  signature: string;
+  sig: string;
 }>;
 
 export type ValidatePhoneNumberRequestPayload = Request<{ code: string }>;
