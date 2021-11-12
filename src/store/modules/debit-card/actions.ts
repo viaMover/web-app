@@ -9,6 +9,7 @@ import {
   DebitCardApiError,
   getCardInfo,
   orderCard,
+  sendEmailHash,
   validatePhoneNumber
 } from '@/services/mover/debit-card';
 import {
@@ -80,7 +81,6 @@ export default {
 
         const cardInfo = await getCardInfo(
           rootState.account.currentAddress,
-          state.email,
           state.emailHash,
           state.emailSignature
         );
@@ -271,12 +271,12 @@ export default {
     );
   },
   // initialize or restore debit card ordering flow
-  async setEmail({ commit, rootState }, email: string): Promise<void> {
+  async setEmail(
+    { commit, dispatch, rootState },
+    email: string
+  ): Promise<void> {
     try {
-      commit('setEmail', email);
-
       const hash = new SHA3().update(email).digest('hex');
-      commit('setEmailHash', hash);
 
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -292,14 +292,29 @@ export default {
         rootState.account.currentAddress,
         ''
       );
-      commit('setEmailSignature', signature);
+
+      const res = await sendEmailHash(
+        rootState.account.currentAddress,
+        email,
+        hash,
+        signature
+      );
+      if (res.isError) {
+        throw new DebitCardApiError(res.error);
+      }
 
       // persist hash and signature to be able to recover state
       // from initial load
-      setEmailHashToPersist(rootState.account.currentAddress, {
+      await setEmailHashToPersist(rootState.account.currentAddress, {
         hash,
         signature
       });
+
+      commit('setEmail', email);
+      commit('setEmailHash', hash);
+      commit('setEmailSignature', signature);
+
+      dispatch('loadInfo', true);
     } catch (error) {
       console.error('failed to set email signature', error);
       Sentry.captureException(error);
@@ -350,14 +365,17 @@ export default {
         throw new DebitCardApiError(res.error);
       }
 
-      await dispatch('setOrderState', 'validate_phone');
+      dispatch('setOrderState', 'validate_phone');
     } catch (error) {
       console.error('failed to order card', error);
       Sentry.captureException(error);
       throw error;
     }
   },
-  async validatePhoneNumber({ state, rootState }, code: string): Promise<void> {
+  async validatePhoneNumber(
+    { state, dispatch, rootState },
+    code: string
+  ): Promise<void> {
     try {
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -380,6 +398,8 @@ export default {
       if (res.isError) {
         throw new DebitCardApiError(res.error);
       }
+
+      dispatch('loadInfo', true);
     } catch (error) {
       console.error('failed to validate phone number', error);
       Sentry.captureException(error);

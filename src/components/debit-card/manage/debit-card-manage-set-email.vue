@@ -119,8 +119,7 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('debitCard', {
-      setEmail: 'setEmail',
-      loadInfo: 'loadInfo'
+      setEmail: 'setEmail'
     }),
     async handleSetEmail(): Promise<void> {
       this.errorText = '';
@@ -133,7 +132,6 @@ export default Vue.extend({
       try {
         this.isLoading = true;
         await this.setEmail(this.email);
-        await this.loadInfo(true);
         this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {

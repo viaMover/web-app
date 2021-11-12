@@ -1,3 +1,4 @@
+import { MoverResponse } from '../responses';
 export class DebitCardApiError extends Error {
   constructor(readonly message: string) {
     super();
@@ -34,7 +35,11 @@ type Request<T> = {
   };
 };
 
-export type CardInfoRequestPayload = Request<{ email: string | null }>;
+export type SendEmailHashRequestPayload = Request<{ email: string }>;
+export type SendEmailHashResponsePayload = MoverResponse<void>;
+
+export type CardInfoRequestPayload = Request<void>;
+export type CardInfoResponsePayload = MoverResponse<CardAggregatedInfo>;
 
 export type OrderCardPayload = {
   email: string;
@@ -50,7 +55,10 @@ export type OrderCardRequestPayload = Request<{
   info: OrderCardPayload;
   sig: string;
 }>;
+export type OrderCardResponsePayload = MoverResponse<void>;
 
 export type ValidatePhoneNumberRequestPayload = Request<{ code: string }>;
+export type ValidatePhoneNumberResponsePayload = MoverResponse<void>;
 
 export type ChangePhoneNumberRequestPayload = Request<{ phone: string }>;
+export type ChangePhoneNumberResponsePayload = MoverResponse<void>;

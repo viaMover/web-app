@@ -1,66 +1,115 @@
-import dayjs from 'dayjs';
+import axios, { AxiosError } from 'axios';
 
 import { Result } from '../../responses';
+import { baseUrl } from '../consts';
+import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 import {
   CardAggregatedInfo,
   CardInfoRequestPayload,
+  CardInfoResponsePayload,
   ChangePhoneNumberRequestPayload,
+  ChangePhoneNumberResponsePayload,
+  DebitCardApiError,
   OrderCardPayload,
   OrderCardRequestPayload,
-  ValidatePhoneNumberRequestPayload
+  OrderCardResponsePayload,
+  SendEmailHashRequestPayload,
+  SendEmailHashResponsePayload,
+  ValidatePhoneNumberRequestPayload,
+  ValidatePhoneNumberResponsePayload
 } from './types';
+
+const cardApiClient = axios.create({
+  baseURL: `${baseUrl}/card`,
+  headers: {
+    Accept: 'application/json'
+  }
+});
+
+export const sendEmailHash = async (
+  accountAddress: string,
+  email: string,
+  emailHash: string,
+  emailSignature: string
+): Promise<Result<void, string>> => {
+  try {
+    const response = (
+      await cardApiClient.post<SendEmailHashResponsePayload>('/hash', {
+        data: {
+          email
+        },
+        meta: {
+          hash: emailHash,
+          address: accountAddress,
+          sig: emailSignature
+        }
+      } as SendEmailHashRequestPayload)
+    ).data;
+
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
+    }
+
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new DebitCardApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(`the request is failed, no response: ${axiosError}`);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
+};
 
 export const getCardInfo = async (
   accountAddress: string,
-  email: string | undefined,
   emailHash: string,
   emailSignature: string
 ): Promise<Result<CardAggregatedInfo, string>> => {
-  const payload: CardInfoRequestPayload = {
-    data: {
-      email: email ?? null
-    },
-    meta: {
-      hash: emailHash,
-      address: accountAddress,
-      sig: emailSignature
-    }
-  };
-
-  console.debug('getCardInfo payload', payload);
-
-  const now = dayjs();
-  return {
-    isError: false,
-    result: {
-      state: 'order_now',
-      orderState: 'order_form',
-      eventHistory: [
-        {
-          timestamp: 1630215570,
-          type: 'order_process_started'
-        },
-        {
-          timestamp: now.subtract(1, 'day').unix(),
-          type: 'kyc_process_started'
-        },
-        {
-          timestamp: now.subtract(1, 'day').add(5, 'hours').unix(),
-          type: 'documents_verified'
-        },
-        {
-          timestamp: now.unix(),
-          type: 'card_shipped'
+  try {
+    const response = (
+      await cardApiClient.post<CardInfoResponsePayload>('/info', {
+        meta: {
+          hash: emailHash,
+          address: accountAddress,
+          sig: emailSignature
         }
-      ],
-      info: {
-        bic: '21938124869',
-        iban: '12934189589158',
-        expiryDate: '12/24',
-        number: '8097809780978097'
-      }
+      } as CardInfoRequestPayload)
+    ).data;
+
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
     }
-  };
+
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new DebitCardApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(`the request is failed, no response: ${axiosError}`);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
 };
 
 export const orderCard = async (
@@ -70,28 +119,44 @@ export const orderCard = async (
   emailHash: string,
   emailSignature: string
 ): Promise<Result<void, string>> => {
-  const payload: OrderCardRequestPayload = {
-    data: {
-      info: data,
-      sig: signature
-    },
-    meta: {
-      hash: emailHash,
-      address: accountAddress,
-      sig: emailSignature
+  try {
+    const response = (
+      await cardApiClient.post<OrderCardResponsePayload>('/order', {
+        data: {
+          info: data,
+          sig: signature
+        },
+        meta: {
+          hash: emailHash,
+          address: accountAddress,
+          sig: emailSignature
+        }
+      } as OrderCardRequestPayload)
+    ).data;
+
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
     }
-  };
 
-  console.debug(payload);
-
-  // return {
-  //   isError: true,
-  //   error: 'not implemented yet'
-  // };
-  return {
-    isError: false,
-    result: undefined
-  };
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new DebitCardApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(`the request is failed, no response: ${axiosError}`);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
 };
 
 export const validatePhoneNumber = async (
@@ -100,23 +165,46 @@ export const validatePhoneNumber = async (
   emailHash: string,
   emailSignature: string
 ): Promise<Result<void, string>> => {
-  const payload: ValidatePhoneNumberRequestPayload = {
-    data: {
-      code
-    },
-    meta: {
-      address: accountAddress,
-      hash: emailHash,
-      sig: emailSignature
+  try {
+    const response = (
+      await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
+        '/phone/validate',
+        {
+          data: {
+            code
+          },
+          meta: {
+            address: accountAddress,
+            hash: emailHash,
+            sig: emailSignature
+          }
+        } as ValidatePhoneNumberRequestPayload
+      )
+    ).data;
+
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
     }
-  };
 
-  console.debug('validatePhoneNumber payload', payload);
-
-  return {
-    isError: true,
-    error: 'not implemented yet'
-  };
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new DebitCardApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(`the request is failed, no response: ${axiosError}`);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
 };
 
 export const changePhoneNumber = async (
@@ -125,21 +213,44 @@ export const changePhoneNumber = async (
   emailHash: string,
   emailSignature: string
 ): Promise<Result<void, string>> => {
-  const payload: ChangePhoneNumberRequestPayload = {
-    data: {
-      phone
-    },
-    meta: {
-      address: accountAddress,
-      hash: emailHash,
-      sig: emailSignature
+  try {
+    const response = (
+      await cardApiClient.post<ChangePhoneNumberResponsePayload>(
+        '/phone/change',
+        {
+          data: {
+            phone
+          },
+          meta: {
+            address: accountAddress,
+            hash: emailHash,
+            sig: emailSignature
+          }
+        } as ChangePhoneNumberRequestPayload
+      )
+    ).data;
+
+    if (response.status !== 'ok') {
+      return {
+        isError: true,
+        error: response.errorMessage
+      };
     }
-  };
 
-  console.debug('changePhoneNumber payload', payload);
-
-  return {
-    isError: true,
-    error: 'not implemented yet'
-  };
+    return { isError: false, result: response.payload };
+  } catch (error) {
+    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    if (axiosError.response !== undefined) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new DebitCardApiError(axiosError.response.data.errorMessage);
+    } else if (axiosError.request !== undefined) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest
+      throw new Error(`the request is failed, no response: ${axiosError}`);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw error;
+    }
+  }
 };

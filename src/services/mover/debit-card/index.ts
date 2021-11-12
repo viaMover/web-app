@@ -4,5 +4,6 @@ export {
   getCardInfo,
   orderCard,
   validatePhoneNumber,
-  changePhoneNumber
+  changePhoneNumber,
+  sendEmailHash
 } from './service';
