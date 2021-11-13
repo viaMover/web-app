@@ -146,7 +146,7 @@ export default Vue.extend({
     formatToNative,
     handleCreateTx(): void {
       this.$emit('tx-start', {
-        isSmartTreasury: this.isSmartTreasury
+        isSmartTreasury: this.isSmartTreasury && this.isSubsidizedEnabled
       });
     }
   }
