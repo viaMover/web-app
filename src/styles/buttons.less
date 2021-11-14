@@ -1,0 +1,50 @@
+.button {
+  height: 40px;
+  width: auto;
+  padding: @padding-small @padding-normal;
+  color: @button-secondary-text;
+  background-color: @button-secondary-background;
+  border-radius: 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.3s;
+  @font-bold();
+  @drop-shadow();
+
+  &:active {
+    transform: scale(1.06);
+  }
+
+  &.round {
+    height: 40px;
+    width: 40px;
+    padding: @padding-small;
+  }
+
+  &.transparent {
+    color: @button-transparent-text;
+    background-color: @button-transparent-background;
+    @font-medium();
+  }
+
+  &.primary {
+    color: @button-primary-text;
+    background-color: @button-primary-background;
+  }
+
+  &.secondary {
+    color: @button-secondary-text;
+    background-color: @button-secondary-background;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+
+    &:active {
+      transform: none;
+    }
+  }
+}
