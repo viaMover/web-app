@@ -1,5 +1,5 @@
 <template>
-  <main id="app">
+  <div id="app">
     <pu-skeleton-theme color="#dcdcdc">
       <web3-modal-vue
         ref="web3modal"
@@ -13,7 +13,7 @@
           <router-view v-cloak v-if="!showPreload" key="viewport" />
         </transition-group>
       </div>
-      <div class="dashboard-mobile">
+      <main class="dashboard-mobile">
         <a
           class="logo button-active"
           href="https://viamover.com/"
@@ -40,9 +40,9 @@
             </a>
           </div>
         </div>
-      </div>
+      </main>
     </pu-skeleton-theme>
-  </main>
+  </div>
 </template>
 
 <script lang="ts">
@@ -57,11 +57,10 @@ import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import Preload from '@/views/preload.vue';
 
-import '@/styles/_common.less';
-import '@/styles/_modal.less';
-import '@/styles/_execute_modal.less';
-import '@/styles/_search_modal.less';
-
+// import '@/styles/_common.less';
+// import '@/styles/_modal.less';
+// import '@/styles/_execute_modal.less';
+// import '@/styles/_search_modal.less';
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/actions/wallet';
 import { InitCallbacks } from './web3/callbacks';
