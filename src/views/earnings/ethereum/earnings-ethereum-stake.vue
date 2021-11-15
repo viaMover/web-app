@@ -48,9 +48,14 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
+import { TokenWithBalance } from '@/wallet/types';
+
+import { InputMode } from '@/components/forms';
+import { Step as TransactionStep } from '@/components/forms/form-loader';
 import LoaderForm from '@/components/forms/loader-form/loader-form.vue';
 import PrepareForm from '@/components/forms/prepare-form/prepare-form.vue';
 import ReviewForm from '@/components/forms/review-form.vue';
+import { PictureDescriptor } from '@/components/html5';
 import SecondaryPage from '@/components/layout/secondary-page/secondary-page.vue';
 
 type processStep = 'prepare' | 'review' | 'loader';
@@ -63,6 +68,41 @@ export default Vue.extend({
       type: String as PropType<processStep>,
       default: 'prepare'
     }
+  },
+  data() {
+    return {
+      olympus: {
+        alt: this.$t('savings.lblSavings'),
+        src: require('@/assets/images/Savings@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.webp')
+          }
+        ]
+      } as PictureDescriptor,
+      inputAsset: undefined as TokenWithBalance | undefined,
+      inputAmount: '' as string,
+      inputAmountNative: '' as string,
+      inputMode: 'TOKEN' as InputMode,
+      isTokenSelectedByUser: false,
+      isLoading: false,
+      isProcessing: false,
+      transferError: undefined as string | undefined,
+      estimatedGasCost: undefined as string | undefined,
+      actionGasLimit: undefined as string | undefined,
+      approveGasLimit: undefined as string | undefined,
+      isSubsidizedEnabled: true,
+      transactionStep: 'Confirm' as TransactionStep
+    };
   }
 });
 </script>
