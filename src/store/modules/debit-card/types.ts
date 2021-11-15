@@ -61,7 +61,6 @@ export type EventHistoryItemMinimal = {
 };
 
 export type CardState =
-  | 'request_email'
   | 'active'
   | 'frozen'
   | 'pending'

@@ -12,7 +12,7 @@ export default {
   state: {
     availableSkins: undefined,
     cardInfo: undefined,
-    cardState: 'request_email',
+    cardState: 'order_now',
     currentSkin: undefined,
     error: undefined,
     eventHistory: [],
