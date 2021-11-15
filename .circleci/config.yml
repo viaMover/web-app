@@ -26,6 +26,10 @@ jobs:
     working_directory: /tmp/workspace
     docker:
       - image: cimg/base:2021.04
+    environment:
+      SENTRY_ORG: holyheld
+      SENTRY_PROJECT: move-web-app
+      SENTRY_ENVIRONMENT: development
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -51,11 +55,25 @@ jobs:
             cp deploy/moverwebapp-stg.yaml dist/
             cd dist
             /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-stg.yaml --promote
+      - run: 
+          name: Create release and notify Sentry of deploy
+          command: |
+            curl -sL https://sentry.io/get-cli/ | bash
+            export SENTRY_RELEASE=$(sentry-cli releases propose-version)
+            sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
+            sentry-cli releases set-commits $SENTRY_RELEASE --auto
+            sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist/www/js/*
+            sentry-cli releases finalize $SENTRY_RELEASE
+            sentry-cli releases deploys $SENTRY_RELEASE new -e $SENTRY_ENVIRONMENT
 
   deploy_prod:
     working_directory: /tmp/workspace
     docker:
       - image: cimg/base:2021.04
+    environment:
+      SENTRY_ORG: holyheld
+      SENTRY_PROJECT: move-web-app
+      SENTRY_ENVIRONMENT: production
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -81,6 +99,16 @@ jobs:
             cp deploy/moverwebapp-prod.yaml dist/
             cd dist
             /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-prod.yaml --promote
+      - run:
+          name: Create release and notify Sentry of deploy
+          command: |
+            curl -sL https://sentry.io/get-cli/ | bash
+            export SENTRY_RELEASE=$(sentry-cli releases propose-version)
+            sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
+            sentry-cli releases set-commits $SENTRY_RELEASE --auto
+            sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist/www/js/*
+            sentry-cli releases finalize $SENTRY_RELEASE
+            sentry-cli releases deploys $SENTRY_RELEASE new -e $SENTRY_ENVIRONMENT
 
 workflows:
   version: 2
