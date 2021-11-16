@@ -191,6 +191,17 @@ export const setEmailHashToPersist = async (
   );
 };
 
+export const deleteEmailHashFromPersist = async (
+  address: string
+): Promise<void> => {
+  const persistedItem = await getEmailHashPersistItem();
+  if (persistedItem === undefined) {
+    return;
+  }
+
+  delete persistedItem[address];
+};
+
 export const getEmailHashFromPersist = async (
   address: string
 ): Promise<EmailHashItem | undefined> => {

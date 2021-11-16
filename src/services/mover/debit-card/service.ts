@@ -21,7 +21,7 @@ import {
 } from './types';
 
 const cardApiClient = axios.create({
-  baseURL: `${baseUrl}/card`,
+  baseURL: `${baseUrl}/v1/cards`,
   headers: {
     Accept: 'application/json'
   }
@@ -35,7 +35,7 @@ const fetchInfo = async (
 ): Promise<Result<FetchInfoReturn, string>> => {
   try {
     const response = (
-      await cardApiClient.post<CardInfoResponsePayload>('/hash', {
+      await cardApiClient.post<CardInfoResponsePayload>('/info', {
         data: {
           email
         },
@@ -50,8 +50,8 @@ const fetchInfo = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage,
-        shortError: response.error
+        error: response.error,
+        shortError: response.errorCode
       };
     }
 
@@ -91,7 +91,7 @@ export const orderCard = async (
 ): Promise<Result<OrderCardReturn, string>> => {
   try {
     const response = (
-      await cardApiClient.post<OrderCardResponsePayload>('/order', {
+      await cardApiClient.post<OrderCardResponsePayload>('/signup', {
         data: {
           info: data,
           sig: signature
@@ -107,8 +107,8 @@ export const orderCard = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage,
-        shortError: response.error
+        error: response.error,
+        shortError: response.errorCode
       };
     }
 
@@ -127,7 +127,7 @@ export const validatePhoneNumber = async (
   try {
     const response = (
       await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
-        '/phone/validate',
+        '/phone/verifyPhone',
         {
           data: {
             code
@@ -144,8 +144,8 @@ export const validatePhoneNumber = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage,
-        shortError: response.error
+        error: response.error,
+        shortError: response.errorCode
       };
     }
 
@@ -170,7 +170,7 @@ export const changePhoneNumber = async (
   try {
     const response = (
       await cardApiClient.post<ChangePhoneNumberResponsePayload>(
-        '/phone/change',
+        '/phone/updatePhone',
         {
           data: {
             phone
@@ -187,8 +187,8 @@ export const changePhoneNumber = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage,
-        shortError: response.error
+        error: response.error,
+        shortError: response.errorCode
       };
     }
 
@@ -209,8 +209,8 @@ const formatError = (error: unknown): Error => {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
     return new DebitCardApiError(
-      axiosError.response.data.errorMessage,
-      axiosError.response.data.error
+      axiosError.response.data.error,
+      axiosError.response.data.errorCode
     );
   } else if (axiosError.request !== undefined) {
     // The request was made but no response was received

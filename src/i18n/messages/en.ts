@@ -1080,7 +1080,10 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       },
       title: {
         required: 'Title is required'
-      }
+      },
+      alreadyRegistered: 'This email is already used',
+      badPhoneSyntax:
+        'Phone number should be valid (e.g. @:debitCard.txtYourPhoneNumberPlaceholder)'
     }
   };
 }

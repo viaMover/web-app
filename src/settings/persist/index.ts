@@ -11,5 +11,6 @@ export {
   setAvailableSkinsToPersist,
   getAvailableSkinsFromPersist,
   setEmailHashToPersist,
-  getEmailHashFromPersist
+  getEmailHashFromPersist,
+  deleteEmailHashFromPersist
 } from './debit-card';

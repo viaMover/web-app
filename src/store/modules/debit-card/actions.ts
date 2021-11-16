@@ -14,6 +14,7 @@ import {
 } from '@/services/mover/debit-card';
 import { FetchInfoReturn } from '@/services/mover/debit-card/types';
 import {
+  deleteEmailHashFromPersist,
   getAvailableSkinsFromPersist,
   getCurrentSkinFromPersist,
   getEmailHashFromPersist,
@@ -95,6 +96,18 @@ export default {
           state.emailSignature
         );
         if (res.isError) {
+          if (
+            res.shortError !== undefined &&
+            ['FORBIDDEN', 'NOT_FOUND'].includes(res.shortError)
+          ) {
+            Sentry.captureMessage(
+              `An error occurred during loadInfo: ${res.shortError} (${res.error}). Removing persist item`
+            );
+            await deleteEmailHashFromPersist(rootState.account.currentAddress);
+            dispatch('loadInfo', true);
+            return;
+          }
+
           throw new DebitCardApiError(res.error, res.shortError);
         }
 
@@ -391,18 +404,31 @@ export default {
         state.emailSignature
       );
       if (res.isError) {
+        if (res.shortError !== undefined) {
+          Sentry.captureMessage(
+            `An error occurred during orderCard: ${res.shortError} (${res.error})`
+          );
+
+          if (res.shortError === 'ALREADY_REGISTERED') {
+            throw new DebitCardApiError('alreadyRegistered');
+          }
+
+          if (res.shortError === 'PHONE_SYNTAX') {
+            throw new DebitCardApiError('badPhoneSyntax');
+          }
+        }
+
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
-      const mappedState = mapServiceState(res.result.status);
-      commit('setOrderState', mappedState.orderState);
-      commit('setCardState', mappedState.cardState);
-
       // TODO: Use own state update or rely on server?
-      // // if API succeeds with personal data
-      // // then we assume that the next stap is
-      // // validate_phone (before KYC starts)
-      // dispatch('setOrderState', 'validate_phone');
+      // if API succeeds with personal data
+      // then we assume that the next stap is
+      // validate_phone (before KYC starts)
+      commit('setOrderState', 'validate_phone');
+      // const mappedState = mapServiceState(res.result.status);
+      // commit('setOrderState', mappedState.orderState);
+      // commit('setCardState', mappedState.cardState);
     } catch (error) {
       console.error('failed to order card', error);
       Sentry.captureException(error);
@@ -481,6 +507,16 @@ export default {
         state.emailSignature
       );
       if (res.isError) {
+        if (res.shortError !== undefined) {
+          Sentry.captureMessage(
+            `An error occurred during changePhoneNumber: ${res.shortError} (${res.error})`
+          );
+
+          if (res.shortError === 'PHONE_SYNTAX') {
+            throw new DebitCardApiError('badPhoneSyntax');
+          }
+        }
+
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
