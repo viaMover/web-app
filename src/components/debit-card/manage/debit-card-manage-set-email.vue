@@ -146,16 +146,27 @@ export default Vue.extend({
           }
         }
 
-        if (
-          error instanceof DebitCardApiError &&
-          this.$te(`debitCard.errors.${error.message}`)
-        ) {
-          this.errorText = this.$t(
-            `debitCard.errors.${error.message}`
-          ) as string;
-          this.scrollButtonIntoView();
-          this.isLoading = false;
-          return;
+        if (error instanceof DebitCardApiError) {
+          if (
+            error.shortMessage !== undefined &&
+            this.$te(`debitCard.errors.${error.shortMessage}`)
+          ) {
+            this.errorText = this.$t(
+              `debitCard.errors.${error.message}`
+            ) as string;
+            this.scrollButtonIntoView();
+            this.isLoading = false;
+            return;
+          }
+
+          if (this.$te(`debitCard.errors.${error.message}`)) {
+            this.errorText = this.$t(
+              `debitCard.errors.${error.message}`
+            ) as string;
+            this.scrollButtonIntoView();
+            this.isLoading = false;
+            return;
+          }
         }
 
         this.errorText = this.$t('debitCard.errors.default') as string;

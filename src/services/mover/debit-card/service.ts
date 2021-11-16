@@ -13,8 +13,6 @@ import {
   OrderCardPayload,
   OrderCardRequestPayload,
   OrderCardResponsePayload,
-  SendEmailHashRequestPayload,
-  SendEmailHashResponsePayload,
   ValidatePhoneNumberRequestPayload,
   ValidatePhoneNumberResponsePayload
 } from './types';
@@ -26,59 +24,18 @@ const cardApiClient = axios.create({
   }
 });
 
-export const sendEmailHash = async (
+const fetchInfo = async (
   accountAddress: string,
   email: string,
-  emailHash: string,
-  emailSignature: string
-): Promise<Result<void, string>> => {
-  try {
-    const response = (
-      await cardApiClient.post<SendEmailHashResponsePayload>('/hash', {
-        data: {
-          email
-        },
-        meta: {
-          hash: emailHash,
-          address: accountAddress,
-          sig: emailSignature
-        }
-      } as SendEmailHashRequestPayload)
-    ).data;
-
-    if (response.status !== 'ok') {
-      return {
-        isError: true,
-        error: response.errorMessage
-      };
-    }
-
-    return { isError: false, result: response.payload };
-  } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
-    if (axiosError.response !== undefined) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      throw new DebitCardApiError(axiosError.response.data.errorMessage);
-    } else if (axiosError.request !== undefined) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest
-      throw new Error(`the request is failed, no response: ${axiosError}`);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      throw error;
-    }
-  }
-};
-
-export const getCardInfo = async (
-  accountAddress: string,
   emailHash: string,
   emailSignature: string
 ): Promise<Result<CardAggregatedInfo, string>> => {
   try {
     const response = (
-      await cardApiClient.post<CardInfoResponsePayload>('/info', {
+      await cardApiClient.post<CardInfoResponsePayload>('/hash', {
+        data: {
+          email
+        },
         meta: {
           hash: emailHash,
           address: accountAddress,
@@ -90,27 +47,31 @@ export const getCardInfo = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.errorMessage,
+        shortError: response.error
       };
     }
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
-    if (axiosError.response !== undefined) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      throw new DebitCardApiError(axiosError.response.data.errorMessage);
-    } else if (axiosError.request !== undefined) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest
-      throw new Error(`the request is failed, no response: ${axiosError}`);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      throw error;
-    }
+    throw formatError(error);
   }
 };
+
+export const sendEmailHash = async (
+  accountAddress: string,
+  email: string,
+  emailHash: string,
+  emailSignature: string
+): Promise<Result<CardAggregatedInfo, string>> =>
+  fetchInfo(accountAddress, email, emailHash, emailSignature);
+
+export const getCardInfo = async (
+  accountAddress: string,
+  emailHash: string,
+  emailSignature: string
+): Promise<Result<CardAggregatedInfo, string>> =>
+  fetchInfo(accountAddress, '', emailHash, emailSignature);
 
 export const orderCard = async (
   data: OrderCardPayload,
@@ -137,25 +98,14 @@ export const orderCard = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.errorMessage,
+        shortError: response.error
       };
     }
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
-    if (axiosError.response !== undefined) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      throw new DebitCardApiError(axiosError.response.data.errorMessage);
-    } else if (axiosError.request !== undefined) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest
-      throw new Error(`the request is failed, no response: ${axiosError}`);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      throw error;
-    }
+    throw formatError(error);
   }
 };
 
@@ -185,25 +135,14 @@ export const validatePhoneNumber = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.errorMessage,
+        shortError: response.error
       };
     }
 
     return { isError: false, result: response.payload.kycFormUrl };
   } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
-    if (axiosError.response !== undefined) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      throw new DebitCardApiError(axiosError.response.data.errorMessage);
-    } else if (axiosError.request !== undefined) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest
-      throw new Error(`the request is failed, no response: ${axiosError}`);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      throw error;
-    }
+    throw formatError(error);
   }
 };
 
@@ -233,24 +172,39 @@ export const changePhoneNumber = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.errorMessage,
+        shortError: response.error
       };
     }
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
-    if (axiosError.response !== undefined) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      throw new DebitCardApiError(axiosError.response.data.errorMessage);
-    } else if (axiosError.request !== undefined) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest
-      throw new Error(`the request is failed, no response: ${axiosError}`);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      throw error;
+    throw formatError(error);
+  }
+};
+
+const formatError = (error: unknown): Error => {
+  const axiosError = error as AxiosError<MoverApiErrorResponse>;
+  if (axiosError.response !== undefined) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    return new DebitCardApiError(
+      axiosError.response.data.errorMessage,
+      axiosError.response.data.error
+    );
+  } else if (axiosError.request !== undefined) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest
+    return new Error(`the request is failed, no response: ${axiosError}`);
+  } else {
+    // Something happened in setting up the request that triggered an Error
+
+    if (typeof error === 'object') {
+      return new Error(
+        `the request is failed during setup: ${JSON.stringify(error)}`
+      );
     }
+
+    return new Error(`request is failed during setup: ${error}`);
   }
 };

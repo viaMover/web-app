@@ -12,6 +12,7 @@ import {
   sendEmailHash,
   validatePhoneNumber
 } from '@/services/mover/debit-card';
+import { CardAggregatedInfo } from '@/services/mover/debit-card/types';
 import {
   getAvailableSkinsFromPersist,
   getCurrentSkinFromPersist,
@@ -31,6 +32,12 @@ import {
 } from './types';
 
 export default {
+  handleInfoResult({ commit }, cardInfo: CardAggregatedInfo) {
+    commit('setCardState', cardInfo.state);
+    commit('setOrderState', cardInfo.orderState ?? 'order_form');
+    commit('setCardEventHistory', cardInfo.eventHistory);
+    commit('setCardInfo', cardInfo.info);
+  },
   async loadInfo(
     { state, commit, dispatch, rootState },
     refetch = false
@@ -79,19 +86,16 @@ export default {
           throw new Error('missing email signature');
         }
 
-        const cardInfo = await getCardInfo(
+        const res = await getCardInfo(
           rootState.account.currentAddress,
           state.emailHash,
           state.emailSignature
         );
-        if (cardInfo.isError) {
-          throw new DebitCardApiError(cardInfo.error);
+        if (res.isError) {
+          throw new DebitCardApiError(res.error, res.shortError);
         }
 
-        commit('setCardState', cardInfo.result.state);
-        commit('setOrderState', cardInfo.result.orderState ?? 'order_form');
-        commit('setCardEventHistory', cardInfo.result.eventHistory);
-        commit('setCardInfo', cardInfo.result.info);
+        await dispatch('handleInfoResult', res.result);
 
         commit('setIsLoading', false);
       } catch (error) {
@@ -316,7 +320,7 @@ export default {
         signature
       );
       if (res.isError) {
-        throw new DebitCardApiError(res.error);
+        throw new DebitCardApiError(res.error, res.shortError);
       }
 
       // persist hash and signature to be able to recover state
@@ -330,16 +334,9 @@ export default {
       commit('setEmailHash', hash);
       commit('setEmailSignature', signature);
 
-      // query the actual info
-      // to check if either API or Trastra know
-      // anything about the user
-      //
-      // possible state changes:
-      // * user is unknown for API and Trastra -> orderCard
-      // * user is known:
-      // ** if cardStatus is not any of active statuses -> orderCard
-      // ** else -> apiResponse.status
-      dispatch('loadInfo', true);
+      commit('setIsLoading', true);
+      await dispatch('handleInfoResult', res.result);
+      commit('setIsLoading', false);
     } catch (error) {
       console.error('failed to set email signature', error);
       Sentry.captureException(error);
@@ -391,7 +388,7 @@ export default {
         state.emailSignature
       );
       if (res.isError) {
-        throw new DebitCardApiError(res.error);
+        throw new DebitCardApiError(res.error, res.shortError);
       }
 
       // if API succeeds with personal data
@@ -429,7 +426,7 @@ export default {
         state.emailSignature
       );
       if (res.isError) {
-        throw new DebitCardApiError(res.error);
+        throw new DebitCardApiError(res.error, res.shortError);
       }
 
       commit('setKycLink', res.result);
@@ -475,7 +472,7 @@ export default {
         state.emailSignature
       );
       if (res.isError) {
-        throw new DebitCardApiError(res.error);
+        throw new DebitCardApiError(res.error, res.shortError);
       }
 
       // return back to the order flow
