@@ -12,7 +12,7 @@ import {
   sendEmailHash,
   validatePhoneNumber
 } from '@/services/mover/debit-card';
-import { CardAggregatedInfo } from '@/services/mover/debit-card/types';
+import { FetchInfoReturn } from '@/services/mover/debit-card/types';
 import {
   getAvailableSkinsFromPersist,
   getCurrentSkinFromPersist,
@@ -26,17 +26,20 @@ import { RootStoreState } from '../../types';
 import { allSkins, defaultSkin } from './consts';
 import {
   DebitCardStoreState,
+  mapServiceState,
   OrderCardParams,
   OrderState,
   Skin
 } from './types';
 
 export default {
-  handleInfoResult({ commit }, cardInfo: CardAggregatedInfo) {
-    commit('setCardState', cardInfo.state);
-    commit('setOrderState', cardInfo.orderState ?? 'order_form');
-    commit('setCardEventHistory', cardInfo.eventHistory);
-    commit('setCardInfo', cardInfo.info);
+  handleInfoResult({ commit }, cardInfo: FetchInfoReturn) {
+    const mappedState = mapServiceState(cardInfo.status);
+    commit('setCardState', mappedState.cardState);
+    commit('setOrderState', mappedState.orderState);
+    commit('setKycLink', cardInfo.KYClink);
+    commit('setCardEventHistory', []);
+    commit('setCardInfo', undefined);
   },
   async loadInfo(
     { state, commit, dispatch, rootState },
@@ -346,7 +349,7 @@ export default {
   // send personal data to the Trastra to initialize flow
   // (order flow, step 1)
   async orderCard(
-    { state, commit, dispatch, rootState },
+    { state, commit, rootState },
     params: OrderCardParams
   ): Promise<void> {
     try {
@@ -391,10 +394,15 @@ export default {
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
-      // if API succeeds with personal data
-      // then we assume that the next stap is
-      // validate_phone (before KYC starts)
-      dispatch('setOrderState', 'validate_phone');
+      const mappedState = mapServiceState(res.result.status);
+      commit('setOrderState', mappedState.orderState);
+      commit('setCardState', mappedState.cardState);
+
+      // TODO: Use own state update or rely on server?
+      // // if API succeeds with personal data
+      // // then we assume that the next stap is
+      // // validate_phone (before KYC starts)
+      // dispatch('setOrderState', 'validate_phone');
     } catch (error) {
       console.error('failed to order card', error);
       Sentry.captureException(error);
@@ -429,6 +437,7 @@ export default {
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
+      // TODO: Use own state update or rely on server?
       commit('setKycLink', res.result);
 
       // once we are done with phone validation and
@@ -447,7 +456,7 @@ export default {
   // change (append) phone number to the existing Trastra user record
   // so new SMS will be sent (order flow, step 2* (optional))
   async changePhoneNumber(
-    { state, commit, dispatch, rootState },
+    { state, commit, rootState },
     newPhoneNumber: string
   ): Promise<void> {
     try {
@@ -475,8 +484,9 @@ export default {
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
+      // TODO: Use own state update or rely on server?
       // return back to the order flow
-      dispatch('setOrderState', 'validate_phone');
+      commit('setOrderState', 'validate_phone');
     } catch (error) {
       console.error('failed to change phone number', error);
       Sentry.captureException(error);

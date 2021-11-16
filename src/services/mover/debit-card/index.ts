@@ -7,3 +7,11 @@ export {
   changePhoneNumber,
   sendEmailHash
 } from './service';
+
+export type {
+  CardStatus,
+  EventHistoryItemMinimal,
+  ChangePhoneNumberReturn,
+  OrderCardReturn,
+  ValidatePhoneNumberReturn
+} from './types';

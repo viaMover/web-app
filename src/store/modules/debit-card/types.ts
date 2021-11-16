@@ -1,3 +1,5 @@
+import { CardStatus as ServiceState } from '@/services/mover/debit-card';
+
 import { PictureDescriptor } from '@/components/html5';
 
 export type DebitCardStoreState = {
@@ -69,6 +71,27 @@ export type CardState =
   | 'order_now';
 
 export type OrderState = 'order_form' | 'validate_phone' | 'change_phone';
+
+export interface ResponseWithCardStatus {
+  status: ServiceState;
+}
+
+export const mapServiceState = (
+  serviceState: ServiceState
+): { cardState: CardState; orderState: OrderState | undefined } => {
+  switch (serviceState) {
+    case 'NOT_REGISTERED':
+      return { cardState: 'order_now', orderState: 'order_form' };
+    case 'PHONE_VERIFICATION_PENDING':
+    case 'KYC_PENDING':
+      return { cardState: 'order_now', orderState: 'validate_phone' };
+    case 'KYC_WAITING':
+    case 'CARD_ORDERING':
+      return { cardState: 'pending', orderState: undefined };
+    default:
+      return { cardState: 'active', orderState: undefined };
+  }
+};
 
 export type OrderCardParams = {
   email: string;

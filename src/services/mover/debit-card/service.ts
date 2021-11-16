@@ -4,17 +4,20 @@ import { Result } from '../../responses';
 import { baseUrl } from '../consts';
 import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 import {
-  CardAggregatedInfo,
   CardInfoRequestPayload,
   CardInfoResponsePayload,
   ChangePhoneNumberRequestPayload,
   ChangePhoneNumberResponsePayload,
+  ChangePhoneNumberReturn,
   DebitCardApiError,
+  FetchInfoReturn,
   OrderCardPayload,
   OrderCardRequestPayload,
   OrderCardResponsePayload,
+  OrderCardReturn,
   ValidatePhoneNumberRequestPayload,
-  ValidatePhoneNumberResponsePayload
+  ValidatePhoneNumberResponsePayload,
+  ValidatePhoneNumberReturn
 } from './types';
 
 const cardApiClient = axios.create({
@@ -29,7 +32,7 @@ const fetchInfo = async (
   email: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<CardAggregatedInfo, string>> => {
+): Promise<Result<FetchInfoReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<CardInfoResponsePayload>('/hash', {
@@ -52,7 +55,13 @@ const fetchInfo = async (
       };
     }
 
-    return { isError: false, result: response.payload };
+    return {
+      isError: false,
+      result: {
+        status: response.payload.status,
+        KYClink: response.payload.KYClink
+      }
+    };
   } catch (error) {
     throw formatError(error);
   }
@@ -63,14 +72,14 @@ export const sendEmailHash = async (
   email: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<CardAggregatedInfo, string>> =>
+): Promise<Result<FetchInfoReturn, string>> =>
   fetchInfo(accountAddress, email, emailHash, emailSignature);
 
 export const getCardInfo = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<CardAggregatedInfo, string>> =>
+): Promise<Result<FetchInfoReturn, string>> =>
   fetchInfo(accountAddress, '', emailHash, emailSignature);
 
 export const orderCard = async (
@@ -79,7 +88,7 @@ export const orderCard = async (
   signature: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<void, string>> => {
+): Promise<Result<OrderCardReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<OrderCardResponsePayload>('/order', {
@@ -114,7 +123,7 @@ export const validatePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<string, string>> => {
+): Promise<Result<ValidatePhoneNumberReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
@@ -140,7 +149,13 @@ export const validatePhoneNumber = async (
       };
     }
 
-    return { isError: false, result: response.payload.kycFormUrl };
+    return {
+      isError: false,
+      result: {
+        status: response.payload.status,
+        KYClink: response.payload.KYClink
+      }
+    };
   } catch (error) {
     throw formatError(error);
   }
@@ -151,7 +166,7 @@ export const changePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<void, string>> => {
+): Promise<Result<ChangePhoneNumberReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<ChangePhoneNumberResponsePayload>(
@@ -177,7 +192,12 @@ export const changePhoneNumber = async (
       };
     }
 
-    return { isError: false, result: response.payload };
+    return {
+      isError: false,
+      result: {
+        status: response.payload.status
+      }
+    };
   } catch (error) {
     throw formatError(error);
   }
