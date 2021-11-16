@@ -164,7 +164,7 @@ export const validatePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<void, string>> => {
+): Promise<Result<string, string>> => {
   try {
     const response = (
       await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
@@ -189,7 +189,7 @@ export const validatePhoneNumber = async (
       };
     }
 
-    return { isError: false, result: response.payload };
+    return { isError: false, result: response.payload.kycFormUrl };
   } catch (error) {
     const axiosError = error as AxiosError<MoverApiErrorResponse>;
     if (axiosError.response !== undefined) {

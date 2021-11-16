@@ -58,7 +58,9 @@ export type OrderCardRequestPayload = Request<{
 export type OrderCardResponsePayload = MoverResponse<void>;
 
 export type ValidatePhoneNumberRequestPayload = Request<{ code: string }>;
-export type ValidatePhoneNumberResponsePayload = MoverResponse<void>;
+export type ValidatePhoneNumberResponsePayload = MoverResponse<{
+  kycFormUrl: string;
+}>;
 
 export type ChangePhoneNumberRequestPayload = Request<{ phone: string }>;
 export type ChangePhoneNumberResponsePayload = MoverResponse<void>;

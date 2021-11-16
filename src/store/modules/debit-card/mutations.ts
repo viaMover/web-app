@@ -51,5 +51,8 @@ export default {
   },
   setOrderState(state, orderState: OrderState | undefined): void {
     state.orderState = orderState;
+  },
+  setKycLink(state, link: string | undefined): void {
+    state.kycLink = link;
   }
 } as MutationTree<DebitCardStoreState>;

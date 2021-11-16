@@ -14,7 +14,11 @@
       <div class="container margin-top-80">
         <form
           class="form validate"
-          :class="{ error: $v.$anyError || errorText !== '' }"
+          :class="{
+            error: $v.$anyError || errorText !== '',
+            disabled: !!kycLink
+          }"
+          :disabled="!!kycLink"
           @submit.prevent="handleValidatePhoneNumber"
         >
           <div class="input-group" :class="{ error: $v.code.$error }">
@@ -24,7 +28,7 @@
                 v-model.trim="code"
                 autocomplete="one-time-code"
                 autofocus
-                :disabled="isLoading"
+                :disabled="isLoading || !!kycLink"
                 maxlength="4"
                 minLength="4"
                 name="code"
@@ -50,7 +54,7 @@
           <action-button
             ref="button"
             button-class="black-link button-active action-button"
-            :disabled="isLoading"
+            :disabled="isLoading || !!kycLink"
             propagate-original-event
             type="submit"
           >
@@ -72,7 +76,7 @@
             class="
               button-active button-image button-transparent button-change-number
             "
-            :disabled="isLoading"
+            :disabled="isLoading || !!kycLink"
             type="button"
             @click="handleChangePhoneNumber"
           >
@@ -83,6 +87,26 @@
             {{ $t('debitCard.btnChangePhoneNumber') }}
           </button>
         </form>
+      </div>
+
+      <div
+        v-if="!!kycLink"
+        ref="linkContainer"
+        class="container margin-top-40 kyc-link"
+      >
+        <i18n class="description" path="debitCard.kycLink.description" tag="p">
+          <a class="link" :href="kycLink" target="_blank">
+            {{ $t('debitCard.kycLink.link') }}
+          </a>
+        </i18n>
+
+        <action-button
+          button-class="black-link button-active action-button"
+          type="button"
+          @button-click="handleProceed"
+        >
+          {{ $t('debitCard.lblProceedAfterKyc') }}
+        </action-button>
       </div>
     </div>
   </secondary-page>
@@ -129,7 +153,8 @@ export default Vue.extend({
   computed: {
     ...mapState('debitCard', {
       savedEmail: 'email',
-      savedPhoneNumber: 'phoneNumber'
+      savedPhoneNumber: 'phoneNumber',
+      kycLink: 'kycLink'
     }),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
@@ -150,7 +175,8 @@ export default Vue.extend({
   methods: {
     ...mapActions('debitCard', {
       validatePhoneNumber: 'validatePhoneNumber',
-      setOrderState: 'setOrderState'
+      setOrderState: 'setOrderState',
+      loadInfo: 'loadInfo'
     }),
     async handleValidatePhoneNumber(): Promise<void> {
       this.errorText = '';
@@ -164,6 +190,11 @@ export default Vue.extend({
         this.isLoading = true;
         await this.validatePhoneNumber(this.code);
         this.isLoading = false;
+        this.$nextTick(() => {
+          (
+            (this.$refs.linkContainer as Vue).$el as HTMLElement
+          ).scrollIntoView();
+        });
       } catch (error) {
         if (isProviderRpcError(error)) {
           const providerError = error as ProviderRpcError;
@@ -201,6 +232,9 @@ export default Vue.extend({
     },
     handleChangePhoneNumber(): void {
       this.setOrderState('change_phone');
+    },
+    async handleProceed(): Promise<void> {
+      await this.loadInfo(true);
     }
   },
   validations: {

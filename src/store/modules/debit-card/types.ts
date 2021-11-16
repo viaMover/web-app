@@ -17,6 +17,7 @@ export type DebitCardStoreState = {
   emailSignature: string | undefined;
   phoneNumber: string | undefined;
   orderState: OrderState | undefined;
+  kycLink: string | undefined;
 };
 
 export type CardInfo = {

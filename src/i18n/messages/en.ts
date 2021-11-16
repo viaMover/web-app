@@ -988,6 +988,12 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     lblExpiryDate: 'Expiry date',
     lblIBAN: 'IBAN',
     lblBIC: 'BIC',
+    kycLink: {
+      description:
+        'You have successfully started your Beautiful card order process. Here is your {0}. You will also receive an email with the same link',
+      link: 'KYC link'
+    },
+    lblProceedAfterKyc: 'Proceed',
     topUp: {
       lblTopUp: 'Card top up',
       txtTopUp:

@@ -22,7 +22,8 @@ export default {
     emailHash: undefined,
     emailSignature: undefined,
     orderState: undefined,
-    phoneNumber: undefined
+    phoneNumber: undefined,
+    kycLink: undefined
   },
   actions,
   getters,

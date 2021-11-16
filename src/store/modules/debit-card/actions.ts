@@ -135,50 +135,54 @@ export default {
         defaultSkin,
         false
       );
-    } else if (persistedSkin.nftAddress === undefined) {
+      return;
+    }
+
+    if (persistedSkin.nftAddress === undefined) {
       // there is a skin which doesn't have an address to check
       // (not NFT-bound like 'default')
       // persist update is not needed
       commit('setCurrentSkin', persistedSkin);
-    } else {
-      // there is a skin, it is NFT-bound
-      if (rootState.account?.provider?.web3 === undefined) {
-        throw new Error('failed to get web3 provider');
-      }
+      return;
+    }
 
-      try {
-        const ownsCorrespondingNFT = await checkIsNftPresent(
-          rootState.account.provider.web3,
-          rootState.account.currentAddress,
-          persistedSkin.nftAddress
-        );
+    // there is a skin, it is NFT-bound
+    if (rootState.account?.provider?.web3 === undefined) {
+      throw new Error('failed to get web3 provider');
+    }
 
-        if (!ownsCorrespondingNFT) {
-          // the user doesn't have an NFT anymore
-          commit('setCurrentSkin', defaultSkin);
-          await setCurrentSkinToPersist(
-            rootState.account.currentAddress,
-            defaultSkin,
-            false
-          );
-        } else {
-          // the user still has an NFT, persist update is not needed
-          commit('setCurrentSkin', persistedSkin);
-        }
-      } catch (error) {
-        console.warn(
-          'failed to check if the NFT is present',
-          persistedSkin,
-          error
-        );
-        Sentry.captureException(error);
+    try {
+      const ownsCorrespondingNFT = await checkIsNftPresent(
+        rootState.account.provider.web3,
+        rootState.account.currentAddress,
+        persistedSkin.nftAddress
+      );
 
-        // an error was thrown during check if NFT is present
-        // but this doesn't mean that the user doesn't have an
-        // NFT anymore. We'll set a default for a while until
-        // the next attempt
+      if (!ownsCorrespondingNFT) {
+        // the user doesn't have an NFT anymore
         commit('setCurrentSkin', defaultSkin);
+        await setCurrentSkinToPersist(
+          rootState.account.currentAddress,
+          defaultSkin,
+          false
+        );
+      } else {
+        // the user still has an NFT, persist update is not needed
+        commit('setCurrentSkin', persistedSkin);
       }
+    } catch (error) {
+      console.warn(
+        'failed to check if the NFT is present',
+        persistedSkin,
+        error
+      );
+      Sentry.captureException(error);
+
+      // an error was thrown during check if NFT is present
+      // but this doesn't mean that the user doesn't have an
+      // NFT anymore. We'll set a default for a while until
+      // the next attempt
+      commit('setCurrentSkin', defaultSkin);
     }
   },
   async loadAvailableSkins(
@@ -192,12 +196,15 @@ export default {
     if (rootState.account?.currentAddress === undefined) {
       throw new Error('failed to get current address');
     }
+
     const persistedAvailableSkins = await getAvailableSkinsFromPersist(
       rootState.account.currentAddress
     );
 
     const skinsWithAvailabilityInfo = await Promise.all(
       allSkins.map(async (skin) => {
+        // there is a skin which doesn't have an address to check
+        // (not NFT-bound like 'default')
         if (skin.nftAddress === undefined) {
           return {
             skin,
@@ -205,6 +212,9 @@ export default {
           };
         }
 
+        // there is a persisted nft ownership record, not expired
+        // so we don't perform checks and assume the skin as
+        // still available to choose from
         if (persistedAvailableSkins.includes(skin.nftAddress)) {
           return {
             skin,
@@ -224,6 +234,8 @@ export default {
           throw new Error('failed to get web3 provider');
         }
 
+        // perform ownership check
+        // (if nft is present on the account of user)
         try {
           return {
             skin,
@@ -248,6 +260,7 @@ export default {
       .filter((entry) => entry.available)
       .map((entry) => entry.skin);
 
+    // update available skins persist item
     setAvailableSkinsToPersist(
       rootState.account.currentAddress,
       availableSkins
@@ -293,6 +306,9 @@ export default {
         ''
       );
 
+      // send identifying non-confidential token
+      // to the API so it knows what user corresponds with
+      // what debit card account of Trastra
       const res = await sendEmailHash(
         rootState.account.currentAddress,
         email,
@@ -314,6 +330,15 @@ export default {
       commit('setEmailHash', hash);
       commit('setEmailSignature', signature);
 
+      // query the actual info
+      // to check if either API or Trastra know
+      // anything about the user
+      //
+      // possible state changes:
+      // * user is unknown for API and Trastra -> orderCard
+      // * user is known:
+      // ** if cardStatus is not any of active statuses -> orderCard
+      // ** else -> apiResponse.status
       dispatch('loadInfo', true);
     } catch (error) {
       console.error('failed to set email signature', error);
@@ -321,6 +346,8 @@ export default {
       throw error;
     }
   },
+  // send personal data to the Trastra to initialize flow
+  // (order flow, step 1)
   async orderCard(
     { state, commit, dispatch, rootState },
     params: OrderCardParams
@@ -344,18 +371,20 @@ export default {
 
       commit('setPhoneNumber', params.phone);
 
-      // prepend phone with '+' sign
-      params.phone = `+${params.phone}`;
+      const mappedParams = {
+        ...params,
+        phone: `+${params.phone}` // prepend phone with '+' sign
+      };
 
       const personalDataSignature =
         await rootState.account.provider.web3.eth.personal.sign(
-          JSON.stringify(params),
+          JSON.stringify(mappedParams),
           rootState.account.currentAddress,
           ''
         );
 
       const res = await orderCard(
-        params,
+        mappedParams,
         rootState.account.currentAddress,
         personalDataSignature,
         state.emailHash,
@@ -365,6 +394,9 @@ export default {
         throw new DebitCardApiError(res.error);
       }
 
+      // if API succeeds with personal data
+      // then we assume that the next stap is
+      // validate_phone (before KYC starts)
       dispatch('setOrderState', 'validate_phone');
     } catch (error) {
       console.error('failed to order card', error);
@@ -372,8 +404,9 @@ export default {
       throw error;
     }
   },
+  // validate phone number (order flow, step 2) to start KYC
   async validatePhoneNumber(
-    { state, dispatch, rootState },
+    { state, commit, dispatch, rootState },
     code: string
   ): Promise<void> {
     try {
@@ -399,6 +432,11 @@ export default {
         throw new DebitCardApiError(res.error);
       }
 
+      commit('setKycLink', res.result);
+
+      // once we are done with phone validation and
+      // API confirms that SMS was sent -- we load the next part
+      // of debit card flow -> pending
       dispatch('loadInfo', true);
     } catch (error) {
       console.error('failed to validate phone number', error);
@@ -409,6 +447,8 @@ export default {
   setOrderState({ commit }, orderState: OrderState): void {
     commit('setOrderState', orderState);
   },
+  // change (append) phone number to the existing Trastra user record
+  // so new SMS will be sent (order flow, step 2* (optional))
   async changePhoneNumber(
     { state, commit, dispatch, rootState },
     newPhoneNumber: string
@@ -438,6 +478,7 @@ export default {
         throw new DebitCardApiError(res.error);
       }
 
+      // return back to the order flow
       dispatch('setOrderState', 'validate_phone');
     } catch (error) {
       console.error('failed to change phone number', error);

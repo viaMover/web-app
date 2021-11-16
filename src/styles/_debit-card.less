@@ -217,6 +217,25 @@
                 right: 64px;
               }
             }
+
+            &.kyc-link {
+              .description,
+              .link {
+                font-size: 16px;
+                line-height: 24px;
+                color: @muted;
+                @font-medium();
+              }
+
+              .link {
+                text-decoration: underline;
+                color: @black;
+              }
+
+              .action-button {
+                margin-top: 40px;
+              }
+            }
           }
 
           // form.form and its children are to be moved
@@ -229,6 +248,10 @@
             &.form {
               max-width: 480px;
               margin-top: 40px;
+
+              &.disabled {
+                opacity: 0.2;
+              }
 
               .input-group {
                 margin-bottom: 40px;
