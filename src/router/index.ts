@@ -369,7 +369,14 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
         props: (to) => ({
           step: to.params.step
         }),
-        beforeEnter: formStepsGuard('debit-card-top-up')
+        beforeEnter: (to, from, next) => {
+          if (!isFeatureEnabled('isDebitCardTopUpEnabled')) {
+            next({ name: 'not-found-route' });
+            return;
+          }
+
+          formStepsGuard('debit-card-top-up')(to, from, next);
+        }
       },
       {
         path: 'change-skin',

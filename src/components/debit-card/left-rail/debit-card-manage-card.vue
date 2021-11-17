@@ -8,6 +8,7 @@
     </template>
     <template v-else>
       <left-rail-section-nav-item-image
+        v-if="isFeatureEnabled('isDebitCardTopUpEnabled')"
         :description="$t('debitCard.txtCardTopUp')"
         navigate-to="debit-card-top-up"
         :title="$t('debitCard.lblCardTopUp')"
@@ -41,6 +42,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapState } from 'vuex';
+
+import { isFeatureEnabled } from '@/settings';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
@@ -85,6 +88,9 @@ export default Vue.extend({
     ...mapState('debitCard', {
       isLoading: 'isLoading'
     })
+  },
+  methods: {
+    isFeatureEnabled
   }
 });
 </script>
