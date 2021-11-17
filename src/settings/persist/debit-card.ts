@@ -40,6 +40,10 @@ export const getCurrentSkinFromPersist = async (
   }
 
   const addressBoundItem = persistedItem[address];
+  if (addressBoundItem === undefined) {
+    return undefined;
+  }
+
   return {
     id: addressBoundItem.id,
     nftAddress: addressBoundItem.nftAddress,
