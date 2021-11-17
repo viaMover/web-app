@@ -206,7 +206,7 @@ import {
   minLength,
   required
 } from 'vuelidate/lib/validators';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -246,6 +246,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('debitCard', {
+      savedEmail: 'email'
+    }),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
     }),
@@ -274,7 +277,16 @@ export default Vue.extend({
           default:
             this.gender = '';
         }
-      }
+      },
+      immediate: true
+    },
+    savedEmail: {
+      handler(newValue: string | undefined): void {
+        if (newValue !== undefined && this.email !== '') {
+          this.email = newValue;
+        }
+      },
+      immediate: true
     }
   },
   methods: {

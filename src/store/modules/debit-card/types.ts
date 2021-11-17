@@ -100,7 +100,7 @@ export const mapServiceState = (
 export const mapServiceHistoryItem = (
   serviceItem: ServiceHistoryItem
 ): EventHistoryItemMinimal => {
-  switch (serviceItem.type) {
+  switch (serviceItem.status) {
     case 'PHONE_VERIFICATION_PENDING':
     case 'KYC_PENDING':
       return {

@@ -14,5 +14,6 @@ export type {
   ChangePhoneNumberReturn,
   OrderCardReturn,
   ValidatePhoneNumberReturn,
-  CardInfo
+  CardInfo,
+  BaseReturn
 } from './types';

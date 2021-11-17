@@ -6,6 +6,7 @@ import { SHA3 } from 'sha3';
 
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
 import {
+  BaseReturn,
   changePhoneNumber,
   DebitCardApiError,
   getCardInfo,
@@ -13,7 +14,6 @@ import {
   sendEmailHash,
   validatePhoneNumber
 } from '@/services/mover/debit-card';
-import { FetchInfoReturn } from '@/services/mover/debit-card/types';
 import {
   deleteEmailHashFromPersist,
   getAvailableSkinsFromPersist,
@@ -37,7 +37,7 @@ import {
 } from './types';
 
 export default {
-  handleInfoResult({ commit }, info: FetchInfoReturn) {
+  handleInfoResult({ commit }, info: BaseReturn) {
     const mappedState = mapServiceState(info.status);
     commit('setCardState', mappedState.cardState);
     commit('setOrderState', mappedState.orderState);
@@ -385,7 +385,7 @@ export default {
   // send personal data to the Trastra to initialize flow
   // (order flow, step 1)
   async orderCard(
-    { state, commit, rootState },
+    { state, commit, dispatch, rootState },
     params: OrderCardParams
   ): Promise<void> {
     try {
@@ -444,14 +444,9 @@ export default {
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
-      // TODO: Use own state update or rely on server?
-      // if API succeeds with personal data
-      // then we assume that the next stap is
-      // validate_phone (before KYC starts)
-      commit('setOrderState', 'validate_phone');
-      // const mappedState = mapServiceState(res.result.status);
-      // commit('setOrderState', mappedState.orderState);
-      // commit('setCardState', mappedState.cardState);
+      commit('setIsLoading', true);
+      await dispatch('handleInfoResult', res.result);
+      commit('setIsLoading', false);
     } catch (error) {
       console.error('failed to order card', error);
       Sentry.captureException(error);
@@ -460,7 +455,7 @@ export default {
   },
   // validate phone number (order flow, step 2) to start KYC
   async validatePhoneNumber(
-    { state, commit, dispatch, rootState },
+    { state, commit, rootState },
     code: string
   ): Promise<void> {
     try {
@@ -483,16 +478,22 @@ export default {
         state.emailSignature
       );
       if (res.isError) {
+        if (res.shortError !== undefined) {
+          console.debug('wtf?', res.error, res.shortError);
+          Sentry.captureMessage(
+            `An error occurred during validatePhoneNumber: ${res.shortError} (${res.error})`
+          );
+
+          if (res.shortError === 'INCORRECT_CODE') {
+            throw new DebitCardApiError('incorrectCode');
+          }
+        }
+
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
       // TODO: Use own state update or rely on server?
-      commit('setKycLink', res.result);
-
-      // once we are done with phone validation and
-      // API confirms that SMS was sent -- we load the next part
-      // of debit card flow -> pending
-      dispatch('loadInfo', true);
+      commit('setKycLink', res.result.KYClink);
     } catch (error) {
       console.error('failed to validate phone number', error);
       Sentry.captureException(error);
@@ -543,8 +544,6 @@ export default {
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
-      // TODO: Use own state update or rely on server?
-      // return back to the order flow
       commit('setOrderState', 'validate_phone');
     } catch (error) {
       console.error('failed to change phone number', error);

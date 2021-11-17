@@ -4,20 +4,17 @@ import { Result } from '../../responses';
 import { baseUrl } from '../consts';
 import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 import {
+  BaseReturn,
   CardInfoRequestPayload,
   CardInfoResponsePayload,
   ChangePhoneNumberRequestPayload,
   ChangePhoneNumberResponsePayload,
-  ChangePhoneNumberReturn,
   DebitCardApiError,
-  FetchInfoReturn,
   OrderCardPayload,
   OrderCardRequestPayload,
   OrderCardResponsePayload,
-  OrderCardReturn,
   ValidatePhoneNumberRequestPayload,
-  ValidatePhoneNumberResponsePayload,
-  ValidatePhoneNumberReturn
+  ValidatePhoneNumberResponsePayload
 } from './types';
 
 const cardApiClient = axios.create({
@@ -32,7 +29,7 @@ const fetchInfo = async (
   email: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<FetchInfoReturn, string>> => {
+): Promise<Result<BaseReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<CardInfoResponsePayload>('/info', {
@@ -57,15 +54,19 @@ const fetchInfo = async (
 
     return {
       isError: false,
-      result: {
-        status: response.payload.status,
-        KYClink: response.payload.KYClink,
-        statusHistory: response.payload.statusHistory,
-        cardInfo: response.payload.cardInfo
-      }
+      result: response.payload
     };
   } catch (error) {
-    throw formatError(error);
+    const formattedError = formatError(error);
+    if (formattedError instanceof DebitCardApiError) {
+      return {
+        isError: true,
+        error: formattedError.message,
+        shortError: formattedError.shortMessage
+      };
+    }
+
+    throw formattedError;
   }
 };
 
@@ -74,14 +75,14 @@ export const sendEmailHash = async (
   email: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<FetchInfoReturn, string>> =>
+): Promise<Result<BaseReturn, string>> =>
   fetchInfo(accountAddress, email, emailHash, emailSignature);
 
 export const getCardInfo = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<FetchInfoReturn, string>> =>
+): Promise<Result<BaseReturn, string>> =>
   fetchInfo(accountAddress, '', emailHash, emailSignature);
 
 export const orderCard = async (
@@ -90,7 +91,7 @@ export const orderCard = async (
   signature: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<OrderCardReturn, string>> => {
+): Promise<Result<BaseReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<OrderCardResponsePayload>('/signup', {
@@ -116,7 +117,16 @@ export const orderCard = async (
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    throw formatError(error);
+    const formattedError = formatError(error);
+    if (formattedError instanceof DebitCardApiError) {
+      return {
+        isError: true,
+        error: formattedError.message,
+        shortError: formattedError.shortMessage
+      };
+    }
+
+    throw formattedError;
   }
 };
 
@@ -125,7 +135,7 @@ export const validatePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<ValidatePhoneNumberReturn, string>> => {
+): Promise<Result<BaseReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
@@ -153,13 +163,19 @@ export const validatePhoneNumber = async (
 
     return {
       isError: false,
-      result: {
-        status: response.payload.status,
-        KYClink: response.payload.KYClink
-      }
+      result: response.payload
     };
   } catch (error) {
-    throw formatError(error);
+    const formattedError = formatError(error);
+    if (formattedError instanceof DebitCardApiError) {
+      return {
+        isError: true,
+        error: formattedError.message,
+        shortError: formattedError.shortMessage
+      };
+    }
+
+    throw formattedError;
   }
 };
 
@@ -168,7 +184,7 @@ export const changePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<ChangePhoneNumberReturn, string>> => {
+): Promise<Result<BaseReturn, string>> => {
   try {
     const response = (
       await cardApiClient.post<ChangePhoneNumberResponsePayload>(
@@ -196,12 +212,19 @@ export const changePhoneNumber = async (
 
     return {
       isError: false,
-      result: {
-        status: response.payload.status
-      }
+      result: response.payload
     };
   } catch (error) {
-    throw formatError(error);
+    const formattedError = formatError(error);
+    if (formattedError instanceof DebitCardApiError) {
+      return {
+        isError: true,
+        error: formattedError.message,
+        shortError: formattedError.shortMessage
+      };
+    }
+
+    throw formattedError;
   }
 };
 
@@ -210,6 +233,7 @@ const formatError = (error: unknown): Error => {
   if (axiosError.response !== undefined) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
+    console.debug(axiosError.response.data);
     return new DebitCardApiError(
       axiosError.response.data.error,
       axiosError.response.data.errorCode
@@ -217,18 +241,18 @@ const formatError = (error: unknown): Error => {
   } else if (axiosError.request !== undefined) {
     // The request was made but no response was received
     // `error.request` is an instance of XMLHttpRequest
-    return new Error(`the request is failed, no response: ${axiosError}`);
+    throw new Error(`the request is failed, no response: ${axiosError}`);
   } else {
     // Something happened in setting up the request that triggered an Error
     // or result handling went wrong
 
     if (error instanceof Error) {
       // An error is JS-initiated error, just pass it through
-      return error;
+      throw error;
     }
 
     if (typeof error === 'object') {
-      return new Error(
+      throw new Error(
         `the request is failed during setup / result handling : ${JSON.stringify(
           error
         )}`

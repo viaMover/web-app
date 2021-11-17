@@ -45,7 +45,7 @@
             <span v-if="!$v.code.length" class="error-message">
               {{
                 $t('debitCard.errors.code.length', {
-                  length: $v.code.$params.length.sub[0].max
+                  length: 4
                 })
               }}
             </span>
@@ -152,7 +152,6 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('debitCard', {
-      savedEmail: 'email',
       savedPhoneNumber: 'phoneNumber',
       kycLink: 'kycLink'
     }),

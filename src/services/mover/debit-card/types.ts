@@ -16,7 +16,7 @@ export type CardStatus =
 
 export type EventHistoryItemMinimal = {
   timestamp: number;
-  type: CardStatus;
+  status: CardStatus;
 };
 
 type Request<T> = {
@@ -28,7 +28,12 @@ type Request<T> = {
   };
 };
 
-type BaseResponse = { status: CardStatus };
+type BaseResponse = {
+  status: CardStatus;
+  KYClink: string | undefined;
+  statusHistory: Array<EventHistoryItemMinimal> | undefined;
+  cardInfo: CardInfo | undefined;
+};
 
 export type CardInfo = {
   displayName: string;
@@ -44,15 +49,9 @@ export type CardInfo = {
 };
 
 export type CardInfoRequestPayload = Request<{ email: string }>;
-export type CardInfoResponsePayload = MoverResponse<
-  {
-    KYClink: string | undefined;
-    statusHistory: Array<EventHistoryItemMinimal> | undefined;
-    cardInfo: CardInfo | undefined;
-  } & BaseResponse
->;
+export type CardInfoResponsePayload = MoverResponse<BaseResponse>;
 
-export type FetchInfoReturn = {
+export type BaseReturn = {
   status: CardStatus;
   KYClink: string | undefined;
   statusHistory: Array<EventHistoryItemMinimal> | undefined;
@@ -73,21 +72,12 @@ export type OrderCardRequestPayload = Request<{
   sig: string;
 }>;
 export type OrderCardResponsePayload = MoverResponse<BaseResponse>;
-export type OrderCardReturn = { status: CardStatus };
+export type OrderCardReturn = BaseReturn;
 
 export type ValidatePhoneNumberRequestPayload = Request<{ code: string }>;
-export type ValidatePhoneNumberResponsePayload = MoverResponse<
-  {
-    KYClink: string;
-  } & BaseResponse
->;
-export type ValidatePhoneNumberReturn = {
-  status: CardStatus;
-  KYClink: string;
-};
+export type ValidatePhoneNumberResponsePayload = MoverResponse<BaseResponse>;
+export type ValidatePhoneNumberReturn = BaseReturn;
 
 export type ChangePhoneNumberRequestPayload = Request<{ phone: string }>;
 export type ChangePhoneNumberResponsePayload = MoverResponse<BaseResponse>;
-export type ChangePhoneNumberReturn = {
-  status: CardStatus;
-};
+export type ChangePhoneNumberReturn = BaseReturn;
