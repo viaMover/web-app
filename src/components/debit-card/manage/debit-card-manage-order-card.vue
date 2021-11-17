@@ -111,16 +111,16 @@
                 <option disabled hidden value="">
                   {{ $t('debitCard.lblYourTitle.placeholder') }}
                 </option>
-                <option value="Mr.">
+                <option value="Mr">
                   {{ $t('debitCard.lblYourTitle.mr') }}
                 </option>
                 <option value="Miss">
                   {{ $t('debitCard.lblYourTitle.miss') }}
                 </option>
-                <option value="Mrs.">
+                <option value="Mrs">
                   {{ $t('debitCard.lblYourTitle.mrs') }}
                 </option>
-                <option value="Dr.">
+                <option value="Dr">
                   {{ $t('debitCard.lblYourTitle.dr') }}
                 </option>
               </select>
@@ -263,14 +263,14 @@ export default Vue.extend({
     title: {
       handler(newValue: string): void {
         switch (newValue) {
-          case 'Mr.':
+          case 'Mr':
             this.gender = 'M';
             break;
           case 'Miss':
-          case 'Mrs.':
+          case 'Mrs':
             this.gender = 'F';
             break;
-          case 'Dr.':
+          case 'Dr':
           default:
             this.gender = '';
         }
