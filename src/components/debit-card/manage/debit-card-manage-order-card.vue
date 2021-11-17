@@ -130,7 +130,7 @@
             </span>
           </div>
 
-          <div v-show="title === 'Dr.'" class="input-group input-dropdown">
+          <div v-show="title === 'Dr'" class="input-group input-dropdown">
             <label>
               {{ $t('debitCard.lblYourGender.label') }}
               <select v-model="gender" :class="{ placeholder: gender === '' }">
@@ -282,7 +282,7 @@ export default Vue.extend({
     },
     savedEmail: {
       handler(newValue: string | undefined): void {
-        if (newValue !== undefined && this.email !== '') {
+        if (newValue !== undefined && this.email === '') {
           this.email = newValue;
         }
       },
