@@ -129,7 +129,7 @@ export const validatePhoneNumber = async (
   try {
     const response = (
       await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
-        '/phone/verifyPhone',
+        '/verifyPhone',
         {
           data: {
             code
@@ -172,7 +172,7 @@ export const changePhoneNumber = async (
   try {
     const response = (
       await cardApiClient.post<ChangePhoneNumberResponsePayload>(
-        '/phone/updatePhone',
+        '/updatePhone',
         {
           data: {
             phone
