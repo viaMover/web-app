@@ -85,6 +85,9 @@
             <span v-if="!$v.givenName.required" class="error-message">
               {{ $t('debitCard.errors.givenName.required') }}
             </span>
+            <span v-if="!$v.givenName.valid" class="error-message">
+              {{ $t('debitCard.errors.givenName.invalid') }}
+            </span>
           </div>
 
           <div class="input-group" :class="{ error: $v.familyName.$error }">
@@ -101,6 +104,9 @@
             </label>
             <span v-if="!$v.familyName.required" class="error-message">
               {{ $t('debitCard.errors.familyName.required') }}
+            </span>
+            <span v-if="!$v.familyName.valid" class="error-message">
+              {{ $t('debitCard.errors.familyName.invalid') }}
             </span>
           </div>
 
@@ -216,6 +222,7 @@ import {
   isProviderRpcError,
   ProviderRpcError
 } from '@/store/modules/governance/utils';
+import { validateName } from '@/utils/validators';
 
 import { ActionButton } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
@@ -371,10 +378,12 @@ export default Vue.extend({
       maxLength: maxLength(15)
     },
     familyName: {
-      required
+      required,
+      valid: validateName
     },
     givenName: {
-      required
+      required,
+      valid: validateName
     },
     dateOfBirth: {
       required,

@@ -1061,10 +1061,14 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
           'Phone number length should be {maxLength} symbols maximum (including +)'
       },
       familyName: {
-        required: 'Last name is required'
+        required: 'Last name is required',
+        invalid:
+          "Last name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
       },
       givenName: {
-        required: 'First name is required'
+        required: 'First name is required',
+        invalid:
+          "First name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
       },
       dateOfBirth: {
         required: 'Date of birth is required',
