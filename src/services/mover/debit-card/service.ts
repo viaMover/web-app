@@ -233,7 +233,6 @@ const formatError = (error: unknown): Error => {
   if (axiosError.response !== undefined) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
-    console.debug(axiosError.response.data);
     return new DebitCardApiError(
       axiosError.response.data.error,
       axiosError.response.data.errorCode
