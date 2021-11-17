@@ -189,11 +189,6 @@ export default Vue.extend({
         this.isLoading = true;
         await this.validatePhoneNumber(this.code);
         this.isLoading = false;
-        this.$nextTick(() => {
-          (
-            (this.$refs.linkContainer as Vue).$el as HTMLElement
-          ).scrollIntoView();
-        });
       } catch (error) {
         if (isProviderRpcError(error)) {
           const providerError = error as ProviderRpcError;
