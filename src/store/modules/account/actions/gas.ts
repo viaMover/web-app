@@ -10,8 +10,10 @@ const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
 
 export default {
-  startGasListening({ commit, state }): void {
+  startGasListening({ commit, state }, caller: string): void {
+    console.debug('[GAS] started gas listener for', caller);
     commit('setGasUpdating', true);
+    commit('pushCaller', caller);
 
     const updateGasFunc = async () => {
       try {
@@ -30,7 +32,11 @@ export default {
 
     setTimeout(updateGasFunc, GAS_INITIAL_DELAY);
   },
-  stopGasListening({ commit }): void {
-    commit('setGasUpdating', false);
+  stopGasListening({ commit, state }, caller): void {
+    console.debug('[GAS] stopped gas listener for', caller);
+    commit('popCaller', caller);
+    if (state.gasUpdaterCallers.length === 0) {
+      commit('setGasUpdating', false);
+    }
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

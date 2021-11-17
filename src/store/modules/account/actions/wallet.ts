@@ -181,7 +181,6 @@ export default {
       } as RefreshWalletPayload);
 
       console.log('Starting gas listening...');
-      await dispatch('startGasListening');
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);

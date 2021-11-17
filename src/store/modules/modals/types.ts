@@ -70,6 +70,7 @@ export type ModalState<K extends TModalKey> = {
   isVisible: boolean;
   stackDepth: number;
   waitForResult: boolean;
+  needGasListener: boolean;
 
   payload?: TModalPayload<K>;
   resolver?: (args: TModalReturn<K>) => Promise<TModalReturn<K>>;

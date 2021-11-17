@@ -18,10 +18,14 @@ type SetVisibilityArgs<K extends TModalKey> = {
 
 export default {
   async setIsDisplayed(
-    { state, commit },
+    { state, commit, dispatch },
     { id, value, payload }: SetVisibilityArgs<TModalKey>
   ): Promise<TModalReturn<TModalKey>> {
     if (!value) {
+      if (state.state[id].needGasListener) {
+        await dispatch('account/stopGasListening', id, { root: true });
+      }
+
       const stackPosition = state.stack.findIndex(
         (stackEntry) => stackEntry === id
       );
@@ -75,6 +79,10 @@ export default {
       // remove modal from stack
       commit('popStack');
       return;
+    }
+
+    if (state.state[id].needGasListener) {
+      await dispatch('account/startGasListening', id, { root: true });
     }
 
     if (state.stack.length > 0) {
