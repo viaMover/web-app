@@ -220,13 +220,23 @@ const formatError = (error: unknown): Error => {
     return new Error(`the request is failed, no response: ${axiosError}`);
   } else {
     // Something happened in setting up the request that triggered an Error
+    // or result handling went wrong
+
+    if (error instanceof Error) {
+      // An error is JS-initiated error, just pass it through
+      return error;
+    }
 
     if (typeof error === 'object') {
       return new Error(
-        `the request is failed during setup: ${JSON.stringify(error)}`
+        `the request is failed during setup / result handling : ${JSON.stringify(
+          error
+        )}`
       );
     }
 
-    return new Error(`request is failed during setup: ${error}`);
+    return new Error(
+      `request is failed during setup / result handling: ${error}`
+    );
   }
 };
