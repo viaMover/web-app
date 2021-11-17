@@ -1,4 +1,10 @@
-import { CardStatus as ServiceState } from '@/services/mover/debit-card';
+import dayjs from 'dayjs';
+
+import {
+  CardInfo as ServiceCardInfo,
+  CardStatus as ServiceState,
+  EventHistoryItemMinimal as ServiceHistoryItem
+} from '@/services/mover/debit-card';
 
 import { PictureDescriptor } from '@/components/html5';
 
@@ -23,7 +29,7 @@ export type DebitCardStoreState = {
 };
 
 export type CardInfo = {
-  number: string;
+  last4Digits: string;
   expiryDate: string;
   iban: string;
   bic: string;
@@ -72,10 +78,6 @@ export type CardState =
 
 export type OrderState = 'order_form' | 'validate_phone' | 'change_phone';
 
-export interface ResponseWithCardStatus {
-  status: ServiceState;
-}
-
 export const mapServiceState = (
   serviceState: ServiceState
 ): { cardState: CardState; orderState: OrderState | undefined } => {
@@ -86,11 +88,45 @@ export const mapServiceState = (
     case 'KYC_PENDING':
       return { cardState: 'order_now', orderState: 'validate_phone' };
     case 'KYC_WAITING':
-    case 'CARD_ORDERING':
+    case 'CARD_ORDER_PENDING':
+    case 'CARD_SHIPPED':
       return { cardState: 'pending', orderState: undefined };
+    case 'ACTIVE':
     default:
       return { cardState: 'active', orderState: undefined };
   }
+};
+
+export const mapServiceHistoryItem = (
+  serviceItem: ServiceHistoryItem
+): EventHistoryItemMinimal => {
+  switch (serviceItem.type) {
+    case 'PHONE_VERIFICATION_PENDING':
+    case 'KYC_PENDING':
+      return {
+        type: 'order_process_started',
+        timestamp: serviceItem.timestamp
+      };
+    case 'KYC_WAITING':
+      return { type: 'kyc_process_started', timestamp: serviceItem.timestamp };
+    case 'CARD_ORDER_PENDING':
+      return { type: 'documents_verified', timestamp: serviceItem.timestamp };
+    case 'CARD_SHIPPED':
+    default:
+      return { type: 'card_shipped', timestamp: serviceItem.timestamp };
+  }
+};
+
+export const mapServiceCardInfo = (serviceInfo: ServiceCardInfo): CardInfo => {
+  const expirationDate = dayjs(
+    new Date(serviceInfo.expYear, serviceInfo.expMonth - 1, 1)
+  );
+  return {
+    bic: serviceInfo.bic,
+    expiryDate: expirationDate.format('MM/YY'),
+    iban: serviceInfo.iban,
+    last4Digits: serviceInfo.last4Digits
+  };
 };
 
 export type OrderCardParams = {

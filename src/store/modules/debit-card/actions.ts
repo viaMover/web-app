@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
+import dayjs from 'dayjs';
 import { SHA3 } from 'sha3';
 
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
@@ -27,6 +28,8 @@ import { RootStoreState } from '../../types';
 import { allSkins, defaultSkin } from './consts';
 import {
   DebitCardStoreState,
+  mapServiceCardInfo,
+  mapServiceHistoryItem,
   mapServiceState,
   OrderCardParams,
   OrderState,
@@ -34,13 +37,33 @@ import {
 } from './types';
 
 export default {
-  handleInfoResult({ commit }, cardInfo: FetchInfoReturn) {
-    const mappedState = mapServiceState(cardInfo.status);
+  handleInfoResult({ commit }, info: FetchInfoReturn) {
+    const mappedState = mapServiceState(info.status);
     commit('setCardState', mappedState.cardState);
     commit('setOrderState', mappedState.orderState);
-    commit('setKycLink', cardInfo.KYClink);
-    commit('setCardEventHistory', []);
-    commit('setCardInfo', undefined);
+    commit('setKycLink', info.KYClink);
+    commit(
+      'setCardEventHistory',
+      info.statusHistory?.map(mapServiceHistoryItem) ?? []
+    );
+
+    if (info.cardInfo !== undefined) {
+      commit('setCardInfo', mapServiceCardInfo(info.cardInfo));
+
+      if (info.cardInfo.temporaryBlocked) {
+        commit('setCardState', 'frozen');
+      }
+
+      const now = dayjs();
+      const expirationDate = dayjs(
+        new Date(info.cardInfo.expYear, info.cardInfo.expMonth - 1, 1)
+      );
+      if (now.isAfter(expirationDate, 'day')) {
+        commit('setCardState', 'expired');
+      }
+    } else {
+      commit('setCardInfo', undefined);
+    }
   },
   async loadInfo(
     { state, commit, dispatch, rootState },

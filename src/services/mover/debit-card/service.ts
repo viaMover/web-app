@@ -59,7 +59,9 @@ const fetchInfo = async (
       isError: false,
       result: {
         status: response.payload.status,
-        KYClink: response.payload.KYClink
+        KYClink: response.payload.KYClink,
+        statusHistory: response.payload.statusHistory,
+        cardInfo: response.payload.cardInfo
       }
     };
   } catch (error) {

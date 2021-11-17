@@ -9,7 +9,9 @@
       <statement-list class="container">
         <statement-list-item
           :description="$t('debitCard.lblLast4Digits')"
-          :value="last4Digits"
+          :value="
+            cardInfo ? cardInfo.last4Digits : $t('debitCard.lblNotAvailable')
+          "
         />
         <statement-list-item
           :description="$t('debitCard.lblExpiryDate')"
@@ -34,8 +36,6 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { CardInfo } from '@/store/modules/debit-card/types';
-
 import { SecondaryPage } from '@/components/layout';
 import {
   StatementList,
@@ -54,21 +54,11 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('debitCard', {
-      rawInfo: 'cardInfo'
+      cardInfo: 'cardInfo'
     }),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
-    }),
-    cardInfo(): CardInfo | undefined {
-      return this.rawInfo;
-    },
-    last4Digits(): string {
-      if (this.cardInfo === undefined) {
-        return this.$t('debitCard.lblNotAvailable') as string;
-      }
-
-      return '*' + this.cardInfo.number.slice(-4);
-    }
+    })
   }
 });
 </script>

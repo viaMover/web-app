@@ -5,21 +5,19 @@ export class DebitCardApiError extends Error {
   }
 }
 
-export type EventHistoryItemMinimal = {
-  timestamp: number;
-  type:
-    | 'order_process_started'
-    | 'kyc_process_started'
-    | 'documents_verified'
-    | 'card_shipped';
-};
-
 export type CardStatus =
   | 'NOT_REGISTERED' // user did not filled personal data form yet
   | 'PHONE_VERIFICATION_PENDING' // account is signed up, SMS sent to phone number provided
   | 'KYC_WAITING' // user verified phone, but not passed KYC yet
   | 'KYC_PENDING' // user has passed KYC, it is being verified (wait)
-  | 'CARD_ORDERING'; // user has verified phone and passed KYC, we would order card;
+  | 'CARD_ORDER_PENDING' // user has verified phone and passed KYC, we would order card;
+  | 'CARD_SHIPPED' // the card is ordered, to be shipped
+  | 'ACTIVE'; // the card is active
+
+export type EventHistoryItemMinimal = {
+  timestamp: number;
+  type: CardStatus;
+};
 
 type Request<T> = {
   data: T;
@@ -32,15 +30,33 @@ type Request<T> = {
 
 type BaseResponse = { status: CardStatus };
 
+export type CardInfo = {
+  displayName: string;
+  last4Digits: string;
+  expMonth: number;
+  expYear: number;
+  currency: string;
+  type: string;
+  issueDate: string;
+  temporaryBlocked: boolean;
+  iban: string;
+  bic: string;
+};
+
 export type CardInfoRequestPayload = Request<{ email: string }>;
 export type CardInfoResponsePayload = MoverResponse<
   {
     KYClink: string | undefined;
+    statusHistory: Array<EventHistoryItemMinimal> | undefined;
+    cardInfo: CardInfo | undefined;
   } & BaseResponse
 >;
+
 export type FetchInfoReturn = {
   status: CardStatus;
   KYClink: string | undefined;
+  statusHistory: Array<EventHistoryItemMinimal> | undefined;
+  cardInfo: CardInfo | undefined;
 };
 
 export type OrderCardPayload = {

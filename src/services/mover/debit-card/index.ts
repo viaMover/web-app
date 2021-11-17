@@ -13,5 +13,6 @@ export type {
   EventHistoryItemMinimal,
   ChangePhoneNumberReturn,
   OrderCardReturn,
-  ValidatePhoneNumberReturn
+  ValidatePhoneNumberReturn,
+  CardInfo
 } from './types';
