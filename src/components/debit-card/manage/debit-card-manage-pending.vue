@@ -11,15 +11,32 @@
           :items="group.events"
         />
       </div>
+
+      <div
+        v-if="showKycLinkContainer"
+        ref="linkContainer"
+        class="container margin-top-40 kyc-link"
+      >
+        <i18n class="description" path="debitCard.kycLink.description" tag="p">
+          <a
+            class="link"
+            :href="kycLink"
+            target="_blank"
+            v-text="$t('debitCard.kycLink.link')"
+          />
+        </i18n>
+      </div>
     </div>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
+
+import { EventHistoryItemMinimal } from '@/store/modules/debit-card/types';
 
 import { SecondaryPage } from '@/components/layout';
 
@@ -32,9 +49,29 @@ export default Vue.extend({
     DebitCardHistoryGroup
   },
   computed: {
+    ...mapState('debitCard', {
+      kycLink: 'kycLink',
+      eventHistory: 'eventHistory'
+    }),
     ...mapGetters('debitCard', {
       actionHistory: 'actionHistoryGroupedByDay'
-    })
+    }),
+    showKycLinkContainer(): boolean {
+      if (this.eventHistory.length === 0) {
+        return false;
+      }
+
+      const lastEvent = (this.eventHistory as Array<EventHistoryItemMinimal>)
+        .slice()
+        .sort((a, b) => a.timestamp - b.timestamp)[
+        this.eventHistory.length - 1
+      ];
+      if (lastEvent.type === 'kyc_process_started') {
+        return true;
+      }
+
+      return false;
+    }
   },
   methods: {
     formatDate(timestamp: number): string {

@@ -990,7 +990,7 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     lblBIC: 'BIC',
     kycLink: {
       description:
-        'You have successfully started your Beautiful card order process. Here is your {0}. You will also receive an email with the same link',
+        'You have successfully started your Beautiful card order process. Here is your {0}',
       link: 'KYC link'
     },
     lblProceedAfterKyc: 'Proceed',
