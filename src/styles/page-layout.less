@@ -1,0 +1,51 @@
+html {
+  background-color: @background;
+}
+
+.page {
+  .dashboard {
+    display: block;
+
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
+
+    .left-rail {
+      background-color: @background-left-rail;
+      border-right: 1px solid @border-background;
+
+      .wrapper {
+        max-height: 100vh;
+        overflow-x: none;
+        position: relative;
+        margin: 0 auto;
+        padding: 80px 40px 80px;
+        min-height: 100vh;
+        width: 412px;
+
+        @media screen and (max-width: 1279px) {
+          padding: 80px 24px 80px;
+          width: 320px;
+        }
+      }
+    }
+
+    .page-content {
+      background-color: @background;
+      margin-left: 128px;
+      width: 780px;
+
+      @media screen and (max-width: 1279px) {
+        margin: 8px auto;
+      }
+    }
+
+    &-mobile {
+      display: none;
+
+      @media screen and (max-width: 767px) {
+        display: block;
+      }
+    }
+  }
+}
