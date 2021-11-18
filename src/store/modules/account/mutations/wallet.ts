@@ -151,7 +151,6 @@ export default {
   },
   pushCaller(state, caller: string): void {
     state.gasUpdaterCallers = state.gasUpdaterCallers.concat(caller);
-    console.debug('[GAS] pushed caller', caller);
   },
   popCaller(state, caller: string): void {
     const idx = state.gasUpdaterCallers.lastIndexOf(caller);
