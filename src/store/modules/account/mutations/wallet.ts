@@ -156,24 +156,12 @@ export default {
   popCaller(state, caller: string): void {
     const idx = state.gasUpdaterCallers.lastIndexOf(caller);
     if (idx < 0) {
-      console.debug(
-        '[GAS] tried to pop caller',
-        caller,
-        'none found in',
-        state.gasUpdaterCallers
-      );
       return;
     }
 
     const newGasUpdaterCallers = [...state.gasUpdaterCallers];
     newGasUpdaterCallers.splice(idx, 1);
     state.gasUpdaterCallers = newGasUpdaterCallers;
-    console.debug(
-      '[GAS] tried to pop caller',
-      caller,
-      'succeeded',
-      newGasUpdaterCallers
-    );
   },
   setAvatars(state, avatars: Array<Avatar>): void {
     state.avatars = avatars;

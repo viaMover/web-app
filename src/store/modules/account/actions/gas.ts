@@ -11,9 +11,13 @@ const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate 
 
 export default {
   startGasListening({ commit, state }, caller: string): void {
-    console.debug('[GAS] started gas listener for', caller);
-    commit('setGasUpdating', true);
     commit('pushCaller', caller);
+
+    if (state.gasUpdating) {
+      return;
+    }
+
+    commit('setGasUpdating', true);
 
     const updateGasFunc = async () => {
       try {
@@ -33,8 +37,8 @@ export default {
     setTimeout(updateGasFunc, GAS_INITIAL_DELAY);
   },
   stopGasListening({ commit, state }, caller): void {
-    console.debug('[GAS] stopped gas listener for', caller);
     commit('popCaller', caller);
+
     if (state.gasUpdaterCallers.length === 0) {
       commit('setGasUpdating', false);
     }

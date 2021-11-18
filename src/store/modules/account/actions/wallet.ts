@@ -179,8 +179,6 @@ export default {
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
-
-      console.log('Starting gas listening...');
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
