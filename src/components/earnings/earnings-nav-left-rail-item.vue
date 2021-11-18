@@ -10,8 +10,10 @@
       <left-rail-section-nav-item-image
         v-if="isFeatureEnabled('isEarningsEthereumEnabled')"
         :description="earningsEthereumBalance"
+        description-class="bold"
         navigate-to="earnings-ethereum-manage"
         :title="$t('earnings.ethereum.lblEthereum')"
+        title-class="disabled medium"
       >
         <template v-slot:picture>
           <custom-picture
@@ -24,8 +26,10 @@
       <left-rail-section-nav-item-image
         v-if="isFeatureEnabled('isEarningsOlympusEnabled')"
         :description="earningsOlympusBalance"
+        description-class="bold"
         navigate-to="earnings-olympus-manage"
-        :title="$t('earnings.olympus.lblOlympus')"
+        :title="$t('earnings.olympus.lblOlympusDAO')"
+        title-class="disabled medium"
       >
         <template v-slot:picture>
           <custom-picture

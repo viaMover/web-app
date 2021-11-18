@@ -25,7 +25,7 @@ const messages: VueI18n.LocaleMessageObject = {
   txtDashboardMobile:
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
-  lblUSDcTokenAlt: 'USDc token image',
+  lblTokenAlt: '{symbol} token image',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -926,10 +926,15 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       lblGlobalAnalytics: 'Global analytics',
       txtGlobalAnalytics: 'All information about Ethereum',
       txtGlobalAnalyticsPictureAlt: 'Global analytics',
-      txtNavIconAlt: 'Ethereum'
+      txtNavIconAlt: 'Ethereum',
+      lblEthTokenAlt: 'Ethereum token image',
+      txtNativeAsset:
+        'Ethereum is a native asset, and is used for staking in ' +
+        'Ethereum 2.0. Your returns will also be in ETH.'
     },
     olympus: {
       lblOlympus: 'Olympus',
+      lblOlympusDAO: 'OlympusDAO',
       lblManage: 'Manage Olympus',
       lblStake: 'Stake Olympus',
       txtStake: 'Get {apy} APY by staking your OHM',
@@ -948,7 +953,8 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtNativeAsset:
         '{symbol} is a native asset of Olympus DAO. It is a rebase token, ' +
         'so your interest is automatically incremented into your principal amount.',
-      txtNavIconAlt: 'Olympus'
+      txtNavIconAlt: 'Olympus',
+      lblOHMTokenAlt: 'Olympus token image'
     }
   };
 }

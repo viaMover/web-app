@@ -948,20 +948,28 @@ button > .loader-icon > img {
       color: rgba(60, 60, 67, 0.6);
     }
 
-    picture {
-      width: 16px;
+    .token {
       height: 16px;
+      width: 16px;
+      box-shadow: 0 0 8px rgba(53, 119, 190, 0.5);
+      border-radius: 19px;
       margin: 0 4px 0 8px;
+
+      &picture {
+        width: 16px;
+        height: 16px;
+
+        img {
+          display: block;
+          width: 100%;
+        }
+      }
 
       img {
         display: block;
         width: 100%;
+        border-radius: 50%;
       }
-    }
-
-    .token {
-      box-shadow: 0 0 8px rgba(53, 119, 190, 0.5);
-      border-radius: 19px;
     }
   }
 

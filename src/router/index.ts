@@ -372,12 +372,31 @@ if (isFeatureEnabled('isEarningsEnabled')) {
         },
         children: [
           {
-            path: 'stake',
+            path: 'stake/step/:step?',
             name: 'earnings-ethereum-stake',
             component: () =>
               import(
                 /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-stake.vue'
-              )
+              ),
+            props: (to) => ({
+              currentStep: to.params.step
+            }),
+            beforeEnter: (to, from, next) => {
+              if (to.params.step === 'prepare') {
+                next();
+                return;
+              }
+
+              if (from.name !== 'earnings-ethereum-stake') {
+                next({
+                  name: 'earnings-ethereum-stake',
+                  params: { step: 'prepare' }
+                });
+                return;
+              }
+
+              next();
+            }
           },
           {
             path: 'withdraw',

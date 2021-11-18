@@ -26,14 +26,32 @@
       @select-max-amount="handleSelectMaxAmount"
       @toggle-input-mode="handleToggleInputMode"
       @update-amount="handleUpdateAmount"
-    />
+    >
+      <template v-slot:swap-message>
+        <div
+          v-if="isSwapNeeded && formattedEthTotal && inputMode === 'TOKEN'"
+          class="form-swap"
+        >
+          <p>
+            {{ $t('forms.lblSwappingFor') }}
+            <custom-picture
+              :alt="$t('lblTokenAlt', { symbol: 'ETH' })"
+              class="token"
+              :sources="ethPicture.sources"
+              :src="ethPicture.src"
+            />
+            <span>{{ formattedEthTotal }}</span>
+          </p>
+        </div>
+      </template>
+    </prepare-form>
     <review-form
       v-else-if="currentStep === 'review'"
       :amount="inputAmount"
       :button-text="reviewActionButtonText"
       :estimated-gas-cost="estimatedGasCost"
       :header-title="$t('earnings.lblReviewYourStake')"
-      :image="olympus"
+      :image="stake"
       :input-amount-native-title="$t('earnings.lblAndTotalOf')"
       :input-amount-title="$t('earnings.lblAmountWeDepositIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
@@ -47,8 +65,19 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { RawLocation } from 'vue-router';
+import { mapActions, mapState } from 'vuex';
 
-import { TokenWithBalance } from '@/wallet/types';
+import * as Sentry from '@sentry/vue';
+import BigNumber from 'bignumber.js';
+
+import { TransferData } from '@/services/0x/api';
+import { Modal as ModalType } from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
+import { divide, multiply } from '@/utils/bigmath';
+import { formatToNative } from '@/utils/format';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import { InputMode } from '@/components/forms';
 import { Step as TransactionStep } from '@/components/forms/form-loader';
@@ -56,13 +85,20 @@ import LoaderForm from '@/components/forms/loader-form/loader-form.vue';
 import PrepareForm from '@/components/forms/prepare-form/prepare-form.vue';
 import ReviewForm from '@/components/forms/review-form.vue';
 import { PictureDescriptor } from '@/components/html5';
+import CustomPicture from '@/components/html5/custom-picture.vue';
 import SecondaryPage from '@/components/layout/secondary-page/secondary-page.vue';
 
 type processStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   name: 'EarningsEthereumStake',
-  components: { PrepareForm, ReviewForm, SecondaryPage, LoaderForm },
+  components: {
+    CustomPicture,
+    PrepareForm,
+    ReviewForm,
+    SecondaryPage,
+    LoaderForm
+  },
   props: {
     currentStep: {
       type: String as PropType<processStep>,
@@ -71,21 +107,25 @@ export default Vue.extend({
   },
   data() {
     return {
-      olympus: {
-        alt: this.$t('savings.lblSavings'),
-        src: require('@/assets/images/Savings@1x.png'),
+      stake: {
+        alt: this.$t('earnings.ethereum.txtStakePictureAlt'),
+        src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png')
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
+            src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png')
           }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
+        ]
+      } as PictureDescriptor,
+      ethPicture: {
+        src: require('@/assets/images/ETH.png'),
+        sources: [
           {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: require('@/assets/images/ETH@2x.png'),
+            variant: '2x'
           }
         ]
       } as PictureDescriptor,
@@ -96,13 +136,201 @@ export default Vue.extend({
       isTokenSelectedByUser: false,
       isLoading: false,
       isProcessing: false,
-      transferError: undefined as string | undefined,
+      transferData: undefined as TransferData | undefined,
+      transferError: undefined as undefined | string,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined,
       isSubsidizedEnabled: true,
       transactionStep: 'Confirm' as TransactionStep
     };
+  },
+  computed: {
+    ...mapState('account', [
+      'networkInfo',
+      'usdcPriceInWeth',
+      'ethPrice',
+      'tokens'
+    ]),
+    showBackButton(): boolean {
+      return this.currentStep === 'review';
+    },
+    USDCAsset(): SmallTokenInfoWithIcon {
+      return getUSDCAssetData(this.networkInfo.network);
+    },
+    estimatedAnnualEarnings(): string {
+      return `~$${formatToNative(0)}`;
+    },
+    inputAssetDescription(): string {
+      if (this.inputAsset === undefined) {
+        return '';
+      }
+
+      if (sameAddress(this.inputAsset.address, 'eth')) {
+        return this.$t('earnings.ethereum.txtNativeAsset') as string;
+      }
+
+      return this.$t('earnings.txtNotNativeAsset', {
+        targetSymbol: 'ETH'
+      }) as string;
+    },
+    reviewActionButtonText(): string {
+      if (this.inputAsset === undefined) {
+        return '';
+      }
+
+      return this.$t('earnings.btnStake', {
+        symbol: this.inputAsset.symbol
+      }) as string;
+    },
+    formattedEthTotal(): string {
+      if (this.inputAsset === undefined) {
+        return '0 ETH';
+      }
+
+      if (sameAddress(this.inputAsset.address, 'eth')) {
+        return `${formatToNative(this.inputAmount)} ETH`;
+      }
+
+      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const eth = new BigNumber(this.inputAmount)
+        .multipliedBy(this.inputAsset.priceUSD)
+        .dividedBy(usdcNative); // (input * asset.Price) / USDcPrice
+      return `${formatToNative(eth)} ETH`;
+    },
+    isSwapNeeded(): boolean {
+      if (this.inputAsset === undefined) {
+        return true;
+      }
+
+      return !sameAddress(this.inputAsset.address, 'eth');
+    }
+  },
+  watch: {
+    tokens: {
+      handler(newVal: Array<TokenWithBalance>) {
+        if (this.isTokenSelectedByUser) {
+          return;
+        }
+
+        this.isLoading = true;
+        const ethTokenInWallet = newVal.find((token) =>
+          sameAddress(token.address, 'eth')
+        );
+        if (ethTokenInWallet === undefined) {
+          this.isLoading = false;
+          return;
+        }
+
+        this.inputAsset = ethTokenInWallet;
+        this.inputAmount = '';
+        this.inputAmountNative = '';
+        this.isLoading = false;
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
+    async handleOpenSelectModal(): Promise<void> {
+      this.isLoading = true;
+
+      const newAsset = await this.setModalIsDisplayed({
+        id: ModalType.SearchToken,
+        value: true,
+        payload: {
+          useWalletTokens: true
+        }
+      });
+
+      if (newAsset !== undefined) {
+        this.inputAsset = newAsset;
+        this.inputAmount = '';
+        this.inputAmountNative = '';
+        this.isTokenSelectedByUser = true;
+      }
+
+      this.isLoading = false;
+    },
+    handleReviewTx(): void {
+      if (this.inputAsset === undefined) {
+        return;
+      }
+
+      this.isSubsidizedEnabled = false;
+      this.estimatedGasCost = undefined;
+      this.actionGasLimit = '0';
+      this.approveGasLimit = '0';
+      this.isProcessing = true;
+      try {
+        // plain code HERE
+      } catch (err) {
+        this.isSubsidizedEnabled = false;
+        console.error(err);
+        Sentry.captureException("can't estimate earnings deposit for subs");
+        return;
+      } finally {
+        this.isProcessing = false;
+      }
+      this.changeStep('review');
+    },
+    handleToggleInputMode(): void {
+      if (this.inputMode === 'NATIVE') {
+        this.inputMode = 'TOKEN';
+        return;
+      }
+
+      this.inputMode = 'NATIVE';
+    },
+    handleSelectMaxAmount(): void {
+      if (this.inputAsset === undefined) {
+        return;
+      }
+
+      this.inputAmount = this.inputAsset.balance;
+      this.inputAmountNative = multiply(
+        this.inputAsset.balance,
+        this.inputAsset.priceUSD
+      );
+    },
+    handleUpdateAmount(amount: string): void {
+      if (this.inputAsset === undefined) {
+        return;
+      }
+
+      if (this.inputMode === 'TOKEN') {
+        this.inputAmount = amount;
+        this.inputAmountNative = multiply(amount, this.inputAsset.priceUSD);
+        return;
+      }
+
+      this.inputAmountNative = amount;
+      this.inputAmount = divide(amount, this.inputAsset.priceUSD);
+    },
+    handleCreateTx(args: { isSmartTreasury: boolean }): void {
+      this.changeStep('loader');
+    },
+    handleBack(): void {
+      if (this.currentStep === 'review') {
+        this.$router.back();
+        return;
+      }
+
+      this.$router.replace({ name: 'earnings-ethereum-manage' });
+    },
+    changeStep(target: processStep): void {
+      const routerArgs: RawLocation = {
+        name: 'earnings-ethereum-stake',
+        params: { step: target }
+      };
+
+      if (this.currentStep === 'review') {
+        this.$router.replace(routerArgs);
+        return;
+      }
+
+      this.$router.push(routerArgs);
+    }
   }
 });
 </script>
