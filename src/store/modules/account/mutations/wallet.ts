@@ -149,10 +149,17 @@ export default {
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
   },
-  pushCaller(state, caller: string): void {
+  setGasUpdaterHandle(state, handle: number): void {
+    state.gasUpdaterHandle = handle;
+  },
+  clearGasUpdaterHandle(state): void {
+    window.clearTimeout(state.gasUpdaterHandle);
+    state.gasUpdaterHandle = undefined;
+  },
+  pushGasListenerCaller(state, caller: string): void {
     state.gasUpdaterCallers = state.gasUpdaterCallers.concat(caller);
   },
-  popCaller(state, caller: string): void {
+  popGasListenerCaller(state, caller: string): void {
     const idx = state.gasUpdaterCallers.lastIndexOf(caller);
     if (idx < 0) {
       return;

@@ -175,6 +175,7 @@ export default {
         pureProvider: payload.provider
       } as ProviderData);
 
+      commit('clearGasUpdaterHandle');
       await dispatch('refreshWallet', {
         injected: payload.injected,
         init: true

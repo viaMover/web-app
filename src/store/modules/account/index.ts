@@ -43,6 +43,7 @@ export default {
 
     gasPrices: undefined,
     gasUpdating: false,
+    gasUpdaterHandle: undefined,
     gasUpdaterCallers: [],
 
     nativeCurrency: 'usd',
