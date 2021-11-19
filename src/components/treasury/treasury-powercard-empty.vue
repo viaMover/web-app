@@ -18,29 +18,26 @@
           {{ $t('treasury.powercard.lblIfYouActivateCard') }}
         </p>
       </div>
-      <div class="treasury__menu-wrapper-body power-card-empty-body">
-        <div class="line">
-          <div class="item">
-            <span class="title">{{ additionalBoost }}</span>
-            <p class="description black">
-              {{ $t('treasury.powercard.lblAdditionalBoost') }}
-            </p>
-          </div>
-          <div class="item">
-            <span class="title">{{ activeTime }}</span>
-            <p class="description black">
-              {{ $t('treasury.powercard.lblActive') }}
-            </p>
-          </div>
-          <div class="item">
-            <span class="title">{{ cooldownTime }}</span>
-            <p class="description black">
-              {{ $t('treasury.powercard.lblCooldown') }}
-            </p>
-          </div>
-        </div>
+      <div class="power-card-empty-body">
+        <product-info-wrapper>
+          <product-info-item
+            :description="$t('treasury.powercard.lblAdditionalBoost')"
+            is-black-description
+            :title="additionalBoost"
+          />
+          <product-info-item
+            :description="$t('treasury.powercard.lblActive')"
+            is-black-description
+            :title="activeTime"
+          />
+          <product-info-item
+            :description="$t('treasury.powercard.lblCooldown')"
+            is-black-description
+            :title="cooldownTime"
+          />
+        </product-info-wrapper>
         <action-button
-          button-class="button button-active black-link"
+          button-class="button button-active black-link margin-top-40"
           :disabled="!stakeAvailable"
           :text="$t('treasury.powercard.btnActivateThePowercard')"
           @button-click="handleActivateCard"
@@ -72,10 +69,13 @@ import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
+import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
   name: 'TreasuryPowercardEmpty',
   components: {
+    ProductInfoItem,
+    ProductInfoWrapper,
     CustomPicture,
     ActionButton,
     SecondaryPageSimpleTitle,

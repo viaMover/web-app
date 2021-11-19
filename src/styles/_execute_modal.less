@@ -1,3 +1,5 @@
+@import './_variables.less';
+
 .modal-wrapper {
   background-color: #fafafc;
   -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -127,7 +129,7 @@
     font-family: 'Bold', sans-serif;
     font-weight: 700;
     font-size: 7px;
-    color: #000;
+    color: @black;
     text-align: center;
     line-height: 16px;
   }
@@ -173,7 +175,7 @@
   background-color: transparent;
   border: none;
   outline: none;
-  color: #000;
+  color: @black;
   font-family: 'Medium', sans-serif;
   font-weight: 500;
 }
@@ -201,9 +203,9 @@
 }
 
 .modal-wrapper-info-items-item-right button.currency.empty {
-  background-color: #000;
-  -webkit-box-shadow: 0 0 16px #000;
-  box-shadow: 0 0 16px #000;
+  background-color: @black;
+  -webkit-box-shadow: 0 0 16px @black;
+  box-shadow: 0 0 16px @black;
 }
 
 .modal-wrapper-info-items-item-right button.currency {
@@ -227,7 +229,7 @@
 .modal-wrapper-info-items-item-right button.currency span {
   margin-left: 0;
   display: inline-block;
-  color: #fff;
+  color: @white;
   font-family: 'Bold', sans-serif;
   font-weight: 700;
   margin-right: 4px;
@@ -438,11 +440,11 @@
 }
 
 .modal-wrapper-info-buttons .tx-details__content-item .info.rate {
-  color: #000;
+  color: @black;
 }
 
 .modal-wrapper-info-buttons .tx-details__content-item .info.slippage {
-  color: #000;
+  color: @black;
   cursor: pointer;
 }
 
@@ -476,7 +478,7 @@
   padding: 9px;
   font-family: 'Bold', sans-serif;
   font-weight: 700;
-  color: #fff;
+  color: @white;
   border-radius: 25px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -502,7 +504,7 @@
 }
 
 .modal-wrapper-info-button .inactive {
-  background-color: #000;
+  background-color: @black;
   opacity: 0.5;
 }
 
@@ -691,7 +693,7 @@
 .modal-wrapper-info-footer-right .swiper-pagination-bullets .swiper-pagination-bullet.swiper-pagination-bullet-active {
   width: 6px;
   height: 4px;
-  background-color: #000;
+  background-color: @black;
 }
 
 .transaction-result__popup-wrapper {
