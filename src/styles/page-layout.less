@@ -4,7 +4,9 @@ html {
 
 .page {
   .dashboard {
-    display: block;
+    display: flex;
+    min-height: 100vh;
+    flex-flow: row nowrap;
 
     @media screen and (max-width: 767px) {
       display: none;
@@ -13,35 +15,88 @@ html {
     .left-rail {
       background-color: @background-left-rail;
       border-right: 1px solid @border-background;
+      width: 412px;
+
+      @media screen and (max-width: 1279px) {
+        width: 320px;
+      }
 
       .wrapper {
         max-height: 100vh;
-        overflow-x: none;
+        overflow-x: hidden;
+        overflow-y: auto;
         position: relative;
         margin: 0 auto;
         padding: 80px 40px 80px;
         min-height: 100vh;
-        width: 412px;
 
         @media screen and (max-width: 1279px) {
           padding: 80px 24px 80px;
-          width: 320px;
         }
       }
     }
 
     .page-content {
       background-color: @background;
-      margin-left: 128px;
-      width: 780px;
+      position: relative;
+      flex: 1 1 100%;
+      height: 100vh;
+      overflow: auto;
 
-      @media screen and (max-width: 1279px) {
-        margin: 8px auto;
+      &.two-sided {
+        .side {
+          &.left,
+          &.right {
+            width: 50%;
+          }
+
+          @media screen and (max-width: 1279px) {
+            &.left {
+              width: 100%;
+            }
+
+            &.right {
+              display: none;
+            }
+          }
+        }
+      }
+
+      &.centered {
+        margin: 0 auto;
+      }
+
+      .wrapper {
+        clear: none;
+        padding: 0 32px;
+        width: 780px;
+        margin-left: 128px;
+
+        @media screen and (max-width: 1279px) {
+          margin: 0 auto;
+        }
+      }
+
+      .page-close-button {
+        position: sticky;
+        float: right;
+        top: @button-page-inset;
+        right: @button-page-inset;
+        z-index: 10;
+      }
+
+      .page-back-button {
+        position: sticky;
+        float: left;
+        top: @button-page-inset;
+        left: @button-page-inset;
+        z-index: 10;
       }
     }
 
     &-mobile {
       display: none;
+      margin: 0 auto;
 
       @media screen and (max-width: 767px) {
         display: block;

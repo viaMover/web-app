@@ -1,5 +1,5 @@
 .button {
-  height: 40px;
+  height: @button-height;
   width: auto;
   padding: @padding-small @padding-normal;
   color: @button-secondary-text;
@@ -8,18 +8,22 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   transition: 0.3s;
   @font-bold();
   @drop-shadow();
+
+  &.icon {
+    justify-content: space-between;
+  }
 
   &:active {
     transform: scale(1.06);
   }
 
   &.round {
-    height: 40px;
-    width: 40px;
+    height: @button-height;
+    width: $height;
     padding: @padding-small;
   }
 
@@ -37,6 +41,11 @@
   &.secondary {
     color: @button-secondary-text;
     background-color: @button-secondary-background;
+  }
+
+  &.navigation {
+    color: @button-navigation-text;
+    background-color: @button-navigation-background;
   }
 
   &.disabled {
