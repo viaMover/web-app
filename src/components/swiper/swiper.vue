@@ -3,7 +3,7 @@
     <div class="swiper-wrapper">
       <slot></slot>
     </div>
-    <template v-show="useNavigationButtons">
+    <template v-if="useNavigationButtons">
       <div ref="swiperPrevEl" class="swiper-button-prev"></div>
       <div ref="swiperNextEl" class="swiper-button-next"></div>
     </template>
@@ -15,7 +15,7 @@ import Vue from 'vue';
 
 import Swiper from 'swiper';
 
-import 'swiper/swiper.less';
+// import 'swiper/swiper.less';
 
 export default Vue.extend({
   name: 'Swiper',

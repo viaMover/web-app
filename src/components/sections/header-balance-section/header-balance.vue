@@ -7,7 +7,7 @@
     <div class="balance-wrapper">
       <div class="balance-wrapper-title">
         <context-button
-          button-class="button"
+          button-class="button transparent"
           :popover-parent-id="popoverParentId"
         >
           <template v-slot:button>

@@ -1,9 +1,27 @@
-@import './fonts.less';
-@import './colors.less';
-@import './shadows.less';
-@import './overrides.less';
+// ----------------------------------------------------------------------
+// Base
+// ----------------------------------------------------------------------
+@import './base/_vendor.less';
+@import './base/mixins/_fonts.less';
+@import './base/mixins/_shadows.less';
+@import './base/_fonts.less';
+@import './base/_overrides.less';
+@import './base/_colors.less';
+@import './base/_page-transitions.less';
+@import './base/_reset.less';
 
-@import './page-transitions.less';
-@import './reset.less';
-@import './buttons.less';
-@import './page-layout.less';
+// ----------------------------------------------------------------------
+// Layout
+// ----------------------------------------------------------------------
+@import './layout/_page-layout.less';
+
+// ----------------------------------------------------------------------
+// Modules
+// ----------------------------------------------------------------------
+@import './modules/_button.less';
+@import './modules/_markdown.less';
+@import './modules/_burger.less';
+
+// ----------------------------------------------------------------------
+// Views
+// ----------------------------------------------------------------------

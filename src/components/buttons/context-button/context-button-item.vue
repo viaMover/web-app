@@ -1,5 +1,5 @@
 <template>
-  <li class="button-active" @click="$emit('click')">
+  <li class="button-like" @click="$emit('click')">
     <slot>
       <span>{{ text }}</span>
     </slot>

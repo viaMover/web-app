@@ -1,5 +1,5 @@
 <template>
-  <div class="button burger-menu" :class="wrapperClass">
+  <div :class="wrapperClass">
     <action-button
       :button-class="actionButtonClass"
       :data-popover-parent-id="popoverParentId"
@@ -25,7 +25,7 @@ import ActionButton from '@/components/buttons/action-button.vue';
 import { Popover } from '@/components/modals';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
-import '@/styles/_burger.less';
+// import '@/styles/_burger.less';
 
 export default Vue.extend({
   name: 'ContextButton',

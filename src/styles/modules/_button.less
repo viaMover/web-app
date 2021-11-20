@@ -30,7 +30,13 @@
   &.transparent {
     color: @button-transparent-text;
     background-color: @button-transparent-background;
+    box-shadow: none;
     @font-medium();
+
+    &.fit {
+      height: auto;
+      width: auto;
+    }
   }
 
   &.primary {
@@ -55,5 +61,14 @@
     &:active {
       transform: none;
     }
+  }
+}
+
+.button-like {
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:active {
+    transform: scale(1.06);
   }
 }

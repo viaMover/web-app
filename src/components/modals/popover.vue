@@ -1,21 +1,11 @@
 <template>
   <div>
-    <div
-      class="burger-menu__popup-bg"
-      :class="{ 'burger-menu__popup-bg-active': isVisible }"
-      @click.prevent="toggle"
-    />
-    <div
-      ref="popper"
-      class="burger-menu__popup"
-      :class="{ 'burger-menu__popup-active': isVisible }"
-    >
-      <div class="burger-menu__wrapper">
-        <div class="burger-menu__wrapper-info">
-          <ul>
-            <slot></slot>
-          </ul>
-        </div>
+    <div class="burger-bg" :class="{ active: isVisible }" @click="toggle" />
+    <div ref="popper" class="burger-content" :class="{ active: isVisible }">
+      <div class="wrapper">
+        <ul>
+          <slot></slot>
+        </ul>
       </div>
     </div>
   </div>
