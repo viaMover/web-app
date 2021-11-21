@@ -120,7 +120,7 @@ export default Vue.extend({
       isLoading: false,
       isProcessing: false,
       isTokenSelectedByUser: false,
-      inputMode: 'NATIVE' as InputMode,
+      inputMode: 'TOKEN' as InputMode,
       inputAmountNative: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
