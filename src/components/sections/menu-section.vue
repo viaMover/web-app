@@ -51,13 +51,13 @@
         />
         <menu-list-icon-item
           :icon="$t('menu.lblDepositInSavingsEmoji')"
-          :modal-id="ModalType.SavingsDeposit"
           :text="$t('menu.lblDepositInSavings')"
+          @button-click="openDepositInSavings"
         />
         <menu-list-icon-item
           :icon="$t('menu.lblIncreaseBoostEmoji')"
-          :modal-id="ModalType.TreasuryIncreaseBoost"
           :text="$t('menu.lblIncreaseBoost')"
+          @button-click="openDepositInTreasury"
         />
         <menu-list-icon-item
           v-if="isFeatureEnabled('isBondsEnabled')"
@@ -74,15 +74,15 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
-import { formatToNative } from '@/utils/format';
 import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
+import { add } from '@/utils/bigmath';
+import { formatToNative } from '@/utils/format';
 
 import {
   MenuList,
   MenuListEmojiCardItem,
   MenuListIconItem
 } from '@/components/home/menu-list';
-import { add } from '@/utils/bigmath';
 
 export default Vue.extend({
   name: 'MenuSection',
@@ -115,7 +115,17 @@ export default Vue.extend({
     }
   },
   methods: {
-    isFeatureEnabled
+    isFeatureEnabled,
+    async openDepositInSavings(): Promise<void> {
+      await this.$router.push({
+        name: 'savings-deposit'
+      });
+    },
+    async openDepositInTreasury(): Promise<void> {
+      await this.$router.push({
+        name: 'treasury-increase'
+      });
+    }
   }
 });
 </script>

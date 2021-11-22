@@ -65,21 +65,21 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
+import { isFeatureEnabled } from '@/settings';
 import {
   formatPercents,
   formatToNative,
   getSignIfNeeded
 } from '@/utils/format';
-import { isFeatureEnabled } from '@/settings';
 
+import {
+  SecondaryPage,
+  SecondaryPageSimpleTitle
+} from '@/components/layout/secondary-page';
 import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
-import {
-  SecondaryPageSimpleTitle,
-  SecondaryPage
-} from '@/components/layout/secondary-page';
 
 export default Vue.extend({
   name: 'SavingsGlobalAnalytics',

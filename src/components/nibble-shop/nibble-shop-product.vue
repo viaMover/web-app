@@ -17,8 +17,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
 import { RawLocation } from 'vue-router';
+import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'NibbleShopProduct',

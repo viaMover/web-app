@@ -1,8 +1,8 @@
 <template>
   <div class="">
     <div class="smart-treasury__menu-wrapper-balance">
-      <span class="balance">{{ bonusBalance }}</span>
-      <p>{{ $t('treasury.lblTreasuryBonusBalance') }}</p>
+      <span class="balance">{{ stakedBalance }}</span>
+      <p>{{ $t('treasury.lblTreasuryBalance') }}</p>
     </div>
     <div class="smart-treasury__menu-wrapper-graph">
       <bar-chart
@@ -22,15 +22,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
+
 import dayjs from 'dayjs';
 
-import { formatToNative, getSignIfNeeded } from '@/utils/format';
-
-import { BarChart } from '@/components/charts';
 import { TreasuryMonthBonusesItem } from '@/services/mover';
+import { fromWei, multiply } from '@/utils/bigmath';
+import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import { fromWei, multiply } from '@/utils/bigmath';
+
+import { BarChart } from '@/components/charts';
 
 export default Vue.extend({
   name: 'TreasuryYearlyChart',
@@ -52,10 +53,11 @@ export default Vue.extend({
     ...mapGetters('account', {
       treasuryBonusNative: 'treasuryBonusNative',
       treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
-      usdcNativePrice: 'usdcNativePrice'
+      usdcNativePrice: 'usdcNativePrice',
+      treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
     }),
-    bonusBalance(): string {
-      return `$${formatToNative(this.treasuryBonusNative)}`;
+    stakedBalance(): string {
+      return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
     },
     earnedThisMonth(): string {
       return `$${formatToNative(this.treasuryEarnedThisMonthNative)}`;

@@ -1,5 +1,7 @@
 import { ActionTree } from 'vuex';
+
 import { RootStoreState } from '@/store/types';
+
 import {
   ModalsStoreState,
   TModalKey,

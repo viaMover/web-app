@@ -1,17 +1,17 @@
-import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
-import Web3 from 'web3';
 import Fuse from 'fuse.js';
+import Web3 from 'web3';
 
-import { NetworkInfo } from '@/utils/networkTypes';
-import { Token, TokenWithBalance, Transaction, GasData } from '@/wallet/types';
-
-import { Explorer } from '@/services/zerion/explorer';
+import { PowercardState } from '@/services/chain';
 import {
   SavingsInfo,
   SavingsReceipt,
   TreasuryInfo,
   TreasuryReceipt
 } from '@/services/mover';
+import { Explorer } from '@/services/zerion/explorer';
+import { NetworkInfo } from '@/utils/networkTypes';
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 export type ChartPair = [number, number];
 
@@ -62,6 +62,7 @@ export type AccountStoreState = {
   tokenInfoMap: Record<string, TokenInfo> | undefined;
   provider: ProviderData | undefined;
   isDetecting: boolean;
+  isWalletLoading: boolean;
   refreshError: undefined | string;
 
   nativeCurrency: 'usd';
@@ -101,6 +102,11 @@ export type AccountStoreState = {
   treasuryAPY: string | undefined;
   treasuryTotalStakedMove: string | undefined;
   treasuryTotalStakedMoveEthLP: string | undefined;
+
+  powercardBalance: string | undefined;
+  powercardState: PowercardState | undefined;
+  powercardActiveTime: number;
+  powercardCooldownTime: number;
 
   isTreasuryInfoLoading: boolean;
   treasuryInfo: TreasuryInfo | undefined;

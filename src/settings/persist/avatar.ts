@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 
-import { Avatar } from '@/store/modules/account/types';
 import { AccountBoundPersistedItem } from '@/settings/persist/types';
+import { Avatar } from '@/store/modules/account/types';
+
 import { isOlympusAvatar } from '../../../data/olympus-avatar';
 
 const avatarPersistKey = 'user_avatar';

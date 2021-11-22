@@ -33,11 +33,13 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import BigNumber from 'bignumber.js';
 
 import { isTokenWithBalance, Token, TokenWithBalance } from '@/wallet/types';
-import { TokenImage } from '@/components/tokens';
+
 import { CustomPicture, PictureSourceDescriptor } from '@/components/html5';
+import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'SearchModalTokenItem',
@@ -70,7 +72,6 @@ export default Vue.extend({
   computed: {
     assetBalance(): string {
       if (isTokenWithBalance(this.item)) {
-        console.log(this.item);
         return new BigNumber(this.item.balance).decimalPlaces(4).toFormat();
       }
       return '0';

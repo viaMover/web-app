@@ -1,13 +1,14 @@
 import { GetterTree } from 'vuex';
+
 import dayjs from 'dayjs';
 
+import { RootStoreState } from '@/store/types';
 import { add, multiply } from '@/utils/bigmath';
+import { MarketCapSortLimit } from '@/wallet/constants';
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 import { AccountStoreState, TransactionGroup } from '../types';
-import { RootStoreState } from '@/store/types';
-import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
-import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
-import { MarketCapSortLimit } from '@/wallet/constants';
 
 export default {
   transactionsGroupedByDay(state): Array<TransactionGroup> {
@@ -36,15 +37,8 @@ export default {
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;
   },
-  isWalletReady(state, getters, rootState): boolean {
-    return (
-      getters.isWalletConnected &&
-      state.provider !== undefined &&
-      !state.isDetecting &&
-      !state.isSavingsInfoLoading &&
-      !state.isTreasuryInfoLoading &&
-      !rootState.nft?.isLoading
-    );
+  isWalletReady(state): boolean {
+    return !state.isWalletLoading;
   },
   entireBalance(state, getters): string {
     let balance = '0';

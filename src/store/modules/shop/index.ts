@@ -1,14 +1,16 @@
 import { Module } from 'vuex';
 
-import actions from './actions';
-import mutations from './mutations';
-import getters from './getters';
-import { ShopStoreState } from './types';
+import { isProduction } from '@/settings';
 import { RootStoreState } from '@/store/types';
+
+import actions from './actions';
+import getters from './getters';
+import mutations from './mutations';
+import { ShopStoreState } from './types';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction(),
   state: {
     assets: [],
     isLoading: false,

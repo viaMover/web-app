@@ -3,40 +3,48 @@
     items-container-tag="div"
     :section-name="$t('governance.lblMyGovernance')"
   >
-    <left-rail-section-nav-item-image
-      :description="governancePower"
-      description-class="bold"
-      navigate-to="governance-view-all"
-      :title="$t('governance.lblGovernance')"
-      title-class="disabled"
-    >
-      <template v-slot:picture>
-        <custom-picture
-          :alt="picture.alt"
-          :sources="picture.sources"
-          :src="picture.src"
-        />
-      </template>
-    </left-rail-section-nav-item-image>
+    <template v-if="isLoading">
+      <left-rail-section-nav-item-image-skeleton />
+    </template>
+    <template v-else>
+      <left-rail-section-nav-item-image
+        :description="governancePower"
+        description-class="bold"
+        navigate-to="governance-view-all"
+        :title="$t('governance.lblGovernance')"
+        title-class="medium disabled"
+      >
+        <template v-slot:picture>
+          <custom-picture
+            :alt="picture.alt"
+            :sources="picture.sources"
+            :src="picture.src"
+          />
+        </template>
+      </left-rail-section-nav-item-image>
+    </template>
   </left-rail-section>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals } from '@/utils/format';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
   LeftRailSection,
-  LeftRailSectionNavItemImage
+  LeftRailSectionNavItemImage,
+  LeftRailSectionNavItemImageSkeleton
 } from '@/components/layout';
-import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
   name: 'GovernanceNavMyGovernance',
   components: {
     LeftRailSection,
     LeftRailSectionNavItemImage,
+    LeftRailSectionNavItemImageSkeleton,
     CustomPicture
   },
   data() {
@@ -54,8 +62,12 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('governance', {
+      isLoading: 'isLoading',
+      votingPowerSelf: 'votingPowerSelf'
+    }),
     governancePower(): string {
-      return `${formatToNative('123190.24')} Power`;
+      return `${formatToDecimals(this.votingPowerSelf, 0)} Power`;
     }
   }
 });

@@ -85,22 +85,23 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
-import Web3 from 'web3';
+
 import * as Sentry from '@sentry/vue';
 import { Properties as CssProperties } from 'csstype';
+import Web3 from 'web3';
 
-import {
-  TokenWithBalance,
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  GasData
-} from '@/wallet/types';
 import {
   getTransferData,
   TransferData,
   ZeroXSwapError
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import {
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -114,25 +115,26 @@ import {
   sub,
   toWei
 } from '@/utils/bigmath';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '@/components/controls/form-loader';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { formatToNative } from '@/utils/format';
 import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
-import { formatToNative } from '@/utils/format';
-import { sameAddress } from '@/utils/address';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
+import { getUSDCAssetData } from '@/wallet/references/data';
 import {
-  Modal as ModalTypes,
-  TModalPayload
-} from '@/store/modules/modals/types';
+  GasData,
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
 
-import Modal from './modal.vue';
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { Step } from '@/components/controls/form-loader';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-import UsdcPicture from './usdc-picture.vue';
+
 import DetailsPicture from './details-picture.vue';
+import Modal from './modal.vue';
+import UsdcPicture from './usdc-picture.vue';
 
 export default Vue.extend({
   name: 'SavingsDepositModal',
@@ -195,15 +197,15 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
-        return 'Choose Token';
+        return this.$t('swaps.lblChooseToken') as string;
       }
 
       if (!notZero(this.input.amount)) {
-        return 'Enter Amount';
+        return this.$t('lblEnterAmount') as string;
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {
@@ -419,13 +421,13 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          this.actionGasLimit,
-          this.approveGasLimit,
-          this.selectedGasPrice,
           this.useSubsidized,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.actionGasLimit,
+          this.approveGasLimit,
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {
@@ -467,7 +469,7 @@ export default Vue.extend({
           this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
@@ -512,7 +514,7 @@ export default Vue.extend({
           this.transferError = mapError(err.publicMessage);
         } else {
           console.error(`can't calc data: ${err}`);
-          this.transferError = 'Exchange error';
+          this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
@@ -576,8 +578,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate savings deposit");
         return;
       }

@@ -1,12 +1,12 @@
 import { GetterTree } from 'vuex';
 
 import gt from 'lodash-es/gt';
-import { divide, fromWei, multiply } from '@/utils/bigmath';
 
+import { SavingsMonthBalanceItem } from '@/services/mover';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
+import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import { SavingsMonthBalanceItem } from '@/services/mover';
 
 export default {
   savingsInfoBalanceUSDC(state): string {

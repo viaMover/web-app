@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="left-rail-section-nav-item button-active emoji"
+    class="left-rail-section-nav-item emoji"
     :class="containerClass"
     exact-active-class="active"
     :style="containerStyles"
@@ -21,10 +21,11 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { RawLocation } from 'vue-router';
+
 import { Properties } from 'csstype';
 
 import '@/styles/_left_rail_section_nav_item.less';
-import { RawLocation } from 'vue-router';
 
 export default Vue.extend({
   name: 'LeftRailSectionNavItemEmoji',

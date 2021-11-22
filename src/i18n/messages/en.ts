@@ -1,4 +1,8 @@
-export default {
+import VueI18n from 'vue-i18n';
+
+import { isFeatureEnabled } from '@/settings';
+
+const messages: VueI18n.LocaleMessageObject = {
   lblPageTitleDefault: 'Mover App',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
@@ -14,10 +18,14 @@ export default {
   lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
-  releaseRadar: {
-    lblReleaseRadar: 'Release Radar',
-    lblReleaseRadarNewTokensToday: 'There are {amount} new tokens for you'
-  },
+  lblInsufficientBalance: 'Insufficient Balance',
+  lblEnterAmount: 'Enter amount',
+  lblNoData: 'No data',
+  lblDashboardMobile: 'Oh no!',
+  txtDashboardMobile:
+    'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
+  btnDashboardMobile: 'Got it. Take me home',
+  lblUSDcTokenAlt: 'USDc token image',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -27,6 +35,17 @@ export default {
     txtQrDescriptionPartTwo:
       'Or use another compatible mobile wallet with WalletConnect.',
     lblChooseProvider: 'Choose from Metamask and other popular wallets'
+  },
+  estimationError: 'Estimation error',
+  exchangeError: 'Exchange error',
+  forms: {
+    lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+    lblEstimatedGasCost: 'Estimated gas cost',
+    lblAvailable: 'Available',
+    lblSwappingFor: 'Swapping for',
+    lblChooseToken: 'Choose Token',
+    lblChooseAmount: 'Choose amount',
+    lblReviewTransaction: 'Review transaction'
   },
   menu: {
     lblSwapTokenEmoji: '🔄',
@@ -90,8 +109,6 @@ export default {
     txtIfYouDeposit: 'If you deposit in Savings now, you are getting',
     lblAPYOnAllSavings: 'APY on all savings',
     lblStartSaving: 'Start saving',
-    lblReviewTransaction: 'Review transaction',
-    lblChooseToken: 'Choose Token',
     lblNothingInSavings: 'Nothing in @:savings.lblSavings',
     txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
@@ -135,7 +152,6 @@ export default {
       'USD Coin is a stable asset and the easiest way to grow your ' +
       'savings. Your returns will also be in USDC.',
     lblInProgress: 'In progress',
-    lblAvailable: 'Available',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -149,7 +165,7 @@ export default {
     deposit: {
       lblChooseAmount: 'Choose the amount to deposit',
       lblDepositInSavings: 'Deposit in @:savings.lblSavingsPrefix',
-      txtDepositShortDescription: 'Get 8.3% APY on simple savings in USDC',
+      txtDepositShortDescription: 'Get {apy}% APY on simple savings in USDC',
       txtYouCouldEarnInYear:
         'You could earn in a year. Considering all changes.',
       txtDepositDescription:
@@ -159,22 +175,20 @@ export default {
       txtAssetWillBeConverted:
         'You chose a non USDC asset. It means that it will be converted ' +
         'to USDC at the time of the deposit at the current market rate.',
-      lblWhatDoWeDeposit: 'What we do deposit',
+      lblWhatDoWeDeposit: 'What do we deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
-      lblSwappingFor: 'Swapping for',
       lblAmountWeDepositIn: 'Amount we deposit in',
       lblReviewYourDeposit: 'Review your deposit',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       txtYieldEstimation:
         'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
     },
     withdraw: {
       lblChooseAmount: 'Choose the amount to withdraw',
-      lblAmountWeDepositIn: 'Amount we withdraw in',
+      lblAmountWeWithdrawIn: 'Amount we withdraw in',
       lblWhatDoWeWithdraw: 'What we do withdraw',
+      lblAndTotalOf: 'And it will be a total of',
       lblWithdrawFromSavings: 'Withdraw from @:savings.lblSavingsPrefix',
       txtWithdrawShortDescription:
         'Remove your assets from savings fully or partially',
@@ -183,32 +197,45 @@ export default {
         'Available balance consists of principal amount you deposited ' +
         'together with the accumulated yield.',
       lblWhatToWithdraw: 'What to withdraw',
+      lblReviewYourWithdraw: 'Review your withdrawal',
       btnWithdraw: 'Withdraw',
       lblWhatAboutTheYield: 'What about the yield?',
       txtIfYouKeepSavings:
         'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:
         'Estimated lost annual yield based on your withdrawal amount is {amount} at the current rate of {apy}% APY.'
-    },
-    btnEnterAmount: 'Enter amount'
+    }
   },
   treasury: {
     icon: '🐷',
     lblTreasuryHeader: '{amount} @:treasury.lblTreasuryBonuses',
     lblSmartTreasury: 'Smart Treasury',
+    lblMySmartTreasury: 'My Smart Treasury',
     lblNothingInTreasury: 'Nothing in @:treasury.lblTreasury',
     txtNothingInTreasury: 'Looks like you don’t have Treasury Boost, yet',
     lblTreasuryEarnedToday: '@:treasury.lblTreasury brought you {amount} today',
     lblTreasuryBonuses: 'Treasury Bonuses',
     lblTreasuryBonusBalance: '@:treasury.lblSmartTreasury Bonus Balance',
+    lblTreasuryBalance: '@:treasury.lblSmartTreasury Balance',
     lblTreasury: 'Treasury',
+    lblRemainingDays: '{days} days',
     lblTreasuryPrefix: 'Treasury',
     lblManageTreasury: 'Manage @:treasury.lblTreasuryPrefix',
-    lblTreasuryOverview: '@:treasury.lblTreasuryPrefix Overview',
+    lblIfYouReserveMoveInST:
+      'If you reserve MOVE in Smart Treasury now, you are getting',
+    txtTreasuryEmptyDescription:
+      'Movers save on gas every year with the rewards from Treasury',
+    lblTreasuryOverview: '@:treasury.lblSmartTreasury Overview',
+    txtTreasuryOverviewDescription:
+      'It is a piggy bank that automatically distributes Mover performance ' +
+      'rewards to you, and covers your costs.',
     lblTreasuryStatements: '@:treasury.lblTreasuryPrefix Statements',
-    lblReservedAssetsValue: 'Reserved assets value',
-    lblCurrentBoost: 'Current boost',
+    lblSmartTreasuryStatements: 'Smart Treasury Statements',
+    lblReservedAssetsValue: 'My reserved boost value',
+    lblCurrentBoost: 'My current boost',
     lblMaximumBoost: 'Maximum boost',
+    lblStartBoosting: 'Start boosting',
+    lblGasCostCoverage: 'Gas cost coverage',
     lblSmartTreasurySize: 'Smart Treasury Size',
     lblTreasuryStats: '@:treasury.lblTreasuryPrefix Stats',
     lblEarnedToday: 'Earned today',
@@ -217,7 +244,21 @@ export default {
     lblSpentToday: 'Spent today',
     lblSpentThisMonth: 'Spent this month',
     lblSpentInTotal: 'Spent in total',
-    lblReservedAssets: 'Reserved Assets',
+    lblReservedAssets: 'Reserved assets',
+    lblCurrentCostCoverage: 'up to 100%',
+    leftRail: {
+      lblManageSmartTreasury: 'Manage Smart Treasury',
+      lblIncreaseBoost: 'Increase Boost',
+      lblIncreaseBoostDescription: 'Increase your Treasury rewards',
+      lblDecreaseBoost: 'Decrease Boost',
+      lblDecreaseBoostDescription: 'Remove assets from Treasury',
+      lblClaimAndBurn: 'Claim & Burn',
+      lblClaimAndBurnDescription: 'Burn MOVE and claim USDC',
+      lblPowerCard: 'Powercard',
+      lblPowerCardDescription: 'NFT with benefits',
+      lblGlobalAnalytics: 'Global analytics',
+      lblGlobalAnalyticsDescription: 'All information about Treasury'
+    },
     btnDeposit: {
       simple: 'Increase Boost',
       emoji: '📈 @:treasury.btnDeposit.simple'
@@ -239,6 +280,21 @@ export default {
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
       'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
+    powercard: {
+      lblThePowercard: 'The Powercard',
+      txtThePowercardPageDescription:
+        'The Powercard allows it’s owner to temporary increase the boost ' +
+        'in the treasury. Think of it as a superpower perk. It activates ' +
+        'extra double boost for 30 days, and then it cools down for 60 days.',
+      lblAdditionalBoost: 'Additional boost',
+      lblActive: 'Active',
+      lblCooldown: 'Cooldown',
+      lblPowercardStatus: 'Powercard Status',
+      lblRemainingTime: 'Remaining time',
+      btnActivateThePowercard: 'Activate the Powercard',
+      btnRemoveThePowercard: 'Remove the Powercard',
+      lblIfYouActivateCard: 'If you activate the Powercard now, you are getting'
+    },
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -252,6 +308,11 @@ export default {
     },
     increaseBoost: {
       lblIncreaseBoost: 'Increase boost',
+      txtYouApproximateBoost: 'Your approximate boost in the Smart Treasury.',
+      txtIncreaseBoostPageDescription:
+        'The larger your share of the Smart Treasury is, the more rewards ' +
+        'you can get. To increase your share, use increase boost. Reserve ' +
+        'MOVE or MOVE-ETH LP tokens to increase your boost.',
       txtIncreaseBoostDescription: {
         part1: 'There are two boost options. Reserving ',
         part2:
@@ -261,7 +322,19 @@ export default {
           ' MOVE-ETH LP tokens will multiply by 2,5 (2.5x) your rewards share ' +
           'based on the total amount of LP tokens you have reserved.'
       },
+      txtYouChooseMove:
+        'You chose MOVE token. It means that the maximum boost can be 1x.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblWhatDoWeReserve: 'What do we reserve',
+      lblAmountWeReserveIn: 'Amount we reserve in',
+      lblChooseAmount: 'Choose the amount to reserve',
+      lblReviewYourIncrease: 'Review your increase',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      lblAndTotalOf: 'And it will be a total of',
       lblWhatToReserve: 'What to reserve',
+      btnIncreaseBoostInSmartTreasury: 'Increase boost in Smart Treasury',
       btnIncreaseBoost: 'Increase Boost',
       lblEstimatedBoost: 'Estimated boost',
       txtEstimatedBoost:
@@ -270,9 +343,26 @@ export default {
     },
     decreaseBoost: {
       lblDecreaseBoost: 'Decrease Boost',
+      txtYouApproximateBoost: 'Your approximate boost in the Smart Treasury.',
+      txtDecreaseBoostPageDescription:
+        'Decrease the boost will return your reserved assets, but will also ' +
+        'decrease your Smart Treasury share and future rewards. ' +
+        'Earned rewards always stay with you.',
       txtDecreaseBoostDescription:
         'Decrease the boost, will return your reserved assets, ' +
         'but will also decrease your Treasury share.',
+      txtYouChooseMove:
+        'You chose to remove MOVE token. It means that your new ' +
+        'boost value will be up to 1x lower.',
+      txtYouChooseMoveETHLp:
+        'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
+        'boost can be up to 2.5x.',
+      lblWhatDoWeRemove: 'What do we remove',
+      lblAmountWeRemoveIn: 'Amount we remove in',
+      lblChooseAmount: 'Choose the amount to remove',
+      lblReviewYourDecrease: 'Review your decrease',
+      lblAndTotalOf: 'And it will be a total of',
+      btnDecreaseBoostInSmartTreasury: 'Decrease boost in Smart Treasury',
       lblWhatToReturn: 'What to return',
       btnDecreaseBoost: 'Decrease Boost',
       lblWhatAboutTheBoost: 'What about the boost?',
@@ -282,18 +372,153 @@ export default {
     },
     claimAndBurn: {
       lblClaimAndBurn: 'Claim & Burn',
+      txtYouApproximateExit: 'Your approximate exit one-time payout.',
+      txtClaimAndBurnPageDescription:
+        'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
+        'portion of the Smart Treasury. You will burn your MOVE tokens, and ' +
+        'receive a one-time payout in USDC.',
       txtClaimAndBurnDescription:
         'Claim & Burn allows you to exchange your MOVE tokens for a larger ' +
         'portion of the Smart Treasury. You will burn your MOVE tokens, ' +
         'and receive four times (4x) of your treasury share in a one-time payout.',
+      txtYouChooseMove:
+        'You chose MOVE. You will burn your MOVE tokens in exchange ' +
+        'for a one-time payout from the Treasury.',
+      lblWhatDoWeBurn: 'What do we burn',
       lblWhatToBurn: 'What to burn',
+      lblAmountWeBurnIn: 'Amount we burn in',
+      lblChooseAmount: 'Choose the amount to burn',
+      lblReviewYourClaim: 'Review your claim',
+      lblAndTotalOf: 'The amount you will receive',
+      btnClaimAndBurnWithAssets: 'Claim {asset1} and burn {asset2}',
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:
-        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.'
+        'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
+      lblBurnError: 'Burn conditions error',
+      lblBurnLimitReached: 'Burn limit reached'
     }
   },
-  governance: {
+  asset: {
+    txtAlt: '{name} icon',
+    txtFallbackAlt: '{fieldRole} asset icon',
+    lblSelectMax: 'Use Max',
+    lblBalance: 'Balance'
+  },
+  transaction: {
+    lblState: {
+      waiting: {
+        header: 'Waiting for confirmation',
+        description: 'Confirm this transaction in your wallet'
+      },
+      pending: {
+        header: 'Your transaction is processing',
+        description: 'Waiting for transaction to be confirmed'
+      },
+      processed: {
+        header: 'Success!',
+        description: 'Your transaction was processed!'
+      },
+      reverted: {
+        header: 'Transaction was reverted',
+        description: 'Your transaction failed'
+      }
+    }
+  },
+  card: {
+    lblCard: 'Card'
+  },
+  search: {
+    lblSearch: 'Search',
+    lblSearchBar: 'Search tokens',
+    lblSearchBarPlaceholder: 'Search any token',
+    lblSearchTransaction: 'Search any transaction',
+    lblFavorite: 'Favorite',
+    lblVerified: 'Verified',
+    lblTokensInTheWallet: 'Tokens in the wallet',
+    lblGlobalSearch: 'Global search'
+  },
+  gas: {
+    lblNetworkFee: 'Network fee',
+    lblSelector: {
+      low: '🐌 Slow',
+      normal: '⏱ Normal',
+      high: '🚀 Fast',
+      treasury: '🐷 Smart Treasury'
+    }
+  },
+  dates: {
+    sameDay: '[Today]',
+    lastDay: '[Yesterday]'
+  },
+  icon: {
+    txtFlipAssetsIconAlt: 'flip',
+    txtBackLinkIconAlt: 'back',
+    txtCloseIconAlt: 'close',
+    txtContextButtonAlt: 'open menu',
+    txtLogoAlt: 'Mover logo',
+    txtSelectAssetButtonAlt: 'select asset',
+    txtNavigationLinkAlt: 'navigation link',
+    txtSwapDetailsIconAlt: 'swap details',
+    txtTokenInfoAlt: '{name} info on Etherscan',
+    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus',
+    txtPendingIconAlt: 'pending'
+  },
+  more: {
+    lblMore: 'More'
+  },
+  provider: {
+    errors: {
+      4001: 'Oh no. You have rejected the provider request. Please try again',
+      4100: 'Oh no. Something is wrong with your provider. Please try again or use different provider instead',
+      4200: 'Oh no. Your provider does not support this method. Please use different provider instead',
+      4900: 'Oh no. Your provider is disconnected from all chains. Please refresh the page or use different provider instead',
+      4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
+    }
+  },
+  lblOhSnap: 'Oh, snap!',
+  txtCouldNotFindToken: 'We couldn’t find this token anywhere'
+};
+
+if (isFeatureEnabled('isReleaseRadarEnabled')) {
+  messages.radar = {
+    lblTokenOfTheDay: 'Token of the day',
+    liveUpdates: {
+      lblLiveUpdates: 'Live updates',
+      lblTopMovers: 'Top Movers',
+      lblTopLosers: 'Top losers',
+      lblNewTokens: 'New tokens',
+      lblDeFi: 'DeFi',
+      lblStablecoins: 'Stablecoins'
+    },
+    lblPersonalLists: 'Personal Lists',
+    lblCuratedLists: 'Curated Lists',
+    lblRune: 'RUNE',
+    txtRuneAlt: '{name} coin icon',
+    txtRadar: {
+      runeDescription:
+        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
+        'THORChain allows for native swaps between various blockchains e.g. a ' +
+        'native swap between ETH and BTC.'
+    },
+    btnGet: {
+      simple: 'Get'
+    },
+    btnSearch: {
+      emoji: '🔍'
+    }
+  };
+}
+
+if (isFeatureEnabled('isBondsEnabled')) {
+  messages.bonds = {
+    icon: '🏦',
+    lblBonds: 'Bonds'
+  };
+}
+
+if (isFeatureEnabled('isGovernanceEnabled')) {
+  messages.governance = {
     lblGovernance: 'Governance',
     lblGetInvolved: 'Get involved',
     lblGovernancePrefix: 'Governance',
@@ -313,7 +538,7 @@ export default {
       emoji: '🗳 @:governance.btnCreateAProposal.simple'
     },
     lblVotingStatus: {
-      open: 'Voting is open',
+      active: 'Voting is open',
       closed: 'Voting is closed'
     },
     btnVote: {
@@ -332,7 +557,7 @@ export default {
       emoji: '🌍'
     },
     btnView: {
-      simple: 'View'
+      text: 'View'
     },
     btnSeeAll: {
       simple: 'See All'
@@ -347,7 +572,7 @@ export default {
     lblCreateAProposal: 'Create a proposal',
     lblProposalOverview: 'Proposal overview',
     lblVotingPeriod: 'Voting period',
-    txtVotingPeriod: '{days} days',
+    lblDaysToRun: 'Days to run',
     lblMinimumVotingThreshold: 'Minimum voting threshold',
     lblProposer: 'Proposer',
     lblProposalId: '@:governance.lblProposal ID',
@@ -362,7 +587,6 @@ export default {
     txtGovernanceImageAlt: 'Governance icon image',
     lblMyGovernance: 'My Governance',
     lblManageGovernance: 'Manage Governance',
-    txtCreateAProposal: 'Community Voting',
     txtCreateAProposalAlt: 'Create a proposal icon image',
     txtGlobalAnalytics: 'All information about Governance',
     lblGlobalAnalytics: 'Global analytics',
@@ -381,103 +605,56 @@ export default {
       'It means that you want this proposal to pass.',
     txtVoteAgainst:
       'You are about to vote AGAINST. ' +
-      'It means that you want this proposal to defeat.'
-  },
-  nibbleShop: {
-    lblNibbleShop: 'Nibble shop',
-    lblNoSweetAndSourNFTHeading: "That's sour! You have no Sweet & Sour",
-    lblNoSweetAndSourNFTSubheading:
-      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop",
-    lblAssetOverview: '{name} Overview',
-    lblTotalTrades: 'Total trades',
-    lblQuantity: {
-      initial: 'Initial quantity',
-      redeemed: 'Redeemed',
-      remaining: 'Remaining quantity',
-      available: 'Available to purchase'
+      'It means that you want this proposal to defeat.',
+    lblProposalStats: 'Proposal Stats',
+    txtCreateAProposal:
+      'You are about to create a governance proposal. Make it count.',
+    txtCreateAProposalTip:
+      'A small tip. To make it easier for other community members a proposal should be answered as simple ' +
+      'yes or no. Make a descriptive title, and an accurate explanation. The more details you provide, the ' +
+      'easier it will be to make a decision for others.',
+    lblProposalTitle: 'Proposal title',
+    txtProposalTitlePlaceholder: 'My title',
+    lblProposalDescription: 'Proposal description',
+    txtProposalDescriptionPlaceholder: 'My proposal description',
+    errors: {
+      default: 'Oh no. Something went wrong',
+      'too large message': 'The description is too large',
+      'no voting power': 'You have no voting power to do this',
+      'not in voting window': 'The voting is already closed',
+      'too many requests':
+        'You are making too many requests, please wait at least 10 seconds then try again',
+      'already voted': 'Oh no. Seems like you already voted',
+      'not enough power to vote':
+        "Oh no. Seems like you don't have enough power to vote",
+      'not enough power to create a proposal':
+        "Oh no. Seems like you don't have enough power to create a proposal",
+      'voting is not started yet': 'Oh no. Voting is not started yet',
+      'voting is closed': 'Oh no. Voting is already closed',
+      'wrong timestamp':
+        "Oh no. The request too long, or our system is out of sync. Looks like you'll have to try again later"
     },
-    lblCurrentPrice: 'Current price',
-    lblAssetActions: {
-      buy: 'Buy {title}',
-      sell: 'Sell {title}',
-      redeem: 'Redeem {title}'
-    },
-    txtTokenizedAsset:
-      '{name} is a tokenized asset. When buying a tokenized asset, you are buying a token that can be redeemed for a physical asset. ' +
-      "Buying and selling affects the current price of the asset. Purchasing a token doesn't require redemption",
-    lblBuyWith: 'Buy with',
-    lblBalance: 'Balance',
-    lblRedeem: 'Redeem',
-    lblRedeemAnItem: 'Redeem an item',
-    txtRedeemDescription:
-      'Burn a digital token, and receive a ' +
-      'physical item delivered to you anywhere in the world.',
-    lblSell: 'Sell',
-    lblYourName: 'Your name',
-    lblYourEmail: 'Your email',
-    lblCountry: 'Country',
-    lblDeliveryAddress: 'Delivery address',
-    lblTownOrCity: 'Town or city',
-    lblPostalCode: 'Postal code',
-    lblPlaceholders: {
-      email: 'email@example.com',
-      yourName: 'Antoshi Nakamoto',
-      country: 'Cryptoland',
-      deliveryAddress: 'Street, house or apartment number',
-      postalCode: '######'
-    },
-    txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
-    txtProductAlt: '{title} product image',
-    lblTotalAvailable: 'Total available',
-    lblPrice: 'Price',
-    lblWhatElseCanDo: 'What else can you do',
-    btn: {
-      get: {
-        txt: 'Purchase the {item}'
-      },
-      redeem: {
-        emoji: '📦',
-        txt: 'Reedem'
-      },
-      sell: {
-        emoji: '🚪',
-        txt: 'Sell'
-      },
-      buy: {
-        emoji: '🛍',
-        txt: 'Buy'
+    btnTogglePreview: 'Toggle preview',
+    txtTogglePreview: 'Toggle markdown preview',
+    createProposal: {
+      validations: {
+        title: {
+          required: 'This field is required. Please provide a title',
+          maxLength: 'Maximum length should be less than {boundary}'
+        },
+        description: {
+          required: 'This field is required. Please provide a description',
+          maxLength: 'Maximum length should be less than {boundary}'
+        }
       }
     },
-    lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
-    txtNoNFT:
-      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop.",
-    txtAssets: {
-      $CEO1: {
-        description:
-          'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
-          'CEOs are very busy, thus it is a limited addition with only 30 caps ever to be made. ' +
-          'This is a genesis limited addition with only 30 caps ever to be made. One size fits all CEOs.'
-      },
-      $SJ1: {
-        description:
-          'The face mask is stylish and cool, and it’s also hand-made. It’s how you can be different from ' +
-          'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
-          'This mask is also a limited edition with only 30 ever to be released.'
-      },
-      $IC1: {
-        description:
-          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
-          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
-          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
-      },
-      $PWR01: {
-        description:
-          'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
-          'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
-      }
-    }
-  },
-  vaultsRace: {
+    lblIpfsLink: 'Your registered vote',
+    txtIpfsLink: 'Link'
+  };
+}
+
+if (isFeatureEnabled('isVaultsRaceEnabled')) {
+  messages.vaultsRace = {
     lblGames: 'Games',
     txtGamesAlt: 'Vaults race promo image',
     lblMyVaults: 'My Vaults',
@@ -516,8 +693,11 @@ export default {
       lblPositionInTheRace: 'Position in the race',
       lblTotalPointsScored: 'Total points scored'
     }
-  },
-  NFTs: {
+  };
+}
+
+if (isFeatureEnabled('isNftDropsEnabled')) {
+  messages.NFTs = {
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
@@ -668,103 +848,107 @@ export default {
         }
       }
     }
-  },
-  asset: {
-    txtAlt: '{name} icon',
-    txtFallbackAlt: '{fieldRole} asset icon',
-    lblSelectMax: 'Use Max',
-    lblBalance: 'Balance'
-  },
-  transaction: {
-    lblState: {
-      waiting: {
-        header: 'Waiting for confirmation',
-        description: 'Confirm this transaction in your wallet'
+  };
+}
+
+if (isFeatureEnabled('isNibbleShopEnabled')) {
+  messages.nibbleShop = {
+    lblNibbleShop: 'Nibble shop',
+    lblNoSweetAndSourNFTHeading: "That's sour! You have no Sweet & Sour",
+    lblNoSweetAndSourNFTSubheading:
+      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop",
+    lblAssetOverview: '{name} Overview',
+    lblTotalTrades: 'Total trades',
+    lblQuantity: {
+      initial: 'Initial quantity',
+      redeemed: 'Redeemed',
+      remaining: 'Remaining quantity',
+      available: 'Available to purchase'
+    },
+    lblCurrentPrice: 'Current price',
+    lblAssetActions: {
+      buy: 'Buy {title}',
+      sell: 'Sell {title}',
+      redeem: 'Redeem {title}'
+    },
+    txtTokenizedAsset:
+      '{name} is a tokenized asset. When buying a tokenized asset, you are buying a token that can be redeemed for a physical asset. ' +
+      "Buying and selling affects the current price of the asset. Purchasing a token doesn't require redemption",
+    lblBuyWith: 'Buy with',
+    lblBalance: 'Balance',
+    lblRedeem: 'Redeem',
+    lblRedeemAnItem: 'Redeem an item',
+    txtRedeemDescription:
+      'Burn a digital token, and receive a ' +
+      'physical item delivered to you anywhere in the world.',
+    lblSell: 'Sell',
+    lblYourName: 'Your name',
+    lblYourEmail: 'Your email',
+    lblCountry: 'Country',
+    lblDeliveryAddress: 'Delivery address',
+    lblTownOrCity: 'Town or city',
+    lblPostalCode: 'Postal code',
+    lblPlaceholders: {
+      email: 'email@example.com',
+      yourName: 'Antoshi Nakamoto',
+      country: 'Cryptoland',
+      deliveryAddress: 'Street, house or apartment number',
+      postalCode: '######'
+    },
+    lblFullName: 'Full name',
+    lblEmail: 'Email',
+    lblFullAddress: 'Full address',
+    txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
+    txtProductAlt: '{title} product image',
+    lblTotalAvailable: 'Total available',
+    lblPrice: 'Price',
+    lblWhatElseCanDo: 'What else can you do',
+    btn: {
+      get: {
+        txt: 'Purchase the {item}'
       },
-      pending: {
-        header: 'Your transaction is processing',
-        description: 'Waiting for transaction to be confirmed'
+      redeem: {
+        emoji: '📦',
+        txt: 'Reedem'
       },
-      processed: {
-        header: 'Success!',
-        description: 'Your transaction was processed!'
+      sell: {
+        emoji: '🚪',
+        txt: 'Sell'
       },
-      reverted: {
-        header: 'Transaction was reverted',
-        description: 'Your transaction failed'
+      buy: {
+        emoji: '🛍',
+        txt: 'Buy'
+      }
+    },
+    lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
+    txtNoNFT:
+      "Looks like you don't have Sweet & Sour NFT. It means that you can't access Nibble Shop.",
+    txtAssets: {
+      $CEO1: {
+        description:
+          'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
+          'CEOs are very busy, thus it is a limited addition with only 30 caps ever to be made. ' +
+          'This is a genesis limited addition with only 30 caps ever to be made. One size fits all CEOs.'
+      },
+      $SJ1: {
+        description:
+          'The face mask is stylish and cool, and it’s also hand-made. It’s how you can be different from ' +
+          'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
+          'This mask is also a limited edition with only 30 ever to be released.'
+      },
+      $IC1: {
+        description:
+          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
+          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
+          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
+      },
+      $PWR01: {
+        description:
+          'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
+          'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
       }
     }
-  },
-  radar: {
-    lblTokenOfTheDay: 'Token of the day',
-    liveUpdates: {
-      lblLiveUpdates: 'Live updates',
-      lblTopMovers: 'Top Movers',
-      lblTopLosers: 'Top losers',
-      lblNewTokens: 'New tokens',
-      lblDeFi: 'DeFi',
-      lblStablecoins: 'Stablecoins'
-    },
-    lblPersonalLists: 'Personal Lists',
-    lblCuratedLists: 'Curated Lists',
-    lblRune: 'RUNE',
-    txtRuneAlt: '{name} coin icon',
-    txtRadar: {
-      runeDescription:
-        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
-        'THORChain allows for native swaps between various blockchains e.g. a ' +
-        'native swap between ETH and BTC.'
-    },
-    btnGet: {
-      simple: 'Get'
-    },
-    btnSearch: {
-      emoji: '🔍'
-    }
-  },
-  bonds: {
-    icon: '🏦',
-    lblBonds: 'Bonds'
-  },
-  card: {
-    lblCard: 'Card'
-  },
-  search: {
-    lblSearch: 'Search',
-    lblSearchBar: 'Search tokens',
-    lblSearchBarPlaceholder: 'Search any token',
-    lblSearchTransaction: 'Search any transaction',
-    lblFavorite: 'Favorite',
-    lblVerified: 'Verified',
-    lblTokensInTheWallet: 'Tokens in the wallet',
-    lblGlobalSearch: 'Global search'
-  },
-  gas: {
-    lblNetworkFee: 'Network fee',
-    lblSelector: {
-      low: '🐌 Slow',
-      normal: '⏱ Normal',
-      high: '🚀 Fast',
-      treasury: '🐷 Smart Treasury'
-    }
-  },
-  dates: {
-    sameDay: '[Today]',
-    lastDay: '[Yesterday]'
-  },
-  icon: {
-    txtFlipAssetsIconAlt: 'flip',
-    txtBackLinkIconAlt: 'back',
-    txtCloseIconAlt: 'close',
-    txtContextButtonAlt: 'open menu',
-    txtLogoAlt: 'Mover logo',
-    txtSelectAssetButtonAlt: 'select asset',
-    txtNavigationLinkAlt: 'navigation link',
-    txtSwapDetailsIconAlt: 'swap details',
-    txtTokenInfoAlt: '{name} info on Etherscan',
-    txtMovingWithOlympusAvatarAlt: 'Moving with Olympus'
-  },
-  more: {
-    lblMore: 'More'
-  }
-};
+  };
+}
+
+export default messages;

@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <savings-manage v-if="hasActiveSavings" />
-    <savings-empty v-else />
-  </div>
+  <savings-manage v-if="hasActiveSavings" />
+  <savings-empty v-else />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import { SavingsManage, SavingsEmpty } from '@/components/savings';
+import { SavingsEmpty, SavingsManage } from '@/components/savings';
 
 export default Vue.extend({
   name: 'SavingsManageWrapper',

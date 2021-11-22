@@ -82,9 +82,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
+
+import * as Sentry from '@sentry/vue';
 import { Properties as CssProperties } from 'csstype';
 
-import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
+import { getExitingAmount, getMaxBurn } from '@/services/chain';
+import { GetTokenPrice } from '@/services/thegraph/api';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -92,27 +100,21 @@ import {
   greaterThan,
   notZero
 } from '@/utils/bigmath';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import { formatToDecimals } from '@/utils/format';
 import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
-import { sameAddress } from '@/utils/address';
-import { formatToDecimals } from '@/utils/format';
-import { getExitingAmount, getMaxBurn } from '@/services/chain';
-import * as Sentry from '@sentry/vue';
-import {
-  Modal as ModalType,
-  TModalPayload
-} from '@/store/modules/modals/types';
+import { getMoveAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
 
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
 import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
 import { Step } from '@/components/controls/form-loader';
-import Modal from './modal.vue';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import DetailsPicture from '@/components/modals/details-picture.vue';
-import UsdcPicture from '@/components/modals/usdc-picture.vue';
 import MovePicture from '@/components/modals/move-picture.vue';
+import UsdcPicture from '@/components/modals/usdc-picture.vue';
+
+import Modal from './modal.vue';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostModal',
@@ -188,8 +190,6 @@ export default Vue.extend({
             symbol: move.symbol,
             priceUSD: this.moveNativePrice,
             logo: move.iconURL,
-            isFavorite: true,
-            isVerified: true,
             balance: moveWalletBalance,
             marketCap: Number.MAX_SAFE_INTEGER
           }
@@ -199,15 +199,15 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
-        return 'Choose Token';
+        return this.$t('swaps.lblChooseToken') as string;
       }
 
       if (!notZero(this.input.amount)) {
-        return 'Enter Amount';
+        return this.$t('lblEnterAmount') as string;
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {
@@ -364,10 +364,10 @@ export default Vue.extend({
           this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
-          this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {
@@ -460,7 +460,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -495,7 +495,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate burn");
         return;
       }

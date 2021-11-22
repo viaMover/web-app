@@ -1,5 +1,7 @@
-import { RootStoreState } from '@/store/types';
 import { ActionTree } from 'vuex';
+
+import { RootStoreState } from '@/store/types';
+
 import { AccountStoreState } from '../types';
 
 export default {

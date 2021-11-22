@@ -1,0 +1,167 @@
+@import './_variables.less';
+@import './_governance-proposals-item.less';
+@import './_close-button.less';
+
+.create-a-proposal {
+  position: relative;
+
+  &__sidebar {
+    padding-top: 80px;
+  }
+
+  &__menu {
+    .g-wrapper {
+      position: static;
+    }
+  }
+
+  &__wrapper {
+    .title {
+      font-size: 40px;
+      line-height: 54px;
+      @font-bold();
+    }
+
+    .description {
+      color: rgba(60, 60, 67, 0.6);
+      margin-top: 8px;
+      @font-medium();
+    }
+
+    .text {
+      color: rgba(60, 60, 67, 0.6);
+      margin-top: 40px;
+      @font-medium();
+    }
+
+    .column {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: start;
+      -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+      align-items: flex-start;
+      margin-top: 24px;
+
+      .item {
+        margin-left: 24px;
+
+        &:first-child {
+          margin-left: 0;
+          width: 100%;
+          max-width: 200px;
+        }
+
+        span {
+          font-size: 24px;
+          line-height: 32px;
+          color: @black;
+          display: block;
+          @font-bold();
+        }
+
+        p {
+          font-size: 16px;
+          line-height: 24px;
+          color: @black;
+          margin-top: 8px;
+          @font-medium();
+        }
+      }
+    }
+
+    .statements {
+      margin-top: 36px;
+
+      form {
+        margin-top: 20px;
+        margin-bottom: 80px;
+
+        span.error-message {
+          display: none;
+          font-style: normal;
+          font-size: 16px;
+          line-height: 24px;
+          color: #d72c33;
+          margin-top: 24px;
+          @font-medium();
+        }
+
+        &.error {
+          span.error-message {
+            display: inline-block;
+          }
+        }
+
+        .input-group {
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+
+        label {
+          width: 100%;
+          color: rgba(60, 60, 67, 0.6);
+          margin-top: 40px;
+          display: block;
+          @font-regular();
+
+          span.toggle-preview {
+            padding: 2px 8px;
+            margin-left: 60px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color ease-in-out 0.25s;
+            @font-bold();
+
+            &:hover {
+              background-color: #e5e5e5;
+            }
+          }
+
+          input,
+          textarea {
+            opacity: 1;
+            width: 100%;
+            background: none;
+            border: none;
+            margin-top: 8px;
+
+            &::placeholder {
+              color: @black;
+              opacity: 0.2;
+            }
+          }
+
+          input {
+            font-size: 24px;
+            line-height: 32px;
+            @font-bold();
+
+            &::placeholder {
+              @font-bold();
+            }
+          }
+
+          textarea {
+            resize: none;
+            font-size: 14px;
+            line-height: 22px;
+            overflow: hidden;
+            @font-medium();
+
+            &::placeholder {
+              @font-medium();
+            }
+          }
+        }
+
+        button {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+}

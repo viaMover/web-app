@@ -89,14 +89,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import { TokenWithBalance, SmallToken, GasData } from '@/wallet/types';
-
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-
 import { mapGetters, mapState } from 'vuex';
+
+import * as Sentry from '@sentry/vue';
+import { Properties as CssProperties } from 'csstype';
+import Web3 from 'web3';
+
+import { GetTokenPrice } from '@/services/thegraph/api';
+import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
+import {
+  Modal as ModalType,
+  TModalPayload
+} from '@/store/modules/modals/types';
+import { sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -107,29 +112,24 @@ import {
   notZero,
   sub
 } from '@/utils/bigmath';
-import { GetTokenPrice } from '@/services/thegraph/api';
-import { Step } from '@/components/controls/form-loader';
+import { formatToDecimals } from '@/utils/format';
+import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
+import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
-import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
-import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
-import { sameAddress } from '@/utils/address';
-import { formatToDecimals, formatToNative } from '@/utils/format';
-import { Properties as CssProperties } from 'csstype';
-import * as Sentry from '@sentry/vue';
-import Web3 from 'web3';
-import {
-  Modal as ModalType,
-  TModalPayload
-} from '@/store/modules/modals/types';
+import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
+
+import { ActionButton } from '@/components/buttons';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { Step } from '@/components/controls/form-loader';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import DetailsPicture from '@/components/modals/details-picture.vue';
+import EthPicture from '@/components/modals/eth-picture.vue';
+import MovePicture from '@/components/modals/move-picture.vue';
 
 import Modal from './modal.vue';
-import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
-import DetailsPicture from '@/components/modals/details-picture.vue';
-import MovePicture from '@/components/modals/move-picture.vue';
-import EthPicture from '@/components/modals/eth-picture.vue';
 
 export default Vue.extend({
   name: 'TreasuryIncreaseBoostModal',
@@ -167,12 +167,9 @@ export default Vue.extend({
       'provider',
       'gasPrices',
       'tokens',
-      'ethPrice',
-      'savingsAPY',
-      'usdcPriceInWeth',
-      'ethPrice',
       'treasuryBalanceMove',
-      'treasuryBalanceLP'
+      'treasuryBalanceLP',
+      'powercardState'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -189,15 +186,15 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (this.input.asset === undefined) {
-        return 'Choose Token';
+        return this.$t('swaps.lblChooseToken') as string;
       }
 
       if (!notZero(this.input.amount)) {
-        return 'Enter Amount';
+        return this.$t('lblEnterAmount') as string;
       }
 
       if (greaterThan(this.input.amount, this.maxInputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {
@@ -246,7 +243,8 @@ export default Vue.extend({
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
-        walletBalanceLP
+        walletBalanceLP,
+        this.powercardState ?? 'NotStaked'
       );
       return `${formatToDecimals(futureBoost, 1)}x`;
     },
@@ -388,10 +386,10 @@ export default Vue.extend({
           this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
-          this.selectedGasPrice,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {
@@ -420,7 +418,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -450,7 +448,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.input.amount, this.input.asset);
       } catch (err) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -484,7 +482,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate treasury deposit");
         return;
       }

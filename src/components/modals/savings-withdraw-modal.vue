@@ -76,19 +76,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters, mapState } from 'vuex';
+
+import * as Sentry from '@sentry/vue';
+import { Properties as CssProperties } from 'csstype';
+import Web3 from 'web3';
 
 import {
-  TokenWithBalance,
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  GasData
-} from '@/wallet/types';
-
-import { AssetField, GasSelector, FormLoader } from '@/components/controls';
-import { ActionButton } from '@/components/buttons';
-import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
-import Web3 from 'web3';
-import { mapGetters, mapState } from 'vuex';
+  Modal as ModalTypes,
+  TModalPayload
+} from '@/store/modules/modals/types';
 import {
   add,
   convertAmountFromNativeValue,
@@ -99,21 +96,25 @@ import {
   multiply,
   notZero
 } from '@/utils/bigmath';
-import * as Sentry from '@sentry/vue';
-import { Step } from '@/components/controls/form-loader';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { formatToNative } from '@/utils/format';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/savings/withdraw/withdrawEstimate';
-import { formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import Modal from './modal.vue';
-import { Properties as CssProperties } from 'csstype';
-
+import { getUSDCAssetData } from '@/wallet/references/data';
 import {
-  Modal as ModalTypes,
-  TModalPayload
-} from '@/store/modules/modals/types';
+  GasData,
+  SmallToken,
+  SmallTokenInfoWithIcon,
+  TokenWithBalance
+} from '@/wallet/types';
+
+import { ActionButton } from '@/components/buttons';
+import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { Step } from '@/components/controls/form-loader';
+import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
 import DetailsPicture from '@/components/modals/details-picture.vue';
+
+import Modal from './modal.vue';
 
 export default Vue.extend({
   name: 'SavingsWithdrawModal',
@@ -172,8 +173,6 @@ export default Vue.extend({
         name: 'USDc',
         priceUSD: this.usdcNativePrice,
         logo: this.outputUSDCAsset.iconURL,
-        isFavorite: true,
-        isVerified: true,
         balance: this.savingsBalance,
         marketCap: Number.MAX_SAFE_INTEGER
       };
@@ -189,11 +188,11 @@ export default Vue.extend({
     },
     error(): string | undefined {
       if (!notZero(this.output.amount)) {
-        return 'Enter Amount';
+        return this.$t('lblEnterAmount') as string;
       }
 
       if (greaterThan(this.output.amount, this.maxOutputAmount)) {
-        return 'Insufficient Balance';
+        return this.$t('lblInsufficientBalance') as string;
       }
 
       if (this.transferError !== undefined) {
@@ -347,11 +346,11 @@ export default Vue.extend({
           this.provider.web3,
           this.currentAddress,
           this.actionGasLimit,
-          this.selectedGasPrice,
           this.useSubsidized,
           async () => {
             this.loaderStep = 'Process';
-          }
+          },
+          this.selectedGasPrice
         );
         this.loaderStep = 'Success';
       } catch (err) {
@@ -379,7 +378,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -406,7 +405,7 @@ export default Vue.extend({
 
         await this.tryToEstimate(this.output.amount, this.outputUSDCAsset);
       } catch (err) {
-        this.transferError = 'Exchange error';
+        this.transferError = this.$t('exchangeError') as string;
         console.error(`can't calc data: ${err}`);
         Sentry.captureException(err);
         return;
@@ -431,8 +430,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        console.error(resp.error);
-        this.transferError = 'Estimate error';
+        this.transferError = this.$t('estimationError') as string;
         Sentry.captureException("can't estimate saving withdraw");
         return;
       }

@@ -1,15 +1,16 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
-import { AbiItem } from 'web3-utils';
-import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
+import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import {
   getMoveAssetData,
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const claimAndBurnCompound = async (
   inputAsset: SmallToken,
@@ -19,8 +20,8 @@ export const claimAndBurnCompound = async (
   accountAddress: string,
   actionGasLimit: string,
   approveGasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
@@ -31,8 +32,6 @@ export const claimAndBurnCompound = async (
       inputAmount,
       accountAddress,
       web3,
-      approveGasLimit,
-      gasPriceInGwei,
       async () => {
         await claimAndBurn(
           inputAsset,
@@ -41,11 +40,13 @@ export const claimAndBurnCompound = async (
           web3,
           accountAddress,
           actionGasLimit,
-          gasPriceInGwei,
-          changeStepToProcess
+          changeStepToProcess,
+          gasPriceInGwei
         );
       },
-      changeStepToProcess
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't treasury claim and burn: ${err}`);
@@ -60,8 +61,8 @@ export const claimAndBurn = async (
   web3: Web3,
   accountAddress: string,
   gasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   console.log('Executing treasury claim and burn...');
 
@@ -81,9 +82,11 @@ export const claimAndBurn = async (
     const transactionParams = {
       from: accountAddress,
       gas: web3.utils.toBN(gasLimit).toNumber(),
-      gasPrice: web3.utils
-        .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-        .toString()
+      gasPrice: gasPriceInGwei
+        ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+        : undefined,
+      maxFeePerGas: gasPriceInGwei ? undefined : null,
+      maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);

@@ -10,9 +10,10 @@ export const formatToNative = (amount: BigNumber.Value): string => {
 
 export const formatToDecimals = (
   amount: BigNumber.Value,
-  decimals: number
+  decimals: number,
+  roundingMode?: BigNumber.RoundingMode
 ): string => {
-  return new BigNumber(amount).toFormat(decimals);
+  return new BigNumber(amount).toFormat(decimals, roundingMode);
 };
 
 export const getSignIfNeeded = (

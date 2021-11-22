@@ -1,5 +1,5 @@
 <template>
-  <statement-list wrapper-class="smart-treasury-statements__wrapper-list">
+  <statement-list>
     <statement-list-item
       :description="$t('treasury.statement.lblBalance', { month: monthName })"
       :value="balance"
@@ -34,6 +34,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
+
 import dayjs from 'dayjs';
 
 import { formatToNative, getSignIfNeeded } from '@/utils/format';

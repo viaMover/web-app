@@ -2,6 +2,11 @@ import BigNumber from 'bignumber.js';
 
 type BigNumberish = number | string | BigNumber;
 
+export const isEqual = (
+  numberOne: BigNumberish,
+  numberTwo: BigNumberish
+): boolean => new BigNumber(numberOne).isEqualTo(new BigNumber(numberTwo));
+
 export const add = (numberOne: BigNumberish, numberTwo: BigNumberish): string =>
   new BigNumber(numberOne).plus(numberTwo).toFixed();
 

@@ -4,13 +4,13 @@ import { AbiItem } from 'web3-utils';
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   SMART_TREASURY_ABI,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const withdrawCompound = async (
   outputAsset: SmallToken,
@@ -19,8 +19,8 @@ export const withdrawCompound = async (
   web3: Web3,
   accountAddress: string,
   actionGasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   try {
     await withdraw(
@@ -30,8 +30,8 @@ export const withdrawCompound = async (
       web3,
       accountAddress,
       actionGasLimit,
-      gasPriceInGwei,
-      changeStepToProcess
+      changeStepToProcess,
+      gasPriceInGwei
     );
   } catch (err) {
     console.error(`Can't treasury withdraw: ${err}`);
@@ -46,8 +46,8 @@ export const withdraw = async (
   web3: Web3,
   accountAddress: string,
   gasLimit: string,
-  gasPriceInGwei: string,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasPriceInGwei?: string
 ): Promise<void> => {
   console.log('Executing treasury withdraw...');
 
@@ -66,15 +66,17 @@ export const withdraw = async (
     const transactionParams = {
       from: accountAddress,
       gas: web3.utils.toBN(gasLimit).toNumber(),
-      gasPrice: web3.utils
-        .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-        .toString()
+      gasPrice: gasPriceInGwei
+        ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+        : undefined,
+      maxFeePerGas: gasPriceInGwei ? undefined : null,
+      maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
     } as TransactionsParams;
 
     const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);
 
     console.log('[treasury withdraw] output amount in WEI:', outputAmountInWEI);
-    console.log('[treasury deposit] transactionParams:', transactionParams);
+    console.log('[treasury withdraw] transactionParams:', transactionParams);
 
     let withdrawFunc: any;
     if (sameAddress(outputAsset.address, move.address)) {

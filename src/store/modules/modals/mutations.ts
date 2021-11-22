@@ -1,4 +1,5 @@
 import { MutationTree } from 'vuex';
+
 import { ModalsStoreState, ModalState, TModalKey } from './types';
 
 export default {

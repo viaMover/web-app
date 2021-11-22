@@ -16,8 +16,6 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { Modal as ModalType } from '@/store/modules/modals/types';
-
 import { Card } from '@/components/controls';
 import { PictureDescriptor } from '@/components/html5';
 
@@ -58,11 +56,9 @@ export default Vue.extend({
     ...mapActions('modals', {
       setIsModalDisplayed: 'setIsDisplayed'
     }),
-    handleButtonClick(): void {
-      this.setIsModalDisplayed({
-        id: ModalType.SavingsDeposit,
-        value: true,
-        payload: {}
+    async handleButtonClick(): Promise<void> {
+      await this.$router.push({
+        name: 'savings-deposit'
       });
     }
   }

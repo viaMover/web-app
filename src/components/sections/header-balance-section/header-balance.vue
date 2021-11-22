@@ -33,6 +33,11 @@
         :text="$t('treasury.lblSmartTreasury')"
       />
       <nav-bar-item
+        v-if="isFeatureEnabled('isGovernanceEnabled')"
+        navigate-to-name="governance-view-all"
+        :text="$t('governance.lblGovernance')"
+      />
+      <nav-bar-item
         v-if="isFeatureEnabled('isBondsEnabled')"
         navigate-to-name="bonds"
         :text="$t('bonds.lblBonds')"
@@ -55,12 +60,13 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
 import { isFeatureEnabled } from '@/settings';
+import { formatToNative } from '@/utils/format';
 
-import { ArrowDownIcon } from '@/components/controls';
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
+import { ArrowDownIcon } from '@/components/controls';
 import { NavBar, NavBarItem } from '@/components/controls';
+
 import HeaderBalanceAvatar from './header-balance-avatar.vue';
 
 export default Vue.extend({

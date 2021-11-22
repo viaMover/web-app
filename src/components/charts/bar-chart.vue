@@ -19,24 +19,25 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+
 import {
+  ActiveElement,
   Chart,
   ChartData,
-  ChartOptions,
   ChartEvent,
-  ActiveElement,
+  ChartOptions,
   ScriptableScaleContext
 } from 'chart.js';
 
+import {
+  SavingsMonthBalanceItem,
+  TreasuryMonthBonusesItem
+} from '@/services/mover';
 import {
   buildBalancesChartData,
   ChartDataItem,
   TItem
 } from '@/store/modules/account/utils/charts';
-import {
-  SavingsMonthBalanceItem,
-  TreasuryMonthBonusesItem
-} from '@/services/mover';
 
 export default Vue.extend({
   name: 'BarChart',
@@ -66,6 +67,10 @@ export default Vue.extend({
     wrapperClass: {
       type: String,
       default: ''
+    },
+    disableSelecting: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -82,7 +87,7 @@ export default Vue.extend({
         this.chartDataSource,
         'bar',
         'month',
-        this.accentColor,
+        this.disableSelecting ? this.defaultColor : this.accentColor,
         this.defaultColor
       ) as ChartData<'bar', Array<ChartDataItem>, string>;
     }
@@ -109,7 +114,7 @@ export default Vue.extend({
   },
   methods: {
     onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart): void {
-      if (elements.length < 1) {
+      if (elements.length < 1 || this.disableSelecting) {
         return;
       }
 
@@ -142,6 +147,8 @@ export default Vue.extend({
     },
     initChart(): void {
       const el = this.$refs.chartCanvas as HTMLCanvasElement;
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const that = this;
       const chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
         type: 'bar',
         data: this.chartData,
@@ -154,9 +161,10 @@ export default Vue.extend({
           animation: true,
           onClick: this.onClick,
           onHover(event: ChartEvent, chartElements: ActiveElement[]) {
-            event.native.target.style.cursor = chartElements[0]
-              ? 'pointer'
-              : 'default';
+            event.native.target.style.cursor =
+              chartElements[0] && !that.disableSelecting
+                ? 'pointer'
+                : 'default';
           },
           maintainAspectRatio: false,
           responsive: false,
@@ -209,6 +217,9 @@ export default Vue.extend({
                   weight: 500
                 },
                 color: (ctx: ScriptableScaleContext) => {
+                  if (this.disableSelecting) {
+                    return this.tickColor;
+                  }
                   const selectedItemIdx =
                     ctx.chart.data.datasets[0].data.findIndex(
                       (val: ChartDataItem) => val.meta === this.selectedItem

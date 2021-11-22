@@ -1,35 +1,29 @@
-import { sameAddress } from '@/utils/address';
-import { needApprove } from '@/wallet/actions/approve/needApprove';
-import { toWei, floorDivide } from '@/utils/bigmath';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
-import { Network } from '@/utils/networkTypes';
 import { BigNumber } from 'bignumber.js';
-import {
-  getPureEthAddress,
-  convertStringToHexWithPrefix
-} from '@/utils/address';
-import { TransferData } from '@/services/0x/api';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
+import { sameAddress } from '@/utils/address';
+import {
+  convertStringToHexWithPrefix,
+  getPureEthAddress
+} from '@/utils/address';
+import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
+import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
+import { needApprove } from '@/wallet/actions/approve/needApprove';
+import {
+  CompoundEstimateResponse,
+  EstimateResponse
+} from '@/wallet/actions/types';
 import {
   HOLY_HAND_ABI,
   HOLY_HAND_ADDRESS,
   HOLY_SAVINGS_POOL_ADDRESS
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
-import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
-
-export type CompoudEstimateResponse = {
-  error: boolean;
-  approveGasLimit: string;
-  actionGasLimit: string;
-};
-
-type EstimateResponse = {
-  error: boolean;
-  gasLimit: string;
-};
+import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const estimateDepositCompound = async (
   inputAsset: SmallToken,
@@ -39,7 +33,7 @@ export const estimateDepositCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string
-): Promise<CompoudEstimateResponse> => {
+): Promise<CompoundEstimateResponse> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
   let isApproveNeeded = true;

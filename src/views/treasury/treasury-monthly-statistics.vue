@@ -1,11 +1,9 @@
 <template>
-  <secondary-page>
-    <template v-slot:title>
-      <div class="smart-treasury-statements__wrapper-title">
-        <h2>{{ pageTitle }}</h2>
-        <p>{{ pageSubtitle }}</p>
-      </div>
-    </template>
+  <secondary-page has-back-button hide-title @back="handleBack">
+    <div class="treasury-statements__wrapper-title">
+      <h2>{{ pageTitle }}</h2>
+      <p>{{ pageSubtitle }}</p>
+    </div>
     <treasury-monthly-chart-wrapper
       v-if="isFeatureEnabled('isTreasuryMonthlyChartEnabled')"
     />
@@ -15,12 +13,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import dayjs from 'dayjs';
 import { mapActions } from 'vuex';
 
+import dayjs from 'dayjs';
+
 import { isFeatureEnabled } from '@/settings';
-import { dateFromExplicitPair } from '@/utils/time';
 import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
+import { dateFromExplicitPair } from '@/utils/time';
 
 import { SecondaryPage } from '@/components/layout';
 import {
@@ -64,7 +63,10 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('account', { fetchTreasuryReceipt: 'fetchTreasuryReceipt' }),
-    isFeatureEnabled
+    isFeatureEnabled,
+    handleBack(): void {
+      this.$router.back();
+    }
   }
 });
 </script>

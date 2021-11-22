@@ -1,4 +1,5 @@
 import { NavigationGuardNext, Route } from 'vue-router';
+
 import router from '@/router/index';
 import { updateIntercomSession } from '@/router/intercom-utils';
 

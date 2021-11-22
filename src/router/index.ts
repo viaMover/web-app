@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
+
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
@@ -92,7 +93,6 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/savings',
-    name: 'savings-root',
     component: () =>
       import(
         /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
@@ -148,11 +148,51 @@ const routes: Array<RouteConfig> = [
       ),
     children: [
       {
-        path: 'empty',
-        name: 'treasury-empty',
+        path: '',
+        name: 'treasury-manage',
         component: () =>
           import(
-            /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-empty.vue'
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage-wrapper.vue'
+          )
+      },
+      {
+        path: 'increase',
+        name: 'treasury-increase',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-wrapper.vue'
+          )
+      },
+      {
+        path: 'decrease',
+        name: 'treasury-decrease',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-wrapper.vue'
+          )
+      },
+      {
+        path: 'claim-and-burn',
+        name: 'treasury-claim-and-burn',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-wrapper.vue'
+          )
+      },
+      {
+        path: 'powercard',
+        name: 'treasury-powercard',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-powercard-wrapper.vue'
+          )
+      },
+      {
+        path: 'analytics',
+        name: 'treasury-global-analytics',
+        component: () =>
+          import(
+            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-global-analytics.vue'
           )
       },
       {
@@ -161,14 +201,6 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
-          )
-      },
-      {
-        path: '',
-        name: 'treasury-manage',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage.vue'
           )
       }
     ]

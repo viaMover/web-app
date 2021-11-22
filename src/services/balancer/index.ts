@@ -1,3 +1,6 @@
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
 import { fromWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
@@ -5,8 +8,6 @@ import {
   BALANCE_CHECKER_ADDRESS
 } from '@/wallet/references/data';
 import { Token, TokenWithBalance, TransactionsParams } from '@/wallet/types';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
 
 const ETH_ADDRESS = '0x0000000000000000000000000000000000000000';
 
@@ -40,8 +41,6 @@ export const getWalletTokens = async (
         address: t.address,
         balance: fromWei(balances[ind], t.decimals),
         decimals: t.decimals,
-        isFavorite: t.isFavorite,
-        isVerified: t.isVerified,
         logo: t.logo,
         name: t.name,
         priceUSD: t.priceUSD,

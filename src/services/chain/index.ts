@@ -10,6 +10,10 @@ export {
   getTreasuryBonus
 } from './treasury/treasury';
 
+export { PowercardState, PowerCardTimings } from './treasury/types';
+
+export { powercardBalance, getPowercardState } from './treasury/powercard';
+
 export {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
@@ -40,3 +44,8 @@ export type { VaultsData } from './nft/vaults/types';
 
 export { getDiceData, claimDice } from './nft/dice/dice';
 export type { DiceData, DiceType } from './nft/dice/types';
+
+export {
+  getVotingPower,
+  getCommunityVotingPower
+} from './governance/governance';

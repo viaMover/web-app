@@ -1,79 +1,112 @@
 <template>
-  <secondary-page>
-    <h2>{{ proposal.name }}</h2>
-    <p>{{ explanatoryText }}</p>
-    <governance-overview-section>
+  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
+    <p class="description">{{ explanatoryText }}</p>
+
+    <governance-overview-section-skeleton v-if="isProposalLoading">
+      <governance-overview-section-item-skeleton />
+    </governance-overview-section-skeleton>
+    <governance-overview-section v-else>
       <governance-overview-section-item
         :description="$t('governance.lblMyVotingPower')"
         :value="myVotingPower"
       />
+      <governance-overview-section-item
+        v-if="ipfsLinkText"
+        :description="$t('governance.lblIpfsLink')"
+      >
+        <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
+          {{ $t('governance.txtIpfsLink') }}
+        </a>
+      </governance-overview-section-item>
     </governance-overview-section>
-    <action-button button-class="button button-active" :text="voteButtonText" />
-    <div v-if="error !== undefined" class="error-message">
-      {{ error }}
-    </div>
+
+    <button
+      class="black-link button-active"
+      :class="{ disabled: isLoading || isProposalLoading }"
+      :disabled="isLoading || isProposalLoading"
+      type="button"
+      @click="handleVote"
+    >
+      <div v-if="isLoading" class="loader-icon">
+        <img
+          :alt="$t('icon.txtPendingIconAlt')"
+          src="@/assets/images/ios-spinner-white.svg"
+        />
+      </div>
+      <template v-else>
+        {{ voteButtonText }}
+      </template>
+    </button>
+    <p v-if="errorText" class="error">
+      {{ errorText }}
+    </p>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import {
+  Choice,
+  Proposal,
+  ProposalInfo,
+  VoteParams,
+  VoteResponse
+} from '@/services/mover/governance';
+import { GovernanceApiError } from '@/services/mover/governance';
+import {
+  isProviderRpcError,
+  ProviderRpcError
+} from '@/store/modules/governance/utils';
+import { formatToDecimals } from '@/utils/format';
 
-import { SecondaryPage } from '@/components/layout';
 import {
   GovernanceOverviewSection,
-  GovernanceOverviewSectionItem
+  GovernanceOverviewSectionItem,
+  GovernanceOverviewSectionItemSkeleton,
+  GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
-import { ActionButton } from '@/components/buttons';
+import { SecondaryPage } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceVote',
   components: {
     SecondaryPage,
     GovernanceOverviewSection,
+    GovernanceOverviewSectionSkeleton,
     GovernanceOverviewSectionItem,
-    ActionButton
+    GovernanceOverviewSectionItemSkeleton
   },
   data() {
     return {
-      // todo: should be in the store some day
-      proposal: {
-        id: 'CIP10-1',
-        name: 'Governance Analysis Period',
-        status: 'open',
-        text:
-          'Summary:\n\n' +
-          'This post outlines a framework for funding Uniswap ecosystem development ' +
-          'with grants from the UNI Community Treasury. The program starts small—sponsoring ' +
-          'hackathons, for example—but could grow in significance over time ' +
-          '(with renewals approved by governance) to fund core protocol development. ' +
-          'Grants administration is a subjective process that cannot be easily automated, ' +
-          'and thus we propose a nimble committee of 6 members —1 lead and 5 reviewers—to ' +
-          'deliver an efficient, predictable process to applicants, such that funding can be ' +
-          'administered without having to put each application to a vote. We propose the program ' +
-          'start with an initial cap of $750K per quarter and a limit of 2 quarters before renewal—a ' +
-          'sum that we feel is appropriate for an MVP relative to the size of the treasury that UNI ' +
-          'token holders are entrusted with allocating.\n\n' +
-          'Purpose:\n\n' +
-          'The mission of the UGP is to provide valuable resources to help grow the Uniswap ecosystem. ' +
-          'Through public discourse and inbound applications, the community will get first-hand exposure to ' +
-          'identify and respond to the most pressing needs of the ecosystem, as well as the ability to support ' +
-          'innovative projects expanding the capabilities of Uniswap. By rewarding talent early with developer ' +
-          'incentives, bounties, and infrastructure support, UGP acts as a catalyst for growth and helps to maintain ' +
-          'Uniswap as a nexus for DeFi on Ethereum.',
-        proposer:
-          '0x806cb7767eb835e5fe0e4de354cb946e21418997d01b90d9f98b0e4da195ce92',
-        ends: 1621609904,
-        votingActivity: 27,
-        votesFor: 8194000,
-        votesAgainst: 46000,
-        currentOutcome: 'quorumNotReached'
-      },
-      error: undefined
+      errorText: '',
+      ipfsLink: '',
+      isLoading: false
     };
   },
   computed: {
+    ...mapState('governance', {
+      isProposalLoading: 'isLoading',
+      proposals: 'items'
+    }),
+    ...mapGetters('governance', {
+      isAlreadyVoted: 'isAlreadyVoted',
+      alreadyVotedIpfsLink: 'ipfsLink',
+      votingPowerSelfOnProposal: 'votingPowerSelfOnProposal'
+    }),
+    pageTitle(): string {
+      if (this.proposal === undefined) {
+        return this.$t('governance.lblProposal').toString();
+      }
+
+      return this.proposal.title;
+    },
+    proposal(): Proposal | undefined {
+      return (this.proposals as Array<ProposalInfo>).find(
+        (item) => item.proposal.id === this.$route.params.id
+      )?.proposal;
+    },
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
     },
@@ -88,7 +121,10 @@ export default Vue.extend({
       return this.$t('governance.txtVoteAgainst') as string;
     },
     myVotingPower(): string {
-      return formatToNative('123190.24');
+      return formatToDecimals(
+        this.votingPowerSelfOnProposal(this.proposal?.id),
+        0
+      );
     },
     voteButtonText(): string {
       if (this.isVoteFor) {
@@ -96,11 +132,92 @@ export default Vue.extend({
       }
 
       return this.$t('governance.btnVoteAgainst.txt') as string;
+    },
+    ipfsLinkText(): string {
+      const alreadyVotedIpfsLink = this.alreadyVotedIpfsLink(this.proposal?.id);
+      if (alreadyVotedIpfsLink) {
+        return this.formatIpfsLink(alreadyVotedIpfsLink);
+      }
+
+      return this.ipfsLink;
+    }
+  },
+  watch: {
+    isVoteFor: {
+      handler() {
+        this.errorText = '';
+        this.ipfsLink = '';
+        this.isLoading = false;
+      },
+      immediate: true
     }
   },
   methods: {
+    ...mapActions('governance', {
+      vote: 'vote',
+      loadProposalInfo: 'loadProposalInfo'
+    }),
     handleClose(): void {
       this.$router.back();
+    },
+    async handleVote(): Promise<void> {
+      if (this.proposal === undefined) {
+        return;
+      }
+
+      this.isLoading = true;
+      this.ipfsLink = '';
+      this.errorText = '';
+
+      try {
+        const voteResult: VoteResponse = await this.vote({
+          proposal: this.proposal.id,
+          choice: this.isVoteFor ? Choice.For : Choice.Against
+        } as VoteParams);
+
+        await this.loadProposalInfo({
+          id: this.proposal.id,
+          refetch: true
+        });
+
+        this.ipfsLink = this.formatIpfsLink(voteResult.ipfsHash);
+        this.isLoading = false;
+      } catch (error) {
+        if (isProviderRpcError(error)) {
+          const providerError = error as ProviderRpcError;
+
+          if (this.$te(`provider.errors.${providerError.code}`)) {
+            this.errorText = this.$t(
+              `provider.errors.${providerError.code}`
+            ).toString();
+            this.isLoading = false;
+            return;
+          }
+        }
+
+        if (
+          error instanceof GovernanceApiError &&
+          this.$te(`governance.errors.${error.message}`)
+        ) {
+          this.errorText = this.$t(
+            `governance.errors.${error.message}`
+          ).toString();
+          this.isLoading = false;
+          return;
+        }
+
+        this.errorText = this.$t('governance.errors.default').toString();
+        this.isLoading = false;
+      }
+    },
+    formatIpfsLink(path: string): string {
+      return `https://gateway.ipfs.io/ipfs/${path}`;
+    },
+    handleBack(): void {
+      this.$router.replace({
+        name: 'governance-view',
+        params: { id: this.$route.params.id }
+      });
     }
   }
 });

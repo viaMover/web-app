@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
+
 import en from './messages/en';
 
 Vue.use(VueI18n);
@@ -21,7 +22,7 @@ export function setI18nLanguage(lang: string): string {
   return lang;
 }
 
-export function loadLanguageAsync(lang?: string): Promise<string> {
+export async function loadLanguageAsync(lang?: string): Promise<string> {
   if (lang == null) {
     return Promise.resolve(setI18nLanguage(i18n.locale));
   }
@@ -37,15 +38,16 @@ export function loadLanguageAsync(lang?: string): Promise<string> {
   }
 
   // If the language hasn't been loaded yet
-  return import(
-    /* webpackChunkName: "lang-[request]" */ `@/i18n/messages/${lang}.ts`
-  )
-    .then((messages) => {
-      i18n.setLocaleMessage(lang, messages.default);
-      loadedLanguages.push(lang);
-      return setI18nLanguage(lang);
-    })
-    .catch(() => Promise.resolve(setI18nLanguage(i18n.locale)));
+  try {
+    const messages = await import(
+      /* webpackChunkName: "lang-[request]" */ `@/i18n/messages/${lang}.ts`
+    );
+    i18n.setLocaleMessage(lang, messages.default);
+    loadedLanguages.push(lang);
+    return setI18nLanguage(lang);
+  } catch {
+    return Promise.resolve(setI18nLanguage(i18n.locale));
+  }
 }
 
 export default i18n;

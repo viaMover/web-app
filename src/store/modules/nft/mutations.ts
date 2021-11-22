@@ -1,12 +1,13 @@
-import { DiceData } from '@/services/chain';
-import {
-  UnexpectedMoveData,
-  SweetAndSourData,
-  OlympusData
-} from '@/services/chain';
 import { MutationTree } from 'vuex';
+
+import {
+  OlympusData,
+  SweetAndSourData,
+  UnexpectedMoveData
+} from '@/services/chain';
+import { DiceData, VaultsData } from '@/services/chain';
+
 import { NftAsset, NFTStoreState } from './types';
-import { VaultsData } from '@/services/chain/nft/vaults/types';
 
 export default {
   setIsLoading(state, isLoading): void {

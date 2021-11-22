@@ -1,5 +1,6 @@
-import { ProviderWithCallbacks } from './types';
 import store from '@/store/index';
+
+import { ProviderWithCallbacks } from './types';
 
 export const InitCallbacks = async (
   provider: any

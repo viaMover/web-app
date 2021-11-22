@@ -1,23 +1,25 @@
 /* eslint-disable  @typescript-eslint/no-non-null-assertion */
 
-import { greaterThan, lessThan } from '@/utils/bigmath';
-import { currentTimestamp } from '@/utils/time';
 import { ActionTree } from 'vuex';
 
 import {
+  claimAndExchangeUnexpectedMove,
+  claimDice,
+  claimOlympus,
   claimSweetAndSour,
   claimUnexpectedMove,
-  claimAndExchangeUnexpectedMove,
-  exchangeUnexpectedMove,
-  claimOlympus,
   DiceType,
-  claimDice
+  exchangeUnexpectedMove
 } from '@/services/chain';
-import { RootStoreState } from '@/store/types';
-import { NFTStoreState } from './../types';
-import { checkAccountStateIsReady } from '../../account/utils/state';
-import { Step } from '@/components/controls/form-loader';
 import { claimVaults } from '@/services/chain/nft/vaults/vaults';
+import { RootStoreState } from '@/store/types';
+import { greaterThan, lessThan } from '@/utils/bigmath';
+import { currentTimestamp } from '@/utils/time';
+
+import { Step } from '@/components/controls/form-loader';
+
+import { checkAccountStateIsReady } from '../../account/utils/state';
+import { NFTStoreState } from './../types';
 
 export type ClaimPayload = {
   signature: string;
@@ -40,10 +42,7 @@ export default {
       greaterThan(currentTimestamp(), state.OlympusStartTs)
     );
   },
-  async claimOlympus(
-    { rootState, state },
-    payload: ChangePayload
-  ): Promise<void> {
+  async claimOlympus({ rootState }, payload: ChangePayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
     }
@@ -58,10 +57,7 @@ export default {
       payload.changeStep
     );
   },
-  async claimVaults(
-    { rootState, state },
-    payload: ChangePayload
-  ): Promise<void> {
+  async claimVaults({ rootState }, payload: ChangePayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
     }
@@ -76,7 +72,7 @@ export default {
       payload.changeStep
     );
   },
-  async claimDice({ rootState, state }, payload: DicePayload): Promise<void> {
+  async claimDice({ rootState }, payload: DicePayload): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       throw new Error('Account state is not loaded, please, try again');
     }

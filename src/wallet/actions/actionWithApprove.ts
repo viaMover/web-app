@@ -1,9 +1,9 @@
 import Web3 from 'web3';
 
-import { lessThanOrEqual } from '@/utils/bigmath';
+import { SmallToken } from '@/wallet/types';
+
 import { approve } from './approve/approve';
 import { needApprove } from './approve/needApprove';
-import { SmallToken } from '@/wallet/types';
 
 export const executeTransactionWithApprove = async (
   token: SmallToken,
@@ -11,15 +11,11 @@ export const executeTransactionWithApprove = async (
   amount: string,
   accountAddress: string,
   web3: Web3,
-  gasLimit: string,
-  gasPriceInGwei: string,
   action: () => Promise<void>,
-  changeStepToProcess: () => Promise<void>
+  changeStepToProcess: () => Promise<void>,
+  gasLimit: string,
+  gasPriceInGwei?: string
 ): Promise<void | never> => {
-  if (lessThanOrEqual(gasPriceInGwei, '0')) {
-    throw new Error("can't execute transaction with zero gas price");
-  }
-
   try {
     if (
       await needApprove(accountAddress, token, amount, contractAddress, web3)
@@ -28,14 +24,28 @@ export const executeTransactionWithApprove = async (
         accountAddress,
         token.address,
         contractAddress,
-        gasLimit,
-        gasPriceInGwei,
         web3,
-        changeStepToProcess
+        changeStepToProcess,
+        gasLimit,
+        gasPriceInGwei
       );
     }
   } catch (err) {
     throw new Error(`can't approve due to: ${err}`);
   }
   await action();
+};
+export const executeTransactionWithApproveExt = async (
+  actionFunc: () => Promise<void>,
+  checkAppproveFunc: () => Promise<boolean>,
+  approveFunc: () => Promise<void>
+): Promise<void | never> => {
+  try {
+    if (!(await checkAppproveFunc())) {
+      await approveFunc();
+    }
+  } catch (err) {
+    throw new Error(`can't approve ext due to: ${err}`);
+  }
+  await actionFunc();
 };

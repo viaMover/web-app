@@ -26,7 +26,7 @@ export default Vue.extend({
     },
     itemsContainerClass: {
       type: String,
-      default: ''
+      default: 'item-group'
     }
   }
 });

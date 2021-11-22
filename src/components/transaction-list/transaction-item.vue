@@ -2,7 +2,10 @@
   <div class="general-desktop__sidebar-wrapper-info-item">
     <div class="label transaction-label" @click="onClick">
       <div v-if="isLoading" class="loader-icon">
-        <img alt="pending" src="@/assets/images/ios-spinner.svg" />
+        <img
+          :alt="$t('icon.txtPendingIconAlt')"
+          src="@/assets/images/ios-spinner.svg"
+        />
       </div>
       <token-image
         v-else
@@ -23,18 +26,18 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapState } from 'vuex';
 
-import { Transaction, TransactionTypes } from '@/wallet/types';
+import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { fromWei, multiply } from '@/utils/bigmath';
 import {
   formatToDecimals,
   formatToNative,
   getSignIfNeeded
 } from '@/utils/format';
+import { Transaction, TransactionTypes } from '@/wallet/types';
 
 import { TokenImage } from '@/components/tokens';
-import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
-import { mapState } from 'vuex';
 
 export default Vue.extend({
   name: 'TransactionItem',

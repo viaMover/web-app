@@ -1,9 +1,10 @@
+import { getTokenLogo } from '@/services/trustwallet/logo';
 import { MAX_ASSET_NAME } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
+
+import { getTestnetAssets } from './references/testnetAssets';
 import { Token } from './types';
 import assetList from '@/../data/assetList.json';
-import { getTokenLogo } from '@/services/trustwallet/logo';
-import { getTestnetAssets } from './references/testnetAssets';
 
 export const getAllTokens = (network: Network): Array<Token> => {
   let assets: Array<Token>;
