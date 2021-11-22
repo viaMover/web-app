@@ -28,7 +28,7 @@
 import Vue from 'vue';
 
 import { ActionButton } from '@/components/buttons';
-import ProgressLoader from '@/components/statements/progress-loader.vue';
+import { ProgressLoader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'AccountListItem',
