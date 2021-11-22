@@ -8,5 +8,8 @@ export default {
   },
   setEthereumAPY(state, apy): void {
     state.ethereumAPY = apy;
+  },
+  setEthereumBalance(state, balance): void {
+    state.ethereumBalance = balance;
   }
 } as MutationTree<EarningsEthereumStoreState>;

@@ -110,14 +110,14 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('earnings/ethereum', {
+      ethereumAPY: 'ethereumAPY',
       isLoading: 'isLoading'
     }),
     ...mapGetters('earnings/ethereum', {
-      apyNative: 'apyNative',
       hasActiveEarnings: 'hasActiveEarnings'
     }),
     apy(): string {
-      return `${formatPercents(this.apyNative)}%`;
+      return `${formatPercents(this.ethereumAPY)}%`;
     }
   }
 });

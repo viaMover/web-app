@@ -372,7 +372,7 @@ if (isFeatureEnabled('isEarningsEnabled')) {
         },
         children: [
           {
-            path: 'stake/step/:step?',
+            path: 'stake/step/:step',
             name: 'earnings-ethereum-stake',
             component: () =>
               import(
@@ -441,7 +441,7 @@ if (isFeatureEnabled('isEarningsEnabled')) {
         },
         children: [
           {
-            path: 'stake/step/:step?',
+            path: 'stake/step/:step',
             name: 'earnings-olympus-stake',
             component: () =>
               import(

@@ -3,4 +3,5 @@ export type EarningsOlympusStoreState = {
   error: string | Error | undefined;
 
   olympusAPY: string | undefined;
+  olympusBalance: string | undefined;
 };

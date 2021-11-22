@@ -8,15 +8,15 @@
       v-if="currentStep === 'prepare'"
       :asset="inputAsset"
       has-select-modal
-      :header-description="$t('earnings.olympus.txtStakeDescription')"
-      :header-title="$t('earnings.olympus.lblStake')"
+      :header-description="$t('earnings.ethereum.txtStakeDescription')"
+      :header-title="$t('earnings.ethereum.lblStake')"
       :input-amount="inputAmount"
       :input-amount-native="inputAmountNative"
       :input-asset-heading="$t('earnings.lblWhatDoWeDeposit')"
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
-      :operation-description="$t('earnings.olympus.txtPotentialEarnings')"
+      :operation-description="$t('earnings.ethereum.txtPotentialEarnings')"
       :operation-title="estimatedAnnualEarnings"
       :output-asset-heading-text="$t('earnings.lblAmountWeDepositIn')"
       :selected-token-description="inputAssetDescription"
@@ -153,7 +153,7 @@ export default Vue.extend({
       'tokens'
     ]),
     showBackButton(): boolean {
-      return this.currentStep === 'review';
+      return this.currentStep !== 'loader';
     },
     USDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);

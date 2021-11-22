@@ -153,7 +153,7 @@ export default Vue.extend({
     }),
     ...mapGetters('account', ['treasuryBonusNative']),
     showBackButton(): boolean {
-      return this.currentStep === 'review';
+      return this.currentStep !== 'loader';
     },
     estimatedAnnualEarnings(): string {
       return `~$${formatToNative(0)}`;

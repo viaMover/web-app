@@ -3,4 +3,5 @@ export type EarningsEthereumStoreState = {
   error: string | Error | undefined;
 
   ethereumAPY: string | undefined;
+  ethereumBalance: string | undefined;
 };

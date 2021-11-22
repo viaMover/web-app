@@ -8,5 +8,8 @@ export default {
   },
   setOlympusAPY(state, apy): void {
     state.olympusAPY = apy;
+  },
+  setOlympusBalance(state, balance): void {
+    state.olympusBalance = balance;
   }
 } as MutationTree<EarningsOlympusStoreState>;

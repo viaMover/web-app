@@ -12,6 +12,7 @@ export default {
     commit('setIsLoading', true);
     try {
       commit('setEthereumAPY', '8.3');
+      commit('setEthereumBalance', '0');
     } finally {
       commit('setIsLoading', false);
     }

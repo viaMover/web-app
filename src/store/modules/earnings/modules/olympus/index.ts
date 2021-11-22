@@ -15,7 +15,8 @@ export default {
     isLoading: false,
     error: undefined,
 
-    olympusAPY: undefined
+    olympusAPY: undefined,
+    olympusBalance: undefined
   },
   actions,
   getters,

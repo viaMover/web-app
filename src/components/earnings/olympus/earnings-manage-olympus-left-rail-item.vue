@@ -108,14 +108,14 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('earnings/olympus', {
+      olympusAPY: 'olympusAPY',
       isLoading: 'isLoading'
     }),
     ...mapGetters('earnings/olympus', {
-      apyNative: 'apyNative',
       hasActiveEarnings: 'hasActiveEarnings'
     }),
     apy(): string {
-      return `${formatPercents(this.apyNative)}%`;
+      return `${formatPercents(this.olympusAPY)}%`;
     }
   }
 });

@@ -15,7 +15,8 @@ export default {
     isLoading: false,
     error: undefined,
 
-    ethereumAPY: undefined
+    ethereumAPY: undefined,
+    ethereumBalance: undefined
   },
   actions,
   getters,

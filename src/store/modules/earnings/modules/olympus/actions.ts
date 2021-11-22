@@ -12,6 +12,7 @@ export default {
     commit('setIsLoading', true);
     try {
       commit('setOlympusAPY', '7.333');
+      commit('setOlympusBalance', '0');
     } finally {
       commit('setIsLoading', false);
     }

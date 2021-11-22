@@ -915,10 +915,26 @@ if (isFeatureEnabled('isEarningsEnabled')) {
     btnStake: 'Stake {symbol}',
     btnStart: 'Start earning',
     lblAndItWillBe: 'And it will be a total of',
+    lblOverview: '{token} Overview',
+    txtOverview:
+      'Earnings is a non-custodial and permissionless product. ' +
+      'Check the global statistics across the board.',
     txtYouCouldApproximately:
       'You could approximately earn in a year if you stake $10,000 now.',
     txtIfYouStake: 'If you stake {token} now, you are getting',
     txtAPYOnAll: 'APY on all {token} staking',
+    lblDepositedAssets: 'My total deposited assets value',
+    lblCurrentVariableAPY: 'Current variable APY',
+    lbl30DayAverageAPY: '30-day average APY',
+    lblTotalAssetsUnderManagement: 'Total assets under management',
+    lblEarningsStats: 'Earnings Stats',
+    lblEarnedToday: 'Earned today',
+    lblEarnedThisMonth: 'Earned this month',
+    lblEarnedInTotal: 'Earned in total',
+    lblEarningsEstimation: 'Earnings Estimation',
+    lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
+    lblEstimatedEarningsThisMonth: 'Estimated earnings this month',
+    lblEstimatedEarningsAnnually: 'Estimated earnings annually',
     ethereum: {
       lblEthereum: 'Ethereum',
       lblManage: 'Manage Ethereum',
@@ -935,7 +951,12 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       lblEthTokenAlt: 'Ethereum token image',
       txtNativeAsset:
         'Ethereum is a native asset, and is used for staking in ' +
-        'Ethereum 2.0. Your returns will also be in ETH.'
+        'Ethereum 2.0. Your returns will also be in ETH.',
+      txtStakeDescription:
+        'Once you stake your assets in Ethereum 2.0, Mover is constantly ' +
+        'searching for the highest paying option. Mover does automatic ' +
+        'rebalancing, yield collection, and capital optimization.',
+      txtPotentialEarnings: 'You could earn in a year. Considering all changes.'
     },
     olympus: {
       lblOlympus: 'Olympus',

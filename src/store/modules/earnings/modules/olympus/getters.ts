@@ -1,13 +1,19 @@
 import { GetterTree } from 'vuex';
 
+import gt from 'lodash-es/gt';
+
 import { RootStoreState } from '@/store/types';
 import { divide, multiply } from '@/utils/bigmath';
 
 import { EarningsOlympusStoreState } from './types';
 
 export default {
-  balanceNative(): string {
-    return '0';
+  balanceNative(state): string {
+    if (!state.olympusBalance) {
+      return '0';
+    }
+
+    return state.olympusBalance;
   },
   apyNative(state): string {
     if (!state.olympusAPY) {
@@ -15,7 +21,10 @@ export default {
     }
     return multiply(divide(state.olympusAPY, '100'), '10000');
   },
-  hasActiveEarnings(): boolean {
+  hasActiveEarnings(state): boolean {
+    if (state.olympusBalance !== undefined && gt(state.olympusBalance, 0)) {
+      return true;
+    }
     return false;
   }
 } as GetterTree<EarningsOlympusStoreState, RootStoreState>;
