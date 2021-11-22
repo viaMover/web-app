@@ -8,7 +8,12 @@ export default {
   async loadMinimalInfo(): Promise<void> {
     Promise.resolve();
   },
-  async loadInfo(): Promise<void> {
-    Promise.resolve();
+  async loadInfo({ commit }): Promise<void> {
+    commit('setIsLoading', true);
+    try {
+      commit('setEthereumAPY', '8.3');
+    } finally {
+      commit('setIsLoading', false);
+    }
   }
 } as ActionTree<EarningsEthereumStoreState, RootStoreState>;

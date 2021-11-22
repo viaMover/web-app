@@ -3,7 +3,7 @@
     <div class="empty-state-graph-wrapper">
       <secondary-page-simple-title
         class="balance"
-        :description="$t('savings.txtYouCouldApproximately')"
+        :description="$t('earnings.txtYouCouldApproximately')"
         :title="savingsBalance"
       />
       <bar-chart
@@ -11,19 +11,21 @@
         disable-selecting
         :is-loading="false"
       />
-      <p class="margin-top">{{ $t('savings.txtIfYouDeposit') }}</p>
+      <p class="margin-top">
+        {{ $t('earnings.txtIfYouStake', { token: 'Ethereum' }) }}
+      </p>
       <div class="body margin-top-20">
         <product-info-wrapper>
           <product-info-item
-            :description="$t('savings.lblAPYOnAllSavings')"
+            :description="$t('earnings.txtAPYOnAll', { token: 'Ethereum' })"
             is-black-description
             :title="currentVariableAPY"
           />
         </product-info-wrapper>
         <action-button
           button-class="button button-active bold"
-          :text="$t('savings.lblStartSaving')"
-          @button-click="handleDepositClick"
+          :text="$t('earnings.btnStart')"
+          @button-click="handleStakeClick"
         />
       </div>
     </div>
@@ -32,10 +34,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { SavingsMonthBalanceItem } from '@/services/mover';
-import { divide, multiply } from '@/utils/bigmath';
 import { formatPercents, formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
@@ -44,7 +45,7 @@ import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
 import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
-  name: 'SavingsEmpty',
+  name: 'EarningsEthereumManageEmpty',
   components: {
     ProductInfoItem,
     ProductInfoWrapper,
@@ -54,15 +55,16 @@ export default Vue.extend({
     BarChart
   },
   computed: {
-    ...mapState('account', { apy: 'savingsAPY' }),
+    ...mapState('earnings/ethereum', { apy: 'ethereumAPY' }),
+    ...mapGetters('earnings/ethereum', { apyNative: 'apyNative' }),
     savingsBalance(): string {
-      const apyNative = multiply(divide(this.apy, '100'), '10000');
-      return `~ $${formatToNative(apyNative)}`;
+      return `~ $${formatToNative(this.apyNative)}`;
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
     },
     chartDataSource(): Array<SavingsMonthBalanceItem> {
+      //TODO
       return Array.from(Array(10).keys()).map((n) => ({
         type: 'savings_month_balance_item',
         balance: 100,
@@ -74,7 +76,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    async handleDepositClick(): Promise<void> {
+    async handleStakeClick(): Promise<void> {
       await this.$router.push({
         name: 'savings-deposit'
       });

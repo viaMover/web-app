@@ -3,6 +3,8 @@ import { SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 import { SmallTokenInfo } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
+import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
@@ -45,7 +47,9 @@ const ADDRESSES = {
     POWERCARD_STAKER: '0xa8AFB8272434f76f9cD0Fd483F15C69AAF9a2E68',
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
     MASTER_CHEF_POOL_INDEX: 257,
-    OHM_ADDRESS: '0x383518188c0c6d7730d91b2c03a03c837814a899'
+    OHM_ADDRESS: '0x383518188c0c6d7730d91b2c03a03c837814a899',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -70,7 +74,9 @@ const ADDRESSES = {
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
     POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1'
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -95,7 +101,9 @@ const ADDRESSES = {
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
     POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1'
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -121,7 +129,9 @@ const ADDRESSES = {
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
     POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1'
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -146,7 +156,9 @@ const ADDRESSES = {
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
     POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1'
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x1',
@@ -171,7 +183,9 @@ const ADDRESSES = {
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
     POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1'
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x1',
@@ -196,7 +210,9 @@ const ADDRESSES = {
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
     POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1'
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   }
 };
 
@@ -343,6 +359,14 @@ const NFT_DICE_ADDRESS = (network: Network): string => {
 
 const OHM_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].OHM_ADDRESS ?? '0x1';
+};
+
+const ETH_V2_STAKER_POOL_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].ETH_V2_STAKER_POOL ?? '0x1';
+};
+
+const OHM_STAKER_POOL_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].OHM_STAKER_POOL ?? '0x1';
 };
 
 const POWERCARD_ADDRESS = (network: Network): string => {
@@ -506,5 +530,9 @@ export {
   POWERCARD_STAKER_ABI,
   MASTER_CHEF_ADDRESS,
   MASTER_CHEF_POOL_INDEX,
-  MASTER_CHEF_ABI
+  MASTER_CHEF_ABI,
+  EARNINGS_ETHEREUM_ABI,
+  EARNINGS_OLYMPUS_ABI,
+  ETH_V2_STAKER_POOL_ADDRESS,
+  OHM_STAKER_POOL_ADDRESS
 };

@@ -13,7 +13,9 @@ export default {
   strict: !isProduction(),
   state: {
     isLoading: false,
-    error: undefined
+    error: undefined,
+
+    olympusAPY: undefined
   },
   actions,
   getters,

@@ -913,7 +913,12 @@ if (isFeatureEnabled('isEarningsEnabled')) {
     txtNotNativeAsset:
       'You chose a non {targetSymbol} asset. It means that it will be converted to {targetSymbol} at the time of the deposit at the current market rate.',
     btnStake: 'Stake {symbol}',
+    btnStart: 'Start earning',
     lblAndItWillBe: 'And it will be a total of',
+    txtYouCouldApproximately:
+      'You could approximately earn in a year if you stake $10,000 now.',
+    txtIfYouStake: 'If you stake {token} now, you are getting',
+    txtAPYOnAll: 'APY on all {token} staking',
     ethereum: {
       lblEthereum: 'Ethereum',
       lblManage: 'Manage Ethereum',
