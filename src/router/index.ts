@@ -322,8 +322,7 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
           )
       }
-    ],
-    beforeEnter: checkFeatureFlag('isNftDropsEnabled')
+    ]
   },
   {
     path: '/transactions/:txHash',

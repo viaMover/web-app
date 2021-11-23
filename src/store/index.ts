@@ -26,16 +26,13 @@ const store = new Vuex.Store<RootStoreState>({
   modules: {
     account,
     modals,
-    governance
+    governance,
+    nft
   }
 });
 
 if (isFeatureEnabled('isNibbleShopEnabled')) {
   store.registerModule('shop', shop);
-}
-
-if (isFeatureEnabled('isNftDropsEnabled')) {
-  store.registerModule('nft', nft);
 }
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {

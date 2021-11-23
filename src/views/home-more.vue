@@ -8,7 +8,7 @@
   >
     <governance-section />
     <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
-    <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
+    <nft-drops-section />
   </content-wrapper>
 </template>
 
