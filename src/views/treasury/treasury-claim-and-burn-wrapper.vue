@@ -82,6 +82,7 @@ import {
   multiply
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
 import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
@@ -115,6 +116,7 @@ export default Vue.extend({
     LoaderForm,
     SecondaryPage
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       //current

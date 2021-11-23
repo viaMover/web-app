@@ -91,6 +91,7 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import {
@@ -126,6 +127,7 @@ export default Vue.extend({
     LoaderForm,
     SecondaryPage
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       //current

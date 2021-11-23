@@ -33,11 +33,6 @@
         :text="$t('treasury.lblSmartTreasury')"
       />
       <nav-bar-item
-        v-if="isFeatureEnabled('isGovernanceEnabled')"
-        navigate-to-name="governance-view-all"
-        :text="$t('governance.lblGovernance')"
-      />
-      <nav-bar-item
         v-if="isFeatureEnabled('isEarningsEnabled')"
         navigate-to-name="earnings-manage"
         :text="$t('earnings.lblEarnings')"
@@ -52,11 +47,7 @@
         navigate-to-name="card"
         :text="$t('card.lblCard')"
       />
-      <nav-bar-item
-        v-if="isFeatureEnabled('isMoreEnabled')"
-        navigate-to-name="home-more"
-        :text="$t('lblMore')"
-      />
+      <nav-bar-item navigate-to-name="home-more" :text="$t('lblMore')" />
     </nav-bar>
   </section>
 </template>

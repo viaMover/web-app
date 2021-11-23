@@ -58,6 +58,7 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import { greaterThan } from '@/utils/bigmath';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { stakePowercardCompound } from '@/wallet/actions/treasury/powercard/stake';
 import { estimateStakePowercardCompound } from '@/wallet/actions/treasury/powercard/stakeEstimate';
 
@@ -82,6 +83,7 @@ export default Vue.extend({
     SecondaryPage,
     LoaderForm
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       txStep: undefined as LoaderStep | undefined,

@@ -29,7 +29,9 @@ const store = new Vuex.Store<RootStoreState>({
   mutations: mutations,
   modules: {
     account,
-    modals
+    modals,
+    governance,
+    nft
   }
 });
 
@@ -37,16 +39,8 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
   store.registerModule('shop', shop);
 }
 
-if (isFeatureEnabled('isNftDropsEnabled')) {
-  store.registerModule('nft', nft);
-}
-
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   store.registerModule('radar', radar);
-}
-
-if (isFeatureEnabled('isGovernanceEnabled')) {
-  store.registerModule('governance', governance);
 }
 
 if (isFeatureEnabled('isEarningsEnabled')) {

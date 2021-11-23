@@ -51,6 +51,7 @@ import * as Sentry from '@sentry/vue';
 import { TransferData } from '@/services/0x/api';
 import { divide, isZero, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
 import {
   CompoundEstimateResponse,
@@ -87,6 +88,7 @@ export default Vue.extend({
     LoaderForm,
     SecondaryPage
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       //current
@@ -124,7 +126,7 @@ export default Vue.extend({
       isLoading: false,
       isProcessing: false,
       isTokenSelectedByUser: false,
-      inputMode: 'NATIVE' as InputMode,
+      inputMode: 'TOKEN' as InputMode,
       inputAmountNative: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,

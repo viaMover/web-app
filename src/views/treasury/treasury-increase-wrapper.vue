@@ -71,6 +71,7 @@ import {
   sub
 } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import { depositCompound } from '@/wallet/actions/treasury/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/treasury/deposit/depositEstimate';
@@ -105,6 +106,7 @@ export default Vue.extend({
     LoaderForm,
     SecondaryPage
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       //prepare-form
