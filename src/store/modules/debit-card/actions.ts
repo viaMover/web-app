@@ -512,7 +512,6 @@ export default {
         throw new DebitCardApiError(res.error, res.shortError);
       }
 
-      // TODO: Use own state update or rely on server?
       commit('setKycLink', res.result.KYClink);
     } catch (error) {
       console.error('failed to validate phone number', error);
