@@ -3,7 +3,6 @@ export interface Globals {
   isSwapPassportEnabled: boolean;
   isReleaseRadarEnabled: boolean;
   isDebitCardEnabled: boolean;
-  isGovernanceEnabled: boolean;
   isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
   isCardEnabled: boolean;
@@ -21,7 +20,6 @@ const values: Globals = {
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
-  isGovernanceEnabled: true,
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isCardEnabled: false,

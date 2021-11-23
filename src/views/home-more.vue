@@ -6,7 +6,7 @@
     @back="handleClose"
     @close="handleClose"
   >
-    <governance-section v-if="isFeatureEnabled('isGovernanceEnabled')" />
+    <governance-section />
     <nibble-shop-section v-if="isFeatureEnabled('isNibbleShopEnabled')" />
     <nft-drops-section v-if="isFeatureEnabled('isNftDropsEnabled')" />
   </content-wrapper>

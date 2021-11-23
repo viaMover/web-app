@@ -233,8 +233,7 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
           )
       }
-    ],
-    beforeEnter: checkFeatureFlag('isGovernanceEnabled')
+    ]
   },
   {
     path: '/nibble-shop',

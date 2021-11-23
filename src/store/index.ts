@@ -25,7 +25,8 @@ const store = new Vuex.Store<RootStoreState>({
   mutations: mutations,
   modules: {
     account,
-    modals
+    modals,
+    governance
   }
 });
 
@@ -39,10 +40,6 @@ if (isFeatureEnabled('isNftDropsEnabled')) {
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   store.registerModule('radar', radar);
-}
-
-if (isFeatureEnabled('isGovernanceEnabled')) {
-  store.registerModule('governance', governance);
 }
 
 export default store;

@@ -477,48 +477,8 @@ const messages: VueI18n.LocaleMessageObject = {
     }
   },
   lblOhSnap: 'Oh, snap!',
-  txtCouldNotFindToken: 'We couldn’t find this token anywhere'
-};
-
-if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  messages.radar = {
-    lblTokenOfTheDay: 'Token of the day',
-    liveUpdates: {
-      lblLiveUpdates: 'Live updates',
-      lblTopMovers: 'Top Movers',
-      lblTopLosers: 'Top losers',
-      lblNewTokens: 'New tokens',
-      lblDeFi: 'DeFi',
-      lblStablecoins: 'Stablecoins'
-    },
-    lblPersonalLists: 'Personal Lists',
-    lblCuratedLists: 'Curated Lists',
-    lblRune: 'RUNE',
-    txtRuneAlt: '{name} coin icon',
-    txtRadar: {
-      runeDescription:
-        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
-        'THORChain allows for native swaps between various blockchains e.g. a ' +
-        'native swap between ETH and BTC.'
-    },
-    btnGet: {
-      simple: 'Get'
-    },
-    btnSearch: {
-      emoji: '🔍'
-    }
-  };
-}
-
-if (isFeatureEnabled('isBondsEnabled')) {
-  messages.bonds = {
-    icon: '🏦',
-    lblBonds: 'Bonds'
-  };
-}
-
-if (isFeatureEnabled('isGovernanceEnabled')) {
-  messages.governance = {
+  txtCouldNotFindToken: 'We couldn’t find this token anywhere',
+  governance: {
     lblGovernance: 'Governance',
     lblGetInvolved: 'Get involved',
     lblGovernancePrefix: 'Governance',
@@ -650,6 +610,43 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
     },
     lblIpfsLink: 'Your registered vote',
     txtIpfsLink: 'Link'
+  }
+};
+
+if (isFeatureEnabled('isReleaseRadarEnabled')) {
+  messages.radar = {
+    lblTokenOfTheDay: 'Token of the day',
+    liveUpdates: {
+      lblLiveUpdates: 'Live updates',
+      lblTopMovers: 'Top Movers',
+      lblTopLosers: 'Top losers',
+      lblNewTokens: 'New tokens',
+      lblDeFi: 'DeFi',
+      lblStablecoins: 'Stablecoins'
+    },
+    lblPersonalLists: 'Personal Lists',
+    lblCuratedLists: 'Curated Lists',
+    lblRune: 'RUNE',
+    txtRuneAlt: '{name} coin icon',
+    txtRadar: {
+      runeDescription:
+        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
+        'THORChain allows for native swaps between various blockchains e.g. a ' +
+        'native swap between ETH and BTC.'
+    },
+    btnGet: {
+      simple: 'Get'
+    },
+    btnSearch: {
+      emoji: '🔍'
+    }
+  };
+}
+
+if (isFeatureEnabled('isBondsEnabled')) {
+  messages.bonds = {
+    icon: '🏦',
+    lblBonds: 'Bonds'
   };
 }
 
