@@ -9,6 +9,8 @@ import debitCard from './modules/debit-card';
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
+import radar from './modules/radar';
+import shop from './modules/shop';
 import mutations from './mutations';
 import { RootStoreState } from './types';
 
@@ -31,15 +33,11 @@ const store = new Vuex.Store<RootStoreState>({
 });
 
 if (isFeatureEnabled('isNibbleShopEnabled')) {
-  import(/* webpackChunkName: "nibble-shop-store" */ './modules/shop').then(
-    (module) => store.registerModule('shop', module.default)
-  );
+  store.registerModule('shop', shop);
 }
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  import(/* webpackChunkName: "release-radar-store" */ './modules/radar').then(
-    (module) => store.registerModule('radar', module.default)
-  );
+  store.registerModule('radar', radar);
 }
 
 if (isFeatureEnabled('isDebitCardEnabled')) {
