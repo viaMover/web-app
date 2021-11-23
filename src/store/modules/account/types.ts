@@ -80,6 +80,8 @@ export type AccountStoreState = {
 
   gasPrices: GasData | undefined;
   gasUpdating: boolean;
+  gasUpdaterHandle: number | undefined;
+  gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
 

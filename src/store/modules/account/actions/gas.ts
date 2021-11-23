@@ -10,8 +10,18 @@ const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
 
 export default {
-  startGasListening({ commit, state }): void {
+  startGasListening({ commit, state }, caller: string): void {
+    commit('pushGasListenerCaller', caller);
+
+    if (state.gasUpdating) {
+      return;
+    }
+
     commit('setGasUpdating', true);
+
+    if (state.gasUpdaterHandle !== undefined) {
+      return;
+    }
 
     const updateGasFunc = async () => {
       try {
@@ -23,14 +33,26 @@ export default {
         Sentry.captureException(err);
       } finally {
         if (state.gasUpdating) {
-          setTimeout(updateGasFunc, GAS_UPDATE_INTERVAL);
+          commit(
+            'setGasUpdaterHandle',
+            window.setTimeout(updateGasFunc, GAS_UPDATE_INTERVAL)
+          );
+        } else {
+          commit('clearGasUpdaterHandle');
         }
       }
     };
 
-    setTimeout(updateGasFunc, GAS_INITIAL_DELAY);
+    commit(
+      'setGasUpdaterHandle',
+      window.setTimeout(updateGasFunc, GAS_INITIAL_DELAY)
+    );
   },
-  stopGasListening({ commit }): void {
-    commit('setGasUpdating', false);
+  stopGasListening({ commit, state }, caller): void {
+    commit('popGasListenerCaller', caller);
+
+    if (state.gasUpdaterCallers.length === 0 && state.gasUpdating) {
+      commit('setGasUpdating', false);
+    }
   }
 } as ActionTree<AccountStoreState, RootStoreState>;

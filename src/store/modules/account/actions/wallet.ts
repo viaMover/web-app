@@ -175,13 +175,11 @@ export default {
         pureProvider: payload.provider
       } as ProviderData);
 
+      commit('clearGasUpdaterHandle');
       await dispatch('refreshWallet', {
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
-
-      console.log('Starting gas listening...');
-      await dispatch('startGasListening');
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
