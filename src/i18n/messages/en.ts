@@ -908,11 +908,14 @@ if (isFeatureEnabled('isEarningsEnabled')) {
     lblMyEarnings: 'My Earnings',
     lblWhatDoWeDeposit: 'What do we deposit',
     lblAmountWeDepositIn: 'Amount we deposit in',
+    lblWhatDoWeWithdraw: 'What do we withdraw',
+    lblAmountWeWithdrawIn: 'Amount we withdraw in',
     lblAndTotalOf: 'And it will be a total of',
     lblReviewYourStake: 'Review your stake',
     txtNotNativeAsset:
       'You chose a non {targetSymbol} asset. It means that it will be converted to {targetSymbol} at the time of the deposit at the current market rate.',
     btnStake: 'Stake {symbol}',
+    btnWithdraw: 'Withdraw {symbol}',
     btnStart: 'Start earning',
     lblAndItWillBe: 'And it will be a total of',
     lblOverview: '{token} Overview',
@@ -921,6 +924,8 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       'Check the global statistics across the board.',
     txtYouCouldApproximately:
       'You could approximately earn in a year if you stake $10,000 now.',
+    txtIfYouKeepAsset:
+      'If you keep your staked assets, you could earn in a year.',
     txtIfYouStake: 'If you stake {token} now, you are getting',
     txtAPYOnAll: 'APY on all {token} staking',
     lblDepositedAssets: 'My total deposited assets value',
@@ -965,12 +970,19 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       lblStake: 'Stake Olympus',
       txtStake: 'Get {apy} APY by staking your OHM',
       txtStakePictureAlt: 'Stake Olympus',
-      lblWithdraw: 'Withdraw Olympus',
+      lblWithdraw: 'Withdraw OHM',
       txtWithdraw: 'Remove your assets from Olympus fully or partially',
       txtWithdrawPictureAlt: 'Withdraw Olympus',
       lblGlobalAnalytics: 'Global analytics',
       txtGlobalAnalytics: 'All information about Olympus',
       txtGlobalAnalyticsPictureAlt: 'Global analytics',
+      txtOHMisNativeAsset:
+        'OHM is a native asset of Olympus DAO. It is a rebase token, so your ' +
+        'interest is automatically incremented into your principal amount.',
+      txtWithdrawDescription:
+        'You can withdraw the entire or partial balance. Available balance ' +
+        'consists of principal amount you deposited together with the ' +
+        'accumulated yield.',
       txtStakeDescription:
         'Once you stake your assets in Ethereum 2.0, Mover is constantly searching for the highest paying option. ' +
         'Mover does automatic rebalancing, yield collection, and capital optimization.',

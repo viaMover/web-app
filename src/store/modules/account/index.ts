@@ -49,6 +49,7 @@ export default {
     ethPrice: undefined,
     movePriceInWeth: undefined,
     usdcPriceInWeth: undefined,
+    olympusInWethPrice: undefined,
     slpPriceInWeth: undefined,
 
     //explorers

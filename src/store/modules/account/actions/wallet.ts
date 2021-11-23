@@ -15,6 +15,7 @@ import {
   getSLPPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/chain';
+import { getOlympusPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { InitExplorer } from '@/services/zerion/explorer';
 import {
   getAvatarFromPersist,
@@ -318,13 +319,22 @@ export default {
         state.networkInfo.network,
         state.provider.web3
       );
+
+      const getOlympusPriceInWETHPromise = getOlympusPriceInWETH(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
       try {
-        const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
-          getMovePriceInWethPromise,
-          getUSDCPriceInWETHPromise
-        ]);
+        const [moveInWethPrice, usdcInWethPrice, olympusInWethPrice] =
+          await Promise.all([
+            getMovePriceInWethPromise,
+            getUSDCPriceInWETHPromise,
+            getOlympusPriceInWETHPromise
+          ]);
         commit('setMovePriceInWeth', moveInWethPrice);
         commit('setUsdcPriceInWeth', usdcInWethPrice);
+        commit('setOlympusInWethPrice', olympusInWethPrice);
       } catch (e) {
         Sentry.captureException(e);
         throw e;

@@ -71,6 +71,7 @@ export type AccountStoreState = {
   movePriceInWeth: undefined | string;
   usdcPriceInWeth: undefined | string;
   slpPriceInWeth: undefined | string;
+  olympusInWethPrice: undefined | string;
 
   // explorer
   explorer: undefined | Explorer;

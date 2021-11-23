@@ -78,6 +78,15 @@ export default {
     }
     return multiply(state.usdcPriceInWeth, state.ethPrice);
   },
+  ohmNativePrice(state): string {
+    if (
+      state.olympusInWethPrice === undefined ||
+      state.ethPrice === undefined
+    ) {
+      return '0';
+    }
+    return multiply(state.olympusInWethPrice, state.ethPrice);
+  },
   slpNativePrice(state): string {
     if (state.slpPriceInWeth === undefined || state.ethPrice === undefined) {
       return '0';

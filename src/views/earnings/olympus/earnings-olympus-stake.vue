@@ -151,12 +151,33 @@ export default Vue.extend({
       gasPrices: 'gasPrices',
       ethPrice: 'ethPrice'
     }),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapState('earnings/olympus', {
+      olympusBalance: 'olympusBalance',
+      olympusAPY: 'olympusAPY'
+    }),
+    ...mapGetters('account', {
+      ohmNativePrice: 'ohmNativePrice',
+      treasuryBonusNative: 'treasuryBonusNative'
+    }),
     showBackButton(): boolean {
       return this.currentStep !== 'loader';
     },
     estimatedAnnualEarnings(): string {
-      return `~$${formatToNative(0)}`;
+      let possibleSavingsBalance = '0';
+
+      if (this.olympusBalance !== undefined) {
+        possibleSavingsBalance = this.olympusBalance;
+      }
+
+      if (possibleSavingsBalance === '0') {
+        return `~ $${formatToNative(0)}`;
+      }
+
+      const usdcNative = multiply(this.ohmNativePrice, this.ethPrice);
+      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
+      let apyNative = multiply(divide(this.olympusAPY, 100), usdcAmountNative);
+
+      return `~ $${formatToNative(apyNative)}`;
     },
     ohmAssetData(): SmallTokenInfoWithIcon {
       return getOhmAssetData(this.networkInfo.network);
