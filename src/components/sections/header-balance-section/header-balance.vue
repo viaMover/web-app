@@ -42,11 +42,7 @@
         navigate-to-name="card"
         :text="$t('card.lblCard')"
       />
-      <nav-bar-item
-        v-if="isFeatureEnabled('isMoreEnabled')"
-        navigate-to-name="home-more"
-        :text="$t('lblMore')"
-      />
+      <nav-bar-item navigate-to-name="home-more" :text="$t('lblMore')" />
     </nav-bar>
   </section>
 </template>

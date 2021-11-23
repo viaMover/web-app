@@ -6,7 +6,6 @@ export interface Globals {
   isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
   isCardEnabled: boolean;
-  isMoreEnabled: boolean;
   isNibbleShopEnabled: boolean;
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
@@ -21,7 +20,6 @@ const values: Globals = {
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isCardEnabled: false,
-  isMoreEnabled: true,
   isNibbleShopEnabled: false,
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
