@@ -324,6 +324,35 @@ const routes: Array<RouteConfig> = [
     beforeEnter: checkFeatureFlag('isNftDropsEnabled')
   },
   {
+    path: '/transactions/:txHash',
+    name: 'transaction',
+    component: () =>
+      import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
+  },
+  {
+    path: '/404',
+    name: 'not-found-route',
+    component: View404,
+    meta: {
+      skipPreloadScreen: true
+    }
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'not-found-route'
+    }
+  }
+];
+
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes
+});
+
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  router.addRoute({
     path: '/debit-card',
     component: () =>
       import(
@@ -367,34 +396,8 @@ const routes: Array<RouteConfig> = [
           )
       }
     ]
-  },
-  {
-    path: '/transactions/:txHash',
-    name: 'transaction',
-    component: () =>
-      import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
-  },
-  {
-    path: '/404',
-    name: 'not-found-route',
-    component: View404,
-    meta: {
-      skipPreloadScreen: true
-    }
-  },
-  {
-    path: '*',
-    redirect: {
-      name: 'not-found-route'
-    }
-  }
-];
-
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
-});
+  });
+}
 
 if (isFeatureEnabled('isNavigationFallbackEnabled')) {
   // detect initial navigation

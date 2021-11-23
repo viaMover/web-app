@@ -5,7 +5,7 @@
     </template>
 
     <header-balance />
-    <debit-card-section />
+    <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
     <menu-section />
 
     <template v-slot:modals>

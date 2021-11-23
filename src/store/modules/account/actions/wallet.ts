@@ -406,10 +406,11 @@ export default {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
-    const debitCardAvailableSkinsPromise = dispatch(
-      'debitCard/loadAvailableSkins',
-      true
-    );
+    const debitCardAvailableSkinsPromise = isFeatureEnabled(
+      'isDebitCardEnabled'
+    )
+      ? dispatch('debitCard/loadAvailableSkins', true)
+      : Promise.resolve();
 
     const promisesResults = await Promise.allSettled([
       savingsFreshData,

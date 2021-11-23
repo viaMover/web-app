@@ -22,8 +22,7 @@ const store = new Vuex.Store<RootStoreState>({
   mutations: mutations,
   modules: {
     account,
-    modals,
-    debitCard
+    modals
   }
 });
 
@@ -49,6 +48,10 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
   import(
     /* webpackChunkName: "governance-store" */ './modules/governance'
   ).then((module) => store.registerModule('governance', module.default));
+}
+
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  store.registerModule('debitCard', debitCard);
 }
 
 export default store;
