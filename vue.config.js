@@ -3,5 +3,8 @@ module.exports = {
   transpileDependencies: ['web3modal-vue'],
   css: {
     sourceMap: true
+  },
+  configureWebpack: {
+    devtool: 'source-map'
   }
 };

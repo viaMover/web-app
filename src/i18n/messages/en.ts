@@ -816,7 +816,7 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
       'voting is not started yet': 'Oh no. Voting is not started yet',
       'voting is closed': 'Oh no. Voting is already closed',
       'wrong timestamp':
-        "Oh no. The request too long, or our system is out of sync. Looks like you'll have to try again later"
+        "Oh no. The request too long, or your system is out of sync. Looks like you'll have to try again later"
     },
     btnTogglePreview: 'Toggle preview',
     txtTogglePreview: 'Toggle markdown preview',

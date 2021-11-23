@@ -18,7 +18,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: true
       },
       [Modal.SavingsWithdraw]: {
         isDisplayed: false,
@@ -26,7 +27,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: true
       },
       [Modal.SearchToken]: {
         isDisplayed: false,
@@ -34,7 +36,8 @@ export default {
         stackDepth: -1,
         waitForResult: true,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: false
       },
       [Modal.SearchSkin]: {
         isDisplayed: false,
@@ -50,7 +53,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: true
       },
       [Modal.Transaction]: {
         isDisplayed: false,
@@ -58,7 +62,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: false
       },
       [Modal.TreasuryIncreaseBoost]: {
         isDisplayed: false,
@@ -66,7 +71,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: true
       },
       [Modal.TreasuryDecreaseBoost]: {
         isDisplayed: false,
@@ -74,7 +80,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: true
       },
       [Modal.TreasuryClaimAndBurn]: {
         isDisplayed: false,
@@ -82,7 +89,8 @@ export default {
         stackDepth: -1,
         waitForResult: false,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: true
       }
     },
     stack: []

@@ -152,6 +152,26 @@ export default {
   setGasUpdating(state, val: boolean): void {
     state.gasUpdating = val;
   },
+  setGasUpdaterHandle(state, handle: number): void {
+    state.gasUpdaterHandle = handle;
+  },
+  clearGasUpdaterHandle(state): void {
+    window.clearTimeout(state.gasUpdaterHandle);
+    state.gasUpdaterHandle = undefined;
+  },
+  pushGasListenerCaller(state, caller: string): void {
+    state.gasUpdaterCallers = state.gasUpdaterCallers.concat(caller);
+  },
+  popGasListenerCaller(state, caller: string): void {
+    const idx = state.gasUpdaterCallers.lastIndexOf(caller);
+    if (idx < 0) {
+      return;
+    }
+
+    const newGasUpdaterCallers = [...state.gasUpdaterCallers];
+    newGasUpdaterCallers.splice(idx, 1);
+    state.gasUpdaterCallers = newGasUpdaterCallers;
+  },
   setAvatars(state, avatars: Array<Avatar>): void {
     state.avatars = avatars;
   },

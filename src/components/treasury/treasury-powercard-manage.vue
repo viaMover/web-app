@@ -66,6 +66,7 @@ import {
   MAX_ACTIVE_TIME,
   MAX_COOLDOWN_TIME
 } from '@/services/chain/treasury/powercard';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { unstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstake';
 import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstakeEstimate';
 
@@ -89,6 +90,7 @@ export default Vue.extend({
     SecondaryPage,
     LoaderForm
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       actionError: undefined as string | undefined,
