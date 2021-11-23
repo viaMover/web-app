@@ -11,7 +11,6 @@ export interface Globals {
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
   isTreasuryMonthlyChartEnabled: boolean;
-  isNavigationFallbackEnabled: boolean;
 }
 
 const values: Globals = {
@@ -26,8 +25,7 @@ const values: Globals = {
   isNibbleShopEnabled: false,
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
-  isTreasuryMonthlyChartEnabled: false,
-  isNavigationFallbackEnabled: true
+  isTreasuryMonthlyChartEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
