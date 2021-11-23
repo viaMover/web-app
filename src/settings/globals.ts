@@ -1,19 +1,14 @@
 export interface Globals {
   isSavingsOverviewSomeFieldsEnabled: boolean;
   isSwapPassportEnabled: boolean;
-  isVaultsEnabled: boolean;
   isReleaseRadarEnabled: boolean;
   isDebitCardEnabled: boolean;
-  isGovernanceEnabled: boolean;
   isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
-  isMoreEnabled: boolean;
   isNibbleShopEnabled: boolean;
-  isNftDropsEnabled: boolean;
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
   isTreasuryMonthlyChartEnabled: boolean;
-  isNavigationFallbackEnabled: boolean;
   isDebitCardTopUpEnabled: boolean;
   isDebitCardChangeSkinEnabled: boolean;
 }
@@ -21,19 +16,14 @@ export interface Globals {
 const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
-  isVaultsEnabled: true,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: false,
-  isGovernanceEnabled: true,
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
-  isMoreEnabled: true,
   isNibbleShopEnabled: false,
-  isNftDropsEnabled: true,
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
-  isNavigationFallbackEnabled: true,
   isDebitCardTopUpEnabled: false,
   isDebitCardChangeSkinEnabled: false
 };

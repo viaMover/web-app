@@ -23,8 +23,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/more',
     name: 'home-more',
-    component: HomeMore,
-    beforeEnter: checkFeatureFlag('isMoreEnabled')
+    component: HomeMore
   },
   {
     path: '/connect-wallet',
@@ -230,8 +229,7 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
           )
       }
-    ],
-    beforeEnter: checkFeatureFlag('isGovernanceEnabled')
+    ]
   },
   {
     path: '/nibble-shop',
@@ -320,8 +318,7 @@ const routes: Array<RouteConfig> = [
             /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
           )
       }
-    ],
-    beforeEnter: checkFeatureFlag('isNftDropsEnabled')
+    ]
   },
   {
     path: '/transactions/:txHash',
@@ -399,27 +396,25 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
   });
 }
 
-if (isFeatureEnabled('isNavigationFallbackEnabled')) {
-  // detect initial navigation
-  let isInitialNavigation = false;
-  router.beforeEach((to, from, next) => {
-    isInitialNavigation = from === VueRouter.START_LOCATION;
-    next();
-  });
+// detect initial navigation
+let isInitialNavigation = false;
+router.beforeEach((to, from, next) => {
+  isInitialNavigation = from === VueRouter.START_LOCATION;
+  next();
+});
 
-  // save original router.back() implementation bound to the initial router
-  const originalRouterBack = router.back.bind(router);
+// save original router.back() implementation bound to the initial router
+const originalRouterBack = router.back.bind(router);
 
-  // substitute with the custom implementation
-  router.back = async (): Promise<void> => {
-    if (isInitialNavigation && router.currentRoute.name !== 'home') {
-      await router.replace({ name: 'home' });
-      return;
-    }
+// substitute with the custom implementation
+router.back = async (): Promise<void> => {
+  if (isInitialNavigation && router.currentRoute.name !== 'home') {
+    await router.replace({ name: 'home' });
+    return;
+  }
 
-    originalRouterBack();
-  };
-}
+  originalRouterBack();
+};
 
 router.beforeEach((to, from, next) => {
   const { lang } = to.params;
