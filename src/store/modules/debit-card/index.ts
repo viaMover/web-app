@@ -18,6 +18,7 @@ export default {
     eventHistory: [],
     isLoading: false,
     loadingPromise: undefined,
+    isInitialized: false,
     email: undefined,
     emailHash: undefined,
     emailSignature: undefined,

@@ -3,7 +3,6 @@ export interface Globals {
   isSwapPassportEnabled: boolean;
   isVaultsEnabled: boolean;
   isReleaseRadarEnabled: boolean;
-  isDebitCardEnabled: boolean;
   isGovernanceEnabled: boolean;
   isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
@@ -15,6 +14,7 @@ export interface Globals {
   isTreasuryMonthlyChartEnabled: boolean;
   isNavigationFallbackEnabled: boolean;
   isDebitCardTopUpEnabled: boolean;
+  isDebitCardChangeSkinEnabled: boolean;
 }
 
 const values: Globals = {
@@ -22,7 +22,6 @@ const values: Globals = {
   isSwapPassportEnabled: false,
   isVaultsEnabled: true,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: true,
   isGovernanceEnabled: true,
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
@@ -33,7 +32,8 @@ const values: Globals = {
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
   isNavigationFallbackEnabled: true,
-  isDebitCardTopUpEnabled: false
+  isDebitCardTopUpEnabled: false,
+  isDebitCardChangeSkinEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>

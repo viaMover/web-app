@@ -28,6 +28,8 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
+import { isFeatureEnabled } from '@/settings';
+
 import { DebitCardManageCard, DebitCardMyCard } from '@/components/debit-card';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal, SearchSkinModal } from '@/components/modals';
@@ -48,6 +50,15 @@ export default Vue.extend({
       cardState: 'cardState'
     }),
     showManageCard(): boolean {
+      if (
+        !(
+          isFeatureEnabled('isDebitCardTopUpEnabled') ||
+          isFeatureEnabled('isDebitCardChangeSkinEnabled')
+        )
+      ) {
+        return false;
+      }
+
       return ['active', 'frozen', 'expired'].includes(this.cardState);
     }
   },

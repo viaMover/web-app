@@ -13,6 +13,9 @@ export default {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
+  setIsInitialized(state, isInitialized: boolean): void {
+    state.isInitialized = isInitialized;
+  },
   setError(state, error: string | Error | undefined): void {
     state.error = error;
   },

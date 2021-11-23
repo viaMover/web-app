@@ -5,8 +5,7 @@
     </template>
 
     <header-balance />
-    <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-    <savings-deposit-card-section />
+    <debit-card-section />
     <menu-section />
 
     <template v-slot:modals>
@@ -35,8 +34,7 @@ import {
 import {
   DebitCardSection,
   HeaderBalance,
-  MenuSection,
-  SavingsDepositCardSection
+  MenuSection
 } from '@/components/sections';
 import { TransactionList } from '@/components/transaction-list';
 
@@ -45,7 +43,6 @@ import '@/styles/_general.less';
 export default Vue.extend({
   name: 'Home',
   components: {
-    SavingsDepositCardSection,
     DebitCardSection,
     MenuSection,
     ContentWrapper,

@@ -84,10 +84,193 @@ const messages: VueI18n.LocaleMessageObject = {
   debitCard: {
     icon: '💳',
     lblDebitCard: 'Debit Card',
-    lblDebitCardHeading: 'Great news!',
-    txtDebitCard:
-      'You can now order the Beautiful debit card brought you by Mover and Trastra',
-    btnOrderDebitCard: 'Order the card'
+    lblDebitCardHeading: 'It’s here!',
+    txtDebitCard: 'The beautiful card is here! Order yours now.',
+    btnOrderDebitCard: 'Order the card',
+    lblMyCard: 'My Card',
+    lblBeautifulCard: 'Beautiful card',
+    txtBeautifulCard:
+      'The beautiful card is brought to you by Mover and our partner Trastra',
+    txtBeautifulCardBenifits: 'Your Beautiful card has the following benefits',
+    lblFree: 'Free',
+    txtFree: 'Crypto to EUR for free',
+    lblNoLimit: 'No limit',
+    txtNoLimit: 'No monthly or annual limit',
+    lblEUR: 'EUR',
+    txtEUR: 'Personal EUR IBAN',
+    lblYourEmailAddress: 'Your email address',
+    txtYourEmailAddressPlaceholder: 'your@email.com',
+    lblYourPhoneNumber: 'Your phone number',
+    txtYourPhoneNumberPlaceholder: '+441234567890',
+    lblYourGender: {
+      label: 'Your gender',
+      placeholder: 'Choose gender',
+      male: 'Male',
+      female: 'Female'
+    },
+    lblYourTitle: {
+      label: 'Your title',
+      placeholder: 'Choose title',
+      mr: 'Mr.',
+      mrs: 'Mrs.',
+      miss: 'Miss',
+      dr: 'Dr.'
+    },
+    lblOrderCard: 'gm! Order a card',
+    txtOrderCard:
+      'You can now order a beautiful card brought to you by our partner Trastra. ' +
+      'Keep in mind, this is a beautiful card, meaning that this type of a card is an “alpha” version. ' +
+      'It also means that Mover doesn’t store or collect your personal data, it is handled securely by licensed partner.',
+    lblYourHonorificPrefix: 'Your honorific prefix',
+    txtYourHonorificPrefixPlaceholder: 'Mr. or Ms. or Mx.',
+    lblYourFamilyName: 'Your last name',
+    txtYourFamilyNamePlaceholder: 'Movemoto',
+    lblYourGivenName: 'Your first name',
+    txtYourGivenNamePlaceholder: 'Antoshi',
+    lblYourDateOfBirth: 'Date of birth',
+    lblYourSecurityCode: 'Security code',
+    txtYourSecurityCodePlaceholder: '1234',
+    btnValidateOrOrderCard: 'Validate or order card',
+    btnOrderCard: 'Order beautiful card',
+    lblValidateYourNumber: 'Validate your number',
+    txtEnterSecurityCode: 'Enter a security code your received in the SMS',
+    btnChangePhoneNumber: 'Change your phone number',
+    lblNotAvailable: 'n/a',
+    lblManageCard: 'Manage Card',
+    lblCardTopUp: 'Card top up',
+    txtCardTopUp: 'Top up your debit card with crypto',
+    lblChangeSkin: 'Change skin',
+    txtChangeSkin: 'Your digital NFT card skin',
+    lblSkins: 'Skins',
+    txtSymbolImageAlt: '{name} skin image',
+    state: {
+      active: 'Active',
+      order_now: 'Order now',
+      pending: 'Pending',
+      frozen: 'Frozen',
+      expired: 'Expired'
+    },
+    txtCardStatus: {
+      orderNow: 'Order now',
+      pending: 'Pending',
+      active: 'Active',
+      frozen: 'Frozen',
+      expired: 'Expired'
+    },
+    txtHistoryMessage: {
+      order_process_started:
+        'You have started your Beautiful card order process',
+      kyc_process_started: 'You have started your KYC process. Beautiful day!',
+      documents_verified: 'Your documents have been verified. Lovely!',
+      card_shipped: 'Your Beautiful card has been shipped to you'
+    },
+    txtVisaDebitCard: 'Visa Debit Card',
+    lblLast4Digits: 'Last 4-digits',
+    lblExpiryDate: 'Expiry date',
+    lblIBAN: 'IBAN',
+    lblBIC: 'BIC',
+    kycLink: {
+      description:
+        'You have successfully started your Beautiful card order process. Here is your {0}',
+      link: 'KYC link'
+    },
+    lblProceedAfterKyc: 'Proceed',
+    topUp: {
+      lblTopUp: 'Card top up',
+      txtTopUp:
+        'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
+      txtApproximateEUREstimation: 'That would be approximately in Euro',
+      lblWhatDoWeTopUp: 'What do we top up',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      btnChooseAmount: 'Choose the amount to top up',
+      txtNativeAsset:
+        '{name} is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
+      txtNonNativeAsset:
+        'You chose neither a non ETH asset nor an USDC asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
+      lblReviewYourTopUp: 'Review your top up',
+      lblAmountWeTopUpIn: 'Amount we top up in',
+      lblAndItWillBeTotalOf: 'And it will be total of',
+      btnTopUpCard: 'Top up Beautiful card'
+    },
+    changeSkin: {
+      lblDigitalCardSkin: 'Digital card skin',
+      txtDigitalCardSkin:
+        'If you hold a special NFT skin, you can change it at any point of time for free. There is no expiry date or limitations. Make it your card!',
+      lblWhatSkinDoWeChoose: 'What skin do we choose',
+      skins: {
+        default: {
+          name: 'Default skin',
+          description: 'This is a default skin. It means that you are a mover!'
+        },
+        'cat-ass': {
+          name: 'Cat Ass',
+          description:
+            'You see the world from a non-conventional angle. You are different. We are different.'
+        },
+        'shiny-one': {
+          name: 'Shiny one'
+        },
+        gorilla: {
+          name: 'Gorilla'
+        },
+        badge: {
+          name: 'Badge'
+        },
+        horns: {
+          name: 'Horns'
+        },
+        txtSkinAlt: '{name} skin image'
+      },
+      btnChooseAnotherCardSkin: 'Choose another card skin',
+      btnApplySkin: 'Apply skin',
+      lblSkin: 'Skin',
+      lblSearchAnySkin: 'Search any skin',
+      lblAvailableSkins: 'Available skins',
+      lblWeCouldNotFindThisSkinAnywhere: "We couldn't find this skin anywhere"
+    },
+    errors: {
+      default: 'Oh no. Something went wrong',
+      email: {
+        required: 'Email is required',
+        invalid: 'Enter a valid email address'
+      },
+      phoneNumber: {
+        required: 'Phone number is required',
+        minLength:
+          'Phone number length should be at least {minLength} symbols (including +)',
+        maxLength:
+          'Phone number length should be {maxLength} symbols maximum (including +)'
+      },
+      familyName: {
+        required: 'Last name is required',
+        invalid:
+          "Last name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
+      },
+      givenName: {
+        required: 'First name is required',
+        invalid:
+          "First name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
+      },
+      dateOfBirth: {
+        required: 'Date of birth is required',
+        invalid: 'Value should represent a valid date (e.g. 1998/03/18)'
+      },
+      code: {
+        required: 'Security code is required',
+        numeric: 'Security code should contain digits only (0-9)',
+        length: 'Security code should contain exactly {length} symbols'
+      },
+      gender: {
+        required: 'Gender is requied'
+      },
+      title: {
+        required: 'Title is required'
+      },
+      alreadyRegistered: 'This email is already used',
+      badPhoneSyntax:
+        'Phone number should be valid (e.g. @:debitCard.txtYourPhoneNumberPlaceholder)',
+      incorrectCode: 'Security code is invalid. Please try again'
+    }
   },
   savingsDepositCard: {
     icon: '💰',
@@ -899,196 +1082,6 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
           'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
           'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
       }
-    }
-  };
-}
-
-if (isFeatureEnabled('isDebitCardEnabled')) {
-  messages.debitCard = {
-    ...(messages.debitCard as Record<string, LocaleMessage>),
-    lblMyCard: 'My Card',
-    lblBeautifulCard: 'Beautiful card',
-    txtBeautifulCard:
-      'The beautiful card is brought to you by Mover and our partner Trastra',
-    txtBeautifulCardBenifits: 'Your Beautiful card has the following benefits',
-    lblFree: 'Free',
-    txtFree: 'Crypto to EUR for free',
-    lblNoLimit: 'No limit',
-    txtNoLimit: 'No monthly or annual limit',
-    lblEUR: 'EUR',
-    txtEUR: 'Personal EUR IBAN',
-    lblYourEmailAddress: 'Your email address',
-    txtYourEmailAddressPlaceholder: 'your@email.com',
-    lblYourPhoneNumber: 'Your phone number',
-    txtYourPhoneNumberPlaceholder: '+441234567890',
-    lblYourGender: {
-      label: 'Your gender',
-      placeholder: 'Choose gender',
-      male: 'Male',
-      female: 'Female'
-    },
-    lblYourTitle: {
-      label: 'Your title',
-      placeholder: 'Choose title',
-      mr: 'Mr.',
-      mrs: 'Mrs.',
-      miss: 'Miss',
-      dr: 'Dr.'
-    },
-    lblOrderCard: 'gm! Order a card',
-    txtOrderCard:
-      'You can now order a beautiful card brought to you by our partner Trastra. ' +
-      'Keep in mind, this is a beautiful card, meaning that this type of a card is an “alpha” version. ' +
-      'It also means that Mover doesn’t store or collect your personal data, it is handled securely by licensed partner.',
-    lblYourHonorificPrefix: 'Your honorific prefix',
-    txtYourHonorificPrefixPlaceholder: 'Mr. or Ms. or Mx.',
-    lblYourFamilyName: 'Your last name',
-    txtYourFamilyNamePlaceholder: 'Movemoto',
-    lblYourGivenName: 'Your first name',
-    txtYourGivenNamePlaceholder: 'Antoshi',
-    lblYourDateOfBirth: 'Date of birth',
-    lblYourSecurityCode: 'Security code',
-    txtYourSecurityCodePlaceholder: '1234',
-    btnValidateOrOrderCard: 'Validate or order card',
-    btnOrderCard: 'Order beautiful card',
-    lblValidateYourNumber: 'Validate your number',
-    txtEnterSecurityCode: 'Enter a security code your received in the SMS',
-    btnChangePhoneNumber: 'Change your phone number',
-    lblNotAvailable: 'n/a',
-    lblManageCard: 'Manage Card',
-    lblCardTopUp: 'Card top up',
-    txtCardTopUp: 'Top up your debit card with crypto',
-    lblChangeSkin: 'Change skin',
-    txtChangeSkin: 'Your digital NFT card skin',
-    lblSkins: 'Skins',
-    txtSymbolImageAlt: '{name} skin image',
-    state: {
-      active: 'Active',
-      order_now: 'Order now',
-      pending: 'Pending',
-      frozen: 'Frozen',
-      expired: 'Expired'
-    },
-    txtCardStatus: {
-      orderNow: 'Order now',
-      pending: 'Pending',
-      active: 'Active',
-      frozen: 'Frozen',
-      expired: 'Expired'
-    },
-    txtHistoryMessage: {
-      order_process_started:
-        'You have started your Beautiful card order process',
-      kyc_process_started: 'You have started your KYC process. Beautiful day!',
-      documents_verified: 'Your documents have been verified. Lovely!',
-      card_shipped: 'Your Beautiful card has been shipped to you'
-    },
-    txtVisaDebitCard: 'Visa Debit Card',
-    lblLast4Digits: 'Last 4-digits',
-    lblExpiryDate: 'Expiry date',
-    lblIBAN: 'IBAN',
-    lblBIC: 'BIC',
-    kycLink: {
-      description:
-        'You have successfully started your Beautiful card order process. Here is your {0}',
-      link: 'KYC link'
-    },
-    lblProceedAfterKyc: 'Proceed',
-    topUp: {
-      lblTopUp: 'Card top up',
-      txtTopUp:
-        'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
-      txtApproximateEUREstimation: 'That would be approximately in Euro',
-      lblWhatDoWeTopUp: 'What do we top up',
-      lblAmountWeDepositIn: 'Amount we deposit in',
-      btnChooseAmount: 'Choose the amount to top up',
-      txtNativeAsset:
-        '{name} is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
-      txtNonNativeAsset:
-        'You chose neither a non ETH asset nor an USDC asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
-      lblReviewYourTopUp: 'Review your top up',
-      lblAmountWeTopUpIn: 'Amount we top up in',
-      lblAndItWillBeTotalOf: 'And it will be total of',
-      btnTopUpCard: 'Top up Beautiful card'
-    },
-    changeSkin: {
-      lblDigitalCardSkin: 'Digital card skin',
-      txtDigitalCardSkin:
-        'If you hold a special NFT skin, you can change it at any point of time for free. There is no expiry date or limitations. Make it your card!',
-      lblWhatSkinDoWeChoose: 'What skin do we choose',
-      skins: {
-        default: {
-          name: 'Default skin',
-          description: 'This is a default skin. It means that you are a mover!'
-        },
-        'cat-ass': {
-          name: 'Cat Ass',
-          description:
-            'You see the world from a non-conventional angle. You are different. We are different.'
-        },
-        'shiny-one': {
-          name: 'Shiny one'
-        },
-        gorilla: {
-          name: 'Gorilla'
-        },
-        badge: {
-          name: 'Badge'
-        },
-        horns: {
-          name: 'Horns'
-        },
-        txtSkinAlt: '{name} skin image'
-      },
-      btnChooseAnotherCardSkin: 'Choose another card skin',
-      btnApplySkin: 'Apply skin',
-      lblSkin: 'Skin',
-      lblSearchAnySkin: 'Search any skin',
-      lblAvailableSkins: 'Available skins',
-      lblWeCouldNotFindThisSkinAnywhere: "We couldn't find this skin anywhere"
-    },
-    errors: {
-      default: 'Oh no. Something went wrong',
-      email: {
-        required: 'Email is required',
-        invalid: 'Enter a valid email address'
-      },
-      phoneNumber: {
-        required: 'Phone number is required',
-        minLength:
-          'Phone number length should be at least {minLength} symbols (including +)',
-        maxLength:
-          'Phone number length should be {maxLength} symbols maximum (including +)'
-      },
-      familyName: {
-        required: 'Last name is required',
-        invalid:
-          "Last name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
-      },
-      givenName: {
-        required: 'First name is required',
-        invalid:
-          "First name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
-      },
-      dateOfBirth: {
-        required: 'Date of birth is required',
-        invalid: 'Value should represent a valid date (e.g. 1998/03/18)'
-      },
-      code: {
-        required: 'Security code is required',
-        numeric: 'Security code should contain digits only (0-9)',
-        length: 'Security code should contain exactly {length} symbols'
-      },
-      gender: {
-        required: 'Gender is requied'
-      },
-      title: {
-        required: 'Title is required'
-      },
-      alreadyRegistered: 'This email is already used',
-      badPhoneSyntax:
-        'Phone number should be valid (e.g. @:debitCard.txtYourPhoneNumberPlaceholder)',
-      incorrectCode: 'Security code is invalid. Please try again'
     }
   };
 }

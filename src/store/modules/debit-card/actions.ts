@@ -19,6 +19,7 @@ import {
   getAvailableSkinsFromPersist,
   getCurrentSkinFromPersist,
   getEmailHashFromPersist,
+  isFeatureEnabled,
   setAvailableSkinsToPersist,
   setCurrentSkinToPersist,
   setEmailHashToPersist
@@ -86,6 +87,7 @@ export default {
             commit('setCardState', 'order_now');
             commit('setOrderState', undefined);
             commit('setIsLoading', false);
+            commit('setIsInitialized', true);
             commit('setError', undefined);
             return;
           }
@@ -137,6 +139,7 @@ export default {
         await dispatch('handleInfoResult', res.result);
 
         commit('setIsLoading', false);
+        commit('setIsInitialized', true);
       } catch (error) {
         console.error('failed to load debit card module info', error);
         Sentry.captureException(error);
@@ -158,6 +161,12 @@ export default {
     { state, commit, rootState },
     refetch = false
   ): Promise<void> {
+    // TODO remove compatibility measures
+    if (!isFeatureEnabled('isDebitCardChangeSkinEnabled')) {
+      commit('setCurrentSkin', defaultSkin);
+      return;
+    }
+
     if (!refetch && state.currentSkin !== undefined) {
       return;
     }
@@ -232,6 +241,12 @@ export default {
     { state, commit, rootState },
     refetch = false
   ): Promise<void> {
+    // TODO remove compatibility measures
+    if (!isFeatureEnabled('isDebitCardChangeSkinEnabled')) {
+      commit('setAvailableSkins', [defaultSkin]);
+      return;
+    }
+
     if (!refetch && state.availableSkins !== undefined) {
       return;
     }
@@ -314,6 +329,11 @@ export default {
     { commit, rootState },
     skinToBeApplied: Skin
   ): Promise<void> {
+    // TODO remove compatibility measures
+    if (!isFeatureEnabled('isDebitCardChangeSkinEnabled')) {
+      return;
+    }
+
     commit('setCurrentSkin', skinToBeApplied);
     if (rootState.account?.currentAddress === undefined) {
       return;

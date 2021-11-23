@@ -4,7 +4,7 @@
     :description="$t('debitCard.txtDebitCard')"
     :icon="$t('debitCard.icon')"
     :image="image"
-    :opened="isInfoVisible"
+    :opened="isVisible"
     :title="$t('debitCard.lblDebitCardHeading')"
     wrapper-class="general-desktop__menu-wrapper-order"
     @button-click="handleButtonClick"
@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { Card } from '@/components/controls';
 
@@ -27,16 +27,31 @@ export default Vue.extend({
   },
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      image: {
+        src: require('@/assets/images/banner-card-main@1x.png'),
+        alt: this.$t('debitCard.lblDebitCard'),
+        sources: [
+          {
+            src: require('@/assets/images/banner-card-main@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor
     };
   },
   computed: {
     ...mapState('account', { isInfoVisible: 'isDebitCardSectionVisible' }),
-    ...mapGetters('debitCard', {
-      currentSkin: 'currentSkin'
+    ...mapState('debitCard', {
+      cardState: 'cardState',
+      isCardStoreInitialized: 'isInitialized'
     }),
-    image(): PictureDescriptor {
-      return this.currentSkin.picture;
+    isVisible(): boolean {
+      return (
+        this.isCardStoreInitialized &&
+        this.cardState === 'order_now' &&
+        this.isInfoVisible
+      );
     }
   },
   async mounted() {

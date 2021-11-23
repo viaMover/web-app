@@ -556,10 +556,7 @@
 
 .general-desktop__menu-wrapper-order {
   margin-top: 40px;
-  background: -webkit-gradient(linear, right top, left top, from(#404040), to(#1d1d1d));
-  background: -o-linear-gradient(right, #404040 0%, #1d1d1d 100%);
-  background: linear-gradient(270deg, #404040 0%, #1d1d1d 100%);
-  -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(0deg, #100a20, #100a20);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   padding: 24px 24px 28px;
@@ -583,13 +580,17 @@
 }
 
 .general-desktop__menu-wrapper-order .card__info-description h2 {
-  color: #cbf851;
+  font-size: 24px;
+  line-height: 40px;
+  color: #fff;
+  @font-bold();
 }
 
 .general-desktop__menu-wrapper-order .card__info-description p {
-  font-family: 'Medium', sans-serif;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  line-height: 22px;
+  @font-medium();
 }
 
 .general-desktop__menu-wrapper-order .card__info-icon {
@@ -600,7 +601,7 @@
 
 .general-desktop__menu-wrapper-order .card__info-icon picture img {
   display: block;
-  width: 120px;
+  height: 120px;
 }
 
 .general-desktop__menu-wrapper-order .card__buttons {
@@ -608,12 +609,12 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  margin-top: 10px;
+  margin-top: 24px;
 }
 
 .general-desktop__menu-wrapper-order .card__buttons .black-link {
   color: #000;
-  background-color: #cbf851;
+  background-color: #efff00;
 }
 
 .general-desktop__menu-wrapper-order .card__buttons .close-button {
@@ -655,7 +656,6 @@
   -webkit-justify-content: space-between;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  height: 86px;
 }
 
 .general-desktop__menu-wrapper-deposit .card__info-description {
@@ -690,6 +690,7 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  margin-top: 24px;
 }
 
 .general-desktop__menu-wrapper-deposit .card__buttons .black-link {
@@ -1205,4 +1206,8 @@
   line-height: 24px;
   color: #000;
   margin-left: 16px;
+}
+
+.general-desktop__menu {
+  padding-bottom: 80px;
 }

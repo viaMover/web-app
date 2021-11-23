@@ -10,6 +10,7 @@ import { PictureDescriptor } from '@/components/html5';
 
 export type DebitCardStoreState = {
   isLoading: boolean;
+  isInitialized: boolean;
   error: string | Error | undefined;
   loadingPromise: Promise<void> | undefined;
 

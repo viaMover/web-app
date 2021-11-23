@@ -5,15 +5,11 @@
         <menu-list-emoji-card-item
           :description="debitCardDescription"
           :description-class="debitCardDescriptionClass"
-          :disabled="!isFeatureEnabled('isDebitCardEnabled')"
           navigate-to-name="debit-card-manage"
           pic="BeautifulCard"
           :title="$t('menu.lblBeautifulCard')"
         >
-          <template
-            v-if="isFeatureEnabled('isDebitCardEnabled')"
-            v-slot:picture
-          >
+          <template v-slot:picture>
             <pu-skeleton
               v-if="isDebitCardInfoLoading"
               class="image"
@@ -124,16 +120,14 @@ export default Vue.extend({
       'treasuryBonusNative',
       'treasuryStakedBalanceNative'
     ]),
-    ...(isFeatureEnabled('isDebitCardEnabled') &&
-      mapGetters('debitCard', {
-        debitCardCurrentSkin: 'currentSkin',
-        debitCardStateText: 'cardStateText'
-      })),
-    ...(isFeatureEnabled('isDebitCardEnabled') &&
-      mapState('debitCard', {
-        isDebitCardInfoLoading: 'isLoading',
-        debitCardState: 'cardState'
-      })),
+    ...mapGetters('debitCard', {
+      debitCardCurrentSkin: 'currentSkin',
+      debitCardStateText: 'cardStateText'
+    }),
+    ...mapState('debitCard', {
+      isDebitCardInfoLoading: 'isLoading',
+      debitCardState: 'cardState'
+    }),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     },
@@ -145,10 +139,6 @@ export default Vue.extend({
       return `$${formatToNative(treasuryAllBalance)}`;
     },
     debitCardDescription(): string {
-      if (!isFeatureEnabled('isDebitCardEnabled')) {
-        return this.$t('menu.lblComingSoon') as string;
-      }
-
       if (this.isDebitCardInfoLoading) {
         return '';
       }
@@ -156,10 +146,6 @@ export default Vue.extend({
       return this.debitCardStateText;
     },
     debitCardDescriptionClass(): string {
-      if (!isFeatureEnabled) {
-        return '';
-      }
-
       if (['frozen', 'expired'].includes(this.debitCardState)) {
         return 'error';
       }
@@ -168,17 +154,10 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    if (
-      isFeatureEnabled('isDebitCardEnabled') &&
-      this.loadDebitCardInfo !== undefined
-    ) {
-      await this.loadDebitCardInfo();
-    }
+    await this.loadDebitCardInfo();
   },
   methods: {
-    isFeatureEnabled,
-    ...(isFeatureEnabled('isDebitCardEnabled') &&
-      mapActions('debitCard', { loadDebitCardInfo: 'loadInfo' })),
+    ...mapActions('debitCard', { loadDebitCardInfo: 'loadInfo' }),
     async openDepositInSavings(): Promise<void> {
       await this.$router.push({
         name: 'savings-deposit'
@@ -188,7 +167,8 @@ export default Vue.extend({
       await this.$router.push({
         name: 'treasury-increase'
       });
-    }
+    },
+    isFeatureEnabled
   }
 });
 </script>

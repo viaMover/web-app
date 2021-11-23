@@ -23,6 +23,7 @@
         </template>
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
+        v-if="isFeatureEnabled('isDebitCardChangeSkinEnabled')"
         :description="$t('debitCard.txtChangeSkin')"
         navigate-to="debit-card-change-skin"
         :title="$t('debitCard.lblChangeSkin')"
