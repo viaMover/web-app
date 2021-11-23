@@ -45,7 +45,8 @@ export default {
         stackDepth: -1,
         waitForResult: true,
         payload: undefined,
-        resolver: undefined
+        resolver: undefined,
+        needGasListener: false
       },
       [Modal.Swap]: {
         isDisplayed: false,
