@@ -246,8 +246,6 @@ export default Vue.extend({
             id: createdProposal.id
           }
         });
-
-        this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
@@ -255,7 +253,6 @@ export default Vue.extend({
               `provider.errors.${error.code}`
             ).toString();
           }
-          this.isLoading = false;
           return;
         }
 
@@ -266,11 +263,11 @@ export default Vue.extend({
           this.errorText = this.$t(
             `governance.errors.${error.message}`
           ).toString();
-          this.isLoading = false;
           return;
         }
 
         this.errorText = this.$t('governance.errors.default').toString();
+      } finally {
         this.isLoading = false;
       }
     },

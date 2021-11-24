@@ -178,14 +178,12 @@ export default Vue.extend({
         });
 
         this.ipfsLink = this.formatIpfsLink(voteResult.ipfsHash);
-        this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(
               `provider.errors.${error.code}`
             ).toString();
-            this.isLoading = false;
             return;
           }
         }
@@ -197,11 +195,11 @@ export default Vue.extend({
           this.errorText = this.$t(
             `governance.errors.${error.message}`
           ).toString();
-          this.isLoading = false;
           return;
         }
 
         this.errorText = this.$t('governance.errors.default').toString();
+      } finally {
         this.isLoading = false;
       }
     },

@@ -129,14 +129,12 @@ export default Vue.extend({
       try {
         this.isLoading = true;
         await this.setEmail(this.email);
-        this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(
               `provider.errors.${error.code}`
             ).toString();
-            this.isLoading = false;
             return;
           }
         }
@@ -150,7 +148,6 @@ export default Vue.extend({
               `debitCard.errors.${error.message}`
             ) as string;
             this.scrollButtonIntoView();
-            this.isLoading = false;
             return;
           }
 
@@ -159,13 +156,13 @@ export default Vue.extend({
               `debitCard.errors.${error.message}`
             ) as string;
             this.scrollButtonIntoView();
-            this.isLoading = false;
             return;
           }
         }
 
         this.errorText = this.$t('debitCard.errors.default') as string;
         this.scrollButtonIntoView();
+      } finally {
         this.isLoading = false;
       }
     },
