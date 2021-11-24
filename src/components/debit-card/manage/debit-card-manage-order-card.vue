@@ -322,6 +322,7 @@ export default Vue.extend({
             this.errorText = this.$t(
               `provider.errors.${error.code}`
             ).toString();
+            this.scrollButtonIntoView();
             return;
           }
         }
