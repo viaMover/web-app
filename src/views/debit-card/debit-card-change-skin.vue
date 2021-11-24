@@ -21,7 +21,6 @@
               :fallback-src-list="skinImageFallbackSrcList"
               :src="skinImageSrc"
               :symbol="skinToBeApplied ? skinToBeApplied.symbol : ''"
-              wrapper-class="icon"
             />
             <div class="coin">
               <p>

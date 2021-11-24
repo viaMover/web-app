@@ -1,5 +1,5 @@
 <template>
-  <div v-if="displayOriginalImage" :class="wrapperClass">
+  <div v-if="displayOriginalImage" class="icon">
     <img
       v-fallback="imageFallbackOpts"
       :alt="$t('debitCard.txtSymbolImageAlt', { name: symbol })"
@@ -7,7 +7,7 @@
       :style="shadowStyles"
     />
   </div>
-  <div v-else :class="wrapperClass">
+  <div v-else class="icon">
     <div class="img-stub" :style="shadowStyles">
       <span>{{ truncatedSymbol }}</span>
     </div>
@@ -24,10 +24,6 @@ import { IImageFallbackOpts } from './types';
 export default Vue.extend({
   name: 'SkinImage',
   props: {
-    wrapperClass: {
-      type: String,
-      default: 'label-icon'
-    },
     id: {
       type: String,
       required: true

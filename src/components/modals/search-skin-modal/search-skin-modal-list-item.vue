@@ -6,7 +6,6 @@
         :color="item.color"
         :src="item.previewPicture.src"
         :symbol="item.symbol"
-        wrapper-class="icon"
       />
       <div class="info">
         <p>{{ item.name }}</p>
