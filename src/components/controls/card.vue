@@ -1,6 +1,6 @@
 <template>
   <transition appear name="fade">
-    <div v-if="opened" :class="wrapperClass">
+    <div v-if="opened">
       <div class="card__info">
         <div class="card__info-description">
           <h2>{{ title }}</h2>
@@ -79,10 +79,6 @@ export default Vue.extend({
     isBlackCloseBtn: {
       type: Boolean,
       default: false
-    },
-    wrapperClass: {
-      type: String,
-      default: ''
     }
   },
   methods: {

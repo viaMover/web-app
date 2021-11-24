@@ -1,12 +1,12 @@
 <template>
   <card
     :button-text="$t('debitCard.btnOrderDebitCard')"
+    class="general-desktop__menu-wrapper-order"
     :description="$t('debitCard.txtDebitCard')"
     :icon="$t('debitCard.icon')"
     :image="image"
     :opened="isVisible"
     :title="$t('debitCard.lblDebitCardHeading')"
-    wrapper-class="general-desktop__menu-wrapper-order"
     @button-click="handleButtonClick"
     @close="toggleInfo"
   />
