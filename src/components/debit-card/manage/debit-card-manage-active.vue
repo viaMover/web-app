@@ -9,23 +9,19 @@
       <statement-list class="container">
         <statement-list-item
           :description="$t('debitCard.lblLast4Digits')"
-          :value="
-            cardInfo ? cardInfo.last4Digits : $t('debitCard.lblNotAvailable')
-          "
+          :value="last4Digits"
         />
         <statement-list-item
           :description="$t('debitCard.lblExpiryDate')"
-          :value="
-            cardInfo ? cardInfo.expiryDate : $t('debitCard.lblNotAvailable')
-          "
+          :value="expiryDate"
         />
         <statement-list-item
           :description="$t('debitCard.lblIBAN')"
-          :value="cardInfo ? cardInfo.iban : $t('debitCard.lblNotAvailable')"
+          :value="iban"
         />
         <statement-list-item
           :description="$t('debitCard.lblBIC')"
-          :value="cardInfo ? cardInfo.bic : $t('debitCard.lblNotAvailable')"
+          :value="bic"
         />
       </statement-list>
     </div>
@@ -58,7 +54,35 @@ export default Vue.extend({
     }),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
-    })
+    }),
+    last4Digits(): string {
+      if (this.cardInfo === undefined) {
+        return this.$t('debitCard.lblNotAvailable') as string;
+      }
+
+      return this.cardInfo.last4Digits;
+    },
+    expiryDate(): string {
+      if (this.cardInfo === undefined) {
+        return this.$t('debitCard.lblNotAvailable') as string;
+      }
+
+      return this.cardInfo.expiryDate;
+    },
+    iban(): string {
+      if (this.cardInfo === undefined) {
+        return this.$t('debitCard.lblNotAvailable') as string;
+      }
+
+      return this.cardInfo.iban;
+    },
+    bic(): string {
+      if (this.cardInfo === undefined) {
+        return this.$t('debitCard.lblNotAvailable') as string;
+      }
+
+      return this.cardInfo.bic;
+    }
   }
 });
 </script>
