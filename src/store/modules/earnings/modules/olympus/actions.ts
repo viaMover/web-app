@@ -1,7 +1,6 @@
 import { ActionTree } from 'vuex';
 
 import { getOlympusData } from '@/services/chain';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
 import { RootStoreState } from '@/store/types';
 
 import { EarningsOlympusStoreState } from './types';
@@ -11,17 +10,25 @@ export default {
     Promise.resolve();
   },
   async loadInfo({ rootState, commit }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      return;
-    }
-
     commit('setIsLoading', true);
     try {
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
+      }
+
+      if (rootState.account?.networkInfo === undefined) {
+        throw new Error('failed to get network info');
+      }
+
+      if (rootState.account?.provider === undefined) {
+        throw new Error('failed to get provider');
+      }
+
       commit('setOlympusAPY', '7.333');
       const olympusData = await getOlympusData(
-        rootState!.account!.currentAddress!,
-        rootState!.account!.networkInfo!.network,
-        rootState!.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
       commit('setOlympusBalance', olympusData.balance);
     } finally {

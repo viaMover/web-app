@@ -1,5 +1,6 @@
 <template>
   <earnings-olympus-manage-empty v-if="!hasActiveEarnings" />
+  <earnings-olympus-manage v-else />
 </template>
 
 <script lang="ts">

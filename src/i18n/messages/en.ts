@@ -900,6 +900,7 @@ if (isFeatureEnabled('isEarningsEnabled')) {
   messages.earnings = {
     lblEarnings: 'Earnings',
     lblMyEarnings: 'My Earnings',
+    lblEarningsBalance: 'Earnings Balance',
     lblWhatDoWeDeposit: 'What do we deposit',
     lblAmountWeDepositIn: 'Amount we deposit in',
     lblWhatDoWeWithdraw: 'What do we withdraw',
