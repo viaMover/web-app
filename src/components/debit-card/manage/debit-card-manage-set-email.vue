@@ -87,10 +87,7 @@ import { email, required } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters } from 'vuex';
 
 import { DebitCardApiError } from '@/services/mover/debit-card';
-import {
-  isProviderRpcError,
-  ProviderRpcError
-} from '@/store/modules/governance/utils';
+import { isProviderRpcError } from '@/store/modules/governance/utils';
 
 import { ActionButton } from '@/components/buttons';
 import { SecondaryPage } from '@/components/layout';
@@ -135,11 +132,9 @@ export default Vue.extend({
         this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
-          const providerError = error as ProviderRpcError;
-
-          if (this.$te(`provider.errors.${providerError.code}`)) {
+          if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(
-              `provider.errors.${providerError.code}`
+              `provider.errors.${error.code}`
             ).toString();
             this.isLoading = false;
             return;

@@ -218,10 +218,7 @@ import dayjs from 'dayjs';
 
 import { DebitCardApiError } from '@/services/mover/debit-card';
 import { OrderCardParams } from '@/store/modules/debit-card/types';
-import {
-  isProviderRpcError,
-  ProviderRpcError
-} from '@/store/modules/governance/utils';
+import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { validateName } from '@/utils/validators';
 
 import { ActionButton } from '@/components/buttons';
@@ -322,11 +319,9 @@ export default Vue.extend({
         this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
-          const providerError = error as ProviderRpcError;
-
-          if (this.$te(`provider.errors.${providerError.code}`)) {
+          if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(
-              `provider.errors.${providerError.code}`
+              `provider.errors.${error.code}`
             ).toString();
             this.isLoading = false;
             return;
