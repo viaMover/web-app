@@ -86,7 +86,6 @@ export default Vue.extend({
   data() {
     return {
       modalId: ModalType.SearchToken,
-      modalClass: 'swaps__wrapper transaction__popup-wrapper',
       searchTerm: '',
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
