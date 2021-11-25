@@ -1,13 +1,13 @@
 <template>
-  <content-wrapper
-    page-container-class="general-no-wallet-desktop"
-    wrapper-class="general-no-wallet-desktop"
-  >
-    <a class="logo" href="https://viamover.com">
-      <img alt="logo" src="@/assets/images/logo.svg" />
+  <content-wrapper class="connect-wallet">
+    <a class="logo" href="https://viamover.com" rel="external">
+      <picture>
+        <img alt="logo" src="@/assets/images/logo.svg" />
+      </picture>
     </a>
-    <div class="general-no-wallet-desktop__wrapper">
-      <div class="general-no-wallet-desktop__wrapper-info">
+
+    <section class="container">
+      <div class="info">
         <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
         <i18n class="description" path="connect.txtMoverDescription" tag="p">
           <a href="https://viamover.com/terms_of_use" target="_blank">
@@ -23,10 +23,10 @@
         </button>
         <p class="text">{{ $t('connect.lblChooseProvider') }}</p>
       </div>
-      <div class="general-no-wallet-desktop__wrapper-qr">
-        <div class="qr-code">
+      <div class="image">
+        <picture class="qr-code">
           <img alt="QR code" :src="wcCode" />
-        </div>
+        </picture>
         <i18n
           class="description"
           path="connect.txtQrDescriptionPartOne"
@@ -36,7 +36,7 @@
           {{ $t('connect.txtQrDescriptionPartTwo') }}
         </i18n>
       </div>
-    </div>
+    </section>
   </content-wrapper>
 </template>
 

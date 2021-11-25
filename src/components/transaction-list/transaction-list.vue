@@ -1,23 +1,22 @@
 <template>
-  <div>
-    <form class="transaction-search-form" @submit.prevent.stop="">
+  <div class="wrapper">
+    <form class="form search" @submit.prevent.stop="">
       <input
         v-model.trim="searchTerm"
+        class="search-term"
         name="transaction-search"
         :placeholder="$t('search.lblSearchTransaction')"
         type="search"
       />
-      <button class="button-active" type="button" @click.prevent.stop="">
-        🔍
-      </button>
+      <button class="icon" type="submit">🔍</button>
     </form>
-    <div class="transactions-list">
-      <div v-if="!transactionGroups.length" class="empty-state">
-        {{ $t('lblConnectWalletTransactionHistory') }}
-      </div>
+
+    <div v-if="!transactionGroups.length" class="empty-state">
+      {{ $t('lblConnectWalletTransactionHistory') }}
+    </div>
+    <div v-else class="list">
       <transaction-group
         v-for="txGroup in filteredTransactionGroups"
-        v-else
         :key="txGroup.date"
         :heading-text="formatDate(txGroup.timeStamp)"
         :transactions="txGroup.transactions"
@@ -36,7 +35,7 @@ import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
 import { tryToGetTransactionAssetSymbol } from '@/store/modules/account/utils/transactions';
 import { isValidTxHash, sameAddress } from '@/utils/address';
-import { Transaction, TransactionTypes } from '@/wallet/types';
+import { Transaction } from '@/wallet/types';
 
 import TransactionGroup from './transaction-group.vue';
 

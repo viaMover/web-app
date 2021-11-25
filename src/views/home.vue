@@ -1,7 +1,9 @@
 <template>
-  <content-wrapper has-left-rail wrapper-class="general-desktop">
+  <content-wrapper has-left-rail>
     <template v-slot:left-rail>
-      <transaction-list />
+      <aside class="left-rail transactions">
+        <transaction-list />
+      </aside>
     </template>
 
     <header-balance />

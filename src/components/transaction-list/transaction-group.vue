@@ -1,12 +1,14 @@
 <template>
-  <div class="general-desktop__sidebar-wrapper-info">
-    <h3>{{ headingText }}</h3>
-    <transaction-item
-      v-for="tx in transactions"
-      :key="tx.uniqHash"
-      :transaction="tx"
-    ></transaction-item>
-  </div>
+  <section class="group">
+    <h2 class="header">{{ headingText }}</h2>
+    <div class="items">
+      <transaction-item
+        v-for="tx in transactions"
+        :key="tx.uniqHash"
+        :transaction="tx"
+      />
+    </div>
+  </section>
 </template>
 
 <script lang="ts">

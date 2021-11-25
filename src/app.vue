@@ -1,50 +1,51 @@
 <template>
   <div id="app">
-    <!-- <pu-skeleton-theme color="#dcdcdc">
-      <web3-modal-vue
-        ref="web3modal"
-        cache-provider
-        :provider-options="providerOptions"
-        :theme="theme"
-      />
-      <div class="dashboard">
-        <transition-group appear name="fade">
-          <preload v-show="showPreload" key="preload" />
-          <router-view v-cloak v-if="!showPreload" key="viewport" />
-        </transition-group>
-      </div>
-      <main class="dashboard-mobile">
-        <a
-          class="logo button-active"
-          href="https://viamover.com/"
-          target="_blank"
-        >
-          <img alt="logo" src="@/assets/images/logo.svg" />
-        </a>
-        <div class="g-wrapper">
-          <div class="dashboard-mobile__wrapper">
-            <div class="dashboard-mobile__wrapper-gif">
-              <video
-                autoplay="autoplay"
-                data-keepplaying="data-keepplaying"
-                loop="loop"
-                muted="muted"
-                playsinline="playsinline"
-                src="@/assets/videos/welcome.webm"
-              ></video>
+    <pu-skeleton-theme color="#dcdcdc">
+      <div class="page">
+        <web3-modal-vue
+          ref="web3modal"
+          cache-provider
+          :provider-options="providerOptions"
+          :theme="theme"
+        />
+        <transition appear name="fade">
+          <preload v-if="showPreload" key="preload" class="dashboard" />
+          <router-view v-if="!showPreload" key="viewport" class="dashboard" />
+        </transition>
+        <div class="dashboard dashboard-mobile">
+          <a
+            class="logo button-active"
+            href="https://viamover.com/"
+            rel="external"
+            target="_blank"
+          >
+            <img alt="logo" src="@/assets/images/logo.svg" />
+          </a>
+          <div class="page-content">
+            <div class="dashboard-mobile__wrapper">
+              <div class="dashboard-mobile__wrapper-gif">
+                <video
+                  autoplay="autoplay"
+                  data-keepplaying="data-keepplaying"
+                  loop="loop"
+                  muted="muted"
+                  playsinline="playsinline"
+                  src="@/assets/videos/welcome.webm"
+                ></video>
+              </div>
+              <h1>{{ $t('lblDashboardMobile') }}</h1>
+              <p>{{ $t('txtDashboardMobile') }}</p>
+              <a class="black-link button-active" href="https://viamover.com/">
+                {{ $t('btnDashboardMobile') }}
+              </a>
             </div>
-            <h1>{{ $t('lblDashboardMobile') }}</h1>
-            <p>{{ $t('txtDashboardMobile') }}</p>
-            <a class="black-link button-active" href="https://viamover.com/">
-              {{ $t('btnDashboardMobile') }}
-            </a>
           </div>
         </div>
-      </main>
-    </pu-skeleton-theme> -->
-    <div class="page">
+      </div>
+    </pu-skeleton-theme>
+    <!-- <div class="page">
       <div class="dashboard">
-        <aside class="left-rail transactions">
+        <aside v-if="isLeftRailTransactions" class="left-rail transactions">
           <div class="wrapper">
             <form class="form search" @submit.prevent="">
               <input
@@ -56,19 +57,28 @@
             </form>
 
             <div class="list">
-              <div class="group">
-                <div class="header">Today</div>
+              <section class="group">
+                <h2 class="header"><time datetime="2021-11-25">Today</time></h2>
                 <div class="items">
                   <div class="item">
-                    <img class="icon" src="@/assets/images/ETH.png" />
+                    <picture class="icon">
+                      <img
+                        :alt="$t('icon.txtPendingIconAlt')"
+                        height="38px"
+                        src="@/assets/images/ios-spinner.svg"
+                        width="38px"
+                      />
+                    </picture>
                     <div class="description">
                       <div class="title">Deposit in Savings</div>
-                      <div class="value">0.00 USDC</div>
+                      <data class="value" value="0.00">0.00 USDC</data>
                     </div>
-                    <div class="outcome">$0.00</div>
+                    <data class="outcome" value="0.00">$0.00</data>
                   </div>
                   <div class="item">
-                    <img class="icon" src="@/assets/images/USDC.png" />
+                    <div class="icon fallback">
+                      <span>XMOVE</span>
+                    </div>
                     <div class="description">
                       <div class="title">Withdraw from Treasury</div>
                       <div class="value">5.00 ETH</div>
@@ -76,39 +86,144 @@
                     <div class="outcome">-$25.000</div>
                   </div>
                 </div>
-              </div>
-              <div class="group">
-                <div class="header">Yesterday</div>
+              </section>
+              <section class="group">
+                <h2 class="header">Yesterday</h2>
                 <div class="items">
                   <div class="item">
-                    <img class="icon" src="@/assets/images/ETH.png" />
+                    <picture class="icon">
+                      <img src="@/assets/images/ETH.png" />
+                    </picture>
                     <div class="description">
-                      <div class="title">Deposit in Savings</div>
+                      <h3 class="title">Deposit in Savings</h3>
                       <div class="value">0.00 USDC</div>
                     </div>
                     <div class="outcome">$0.00</div>
                   </div>
                   <div class="item">
-                    <img class="icon" src="@/assets/images/ETH.png" />
+                    <picture class="icon">
+                      <img src="@/assets/images/ETH.png" />
+                    </picture>
                     <div class="description">
-                      <div class="title">Deposit in Savings</div>
+                      <h3 class="title">Deposit in Savings</h3>
                       <div class="value">0.00 USDC</div>
                     </div>
                     <div class="outcome">$0.00</div>
                   </div>
                   <div class="item">
-                    <img class="icon" src="@/assets/images/MOVE.png" />
+                    <picture class="icon">
+                      <source srcset="@/assets/images/MOVE@2x.png 2x" />
+                      <img
+                        alt="MOVE asset icon"
+                        height="19px"
+                        src="@/assets/images/MOVE.png"
+                        width="19px"
+                      />
+                    </picture>
                     <div class="description">
-                      <div class="title">Withdraw from Treasury</div>
+                      <h3 class="title">Withdraw from Treasury</h3>
                       <div class="value">11,984.4953 MOVE</div>
                     </div>
                     <div class="outcome">-$1100,071.11</div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
           </div>
         </aside>
+        <nav v-else class="left-rail navigation">
+          <div class="wrapper">
+            <div class="list">
+              <section class="group">
+                <h2 class="header">My first navigation block</h2>
+                <div class="items">
+                  <a class="item picture active" href="#">
+                    <picture class="icon">
+                      <source
+                        srcset="
+                          @/assets/images/governance-global-analytics@2x.png 2x
+                        "
+                      />
+                      <img
+                        alt="Hellow"
+                        src="@/assets/images/governance-global-analytics.png"
+                      />
+                    </picture>
+                    <div class="info">
+                      <h3 class="title">Go to my BeautifulCard</h3>
+                      <div class="description">Hell yeah!</div>
+                    </div>
+                  </a>
+                  <a class="item picture" href="#">
+                    <picture class="icon">
+                      <source
+                        srcset="
+                          @/assets/images/governance-global-analytics@2x.png 2x
+                        "
+                      />
+                      <img
+                        alt="Hellow"
+                        src="@/assets/images/governance-global-analytics.png"
+                      />
+                    </picture>
+                    <div class="info">
+                      <h3 class="title muted medium">Well, this is nav item</h3>
+                      <div class="description bold emphasize">
+                        Let's see what's inside this navigation item really
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </section>
+              <section class="group">
+                <h2 class="header">My second navigation block</h2>
+                <div class="items">
+                  <a class="item emoji" href="#">
+                    <div class="icon">❤</div>
+                    <h3 class="info">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Reprehenderit temporibus quidem aliquid nemo illum alias
+                      cum vitae, doloribus quae! Nihil tenetur ad fuga voluptas
+                      exercitationem optio quia quaerat ipsa necessitatibus!
+                    </h3>
+                  </a>
+                  <a class="item emoji active" href="#">
+                    <div class="icon">💛</div>
+                    <h3 class="info">Hellow 2</h3>
+                  </a>
+                </div>
+              </section>
+              <section class="group">
+                <h2 class="header">My second navigation block</h2>
+                <div class="items">
+                  <a class="item emoji" href="#">
+                    <div class="icon">❤</div>
+                    <h3 class="info">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Reprehenderit temporibus quidem aliquid nemo illum alias
+                      cum vitae, doloribus quae! Nihil tenetur ad fuga voluptas
+                      exercitationem optio quia quaerat ipsa necessitatibus!
+                    </h3>
+                  </a>
+                  <a class="item emoji active" href="#">
+                    <picture class="icon">
+                      <source
+                        srcset="
+                          @/assets/images/governance-global-analytics@2x.png 2x
+                        "
+                      />
+                      <img
+                        alt="Hellow"
+                        src="@/assets/images/governance-global-analytics.png"
+                      />
+                    </picture>
+                    <h3 class="info">Hellow 2</h3>
+                  </a>
+                </div>
+              </section>
+            </div>
+          </div>
+        </nav>
         <div class="page-content" data-page-element-id="main-content-root">
           <button
             class="button round navigation page-close-button"
@@ -299,7 +414,7 @@
           <div class="wrapper">Mobile content only</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -326,11 +441,12 @@ import { InitCallbacks } from './web3/callbacks';
 export default Vue.extend({
   name: 'App',
   components: {
-    // Preload,
-    // Web3ModalVue
+    Preload,
+    Web3ModalVue
   },
   data() {
     return {
+      isLeftRailTransactions: true,
       theme: 'light',
       providerOptions: {
         mewconnect: {

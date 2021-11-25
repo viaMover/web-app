@@ -1,0 +1,45 @@
+.page-content.connect-wallet {
+  .wrapper {
+    width: 500px;
+  }
+}
+
+.connect-wallet {
+  .logo {
+    display: block;
+    margin-bottom: 40px;
+  }
+
+  .container {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+
+    .info {
+      flex: auto;
+      margin-right: 80px;
+    }
+
+    .image {
+      flex: 0 0 240px;
+
+      .qr-code {
+        width: 240px;
+        height: $width;
+
+        img {
+          width: 240px;
+          height: $width;
+        }
+      }
+
+      .description {
+        font-size: 12px;
+        line-height: 16px;
+        color: @text-muted;
+        @font-regular();
+      }
+    }
+  }
+}

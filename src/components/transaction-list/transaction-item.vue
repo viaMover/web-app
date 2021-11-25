@@ -1,27 +1,23 @@
 <template>
-  <div class="general-desktop__sidebar-wrapper-info-item">
-    <div class="label transaction-label" @click="onClick">
-      <div v-if="isLoading" class="loader-icon">
-        <img
-          :alt="$t('icon.txtPendingIconAlt')"
-          src="@/assets/images/ios-spinner.svg"
-        />
-      </div>
-      <token-image
-        v-else
-        :address="tokenAddress"
-        :src="tokenImageSrc"
-        :symbol="tokenSymbol"
+  <a class="item" :href="txHref" rel="external nofollow" target="_blank">
+    <picture v-if="isLoading" class="icon">
+      <img
+        :alt="$t('icon.txtPendingIconAlt')"
+        src="@/assets/images/ios-spinner.svg"
       />
-      <div class="label-info">
-        <p>{{ head }}</p>
-        <span>{{ subhead }}</span>
-      </div>
+    </picture>
+    <token-image
+      v-else
+      :address="tokenAddress"
+      :src="tokenImageSrc"
+      :symbol="tokenSymbol"
+    />
+    <div class="description">
+      <h3 class="title">{{ head }}</h3>
+      <div class="value">{{ subhead }}</div>
     </div>
-    <div class="volume">
-      <span>{{ balanceChange }}</span>
-    </div>
-  </div>
+    <div class="outcome">{{ balanceChange }}</div>
+  </a>
 </template>
 
 <script lang="ts">
@@ -52,7 +48,6 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', ['networkInfo']),
-
     head(): string {
       return getTransactionHumanType(
         this.transaction,
@@ -95,7 +90,6 @@ export default Vue.extend({
         if (this.transaction.asset.direction === 'self') {
           return `$0.00`;
         }
-        console.log('1312312', changeNative);
         return `${getSignIfNeeded(changeNative, sign)}$${formatToNative(
           changeNative
         )}`;
@@ -143,11 +137,9 @@ export default Vue.extend({
     },
     isLPToken(): boolean {
       return false;
-    }
-  },
-  methods: {
-    onClick(): void {
-      window.open(`https://etherscan.io/tx/${this.transaction.hash}`, '_blank');
+    },
+    txHref(): string {
+      return `https://etherscan.io/tx/${this.transaction.hash}`;
     }
   }
 });

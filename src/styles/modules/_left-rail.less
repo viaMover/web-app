@@ -44,6 +44,14 @@
         }
       }
 
+      .empty-state {
+        margin-top: 40px;
+        font-size: 16px;
+        line-height: 24px;
+        color: @text-muted;
+        @font-medium();
+      }
+
       .list {
         .group {
           margin-bottom: 40px;
@@ -78,14 +86,39 @@
 
               .icon {
                 flex: 0 0 38px;
-                width: 38px;
-                height: $width;
                 margin-right: 16px;
                 border-radius: 50%;
-                @drop-shadow();
+                width: 38px;
+                height: $width;
+
+                img {
+                  width: 38px;
+                  height: $width;
+                  @drop-shadow-filter();
+                }
 
                 @media screen and (max-width: 1279px) {
                   margin-right: 8px;
+                }
+
+                &.fallback {
+                  border-radius: 50%;
+                  background-color: @background-left-rail-darker;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 2px;
+                  @drop-shadow();
+
+                  span {
+                    font-size: 9px;
+                    line-height: 16px;
+                    color: @text-primary;
+                    text-align: center;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    @font-bold();
+                  }
                 }
               }
 
@@ -125,7 +158,10 @@
 
     &.navigation {
       .wrapper {
+        display: flex;
+
         .list {
+          flex: auto;
           display: flex;
           flex-flow: column nowrap;
           justify-content: space-between;
@@ -152,47 +188,85 @@
                 flex-flow: row nowrap;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 40px;
+                border-radius: 8px;
+                margin-bottom: 24px;
 
                 &:last-child {
                   margin-bottom: 0;
                 }
 
+                &.active {
+                  background-color: @background-left-rail-darkest;
+                }
+
+                &:not(.active):hover {
+                  background-color: @background-left-rail-darker;
+                }
+
+                .icon {
+                  flex-grow: 0;
+                  flex-shrink: 0;
+                  align-self: center;
+                  margin-right: 16px;
+
+                  @media screen and (max-width: 1279px) {
+                    margin-right: 8px;
+                  }
+                }
+
+                .info {
+                  flex: auto;
+                  color: @text-primary;
+                }
+
                 &.emoji {
+                  padding: 16px;
+
+                  @media screen and (max-width: 1279px) {
+                    padding: 8px;
+                  }
+
                   .icon {
-                    flex-grow: 0;
-                    flex-shrink: 0;
                     width: 24px;
                     height: 24px;
-                    align-self: center;
-                    margin-right: 16px;
+                    display: flex;
+                    align-self: flex-start;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
 
-                    @media screen and (max-width: 1279px) {
-                      margin-right: 8px;
+                    img {
+                      width: 24px;
+                      height: 24px;
                     }
                   }
 
                   .info {
-                    flex-grow: 1;
-                    flex-shrink: 0;
-                    border-radius: 8px;
-                    padding: 16px;
-
-                    @media screen and (max-width: 1279px) {
-                      padding: 8px;
-                    }
+                    @font-medium();
                   }
                 }
 
                 &.picture {
+                  padding: 8px 16px;
+
+                  @media screen and (max-width: 1279px) {
+                    padding-right: 8px;
+                    padding-left: 8px;
+                  }
+
                   .icon {
                     flex-grow: 0;
                     flex-shrink: 0;
                     align-self: flex-start;
-                    width: 56;
-                    height: 40px;
-                    margin-top: 4px;
                     margin-right: 16px;
+                    height: 40px;
+                    max-width: 56px;
+
+                    img {
+                      height: 40px;
+                      max-width: 56px;
+                      @drop-shadow-filter();
+                    }
 
                     @media screen and (max-width: 1279px) {
                       margin-right: 8px;
@@ -200,28 +274,11 @@
                   }
 
                   .info {
-                    flex-grow: 1;
-                    flex-shrink: 0;
-                    border-radius: 8px;
-                    padding: 8px 16px;
-
-                    @media screen and (max-width: 1279px) {
-                      padding-right: 8px;
-                      padding-left: 8px;
-                    }
-
-                    &.active {
-                      background-color: @background-left-rail-darkest;
-                    }
-
-                    &:not(.active):hover {
-                      background-color: @background-left-rail-darker;
-                    }
-
                     .title {
                       font-size: 14px;
                       line-height: 22px;
                       margin-bottom: 4px;
+                      @font-bold();
 
                       &.muted {
                         color: @text-muted;
@@ -233,7 +290,7 @@
                     }
 
                     .description {
-                      font-size: 16px;
+                      font-size: 14px;
                       line-height: 22px;
                       color: @text-muted;
                       @font-medium();

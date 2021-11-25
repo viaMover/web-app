@@ -1,5 +1,5 @@
 <template>
-  <div v-if="displayOriginalImage" :class="wrapperClass">
+  <div v-if="displayOriginalImage" class="icon">
     <img
       v-fallback="imageFallbackOpts"
       :alt="$t('asset.txtAlt', { name: symbol })"
@@ -7,10 +7,8 @@
       :style="shadowStyles"
     />
   </div>
-  <div v-else :class="wrapperClass">
-    <div class="img-stub" :style="shadowStyles">
-      <span>{{ truncatedSymbol }}</span>
-    </div>
+  <div v-else class="icon fallback" :style="shadowStyles">
+    <span>{{ truncatedSymbol }}</span>
   </div>
 </template>
 
@@ -25,10 +23,6 @@ import { IImageFallbackOpts } from '@/components/tokens/token-image/types';
 export default Vue.extend({
   name: 'TokenImage',
   props: {
-    wrapperClass: {
-      type: String,
-      default: 'label-icon'
-    },
     address: {
       type: String,
       required: true
@@ -75,8 +69,14 @@ export default Vue.extend({
       };
     },
     shadowStyles(): Properties {
+      if (this.displayOriginalImage) {
+        return {
+          filter: `drop-shadow(0 4px 16px var(--shadow))`
+        };
+      }
+
       return {
-        boxShadow: `0px 0px 16px ${this.color}`
+        boxShadow: `drop-shadow(0 4px 16px 0 var(--shadow))`
       };
     }
   },
