@@ -13,6 +13,14 @@ export interface Globals {
   isDebitCardChangeSkinEnabled: boolean;
 }
 
+export const isProduction = (): boolean => {
+  return process.env.NODE_ENV === 'production';
+};
+
+export const isDevelop = (): boolean => {
+  return process.env.NODE_ENV === 'development';
+};
+
 const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
@@ -21,7 +29,7 @@ const values: Globals = {
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isNibbleShopEnabled: false,
-  isIntercomEnabled: false,
+  isIntercomEnabled: !isDevelop(),
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
   isDebitCardTopUpEnabled: false,
@@ -30,11 +38,3 @@ const values: Globals = {
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
   !!values[key];
-
-export const isProduction = (): boolean => {
-  return process.env.NODE_ENV === 'production';
-};
-
-export const isDevelop = (): boolean => {
-  return process.env.NODE_ENV === 'development';
-};
