@@ -64,49 +64,27 @@
             .card-image {
               width: 312px;
               height: 184px;
-              position: relative;
               box-shadow: 0 8px 32px @icon-shadow;
               border-radius: 8px;
 
               &.small {
                 width: 200px;
                 height: 120px;
-
-                &::before {
-                  width: 200px;
-                  height: 120px;
-                }
-              }
-
-              &::before {
-                content: '';
-                display: inline-block;
-                width: 312px;
-                height: 184px;
-                position: absolute;
-                background-color: @black;
-                border-radius: 8px;
-                z-index: 1;
               }
 
               img,
               .pu-skeleton {
-                position: absolute;
-                top: 0;
-                z-index: 2;
-                width: 100%;
-                height: auto;
+                height: 100%;
+                width: auto;
                 object-fit: cover;
                 border-radius: 8px;
               }
 
               &.skeleton {
-                &::before {
-                  content: unset;
-                }
-
                 .pu-skeleton {
+                  line-height: unset;
                   height: 100%;
+                  width: 100%;
                 }
               }
             }
