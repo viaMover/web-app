@@ -60,7 +60,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblIncreaseBoost: 'Increase boost',
     lblPurchaseBondsEmoji: '🏦',
     lblPurchaseBonds: 'Purchase Bonds',
-    lblBeautifulCard: 'Beautiful card',
+    lblBeautifulCard: 'Beautiful Card',
     lblComingSoon: 'Coming soon',
     lblBonds: 'Bonds'
   },
@@ -88,10 +88,10 @@ const messages: VueI18n.LocaleMessageObject = {
     txtDebitCard: 'The beautiful card is here! Order yours now.',
     btnOrderDebitCard: 'Order the card',
     lblMyCard: 'My Card',
-    lblBeautifulCard: 'Beautiful card',
+    lblBeautifulCard: 'Beautiful Card',
     txtBeautifulCard:
       'The beautiful card is brought to you by Mover and our partner Trastra',
-    txtBeautifulCardBenifits: 'Your Beautiful card has the following benefits',
+    txtBeautifulCardBenifits: 'Your Beautiful Card has the following benefits',
     lblFree: 'Free',
     txtFree: 'Crypto to EUR for free',
     lblNoLimit: 'No limit',
@@ -159,10 +159,10 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     txtHistoryMessage: {
       order_process_started:
-        'You have started your Beautiful card order process',
+        'You have started your Beautiful Card order process',
       kyc_process_started: 'You have started your KYC process. Beautiful day!',
       documents_verified: 'Your documents have been verified. Lovely!',
-      card_shipped: 'Your Beautiful card has been shipped to you'
+      card_shipped: 'Your Beautiful Card has been shipped to you'
     },
     txtVisaDebitCard: 'Visa Debit Card',
     lblLast4Digits: 'Last 4-digits',
@@ -171,7 +171,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblBIC: 'BIC',
     kycLink: {
       description:
-        'You have successfully started your Beautiful card order process. Here is your {0}',
+        'You have successfully started your Beautiful Card order process. Here is your {0}',
       link: 'KYC link'
     },
     lblProceedAfterKyc: 'Proceed',
@@ -190,7 +190,7 @@ const messages: VueI18n.LocaleMessageObject = {
       lblReviewYourTopUp: 'Review your top up',
       lblAmountWeTopUpIn: 'Amount we top up in',
       lblAndItWillBeTotalOf: 'And it will be total of',
-      btnTopUpCard: 'Top up Beautiful card'
+      btnTopUpCard: 'Top up Beautiful Card'
     },
     changeSkin: {
       lblDigitalCardSkin: 'Digital card skin',

@@ -86,8 +86,8 @@ export const mapServiceState = (
     case 'NOT_REGISTERED':
       return { cardState: 'order_now', orderState: 'order_form' };
     case 'PHONE_VERIFICATION_PENDING':
-    case 'KYC_PENDING':
       return { cardState: 'order_now', orderState: 'validate_phone' };
+    case 'KYC_PENDING':
     case 'KYC_WAITING':
     case 'CARD_ORDER_PENDING':
     case 'CARD_SHIPPED':
@@ -103,11 +103,11 @@ export const mapServiceHistoryItem = (
 ): EventHistoryItemMinimal => {
   switch (serviceItem.status) {
     case 'PHONE_VERIFICATION_PENDING':
-    case 'KYC_PENDING':
       return {
         type: 'order_process_started',
         timestamp: serviceItem.timestamp
       };
+    case 'KYC_PENDING':
     case 'KYC_WAITING':
       return { type: 'kyc_process_started', timestamp: serviceItem.timestamp };
     case 'CARD_ORDER_PENDING':
