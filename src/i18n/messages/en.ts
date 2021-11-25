@@ -85,12 +85,12 @@ const messages: VueI18n.LocaleMessageObject = {
     icon: '💳',
     lblDebitCard: 'Debit Card',
     lblDebitCardHeading: 'It’s here!',
-    txtDebitCard: 'The beautiful card is here! Order yours now.',
+    txtDebitCard: 'The Beautiful Card is here! Order yours now.',
     btnOrderDebitCard: 'Order the card',
     lblMyCard: 'My Card',
     lblBeautifulCard: 'Beautiful Card',
     txtBeautifulCard:
-      'The beautiful card is brought to you by Mover and our partner Trastra',
+      'The Beautiful Card is brought to you by Mover and our partner Trastra',
     txtBeautifulCardBenifits: 'Your Beautiful Card has the following benefits',
     lblFree: 'Free',
     txtFree: 'Crypto to EUR for free',
@@ -118,8 +118,8 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     lblOrderCard: 'gm! Order a card',
     txtOrderCard:
-      'You can now order a beautiful card brought to you by our partner Trastra. ' +
-      'Keep in mind, this is a beautiful card, meaning that this type of a card is an “alpha” version. ' +
+      'You can now order a Beautiful Card brought to you by our partner Trastra. ' +
+      'Keep in mind, this is a Beautiful Card, meaning that this type of a card is an “alpha” version. ' +
       'It also means that Mover doesn’t store or collect your personal data, it is handled securely by licensed partner.',
     lblYourHonorificPrefix: 'Your honorific prefix',
     txtYourHonorificPrefixPlaceholder: 'Mr. or Ms. or Mx.',
@@ -131,7 +131,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblYourSecurityCode: 'Security code',
     txtYourSecurityCodePlaceholder: '1234',
     btnValidateOrOrderCard: 'Validate or order card',
-    btnOrderCard: 'Order beautiful card',
+    btnOrderCard: 'Order Beautiful Card',
     lblValidateYourNumber: 'Validate your number',
     txtEnterSecurityCode: 'Enter a security code your received in the SMS',
     btnChangePhoneNumber: 'Change your phone number',
