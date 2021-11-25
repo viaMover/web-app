@@ -1,6 +1,10 @@
 export { default as ContentWrapper } from './content-wrapper.vue';
 export { default as ShopWrapper } from './shop-wrapper/shop-wrapper.vue';
-export { SecondaryPage, SecondaryPageTitle } from './secondary-page';
+export {
+  SecondaryPage,
+  SecondaryPageTitle,
+  SecondaryPageSimpleTitle
+} from './secondary-page';
 export {
   LeftRailSection,
   LeftRailSectionItem,

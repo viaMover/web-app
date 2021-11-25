@@ -3,6 +3,7 @@ export type Result<T, E extends string> = ErrorResult<E> | SuccessResult<T>;
 export type ErrorResult<E extends string> = {
   isError: true;
   error: E;
+  shortError?: E;
 };
 
 export type SuccessResult<T> = {

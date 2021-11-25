@@ -111,7 +111,7 @@ export const getCommunityVotingPower = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 
@@ -121,7 +121,7 @@ export const getCommunityVotingPower = async (
     if (axiosError.response !== undefined) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      throw new GovernanceApiError(axiosError.response.data.errorMessage);
+      throw new GovernanceApiError(axiosError.response.data.error);
     } else if (axiosError.request !== undefined) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest
@@ -155,7 +155,7 @@ export const getVotingPower = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 
@@ -165,7 +165,7 @@ export const getVotingPower = async (
     if (axiosError.response !== undefined) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      throw new GovernanceApiError(axiosError.response.data.errorMessage);
+      throw new GovernanceApiError(axiosError.response.data.error);
     } else if (axiosError.request !== undefined) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest
