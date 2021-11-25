@@ -5,6 +5,7 @@ import { isFeatureEnabled } from '@/settings';
 
 import actions from './actions';
 import account from './modules/account';
+import debitCard from './modules/debit-card';
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
@@ -37,6 +38,10 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   store.registerModule('radar', radar);
+}
+
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  store.registerModule('debitCard', debitCard);
 }
 
 export default store;

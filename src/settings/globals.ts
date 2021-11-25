@@ -5,25 +5,27 @@ export interface Globals {
   isDebitCardEnabled: boolean;
   isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
-  isCardEnabled: boolean;
   isNibbleShopEnabled: boolean;
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
   isTreasuryMonthlyChartEnabled: boolean;
+  isDebitCardTopUpEnabled: boolean;
+  isDebitCardChangeSkinEnabled: boolean;
 }
 
 const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: false,
+  isDebitCardEnabled: true,
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
-  isCardEnabled: false,
   isNibbleShopEnabled: false,
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
-  isTreasuryMonthlyChartEnabled: false
+  isTreasuryMonthlyChartEnabled: false,
+  isDebitCardTopUpEnabled: false,
+  isDebitCardChangeSkinEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>

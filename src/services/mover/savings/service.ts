@@ -27,7 +27,7 @@ export const getSavingsInfo = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 
@@ -66,7 +66,7 @@ export const getSavingsReceipt = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 

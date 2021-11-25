@@ -38,8 +38,8 @@
         :text="$t('bonds.lblBonds')"
       />
       <nav-bar-item
-        v-if="isFeatureEnabled('isCardEnabled')"
-        navigate-to-name="card"
+        v-if="isFeatureEnabled('isDebitCardEnabled')"
+        navigate-to-name="debit-card-manage"
         :text="$t('card.lblCard')"
       />
       <nav-bar-item navigate-to-name="home-more" :text="$t('lblMore')" />

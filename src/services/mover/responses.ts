@@ -6,10 +6,10 @@ export type ErrorResponse = {
   status: 'error';
 
   // short service explanation
-  error: string;
+  errorCode: string;
 
   // user-friendly error message which can be displayed
-  errorMessage: string;
+  error: string;
 };
 
 export type MoverResponse<T> = SuccessfulResponse<T> | ErrorResponse;

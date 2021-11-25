@@ -27,7 +27,7 @@ export const getTreasuryInfo = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 
@@ -64,7 +64,7 @@ export const getTreasuryReceipt = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 

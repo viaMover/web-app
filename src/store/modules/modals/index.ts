@@ -39,6 +39,15 @@ export default {
         resolver: undefined,
         needGasListener: false
       },
+      [Modal.SearchSkin]: {
+        isDisplayed: false,
+        isVisible: false,
+        stackDepth: -1,
+        waitForResult: true,
+        payload: undefined,
+        resolver: undefined,
+        needGasListener: false
+      },
       [Modal.Swap]: {
         isDisplayed: false,
         isVisible: false,
