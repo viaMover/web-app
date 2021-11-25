@@ -17,7 +17,7 @@ const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: false,
+  isDebitCardEnabled: true,
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isNibbleShopEnabled: false,
