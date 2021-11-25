@@ -203,10 +203,8 @@ export default {
               }
             ]
           }
-        }
-      ];
-      if (isFeatureEnabled('isVaultsEnabled')) {
-        nftAssets.splice(0, 0, {
+        },
+        {
           name: 'Vaults',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.vaults.description'
@@ -250,8 +248,8 @@ export default {
               }
             ]
           }
-        });
-      }
+        }
+      ];
 
       if (isFeatureEnabled('isSwapPassportEnabled')) {
         nftAssets.push({
@@ -329,17 +327,11 @@ export default {
       rootState!.account!.provider!.web3
     );
 
-    let vaultsDataPromise: Promise<VaultsData | undefined> =
-      Promise.resolve(undefined);
-    if (isFeatureEnabled('isVaultsEnabled')) {
-      vaultsDataPromise = vaultsDataPromise.then(() =>
-        getVaultsData(
-          rootState!.account!.currentAddress!,
-          rootState!.account!.networkInfo!.network,
-          rootState!.account!.provider!.web3
-        )
-      );
-    }
+    const vaultsDataPromise = getVaultsData(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3
+    );
 
     const diceDataPromise = getDiceData(
       rootState!.account!.currentAddress!,

@@ -1,3 +1,5 @@
+@import (reference) './_variables.less';
+
 * {
   margin: 0;
   padding: 0;
@@ -47,6 +49,11 @@ input[type='search']::-webkit-search-results-decoration {
   display: none;
   width: 0;
   height: 0;
+}
+
+select {
+  border: unset;
+  background-color: transparent;
 }
 
 a {
@@ -736,8 +743,7 @@ body {
   height: 40px;
   color: #fff;
   background: #fff;
-  background:
- linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~'0 / 12px 12px',
+  background: linear-gradient(-135deg, transparent 50%, var(--bgColor) 0) no-repeat 100% ~'0 / 12px 12px',
     linear-gradient(-135deg, transparent 9px, #fff 0);
   filter: drop-shadow(0 0 16px #ccc);
   border-radius: 3px;
@@ -1051,11 +1057,10 @@ button > .loader-icon > img {
     margin-top: 16px;
 
     p {
-      font-family: 'Medium', sans-serif;
-      font-weight: 500;
-      color: rgba(60, 60, 67, 0.6);
       font-size: 14px;
       line-height: 22px;
+      color: @muted;
+      @font-medium();
     }
   }
 
@@ -1361,9 +1366,12 @@ button > .loader-icon > img {
       border-radius: 50%;
       -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-      -webkit-transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-      -o-transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-      transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      -webkit-transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      -o-transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .switch-button:active::before {
@@ -1460,21 +1468,12 @@ button > .loader-icon > img {
   }
 }
 
-.margin-top-20 {
-  margin-top: 20px;
-}
-
-.margin-top-40 {
-  margin-top: 40px;
-}
-
-.margin-top-60 {
-  margin-top: 60px;
-}
-
-.margin-top-80 {
-  margin-top: 80px;
-}
+each(range(5), {
+  @v: (@value - 1) * 20;
+  .margin-top-@{v} {
+    margin-top: @v * 1px;
+  }
+});
 
 .medium {
   font-family: 'Medium', sans-serif;

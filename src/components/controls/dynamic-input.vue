@@ -85,7 +85,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.calcWidth('0.00');
+    this.calcWidth(this.value !== '' ? this.value : '0.00');
   },
   methods: {
     calcWidth(newVal: string): void {
