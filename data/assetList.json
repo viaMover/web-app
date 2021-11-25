@@ -3483,7 +3483,7 @@
   {
     "name": "arNXM",
     "website": "https://armor.fi",
-    "description": "arNXM is the yield-bearing token for the arNXM vault.",
+    "description": "arNXM is the yield-bearing token for the arNXM vault.",
     "explorer": "https://etherscan.io/token/0x1337DEF18C680aF1f9f45cBcab6309562975b1dD",
     "type": "ERC20",
     "symbol": "arNXM",
@@ -14644,7 +14644,7 @@
   {
     "name": "QUSD",
     "website": "https://qian.finance",
-    "description": "QUSD is the first kind of stablecoin of QIAN protocol. In the future, QIAN will launch QHKD, QEUR and other stable assets).",
+    "description": "QUSD is the first kind of stablecoin of QIAN protocol. In the future, QIAN will launch QHKD, QEUR and other stable assets).",
     "explorer": "https://etherscan.io/token/0x59d4CCC94A9C4C3d3b4bA2Aa343a9bDF95145DD1",
     "audit_report": "https://qian.finance/PeckShield-Audit-Report-QIAN2-v1.0.pdf",
     "type": "ERC20",
@@ -26058,7 +26058,7 @@
   {
     "name": "CryptoBRL",
     "website": "https://cryptobrl.com",
-    "description": "The CryptoBRL is a stablecoin pegged one for one to the Brazilian Real. It's supported and adopted by a consortium with several companies from Brazilian cryptocurrency market. Every token is backed by traditional currency, the reserve holdings are published and subject to 'distributed audits', from the companies in the consortium and other important players from the crypto-market.",
+    "description": "The CryptoBRL is a stablecoin pegged one for one to the Brazilian Real. It's supported and adopted by a consortium with several companies from Brazilian cryptocurrency market. Every token is backed by traditional currency, the reserve holdings are published and subject to 'distributed audits', from the companies in the consortium and other important players from the crypto-market.",
     "explorer": "https://etherscan.io/token/0xA6FA6531acDf1f9F96EDdD66a0F9481E35c2e42A",
     "type": "ERC20",
     "symbol": "CBRL",
@@ -31408,7 +31408,7 @@
   {
     "name": "GRAP",
     "website": "https://grap.finance",
-    "description": "Grap is a fork of the YAM project. But it came with correct 'rebase' and it fixed some obvious bugs. So it will be less trouble and more fun.",
+    "description": "Grap is a fork of the YAM project. But it came with correct 'rebase' and it fixed some obvious bugs. So it will be less trouble and more fun.",
     "explorer": "https://etherscan.io/token/0xC8D2AB2a6FdEbC25432E54941cb85b55b9f152dB",
     "research": "",
     "type": "ERC20",
