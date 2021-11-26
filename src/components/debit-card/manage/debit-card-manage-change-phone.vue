@@ -177,7 +177,7 @@ export default Vue.extend({
     },
     scrollButtonIntoView(): void {
       this.$nextTick(() => {
-        ((this.$refs.button as Vue).$el as HTMLElement).scrollIntoView();
+        ((this?.$refs?.button as Vue)?.$el as HTMLElement)?.scrollIntoView?.();
       });
     }
   },
