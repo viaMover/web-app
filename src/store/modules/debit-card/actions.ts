@@ -499,11 +499,6 @@ export default {
       );
       if (res.isError) {
         if (res.shortError !== undefined) {
-          console.debug('wtf?', res.error, res.shortError);
-          Sentry.captureMessage(
-            `An error occurred during validatePhoneNumber: ${res.shortError} (${res.error})`
-          );
-
           if (res.shortError === 'INCORRECT_CODE') {
             throw new DebitCardApiError('incorrectCode');
           }
@@ -551,10 +546,6 @@ export default {
       );
       if (res.isError) {
         if (res.shortError !== undefined) {
-          Sentry.captureMessage(
-            `An error occurred during changePhoneNumber: ${res.shortError} (${res.error})`
-          );
-
           if (res.shortError === 'PHONE_SYNTAX') {
             throw new DebitCardApiError('badPhoneSyntax');
           }
