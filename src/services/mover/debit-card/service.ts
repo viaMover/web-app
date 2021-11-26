@@ -19,7 +19,7 @@ import {
 } from './types';
 
 const cardApiClient = axios.create({
-  baseURL: `${baseUrl}2/v1/cards`,
+  baseURL: `${baseUrl}/v1/cards`,
   headers: {
     Accept: 'application/json'
   }
