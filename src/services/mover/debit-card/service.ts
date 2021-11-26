@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/vue';
 import axios, { AxiosError } from 'axios';
 
 import { Result } from '../../responses';
@@ -233,6 +234,14 @@ const formatError = (error: unknown): Error => {
   if (axiosError.response !== undefined) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
+    Sentry.addBreadcrumb({
+      message: 'API responded with an error',
+      data: {
+        error: axiosError.response.data.error,
+        shortError: axiosError.response.data.errorCode
+      }
+    });
+
     return new DebitCardApiError(
       axiosError.response.data.error,
       axiosError.response.data.errorCode
