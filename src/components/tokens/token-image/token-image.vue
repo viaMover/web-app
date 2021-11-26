@@ -1,5 +1,5 @@
 <template>
-  <div v-if="displayOriginalImage" class="icon">
+  <div v-if="displayOriginalImage" class="icon token-icon">
     <img
       v-fallback="imageFallbackOpts"
       :alt="$t('asset.txtAlt', { name: symbol })"
@@ -57,7 +57,7 @@ export default Vue.extend({
       return this.src !== '' && !this.loadingFailed;
     },
     color(): string | undefined {
-      return this.getTokenColor(this.address) ?? 'rgba(0, 0, 0, 50%)';
+      return this.getTokenColor(this.address) ?? 'var(--shadow)';
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {
@@ -71,12 +71,12 @@ export default Vue.extend({
     shadowStyles(): Properties {
       if (this.displayOriginalImage) {
         return {
-          filter: `drop-shadow(0 4px 16px var(--shadow))`
+          filter: `drop-shadow(0 4px 16px ${this.color})`
         };
       }
 
       return {
-        boxShadow: `drop-shadow(0 4px 16px 0 var(--shadow))`
+        boxShadow: `drop-shadow(0 4px 16px 0 ${this.color})`
       };
     }
   },

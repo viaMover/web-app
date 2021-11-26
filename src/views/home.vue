@@ -59,6 +59,11 @@ export default Vue.extend({
     SavingsWithdrawModal,
     TreasuryIncreaseBoostModal
   },
+  inject: {
+    themeColors: {
+      default: {}
+    }
+  },
   methods: {
     isFeatureEnabled
   }

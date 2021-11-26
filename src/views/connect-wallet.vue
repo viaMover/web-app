@@ -1,5 +1,5 @@
 <template>
-  <content-wrapper class="connect-wallet">
+  <content-wrapper class="connect-wallet" page-content-class="centered">
     <a class="logo" href="https://viamover.com" rel="external">
       <picture>
         <img alt="logo" src="@/assets/images/logo.svg" />
@@ -7,26 +7,40 @@
     </a>
 
     <section class="container">
-      <div class="info">
-        <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
-        <i18n class="description" path="connect.txtMoverDescription" tag="p">
-          <a href="https://viamover.com/terms_of_use" target="_blank">
-            {{ $t('connect.lblTermsAndConditions') }}
-          </a>
-        </i18n>
-        <button
-          class="button-active black-link"
-          type="button"
-          @click.prevent="otherProvider"
-        >
-          {{ $t('connect.btnConnectOtherWallet') }}
-        </button>
-        <p class="text">{{ $t('connect.lblChooseProvider') }}</p>
+      <div class="left">
+        <div class="info">
+          <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
+          <i18n class="description" path="connect.txtMoverDescription" tag="p">
+            <a
+              class="link"
+              href="https://viamover.com/terms_of_use"
+              target="_blank"
+            >
+              {{ $t('connect.lblTermsAndConditions') }}
+            </a>
+          </i18n>
+        </div>
+
+        <div class="button-container">
+          <button
+            class="button primary"
+            type="button"
+            @click.prevent="otherProvider"
+          >
+            {{ $t('connect.btnConnectOtherWallet') }}
+          </button>
+
+          <p class="description">{{ $t('connect.lblChooseProvider') }}</p>
+        </div>
       </div>
-      <div class="image">
-        <picture class="qr-code">
-          <img alt="QR code" :src="wcCode" />
-        </picture>
+      <div class="right">
+        <div class="qr-code">
+          <picture v-if="wcCode !== '' && wcCodeWebp !== ''">
+            <source :srcset="wcCodeWebp" type="image/webp" />
+            <img alt="QR code" :src="wcCode" />
+          </picture>
+          <pu-skeleton v-else class="image-stub" tag="div" />
+        </div>
         <i18n
           class="description"
           path="connect.txtQrDescriptionPartOne"
@@ -53,8 +67,6 @@ import { InitCallbacks } from '@/web3/callbacks';
 
 import { ContentWrapper } from '@/components/layout';
 
-import '@/styles/_general.less';
-
 export default Vue.extend({
   name: 'ConnectWallet',
   components: {
@@ -62,7 +74,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      wcCode: ''
+      wcCode: '',
+      wcCodeWebp: ''
     };
   },
   computed: {
@@ -86,8 +99,16 @@ export default Vue.extend({
       infuraId: APIKeys.INFURA_PROJECT_ID,
       qrcodeModal: {
         open: async (uri: string) => {
-          const qrCodeUri = await QRCode.toDataURL(uri);
-          this.wcCode = qrCodeUri;
+          this.wcCode = await QRCode.toDataURL(uri, {
+            margin: 0,
+            width: 216 * 2,
+            type: 'image/png'
+          });
+          this.wcCodeWebp = `${await QRCode.toDataURL(uri, {
+            margin: 0,
+            width: 216 * 2,
+            type: 'image/webp'
+          })} 1x`;
         },
         close: () => {
           // do nothing.

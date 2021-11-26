@@ -14,14 +14,15 @@
     <div v-if="!transactionGroups.length" class="empty-state">
       {{ $t('lblConnectWalletTransactionHistory') }}
     </div>
-    <div v-else class="list">
+    <transition-group v-else class="list" name="list-transition" tag="div">
       <transaction-group
         v-for="txGroup in filteredTransactionGroups"
-        :key="txGroup.date"
+        :key="txGroup.timeStamp"
+        class="list-transition-item"
         :heading-text="formatDate(txGroup.timeStamp)"
         :transactions="txGroup.transactions"
       />
-    </div>
+    </transition-group>
   </div>
 </template>
 

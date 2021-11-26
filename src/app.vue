@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <pu-skeleton-theme color="#dcdcdc">
+    <pu-skeleton-theme
+      color="var(--skeleton-color)"
+      highlight="var(--skeleton-highlight-color)"
+    >
       <div class="page">
         <web3-modal-vue
           ref="web3modal"
@@ -10,7 +13,7 @@
         />
         <transition appear name="fade">
           <preload v-if="showPreload" key="preload" class="dashboard" />
-          <router-view v-if="!showPreload" key="viewport" class="dashboard" />
+          <router-view v-else key="viewport" class="dashboard" />
         </transition>
         <div class="dashboard dashboard-mobile">
           <a
@@ -444,6 +447,15 @@ export default Vue.extend({
     Preload,
     Web3ModalVue
   },
+  provide() {
+    const provided = {};
+    Object.defineProperty(provided, 'themeColors', {
+      enumerable: true,
+      get: () => this.colors
+    });
+
+    return provided;
+  },
   data() {
     return {
       isLeftRailTransactions: true,
@@ -461,7 +473,8 @@ export default Vue.extend({
             id: APIKeys.PORTUS_DAPP_ID
           }
         }
-      }
+      },
+      colors: {}
     };
   },
   computed: {
@@ -493,6 +506,7 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.computeProviderColors();
     this.setI18n(this.$i18n);
     this.setPageTitle(this.pageTitle);
     this.setIsDetecting(true);
@@ -524,6 +538,24 @@ export default Vue.extend({
     }),
     setPageTitle(title: string): void {
       document.title = title;
+    },
+    async computeProviderColors(): Promise<void> {
+      console.time('computeProviderColors');
+      const computedStyle = getComputedStyle(document.documentElement);
+      console.timeLog('computeProviderColors', 'computedStyle', computedStyle);
+      const value = Object.values(computedStyle)
+        .filter((item) => item.startsWith('--color'))
+        .reduce((colors, color) => {
+          return {
+            ...colors,
+            [color.replace('--color-', '')]:
+              computedStyle.getPropertyValue(color)
+          };
+        }, {});
+      console.timeLog('computeProviderColors', 'value is ready', value);
+
+      this.colors = value;
+      console.timeEnd('computeProviderColors');
     }
   }
 });

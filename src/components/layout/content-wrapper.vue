@@ -22,9 +22,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-
-import { Properties } from 'csstype';
+import Vue, { PropType } from 'vue';
 
 import { BackButton } from '@/components/buttons';
 
@@ -49,6 +47,10 @@ export default Vue.extend({
     isBlackCloseButton: {
       type: Boolean,
       default: false
+    },
+    pageContentClass: {
+      type: String as PropType<string | undefined>,
+      default: undefined
     }
   },
   methods: {

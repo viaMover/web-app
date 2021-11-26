@@ -1,6 +1,6 @@
 <template>
   <a class="item" :href="txHref" rel="external nofollow" target="_blank">
-    <picture v-if="isLoading" class="icon">
+    <picture v-if="isLoading" class="icon token-icon">
       <img
         :alt="$t('icon.txtPendingIconAlt')"
         src="@/assets/images/ios-spinner.svg"

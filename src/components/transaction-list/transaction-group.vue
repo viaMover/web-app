@@ -1,13 +1,14 @@
 <template>
   <section class="group">
     <h2 class="header">{{ headingText }}</h2>
-    <div class="items">
+    <transition-group class="items" name="list-transition" tag="div">
       <transaction-item
         v-for="tx in transactions"
         :key="tx.uniqHash"
+        class="list-transition-item"
         :transaction="tx"
       />
-    </div>
+    </transition-group>
   </section>
 </template>
 
