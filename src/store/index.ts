@@ -5,6 +5,7 @@ import { isFeatureEnabled } from '@/settings';
 
 import actions from './actions';
 import account from './modules/account';
+import debitCard from './modules/debit-card';
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
@@ -25,7 +26,9 @@ const store = new Vuex.Store<RootStoreState>({
   mutations: mutations,
   modules: {
     account,
-    modals
+    modals,
+    governance,
+    nft
   }
 });
 
@@ -33,16 +36,12 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
   store.registerModule('shop', shop);
 }
 
-if (isFeatureEnabled('isNftDropsEnabled')) {
-  store.registerModule('nft', nft);
-}
-
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   store.registerModule('radar', radar);
 }
 
-if (isFeatureEnabled('isGovernanceEnabled')) {
-  store.registerModule('governance', governance);
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  store.registerModule('debitCard', debitCard);
 }
 
 export default store;

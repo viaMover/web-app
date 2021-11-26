@@ -14,8 +14,6 @@ export type Token = {
   name: string;
   priceUSD: string;
   logo: string;
-  isFavorite: boolean;
-  isVerified: boolean;
 
   // @deprecated use getTokenColor() store function instead
   color?: string;

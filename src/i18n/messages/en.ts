@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import VueI18n, { LocaleMessage } from 'vue-i18n';
 
 import { isFeatureEnabled } from '@/settings';
 
@@ -25,6 +25,7 @@ const messages: VueI18n.LocaleMessageObject = {
   txtDashboardMobile:
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
+  lblUSDcTokenAlt: 'USDc token image',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -37,6 +38,15 @@ const messages: VueI18n.LocaleMessageObject = {
   },
   estimationError: 'Estimation error',
   exchangeError: 'Exchange error',
+  forms: {
+    lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
+    lblEstimatedGasCost: 'Estimated gas cost',
+    lblAvailable: 'Available',
+    lblSwappingFor: 'Swapping for',
+    lblChooseToken: 'Choose Token',
+    lblChooseAmount: 'Choose amount',
+    lblReviewTransaction: 'Review transaction'
+  },
   menu: {
     lblSwapTokenEmoji: '🔄',
     lblSwapToken: 'Swap Tokens',
@@ -50,7 +60,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblIncreaseBoost: 'Increase boost',
     lblPurchaseBondsEmoji: '🏦',
     lblPurchaseBonds: 'Purchase Bonds',
-    lblBeautifulCard: 'Beautiful card',
+    lblBeautifulCard: 'Beautiful Card',
     lblComingSoon: 'Coming soon',
     lblBonds: 'Bonds'
   },
@@ -74,10 +84,193 @@ const messages: VueI18n.LocaleMessageObject = {
   debitCard: {
     icon: '💳',
     lblDebitCard: 'Debit Card',
-    lblDebitCardHeading: 'Great news!',
-    txtDebitCard:
-      'You can now order the Beautiful debit card brought you by Mover and Trastra',
-    btnOrderDebitCard: 'Order the card'
+    lblDebitCardHeading: 'It’s here!',
+    txtDebitCard: 'The Beautiful Card is here! Order yours now.',
+    btnOrderDebitCard: 'Order the card',
+    lblMyCard: 'My Card',
+    lblBeautifulCard: 'Beautiful Card',
+    txtBeautifulCard:
+      'The Beautiful Card is brought to you by Mover and our partner Trastra',
+    txtBeautifulCardBenifits: 'Your Beautiful Card has the following benefits',
+    lblFree: 'Free',
+    txtFree: 'Crypto to EUR for free',
+    lblNoLimit: 'No limit',
+    txtNoLimit: 'No monthly or annual limit',
+    lblEUR: 'EUR',
+    txtEUR: 'Personal EUR IBAN',
+    lblYourEmailAddress: 'Your email address',
+    txtYourEmailAddressPlaceholder: 'your@email.com',
+    lblYourPhoneNumber: 'Your phone number',
+    txtYourPhoneNumberPlaceholder: '+441234567890',
+    lblYourGender: {
+      label: 'Your gender',
+      placeholder: 'Choose gender',
+      male: 'Male',
+      female: 'Female'
+    },
+    lblYourTitle: {
+      label: 'Your title',
+      placeholder: 'Choose title',
+      mr: 'Mr.',
+      mrs: 'Mrs.',
+      miss: 'Miss',
+      dr: 'Dr.'
+    },
+    lblOrderCard: 'gm! Order a card',
+    txtOrderCard:
+      'You can now order a Beautiful Card brought to you by our partner Trastra. ' +
+      'Keep in mind, this is a Beautiful Card, meaning that this type of a card is an “alpha” version. ' +
+      'It also means that Mover doesn’t store or collect your personal data, it is handled securely by licensed partner.',
+    lblYourHonorificPrefix: 'Your honorific prefix',
+    txtYourHonorificPrefixPlaceholder: 'Mr. or Ms. or Mx.',
+    lblYourFamilyName: 'Your last name',
+    txtYourFamilyNamePlaceholder: 'Movemoto',
+    lblYourGivenName: 'Your first name',
+    txtYourGivenNamePlaceholder: 'Antoshi',
+    lblYourDateOfBirth: 'Date of birth',
+    lblYourSecurityCode: 'Security code',
+    txtYourSecurityCodePlaceholder: '1234',
+    btnValidateOrOrderCard: 'Validate or order card',
+    btnOrderCard: 'Order Beautiful Card',
+    lblValidateYourNumber: 'Validate your number',
+    txtEnterSecurityCode: 'Enter a security code your received in the SMS',
+    btnChangePhoneNumber: 'Change your phone number',
+    lblNotAvailable: 'n/a',
+    lblManageCard: 'Manage Card',
+    lblCardTopUp: 'Card top up',
+    txtCardTopUp: 'Top up your debit card with crypto',
+    lblChangeSkin: 'Change skin',
+    txtChangeSkin: 'Your digital NFT card skin',
+    lblSkins: 'Skins',
+    txtSymbolImageAlt: '{name} skin image',
+    state: {
+      active: 'Active',
+      order_now: 'Order now',
+      pending: 'Pending',
+      frozen: 'Frozen',
+      expired: 'Expired'
+    },
+    txtCardStatus: {
+      orderNow: 'Order now',
+      pending: 'Pending',
+      active: 'Active',
+      frozen: 'Frozen',
+      expired: 'Expired'
+    },
+    txtHistoryMessage: {
+      order_process_started:
+        'You have started your Beautiful Card order process',
+      kyc_process_started: 'You have started your KYC process. Beautiful day!',
+      documents_verified: 'Your documents have been verified. Lovely!',
+      card_shipped: 'Your Beautiful Card has been shipped to you'
+    },
+    txtVisaDebitCard: 'Visa Debit Card',
+    lblLast4Digits: 'Last 4-digits',
+    lblExpiryDate: 'Expiry date',
+    lblIBAN: 'IBAN',
+    lblBIC: 'BIC',
+    kycLink: {
+      description:
+        'You have successfully started your Beautiful Card order process. Here is your {0}',
+      link: 'KYC link'
+    },
+    lblProceedAfterKyc: 'Proceed',
+    topUp: {
+      lblTopUp: 'Card top up',
+      txtTopUp:
+        'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
+      txtApproximateEUREstimation: 'That would be approximately in Euro',
+      lblWhatDoWeTopUp: 'What do we top up',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      btnChooseAmount: 'Choose the amount to top up',
+      txtNativeAsset:
+        '{name} is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
+      txtNonNativeAsset:
+        'You chose neither a non ETH asset nor an USDC asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
+      lblReviewYourTopUp: 'Review your top up',
+      lblAmountWeTopUpIn: 'Amount we top up in',
+      lblAndItWillBeTotalOf: 'And it will be total of',
+      btnTopUpCard: 'Top up Beautiful Card'
+    },
+    changeSkin: {
+      lblDigitalCardSkin: 'Digital card skin',
+      txtDigitalCardSkin:
+        'If you hold a special NFT skin, you can change it at any point of time for free. There is no expiry date or limitations. Make it your card!',
+      lblWhatSkinDoWeChoose: 'What skin do we choose',
+      skins: {
+        default: {
+          name: 'Default skin',
+          description: 'This is a default skin. It means that you are a mover!'
+        },
+        'cat-ass': {
+          name: 'Cat Ass',
+          description:
+            'You see the world from a non-conventional angle. You are different. We are different.'
+        },
+        'shiny-one': {
+          name: 'Shiny one'
+        },
+        gorilla: {
+          name: 'Gorilla'
+        },
+        badge: {
+          name: 'Badge'
+        },
+        horns: {
+          name: 'Horns'
+        },
+        txtSkinAlt: '{name} skin image'
+      },
+      btnChooseAnotherCardSkin: 'Choose another card skin',
+      btnApplySkin: 'Apply skin',
+      lblSkin: 'Skin',
+      lblSearchAnySkin: 'Search any skin',
+      lblAvailableSkins: 'Available skins',
+      lblWeCouldNotFindThisSkinAnywhere: "We couldn't find this skin anywhere"
+    },
+    errors: {
+      default: 'Oh no. Something went wrong',
+      email: {
+        required: 'Email is required',
+        invalid: 'Enter a valid email address'
+      },
+      phoneNumber: {
+        required: 'Phone number is required',
+        minLength:
+          'Phone number length should be at least {minLength} symbols (including +)',
+        maxLength:
+          'Phone number length should be {maxLength} symbols maximum (including +)'
+      },
+      familyName: {
+        required: 'Last name is required',
+        invalid:
+          "Last name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
+      },
+      givenName: {
+        required: 'First name is required',
+        invalid:
+          "First name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
+      },
+      dateOfBirth: {
+        required: 'Date of birth is required',
+        invalid: 'Value should represent a valid date (e.g. 1998/03/18)'
+      },
+      code: {
+        required: 'Security code is required',
+        numeric: 'Security code should contain digits only (0-9)',
+        length: 'Security code should contain exactly {length} symbols'
+      },
+      gender: {
+        required: 'Gender is requied'
+      },
+      title: {
+        required: 'Title is required'
+      },
+      alreadyRegistered: 'This email is already used',
+      badPhoneSyntax:
+        'Phone number should be valid (e.g. @:debitCard.txtYourPhoneNumberPlaceholder)',
+      incorrectCode: 'Security code is invalid. Please try again'
+    }
   },
   savingsDepositCard: {
     icon: '💰',
@@ -99,8 +292,6 @@ const messages: VueI18n.LocaleMessageObject = {
     txtIfYouDeposit: 'If you deposit in Savings now, you are getting',
     lblAPYOnAllSavings: 'APY on all savings',
     lblStartSaving: 'Start saving',
-    lblReviewTransaction: 'Review transaction',
-    lblChooseToken: 'Choose Token',
     lblNothingInSavings: 'Nothing in @:savings.lblSavings',
     txtNothingInSavings: 'Looks like you don’t have any savings, yet',
     lblSavingsHeader: '{amount} in @:savings.lblSavings',
@@ -144,7 +335,6 @@ const messages: VueI18n.LocaleMessageObject = {
       'USD Coin is a stable asset and the easiest way to grow your ' +
       'savings. Your returns will also be in USDC.',
     lblInProgress: 'In progress',
-    lblAvailable: 'Available',
     statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -171,12 +361,9 @@ const messages: VueI18n.LocaleMessageObject = {
       lblWhatDoWeDeposit: 'What do we deposit',
       btnDeposit: 'Deposit',
       lblYieldEstimation: 'Yield estimation',
-      lblSwappingFor: 'Swapping for',
       lblAmountWeDepositIn: 'Amount we deposit in',
       lblReviewYourDeposit: 'Review your deposit',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       txtYieldEstimation:
         'Estimated annual yield based on your deposit amount is {amount} at the current rate of {apy}% APY.'
     },
@@ -196,8 +383,6 @@ const messages: VueI18n.LocaleMessageObject = {
       lblReviewYourWithdraw: 'Review your withdrawal',
       btnWithdraw: 'Withdraw',
       lblWhatAboutTheYield: 'What about the yield?',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       txtIfYouKeepSavings:
         'If you keep your savings, you could earn in a year.',
       txtWhatAboutTheYield:
@@ -278,7 +463,6 @@ const messages: VueI18n.LocaleMessageObject = {
     lblEarnedRelativeMonthlyChangeExtendedMonthOnly:
       'Treasury rewards earned in {date}',
     lblInProgress: 'In progress',
-    lblReviewTransaction: 'Review transaction',
     powercard: {
       lblThePowercard: 'The Powercard',
       txtThePowercardPageDescription:
@@ -326,15 +510,12 @@ const messages: VueI18n.LocaleMessageObject = {
       txtYouChooseMoveETHLp:
         'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
         'boost can be up to 2.5x.',
-      lblAvailable: 'Available',
       lblWhatDoWeReserve: 'What do we reserve',
       lblAmountWeReserveIn: 'Amount we reserve in',
       lblChooseAmount: 'Choose the amount to reserve',
       lblReviewYourIncrease: 'Review your increase',
       lblAmountWeDepositIn: 'Amount we deposit in',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       lblWhatToReserve: 'What to reserve',
       btnIncreaseBoostInSmartTreasury: 'Increase boost in Smart Treasury',
       btnIncreaseBoost: 'Increase Boost',
@@ -359,14 +540,11 @@ const messages: VueI18n.LocaleMessageObject = {
       txtYouChooseMoveETHLp:
         'You chose MOVE-ETH LP token on Sushi. It means that the maximum ' +
         'boost can be up to 2.5x.',
-      lblAvailable: 'Available',
       lblWhatDoWeRemove: 'What do we remove',
       lblAmountWeRemoveIn: 'Amount we remove in',
       lblChooseAmount: 'Choose the amount to remove',
       lblReviewYourDecrease: 'Review your decrease',
       lblAndTotalOf: 'And it will be a total of',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       btnDecreaseBoostInSmartTreasury: 'Decrease boost in Smart Treasury',
       lblWhatToReturn: 'What to return',
       btnDecreaseBoost: 'Decrease Boost',
@@ -391,23 +569,18 @@ const messages: VueI18n.LocaleMessageObject = {
         'for a one-time payout from the Treasury.',
       lblWhatDoWeBurn: 'What do we burn',
       lblWhatToBurn: 'What to burn',
-      lblAvailable: 'Available',
       lblAmountWeBurnIn: 'Amount we burn in',
       lblChooseAmount: 'Choose the amount to burn',
       lblReviewYourClaim: 'Review your claim',
       lblAndTotalOf: 'The amount you will receive',
-      lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
-      lblEstimatedGasCost: 'Estimated gas cost',
       btnClaimAndBurnWithAssets: 'Claim {asset1} and burn {asset2}',
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:
         'Estimated one-time payout {payout} USDC. As a reminder, you will burn {burning} MOVE.',
       lblBurnError: 'Burn conditions error',
-      lblBurnLimitReached: 'Burn limit reached',
-      lblUSDcTokenAlt: 'USDC'
-    },
-    lblChooseToken: 'Choose Token'
+      lblBurnLimitReached: 'Burn limit reached'
+    }
   },
   asset: {
     txtAlt: '{name} icon',
@@ -486,49 +659,10 @@ const messages: VueI18n.LocaleMessageObject = {
       4901: 'Oh no. Your provider is disconnected from Ethereum chain. Please refresh the page or use different provider instead'
     }
   },
+  lblSearch: 'Search',
   lblOhSnap: 'Oh, snap!',
-  txtCouldNotFindToken: 'We couldn’t find this token anywhere'
-};
-
-if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  messages.radar = {
-    lblTokenOfTheDay: 'Token of the day',
-    liveUpdates: {
-      lblLiveUpdates: 'Live updates',
-      lblTopMovers: 'Top Movers',
-      lblTopLosers: 'Top losers',
-      lblNewTokens: 'New tokens',
-      lblDeFi: 'DeFi',
-      lblStablecoins: 'Stablecoins'
-    },
-    lblPersonalLists: 'Personal Lists',
-    lblCuratedLists: 'Curated Lists',
-    lblRune: 'RUNE',
-    txtRuneAlt: '{name} coin icon',
-    txtRadar: {
-      runeDescription:
-        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
-        'THORChain allows for native swaps between various blockchains e.g. a ' +
-        'native swap between ETH and BTC.'
-    },
-    btnGet: {
-      simple: 'Get'
-    },
-    btnSearch: {
-      emoji: '🔍'
-    }
-  };
-}
-
-if (isFeatureEnabled('isBondsEnabled')) {
-  messages.bonds = {
-    icon: '🏦',
-    lblBonds: 'Bonds'
-  };
-}
-
-if (isFeatureEnabled('isGovernanceEnabled')) {
-  messages.governance = {
+  txtCouldNotFindToken: 'We couldn’t find this token anywhere',
+  governance: {
     lblGovernance: 'Governance',
     lblGetInvolved: 'Get involved',
     lblGovernancePrefix: 'Governance',
@@ -638,7 +772,11 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
       'not enough power to vote':
         "Oh no. Seems like you don't have enough power to vote",
       'not enough power to create a proposal':
-        "Oh no. Seems like you don't have enough power to create a proposal"
+        "Oh no. Seems like you don't have enough power to create a proposal",
+      'voting is not started yet': 'Oh no. Voting is not started yet',
+      'voting is closed': 'Oh no. Voting is already closed',
+      'wrong timestamp':
+        "Oh no. The request too long, or your system is out of sync. Looks like you'll have to try again later"
     },
     btnTogglePreview: 'Toggle preview',
     txtTogglePreview: 'Toggle markdown preview',
@@ -656,11 +794,8 @@ if (isFeatureEnabled('isGovernanceEnabled')) {
     },
     lblIpfsLink: 'Your registered vote',
     txtIpfsLink: 'Link'
-  };
-}
-
-if (isFeatureEnabled('isNftDropsEnabled')) {
-  messages.NFTs = {
+  },
+  NFTs: {
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
@@ -811,6 +946,43 @@ if (isFeatureEnabled('isNftDropsEnabled')) {
         }
       }
     }
+  }
+};
+
+if (isFeatureEnabled('isReleaseRadarEnabled')) {
+  messages.radar = {
+    lblTokenOfTheDay: 'Token of the day',
+    liveUpdates: {
+      lblLiveUpdates: 'Live updates',
+      lblTopMovers: 'Top Movers',
+      lblTopLosers: 'Top losers',
+      lblNewTokens: 'New tokens',
+      lblDeFi: 'DeFi',
+      lblStablecoins: 'Stablecoins'
+    },
+    lblPersonalLists: 'Personal Lists',
+    lblCuratedLists: 'Curated Lists',
+    lblRune: 'RUNE',
+    txtRuneAlt: '{name} coin icon',
+    txtRadar: {
+      runeDescription:
+        'RUNE is a native token of THORChain — a cross-network AMM exchange. ' +
+        'THORChain allows for native swaps between various blockchains e.g. a ' +
+        'native swap between ETH and BTC.'
+    },
+    btnGet: {
+      simple: 'Get'
+    },
+    btnSearch: {
+      emoji: '🔍'
+    }
+  };
+}
+
+if (isFeatureEnabled('isBondsEnabled')) {
+  messages.bonds = {
+    icon: '🏦',
+    lblBonds: 'Bonds'
   };
 }
 

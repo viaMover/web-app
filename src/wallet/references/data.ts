@@ -4,6 +4,7 @@ import { SmallTokenInfo } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
+import ERC721_ABI from './abi/erc721-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
@@ -44,7 +45,9 @@ const ADDRESSES = {
     POWERCARD: '0xd07dc4262bcdbf85190c01c996b4c06a461d2430',
     POWERCARD_STAKER: '0xa8AFB8272434f76f9cD0Fd483F15C69AAF9a2E68',
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
-    MASTER_CHEF_POOL_INDEX: 257
+    MASTER_CHEF_POOL_INDEX: 257,
+    EURS_TOKEN_ADDRESS: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x7cc34ea5d7103d01b76e0dccf1ddad9f376801e9'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -68,7 +71,9 @@ const ADDRESSES = {
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -92,7 +97,9 @@ const ADDRESSES = {
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -117,7 +124,9 @@ const ADDRESSES = {
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -141,7 +150,9 @@ const ADDRESSES = {
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x1',
@@ -165,7 +176,9 @@ const ADDRESSES = {
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x1',
@@ -189,7 +202,9 @@ const ADDRESSES = {
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0
+    MASTER_CHEF_POOL_INDEX: 0,
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   }
 };
 
@@ -236,10 +251,15 @@ const USDC_TOKEN_ADDRESS = (network: Network): string => {
     ? ADDRESSES[network].USDC_TOKEN_ADDRESS
     : '0x1';
 };
+
 const WETH_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].WETH_TOKEN_ADDRESS
     ? ADDRESSES[network].WETH_TOKEN_ADDRESS
     : '0x1';
+};
+
+const EURS_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].EURS_TOKEN_ADDRESS ?? '0x1';
 };
 
 const MOVE_ADDRESS = (network: Network): string => {
@@ -294,6 +314,10 @@ const UNISWAP_USDC_WETH_POOL_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].UNSIWAP_USDC_WETH_POOL_ADDRESS
     ? ADDRESSES[network].UNSIWAP_USDC_WETH_POOL_ADDRESS
     : '0x1';
+};
+
+const UNISWAP_EURS_WETH_POOL_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].UNISWAP_EURS_WETH_POOL_ADDRESS ?? '0x1';
 };
 
 const SUSHISWAP_MOVE_WETH_POOL_ADDRESS = (network: Network): string => {
@@ -404,8 +428,6 @@ const getAssetsForTreasury = (
       address: move.address,
       decimals: move.decimals,
       symbol: move.symbol,
-      isFavorite: false,
-      isVerified: true,
       name: move.name,
       priceUSD: moveNativePrice,
       logo: move.iconURL,
@@ -415,8 +437,6 @@ const getAssetsForTreasury = (
       address: slp.address,
       decimals: slp.decimals,
       symbol: slp.symbol,
-      isFavorite: false,
-      isVerified: true,
       name: 'Sushi MOVE-ETH LP',
       priceUSD: slpNativePrice,
       logo: 'https://protocol-icons.s3.amazonaws.com/sushi-exchange.png',
@@ -435,6 +455,16 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: EURS_TOKEN_ADDRESS(network),
+    decimals: 2,
+    symbol: 'EURS',
+    iconURL:
+      'https://token-icons.s3.amazonaws.com/0xdb25f211ab05b1c97d595516f45794528a807ad8.png'
+  };
+};
+
 const formatSwapSources = (swapSource: string): string => {
   return SWAP_SOURCES_ICON[swapSource]
     ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
@@ -449,6 +479,7 @@ export {
   getAssetsForTreasury,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
+  getEURSAssetData,
   SUSHI_ADDRESS,
   MOBO_ADDRESS,
   HOLY_PASSAGE_ADDRESS,
@@ -488,5 +519,8 @@ export {
   POWERCARD_STAKER_ABI,
   MASTER_CHEF_ADDRESS,
   MASTER_CHEF_POOL_INDEX,
-  MASTER_CHEF_ABI
+  MASTER_CHEF_ABI,
+  EURS_TOKEN_ADDRESS,
+  UNISWAP_EURS_WETH_POOL_ADDRESS,
+  ERC721_ABI
 };

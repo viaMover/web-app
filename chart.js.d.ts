@@ -18,7 +18,12 @@ export {
   ChartEvent,
   Chart,
   Interaction,
-  registerables,
   ActiveElement,
-  ScriptableScaleContext
+  ScriptableScaleContext,
+  Chart,
+  BarElement,
+  BarController,
+  CategoryScale,
+  LinearScale,
+  TimeScale
 } from 'chart.js';

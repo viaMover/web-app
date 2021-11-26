@@ -50,7 +50,7 @@
         </div>
       </div>
     </template>
-    <full-page-form-loader v-else :step="txStep" />
+    <loader-form v-else :step="txStep" />
   </secondary-page>
 </template>
 
@@ -61,19 +61,18 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import { greaterThan } from '@/utils/bigmath';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { stakePowercardCompound } from '@/wallet/actions/treasury/powercard/stake';
 import { estimateStakePowercardCompound } from '@/wallet/actions/treasury/powercard/stakeEstimate';
 
 import { ActionButton } from '@/components/buttons';
-import { FullPageFormLoader } from '@/components/controls/full-page-form-loader';
+import { LoaderForm, LoaderStep } from '@/components/forms';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
 import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
-
-import { Step } from '../controls/form-loader';
 
 export default Vue.extend({
   name: 'TreasuryPowercardEmpty',
@@ -82,11 +81,12 @@ export default Vue.extend({
     ActionButton,
     SecondaryPageSimpleTitle,
     SecondaryPage,
-    FullPageFormLoader
+    LoaderForm
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
-      txStep: undefined as Step | undefined,
+      txStep: undefined as LoaderStep | undefined,
       actionError: undefined as string | undefined,
       powercard: {
         alt: this.$t('treasury.lblSmartTreasury'),
@@ -148,7 +148,7 @@ export default Vue.extend({
           this.currentAddress,
           resp.actionGasLimit,
           resp.approveGasLimit,
-          async (step: Step) => {
+          async (step: LoaderStep) => {
             this.txStep = step;
           }
         );
