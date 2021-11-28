@@ -184,7 +184,7 @@ export default Vue.extend({
   validations: {
     phoneNumber: {
       required,
-      minLength: minLength(11),
+      minLength: minLength(10),
       maxLength: maxLength(15)
     }
   }
