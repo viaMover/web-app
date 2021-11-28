@@ -119,14 +119,8 @@ export default Vue.extend({
     if (this.proposalsIds.includes(this.pageProposalId)) {
       return;
     }
-    console.debug('going to refresh the page');
 
-    // const governanceInfo: Array<ProposalInfo> = await this.loadGovernanceInfo();
-    // if (
-    // !governanceInfo.some((info) => info.proposal.id === this.pageProposalId)
-    // ) {
-    // await this.$router.replace({ name: 'governance-view-all' });
-    // }
+    await this.$router.replace({ name: 'governance-view-all' });
   },
   methods: {
     ...mapActions('governance', {
