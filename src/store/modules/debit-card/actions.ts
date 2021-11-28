@@ -352,7 +352,8 @@ export default {
     email: string
   ): Promise<void> {
     try {
-      const hash = new SHA3().update(email).digest('hex');
+      const emailLowercased = email.trim().toLowerCase();
+      const hash = new SHA3().update(emailLowercased).digest('hex');
 
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -374,7 +375,7 @@ export default {
       // what debit card account of Trastra
       const res = await sendEmailHash(
         rootState.account.currentAddress,
-        email,
+        emailLowercased,
         hash,
         signature
       );
@@ -389,7 +390,7 @@ export default {
         signature
       });
 
-      commit('setEmail', email);
+      commit('setEmail', emailLowercased);
       commit('setEmailHash', hash);
       commit('setEmailSignature', signature);
 
@@ -429,6 +430,7 @@ export default {
 
       const mappedParams = {
         ...params,
+        email: params.email.trim().toLowerCase(),
         phone: `+${params.phone}` // prepend phone with '+' sign
       };
 
@@ -499,11 +501,6 @@ export default {
       );
       if (res.isError) {
         if (res.shortError !== undefined) {
-          console.debug('wtf?', res.error, res.shortError);
-          Sentry.captureMessage(
-            `An error occurred during validatePhoneNumber: ${res.shortError} (${res.error})`
-          );
-
           if (res.shortError === 'INCORRECT_CODE') {
             throw new DebitCardApiError('incorrectCode');
           }
@@ -534,7 +531,7 @@ export default {
       }
 
       if (state.emailHash === undefined) {
-        throw new Error('missing email');
+        throw new Error('missing email hash');
       }
 
       if (state.emailSignature === undefined) {
@@ -551,10 +548,6 @@ export default {
       );
       if (res.isError) {
         if (res.shortError !== undefined) {
-          Sentry.captureMessage(
-            `An error occurred during changePhoneNumber: ${res.shortError} (${res.error})`
-          );
-
           if (res.shortError === 'PHONE_SYNTAX') {
             throw new DebitCardApiError('badPhoneSyntax');
           }

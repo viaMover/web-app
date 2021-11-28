@@ -237,9 +237,9 @@ const messages: VueI18n.LocaleMessageObject = {
       phoneNumber: {
         required: 'Phone number is required',
         minLength:
-          'Phone number length should be at least {minLength} symbols (including +)',
+          'Phone number length should be at least {minLength} symbols (not including "+" sign)',
         maxLength:
-          'Phone number length should be {maxLength} symbols maximum (including +)'
+          'Phone number length should be {maxLength} symbols maximum (not including "+" sign)'
       },
       familyName: {
         required: 'Last name is required',
