@@ -356,7 +356,7 @@ export default Vue.extend({
     },
     scrollButtonIntoView(): void {
       this.$nextTick(() => {
-        ((this.$refs.button as Vue).$el as HTMLElement).scrollIntoView();
+        ((this?.$refs?.button as Vue)?.$el as HTMLElement)?.scrollIntoView?.();
       });
     }
   },
@@ -367,7 +367,7 @@ export default Vue.extend({
     },
     phoneNumber: {
       required,
-      minLength: minLength(11),
+      minLength: minLength(10),
       maxLength: maxLength(15)
     },
     familyName: {
