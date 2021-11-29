@@ -1,6 +1,7 @@
 import { ActionTree } from 'vuex';
-import { RootStoreState } from '@/store/types';
+
 import { GamesStoreState, VaultRaceAccount } from '@/store/modules/games/types';
+import { RootStoreState } from '@/store/types';
 
 export default {
   async init({ commit }): Promise<void> {

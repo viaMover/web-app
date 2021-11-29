@@ -86,13 +86,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
-import { validationMixin } from 'vuelidate';
 import { alpha, email, helpers, required } from 'vuelidate/lib/validators';
 import { Validation } from 'vuelidate/vuelidate';
+import { mapState } from 'vuex';
 
 import { Asset } from '@/store/modules/shop/types';
 
+import ActionButton from '@/components/buttons/action-button.vue';
+import ContentWrapper from '@/components/layout/content-wrapper.vue';
 import {
   SecondaryPage,
   SecondaryPageSimpleTitle
@@ -102,8 +103,6 @@ import {
   StatementList,
   StatementListItem
 } from '@/components/statements/statement-list';
-import ContentWrapper from '@/components/layout/content-wrapper.vue';
-import ActionButton from '@/components/buttons/action-button.vue';
 
 const vString = helpers.regex('vString', /^[a-zA-Z_ ]*$/i);
 const vStringNum = helpers.regex('vStringNum', /^[a-zA-Z0-9_ ]*$/i);
@@ -119,7 +118,6 @@ export default Vue.extend({
     ContentWrapper,
     NibbleShopRedeemLeftRail
   },
-  mixins: [validationMixin],
   validations: {
     email: {
       email,

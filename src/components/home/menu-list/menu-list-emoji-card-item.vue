@@ -2,16 +2,18 @@
   <li :class="itemClass">
     <router-link class="button-active" :to="{ name: this.navigateToName }">
       <div class="image">
-        <custom-picture
-          alt=""
-          :sources="pictureSources"
-          :src="src"
-          :webp-sources="pictureWebpSources"
-        />
+        <slot name="picture">
+          <custom-picture
+            alt=""
+            :sources="pictureSources"
+            :src="src"
+            :webp-sources="pictureWebpSources"
+          />
+        </slot>
       </div>
       <div class="info">
         <h3>{{ title }}</h3>
-        <p>{{ description }}</p>
+        <p :class="descriptionClass">{{ description }}</p>
       </div>
     </router-link>
   </li>
@@ -45,6 +47,10 @@ export default Vue.extend({
     navigateToName: {
       type: String,
       required: true
+    },
+    descriptionClass: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -67,7 +73,7 @@ export default Vue.extend({
       ];
     },
     src(): string {
-      return `@/assets/images/${this.pic}@1x.png`;
+      return require(`@/assets/images/${this.pic}@1x.png`);
     }
   }
 });

@@ -43,6 +43,8 @@ export default {
 
     gasPrices: undefined,
     gasUpdating: false,
+    gasUpdaterHandle: undefined,
+    gasUpdaterCallers: [],
 
     nativeCurrency: 'usd',
 
@@ -50,6 +52,7 @@ export default {
     movePriceInWeth: undefined,
     usdcPriceInWeth: undefined,
     slpPriceInWeth: undefined,
+    eursPriceInWeth: undefined,
 
     //explorers
     explorer: undefined,
@@ -64,7 +67,7 @@ export default {
     allTokensSearcher: undefined,
     refreshError: undefined,
 
-    isDebitCardSectionVisible: false,
+    isDebitCardSectionVisible: true,
     isDepositCardSectionVisible: true,
 
     isSavingsInfoLoading: false,

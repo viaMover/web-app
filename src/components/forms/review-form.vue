@@ -21,7 +21,7 @@
           <span />
         </div>
       </div>
-      <div class="item">
+      <div class="item item-image">
         <slot name="second-token-image">
           <custom-picture
             :alt="image ? image.alt : ''"

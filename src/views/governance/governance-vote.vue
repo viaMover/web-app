@@ -55,10 +55,7 @@ import {
   VoteResponse
 } from '@/services/mover/governance';
 import { GovernanceApiError } from '@/services/mover/governance';
-import {
-  isProviderRpcError,
-  ProviderRpcError
-} from '@/store/modules/governance/utils';
+import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { formatToDecimals } from '@/utils/format';
 
 import {
@@ -181,16 +178,12 @@ export default Vue.extend({
         });
 
         this.ipfsLink = this.formatIpfsLink(voteResult.ipfsHash);
-        this.isLoading = false;
       } catch (error) {
         if (isProviderRpcError(error)) {
-          const providerError = error as ProviderRpcError;
-
-          if (this.$te(`provider.errors.${providerError.code}`)) {
+          if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(
-              `provider.errors.${providerError.code}`
+              `provider.errors.${error.code}`
             ).toString();
-            this.isLoading = false;
             return;
           }
         }
@@ -202,11 +195,11 @@ export default Vue.extend({
           this.errorText = this.$t(
             `governance.errors.${error.message}`
           ).toString();
-          this.isLoading = false;
           return;
         }
 
         this.errorText = this.$t('governance.errors.default').toString();
+      } finally {
         this.isLoading = false;
       }
     },

@@ -1,5 +1,6 @@
 <template>
   <router-link
+    :active-class="activeClass"
     class="left-rail-section-nav-item image"
     :class="containerClass"
     exact-active-class="active"
@@ -60,6 +61,10 @@ export default Vue.extend({
     descriptionClass: {
       type: String,
       default: ''
+    },
+    usePartialMatchActiveClass: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -69,6 +74,13 @@ export default Vue.extend({
       }
 
       return this.navigateTo;
+    },
+    activeClass(): string | undefined {
+      if (!this.usePartialMatchActiveClass) {
+        return undefined;
+      }
+
+      return 'active';
     }
   }
 });

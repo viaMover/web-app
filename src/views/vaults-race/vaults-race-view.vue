@@ -52,10 +52,10 @@ import { mapGetters } from 'vuex';
 
 import { VaultRaceAccount } from '@/store/modules/games/types';
 
-import ShopWrapper from '@/components/layout/shop-wrapper/shop-wrapper.vue';
+import ActionButton from '@/components/buttons/action-button.vue';
 import ShopList from '@/components/layout/shop-wrapper/shop-list/shop-list.vue';
 import ShopListItem from '@/components/layout/shop-wrapper/shop-list/shop-list-item.vue';
-import ActionButton from '@/components/buttons/action-button.vue';
+import ShopWrapper from '@/components/layout/shop-wrapper/shop-wrapper.vue';
 
 export default Vue.extend({
   name: 'VaultsRaceView',

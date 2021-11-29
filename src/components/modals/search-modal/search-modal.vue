@@ -10,7 +10,7 @@
     @close="handleSelect(undefined)"
   >
     <template v-slot:header>
-      <h3 class="modal-wrapper-info-title">Search</h3>
+      <h3 class="modal-wrapper-info-title">{{ $t('lblSearch') }}</h3>
       <form class="search-form" @submit.prevent.stop="">
         <input
           v-model.trim="searchTerm"
@@ -86,7 +86,6 @@ export default Vue.extend({
   data() {
     return {
       modalId: ModalType.SearchToken,
-      modalClass: 'swaps__wrapper transaction__popup-wrapper',
       searchTerm: '',
       searchTermDebounced: '',
       debounce: undefined as number | undefined,
