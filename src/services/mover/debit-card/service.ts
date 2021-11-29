@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/vue';
 import axios, { AxiosError } from 'axios';
 
 import { Result } from '../../responses';
@@ -230,9 +231,34 @@ export const changePhoneNumber = async (
 
 const formatError = (error: unknown): Error => {
   const axiosError = error as AxiosError<MoverApiErrorResponse>;
+  if (axiosError.config !== undefined) {
+    const requestUrl = `${axiosError.config?.baseURL}${axiosError.config?.url}`;
+    const code = axiosError.code;
+
+    Sentry.addBreadcrumb({
+      message: 'A request to the Debit Card API is failed',
+      data: {
+        requestUrl,
+        code
+      }
+    });
+  }
+
   if (axiosError.response !== undefined) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
+    if (axiosError.response.data === undefined) {
+      throw axiosError; // no data available
+    }
+
+    Sentry.addBreadcrumb({
+      message: 'Debit Card API responded with an error',
+      data: {
+        error: axiosError.response.data.error,
+        shortError: axiosError.response.data.errorCode
+      }
+    });
+
     return new DebitCardApiError(
       axiosError.response.data.error,
       axiosError.response.data.errorCode
