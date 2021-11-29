@@ -85,8 +85,8 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
-import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
+import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
+import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import {
   calcTransactionFastNativePrice,
   isSubsidizedAllowed
@@ -315,9 +315,6 @@ export default Vue.extend({
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
 
-        console.info('Savings deposit action gaslimit:', this.actionGasLimit);
-        console.info('Savings deposit approve gaslimit:', this.approveGasLimit);
-
         if (!isZero(this.actionGasLimit)) {
           this.isSubsidizedEnabled = this.checkSubsidizedAvailability(
             this.actionGasLimit
@@ -328,8 +325,12 @@ export default Vue.extend({
         }
       } catch (err) {
         this.isSubsidizedEnabled = false;
-        console.error(err);
-        Sentry.captureException("can't estimate savings deposit for subs");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxReview',
+          message: 'failed to estimate action for subsidized'
+        });
+        Sentry.captureException(err);
         return;
       } finally {
         this.isProcessing = false;
@@ -341,9 +342,6 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we can't calculate subsidized tx native price"
-        );
         return undefined;
       }
       return calcTransactionFastNativePrice(
@@ -356,14 +354,11 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we don't allow subsidized transaction"
-        );
         return false;
       }
 
       if (this.inputAsset?.address === 'eth') {
-        console.info('Subsidizing for deposit ETH denied');
+        console.debug('Subsidizing for top-up ETH denied');
         return false;
       }
 
@@ -379,7 +374,7 @@ export default Vue.extend({
       inputAsset: SmallToken,
       transferData: TransferData | undefined
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateDepositCompound(
+      const resp = await estimateTopUpCompound(
         inputAsset,
         this.outputUSDCAsset,
         inputAmount,
@@ -390,8 +385,15 @@ export default Vue.extend({
       );
       if (resp.error) {
         this.transferError = this.$t('estimationError') as string;
-        Sentry.captureException("can't estimate savings deposit");
-        throw new Error(`Can't estimate action ${resp.error}`);
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.estimateAction',
+          message: 'failed to estimate top-up',
+          data: {
+            estimateError: resp.error
+          }
+        });
+        Sentry.captureException("can't estimate top-up");
       }
       return resp;
     },
@@ -407,7 +409,6 @@ export default Vue.extend({
 
       try {
         if (!this.isSwapNeeded) {
-          console.log('Dont need transfer, token is ETH/USDC');
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -525,43 +526,75 @@ export default Vue.extend({
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
       if (this.inputAsset === undefined) {
-        console.error('inputAsset is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxStart',
+          message: 'inputAsset is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start top-up TX");
         return;
       }
 
       if (this.inputAmount === '') {
-        console.error('inputAmount is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxStart',
+          message: 'inputAmount is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start top-up TX");
         return;
       }
 
       if (this.actionGasLimit === undefined) {
-        console.error('action gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxStart',
+          message: 'action gas limit is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start top-up TX");
         return;
       }
 
       if (this.approveGasLimit === undefined) {
-        console.error('approve gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxStart',
+          message: 'approve gas limit is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start top-up TX");
         return;
       }
 
       if (this.isNeedTransfer && this.transferData === undefined) {
-        console.error(
-          'transfer data is empty during `handleTxStart` when it is needed'
-        );
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxStart',
+          message:
+            'transfer data is empty during `handleTxStart` when it is needed'
+        });
+        Sentry.captureException("can't start top-up TX");
         return;
       }
 
-      console.log('is smart treasury:', args.isSmartTreasury);
+      Sentry.addBreadcrumb({
+        type: 'debug',
+        category: 'debit-card.top-up.handleTxStart',
+        data: {
+          isSmartTreasury: args.isSmartTreasury,
+          inputAsset: this.inputAsset,
+          inputAmount: this.inputAmount,
+          transferData: this.transferData,
+          network: this.networkInfo.network,
+          currentAddress: this.currentAddress,
+          actionGasLimit: this.actionGasLimit,
+          approveGasLimit: this.approveGasLimit
+        }
+      });
 
       this.changeStep('loader');
       this.transactionStep = 'Confirm';
       try {
-        await depositCompound(
+        await topUpCompound(
           this.inputAsset,
           this.outputUSDCAsset,
           this.inputAmount,
@@ -569,7 +602,6 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          args.isSmartTreasury,
           async () => {
             this.transactionStep = 'Process';
           },
@@ -580,7 +612,7 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (err) {
         this.transactionStep = 'Reverted';
-        console.log('Savings deposit swap reverted');
+        console.error('Top up reverted', err);
         Sentry.captureException(err);
       }
     }

@@ -1,0 +1,282 @@
+import * as Sentry from '@sentry/vue';
+import { BigNumber } from 'bignumber.js';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
+
+import { TransferData } from '@/services/0x/api';
+import { sameAddress } from '@/utils/address';
+import {
+  convertStringToHexWithPrefix,
+  getPureEthAddress
+} from '@/utils/address';
+import { floorDivide, toWei } from '@/utils/bigmath';
+import { multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
+import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
+import { needApprove } from '@/wallet/actions/approve/needApprove';
+import {
+  CompoundEstimateResponse,
+  EstimateResponse
+} from '@/wallet/actions/types';
+import {
+  DEBIT_CARD_TOP_UP_ADDRESS,
+  HOLY_HAND_ABI,
+  HOLY_HAND_ADDRESS
+} from '@/wallet/references/data';
+import ethDefaults from '@/wallet/references/defaults';
+import { SmallToken, TransactionsParams } from '@/wallet/types';
+
+export const estimateTopUpCompound = async (
+  inputAsset: SmallToken,
+  outputAsset: SmallToken,
+  inputAmount: string,
+  transferData: TransferData | undefined,
+  network: Network,
+  web3: Web3,
+  accountAddress: string
+): Promise<CompoundEstimateResponse> => {
+  const contractAddress = HOLY_HAND_ADDRESS(network);
+
+  let isApproveNeeded = true;
+  try {
+    isApproveNeeded = await needApprove(
+      accountAddress,
+      inputAsset,
+      inputAmount,
+      contractAddress,
+      web3
+    );
+  } catch (err) {
+    Sentry.addBreadcrumb({
+      type: 'error',
+      category: 'debit-card.top-up.estimateTopUpCompound',
+      message: 'failed to estimate approve',
+      data: {
+        error: err
+      }
+    });
+    console.error(`Can't estimate approve: ${err}`);
+    return {
+      error: true,
+      approveGasLimit: '0',
+      actionGasLimit: '0'
+    };
+  }
+
+  if (isApproveNeeded) {
+    Sentry.addBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.estimateTopUpCompound',
+      message: "Needs approve, can't do a proper estimation"
+    });
+
+    try {
+      const approveGasLimit = await estimateApprove(
+        accountAddress,
+        inputAsset.address,
+        contractAddress,
+        web3
+      );
+
+      return {
+        error: false,
+        actionGasLimit: ethDefaults.basic_move_card_top_up,
+        approveGasLimit: approveGasLimit
+      };
+    } catch (err) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.estimateTopUpCompound',
+        message: 'Failed to estimate approve',
+        data: {
+          error: err
+        }
+      });
+
+      console.error(`Can't estimate approve: ${err}`);
+      return {
+        error: true,
+        actionGasLimit: '0',
+        approveGasLimit: '0'
+      };
+    }
+  } else {
+    const estimation = await estimateTopUp(
+      inputAsset,
+      outputAsset,
+      inputAmount,
+      transferData,
+      network,
+      web3,
+      accountAddress
+    );
+    return {
+      error: estimation.error,
+      approveGasLimit: '0',
+      actionGasLimit: estimation.gasLimit
+    };
+  }
+};
+
+export const estimateTopUp = async (
+  inputAsset: SmallToken,
+  outputAsset: SmallToken,
+  inputAmount: string,
+  transferData: TransferData | undefined,
+  network: Network,
+  web3: Web3,
+  accountAddress: string
+): Promise<EstimateResponse> => {
+  if (
+    !sameAddress(inputAsset.address, outputAsset.address) &&
+    transferData === undefined
+  ) {
+    throw 'TransferData is missing';
+  }
+
+  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractABI = HOLY_HAND_ABI;
+
+  const poolAddress = DEBIT_CARD_TOP_UP_ADDRESS(network);
+
+  try {
+    const holyHand = new web3.eth.Contract(
+      contractABI as AbiItem[],
+      contractAddress
+    );
+
+    let value = undefined;
+
+    if (transferData) {
+      value = Web3.utils.toHex(transferData.value);
+    }
+
+    const transactionParams = {
+      from: accountAddress,
+      value: value
+    } as TransactionsParams;
+
+    const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
+
+    Sentry.addBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.estimateTopUp',
+      message: 'input amount in WEI',
+      data: {
+        inputAmountInWEI
+      }
+    });
+
+    let bytesData = [];
+    let expectedMinimumReceived = '0';
+
+    if (transferData) {
+      expectedMinimumReceived = new BigNumber(
+        multiply(transferData.buyAmount, '0.85')
+      ).toFixed(0);
+
+      Sentry.addBreadcrumb({
+        type: 'info',
+        category: 'debit-card.top-up.estimateTopUp',
+        message: 'expected minimum received',
+        data: {
+          expectedMinimumReceived
+        }
+      });
+
+      const valueBytes = Web3.utils.hexToBytes(
+        Web3.utils.padLeft(convertStringToHexWithPrefix(transferData.value), 64)
+      );
+
+      bytesData = Array.prototype.concat(
+        Web3.utils.hexToBytes(transferData.to),
+        Web3.utils.hexToBytes(transferData.allowanceTarget),
+        valueBytes,
+        Web3.utils.hexToBytes(transferData.data)
+      );
+
+      Sentry.addBreadcrumb({
+        type: 'info',
+        category: 'debit-card.top-up.estimateTopUp',
+        message: 'bytes',
+        data: {
+          valueBytes: Web3.utils.bytesToHex(valueBytes),
+          dataBytes: Web3.utils.bytesToHex(bytesData)
+        }
+      });
+    }
+
+    Sentry.addBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.estimateTopUp',
+      message: 'transaction params',
+      data: {
+        ...transactionParams
+      }
+    });
+
+    let inputCurrencyAddress = inputAsset.address;
+    if (inputAsset.address === 'eth') {
+      inputCurrencyAddress = getPureEthAddress();
+    }
+
+    let outputCurrencyAddress = outputAsset.address;
+    if (outputAsset.address === 'eth') {
+      outputCurrencyAddress = getPureEthAddress();
+    }
+
+    Sentry.addBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.estimateTopUp',
+      message: 'currencies',
+      data: {
+        inputCurrencyAddress,
+        outputCurrencyAddress
+      }
+    });
+
+    const gasLimitObj = await holyHand.methods
+      .depositToPool(
+        poolAddress,
+        inputCurrencyAddress,
+        inputAmountInWEI,
+        expectedMinimumReceived,
+        bytesData
+      )
+      .estimateGas(transactionParams);
+
+    if (gasLimitObj) {
+      const gasLimit = gasLimitObj.toString();
+      const gasLimitWithBuffer = floorDivide(multiply(gasLimit, '120'), '100');
+
+      Sentry.addBreadcrumb({
+        type: 'info',
+        category: 'debit-card.top-up.estimateTopUp',
+        message: 'gas estimations',
+        data: {
+          gasLimit,
+          gasLimitWithBuffer
+        }
+      });
+
+      return { error: false, gasLimit: gasLimitWithBuffer };
+    } else {
+      throw new Error('empty gas limit');
+    }
+  } catch (error) {
+    Sentry.addBreadcrumb({
+      type: 'error',
+      category: 'debit-card.top-up.estimateTopUp',
+      message: 'failed to estimate top up',
+      data: {
+        error
+      }
+    });
+    console.error(`Can't estimate top-up: ${error}`);
+
+    return {
+      error: true,
+      gasLimit: '0'
+    };
+  }
+};
