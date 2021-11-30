@@ -17,7 +17,7 @@
       :is-loading="isLoading"
       :is-processing="isProcessing"
       :operation-description="$t('debitCard.topUp.txtApproximateEUREstimation')"
-      :operation-title="approximateEUREstimation"
+      :operation-title="approximateEUREstimationText"
       :output-asset-heading-text="$t('debitCard.topUp.lblAmountWeDepositIn')"
       :selected-token-description="description"
       :transfer-error="transferError"
@@ -92,9 +92,10 @@ import {
   isSubsidizedAllowed
 } from '@/wallet/actions/subsidized';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { getEURSAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
+  SmallTokenInfo,
   SmallTokenInfoWithIcon,
   TokenWithBalance
 } from '@/wallet/types';
@@ -164,7 +165,9 @@ export default Vue.extend({
       isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
-      approveGasLimit: undefined as string | undefined
+      approveGasLimit: undefined as string | undefined,
+      approximateEUREstimationAmount: '0',
+      approximateEstimationDebounceHandler: undefined as number | undefined
     };
   },
   computed: {
@@ -187,6 +190,9 @@ export default Vue.extend({
     }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
+    },
+    eursAsset(): SmallTokenInfo {
+      return getEURSAssetData(this.networkInfo.network);
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
@@ -213,19 +219,8 @@ export default Vue.extend({
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },
-    approximateEUREstimation(): string {
-      if (
-        this.inputAmountNative === '' ||
-        this.usdcPriceInWeth === undefined ||
-        this.eursPriceInWeth === undefined
-      ) {
-        return '~ €0.00';
-      }
-
-      const eursPerUsdc = divide(this.eursPriceInWeth, this.usdcPriceInWeth);
-      const amountInEurs = multiply(this.inputAmountNative, eursPerUsdc);
-
-      return `~ €${formatToNative(amountInEurs)}`;
+    approximateEUREstimationText(): string {
+      return `~ €${formatToNative(this.approximateEUREstimationAmount)}`;
     },
     formattedETHTotal(): string {
       if (this.inputAsset === undefined) {
@@ -400,6 +395,71 @@ export default Vue.extend({
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
     },
+    async updateApproximateEURSEstimationValue(mode: InputMode): Promise<void> {
+      if (this.approximateEstimationDebounceHandler !== undefined) {
+        window.clearTimeout(this.approximateEstimationDebounceHandler);
+      }
+
+      this.approximateEstimationDebounceHandler = window.setTimeout(
+        async () => {
+          try {
+            const referenceAmount =
+              mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
+            const referenceToken =
+              mode === 'TOKEN' ? this.inputAsset : this.outputUSDCAsset;
+
+            if (referenceToken === undefined) {
+              return;
+            }
+
+            if (isZero(referenceAmount) || referenceAmount === '') {
+              this.approximateEUREstimationAmount = '0';
+              return;
+            }
+
+            const inputInWei = toWei(referenceAmount, referenceToken.decimals);
+            const transferData = await getTransferData(
+              this.eursAsset.address,
+              referenceToken.address,
+              inputInWei,
+              true,
+              '0.01',
+              this.networkInfo.network
+            );
+
+            this.approximateEUREstimationAmount = fromWei(
+              transferData.buyAmount,
+              this.eursAsset.decimals
+            );
+          } catch (error) {
+            console.warn(
+              'failed to estimate output in EURS, using fallback',
+              error instanceof ZeroXSwapError
+                ? mapError(error.publicMessage)
+                : error
+            );
+
+            if (
+              this.inputAmountNative === '' ||
+              this.usdcPriceInWeth === undefined ||
+              this.eursPriceInWeth === undefined
+            ) {
+              return;
+            }
+
+            const eursPerUsdc = divide(
+              this.eursPriceInWeth,
+              this.usdcPriceInWeth
+            );
+            const amountInEurs = multiply(this.inputAmountNative, eursPerUsdc);
+
+            // a very rough estimation of output amount
+            this.approximateEUREstimationAmount = amountInEurs;
+          }
+        },
+        250
+      );
+    },
     async updateAmount(value: string, mode: InputMode): Promise<void> {
       if (this.inputAsset === undefined || this.isLoading) {
         return;
@@ -465,6 +525,7 @@ export default Vue.extend({
             );
           }
         }
+        this.updateApproximateEURSEstimationValue(mode);
       } catch (err) {
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
@@ -501,6 +562,7 @@ export default Vue.extend({
       this.transferError = undefined;
       this.inputAmount = '';
       this.inputAmountNative = '';
+      this.updateApproximateEURSEstimationValue(this.inputMode);
     },
     handleToggleInputMode(): void {
       if (this.inputMode === 'NATIVE') {
