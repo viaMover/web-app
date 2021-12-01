@@ -357,6 +357,12 @@ export default {
       const treasuryFreshData = dispatch('fetchTreasuryFreshData');
       const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
 
+      const olympusInfoPromise = dispatch(
+        'earnings/olympus/fetchOlympusInfo',
+        undefined,
+        { root: true }
+      );
+
       const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
         root: true
       });
@@ -382,7 +388,8 @@ export default {
         nftInfoPromise,
         loadAvatarPromise,
         nibbleShopInfoPromise,
-        loadPowercardPromise
+        loadPowercardPromise,
+        olympusInfoPromise
       ]);
 
       const promisesErrors = promisesResults

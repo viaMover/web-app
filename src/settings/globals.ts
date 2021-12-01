@@ -10,6 +10,7 @@ export interface Globals {
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
   isTreasuryMonthlyChartEnabled: boolean;
+  isEarningsMonthlyChartEnabled: boolean;
   isEarningsEnabled: boolean;
   isEarningsEthereumEnabled: boolean;
   isEarningsOlympusEnabled: boolean;
@@ -27,6 +28,7 @@ const values: Globals = {
   isIntercomEnabled: false,
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
+  isEarningsMonthlyChartEnabled: false,
   isEarningsEnabled: true,
   isEarningsEthereumEnabled: true,
   isEarningsOlympusEnabled: true

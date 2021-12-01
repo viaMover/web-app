@@ -16,7 +16,11 @@ export default {
     error: undefined,
 
     olympusAPY: undefined,
-    olympusBalance: undefined
+    olympusBalance: undefined,
+
+    isOlympusInfoLoading: false,
+    olympusInfo: undefined,
+    olympusInfoError: undefined
   },
   actions,
   getters,

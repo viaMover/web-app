@@ -898,20 +898,24 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
 
 if (isFeatureEnabled('isEarningsEnabled')) {
   messages.earnings = {
+    icon: '🌻',
     lblEarnings: 'Earnings',
     lblMyEarnings: 'My Earnings',
     lblEarningsBalance: 'Earnings Balance',
+    lblEarningsStatements: 'Earnings Statements',
     lblWhatDoWeDeposit: 'What do we deposit',
     lblAmountWeDepositIn: 'Amount we deposit in',
     lblWhatDoWeWithdraw: 'What do we withdraw',
     lblAmountWeWithdrawIn: 'Amount we withdraw in',
     lblAndTotalOf: 'And it will be a total of',
     lblReviewYourStake: 'Review your stake',
+    lblInProgress: 'In progress',
     txtNotNativeAsset:
       'You chose a non {targetSymbol} asset. It means that it will be converted to {targetSymbol} at the time of the deposit at the current market rate.',
     btnStake: 'Stake {symbol}',
     btnWithdraw: 'Withdraw {symbol}',
     btnStart: 'Start earning',
+    btnView: 'View',
     lblAndItWillBe: 'And it will be a total of',
     lblOverview: '{token} Overview',
     txtOverview:
@@ -935,6 +939,15 @@ if (isFeatureEnabled('isEarningsEnabled')) {
     lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
     lblEstimatedEarningsThisMonth: 'Estimated earnings this month',
     lblEstimatedEarningsAnnually: 'Estimated earnings annually',
+    statement: {
+      lblBalance: '{month} balance',
+      lblTotalEarnedInMonth: 'Total earned in {month}',
+      lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}',
+      lblDeposits: '{month} deposits',
+      lblWithdrawals: '{month} withdrawals',
+      lblSavedFees: 'Saved fees',
+      lblPayoutsToEarnings: 'Payouts to Earnings'
+    },
     ethereum: {
       lblEthereum: 'Ethereum',
       lblManage: 'Manage Ethereum',

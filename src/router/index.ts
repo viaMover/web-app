@@ -485,7 +485,7 @@ if (isFeatureEnabled('isEarningsEnabled')) {
             name: 'earnings-olympus-manage',
             component: () =>
               import(
-                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-manage.vue'
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-manage-wrapper.vue'
               )
           }
         ],

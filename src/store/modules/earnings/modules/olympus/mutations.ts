@@ -11,5 +11,14 @@ export default {
   },
   setOlympusBalance(state, balance): void {
     state.olympusBalance = balance;
+  },
+  setOlympusInfo(state, info): void {
+    state.olympusInfo = info;
+  },
+  setOlympusInfoError(state, error): void {
+    state.olympusInfoError = error;
+  },
+  setIsOlympusInfoLoading(state, status): void {
+    state.isOlympusInfoLoading = status;
   }
 } as MutationTree<EarningsOlympusStoreState>;

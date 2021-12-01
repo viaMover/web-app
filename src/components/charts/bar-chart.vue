@@ -33,6 +33,7 @@ import {
   SavingsMonthBalanceItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
+import { OlympusMonthBalanceItem } from '@/services/mover/earnings/types';
 import {
   buildBalancesChartData,
   ChartDataItem,
@@ -56,7 +57,11 @@ export default Vue.extend({
     },
     chartDataSource: {
       type: Array as PropType<
-        Array<SavingsMonthBalanceItem | TreasuryMonthBonusesItem>
+        Array<
+          | SavingsMonthBalanceItem
+          | TreasuryMonthBonusesItem
+          | OlympusMonthBalanceItem
+        >
       >,
       required: true
     },
