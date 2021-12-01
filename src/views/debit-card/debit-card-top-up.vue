@@ -46,12 +46,10 @@
       v-else-if="step === 'review'"
       :amount="inputAmount"
       :button-text="$t('debitCard.topUp.btnTopUpCard')"
-      :estimated-gas-cost="estimatedGasCost"
       :header-title="$t('debitCard.topUp.lblReviewYourTopUp')"
       :image="currentSkin.previewPicture"
       :input-amount-native-title="$t('debitCard.topUp.lblAndItWillBeTotalOf')"
       :input-amount-title="$t('debitCard.topUp.lblAmountWeTopUpIn')"
-      :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="inputAmountNative"
       :token="inputAsset"
       @tx-start="handleTxStart"
@@ -84,13 +82,10 @@ import {
   multiply,
   toWei
 } from '@/utils/bigmath';
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
-import {
-  calcTransactionFastNativePrice,
-  isSubsidizedAllowed
-} from '@/wallet/actions/subsidized';
+import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getEURSAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import {
@@ -162,8 +157,6 @@ export default Vue.extend({
       transferError: undefined as undefined | string,
 
       //to tx
-      isSubsidizedEnabled: false,
-      estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined,
       approximateEUREstimationAmount: '0',
@@ -188,7 +181,7 @@ export default Vue.extend({
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
     }),
-    outputUSDCAsset(): SmallTokenInfoWithIcon {
+    usdcAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
     eursAsset(): SmallTokenInfo {
@@ -203,7 +196,7 @@ export default Vue.extend({
       }
 
       return !(
-        sameAddress(this.inputAsset.address, this.outputUSDCAsset.address) ||
+        sameAddress(this.inputAsset.address, this.usdcAsset.address) ||
         isEth(this.inputAsset.address)
       );
     },
@@ -228,12 +221,12 @@ export default Vue.extend({
       }
 
       if (isEth(this.inputAsset.address)) {
-        return `${formatToNative(this.inputAmount)} ETH`;
+        return `${formatToDecimals(this.inputAmount, 4)} ETH`;
       }
 
       if (this.transferData !== undefined) {
         const boughtETH = fromWei(this.transferData.buyAmount, 18);
-        return `${formatToNative(boughtETH)} ETH`;
+        return `${formatToDecimals(boughtETH, 4)} ETH`;
       }
 
       return '';
@@ -243,10 +236,7 @@ export default Vue.extend({
         return true;
       }
 
-      return !sameAddress(
-        this.inputAsset.address,
-        this.outputUSDCAsset.address
-      );
+      return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
     }
   },
   watch: {
@@ -263,7 +253,7 @@ export default Vue.extend({
             return;
           }
           const usdc = newVal.find((t: TokenWithBalance) =>
-            sameAddress(t.address, this.outputUSDCAsset.address)
+            sameAddress(t.address, this.usdcAsset.address)
           );
           if (usdc !== undefined) {
             this.inputAsset = usdc;
@@ -295,8 +285,6 @@ export default Vue.extend({
         return;
       }
 
-      this.isSubsidizedEnabled = false;
-      this.estimatedGasCost = undefined;
       this.actionGasLimit = '0';
       this.approveGasLimit = '0';
       this.isProcessing = true;
@@ -309,22 +297,7 @@ export default Vue.extend({
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
-
-        if (!isZero(this.actionGasLimit)) {
-          this.isSubsidizedEnabled = this.checkSubsidizedAvailability(
-            this.actionGasLimit
-          );
-          this.estimatedGasCost = this.subsidizedTxNativePrice(
-            this.actionGasLimit
-          );
-        }
       } catch (err) {
-        this.isSubsidizedEnabled = false;
-        Sentry.addBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.handleTxReview',
-          message: 'failed to estimate action for subsidized'
-        });
         Sentry.captureException(err);
         return;
       } finally {
@@ -345,33 +318,23 @@ export default Vue.extend({
         this.ethPrice
       );
     },
-    checkSubsidizedAvailability(actionGasLimit: string): boolean {
-      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        return false;
-      }
-
-      if (this.inputAsset?.address === 'eth') {
-        console.debug('Subsidizing for top-up ETH denied');
-        return false;
-      }
-
-      return isSubsidizedAllowed(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice,
-        this.treasuryBonusNative
-      );
-    },
     async estimateAction(
       inputAmount: string,
       inputAsset: SmallToken,
       transferData: TransferData | undefined
     ): Promise<CompoundEstimateResponse> {
+      let outputAsset: SmallToken = {
+        address: 'eth',
+        decimals: 18,
+        symbol: 'ETH'
+      };
+      if (sameAddress(inputAsset.address, this.usdcAsset.address)) {
+        outputAsset = inputAsset;
+      }
+
       const resp = await estimateTopUpCompound(
         inputAsset,
-        this.outputUSDCAsset,
+        outputAsset,
         inputAmount,
         transferData,
         this.networkInfo.network,
@@ -397,22 +360,29 @@ export default Vue.extend({
     },
     async updateApproximateEURSEstimationValue(mode: InputMode): Promise<void> {
       if (this.approximateEstimationDebounceHandler !== undefined) {
+        // clear debounce handler to prevent last queued update from
+        // being executed
         window.clearTimeout(this.approximateEstimationDebounceHandler);
       }
 
+      // set up a debounce handler
       this.approximateEstimationDebounceHandler = window.setTimeout(
         async () => {
           try {
             const referenceAmount =
               mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
             const referenceToken =
-              mode === 'TOKEN' ? this.inputAsset : this.outputUSDCAsset;
-
+              mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
             if (referenceToken === undefined) {
+              // if reference token is an arbitrary token
+              // but is evaluated as undefined, we preserve the last estimated amount
               return;
             }
 
             if (isZero(referenceAmount) || referenceAmount === '') {
+              // in case of 0 amount or token has been changed
+              // we assume that no estimation required and reassign a 0
+              // to the estimated amount
               this.approximateEUREstimationAmount = '0';
               return;
             }
@@ -453,7 +423,9 @@ export default Vue.extend({
             );
             const amountInEurs = multiply(this.inputAmountNative, eursPerUsdc);
 
-            // a very rough estimation of output amount
+            // if no transfer data is available or some conditions
+            // are not met then we use a fallback to give user
+            // much more rough estimate of output amount
             this.approximateEUREstimationAmount = amountInEurs;
           }
         },
@@ -469,6 +441,7 @@ export default Vue.extend({
 
       try {
         if (!this.isSwapNeeded) {
+          // ETH or USDC
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -485,6 +458,7 @@ export default Vue.extend({
             this.inputAmountNative = value;
           }
         } else {
+          // Swap is needed, therefore inputAsset is neither ETH or USDC
           if (mode === 'TOKEN') {
             this.inputAmount = value;
             this.inputAmountNative = new BigNumber(
@@ -511,7 +485,7 @@ export default Vue.extend({
               this.inputAsset.decimals
             );
             this.transferData = await getTransferData(
-              'eth',
+              getPureEthAddress(),
               this.inputAsset.address,
               inputInWei,
               true,
@@ -656,9 +630,18 @@ export default Vue.extend({
       this.changeStep('loader');
       this.transactionStep = 'Confirm';
       try {
+        let outputAsset: SmallToken = {
+          address: 'eth',
+          decimals: 18,
+          symbol: 'ETH'
+        };
+        if (sameAddress(this.inputAsset.address, this.usdcAsset.address)) {
+          outputAsset = this.inputAsset;
+        }
+
         await topUpCompound(
           this.inputAsset,
-          this.outputUSDCAsset,
+          outputAsset,
           this.inputAmount,
           this.transferData,
           this.networkInfo.network,
