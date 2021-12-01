@@ -81,8 +81,12 @@ import { TheMask } from 'vue-the-mask';
 import { maxLength, minLength, required } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { DebitCardApiError } from '@/services/mover/debit-card';
+import {
+  DebitCardApiError,
+  DebitCardNotSupportedCountryError
+} from '@/services/mover/debit-card';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { mapCountryCodeToEmoji } from '@/utils/emoji';
 
 import { ActionButton } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
@@ -143,9 +147,29 @@ export default Vue.extend({
             this.errorText = this.$t(
               `provider.errors.${error.code}`
             ).toString();
-            this.scrollButtonIntoView();
             return;
           }
+        }
+
+        if (error instanceof DebitCardNotSupportedCountryError) {
+          if (
+            error.additionalPayload?.country !== undefined &&
+            error.additionalPayload?.countryName !== undefined
+          ) {
+            this.errorText = this.$t('debitCard.errors.notSupportedCountry', {
+              flag: mapCountryCodeToEmoji(
+                error.additionalPayload.country,
+                true
+              ),
+              country: error.additionalPayload.countryName
+            }) as string;
+            return;
+          }
+
+          this.errorText = this.$t(
+            'debitCard.errors.notSupportedCountryFallback'
+          ) as string;
+          return;
         }
 
         if (error instanceof DebitCardApiError) {
@@ -156,7 +180,6 @@ export default Vue.extend({
             this.errorText = this.$t(
               `debitCard.errors.${error.message}`
             ) as string;
-            this.scrollButtonIntoView();
             return;
           }
 
@@ -164,14 +187,13 @@ export default Vue.extend({
             this.errorText = this.$t(
               `debitCard.errors.${error.message}`
             ) as string;
-            this.scrollButtonIntoView();
             return;
           }
         }
 
         this.errorText = this.$t('debitCard.errors.default') as string;
-        this.scrollButtonIntoView();
       } finally {
+        this.scrollButtonIntoView();
         this.isLoading = false;
       }
     },

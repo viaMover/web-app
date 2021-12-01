@@ -1,4 +1,4 @@
-export { DebitCardApiError } from './types';
+export { DebitCardApiError, DebitCardNotSupportedCountryError } from './types';
 
 export {
   getCardInfo,

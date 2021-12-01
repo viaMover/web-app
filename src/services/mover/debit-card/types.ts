@@ -1,9 +1,15 @@
-import { MoverResponse } from '../responses';
-export class DebitCardApiError extends Error {
-  constructor(readonly message: string, readonly shortMessage?: string) {
+import { MoverResponse, MoverResponseExtended } from '../responses';
+export class DebitCardApiError<T> extends Error {
+  constructor(
+    readonly message: string,
+    readonly shortMessage?: string,
+    readonly additionalPayload?: T
+  ) {
     super(message);
   }
 }
+
+export class DebitCardNotSupportedCountryError extends DebitCardApiError<NotSupportedCountryErrorPayload> {}
 
 export type CardStatus =
   | 'NOT_REGISTERED' // user did not filled personal data form yet
@@ -71,7 +77,14 @@ export type OrderCardRequestPayload = Request<{
   info: OrderCardPayload;
   sig: string;
 }>;
-export type OrderCardResponsePayload = MoverResponse<BaseResponse>;
+export type NotSupportedCountryErrorPayload = {
+  country: string;
+  countryName: string;
+};
+export type OrderCardResponsePayload = MoverResponseExtended<
+  BaseResponse,
+  NotSupportedCountryErrorPayload
+>;
 export type OrderCardReturn = BaseReturn;
 
 export type ValidatePhoneNumberRequestPayload = Request<{ code: string }>;

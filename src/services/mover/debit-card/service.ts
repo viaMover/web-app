@@ -11,6 +11,7 @@ import {
   ChangePhoneNumberRequestPayload,
   ChangePhoneNumberResponsePayload,
   DebitCardApiError,
+  NotSupportedCountryErrorPayload,
   OrderCardPayload,
   OrderCardRequestPayload,
   OrderCardResponsePayload,
@@ -30,7 +31,7 @@ const fetchInfo = async (
   email: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<BaseReturn, string>> => {
+): Promise<Result<BaseReturn, string, void>> => {
   try {
     const response = (
       await cardApiClient.post<CardInfoResponsePayload>('/info', {
@@ -76,14 +77,14 @@ export const sendEmailHash = async (
   email: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<BaseReturn, string>> =>
+): Promise<Result<BaseReturn, string, void>> =>
   fetchInfo(accountAddress, email, emailHash, emailSignature);
 
 export const getCardInfo = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<BaseReturn, string>> =>
+): Promise<Result<BaseReturn, string, void>> =>
   fetchInfo(accountAddress, '', emailHash, emailSignature);
 
 export const orderCard = async (
@@ -92,7 +93,9 @@ export const orderCard = async (
   signature: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<BaseReturn, string>> => {
+): Promise<
+  Result<BaseReturn, string, NotSupportedCountryErrorPayload | void>
+> => {
   try {
     const response = (
       await cardApiClient.post<OrderCardResponsePayload>('/signup', {
@@ -118,12 +121,14 @@ export const orderCard = async (
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    const formattedError = formatError(error);
+    const formattedError =
+      formatError<NotSupportedCountryErrorPayload | void>(error);
     if (formattedError instanceof DebitCardApiError) {
       return {
         isError: true,
         error: formattedError.message,
-        shortError: formattedError.shortMessage
+        shortError: formattedError.shortMessage,
+        payload: formattedError.additionalPayload
       };
     }
 
@@ -136,7 +141,7 @@ export const validatePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<BaseReturn, string>> => {
+): Promise<Result<BaseReturn, string, void>> => {
   try {
     const response = (
       await cardApiClient.post<ValidatePhoneNumberResponsePayload>(
@@ -185,7 +190,7 @@ export const changePhoneNumber = async (
   accountAddress: string,
   emailHash: string,
   emailSignature: string
-): Promise<Result<BaseReturn, string>> => {
+): Promise<Result<BaseReturn, string, void>> => {
   try {
     const response = (
       await cardApiClient.post<ChangePhoneNumberResponsePayload>(
@@ -216,12 +221,14 @@ export const changePhoneNumber = async (
       result: response.payload
     };
   } catch (error) {
-    const formattedError = formatError(error);
+    const formattedError =
+      formatError<NotSupportedCountryErrorPayload | void>(error);
     if (formattedError instanceof DebitCardApiError) {
       return {
         isError: true,
         error: formattedError.message,
-        shortError: formattedError.shortMessage
+        shortError: formattedError.shortMessage,
+        payload: formattedError.additionalPayload
       };
     }
 
@@ -229,8 +236,8 @@ export const changePhoneNumber = async (
   }
 };
 
-const formatError = (error: unknown): Error => {
-  const axiosError = error as AxiosError<MoverApiErrorResponse>;
+const formatError = <P = void>(error: unknown): Error => {
+  const axiosError = error as AxiosError<MoverApiErrorResponse<P>>;
   if (axiosError.config !== undefined) {
     const requestUrl = `${axiosError.config?.baseURL}${axiosError.config?.url}`;
     const code = axiosError.code;
@@ -261,7 +268,8 @@ const formatError = (error: unknown): Error => {
 
     return new DebitCardApiError(
       axiosError.response.data.error,
-      axiosError.response.data.errorCode
+      axiosError.response.data.errorCode,
+      axiosError.response.data.payload
     );
   } else if (axiosError.request !== undefined) {
     // The request was made but no response was received

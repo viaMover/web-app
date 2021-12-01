@@ -117,7 +117,7 @@ export const getCommunityVotingPower = async (
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    const axiosError = error as AxiosError<MoverApiErrorResponse<unknown>>;
     if (axiosError.response !== undefined) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
@@ -161,7 +161,7 @@ export const getVotingPower = async (
 
     return { isError: false, result: response.payload };
   } catch (error) {
-    const axiosError = error as AxiosError<MoverApiErrorResponse>;
+    const axiosError = error as AxiosError<MoverApiErrorResponse<unknown>>;
     if (axiosError.response !== undefined) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
