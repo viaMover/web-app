@@ -9,6 +9,7 @@ import {
   BaseReturn,
   changePhoneNumber,
   DebitCardApiError,
+  DebitCardNotSupportedCountryError,
   getCardInfo,
   orderCard,
   sendEmailHash,
@@ -461,9 +462,25 @@ export default {
           if (res.shortError === 'PHONE_SYNTAX') {
             throw new DebitCardApiError('badPhoneSyntax');
           }
+
+          if (res.shortError === 'UNSUPPORTED_COUNTRY') {
+            if (res.payload) {
+              throw new DebitCardNotSupportedCountryError(
+                res.error,
+                res.shortError,
+                res.payload
+              );
+            }
+
+            // handle missing payload gracefully (component will render itself as intended)
+            throw new DebitCardNotSupportedCountryError(
+              res.error,
+              res.shortError
+            );
+          }
         }
 
-        throw new DebitCardApiError(res.error, res.shortError);
+        throw new DebitCardApiError(res.error, res.shortError, res.payload);
       }
 
       commit('setIsLoading', true);
@@ -550,6 +567,22 @@ export default {
         if (res.shortError !== undefined) {
           if (res.shortError === 'PHONE_SYNTAX') {
             throw new DebitCardApiError('badPhoneSyntax');
+          }
+
+          if (res.shortError === 'UNSUPPORTED_COUNTRY') {
+            if (res.payload) {
+              throw new DebitCardNotSupportedCountryError(
+                res.error,
+                res.shortError,
+                res.payload
+              );
+            }
+
+            // handle missing payload gracefully (component will render itself as intended)
+            throw new DebitCardNotSupportedCountryError(
+              res.error,
+              res.shortError
+            );
           }
         }
 
