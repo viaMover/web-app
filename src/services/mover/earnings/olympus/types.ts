@@ -1,4 +1,4 @@
-import { MoverResponse } from '../responses';
+import { MoverResponse } from '../../responses';
 
 export type OlympusMonthBalanceItem = {
   type: 'olympus_month_balance_item';

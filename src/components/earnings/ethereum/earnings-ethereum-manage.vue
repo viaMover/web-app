@@ -9,7 +9,7 @@
       <div class="manage-graph-wrapper">
         <bar-chart
           :chart-data-source="chartDataSource"
-          :is-loading="isOlympusInfoLoading || olympusInfo === undefined"
+          :is-loading="isEthereumInfoLoading || ethereumInfo === undefined"
           @item-selected="handleItemSelected"
         />
         <p>
@@ -22,7 +22,7 @@
       :button-text="$t('earnings.btnView')"
       :icon="$t('earnings.icon')"
       :in-progress-text="$t('earnings.lblInProgress')"
-      :items="olympusMonthStatsOptions"
+      :items="ethereumMonthStatsOptions"
       navigate-to-name="earnings-month-stats"
       :title="$t('earnings.lblEarningsStatements')"
       wrapper-class="manage-statements-list"
@@ -36,7 +36,7 @@ import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { OlympusMonthBalanceItem } from '@/services/mover';
+import { EthereumMonthBalanceItem } from '@/services/mover/earnings/ethereum/types';
 import { fromWei, multiply } from '@/utils/bigmath';
 import {
   formatPercents,
@@ -51,7 +51,7 @@ import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
 import { StatementNavList } from '@/components/statements/statement-nav-list';
 
 export default Vue.extend({
-  name: 'EarningsOlympusManage',
+  name: 'EarningsEthereumManage',
   components: {
     StatementNavList,
     SecondaryPageSimpleTitle,
@@ -60,7 +60,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      selectedItem: undefined as OlympusMonthBalanceItem | undefined
+      selectedItem: undefined as EthereumMonthBalanceItem | undefined
     };
   },
   computed: {
@@ -70,20 +70,20 @@ export default Vue.extend({
     ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice'
     }),
-    ...mapState('earnings/olympus', {
-      apy: 'olympusAPY',
-      olympusBalance: 'olympusBalance',
-      olympusInfo: 'olympusInfo',
-      isOlympusInfoLoading: 'isOlympusInfoLoading'
+    ...mapState('earnings/ethereum', {
+      apy: 'ethereumAPY',
+      ethereumBalance: 'ethereumBalance',
+      ethereumInfo: 'ethereumInfo',
+      isEthereumInfoLoading: 'isEthereumInfoLoading'
     }),
-    ...mapGetters('earnings/olympus', {
-      olympusMonthStatsOptions: 'olympusMonthStatsOptions',
-      olympusInfoEarnedThisMonthNative: 'olympusInfoEarnedThisMonthNative',
+    ...mapGetters('earnings/ethereum', {
+      ethereumMonthStatsOptions: 'ethereumMonthStatsOptions',
+      ethereumInfoEarnedThisMonthNative: 'ethereumInfoEarnedThisMonthNative',
       apyNative: 'apyNative'
     }),
-    chartDataSource(): Array<OlympusMonthBalanceItem> {
-      return this.olympusInfo !== undefined
-        ? this.olympusInfo.last12MonthsBalances
+    chartDataSource(): Array<EthereumMonthBalanceItem> {
+      return this.ethereumInfo !== undefined
+        ? this.ethereumInfo.last12MonthsBalances
         : [];
     },
     selectedItemPrefix(): string {
@@ -112,7 +112,7 @@ export default Vue.extend({
     selectedItemValue(): string {
       if (this.selectedItem === undefined) {
         return this.formatSelectedItemValue(
-          this.olympusInfoEarnedThisMonthNative
+          this.ethereumInfoEarnedThisMonthNative
         );
       }
 
@@ -122,7 +122,7 @@ export default Vue.extend({
         this.selectedItem.year == now.get('year')
       ) {
         return this.formatSelectedItemValue(
-          this.olympusInfoEarnedThisMonthNative
+          this.ethereumInfoEarnedThisMonthNative
         );
       }
 
@@ -144,7 +144,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleItemSelected(item: OlympusMonthBalanceItem): void {
+    handleItemSelected(item: EthereumMonthBalanceItem): void {
       this.selectedItem = item;
     },
     formatSelectedItemValue(value: string | number): string {

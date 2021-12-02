@@ -2,8 +2,7 @@ import { GetterTree } from 'vuex';
 
 import gt from 'lodash-es/gt';
 
-import { SavingsMonthBalanceItem } from '@/services/mover';
-import { OlympusMonthBalanceItem } from '@/services/mover/earnings/types';
+import { OlympusMonthBalanceItem } from '@/services/mover';
 import { RootStoreState } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -28,7 +27,7 @@ export default {
     if (state.olympusBalance !== undefined && gt(state.olympusBalance, 0)) {
       return true;
     }
-    return true;
+    return false;
   },
   olympusInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (
@@ -83,5 +82,14 @@ export default {
         return [...acc, item];
       }, new Array<OlympusMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
+  },
+  ohmNativePrice(state, getters, rootState): string {
+    if (
+      state.olympusPriceInWeth === undefined ||
+      rootState.account?.ethPrice === undefined
+    ) {
+      return '0';
+    }
+    return multiply(state.olympusPriceInWeth, rootState.account.ethPrice);
   }
 } as GetterTree<EarningsOlympusStoreState, RootStoreState>;

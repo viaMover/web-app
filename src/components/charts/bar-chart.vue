@@ -30,10 +30,11 @@ import {
 } from 'chart.js';
 
 import {
+  EthereumMonthBalanceItem,
+  OlympusMonthBalanceItem,
   SavingsMonthBalanceItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
-import { OlympusMonthBalanceItem } from '@/services/mover/earnings/types';
 import {
   buildBalancesChartData,
   ChartDataItem,
@@ -61,6 +62,7 @@ export default Vue.extend({
           | SavingsMonthBalanceItem
           | TreasuryMonthBonusesItem
           | OlympusMonthBalanceItem
+          | EthereumMonthBalanceItem
         >
       >,
       required: true

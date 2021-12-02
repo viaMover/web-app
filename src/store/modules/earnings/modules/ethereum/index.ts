@@ -16,7 +16,11 @@ export default {
     error: undefined,
 
     ethereumAPY: undefined,
-    ethereumBalance: undefined
+    ethereumBalance: undefined,
+
+    isEthereumInfoLoading: false,
+    ethereumInfo: undefined,
+    ethereumInfoError: undefined
   },
   actions,
   getters,

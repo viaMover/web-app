@@ -15,7 +15,6 @@ import {
   getSLPPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/chain';
-import { getOlympusPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { InitExplorer } from '@/services/zerion/explorer';
 import {
   getAvatarFromPersist,
@@ -318,21 +317,13 @@ export default {
         state.provider.web3
       );
 
-      const getOlympusPriceInWETHPromise = getOlympusPriceInWETH(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
-      );
       try {
-        const [moveInWethPrice, usdcInWethPrice, olympusInWethPrice] =
-          await Promise.all([
-            getMovePriceInWethPromise,
-            getUSDCPriceInWETHPromise,
-            getOlympusPriceInWETHPromise
-          ]);
+        const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
+          getMovePriceInWethPromise,
+          getUSDCPriceInWETHPromise
+        ]);
         commit('setMovePriceInWeth', moveInWethPrice);
         commit('setUsdcPriceInWeth', usdcInWethPrice);
-        commit('setOlympusInWethPrice', olympusInWethPrice);
       } catch (e) {
         Sentry.captureException(e);
         throw e;
@@ -356,12 +347,6 @@ export default {
 
       const treasuryFreshData = dispatch('fetchTreasuryFreshData');
       const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
-
-      const olympusInfoPromise = dispatch(
-        'earnings/olympus/fetchOlympusInfo',
-        undefined,
-        { root: true }
-      );
 
       const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
         root: true
@@ -388,8 +373,7 @@ export default {
         nftInfoPromise,
         loadAvatarPromise,
         nibbleShopInfoPromise,
-        loadPowercardPromise,
-        olympusInfoPromise
+        loadPowercardPromise
       ]);
 
       const promisesErrors = promisesResults

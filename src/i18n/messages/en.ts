@@ -948,6 +948,9 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       lblSavedFees: 'Saved fees',
       lblPayoutsToEarnings: 'Payouts to Earnings'
     },
+    lblEarnedRelativeMonthlyChange: 'Yield earned this month',
+    lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
+      'Yield earned in {date}',
     ethereum: {
       lblEthereum: 'Ethereum',
       lblManage: 'Manage Ethereum',

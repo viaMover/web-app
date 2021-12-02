@@ -20,5 +20,8 @@ export default {
   },
   setIsOlympusInfoLoading(state, status): void {
     state.isOlympusInfoLoading = status;
+  },
+  setOlympusPriceInWeth(state, olympusPriceInWeth: string): void {
+    state.olympusPriceInWeth = olympusPriceInWeth;
   }
 } as MutationTree<EarningsOlympusStoreState>;

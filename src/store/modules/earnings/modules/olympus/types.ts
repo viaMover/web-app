@@ -1,4 +1,4 @@
-import { OlympusInfo } from '@/services/mover/earnings/types';
+import { OlympusInfo } from '@/services/mover';
 
 export type EarningsOlympusStoreState = {
   isLoading: boolean;
@@ -10,4 +10,5 @@ export type EarningsOlympusStoreState = {
   isOlympusInfoLoading: boolean;
   olympusInfo: OlympusInfo | undefined;
   olympusInfoError: string | undefined;
+  olympusPriceInWeth: undefined | string;
 };

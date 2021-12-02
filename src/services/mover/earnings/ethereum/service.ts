@@ -1,21 +1,21 @@
 import axios from 'axios';
 
 import {
-  OlympusInfo,
-  OlympusInfoResponse
-} from '@/services/mover/earnings/types';
+  EthereumInfo,
+  EthereumInfoResponse
+} from '@/services/mover/earnings/ethereum/types';
 
-import { Result } from '../../responses';
-import { baseUrl } from '../consts';
+import { Result } from '../../../responses';
+import { baseUrl } from '../../consts';
 
-export const getOlympusInfo = async (
+export const getEthereumInfo = async (
   address: string
-): Promise<Result<OlympusInfo, string>> => {
+): Promise<Result<EthereumInfo, string>> => {
   try {
     const response = (
-      await axios.get<OlympusInfoResponse>(
+      await axios.get<EthereumInfoResponse>(
         //TODO check path
-        `${baseUrl}/v1/earnings/olympus/info/${address}`,
+        `${baseUrl}/v1/earnings/ethereum/info/${address}`,
         {
           headers: {
             Accept: 'application/json'
@@ -30,12 +30,12 @@ export const getOlympusInfo = async (
       };
     }
 
-    const payloadProcessed: OlympusInfo = {
+    const payloadProcessed: EthereumInfo = {
       ...response.payload,
       last12MonthsBalances: response.payload.last12MonthsBalances.map(
         (item) => ({
           ...item,
-          type: 'olympus_month_balance_item'
+          type: 'ethereum_month_balance_item'
         })
       )
     };

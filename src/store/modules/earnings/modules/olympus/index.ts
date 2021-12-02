@@ -20,7 +20,8 @@ export default {
 
     isOlympusInfoLoading: false,
     olympusInfo: undefined,
-    olympusInfoError: undefined
+    olympusInfoError: undefined,
+    olympusPriceInWeth: undefined
   },
   actions,
   getters,

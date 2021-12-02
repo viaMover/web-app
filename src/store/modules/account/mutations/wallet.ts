@@ -26,9 +26,6 @@ export default {
   setUsdcPriceInWeth(state, usdcPriceInWeth: string): void {
     state.usdcPriceInWeth = usdcPriceInWeth;
   },
-  setOlympusInWethPrice(state, olympusInWethPrice: string): void {
-    state.olympusInWethPrice = olympusInWethPrice;
-  },
   setSLPPriceInWETH(state, slpPriceInWeth: string): void {
     state.slpPriceInWeth = slpPriceInWeth;
   },

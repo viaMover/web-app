@@ -153,10 +153,10 @@ export default Vue.extend({
     }),
     ...mapState('earnings/olympus', {
       olympusBalance: 'olympusBalance',
-      olympusAPY: 'olympusAPY'
+      olympusAPY: 'olympusAPY',
+      ohmNativePrice: 'ohmNativePrice'
     }),
     ...mapGetters('account', {
-      ohmNativePrice: 'ohmNativePrice',
       treasuryBonusNative: 'treasuryBonusNative'
     }),
     showBackButton(): boolean {
