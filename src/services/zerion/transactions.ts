@@ -1,10 +1,10 @@
 import * as Sentry from '@sentry/vue';
-import find from 'lodash-es/find';
 
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
 import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
 import {
+  DEBIT_CARD_TOP_UP_ADDRESS,
   HOLY_HAND_ADDRESS,
   SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
@@ -66,6 +66,14 @@ export const isMoverTransation = (
     sameAddress(TreasuryAddress, zt.address_from) ||
     sameAddress(TreasuryAddress, zt.address_to)
   ) {
+    return true;
+  }
+
+  // top up tx should be handled on HolyHand contract address
+  // but anyway we check if transaction 'to' address is
+  // the same as top up contract
+  const DebitCardTopUpAddress = DEBIT_CARD_TOP_UP_ADDRESS(network);
+  if (sameAddress(DebitCardTopUpAddress, zt.address_to)) {
     return true;
   }
 
@@ -395,13 +403,3 @@ const tryToParseToUnknown = (
     }
   ];
 };
-
-const potentialNftTransaction = (txns: Array<ZerionTransaction>): boolean =>
-  find<ZerionTransaction>(txns, (txn) => {
-    return true;
-    // return (
-    //   !txn.protocol &&
-    //   (txn.type === 'send' || txn.type === 'receive') &&
-    //   txn.meta?.asset?.asset_code !== 'ETH'
-    // );
-  }) !== undefined;

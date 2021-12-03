@@ -950,6 +950,17 @@ const messages: VueI18n.LocaleMessageObject = {
         }
       }
     }
+  },
+  transactionTypes: {
+    // lowercased human-readable type as a key
+    'deposit in savings': 'Deposit',
+    withdraw: 'Withdraw',
+    receive: 'Receive',
+    'decrease boost': 'Decrease Boost',
+    send: 'Send',
+    self: 'Self',
+    approve: 'Approve',
+    unknown: 'Unknown'
   }
 };
 
