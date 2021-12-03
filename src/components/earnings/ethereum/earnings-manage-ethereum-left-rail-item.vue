@@ -21,20 +21,6 @@
         </template>
       </left-rail-section-nav-item-image>
       <left-rail-section-nav-item-image
-        v-if="hasActiveEarnings"
-        :description="$t('earnings.ethereum.txtWithdraw')"
-        navigate-to="earnings-ethereum-withdraw"
-        :title="$t('earnings.ethereum.lblWithdraw')"
-      >
-        <template v-slot:picture>
-          <custom-picture
-            :alt="withdrawPicture.alt"
-            :sources="withdrawPicture.sources"
-            :src="withdrawPicture.src"
-          />
-        </template>
-      </left-rail-section-nav-item-image>
-      <left-rail-section-nav-item-image
         :description="$t('earnings.ethereum.txtGlobalAnalytics')"
         navigate-to="earnings-ethereum-global-analytics"
         :title="$t('earnings.ethereum.lblGlobalAnalytics')"

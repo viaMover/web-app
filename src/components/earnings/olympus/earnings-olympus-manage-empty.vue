@@ -36,7 +36,7 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { SavingsMonthBalanceItem } from '@/services/mover';
+import { OlympusMonthBalanceItem } from '@/services/mover';
 import { formatPercents, formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
@@ -63,10 +63,9 @@ export default Vue.extend({
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
     },
-    chartDataSource(): Array<SavingsMonthBalanceItem> {
-      //TODO
+    chartDataSource(): Array<OlympusMonthBalanceItem> {
       return Array.from(Array(10).keys()).map((n) => ({
-        type: 'savings_month_balance_item',
+        type: 'olympus_month_balance_item',
         balance: 100,
         earned: n,
         snapshotTimestamp: n,
@@ -78,7 +77,7 @@ export default Vue.extend({
   methods: {
     async handleStakeClick(): Promise<void> {
       await this.$router.push({
-        name: 'savings-deposit'
+        name: 'earnings-olympus-stake'
       });
     }
   }

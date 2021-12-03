@@ -3,6 +3,7 @@ import { ActionTree } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import { getOlympusData, getOlympusPriceInWETH } from '@/services/chain';
+import { getOlympusAPY } from '@/services/chain/earnings/olympys';
 import { getOlympusInfo } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { RootStoreState } from '@/store/types';
@@ -13,8 +14,10 @@ export default {
   async loadMinimalInfo({ dispatch, commit }): Promise<void> {
     commit('setIsLoading', true);
     try {
-      await dispatch('fetchOlympusInfo');
-      await dispatch('fetchOlympusPriceInWeth');
+      const olympusInfoPromise = dispatch('fetchOlympusInfo');
+      const olympusPriceInWethPromise = dispatch('fetchOlympusPriceInWeth');
+
+      await Promise.all([olympusInfoPromise, olympusPriceInWethPromise]);
     } catch (e) {
       console.error('failed olympus/loadMinimalInfo', e);
       Sentry.captureException(e);
@@ -37,7 +40,13 @@ export default {
         throw new Error('failed to get provider');
       }
 
-      commit('setOlympusAPY', '7.333');
+      const olympusAPY = await getOlympusAPY(
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
+      );
+      commit('setOlympusAPY', olympusAPY.apy);
+
       const olympusData = await getOlympusData(
         rootState.account.currentAddress,
         rootState.account.networkInfo.network,
@@ -45,8 +54,10 @@ export default {
       );
       commit('setOlympusBalance', olympusData.balance);
 
-      await dispatch('fetchOlympusInfo');
-      await dispatch('fetchOlympusPriceInWeth');
+      const olympusInfoPromise = dispatch('fetchOlympusInfo');
+      const olympusPriceInWethPromise = dispatch('fetchOlympusPriceInWeth');
+
+      await Promise.all([olympusInfoPromise, olympusPriceInWethPromise]);
     } catch (e) {
       console.error('failed olympus/loadInfo: ', e);
       Sentry.captureException(e);

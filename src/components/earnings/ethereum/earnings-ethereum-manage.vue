@@ -23,7 +23,7 @@
       :icon="$t('earnings.icon')"
       :in-progress-text="$t('earnings.lblInProgress')"
       :items="ethereumMonthStatsOptions"
-      navigate-to-name="earnings-month-stats"
+      navigate-to-name="earnings-ethereum-month-stats"
       :title="$t('earnings.lblEarningsStatements')"
       wrapper-class="manage-statements-list"
     />

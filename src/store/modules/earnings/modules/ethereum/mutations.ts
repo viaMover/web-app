@@ -1,24 +1,26 @@
 import { MutationTree } from 'vuex';
 
+import { EthereumInfo } from '@/services/mover';
+
 import { EarningsEthereumStoreState } from './types';
 
 export default {
-  setIsLoading(state, isLoading): void {
+  setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
-  setEthereumAPY(state, apy): void {
+  setEthereumAPY(state, apy: string | undefined): void {
     state.ethereumAPY = apy;
   },
-  setEthereumBalance(state, balance): void {
+  setEthereumBalance(state, balance: string | undefined): void {
     state.ethereumBalance = balance;
   },
-  setEthereumInfo(state, info): void {
+  setEthereumInfo(state, info: EthereumInfo | undefined): void {
     state.ethereumInfo = info;
   },
-  setEthereumInfoError(state, error): void {
+  setEthereumInfoError(state, error: string | undefined): void {
     state.ethereumInfoError = error;
   },
-  setIsEthereumInfoLoading(state, status): void {
+  setIsEthereumInfoLoading(state, status: boolean): void {
     state.isEthereumInfoLoading = status;
   }
 } as MutationTree<EarningsEthereumStoreState>;

@@ -4,7 +4,7 @@
       <secondary-page-simple-title
         class="page-title"
         :description="$t('earnings.txtOverview')"
-        :title="$t('earnings.lblOverview', { token: 'Olympus ' })"
+        :title="$t('earnings.lblOverview', { token: 'Olympus' })"
       />
       <statement-list>
         <statement-list-item

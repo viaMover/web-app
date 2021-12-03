@@ -2,6 +2,10 @@ import { ActionTree } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
+import {
+  getEthereumAPY,
+  getEthereumBalance
+} from '@/services/chain/earnings/ethereum';
 import { getEthereumInfo } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { RootStoreState } from '@/store/types';
@@ -12,11 +16,39 @@ export default {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     await dispatch('fetchEthereumInfo');
   },
-  async loadInfo({ commit }): Promise<void> {
+  async loadInfo({ commit, rootState, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {
-      commit('setEthereumAPY', '8.3');
-      commit('setEthereumBalance', '0');
+      if (rootState.account?.currentAddress === undefined) {
+        throw new Error('failed to get current address');
+      }
+
+      if (rootState.account?.networkInfo === undefined) {
+        throw new Error('failed to get network info');
+      }
+
+      if (rootState.account?.provider === undefined) {
+        throw new Error('failed to get provider');
+      }
+
+      const ethereumAPY = await getEthereumAPY(
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
+      );
+      commit('setEthereumAPY', ethereumAPY.apy);
+
+      const ethereumBalance = await getEthereumBalance(
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
+      );
+      commit('setEthereumBalance', ethereumBalance);
+
+      await dispatch('fetchEthereumInfo');
+    } catch (e) {
+      console.error('failed ethereum/loadInfo: ', e);
+      Sentry.captureException(e);
     } finally {
       commit('setIsLoading', false);
     }

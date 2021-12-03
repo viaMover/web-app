@@ -440,14 +440,6 @@ if (isFeatureEnabled('isEarningsEnabled')) {
             }
           },
           {
-            path: 'withdraw',
-            name: 'earnings-ethereum-withdraw',
-            component: () =>
-              import(
-                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-withdraw.vue'
-              )
-          },
-          {
             path: 'global-analytics',
             name: 'earnings-ethereum-global-analytics',
             component: () =>
@@ -460,7 +452,15 @@ if (isFeatureEnabled('isEarningsEnabled')) {
             name: 'earnings-ethereum-manage',
             component: () =>
               import(
-                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-manage.vue'
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-manage-wrapper.vue'
+              )
+          },
+          {
+            path: 'month-statistics/:year/:month',
+            name: 'earnings-ethereum-month-stats',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-monthly-statistics.vue'
               )
           }
         ],
@@ -530,6 +530,14 @@ if (isFeatureEnabled('isEarningsEnabled')) {
             component: () =>
               import(
                 /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-manage-wrapper.vue'
+              )
+          },
+          {
+            path: 'month-statistics/:year/:month',
+            name: 'earnings-olympus-month-stats',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-monthly-statistics.vue'
               )
           }
         ],

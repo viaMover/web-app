@@ -7,8 +7,10 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
-import EarningsOlympusManage from '@/components/earnings/olympus/earnings-olympus-manage.vue';
-import EarningsOlympusManageEmpty from '@/components/earnings/olympus/earnings-olympus-manage-empty.vue';
+import {
+  EarningsOlympusManage,
+  EarningsOlympusManageEmpty
+} from '@/components/earnings/olympus';
 
 export default Vue.extend({
   name: 'EarningsOlympusManageWrapper',
