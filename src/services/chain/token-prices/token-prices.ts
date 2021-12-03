@@ -5,10 +5,13 @@ import { add, divide, fromWei, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   ERC20_ABI,
+  EURS_TOKEN_ADDRESS,
+  getEURSAssetData,
   getUSDCAssetData,
   MOVE_ADDRESS,
   OHM_ADDRESS,
   SUSHISWAP_MOVE_WETH_POOL_ADDRESS,
+  UNISWAP_EURS_WETH_POOL_ADDRESS,
   UNISWAP_USDC_WETH_POOL_ADDRESS,
   USDC_TOKEN_ADDRESS,
   WETH_TOKEN_ADDRESS
@@ -203,6 +206,74 @@ export const getUSDCPriceInWETH = async (
   } catch (error) {
     throw new Error(
       `error get USDC price in WETH from UNISWAP USDC-WETH pool: ${JSON.stringify(
+        error
+      )}`
+    );
+  }
+};
+
+export const getEURSPriceInWETH = async (
+  accountAddress: string,
+  network: Network,
+  web3: Web3
+): Promise<string> => {
+  if (network !== Network.mainnet) {
+    console.log(
+      'get EURS price in WETH is disabled for not ethereum mainnet: ',
+      network
+    );
+    return '0';
+  }
+
+  const contractAddressEURS = EURS_TOKEN_ADDRESS(network);
+  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+
+  const contractUniswapEURSWETHPoolAddress =
+    UNISWAP_EURS_WETH_POOL_ADDRESS(network);
+
+  const contractEURS = new web3.eth.Contract(
+    ERC20_ABI as AbiItem[],
+    contractAddressEURS
+  );
+
+  const contractWETH = new web3.eth.Contract(
+    ERC20_ABI as AbiItem[],
+    contractAddressWETH
+  );
+
+  try {
+    console.log('get EURS-ETH price...');
+    const transactionParams = {
+      from: accountAddress
+    } as TransactionsParams;
+
+    const eursPoolAmountResponse = await contractEURS.methods
+      .balanceOf(contractUniswapEURSWETHPoolAddress)
+      .call(transactionParams);
+
+    const eursPoolAmountWEI = eursPoolAmountResponse.toString();
+    const eursPoolAmount = fromWei(
+      eursPoolAmountWEI,
+      getEURSAssetData(network).decimals
+    );
+
+    console.log('uniswap EURS-WETH pool, EUR amount: ', eursPoolAmount);
+
+    const wethPoolAmountResponse = await contractWETH.methods
+      .balanceOf(contractUniswapEURSWETHPoolAddress)
+      .call(transactionParams);
+
+    const wethPoolAmountInWEI = wethPoolAmountResponse.toString();
+    const wethPoolAmount = fromWei(wethPoolAmountInWEI, 18);
+    console.log('uniswap EURS-WETH pool, WETH amount: ', wethPoolAmount);
+
+    const EURSPriceInWETH = divide(wethPoolAmount, eursPoolAmount);
+    console.log('EursPriceInWETH: ', EURSPriceInWETH);
+
+    return EURSPriceInWETH;
+  } catch (error) {
+    throw new Error(
+      `error get EURS price in WETH from UNISWAP EURS-WETH pool: ${JSON.stringify(
         error
       )}`
     );

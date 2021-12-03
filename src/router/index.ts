@@ -6,6 +6,12 @@ import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
 import { ActiveProviders } from '@/store/modules/earnings/utils';
+import ConnectWallet from '@/views/connect-wallet.vue';
+import Home from '@/views/home.vue';
+import HomeMore from '@/views/home-more.vue';
+import View404 from '@/views/view-404.vue';
+
+import { formStepsGuard } from './form-steps-guard';
 
 Vue.use(VueRouter);
 
@@ -13,19 +19,17 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'home',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/home.vue')
+    component: Home
   },
   {
     path: '/more',
     name: 'home-more',
-    component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/home-more.vue')
+    component: HomeMore
   },
   {
     path: '/connect-wallet',
     name: 'connect-wallet',
-    component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/connect-wallet.vue'),
+    component: ConnectWallet,
     meta: {
       skipPreloadScreen: true
     }
@@ -47,13 +51,6 @@ const routes: Array<RouteConfig> = [
       }
     ],
     beforeEnter: checkFeatureFlag('isReleaseRadarEnabled')
-  },
-  {
-    path: '/debit-card',
-    name: 'debit-card',
-    component: () =>
-      import(/* webpackChunkName: "debit-card" */ '@/views/home.vue'),
-    beforeEnter: checkFeatureFlag('isDebitCardEnabled')
   },
   {
     path: '/savings',
@@ -333,8 +330,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/404',
     name: 'not-found-route',
-    component: () =>
-      import(/* webpackChunkName: "home" */ '@/views/view-404.vue'),
+    component: View404,
     meta: {
       skipPreloadScreen: true
     }
@@ -346,6 +342,54 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  router.addRoute({
+    path: '/debit-card',
+    component: () =>
+      import(
+        /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
+      ),
+    children: [
+      {
+        path: 'top-up/step/:step?',
+        name: 'debit-card-top-up',
+        component: () =>
+          import(
+            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
+          ),
+        props: (to) => ({
+          step: to.params.step
+        }),
+        beforeEnter: (to, from, next) => {
+          if (!isFeatureEnabled('isDebitCardTopUpEnabled')) {
+            next({ name: 'not-found-route' });
+            return;
+          }
+
+          formStepsGuard('debit-card-top-up')(to, from, next);
+        }
+      },
+      {
+        path: 'change-skin',
+        name: 'debit-card-change-skin',
+        component: () =>
+          import(
+            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-change-skin.vue'
+          ),
+        beforeEnter: checkFeatureFlag('isDebitCardChangeSkinEnabled')
+      },
+      {
+        path: '',
+        name: 'debit-card-manage',
+        component: () =>
+          import(
+            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-manage.vue'
+          )
+      }
+    ]
+  });
+}
 
 if (isFeatureEnabled('isEarningsEnabled')) {
   router.addRoute({

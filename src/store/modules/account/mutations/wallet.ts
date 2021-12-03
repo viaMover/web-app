@@ -29,6 +29,9 @@ export default {
   setSLPPriceInWETH(state, slpPriceInWeth: string): void {
     state.slpPriceInWeth = slpPriceInWeth;
   },
+  setEursPriceInWeth(state, eursPriceInWETH: string): void {
+    state.eursPriceInWeth = eursPriceInWETH;
+  },
   setExplorer(state, explorer: Explorer): void {
     state.explorer = explorer;
   },

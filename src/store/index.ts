@@ -5,6 +5,7 @@ import { isFeatureEnabled } from '@/settings';
 
 import actions from './actions';
 import account from './modules/account';
+import debitCard from './modules/debit-card';
 import {
   earningsModule as earnings,
   registerNestedModules as earningsRegisterNestedModules
@@ -46,6 +47,10 @@ if (isFeatureEnabled('isReleaseRadarEnabled')) {
 if (isFeatureEnabled('isEarningsEnabled')) {
   store.registerModule('earnings', earnings);
   earningsRegisterNestedModules(store);
+}
+
+if (isFeatureEnabled('isDebitCardEnabled')) {
+  store.registerModule('debitCard', debitCard);
 }
 
 export default store;

@@ -3,13 +3,32 @@
     <div class="general-desktop__menu-wrapper-navigation-left">
       <menu-list>
         <menu-list-emoji-card-item
-          :description="$t('menu.lblComingSoon')"
-          disabled
+          :description="debitCardDescription"
+          :description-class="debitCardDescriptionClass"
+          :disabled="!isFeatureEnabled('isDebitCardEnabled')"
           has-webp-sources
-          navigate-to-name="home"
+          navigate-to-name="debit-card-manage"
           pic="BeautifulCard"
           :title="$t('menu.lblBeautifulCard')"
-        />
+        >
+          <template
+            v-if="isFeatureEnabled('isDebitCardEnabled')"
+            v-slot:picture
+          >
+            <pu-skeleton
+              v-if="isDebitCardInfoLoading"
+              class="image"
+              tag="div"
+            />
+            <custom-picture
+              v-else
+              :alt="debitCardCurrentSkin.previewPicture.alt"
+              :sources="debitCardCurrentSkin.previewPicture.sources"
+              :src="debitCardCurrentSkin.previewPicture.src"
+              :webp-sources="debitCardCurrentSkin.previewPicture.webpSources"
+            />
+          </template>
+        </menu-list-emoji-card-item>
         <menu-list-emoji-card-item
           :description="savingsBalance"
           has-webp-sources
@@ -81,7 +100,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
@@ -93,13 +112,15 @@ import {
   MenuListEmojiCardItem,
   MenuListIconItem
 } from '@/components/home/menu-list';
+import { CustomPicture } from '@/components/html5';
 
 export default Vue.extend({
   name: 'MenuSection',
   components: {
     MenuList,
     MenuListEmojiCardItem,
-    MenuListIconItem
+    MenuListIconItem,
+    CustomPicture
   },
   data() {
     return {
@@ -117,6 +138,16 @@ export default Vue.extend({
       mapGetters('earnings', {
         earningsBalanceNative: 'earningsBalanceNative'
       })),
+    ...(isFeatureEnabled('isDebitCardEnabled') &&
+      mapGetters('debitCard', {
+        debitCardCurrentSkin: 'currentSkin',
+        debitCardStateText: 'cardStateText'
+      })),
+    ...(isFeatureEnabled('isDebitCardEnabled') &&
+      mapState('debitCard', {
+        isDebitCardInfoLoading: 'isLoading',
+        debitCardState: 'cardState'
+      })),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     },
@@ -133,17 +164,52 @@ export default Vue.extend({
         this.treasuryStakedBalanceNative
       );
       return `$${formatToNative(treasuryAllBalance)}`;
+    },
+    debitCardDescription(): string {
+      if (!isFeatureEnabled('isDebitCardEnabled')) {
+        return this.$t('menu.lblComingSoon') as string;
+      }
+
+      if (this.isDebitCardInfoLoading) {
+        return '';
+      }
+
+      return this.debitCardStateText;
+    },
+    debitCardDescriptionClass(): string {
+      if (!isFeatureEnabled('isDebitCardEnabled')) {
+        return '';
+      }
+
+      if (['frozen', 'expired'].includes(this.debitCardState)) {
+        return 'error';
+      }
+
+      return '';
     }
   },
   async mounted() {
-    await this.loadMinimalInfo?.();
+    if (
+      isFeatureEnabled('isDebitCardEnabled') &&
+      this.loadDebitCardInfo !== undefined
+    ) {
+      await this.loadDebitCardInfo();
+    }
+    if (
+      isFeatureEnabled('isEarningsEnabled') &&
+      this.loadEarningsMinimalInfo !== undefined
+    ) {
+      await this.loadEarningsMinimalInfo();
+    }
   },
   methods: {
+    isFeatureEnabled,
     ...(isFeatureEnabled('isEarningsEnabled') &&
       mapActions('earnings', {
-        loadMinimalInfo: 'loadMinimalInfo'
+        loadEarningsMinimalInfo: 'loadMinimalInfo'
       })),
-    isFeatureEnabled,
+    ...(isFeatureEnabled('isDebitCardEnabled') &&
+      mapActions('debitCard', { loadDebitCardInfo: 'loadInfo' })),
     async openDepositInSavings(): Promise<void> {
       await this.$router.push({
         name: 'savings-deposit'

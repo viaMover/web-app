@@ -5,7 +5,6 @@ export interface Globals {
   isDebitCardEnabled: boolean;
   isGovernanceMarkdownEnabled: boolean;
   isBondsEnabled: boolean;
-  isCardEnabled: boolean;
   isNibbleShopEnabled: boolean;
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
@@ -14,28 +13,9 @@ export interface Globals {
   isEarningsEnabled: boolean;
   isEarningsEthereumEnabled: boolean;
   isEarningsOlympusEnabled: boolean;
+  isDebitCardTopUpEnabled: boolean;
+  isDebitCardChangeSkinEnabled: boolean;
 }
-
-const values: Globals = {
-  isSavingsOverviewSomeFieldsEnabled: false,
-  isSwapPassportEnabled: false,
-  isReleaseRadarEnabled: false,
-  isDebitCardEnabled: false,
-  isGovernanceMarkdownEnabled: false,
-  isBondsEnabled: false,
-  isCardEnabled: false,
-  isNibbleShopEnabled: false,
-  isIntercomEnabled: false,
-  isSavingsMonthlyChartEnabled: false,
-  isTreasuryMonthlyChartEnabled: false,
-  isEarningsMonthlyChartEnabled: false,
-  isEarningsEnabled: true,
-  isEarningsEthereumEnabled: true,
-  isEarningsOlympusEnabled: true
-};
-
-export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
-  !!values[key];
 
 export const isProduction = (): boolean => {
   return process.env.NODE_ENV === 'production';
@@ -44,3 +24,25 @@ export const isProduction = (): boolean => {
 export const isDevelop = (): boolean => {
   return process.env.NODE_ENV === 'development';
 };
+
+const values: Globals = {
+  isSavingsOverviewSomeFieldsEnabled: false,
+  isSwapPassportEnabled: false,
+  isReleaseRadarEnabled: false,
+  isDebitCardEnabled: true,
+  isGovernanceMarkdownEnabled: false,
+  isBondsEnabled: false,
+  isNibbleShopEnabled: false,
+  isIntercomEnabled: !isDevelop(),
+  isSavingsMonthlyChartEnabled: false,
+  isTreasuryMonthlyChartEnabled: false,
+  isEarningsMonthlyChartEnabled: false,
+  isEarningsEnabled: true,
+  isEarningsEthereumEnabled: true,
+  isEarningsOlympusEnabled: true,
+  isDebitCardTopUpEnabled: false,
+  isDebitCardChangeSkinEnabled: false
+};
+
+export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
+  !!values[key];

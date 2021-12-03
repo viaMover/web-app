@@ -2,14 +2,20 @@ export type SuccessfulResponse<T> = {
   status: 'ok';
   payload: T;
 };
-export type ErrorResponse = {
+export type ErrorResponse<E> = {
   status: 'error';
 
   // short service explanation
-  error: string;
+  errorCode: string;
 
   // user-friendly error message which can be displayed
-  errorMessage: string;
+  error: string;
+
+  payload: E;
 };
 
-export type MoverResponse<T> = SuccessfulResponse<T> | ErrorResponse;
+export type MoverResponse<T> = SuccessfulResponse<T> | ErrorResponse<void>;
+
+export type MoverResponseExtended<T, E> =
+  | SuccessfulResponse<T>
+  | ErrorResponse<E>;

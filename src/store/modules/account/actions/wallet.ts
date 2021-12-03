@@ -15,6 +15,7 @@ import {
   getSLPPriceInWETH,
   getUSDCPriceInWETH
 } from '@/services/chain';
+import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { InitExplorer } from '@/services/zerion/explorer';
 import {
   getAvatarFromPersist,
@@ -317,13 +318,22 @@ export default {
         state.provider.web3
       );
 
+      const getEURSPriceInWETHPromise = getEURSPriceInWETH(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+
       try {
-        const [moveInWethPrice, usdcInWethPrice] = await Promise.all([
-          getMovePriceInWethPromise,
-          getUSDCPriceInWETHPromise
-        ]);
+        const [moveInWethPrice, usdcInWethPrice, eursInWethPrice] =
+          await Promise.all([
+            getMovePriceInWethPromise,
+            getUSDCPriceInWETHPromise,
+            getEURSPriceInWETHPromise
+          ]);
         commit('setMovePriceInWeth', moveInWethPrice);
         commit('setUsdcPriceInWeth', usdcInWethPrice);
+        commit('setEursPriceInWeth', eursInWethPrice);
       } catch (e) {
         Sentry.captureException(e);
         throw e;
@@ -396,12 +406,18 @@ export default {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
+    const debitCardAvailableSkinsPromise = isFeatureEnabled(
+      'isDebitCardEnabled'
+    )
+      ? dispatch('debitCard/loadAvailableSkins', true)
+      : Promise.resolve();
 
     const promisesResults = await Promise.allSettled([
       savingsFreshData,
       treasuryFreshData,
       nftInfoPromise,
-      loadPowercardPromise
+      loadPowercardPromise,
+      debitCardAvailableSkinsPromise
     ]);
     const promisesErrors = promisesResults
       .filter((p): p is PromiseRejectedResult => p.status === 'rejected')

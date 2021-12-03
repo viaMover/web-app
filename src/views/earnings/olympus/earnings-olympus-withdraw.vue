@@ -47,7 +47,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 

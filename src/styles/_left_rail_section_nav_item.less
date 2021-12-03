@@ -1,4 +1,4 @@
-@import './_variables.less';
+@import (reference) './_variables.less';
 
 .left-rail-section-nav-item {
   display: flex;
@@ -16,7 +16,7 @@
       flex-shrink: 0;
       margin-top: 4px;
       margin-right: 18px;
-      filter: drop-shadow(0 4px 16px #ccc);
+      filter: drop-shadow(0 4px 16px @icon-shadow);
 
       & picture,
       & img {
@@ -54,6 +54,10 @@
         &.bold {
           color: @black;
           @font-bold();
+        }
+
+        &.error {
+          color: @error;
         }
       }
     }

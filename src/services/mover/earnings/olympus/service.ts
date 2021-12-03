@@ -26,7 +26,7 @@ export const getOlympusInfo = async (
     if (response.status !== 'ok') {
       return {
         isError: true,
-        error: response.errorMessage
+        error: response.error
       };
     }
 

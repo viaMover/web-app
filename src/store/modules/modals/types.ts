@@ -1,5 +1,7 @@
 import { Token } from '@/wallet/types';
 
+import { Skin } from '../debit-card/types';
+
 export enum Modal {
   SavingsDeposit = 'savings-deposit-modal',
   SavingsWithdraw = 'savings-withdraw-modal',
@@ -8,7 +10,8 @@ export enum Modal {
   Transaction = 'transaction-modal',
   TreasuryIncreaseBoost = 'treasury-increase-boost',
   TreasuryDecreaseBoost = 'treasury-decrease-boost',
-  TreasuryClaimAndBurn = 'treasury-claim-and-burn'
+  TreasuryClaimAndBurn = 'treasury-claim-and-burn',
+  SearchSkin = 'search-skin-modal'
 }
 
 export enum SwapType {
@@ -34,6 +37,12 @@ export interface TModalParams {
       hideCloseButton: boolean;
     };
     returnType: Token | undefined;
+  };
+  [Modal.SearchSkin]: {
+    payloadType: {
+      hideCloseButton: boolean;
+    };
+    returnType: Skin | undefined;
   };
   [Modal.Swap]: {
     payloadType:
