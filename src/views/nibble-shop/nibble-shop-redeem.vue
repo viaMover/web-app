@@ -8,9 +8,17 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <keep-alive>
-        <component :is="'nibble-shop-redeem-left-rail'" />
-      </keep-alive>
+      <div class="progressive-left-rail">
+        <left-rail-section>
+          <template>
+            <left-rail-section-nav-item-emoji
+              emoji="📦"
+              navigate-to="nibble-shop-redeem"
+              :text="$t('nibbleShop.lblRedeem')"
+            />
+          </template>
+        </left-rail-section>
+      </div>
     </template>
 
     <secondary-page has-back-button @back="handleBack">
@@ -93,12 +101,15 @@ import { mapState } from 'vuex';
 import { Asset } from '@/store/modules/shop/types';
 
 import ActionButton from '@/components/buttons/action-button.vue';
-import ContentWrapper from '@/components/layout/content-wrapper.vue';
+import {
+  ContentWrapper,
+  LeftRailSection,
+  LeftRailSectionNavItemEmoji
+} from '@/components/layout';
 import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
-import { NibbleShopRedeemLeftRail } from '@/components/nibble-shop';
 import {
   StatementList,
   StatementListItem
@@ -116,7 +127,8 @@ export default Vue.extend({
     SecondaryPageSimpleTitle,
     SecondaryPage,
     ContentWrapper,
-    NibbleShopRedeemLeftRail
+    LeftRailSection,
+    LeftRailSectionNavItemEmoji
   },
   validations: {
     email: {
