@@ -95,7 +95,7 @@ export const mapZerionTxns = async (
     const moverTypesDataRes = await getMoverTransactionsTypes(
       data.payload.transactions.map((t) => t.hash)
     );
-    if (isError<TransactionMoveTypeData[], string>(moverTypesDataRes)) {
+    if (isError<TransactionMoveTypeData[], string, void>(moverTypesDataRes)) {
       console.error(
         `Error from mover transaction service: ${moverTypesDataRes.error}`
       );

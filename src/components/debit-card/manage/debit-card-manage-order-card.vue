@@ -113,7 +113,11 @@
           <div class="input-group input-dropdown">
             <label>
               {{ $t('debitCard.lblYourTitle.label') }}
-              <select v-model="title" :class="{ placeholder: title === '' }">
+              <select
+                v-model="title"
+                autocomplete="sex"
+                :class="{ placeholder: title === '' }"
+              >
                 <option disabled hidden value="">
                   {{ $t('debitCard.lblYourTitle.placeholder') }}
                 </option>
@@ -139,7 +143,11 @@
           <div v-show="title === 'Dr'" class="input-group input-dropdown">
             <label>
               {{ $t('debitCard.lblYourGender.label') }}
-              <select v-model="gender" :class="{ placeholder: gender === '' }">
+              <select
+                v-model="gender"
+                autocomplete="honorific-prefix"
+                :class="{ placeholder: gender === '' }"
+              >
                 <option disabled hidden value="">
                   {{ $t('debitCard.lblYourGender.placeholder') }}
                 </option>
@@ -216,9 +224,13 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { DebitCardApiError } from '@/services/mover/debit-card';
+import {
+  DebitCardApiError,
+  DebitCardNotSupportedCountryError
+} from '@/services/mover/debit-card';
 import { OrderCardParams } from '@/store/modules/debit-card/types';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { mapCountryCodeToEmoji } from '@/utils/emoji';
 import { validateName } from '@/utils/validators';
 
 import { ActionButton } from '@/components/buttons';
@@ -301,7 +313,6 @@ export default Vue.extend({
       this.errorText = '';
       this.$v.$touch();
       if (this.$v.$invalid) {
-        this.scrollButtonIntoView();
         return;
       }
 
@@ -322,9 +333,29 @@ export default Vue.extend({
             this.errorText = this.$t(
               `provider.errors.${error.code}`
             ).toString();
-            this.scrollButtonIntoView();
             return;
           }
+        }
+
+        if (error instanceof DebitCardNotSupportedCountryError) {
+          if (
+            error.additionalPayload?.country !== undefined &&
+            error.additionalPayload?.countryName !== undefined
+          ) {
+            this.errorText = this.$t('debitCard.errors.notSupportedCountry', {
+              flag: mapCountryCodeToEmoji(
+                error.additionalPayload.country,
+                true
+              ),
+              country: error.additionalPayload.countryName
+            }) as string;
+            return;
+          }
+
+          this.errorText = this.$t(
+            'debitCard.errors.notSupportedCountryFallback'
+          ) as string;
+          return;
         }
 
         if (error instanceof DebitCardApiError) {
@@ -335,7 +366,6 @@ export default Vue.extend({
             this.errorText = this.$t(
               `debitCard.errors.${error.message}`
             ) as string;
-            this.scrollButtonIntoView();
             return;
           }
 
@@ -343,14 +373,13 @@ export default Vue.extend({
             this.errorText = this.$t(
               `debitCard.errors.${error.message}`
             ) as string;
-            this.scrollButtonIntoView();
             return;
           }
         }
 
         this.errorText = this.$t('debitCard.errors.default') as string;
-        this.scrollButtonIntoView();
       } finally {
+        this.scrollButtonIntoView();
         this.isLoading = false;
       }
     },

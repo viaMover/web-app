@@ -135,7 +135,6 @@ export default Vue.extend({
             this.errorText = this.$t(
               `provider.errors.${error.code}`
             ).toString();
-            this.scrollButtonIntoView();
             return;
           }
         }
@@ -148,7 +147,6 @@ export default Vue.extend({
             this.errorText = this.$t(
               `debitCard.errors.${error.message}`
             ) as string;
-            this.scrollButtonIntoView();
             return;
           }
 
@@ -156,14 +154,13 @@ export default Vue.extend({
             this.errorText = this.$t(
               `debitCard.errors.${error.message}`
             ) as string;
-            this.scrollButtonIntoView();
             return;
           }
         }
 
         this.errorText = this.$t('debitCard.errors.default') as string;
-        this.scrollButtonIntoView();
       } finally {
+        this.scrollButtonIntoView();
         this.isLoading = false;
       }
     },

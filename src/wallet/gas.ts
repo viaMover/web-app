@@ -14,7 +14,7 @@ export const getGasPrices = async (
 
   const res = await getGasPricesFromEtherscan(network);
 
-  if (isError<GasData, GetGasErrors>(res)) {
+  if (isError<GasData, GetGasErrors, void>(res)) {
     console.error(
       `Can't load gas prices from Etherscan: ${res.error}, trying another source...`
     );
@@ -27,7 +27,7 @@ export const getGasPrices = async (
     }
   }
 
-  if (isSuccess<GasData, GetGasErrors>(res)) {
+  if (isSuccess<GasData, GetGasErrors, void>(res)) {
     return res.result;
   }
 

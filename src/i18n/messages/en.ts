@@ -1,4 +1,4 @@
-import VueI18n, { LocaleMessage } from 'vue-i18n';
+import VueI18n from 'vue-i18n';
 
 import { isFeatureEnabled } from '@/settings';
 
@@ -269,7 +269,11 @@ const messages: VueI18n.LocaleMessageObject = {
       alreadyRegistered: 'This email is already used',
       badPhoneSyntax:
         'Phone number should be valid (e.g. @:debitCard.txtYourPhoneNumberPlaceholder)',
-      incorrectCode: 'Security code is invalid. Please try again'
+      incorrectCode: 'Security code is invalid. Please try again',
+      notSupportedCountry:
+        'Sorry, but {country}{flag} is not supported yet. We are looking forward to expanding as soon as possible.',
+      notSupportedCountryFallback:
+        'Sorry but the country associated with your phone number is not supported yet. We are looking forward to expanding as soon as possible.'
     }
   },
   savingsDepositCard: {
