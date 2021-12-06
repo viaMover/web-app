@@ -186,7 +186,7 @@ const messages: VueI18n.LocaleMessageObject = {
       txtNativeAsset:
         '{name} is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
       txtNonNativeAsset:
-        'You chose neither a non ETH asset nor an USDC asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
+        'You chose neither a non-ETH asset nor a USDC asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
       lblReviewYourTopUp: 'Review your top up',
       lblAmountWeTopUpIn: 'Amount we top up in',
       lblAndItWillBeTotalOf: 'And it will be total of',
