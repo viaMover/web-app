@@ -7,8 +7,11 @@
     </template>
 
     <header-balance />
-    <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-    <savings-deposit-card-section />
+
+    <div class="cards">
+      <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
+      <savings-deposit-card-section />
+    </div>
     <menu-section />
 
     <template v-slot:modals>

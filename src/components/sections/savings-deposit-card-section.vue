@@ -1,12 +1,12 @@
 <template>
   <card
     :button-text="$t('savingsDepositCard.btnSavingsDepositCard')"
+    class="deposit-in-savings"
     :description="$t('savingsDepositCard.txtSavingsDepositCard')"
     :image="image"
     is-black-close-btn
     :opened="isInfoVisible"
     :title="$t('savingsDepositCard.lblSavingsDepositCardHeading')"
-    wrapper-class="general-desktop__menu-wrapper-deposit"
     @button-click="handleButtonClick"
     @close="toggleInfo"
   />

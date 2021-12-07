@@ -84,4 +84,66 @@
       }
     }
   }
+
+  .cards {
+    margin-bottom: 40px;
+
+    .card {
+      padding: 24px;
+      background-color: @card;
+      border-radius: 12px;
+      display: flex;
+      flex-flow: row nowrap;
+      @drop-shadow();
+
+      .info {
+        flex: 1 0 50%;
+
+        .text {
+          margin-bottom: 24px;
+
+          .title {
+            font-size: 24px;
+            line-height: 40px;
+            color: @text-primary;
+            @font-bold();
+          }
+
+          .description {
+            font-size: 14px;
+            line-height: 22px;
+            color: @text-muted;
+            @font-medium();
+          }
+        }
+
+        .buttons {
+          display: flex;
+          flex-flow: row nowrap;
+          column-gap: 24px;
+        }
+      }
+
+      .image {
+        flex: 0 1 auto;
+
+        img {
+          max-height: 100%;
+          max-width: 100%;
+          object-fit: cover;
+        }
+      }
+
+      &.order-debit-card {
+        background-color: @card-order-debit-card;
+
+        .buttons {
+          .cta {
+            background-color: @button-order-debit-card;
+            color: @text-primary;
+          }
+        }
+      }
+    }
+  }
 }
