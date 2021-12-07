@@ -3,7 +3,6 @@
     :button-text="$t('debitCard.btnOrderDebitCard')"
     class="order-debit-card"
     :description="$t('debitCard.txtDebitCard')"
-    :icon="$t('debitCard.icon')"
     :image="image"
     is-black-close-btn
     :opened="isVisible"
