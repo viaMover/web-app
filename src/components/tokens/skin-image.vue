@@ -1,29 +1,30 @@
 <template>
-  <div v-if="displayOriginalImage" class="icon token-icon">
+  <div v-if="displayOriginalImage" class="icon">
     <img
       v-fallback="imageFallbackOpts"
-      :alt="$t('asset.txtAlt', { name: symbol })"
+      :alt="$t('debitCard.txtSymbolImageAlt', { name: symbol })"
       :src="src"
       :style="shadowStyles"
     />
   </div>
-  <div v-else class="icon fallback" :style="shadowStyles">
-    <span>{{ truncatedSymbol }}</span>
+  <div v-else class="icon">
+    <div class="img-stub" :style="shadowStyles">
+      <span>{{ truncatedSymbol }}</span>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapGetters } from 'vuex';
 
 import { Properties } from 'csstype';
 
-import { IImageFallbackOpts } from '@/components/tokens/token-image/types';
+import { IImageFallbackOpts } from './types';
 
 export default Vue.extend({
-  name: 'TokenImage',
+  name: 'SkinImage',
   props: {
-    address: {
+    id: {
       type: String,
       required: true
     },
@@ -38,6 +39,10 @@ export default Vue.extend({
     fallbackSrcList: {
       type: Array as PropType<Array<string>>,
       default: undefined
+    },
+    color: {
+      type: String,
+      default: 'rgba(0, 0, 0, 50%)'
     }
   },
   data() {
@@ -46,7 +51,6 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
     truncatedSymbol(): string {
       if (this.symbol.length > 5) {
         return `${this.symbol.toUpperCase().substr(0, 4)}...`;
@@ -55,9 +59,6 @@ export default Vue.extend({
     },
     displayOriginalImage(): boolean {
       return this.src !== '' && !this.loadingFailed;
-    },
-    color(): string | undefined {
-      return this.getTokenColor(this.address) ?? 'var(--shadow)';
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {
@@ -69,14 +70,8 @@ export default Vue.extend({
       };
     },
     shadowStyles(): Properties {
-      if (this.displayOriginalImage) {
-        return {
-          filter: `drop-shadow(0 4px 16px ${this.color})`
-        };
-      }
-
       return {
-        boxShadow: `drop-shadow(0 4px 16px 0 ${this.color})`
+        boxShadow: `0px 0px 16px ${this.color}`
       };
     }
   },

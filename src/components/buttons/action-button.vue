@@ -57,7 +57,6 @@ export default Vue.extend({
         event.preventDefault();
         event.stopPropagation();
       }
-
       this.$emit('button-click');
     }
   }

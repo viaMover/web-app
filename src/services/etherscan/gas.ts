@@ -130,7 +130,7 @@ export const getGasSpeedWithoutErr = async (
 ): Promise<string> => {
   const gasPriceInWei = Web3.utils.toWei(gasPriceInGwei, 'Gwei');
   const res = await getGasSpeed(gasPriceInWei, network);
-  if (isError<string, GetGasErrors>(res)) {
+  if (isError<string, GetGasErrors, void>(res)) {
     console.log(res.error);
     return '0';
   }

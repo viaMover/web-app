@@ -70,6 +70,7 @@ import {
   sub
 } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
@@ -105,6 +106,7 @@ export default Vue.extend({
     ReviewForm,
     SecondaryPage
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       //current

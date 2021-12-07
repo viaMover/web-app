@@ -16,7 +16,9 @@ export const isValidCacheItem = (
   return expiresAt.isAfter(dayjs());
 };
 
-export const isProviderRpcError = (error: unknown): boolean => {
+export const isProviderRpcError = (
+  error: unknown
+): error is ProviderRpcError => {
   if (!(error instanceof Object)) {
     return false;
   }
