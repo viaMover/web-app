@@ -2,7 +2,7 @@
   <div>
     <div class="burger-bg" :class="{ active: isVisible }" @click="toggle" />
     <div ref="popper" class="burger-content" :class="{ active: isVisible }">
-      <div class="wrapper">
+      <div class="burger-content-wrapper">
         <ul>
           <slot></slot>
         </ul>
