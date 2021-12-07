@@ -1,5 +1,5 @@
 <template>
-  <content-wrapper has-left-rail>
+  <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
       <aside class="left-rail transactions">
         <transaction-list />

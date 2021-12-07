@@ -1,6 +1,6 @@
 <template>
-  <li class="button-active">
-    <router-link :to="{ name: this.navigateToName }">
+  <li class="item button-like">
+    <router-link class="link" :to="{ name: this.navigateToName }">
       <slot>{{ text }}</slot>
     </router-link>
   </li>

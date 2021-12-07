@@ -1,28 +1,24 @@
 <template>
-  <section
-    class="general-desktop__menu-wrapper-balance"
-    :name="$t('lblBalance')"
-  >
+  <header class="masthead">
     <header-balance-avatar />
-    <div class="balance-wrapper">
-      <div class="balance-wrapper-title">
-        <context-button
-          button-class="button transparent"
-          :popover-parent-id="popoverParentId"
-        >
-          <template v-slot:button>
-            <span class="title">{{ $t('headingBalance') }}</span>
-            <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
-          </template>
-          <span class="address">{{ currentAddressText }}</span>
-          <context-button-item
-            :text="$t('lblDisconnect')"
-            @click="disconnectWallet"
-          />
-        </context-button>
-      </div>
-      <span class="balance">{{ balanceNative }}</span>
-    </div>
+    <section class="title">
+      <context-button
+        button-class="selector button-like"
+        :popover-parent-id="popoverParentId"
+      >
+        <template v-slot:button>
+          <span class="title">{{ $t('headingBalance') }}</span>
+          <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
+        </template>
+        <span class="address">{{ currentAddressText }}</span>
+        <context-button-item
+          :text="$t('lblDisconnect')"
+          @click="disconnectWallet"
+        />
+      </context-button>
+      <div class="balance">{{ balanceNative }}</div>
+    </section>
+
     <nav-bar>
       <nav-bar-item
         navigate-to-name="savings-manage"
@@ -53,7 +49,7 @@
         :text="$t('lblMore')"
       />
     </nav-bar>
-  </section>
+  </header>
 </template>
 
 <script lang="ts">

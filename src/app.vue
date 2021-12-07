@@ -1,8 +1,12 @@
 <template>
   <div id="app">
     <pu-skeleton-theme
-      color="var(--skeleton-color)"
-      highlight="var(--skeleton-highlight-color)"
+      :color="colors ? colors['skeleton-color'] : 'var(--color-skeleton-color)'"
+      :highlight="
+        colors
+          ? colors['skeleton-highlight-color']
+          : 'var(--color-skeleton-highlight-color)'
+      "
     >
       <div class="page">
         <web3-modal-vue
