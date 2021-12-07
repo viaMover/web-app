@@ -5,6 +5,7 @@
     :description="$t('debitCard.txtDebitCard')"
     :icon="$t('debitCard.icon')"
     :image="image"
+    is-black-close-btn
     :opened="isVisible"
     :title="$t('debitCard.lblDebitCardHeading')"
     @button-click="handleButtonClick"
