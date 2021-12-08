@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { VaultsData } from '@/services/chain';
@@ -89,14 +91,13 @@ export const claimVaults = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    vaults.methods
-      .claimNFT()
+    (vaults.methods.claimNFT() as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
         console.log(`Claim txn receipt: ${receipt}`);
         resolve();
       })

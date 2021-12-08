@@ -56,7 +56,7 @@ const fetchInfo = async (
 
     return {
       isError: false,
-      result: { ...response.payload, status: 'ACTIVE' }
+      result: response.payload
     };
   } catch (error) {
     const formattedError = formatError(error);

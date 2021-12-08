@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
-import { PromiEvent, TransactionReceipt } from 'web3-core/types/index';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
@@ -13,11 +14,7 @@ import {
 import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
-import {
-  DEBIT_CARD_TOP_UP_ADDRESS,
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS
-} from '@/wallet/references/data';
+import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const topUpCompound = async (
@@ -69,8 +66,6 @@ export const topUpCompound = async (
         error: err
       }
     });
-
-    console.error(`Failed to top up: ${err}`);
     throw err;
   }
 };
@@ -96,8 +91,6 @@ export const topUp = async (
 
   const contractAddress = HOLY_HAND_ADDRESS(network);
   const contractABI = HOLY_HAND_ABI;
-
-  const poolAddress = DEBIT_CARD_TOP_UP_ADDRESS(network);
 
   const holyHand = new web3.eth.Contract(
     contractABI as AbiItem[],
@@ -184,33 +177,27 @@ export const topUp = async (
     inputCurrencyAddress = getPureEthAddress();
   }
 
-  let outputCurrencyAddress = outputAsset.address;
-  if (outputAsset.address === 'eth') {
-    outputCurrencyAddress = getPureEthAddress();
-  }
-
   Sentry.addBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.topUp',
     message: 'currencies',
     data: {
       inputCurrencyAddress,
-      outputCurrencyAddress
+      outputCurrencyAddress: outputAsset.address
     }
   });
 
   await new Promise<void>((resolve, reject) => {
     (
-      holyHand.methods
-        .depositToPool(
-          poolAddress,
-          inputCurrencyAddress,
-          inputAmountInWEI,
-          expectedMinimumReceived,
-          bytesData
-        )
-        .send(transactionParams) as PromiEvent<void>
+      holyHand.methods.cardTopUp(
+        accountAddress,
+        inputCurrencyAddress,
+        inputAmountInWEI,
+        expectedMinimumReceived,
+        bytesData
+      ) as ContractSendMethod
     )
+      .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         Sentry.addBreadcrumb({
           type: 'debug',
@@ -221,7 +208,7 @@ export const topUp = async (
           }
         });
 
-        console.log(`Debug card top up txn hash: ${hash}`);
+        console.log('debug debit card top up txn hash', hash);
         changeStepToProcess();
       })
       .once('receipt', (receipt: TransactionReceipt) => {
@@ -233,7 +220,7 @@ export const topUp = async (
             receipt
           }
         });
-        console.log(`Debit card top up txn receipt: ${receipt}`);
+        console.debug('debit card top up txn receipt', receipt);
         resolve();
       })
       .once('error', (error: Error) => reject(error));

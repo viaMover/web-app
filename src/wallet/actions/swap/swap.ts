@@ -1,5 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
@@ -158,20 +160,21 @@ export const swap = async (
     console.log('[swap] outputCurrencyAddress:', outputCurrencyAddress);
 
     await new Promise<void>((resolve, reject) => {
-      holyHand.methods
-        .executeSwap(
+      (
+        holyHand.methods.executeSwap(
           inputCurrencyAddress,
           outputCurrencyAddress,
           inputAmountInWEI,
           expectedMinimumReceived,
           bytesData
-        )
+        ) as ContractSendMethod
+      )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Swap txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Swap txn receipt: ${receipt}`);
           resolve();
         })

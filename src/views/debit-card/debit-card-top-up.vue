@@ -28,16 +28,19 @@
       @update-amount="handleUpdateAmount"
     >
       <template v-slot:swap-message>
-        <div v-if="isSwapNeeded && formattedETHTotal" class="form-swap">
+        <div
+          v-if="isSwapNeeded && formattedUSDCTotal && inputMode === 'TOKEN'"
+          class="form-swap"
+        >
           <p>
             {{ $t('forms.lblSwappingFor') }}
             <custom-picture
-              :alt="$t('asset.txtAlt', { name: 'ETH' })"
+              :alt="$t('lblUSDcTokenAlt')"
               class="token"
-              :sources="ethPicture.sources"
-              :src="ethPicture.src"
+              :sources="usdcPicture.sources"
+              :src="usdcPicture.src"
             />
-            <span>{{ formattedETHTotal }}</span>
+            <span>{{ formattedUSDCTotal }}</span>
           </p>
         </div>
       </template>
@@ -72,7 +75,7 @@ import {
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { getPureEthAddress, isEth, sameAddress } from '@/utils/address';
+import { isEth, sameAddress } from '@/utils/address';
 import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
@@ -82,7 +85,7 @@ import {
   multiply,
   toWei
 } from '@/utils/bigmath';
-import { formatToDecimals, formatToNative } from '@/utils/format';
+import { formatToNative } from '@/utils/format';
 import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
@@ -195,18 +198,13 @@ export default Vue.extend({
         return true;
       }
 
-      return !(
-        sameAddress(this.inputAsset.address, this.usdcAsset.address) ||
-        isEth(this.inputAsset.address)
-      );
+      return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
     },
     description(): string {
       return (
         this.isSwapNeeded
           ? this.$t('debitCard.topUp.txtNonNativeAsset')
-          : this.$t('debitCard.topUp.txtNativeAsset', {
-              name: this.inputAsset?.name
-            })
+          : this.$t('debitCard.topUp.txtNativeAsset')
       ) as string;
     },
     hasBackButton(): boolean {
@@ -215,18 +213,21 @@ export default Vue.extend({
     approximateEUREstimationText(): string {
       return `~ €${formatToNative(this.approximateEUREstimationAmount)}`;
     },
-    formattedETHTotal(): string {
+    formattedUSDCTotal(): string {
       if (this.inputAsset === undefined) {
-        return '0 ETH';
+        return '0 USDC';
       }
 
-      if (isEth(this.inputAsset.address)) {
-        return `${formatToDecimals(this.inputAmount, 4)} ETH`;
+      if (sameAddress(this.inputAsset.address, this.usdcAsset.address)) {
+        return `${formatToNative(this.inputAmount)} USDC`;
       }
 
       if (this.transferData !== undefined) {
-        const boughtETH = fromWei(this.transferData.buyAmount, 18);
-        return `${formatToDecimals(boughtETH, 4)} ETH`;
+        const boughtUSDC = fromWei(
+          this.transferData.buyAmount,
+          this.usdcAsset.decimals
+        );
+        return `${formatToNative(boughtUSDC)} USDC`;
       }
 
       return '';
@@ -297,14 +298,15 @@ export default Vue.extend({
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
+        if (!gasLimits.error) {
+          this.changeStep('review');
+        }
       } catch (err) {
         Sentry.captureException(err);
         return;
       } finally {
         this.isProcessing = false;
       }
-
-      this.changeStep('review');
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
@@ -323,18 +325,9 @@ export default Vue.extend({
       inputAsset: SmallToken,
       transferData: TransferData | undefined
     ): Promise<CompoundEstimateResponse> {
-      let outputAsset: SmallToken = {
-        address: 'eth',
-        decimals: 18,
-        symbol: 'ETH'
-      };
-      if (sameAddress(inputAsset.address, this.usdcAsset.address)) {
-        outputAsset = inputAsset;
-      }
-
       const resp = await estimateTopUpCompound(
         inputAsset,
-        outputAsset,
+        this.usdcAsset,
         inputAmount,
         transferData,
         this.networkInfo.network,
@@ -440,8 +433,8 @@ export default Vue.extend({
       this.isLoading = true;
 
       try {
+        this.transferError = undefined;
         if (!this.isSwapNeeded) {
-          // ETH or USDC
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -458,7 +451,6 @@ export default Vue.extend({
             this.inputAmountNative = value;
           }
         } else {
-          // Swap is needed, therefore inputAsset is neither ETH or USDC
           if (mode === 'TOKEN') {
             this.inputAmount = value;
             this.inputAmountNative = new BigNumber(
@@ -466,14 +458,13 @@ export default Vue.extend({
             ).toFixed(2);
             const inputInWei = toWei(value, this.inputAsset.decimals);
             this.transferData = await getTransferData(
-              getPureEthAddress(),
+              this.usdcAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
               '0.01',
               this.networkInfo.network
             );
-            this.transferError = undefined;
           } else {
             this.inputAmountNative = value;
             const inputInWei = toWei(
@@ -485,14 +476,13 @@ export default Vue.extend({
               this.inputAsset.decimals
             );
             this.transferData = await getTransferData(
-              getPureEthAddress(),
+              this.usdcAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
               '0.01',
               this.networkInfo.network
             );
-            this.transferError = undefined;
             this.inputAmount = fromWei(
               this.transferData.sellAmount,
               this.inputAsset.decimals
@@ -500,14 +490,14 @@ export default Vue.extend({
           }
         }
         this.updateApproximateEURSEstimationValue(mode);
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        if (error instanceof ZeroXSwapError) {
+          this.transferError = mapError(error.publicMessage);
         } else {
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
+          Sentry.captureException(error);
         }
-        console.error(`transfer error: ${err}`);
+        console.error('transfer error', error);
         this.transferData = undefined;
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';
@@ -630,18 +620,9 @@ export default Vue.extend({
       this.changeStep('loader');
       this.transactionStep = 'Confirm';
       try {
-        let outputAsset: SmallToken = {
-          address: 'eth',
-          decimals: 18,
-          symbol: 'ETH'
-        };
-        if (sameAddress(this.inputAsset.address, this.usdcAsset.address)) {
-          outputAsset = this.inputAsset;
-        }
-
         await topUpCompound(
           this.inputAsset,
-          outputAsset,
+          this.usdcAsset,
           this.inputAmount,
           this.transferData,
           this.networkInfo.network,
@@ -657,7 +638,7 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (err) {
         this.transactionStep = 'Reverted';
-        console.error('Top up reverted', err);
+        console.error('top up reverted', err);
         Sentry.captureException(err);
       }
     }

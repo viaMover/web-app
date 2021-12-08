@@ -50,16 +50,14 @@ export default Vue.extend({
       cardState: 'cardState'
     }),
     showManageCard(): boolean {
-      if (
-        !(
-          isFeatureEnabled('isDebitCardTopUpEnabled') ||
-          isFeatureEnabled('isDebitCardChangeSkinEnabled')
-        )
-      ) {
-        return false;
-      }
+      const isTopUpEnabled =
+        isFeatureEnabled('isDebitCardTopUpEnabled') &&
+        this.cardState === 'active';
+      const isChangeSkinEnabled =
+        isFeatureEnabled('isDebitCardChangeSkinEnabled') &&
+        ['active', 'frozen', 'expired'].includes(this.cardState);
 
-      return ['active', 'frozen', 'expired'].includes(this.cardState);
+      return isTopUpEnabled || isChangeSkinEnabled;
     }
   },
   async mounted() {

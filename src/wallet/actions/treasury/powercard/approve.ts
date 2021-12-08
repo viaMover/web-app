@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
@@ -46,14 +48,18 @@ export const approvePowercard = async (
     console.log('[powercard approve] transactionParams:', transactionParams);
 
     await new Promise<void>((resolve, reject) => {
-      rari.methods
-        .setApprovalForAll(contractAddress, true)
+      (
+        rari.methods.setApprovalForAll(
+          contractAddress,
+          true
+        ) as ContractSendMethod
+      )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Powercard approve txn hash: ${hash}`);
           changeStepToProcess('Process');
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Powercard approve txn receipt: ${receipt}`);
           resolve();
         })

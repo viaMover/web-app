@@ -9,7 +9,7 @@ export type TransactionMoveType =
   | 'subsidized_withdraw'
   | 'withdraw_savings'
   | 'withdraw_treasury'
-  | 'card_top-up';
+  | 'card_topup';
 
 export type TransactionMoveTypeData = {
   txID: string;
