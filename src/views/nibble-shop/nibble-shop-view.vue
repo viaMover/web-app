@@ -66,7 +66,7 @@ import { Properties } from 'csstype';
 import { Asset } from '@/store/modules/shop/types';
 
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
-import { Step } from '@/components/controls/form-loader';
+import { Step } from '@/components/forms/form-loader';
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 
 export default Vue.extend({

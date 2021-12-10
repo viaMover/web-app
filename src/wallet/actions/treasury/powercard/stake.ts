@@ -11,8 +11,6 @@ import {
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
-
 import { approvePowercard, isPowercardApproved } from './approve';
 
 export const stakePowercardCompound = async (
@@ -21,7 +19,7 @@ export const stakePowercardCompound = async (
   accountAddress: string,
   actionGasLimit: string,
   approveGasLimit: string,
-  changeStepToProcess: (step: Step) => Promise<void>
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   if (network !== Network.mainnet) {
     throw new Error(
@@ -67,11 +65,9 @@ export const stake = async (
   accountAddress: string,
   contractAddress: string,
   gasLimit: string,
-  changeStepToProcess: (step: Step) => Promise<void>
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   console.log('Executing powercard stake...');
-  changeStepToProcess('Confirm');
-
   const contractABI = POWERCARD_STAKER_ABI;
 
   try {
@@ -94,7 +90,7 @@ export const stake = async (
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Powercard stake txn hash: ${hash}`);
-          changeStepToProcess('Process');
+          changeStepToProcess();
         })
         .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Powercard stake txn receipt: ${receipt}`);

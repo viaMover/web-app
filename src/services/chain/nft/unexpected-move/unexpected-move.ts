@@ -12,7 +12,7 @@ import {
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
+import { Step } from '@/components/forms/form-loader/types';
 
 import { UnexpectedMoveData } from './types';
 

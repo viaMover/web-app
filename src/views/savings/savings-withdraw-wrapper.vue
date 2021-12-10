@@ -16,7 +16,7 @@
       :is-loading="isLoading"
       :is-processing="isProcessing"
       :operation-description="$t('savings.withdraw.txtIfYouKeepSavings')"
-      :operation-title="estimatedAnnualEarning"
+      :operation-title="estimatedAnnualEarnings"
       :output-asset-heading-text="$t('savings.deposit.lblAmountWeDepositIn')"
       :selected-token-description="$t('savings.txtUSDCCoinIsAStable')"
       :transfer-error="transferError"
@@ -68,9 +68,13 @@ import {
   TokenWithBalance
 } from '@/wallet/types';
 
-import { InputMode, LoaderForm, LoaderStep } from '@/components/forms';
-import PrepareForm from '@/components/forms/prepare-form/prepare-form.vue';
-import ReviewForm from '@/components/forms/review-form.vue';
+import {
+  InputMode,
+  LoaderForm,
+  LoaderStep,
+  PrepareForm,
+  ReviewForm
+} from '@/components/forms';
 import { PictureDescriptor } from '@/components/html5';
 import { SecondaryPage } from '@/components/layout/secondary-page';
 
@@ -163,7 +167,7 @@ export default Vue.extend({
         marketCap: Number.MAX_SAFE_INTEGER
       };
     },
-    estimatedAnnualEarning(): string {
+    estimatedAnnualEarnings(): string {
       let possibleSavingsBalance = '0';
 
       if (this.savingsBalance !== undefined) {

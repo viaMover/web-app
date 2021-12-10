@@ -7,6 +7,7 @@ import { RadarStoreState } from '@/store/modules/radar/types';
 import { ShopStoreState } from '@/store/modules/shop/types';
 
 import { AccountStoreState } from './modules/account/types';
+import { EarningsStoreState } from './modules/earnings/types';
 
 export interface RootStoreState {
   appVersion: string;
@@ -20,5 +21,6 @@ export interface RootStoreState {
   governance?: GovernanceStoreState;
   radar?: RadarStoreState;
   modals?: ModalsStoreState;
+  earnings?: EarningsStoreState;
   // rootState members end
 }

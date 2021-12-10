@@ -1,33 +1,32 @@
 <template>
   <secondary-page hide-title>
-    <div class="treasury__menu-wrapper-graph">
-      <div class="treasury__menu-wrapper-balance">
-        <span class="balance">{{ treasuryBalance }}</span>
-        <p class="black">{{ $t('treasury.txtTreasuryEmptyDescription') }}</p>
-      </div>
+    <div class="empty-state-graph-wrapper">
+      <secondary-page-simple-title
+        class="balance"
+        :description="$t('treasury.txtTreasuryEmptyDescription')"
+        :title="treasuryBalance"
+      />
       <bar-chart
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
       />
       <p class="margin-top">{{ $t('treasury.lblIfYouReserveMoveInST') }}</p>
-      <div class="treasury__menu-wrapper-body margin-top-20">
-        <div class="line short">
-          <div class="item">
-            <span class="title">{{ currentMaxBoost }}</span>
-            <p class="description black">
-              {{ $t('treasury.lblMaximumBoost') }}
-            </p>
-          </div>
-          <div class="item">
-            <span class="title">{{ currentCostCoverage }}</span>
-            <p class="description black">
-              {{ $t('treasury.lblGasCostCoverage') }}
-            </p>
-          </div>
-        </div>
+      <div class="body margin-top-20">
+        <product-info-wrapper is-short>
+          <product-info-item
+            :description="$t('treasury.lblMaximumBoost')"
+            is-black-description
+            :title="currentMaxBoost"
+          />
+          <product-info-item
+            :description="$t('treasury.lblGasCostCoverage')"
+            is-black-description
+            :title="currentCostCoverage"
+          />
+        </product-info-wrapper>
         <action-button
-          button-class="button button-active"
+          button-class="button button-active bold"
           :text="$t('treasury.lblStartBoosting')"
           @button-click="handleStartBoosting"
         />
@@ -44,12 +43,15 @@ import { formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
 import { BarChart } from '@/components/charts';
-
-import { SecondaryPage } from '../layout';
+import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
   name: 'TreasuryEmpty',
   components: {
+    ProductInfoItem,
+    ProductInfoWrapper,
+    SecondaryPageSimpleTitle,
     BarChart,
     SecondaryPage,
     ActionButton

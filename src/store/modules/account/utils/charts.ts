@@ -7,6 +7,14 @@ import {
   TreasuryHourlyBalancesItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
+import {
+  EthereumHourlyBalancesItem,
+  EthereumMonthBalanceItem
+} from '@/services/mover/earnings/ethereum/types';
+import {
+  OlympusHourlyBalancesItem,
+  OlympusMonthBalanceItem
+} from '@/services/mover/earnings/olympus/types';
 import { divide, fromWei, greaterThan, lessThan, sub } from '@/utils/bigmath';
 import { dateFromExplicitPair } from '@/utils/time';
 
@@ -14,8 +22,12 @@ type FilterPeriod = 'month' | 'week' | 'day';
 export type TItem =
   | TreasuryHourlyBalancesItem
   | SavingsHourlyBalancesItem
+  | OlympusHourlyBalancesItem
+  | EthereumHourlyBalancesItem
   | TreasuryMonthBonusesItem
-  | SavingsMonthBalanceItem;
+  | SavingsMonthBalanceItem
+  | OlympusMonthBalanceItem
+  | EthereumMonthBalanceItem;
 const filterByPeriod = (
   list: Array<TItem>,
   period: FilterPeriod
@@ -73,6 +85,22 @@ export const buildBalancesChartData = (
         case 'treasury_month_bonuses_item':
           valSource = val.bonusesEarned;
           shouldTrimLeft = val.bonusesEarned === 0;
+          break;
+        case 'olympus_hourly_balance_item':
+          valSource = val.balance;
+          shouldTrimLeft = val.balance === 0;
+          break;
+        case 'olympus_month_balance_item':
+          valSource = val.earned;
+          shouldTrimLeft = val.earned === 0 && val.balance === 0;
+          break;
+        case 'ethereum_hourly_balance_item':
+          valSource = val.balance;
+          shouldTrimLeft = val.balance === 0;
+          break;
+        case 'ethereum_month_balance_item':
+          valSource = val.earned;
+          shouldTrimLeft = val.earned === 0 && val.balance === 0;
           break;
       }
 

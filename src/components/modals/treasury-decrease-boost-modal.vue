@@ -102,11 +102,11 @@ import {
 import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
 
 import { ActionButton } from '@/components/buttons';
-import { AssetField, FormLoader, GasSelector } from '@/components/controls';
+import { AssetField, GasSelector } from '@/components/controls';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { FormLoader, Step } from '@/components/forms/form-loader';
 import DetailsPicture from '@/components/modals/details-picture.vue';
 
-import { Step } from '../controls/form-loader';
 import Modal from './modal.vue';
 
 export default Vue.extend({

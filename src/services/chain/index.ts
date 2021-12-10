@@ -17,7 +17,8 @@ export { powercardBalance, getPowercardState } from './treasury/powercard';
 export {
   getMOVEPriceInWETH,
   getSLPPriceInWETH,
-  getUSDCPriceInWETH
+  getUSDCPriceInWETH,
+  getOlympusPriceInWETH
 } from './token-prices/token-prices';
 
 export {

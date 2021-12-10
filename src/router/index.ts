@@ -1,10 +1,15 @@
 import Vue from 'vue';
-import VueRouter, { NavigationFailureType, RouteConfig } from 'vue-router';
+import VueRouter, {
+  NavigationFailureType,
+  RawLocation,
+  RouteConfig
+} from 'vue-router';
 
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
+import { ActiveProviders } from '@/store/modules/earnings/utils';
 import ConnectWallet from '@/views/connect-wallet.vue';
 import Home from '@/views/home.vue';
 import HomeMore from '@/views/home-more.vue';
@@ -333,12 +338,6 @@ const routes: Array<RouteConfig> = [
     meta: {
       skipPreloadScreen: true
     }
-  },
-  {
-    path: '*',
-    redirect: {
-      name: 'not-found-route'
-    }
   }
 ];
 
@@ -395,6 +394,183 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
     ]
   });
 }
+
+if (isFeatureEnabled('isEarningsEnabled')) {
+  router.addRoute({
+    path: '/earnings',
+    component: () =>
+      import(
+        /* webpackChunkName: "earnings" */ '@/views/earnings/earnings-root.vue'
+      ),
+    children: [
+      {
+        path: 'ethereum',
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-root.vue'
+            ),
+          manage: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/components/earnings/ethereum/earnings-manage-ethereum-left-rail-item.vue'
+            )
+        },
+        children: [
+          {
+            path: 'stake/step/:step',
+            name: 'earnings-ethereum-stake',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-stake.vue'
+              ),
+            props: (to) => ({
+              currentStep: to.params.step
+            }),
+            beforeEnter: (to, from, next) => {
+              if (to.params.step === 'prepare') {
+                next();
+                return;
+              }
+
+              if (from.name !== 'earnings-ethereum-stake') {
+                next({
+                  name: 'earnings-ethereum-stake',
+                  params: { step: 'prepare' }
+                });
+                return;
+              }
+
+              next();
+            }
+          },
+          {
+            path: 'global-analytics',
+            name: 'earnings-ethereum-global-analytics',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-global-analytics.vue'
+              )
+          },
+          {
+            path: '',
+            name: 'earnings-ethereum-manage',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-manage-wrapper.vue'
+              )
+          },
+          {
+            path: 'month-statistics/:year/:month',
+            name: 'earnings-ethereum-month-stats',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/ethereum/earnings-ethereum-monthly-statistics.vue'
+              )
+          }
+        ],
+        beforeEnter: checkFeatureFlag('isEarningsEthereumEnabled', {
+          name: 'earnings-manage'
+        })
+      },
+      {
+        path: 'olympus',
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-root.vue'
+            ),
+          manage: () =>
+            import(
+              /* webpackChunkName: "earnings" */ '@/components/earnings/olympus/earnings-manage-olympus-left-rail-item.vue'
+            )
+        },
+        children: [
+          {
+            path: 'stake/step/:step',
+            name: 'earnings-olympus-stake',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-stake.vue'
+              ),
+            props: (to) => ({
+              currentStep: to.params.step
+            }),
+            beforeEnter: (to, from, next) => {
+              if (to.params.step === 'prepare') {
+                next();
+                return;
+              }
+
+              if (from.name !== 'earnings-olympus-stake') {
+                next({
+                  name: 'earnings-olympus-stake',
+                  params: { step: 'prepare' }
+                });
+                return;
+              }
+
+              next();
+            }
+          },
+          {
+            path: 'withdraw',
+            name: 'earnings-olympus-withdraw',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-withdraw.vue'
+              )
+          },
+          {
+            path: 'global-analytics',
+            name: 'earnings-olympus-global-analytics',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-global-analytics.vue'
+              )
+          },
+          {
+            path: '',
+            name: 'earnings-olympus-manage',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-manage-wrapper.vue'
+              )
+          },
+          {
+            path: 'month-statistics/:year/:month',
+            name: 'earnings-olympus-month-stats',
+            component: () =>
+              import(
+                /* webpackChunkName: "earnings" */ '@/views/earnings/olympus/earnings-olympus-monthly-statistics.vue'
+              )
+          }
+        ],
+        beforeEnter: checkFeatureFlag('isEarningsOlympusEnabled', {
+          name: 'earnings-manage'
+        })
+      },
+      {
+        path: '',
+        name: 'earnings-manage',
+        redirect: (): RawLocation => {
+          if (ActiveProviders.length < 1) {
+            return { name: 'not-found-route' };
+          }
+
+          return { name: `earnings-${ActiveProviders[0]}-manage` };
+        }
+      }
+    ]
+  });
+}
+
+router.addRoute({
+  path: '*',
+  name: 'any-route',
+  redirect: {
+    name: 'not-found-route'
+  }
+});
 
 // detect initial navigation
 let isInitialNavigation = false;
