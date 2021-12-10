@@ -37,9 +37,9 @@ const values: Globals = {
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
   isEarningsMonthlyChartEnabled: false,
-  isEarningsEnabled: true,
-  isEarningsEthereumEnabled: true,
-  isEarningsOlympusEnabled: true,
+  isEarningsEnabled: false,
+  isEarningsEthereumEnabled: false,
+  isEarningsOlympusEnabled: false,
   isDebitCardTopUpEnabled: false,
   isDebitCardChangeSkinEnabled: false
 };
