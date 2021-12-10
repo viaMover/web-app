@@ -16,7 +16,10 @@ export type {
   TreasuryActionHistoryItem
 } from './treasury/types';
 
-export { getEthereumInfo } from './earnings/ethereum/service';
+export {
+  getEthereumInfo,
+  getEthereumReceipt
+} from './earnings/ethereum/service';
 export type {
   EthereumMonthBalanceItem,
   EthereumHourlyBalancesItem,
@@ -27,7 +30,7 @@ export type {
   EthereumReceiptResponse
 } from './earnings/ethereum/types';
 
-export { getOlympusInfo } from './earnings/olympus/service';
+export { getOlympusInfo, getOlympusReceipt } from './earnings/olympus/service';
 export type {
   OlympusMonthBalanceItem,
   OlympusHourlyBalancesItem,

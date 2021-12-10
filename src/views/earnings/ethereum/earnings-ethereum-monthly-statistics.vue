@@ -50,10 +50,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions } from 'vuex';
 
 import dayjs from 'dayjs';
 
 import { isFeatureEnabled } from '@/settings';
+import { FetchEthereumReceiptPayload } from '@/store/modules/earnings/modules/ethereum/types';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import { dateFromExplicitPair } from '@/utils/time';
 
@@ -121,13 +123,16 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    // await this.fetchMonthlyStats({
-    //   year: pageDate.get('year'),
-    //   month: pageDate.get('month') + 1
-    // } as SavingsGetReceiptPayload);
+    await this.fetchMonthlyStats({
+      year: this.pageDate.get('year'),
+      month: this.pageDate.get('month') + 1
+    } as FetchEthereumReceiptPayload);
   },
   methods: {
     isFeatureEnabled,
+    ...mapActions('earnings/ethereum', {
+      fetchMonthlyStats: 'fetchEthereumReceipt'
+    }),
     handleBack(): void {
       this.$router.back();
     }
@@ -151,10 +156,10 @@ export default Vue.extend({
       date = dayjs();
     }
 
-    // await this.fetchMonthlyStats({
-    //   year: date.get('year'),
-    //   month: date.get('month') + 1
-    // } as SavingsGetReceiptPayload);
+    await this.fetchMonthlyStats({
+      year: date.get('year'),
+      month: date.get('month') + 1
+    } as FetchEthereumReceiptPayload);
   }
 });
 </script>

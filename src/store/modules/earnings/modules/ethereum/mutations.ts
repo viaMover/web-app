@@ -2,7 +2,7 @@ import { MutationTree } from 'vuex';
 
 import { EthereumInfo } from '@/services/mover';
 
-import { EarningsEthereumStoreState } from './types';
+import { EarningsEthereumStoreState, SetEthereumReceiptPayload } from './types';
 
 export default {
   setIsLoading(state, isLoading: boolean): void {
@@ -21,6 +21,16 @@ export default {
     state.ethereumInfoError = error;
   },
   setIsEthereumInfoLoading(state, status: boolean): void {
+    state.isEthereumInfoLoading = status;
+  },
+  setEthereumReceipt(state, payload: SetEthereumReceiptPayload): void {
+    state.ethereumReceiptCache[`${payload.year}/${payload.month}`] =
+      payload.receipt;
+  },
+  setEthereumReceiptError(state, error: string | undefined): void {
+    state.ethereumInfoError = error;
+  },
+  setIsEthereumReceiptLoading(state, status: boolean): void {
     state.isEthereumInfoLoading = status;
   }
 } as MutationTree<EarningsEthereumStoreState>;

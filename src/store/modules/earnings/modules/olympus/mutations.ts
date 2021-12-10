@@ -2,7 +2,7 @@ import { MutationTree } from 'vuex';
 
 import { OlympusInfo } from '@/services/mover';
 
-import { EarningsOlympusStoreState } from './types';
+import { EarningsOlympusStoreState, SetOlympusReceiptPayload } from './types';
 
 export default {
   setIsLoading(state, isLoading: boolean): void {
@@ -25,5 +25,15 @@ export default {
   },
   setOlympusPriceInWeth(state, olympusPriceInWeth: string | undefined): void {
     state.olympusPriceInWeth = olympusPriceInWeth;
+  },
+  setOlympusReceipt(state, payload: SetOlympusReceiptPayload): void {
+    state.olympusReceiptCache[`${payload.year}/${payload.month}`] =
+      payload.receipt;
+  },
+  setOlympusReceiptError(state, error: string | undefined): void {
+    state.olympusReceiptError = error;
+  },
+  setIsOlympusReceiptLoading(state, status: boolean): void {
+    state.isOlympusReceiptLoading = status;
   }
 } as MutationTree<EarningsOlympusStoreState>;

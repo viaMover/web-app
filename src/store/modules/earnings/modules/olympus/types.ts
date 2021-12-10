@@ -1,4 +1,4 @@
-import { OlympusInfo } from '@/services/mover';
+import { EthereumReceipt, OlympusInfo } from '@/services/mover';
 
 export type EarningsOlympusStoreState = {
   isLoading: boolean;
@@ -11,4 +11,19 @@ export type EarningsOlympusStoreState = {
   olympusInfo: OlympusInfo | undefined;
   olympusInfoError: string | undefined;
   olympusPriceInWeth: undefined | string;
+
+  olympusReceiptCache: Record<string, EthereumReceipt>;
+  isOlympusReceiptLoading: boolean;
+  olympusReceiptError: string | undefined;
+};
+
+export type SetOlympusReceiptPayload = {
+  receipt: EthereumReceipt;
+  month: number;
+  year: number;
+};
+
+export type FetchOlympusReceiptPayload = {
+  month: number;
+  year: number;
 };

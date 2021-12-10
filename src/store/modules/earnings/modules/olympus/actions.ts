@@ -4,11 +4,11 @@ import * as Sentry from '@sentry/vue';
 
 import { getOlympusData, getOlympusPriceInWETH } from '@/services/chain';
 import { getOlympusAPY } from '@/services/chain/earnings/olympys';
-import { getOlympusInfo } from '@/services/mover';
+import { getOlympusInfo, getOlympusReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { RootStoreState } from '@/store/types';
 
-import { EarningsOlympusStoreState } from './types';
+import { EarningsOlympusStoreState, FetchOlympusReceiptPayload } from './types';
 
 export default {
   async loadMinimalInfo({ dispatch, commit }): Promise<void> {
@@ -102,5 +102,33 @@ export default {
       rootState.account.provider.web3
     );
     commit('setOlympusPriceInWeth', olympusPriceInWeth);
+  },
+  async fetchOlympusReceipt(
+    { commit, rootState, state },
+    { year, month }: FetchOlympusReceiptPayload
+  ): Promise<void> {
+    if (rootState.account?.currentAddress === undefined) {
+      throw new Error('failed to get current address');
+    }
+    commit('setIsOlympusReceiptLoading', true);
+    const key = `${year}/${month}`;
+
+    if (state.olympusReceiptCache[key] !== undefined) {
+      return;
+    }
+
+    const receipt = await getOlympusReceipt(
+      rootState.account.currentAddress,
+      year,
+      month
+    );
+
+    commit('setIsOlympusReceiptLoading', false);
+    if (isError(receipt)) {
+      commit('setOlympusReceiptError', receipt.error);
+      Sentry.captureException(`can't get olympus receipt: ${receipt.error}`);
+      return;
+    }
+    commit('setOlympusReceipt', receipt);
   }
 } as ActionTree<EarningsOlympusStoreState, RootStoreState>;

@@ -9,47 +9,47 @@
       <statement-list>
         <statement-list-item
           :description="$t('earnings.lblDepositedAssets')"
-          :value="0"
+          :value="depositAsset"
         />
         <statement-list-item
           :description="$t('earnings.lblCurrentVariableAPY')"
-          :value="0"
+          :value="currentVariableAPY"
         />
         <statement-list-item
           :description="$t('earnings.lbl30DayAverageAPY')"
-          :value="0"
+          :value="monthAverageAPY"
         />
         <statement-list-item
           :description="$t('earnings.lblTotalAssetsUnderManagement')"
-          :value="0"
+          :value="totalAssetsUnderManagement"
         />
       </statement-list>
       <statement-list :title="$t('earnings.lblEarningsStats')">
         <statement-list-item
           :description="$t('earnings.lblEarnedToday')"
-          :value="0"
+          :value="earnedToday"
         />
         <statement-list-item
           :description="$t('earnings.lblEarnedThisMonth')"
-          :value="0"
+          :value="earnedThisMonth"
         />
         <statement-list-item
           :description="$t('earnings.lblEarnedInTotal')"
-          :value="0"
+          :value="earnedInTotal"
         />
       </statement-list>
       <statement-list :title="$t('earnings.lblEarningsEstimation')">
         <statement-list-item
           :description="$t('earnings.lblEstimatedEarningsTomorrow')"
-          :value="0"
+          :value="estimatedEarningsTomorrow"
         />
         <statement-list-item
           :description="$t('earnings.lblEstimatedEarningsThisMonth')"
-          :value="0"
+          :value="estimatedEarningsThisMonth"
         />
         <statement-list-item
           :description="$t('earnings.lblEstimatedEarningsAnnually')"
-          :value="0"
+          :value="estimatedEarningsAnnually"
         />
       </statement-list>
     </div>
@@ -75,6 +75,38 @@ export default Vue.extend({
     StatementList,
     SecondaryPageSimpleTitle,
     SecondaryPage
+  },
+  computed: {
+    depositAsset(): number {
+      return 0;
+    },
+    currentVariableAPY(): number {
+      return 0;
+    },
+    monthAverageAPY(): number {
+      return 0;
+    },
+    totalAssetsUnderManagement(): number {
+      return 0;
+    },
+    earnedToday(): number {
+      return 0;
+    },
+    earnedThisMonth(): number {
+      return 0;
+    },
+    earnedInTotal(): number {
+      return 0;
+    },
+    estimatedEarningsTomorrow(): number {
+      return 0;
+    },
+    estimatedEarningsThisMonth(): number {
+      return 0;
+    },
+    estimatedEarningsAnnually(): number {
+      return 0;
+    }
   },
   methods: {
     handleBack(): void {

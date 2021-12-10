@@ -6,11 +6,14 @@ import {
   getEthereumAPY,
   getEthereumBalance
 } from '@/services/chain/earnings/ethereum';
-import { getEthereumInfo } from '@/services/mover';
+import { getEthereumInfo, getEthereumReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { RootStoreState } from '@/store/types';
 
-import { EarningsEthereumStoreState } from './types';
+import {
+  EarningsEthereumStoreState,
+  FetchEthereumReceiptPayload
+} from './types';
 
 export default {
   async loadMinimalInfo({ dispatch }): Promise<void> {
@@ -72,5 +75,33 @@ export default {
     }
 
     commit('setEthereumInfo', info.result);
+  },
+  async fetchEthereumReceipt(
+    { commit, rootState, state },
+    { year, month }: FetchEthereumReceiptPayload
+  ): Promise<void> {
+    if (rootState.account?.currentAddress === undefined) {
+      throw new Error('failed to get current address');
+    }
+    commit('setIsEthereumReceiptLoading', true);
+    const key = `${year}/${month}`;
+
+    if (state.ethereumReceiptCache[key] !== undefined) {
+      return;
+    }
+
+    const receipt = await getEthereumReceipt(
+      rootState.account.currentAddress,
+      year,
+      month
+    );
+
+    commit('setIsEthereumReceiptLoading', false);
+    if (isError(receipt)) {
+      commit('setEthereumReceiptError', receipt.error);
+      Sentry.captureException(`can't get ethereum receipt: ${receipt.error}`);
+      return;
+    }
+    commit('setEthereumReceipt', receipt);
   }
 } as ActionTree<EarningsEthereumStoreState, RootStoreState>;

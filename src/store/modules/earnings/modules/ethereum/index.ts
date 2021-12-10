@@ -20,7 +20,11 @@ export default {
 
     isEthereumInfoLoading: false,
     ethereumInfo: undefined,
-    ethereumInfoError: undefined
+    ethereumInfoError: undefined,
+
+    ethereumReceiptCache: {},
+    ethereumReceiptError: undefined,
+    isEthereumReceiptLoading: false
   },
   actions,
   getters,

@@ -21,7 +21,11 @@ export default {
     isOlympusInfoLoading: false,
     olympusInfo: undefined,
     olympusInfoError: undefined,
-    olympusPriceInWeth: undefined
+    olympusPriceInWeth: undefined,
+
+    olympusReceiptCache: {},
+    olympusReceiptError: undefined,
+    isOlympusReceiptLoading: false
   },
   actions,
   getters,

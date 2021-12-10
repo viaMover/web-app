@@ -2,7 +2,7 @@ import { GetterTree } from 'vuex';
 
 import gt from 'lodash-es/gt';
 
-import { EthereumMonthBalanceItem } from '@/services/mover';
+import { EthereumMonthBalanceItem, EthereumReceipt } from '@/services/mover';
 import { RootStoreState } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -87,5 +87,18 @@ export default {
         return [...acc, item];
       }, new Array<EthereumMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
+  },
+  ethereumReceipt(
+    state
+  ): (year: number, month: number) => EthereumReceipt | undefined {
+    return (year: number, month: number) => {
+      if (
+        state.isEthereumReceiptLoading ||
+        state.ethereumReceiptError !== undefined
+      ) {
+        return undefined;
+      }
+      return state.ethereumReceiptCache[`${year}/${month}`];
+    };
   }
 } as GetterTree<EarningsEthereumStoreState, RootStoreState>;
