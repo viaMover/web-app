@@ -35,7 +35,7 @@
           <p>
             {{ $t('forms.lblSwappingFor') }}
             <custom-picture
-              :alt="$t('lblUSDcTokenAlt')"
+              :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
               class="token"
               :sources="usdcPicture.sources"
               :src="usdcPicture.src"
@@ -74,6 +74,7 @@ import {
   ZeroXSwapError
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
+import { getUsdcPriceInEur } from '@/services/coingecko/tokens';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isEth, sameAddress } from '@/utils/address';
 import {
@@ -158,6 +159,7 @@ export default Vue.extend({
       inputAmountNative: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
+      usdcPriceInEur: undefined as undefined | string,
 
       //to tx
       actionGasLimit: undefined as string | undefined,
@@ -362,6 +364,34 @@ export default Vue.extend({
       this.approximateEstimationDebounceHandler = window.setTimeout(
         async () => {
           try {
+            const usdcPriceInEur = await this.getUsdcPriceInEur();
+            if (usdcPriceInEur) {
+              if (
+                sameAddress(this.inputAsset?.address, this.usdcAsset.address) &&
+                !isZero(this.inputAmount) &&
+                this.inputAmount !== ''
+              ) {
+                this.approximateEUREstimationAmount = multiply(
+                  this.inputAmount,
+                  usdcPriceInEur
+                );
+                return;
+              }
+
+              if (this.transferData) {
+                const boughtUSDC = fromWei(
+                  this.transferData.buyAmount,
+                  this.usdcAsset.decimals
+                );
+
+                this.approximateEUREstimationAmount = multiply(
+                  boughtUSDC,
+                  usdcPriceInEur
+                );
+                return;
+              }
+            }
+
             const referenceAmount =
               mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
             const referenceToken =
@@ -424,6 +454,27 @@ export default Vue.extend({
         },
         250
       );
+    },
+    async getUsdcPriceInEur(): Promise<string | undefined> {
+      if (this.usdcPriceInEur !== undefined) {
+        return this.usdcPriceInEur;
+      }
+
+      const res = await getUsdcPriceInEur();
+      if (res.isError) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.getUsdcPriceInEur',
+          message: 'failed to get USDC price in EUR',
+          data: {
+            error: res.error
+          }
+        });
+        return undefined;
+      }
+
+      this.usdcPriceInEur = res.result;
+      return res.result;
     },
     async updateAmount(value: string, mode: InputMode): Promise<void> {
       if (this.inputAsset === undefined || this.isLoading) {
@@ -489,7 +540,7 @@ export default Vue.extend({
             );
           }
         }
-        this.updateApproximateEURSEstimationValue(mode);
+        await this.updateApproximateEURSEstimationValue(mode);
       } catch (error) {
         if (error instanceof ZeroXSwapError) {
           this.transferError = mapError(error.publicMessage);
