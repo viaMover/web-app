@@ -215,7 +215,7 @@ export default Vue.extend({
       return undefined;
     },
     isButtonActive(): boolean {
-      return this.error === undefined && !this.isLoading;
+      return this.error === undefined && !this.isLoading && !this.isProcessing;
     },
     formattedMaxAmount(): string {
       if (this.asset === undefined) {

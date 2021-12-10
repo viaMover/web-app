@@ -37,7 +37,7 @@
           <p>
             {{ $t('forms.lblSwappingFor') }}
             <custom-picture
-              :alt="$t('lblUSDcTokenAlt')"
+              :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
               class="token"
               :sources="usdcPicture.sources"
               :src="usdcPicture.src"

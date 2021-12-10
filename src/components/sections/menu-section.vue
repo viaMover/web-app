@@ -6,6 +6,7 @@
           :description="debitCardDescription"
           :description-class="debitCardDescriptionClass"
           :disabled="!isFeatureEnabled('isDebitCardEnabled')"
+          has-webp-sources
           navigate-to-name="debit-card-manage"
           pic="BeautifulCard"
           :title="$t('menu.lblBeautifulCard')"
@@ -30,20 +31,29 @@
         </menu-list-emoji-card-item>
         <menu-list-emoji-card-item
           :description="savingsBalance"
+          has-webp-sources
           navigate-to-name="savings-manage"
           pic="Savings"
           :title="$t('savings.lblSavings')"
         />
         <menu-list-emoji-card-item
-          corner-color="#ff57db"
           :description="treasuryBalance"
+          has-webp-sources
           navigate-to-name="treasury-manage"
           pic="SmartTreasury"
           :title="$t('treasury.lblSmartTreasury')"
         />
         <menu-list-emoji-card-item
+          v-if="isFeatureEnabled('isEarningsEnabled')"
+          :description="earningsBalance"
+          navigate-to-name="earnings-manage"
+          pic="earnings-ethereum-and-olympus"
+          :title="$t('earnings.lblEarnings')"
+        />
+        <menu-list-emoji-card-item
           v-if="isFeatureEnabled('isBondsEnabled')"
           description="$942,184.11"
+          has-webp-sources
           navigate-to-name="bonds"
           pic="Bonds"
           :title="$t('menu.lblBonds')"
@@ -124,6 +134,10 @@ export default Vue.extend({
       'treasuryBonusNative',
       'treasuryStakedBalanceNative'
     ]),
+    ...(isFeatureEnabled('isEarningsEnabled') &&
+      mapGetters('earnings', {
+        earningsBalanceNative: 'earningsBalanceNative'
+      })),
     ...(isFeatureEnabled('isDebitCardEnabled') &&
       mapGetters('debitCard', {
         debitCardCurrentSkin: 'currentSkin',
@@ -136,6 +150,13 @@ export default Vue.extend({
       })),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
+    },
+    earningsBalance(): string {
+      if (this.earningsBalanceNative === undefined) {
+        return '';
+      }
+
+      return `$${formatToNative(this.earningsBalanceNative)}`;
     },
     treasuryBalance(): string {
       const treasuryAllBalance = add(
@@ -174,9 +195,19 @@ export default Vue.extend({
     ) {
       await this.loadDebitCardInfo();
     }
+    if (
+      isFeatureEnabled('isEarningsEnabled') &&
+      this.loadEarningsMinimalInfo !== undefined
+    ) {
+      await this.loadEarningsMinimalInfo();
+    }
   },
   methods: {
     isFeatureEnabled,
+    ...(isFeatureEnabled('isEarningsEnabled') &&
+      mapActions('earnings', {
+        loadEarningsMinimalInfo: 'loadMinimalInfo'
+      })),
     ...(isFeatureEnabled('isDebitCardEnabled') &&
       mapActions('debitCard', { loadDebitCardInfo: 'loadInfo' })),
     async openDepositInSavings(): Promise<void> {
