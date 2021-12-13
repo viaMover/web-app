@@ -18,6 +18,7 @@
         <asset-field
           :amount="input.amount"
           :asset="input.asset"
+          :exclude-tokens="excludedInputTokens"
           field-role="input"
           has-couple-tokens
           :label="$t('swaps.lblSwapFrom')"
@@ -362,6 +363,12 @@ export default Vue.extend({
       }
 
       return [this.input.asset];
+    },
+    excludedInputTokens(): Array<Token> {
+      if (this.output.asset === undefined) {
+        return [];
+      }
+      return [this.output.asset];
     },
     isInfoAvailable(): boolean {
       return !this.loading && !!this.transferData;
