@@ -204,7 +204,7 @@ export default Vue.extend({
       return (
         this.forcedTokens.length +
         this.walletTokens.length +
-        this.globalTokensData.length
+        (this.showGlobalTokens ? this.globalTokensData.length : 0)
       );
     }
   },
