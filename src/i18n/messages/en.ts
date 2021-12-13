@@ -1129,6 +1129,24 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
           'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
           'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
       }
+    },
+    errors: {
+      default: 'Oh no. Something went wrong',
+      email: {
+        required: 'Email is required',
+        invalid: 'Enter a valid email address'
+      },
+      name: {
+        required: 'Name is required',
+        invalid:
+          "Name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
+      },
+      country: {
+        required: 'Country is required'
+      },
+      address: {
+        required: 'Address is required'
+      }
     }
   };
 }
