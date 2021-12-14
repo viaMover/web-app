@@ -12,13 +12,13 @@ export class DebitCardApiError<T> extends Error {
 export class DebitCardNotSupportedCountryError extends DebitCardApiError<NotSupportedCountryErrorPayload> {}
 
 export type CardStatus =
-  | 'NOT_REGISTERED' // user did not filled personal data form yet
+  | 'NOT_REGISTERED' // user did not fill personal data form yet
   | 'PHONE_VERIFICATION_PENDING' // account is signed up, SMS sent to phone number provided
   | 'KYC_WAITING' // user verified phone, but not passed KYC yet
   | 'KYC_PENDING' // user has passed KYC, it is being verified (wait)
   | 'CARD_ORDER_PENDING' // user has verified phone and passed KYC, we would order card;
   | 'CARD_SHIPPED' // the card is ordered, to be shipped
-  | 'ACTIVE'; // the card is active
+  | 'CARD_ACTIVE'; // the card is active
 
 export type EventHistoryItemMinimal = {
   timestamp: number;
