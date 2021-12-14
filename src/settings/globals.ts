@@ -9,6 +9,10 @@ export interface Globals {
   isIntercomEnabled: boolean;
   isSavingsMonthlyChartEnabled: boolean;
   isTreasuryMonthlyChartEnabled: boolean;
+  isEarningsMonthlyChartEnabled: boolean;
+  isEarningsEnabled: boolean;
+  isEarningsEthereumEnabled: boolean;
+  isEarningsOlympusEnabled: boolean;
   isDebitCardTopUpEnabled: boolean;
   isDebitCardChangeSkinEnabled: boolean;
   isVaultsRaceEnabled: boolean;
@@ -33,6 +37,10 @@ const values: Globals = {
   isIntercomEnabled: !isDevelop(),
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
+  isEarningsMonthlyChartEnabled: false,
+  isEarningsEnabled: false,
+  isEarningsEthereumEnabled: false,
+  isEarningsOlympusEnabled: false,
   isDebitCardTopUpEnabled: false,
   isDebitCardChangeSkinEnabled: false,
   isVaultsRaceEnabled: true

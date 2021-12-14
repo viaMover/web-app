@@ -6,6 +6,10 @@ import { isFeatureEnabled } from '@/settings';
 import actions from './actions';
 import account from './modules/account';
 import debitCard from './modules/debit-card';
+import {
+  earningsModule as earnings,
+  registerNestedModules as earningsRegisterNestedModules
+} from './modules/earnings';
 import games from './modules/games';
 import governance from './modules/governance';
 import modals from './modules/modals';
@@ -39,6 +43,11 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
 
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   store.registerModule('radar', radar);
+}
+
+if (isFeatureEnabled('isEarningsEnabled')) {
+  store.registerModule('earnings', earnings);
+  earningsRegisterNestedModules(store);
 }
 
 if (isFeatureEnabled('isDebitCardEnabled')) {

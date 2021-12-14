@@ -8,40 +8,25 @@
           :title="$t('treasury.powercard.lblThePowercard')"
         />
       </div>
-      <div class="treasury__menu-wrapper-body margin-top-80">
-        <div class="token__item">
-          <div class="item__info">
-            <progress-loader class="loading" :value="powercardProgress" />
-            <div class="item__info-icon">
-              <custom-picture
-                :alt="powercard.alt"
-                :sources="powercard.sources"
-                :src="powercard.src"
-                :webp-sources="powercard.webpSources"
-              />
-            </div>
-            <div class="item__info-label">
-              <p>{{ $t('treasury.powercard.lblThePowercard') }}</p>
-              <span>{{ status }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="treasury-powercard-list">
-          <div class="item">
-            <h2>{{ $t('treasury.powercard.lblPowercardStatus') }}</h2>
-            <span>
-              {{ status }}
-            </span>
-          </div>
-          <div class="item">
-            <h2>{{ $t('treasury.powercard.lblRemainingTime') }}</h2>
-            <span>
-              {{ remainingTime }}
-            </span>
-          </div>
-        </div>
+      <div class="margin-top-80">
+        <statement-list>
+          <statement-list-progress-item
+            :description="$t('treasury.powercard.lblThePowercard')"
+            :image="powercard"
+            :progress="powercardProgress"
+            :value="status"
+          />
+          <statement-list-item
+            :description="$t('treasury.powercard.lblPowercardStatus')"
+            :value="status"
+          />
+          <statement-list-item
+            :description="$t('treasury.powercard.lblRemainingTime')"
+            :value="remainingTime"
+          />
+        </statement-list>
         <action-button
-          button-class="button button-active"
+          button-class="button button-active black-link margin-top-40"
           :disabled="!unstakeAvailable"
           :text="$t('treasury.powercard.btnRemoveThePowercard')"
           @button-click="handleRemoveCard"
@@ -73,19 +58,23 @@ import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powe
 import ActionButton from '@/components/buttons/action-button.vue';
 import { LoaderForm, LoaderStep } from '@/components/forms';
 import { PictureDescriptor } from '@/components/html5';
-import CustomPicture from '@/components/html5/custom-picture.vue';
-import { ProgressLoader } from '@/components/layout';
 import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
+import {
+  StatementList,
+  StatementListItem,
+  StatementListProgressItem
+} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'TreasuryPowercardManage',
   components: {
-    CustomPicture,
+    StatementListProgressItem,
+    StatementListItem,
+    StatementList,
     ActionButton,
-    ProgressLoader,
     SecondaryPageSimpleTitle,
     SecondaryPage,
     LoaderForm

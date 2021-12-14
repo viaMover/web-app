@@ -115,7 +115,7 @@ export default Vue.extend({
       return this.state[this.modalId].payload?.useWalletTokens ?? false;
     },
     excludedTokens(): Array<Token> {
-      return this.state[this.modalId].payload?.excludedTokens ?? [];
+      return this.state[this.modalId].payload?.excludeTokens ?? [];
     },
     treasuryOnly(): boolean {
       return this.state[this.modalId].payload?.treasuryOnly ?? false;
@@ -204,7 +204,7 @@ export default Vue.extend({
       return (
         this.forcedTokens.length +
         this.walletTokens.length +
-        this.globalTokensData.length
+        (this.showGlobalTokens ? this.globalTokensData.length : 0)
       );
     }
   },

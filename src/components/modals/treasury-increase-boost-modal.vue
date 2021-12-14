@@ -122,9 +122,9 @@ import {
 import { GasData, SmallToken, TokenWithBalance } from '@/wallet/types';
 
 import { ActionButton } from '@/components/buttons';
-import { AssetField, FormLoader, GasSelector } from '@/components/controls';
-import { Step } from '@/components/controls/form-loader';
+import { AssetField, GasSelector } from '@/components/controls';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { FormLoader, Step } from '@/components/forms/form-loader';
 import DetailsPicture from '@/components/modals/details-picture.vue';
 import EthPicture from '@/components/modals/eth-picture.vue';
 import MovePicture from '@/components/modals/move-picture.vue';
