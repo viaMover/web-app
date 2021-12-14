@@ -1146,6 +1146,10 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
       },
       address: {
         required: 'Address is required'
+      },
+      postCode: {
+        required: 'Post code is required',
+        invalid: 'Enter a valid postal code'
       }
     }
   };

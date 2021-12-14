@@ -1904,6 +1904,10 @@ form {
     max-width: 480px;
     margin-top: 40px;
 
+    &.with-bottom-margin {
+      margin-bottom: 30px;
+    }
+
     &.disabled {
       opacity: 0.2;
     }
@@ -1918,6 +1922,12 @@ form {
         font-size: 12px;
         line-height: 16px;
         @font-regular();
+
+        &.bold-label {
+          font-size: 16px;
+          @font-medium();
+          color: @black;
+        }
 
         input {
           opacity: 1;
@@ -1945,6 +1955,16 @@ form {
 
           &::placeholder {
             @font-bold();
+          }
+          &.small-font {
+            line-height: 24px;
+            @font-medium();
+            font-size: 14px;
+          }
+          &.bold-label {
+            line-height: 24px;
+            @font-medium();
+            font-size: 16px;
           }
         }
 
