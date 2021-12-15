@@ -40,6 +40,11 @@ export { getSweetAndSourClaimSignature } from './nft/sweet-and-sour/service';
 export { getOlympusData, claimOlympus } from './nft/olympus/olympus';
 export type { OlympusData } from './nft/olympus/types';
 
+export {
+  getCeoOfMoneyTokenData,
+  claimCeoOfMoney
+} from './shop/ceoofmoney/token';
+
 export { getVaultsData } from './nft/vaults/vaults';
 export type { VaultsData } from './nft/vaults/types';
 

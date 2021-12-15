@@ -364,7 +364,7 @@ export default {
       let nibbleShopInfoPromise = Promise.resolve();
       if (isFeatureEnabled('isNibbleShopEnabled')) {
         nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
-          dispatch('shop/loadAssetsInfoList', undefined, {
+          dispatch('shop/refreshAssetsInfoList', undefined, {
             root: true
           })
         );

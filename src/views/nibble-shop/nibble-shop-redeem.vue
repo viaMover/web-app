@@ -169,6 +169,11 @@
         </form>
       </div>
     </secondary-page>
+    <simple-loader-modal
+      v-if="transactionStep !== undefined"
+      :loader-step="transactionStep"
+      @close="transactionStep = undefined"
+    />
   </content-wrapper>
 </template>
 
@@ -181,6 +186,7 @@ import { mapState } from 'vuex';
 import { Asset } from '@/store/modules/shop/types';
 
 import { ActionButton } from '@/components/buttons';
+import { Step } from '@/components/forms/form-loader';
 import {
   ContentWrapper,
   LeftRailSection,
@@ -190,7 +196,7 @@ import {
   SecondaryPage,
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
-
+import { SimpleLoaderModal } from '@/components/modals';
 const vString = helpers.regex('vString', /^[a-zA-Z_ ]*$/i);
 const vStringNum = helpers.regex('vStringNum', /^[a-zA-Z0-9_ ]*$/i);
 
@@ -202,7 +208,8 @@ export default Vue.extend({
     SecondaryPage,
     ContentWrapper,
     LeftRailSection,
-    LeftRailSectionNavItemEmoji
+    LeftRailSectionNavItemEmoji,
+    SimpleLoaderModal
   },
   validations: {
     email: {
@@ -236,7 +243,8 @@ export default Vue.extend({
       postCode: '',
 
       isLoading: false,
-      errorText: ''
+      errorText: '',
+      transactionStep: undefined as Step | undefined
     };
   },
   computed: {
@@ -256,6 +264,8 @@ export default Vue.extend({
     if (this.product === null) {
       this.$router.push({ name: 'not-found-route' });
     }
+    this.transactionStep = undefined;
+    this.errorText = '';
   },
   methods: {
     handleBack(): void {
