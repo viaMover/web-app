@@ -20,46 +20,34 @@ export const getNibbleTokenData = async (
   const transactionParams = {
     from: accountAddress
   } as TransactionsParams;
-  console.log(`getNibbleTokenData ${tokenId}`);
+  const contract = new web3.eth.Contract(
+    NFT_NIBBLE_SHOP_ABI as AbiItem[],
+    tokenAddres
+  );
+
+  const balance = await contract.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
+  const totalClaimed = await contract.methods
+    .totalClaimed(accountAddress)
+    .call(transactionParams);
+
+  const reedemCount = await contract.methods
+    .redeemCount(accountAddress)
+    .call(transactionParams);
+
+  const tokenIntId = await contract.methods
+    .tokenOfOwnerByIndex(accountAddress, 0)
+    .call(transactionParams);
 
   return {
     tokenId: tokenId,
-    tokenIntId: '123',
-    balance: 1,
-    totalClaimed: 2,
-    redeemCount: 0
+    tokenIntId: tokenIntId.toString(),
+    balance: balance.toString(),
+    totalClaimed: totalClaimed.toString(),
+    redeemCount: parseInt(reedemCount.toString())
   };
-
-  //
-  // const contract = new web3.eth.Contract(
-  // NFT_NIBBLE_SHOP_ABI as AbiItem[],
-  // tokenAddres
-  // );
-  //
-  // const balance = await contract.methods
-  // .balanceOf(accountAddress)
-  // .call(transactionParams);
-  //
-  // const totalClaimed = await contract.methods
-  // .totalClaimed(accountAddress)
-  // .call(transactionParams);
-  //
-  // const reedemCount = await contract.methods
-  // .redeemCount(accountAddress)
-  // .call(transactionParams);
-  //
-  // const tokenIntId = await contract.methods
-  // .tokenOfOwnerByIndex(accountAddress, 0)
-  // .call(transactionParams);
-  //
-  // return {
-  // tokenId: tokenId,
-  // tokenIntId: tokenIntId.toString(),
-  // balance: balance.toString(),
-  // totalClaimed: totalClaimed.toString(),
-  // redeemCount: parseInt(reedemCount.toString())
-  // };
-  //
 };
 
 export const claimNibbleToken = async (
