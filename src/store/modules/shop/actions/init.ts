@@ -3,7 +3,7 @@ import { ActionTree } from 'vuex';
 import { logger } from '@sentry/utils';
 import * as Sentry from '@sentry/vue';
 
-import { getCeoOfMoneyTokenData } from '@/services/chain';
+import { getNibbleTokenData } from '@/services/chain';
 import { RootStoreState } from '@/store/types';
 
 import { checkAccountStateIsReady } from './../../account/utils/state';
@@ -23,34 +23,38 @@ export default {
 
     commit('setIsLoading', true);
 
-    const ceoOfMoneyDataPromise = getCeoOfMoneyTokenData(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3
-    );
-
     try {
-      const [ceoOfMoneyDataRes] = await Promise.allSettled([
-        ceoOfMoneyDataPromise
-      ]);
+      const promisesResults = await Promise.allSettled(
+        state.localAssets
+          .filter((lt) => lt.active)
+          .map(async (localToken) => {
+            return getNibbleTokenData(
+              localToken.id,
+              localToken.address,
+              rootState!.account!.currentAddress!,
+              rootState!.account!.networkInfo!.network,
+              rootState!.account!.provider!.web3
+            );
+          })
+      );
 
-      if (ceoOfMoneyDataRes.status === 'fulfilled') {
-        console.log('SET refreshAssetsInfoList');
-        const id = '$CEO1';
-        console.log(
-          rootState.i18n?.t(`nibbleShop.txtAssets.${id}.description`)
-        );
-        commit('setAsset', {
-          assetId: id,
-          asset: ceoOfMoneyDataRes.value
-        } as SetAssetData);
-      } else {
-        logger.error(
-          "Can't get data about CEO OF MONEY",
-          ceoOfMoneyDataRes.reason
-        );
-        Sentry.captureException("Can't get data about CEO OF MONEY");
-      }
+      promisesResults.forEach((res) => {
+        if (res.status === 'fulfilled') {
+          console.log(`Set asset: ${res.value.tokenId}`);
+          console.log(
+            rootState.i18n?.t(
+              `nibbleShop.txtAssets.${res.value.tokenId}.description`
+            )
+          );
+          commit('setAsset', {
+            assetId: res.value.tokenId,
+            asset: res.value
+          } as SetAssetData);
+        } else {
+          logger.error("Can't get nibbler token data", res.reason);
+          Sentry.captureException("Can't get nibble token data");
+        }
+      });
     } catch (err) {
       console.error("can't load shop's data", err);
       Sentry.captureException(err);

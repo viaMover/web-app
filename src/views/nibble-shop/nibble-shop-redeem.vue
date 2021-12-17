@@ -99,6 +99,14 @@
                 <option disabled hidden value="">
                   {{ $t('nibbleShop.lblPlaceholders.country') }}
                 </option>
+
+                <option
+                  v-for="country in countries"
+                  :key="country.code"
+                  :value="country.code"
+                >
+                  {{ country.name }}
+                </option>
               </select>
             </label>
             <span v-if="!$v.country.required" class="error-message">
@@ -181,9 +189,14 @@
 import Vue from 'vue';
 import { alpha, email, helpers, required } from 'vuelidate/lib/validators';
 import { Validation } from 'vuelidate/vuelidate';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
-import { Asset } from '@/store/modules/shop/types';
+import * as Sentry from '@sentry/vue';
+
+import { NibbleShopApiError } from '@/services/mover/nibble-shop/types';
+import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { RedeemPayload } from '@/store/modules/shop/actions/claim';
+import { Asset, RedeemParams } from '@/store/modules/shop/types';
 
 import { ActionButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
@@ -235,20 +248,21 @@ export default Vue.extend({
   },
   data() {
     return {
-      product: null as null | Asset,
+      product: undefined as undefined | Asset,
       email: '',
       name: '',
       country: '',
       address: '',
       postCode: '',
 
-      isLoading: false,
+      isLoading: false, // for chain request
+      isRedeeming: false, // for api request
       errorText: '',
       transactionStep: undefined as Step | undefined
     };
   },
   computed: {
-    ...mapState('shop', { products: 'assets' }),
+    ...mapState('shop', { products: 'assets', countries: 'countries' }),
     id(): string {
       return this.$route.params.id;
     },
@@ -258,27 +272,100 @@ export default Vue.extend({
   },
   mounted() {
     const id = this.$route.params.id;
-    this.product =
-      (this.products as Array<Asset>).find((asset: Asset) => asset.id === id) ||
-      null;
+    this.product = (this.products as Array<Asset>).find(
+      (asset: Asset) => asset.id === id
+    );
     if (this.product === null) {
       this.$router.push({ name: 'not-found-route' });
     }
     this.transactionStep = undefined;
     this.errorText = '';
+    this.isLoading = false;
   },
   methods: {
+    ...mapActions('shop', {
+      nibbleShopRedeemServerRequest: 'nibbleShopRedeemServerRequest',
+      refreshAssetsInfoList: 'refreshAssetsInfoList',
+      redeemNibbleNFTChain: 'redeemNibbleNFTChain'
+    }),
     handleBack(): void {
       this.$router.back();
     },
     handleClose(): void {
       this.$router.push({ name: 'home' });
     },
-    handleRedeem(): void {
+    async handleRedeem(): Promise<void> {
       this.errorText = '';
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;
+      }
+
+      if (this.product === undefined) {
+        this.errorText = this.$t('nibbleShop.errors.default') as string;
+        return;
+      }
+
+      try {
+        this.isLoading = true;
+        await this.nibbleShopRedeemServerRequest({
+          email: this.email,
+          tokenIntId: this.product.intId,
+          name: this.name,
+          country: this.country,
+          address: this.address,
+          postalCode: this.postCode,
+          tokenUrl: this.product.urlId
+        } as RedeemParams);
+      } catch (error) {
+        if (isProviderRpcError(error)) {
+          if (this.$te(`provider.errors.${error.code}`)) {
+            this.errorText = this.$t(
+              `provider.errors.${error.code}`
+            ).toString();
+            return;
+          }
+        }
+
+        if (error instanceof NibbleShopApiError) {
+          if (
+            error.shortMessage !== undefined &&
+            this.$te(`nibbleShop.errors.${error.shortMessage}`)
+          ) {
+            this.errorText = this.$t(
+              `nibbleShop.errors.${error.message}`
+            ) as string;
+            return;
+          }
+
+          if (this.$te(`nibbleShop.errors.${error.message}`)) {
+            this.errorText = this.$t(
+              `nibbleShop.errors.${error.message}`
+            ) as string;
+            return;
+          }
+        }
+
+        this.errorText = this.$t('nibbleShop.errors.default') as string;
+        return;
+      } finally {
+        this.isLoading = false;
+      }
+
+      try {
+        this.transactionStep = 'Confirm';
+        await this.redeemNibbleNFTChain({
+          changeStep: () => {
+            this.transactionStep = 'Process';
+          },
+          tokenId: this.product.id
+        } as RedeemPayload);
+        await this.refreshAssetsInfoList();
+        this.transactionStep = 'Success';
+      } catch (err) {
+        console.log(err);
+        Sentry.captureException(err);
+        this.transactionStep = 'Reverted';
       }
     },
     status(validation: Validation) {

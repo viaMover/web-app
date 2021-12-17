@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import { MutationTree } from 'vuex';
 
-import { Asset, SetAssetData, ShopStoreState } from './types';
+import { SetAssetData, ShopStoreState } from './types';
 
 export default {
   setIsLoading(state, isLoading): void {
@@ -21,12 +21,24 @@ export default {
     if (assetIdx < 0) {
       state.assets.push({
         ...state.localAssets[localEntryIdx],
-        initialQuantity: data.asset.totalSupplyCap
+        ...(data.asset.initialQuantity !== undefined && {
+          initialQuantity: data.asset.initialQuantity
+        }),
+        balance: data.asset.balance,
+        redeemCount: data.asset.redeemCount,
+        totalClaimed: data.asset.totalClaimed,
+        intId: data.asset.tokenIntId
       });
     } else {
       Vue.set(state.assets, assetIdx, {
         ...state.assets[assetIdx],
-        initialQuantity: data.asset.totalSupplyCap
+        ...(data.asset.initialQuantity !== undefined && {
+          initialQuantity: data.asset.initialQuantity
+        }),
+        balance: data.asset.balance,
+        redeemCount: data.asset.redeemCount,
+        totalClaimed: data.asset.totalClaimed,
+        intId: data.asset.tokenIntId
       });
     }
   }

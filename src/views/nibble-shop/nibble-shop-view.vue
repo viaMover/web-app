@@ -2,23 +2,23 @@
   <div>
     <shop-wrapper has-close-button @close="handleClose">
       <template v-slot:info>
-        <h1 class="info__title">{{ product.title }}</h1>
+        <h1 class="info__title">{{ productTitle }}</h1>
         <p class="info__description">
-          {{ $t(`nibbleShop.txtAssets.${product.id}.description`) }}
+          {{ $t(`nibbleShop.txtAssets.${id}.description`) }}
         </p>
         <shop-list>
           <shop-list-item
             :title="$t('nibbleShop.lblTotalAvailable')"
-            :value="product.availableQuantity"
+            :value="totalAvailable"
           />
           <shop-list-item
             :title="$t('nibbleShop.lblPrice')"
-            :value="product.price"
+            :value="productPrice"
           />
         </shop-list>
         <action-button
           button-class="button button-active"
-          :text="$t('nibbleShop.btn.get.txt', { item: product.shortName })"
+          :text="$t('nibbleShop.btn.get.txt', { item: productShortName })"
           @button-click="handleClaim"
         />
         <div v-if="getTokenError !== undefined" class="error-message">
@@ -68,7 +68,6 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { logger } from '@sentry/utils';
 import * as Sentry from '@sentry/vue';
 import { Properties } from 'csstype';
 
@@ -106,27 +105,66 @@ export default Vue.extend({
         backgroundColor: this.product?.page.background
       };
     },
-    product(): Asset | null {
+    product(): Asset | undefined {
+      return (this.products as Array<Asset>).find(
+        (asset: Asset) => asset.id === this.id
+      );
+    },
+    productTitle(): string {
+      return this.product ? this.product.title : '';
+    },
+    productPrice(): string {
+      return this.product ? `Ξ${this.product.feeAmount}` : '';
+    },
+    productShortName(): string {
+      return this.product ? this.product.shortName : '';
+    },
+    productBalance(): number {
+      return this.product ? this.product.balance : 0;
+    },
+    totalAvailable(): number {
+      if (this.product === undefined) {
+        return 0;
+      }
       return (
-        (this.products as Array<Asset>).find(
-          (asset: Asset) => asset.id === this.id
-        ) || null
+        this.product.initialQuantity -
+        this.product.totalClaimed -
+        this.product.redeemCount
       );
     }
   },
+  mounted() {
+    if (this.product === undefined) {
+      this.$router.push({ name: 'not-found-route' });
+    }
+    this.transactionStep = undefined;
+    this.actionError = '';
+  },
   methods: {
-    ...mapActions('shop', ['claimCeoOfMoney', 'refreshAssetsInfoList']),
+    ...mapActions('shop', ['claimNibbleNFT', 'refreshAssetsInfoList']),
     async handleClaim(): Promise<void> {
       try {
+        this.getTokenError = '';
+        if (this.product === undefined) {
+          this.getTokenError = this.$t('nibbleShop.errors.default') as string;
+          return;
+        }
+        if (this.totalAvailable <= 0) {
+          this.getTokenError = this.$t('nibbleShop.errors.cantClaim') as string;
+          return;
+        }
+
         this.transactionStep = 'Confirm';
-        await this.claimCeoOfMoney({
+        await this.claimNibbleNFT({
           changeStep: () => {
             this.transactionStep = 'Process';
-          }
+          },
+          tokenId: this.product.id
         } as ClaimPayload);
         await this.refreshAssetsInfoList();
         this.transactionStep = 'Success';
       } catch (err) {
+        console.log(err);
         Sentry.captureException(err);
         this.transactionStep = 'Reverted';
       }
@@ -135,6 +173,14 @@ export default Vue.extend({
       this.$router.back();
     },
     handleRedeem(): void {
+      if (this.product === undefined) {
+        this.actionError = this.$t('nibbleShop.errors.default') as string;
+        return;
+      }
+      if (this.productBalance <= 0) {
+        this.actionError = this.$t('nibbleShop.errors.cantRedeem') as string;
+        return;
+      }
       this.$router.push({
         name: 'nibble-shop-redeem',
         params: { id: this.id }

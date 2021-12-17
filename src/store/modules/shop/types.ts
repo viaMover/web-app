@@ -1,12 +1,14 @@
 export type Asset = {
+  active: boolean;
   id: string;
+  urlId: string;
+  intId: string;
   address: string;
-  price: string;
-  totalTrades: number;
+  feeAmount: string;
+  balance: number;
   initialQuantity: number;
-  redeemedQuantity: number;
-  remainingQuantity: number;
-  availableQuantity: number;
+  totalClaimed: number;
+  redeemCount: number;
   title: string;
   shortName: string;
   preview: {
@@ -20,9 +22,12 @@ export type Asset = {
 };
 
 export type TokenDate = {
-  totalClaimed: number;
+  tokenId: string;
+  tokenIntId: string;
   balance: number;
-  totalSupplyCap: number;
+  initialQuantity?: number;
+  totalClaimed: number;
+  redeemCount: number;
 };
 
 export type SetAssetData = {
@@ -30,8 +35,24 @@ export type SetAssetData = {
   asset: TokenDate;
 };
 
+export type Country = {
+  name: string;
+  code: string;
+};
+
 export type ShopStoreState = {
   localAssets: Array<Asset>;
   assets: Array<Asset>;
   isLoading: boolean;
+  countries: Array<Country>;
+};
+
+export type RedeemParams = {
+  tokenIntId: string;
+  tokenUrl: string;
+  email: string;
+  name: string;
+  country: string;
+  address: string;
+  postalCode: string;
 };
