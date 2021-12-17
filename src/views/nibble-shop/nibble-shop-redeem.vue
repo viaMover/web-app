@@ -255,8 +255,7 @@ export default Vue.extend({
       address: '',
       postCode: '',
 
-      isLoading: false, // for chain request
-      isRedeeming: false, // for api request
+      isLoading: false,
       errorText: '',
       transactionStep: undefined as Step | undefined
     };
