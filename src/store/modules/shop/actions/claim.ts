@@ -22,8 +22,6 @@ export default {
       throw new Error('Account state is not loaded, please, try again');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
-
     const asset = state.assets.find((asset) => asset.id === payload.tokenId);
 
     if (asset === undefined) {
@@ -38,7 +36,6 @@ export default {
       asset.feeAmount,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3,
-      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   }

@@ -67,7 +67,6 @@ export const claimNibbleToken = async (
   feeAmount: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = tokenAddress;
@@ -128,10 +127,10 @@ export const claimNibbleToken = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString(),
-    value: feeAmount
+    value: feeAmount,
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null
   };
 
   await new Promise<void>((resolve, reject) => {
@@ -167,7 +166,6 @@ export const redeemNibbleToken = async (
   signature: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contract = new web3.eth.Contract(
@@ -179,10 +177,12 @@ export const redeemNibbleToken = async (
     from: accountAddress
   };
 
+  const sigKeccak = web3.utils.keccak256(signature);
+
   let gasLimit;
   try {
     const gasLimitObj = await contract.methods
-      .redeem(tokenIntId, signature)
+      .redeem(tokenIntId, sigKeccak)
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
@@ -221,13 +221,13 @@ export const redeemNibbleToken = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null
   };
 
   await new Promise<void>((resolve, reject) => {
-    (contract.methods.redeem(tokenIntId, signature) as ContractSendMethod)
+    (contract.methods.redeem(tokenIntId, sigKeccak) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Redeem txn hash: ${hash}`);
