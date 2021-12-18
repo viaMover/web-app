@@ -58,7 +58,7 @@
                 type="text"
               />
             </label>
-            <span v-if="!$v.email.required" class="error-message">
+            <span v-if="!$v.email.required" class="error-message small-font">
               {{ $t('nibbleShop.errors.email.required') }}
             </span>
           </div>
@@ -76,7 +76,7 @@
                 type="text"
               />
             </label>
-            <span v-if="!$v.name.required" class="error-message">
+            <span v-if="!$v.name.required" class="error-message small-font">
               {{ $t('nibbleShop.errors.name.required') }}
             </span>
           </div>
@@ -103,7 +103,7 @@
                 </option>
               </select>
             </label>
-            <span v-if="!$v.country.required" class="error-message">
+            <span v-if="!$v.country.required" class="error-message small-font">
               {{ $t('nibbleShop.errors.country.required') }}
             </span>
           </div>
@@ -121,7 +121,7 @@
                 type="text"
               />
             </label>
-            <span v-if="!$v.address.required" class="error-message">
+            <span v-if="!$v.address.required" class="error-message small-font">
               {{ $t('nibbleShop.errors.address.required') }}
             </span>
           </div>
@@ -139,7 +139,7 @@
                 type="text"
               />
             </label>
-            <span v-if="!$v.postCode.required" class="error-message">
+            <span v-if="!$v.postCode.required" class="error-message small-font">
               {{ $t('nibbleShop.errors.postCode.required') }}
             </span>
           </div>

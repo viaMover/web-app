@@ -1,4 +1,4 @@
-import { MoverResponse } from './../responses';
+import { MoverResponse } from '../responses';
 export class NibbleShopApiError<T> extends Error {
   constructor(
     readonly message: string,

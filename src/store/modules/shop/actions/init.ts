@@ -6,13 +6,24 @@ import * as Sentry from '@sentry/vue';
 import { getNibbleTokenData } from '@/services/chain';
 import { RootStoreState } from '@/store/types';
 
-import { checkAccountStateIsReady } from './../../account/utils/state';
 import { SetAssetData, ShopStoreState } from './../types';
 
 export default {
   async refreshAssetsInfoList({ rootState, state, commit }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      return;
+    if (rootState.account === undefined) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    if (rootState.account.currentAddress === undefined) {
+      throw new Error('failed to get current address');
+    }
+
+    if (rootState.account.networkInfo?.network === undefined) {
+      throw new Error('failed to get current network');
+    }
+
+    if (rootState.account.provider?.web3 === undefined) {
+      throw new Error('failed to get web3 provider');
     }
 
     if (state.isLoading) {
@@ -29,9 +40,9 @@ export default {
             return getNibbleTokenData(
               localToken.id,
               localToken.address,
-              rootState!.account!.currentAddress!,
-              rootState!.account!.networkInfo!.network,
-              rootState!.account!.provider!.web3
+              rootState.account!.currentAddress!,
+              rootState.account!.networkInfo!.network,
+              rootState.account!.provider!.web3
             );
           })
       );

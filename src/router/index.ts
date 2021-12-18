@@ -45,7 +45,6 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/vaults-race',
-    name: 'vaults-race',
     component: () =>
       import(
         /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-root.vue'

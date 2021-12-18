@@ -6,8 +6,6 @@ import { RootStoreState } from '@/store/types';
 
 import { Step } from '@/components/forms/form-loader';
 
-import { checkAccountStateIsReady } from '../../account/utils/state';
-
 export type ClaimPayload = {
   changeStep: (step: Step) => void;
   tokenId: string;
@@ -18,8 +16,20 @@ export default {
     { rootState, state },
     payload: ClaimPayload
   ): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (rootState.account === undefined) {
       throw new Error('Account state is not loaded, please, try again');
+    }
+
+    if (rootState.account.currentAddress === undefined) {
+      throw new Error('failed to get current address');
+    }
+
+    if (rootState.account.networkInfo?.network === undefined) {
+      throw new Error('failed to get current network');
+    }
+
+    if (rootState.account.provider?.web3 === undefined) {
+      throw new Error('failed to get web3 provider');
     }
 
     const asset = state.assets.find((asset) => asset.id === payload.tokenId);
@@ -32,10 +42,10 @@ export default {
 
     await claimNibbleToken(
       asset.address,
-      rootState!.account!.currentAddress!,
+      rootState.account.currentAddress,
       asset.feeAmount,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       payload.changeStep
     );
   }

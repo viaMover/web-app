@@ -128,11 +128,7 @@ export default Vue.extend({
       if (this.product === undefined) {
         return 0;
       }
-      return (
-        this.product.initialQuantity -
-        this.product.totalClaimed -
-        this.product.redeemCount
-      );
+      return this.product.initialQuantity - this.product.totalClaimed;
     }
   },
   mounted() {
