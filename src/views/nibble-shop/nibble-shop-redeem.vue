@@ -61,6 +61,9 @@
             <span v-if="!$v.email.required" class="error-message small-font">
               {{ $t('nibbleShop.errors.email.required') }}
             </span>
+            <span v-if="!$v.email.valid" class="error-message small-font">
+              {{ $t('nibbleShop.errors.email.invalid') }}
+            </span>
           </div>
 
           <div class="input-group" :class="{ error: $v.name.$error }">
