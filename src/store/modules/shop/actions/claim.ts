@@ -13,11 +13,6 @@ export type ClaimPayload = {
   tokenId: string;
 };
 
-export type RedeemPayload = {
-  changeStep: (step: Step) => void;
-  tokenId: string;
-};
-
 export default {
   async claimNibbleNFT(
     { rootState, state },

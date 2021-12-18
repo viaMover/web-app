@@ -10,16 +10,23 @@ import {
 } from '@/services/mover/nibble-shop/types';
 import { RootStoreState } from '@/store/types';
 
+import { Step } from '@/components/forms/form-loader/types';
+
 import { checkAccountStateIsReady } from '../../account/utils/state';
 import { RedeemParams } from '../types';
 import { ShopStoreState } from '../types';
-import { RedeemPayload } from './claim';
+
+export type RedeemPayload = {
+  changeStep: (step: Step) => void;
+  tokenId: string;
+  signature: string;
+};
 
 export default {
   async requestToNibbleShopRedeemServer(
-    { commit, rootState },
+    { rootState },
     params: RedeemParams
-  ): Promise<void> {
+  ): Promise<string> {
     try {
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -65,6 +72,7 @@ export default {
 
         throw new NibbleShopApiError(res.error, res.shortError, res.payload);
       }
+      return personalDataSignature;
     } catch (error) {
       console.error('failed to perform API request to redeem', error);
       Sentry.captureException(error);
@@ -93,7 +101,7 @@ export default {
       asset.address,
       asset.intId,
       rootState!.account!.currentAddress!,
-      asset.feeAmount,
+      payload.signature,
       rootState!.account!.networkInfo!.network,
       rootState!.account!.provider!.web3,
       fastGasPrice?.price ?? '0',

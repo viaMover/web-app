@@ -178,14 +178,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { email, helpers, required } from 'vuelidate/lib/validators';
+import { email, required } from 'vuelidate/lib/validators';
 import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
 import { NibbleShopApiError } from '@/services/mover/nibble-shop/types';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
-import { RedeemPayload } from '@/store/modules/shop/actions/claim';
+import { RedeemPayload } from '@/store/modules/shop/actions/redeem';
 import { Asset, RedeemParams } from '@/store/modules/shop/types';
 
 import { ActionButton } from '@/components/buttons';
@@ -290,9 +290,11 @@ export default Vue.extend({
         return;
       }
 
+      let sig = '';
+
       try {
         this.isLoading = true;
-        await this.requestToNibbleShopRedeemServer({
+        sig = await this.requestToNibbleShopRedeemServer({
           email: this.email,
           tokenIntId: this.product.intId,
           name: this.name,
@@ -342,7 +344,8 @@ export default Vue.extend({
           changeStep: () => {
             this.transactionStep = 'Process';
           },
-          tokenId: this.product.id
+          tokenId: this.product.id,
+          signature: sig
         } as RedeemPayload);
         await this.refreshAssetsInfoList();
         this.transactionStep = 'Success';
