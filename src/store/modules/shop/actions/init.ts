@@ -38,19 +38,19 @@ export default {
 
       promisesResults.forEach((res) => {
         if (res.status === 'fulfilled') {
-          console.log(`Set asset: ${res.value.tokenId}`);
-          console.log(
-            rootState.i18n?.t(
-              `nibbleShop.txtAssets.${res.value.tokenId}.description`
-            )
-          );
           commit('setAsset', {
             assetId: res.value.tokenId,
             asset: res.value
           } as SetAssetData);
         } else {
-          logger.error("Can't get nibbler token data", res.reason);
-          Sentry.captureException("Can't get nibble token data");
+          Sentry.addBreadcrumb({
+            type: 'error',
+            category: 'nibble-shop.init.refreshAssetsInfoList',
+            message: "Can't get nibble token data",
+            data: {
+              error: res.reason
+            }
+          });
         }
       });
     } catch (err) {

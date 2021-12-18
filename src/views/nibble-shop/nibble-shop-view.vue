@@ -73,6 +73,7 @@ import { Properties } from 'csstype';
 
 import { ClaimPayload } from '@/store/modules/shop/actions/claim';
 import { Asset } from '@/store/modules/shop/types';
+import { fromWei } from '@/utils/bigmath';
 
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
@@ -115,7 +116,7 @@ export default Vue.extend({
       return this.product ? this.product.title : '';
     },
     productPrice(): string {
-      return this.product ? `Ξ${this.product.feeAmount}` : '';
+      return this.product ? `Ξ${fromWei(this.product.feeAmount, 18)}` : '';
     },
     productShortName(): string {
       return this.product ? this.product.shortName : '';

@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/vue';
+import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
@@ -11,6 +12,8 @@ import { NFT_NIBBLE_SHOP_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 import { Step } from '@/components/forms/form-loader/types';
+
+import { greaterThan } from './../../../utils/bigmath';
 
 export const getNibbleTokenData = async (
   tokenId: string,
@@ -32,20 +35,21 @@ export const getNibbleTokenData = async (
     .call(transactionParams);
 
   const totalClaimed = await contract.methods
-    .totalClaimed(accountAddress)
+    .totalClaimed()
     .call(transactionParams);
 
   const reedemCount = await contract.methods
-    .totalRedeemed(accountAddress)
+    .totalRedeemed()
     .call(transactionParams);
 
-  const tokenIntId = await contract.methods
-    .tokenOfOwnerByIndex(accountAddress, 0)
-    .call(transactionParams);
+  let tokenIntId = 0;
+  if (greaterThan(balance, '0')) {
+    tokenIntId = await contract.methods
+      .tokenOfOwnerByIndex(accountAddress, 0)
+      .call(transactionParams);
+  }
 
-  const feeAmount = await contract.methods
-    .feeAmount(accountAddress)
-    .call(transactionParams);
+  const feeAmount = await contract.methods.feeAmount().call(transactionParams);
 
   return {
     tokenId: tokenId,

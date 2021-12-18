@@ -178,8 +178,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { alpha, email, helpers, required } from 'vuelidate/lib/validators';
-import { Validation } from 'vuelidate/vuelidate';
+import { email, helpers, required } from 'vuelidate/lib/validators';
 import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
@@ -201,9 +200,6 @@ import {
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
 import { SimpleLoaderModal } from '@/components/modals';
-
-const vString = helpers.regex('vString', /^[a-zA-Z_ ]*$/i);
-const vStringNum = helpers.regex('vStringNum', /^[a-zA-Z0-9_ ]*$/i);
 
 export default Vue.extend({
   name: 'NibbleShopRedeem',
@@ -262,7 +258,7 @@ export default Vue.extend({
     this.product = (this.products as Array<Asset>).find(
       (asset: Asset) => asset.id === id
     );
-    if (this.product === null) {
+    if (this.product === undefined) {
       this.$router.push({ name: 'not-found-route' });
       return;
     }
