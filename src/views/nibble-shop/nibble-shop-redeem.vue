@@ -210,6 +210,7 @@ import {
   SecondaryPageSimpleTitle
 } from '@/components/layout/secondary-page';
 import { SimpleLoaderModal } from '@/components/modals';
+
 const vString = helpers.regex('vString', /^[a-zA-Z_ ]*$/i);
 const vStringNum = helpers.regex('vStringNum', /^[a-zA-Z0-9_ ]*$/i);
 
@@ -276,6 +277,7 @@ export default Vue.extend({
     );
     if (this.product === null) {
       this.$router.push({ name: 'not-found-route' });
+      return;
     }
     this.transactionStep = undefined;
     this.errorText = '';
@@ -283,9 +285,9 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('shop', {
-      nibbleShopRedeemServerRequest: 'nibbleShopRedeemServerRequest',
+      requestToNibbleShopRedeemServer: 'requestToNibbleShopRedeemServer',
       refreshAssetsInfoList: 'refreshAssetsInfoList',
-      redeemNibbleNFTChain: 'redeemNibbleNFTChain'
+      redeemNibbleNFT: 'redeemNibbleNFT'
     }),
     handleBack(): void {
       this.$router.back();
@@ -307,7 +309,7 @@ export default Vue.extend({
 
       try {
         this.isLoading = true;
-        await this.nibbleShopRedeemServerRequest({
+        await this.requestToNibbleShopRedeemServer({
           email: this.email,
           tokenIntId: this.product.intId,
           name: this.name,
@@ -353,7 +355,7 @@ export default Vue.extend({
 
       try {
         this.transactionStep = 'Confirm';
-        await this.redeemNibbleNFTChain({
+        await this.redeemNibbleNFT({
           changeStep: () => {
             this.transactionStep = 'Process';
           },
@@ -366,11 +368,6 @@ export default Vue.extend({
         Sentry.captureException(err);
         this.transactionStep = 'Reverted';
       }
-    },
-    status(validation: Validation) {
-      return {
-        error: validation.$error || validation.$invalid
-      };
     }
   }
 });

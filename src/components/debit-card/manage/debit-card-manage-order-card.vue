@@ -15,7 +15,7 @@
         <form
           class="form order"
           :class="{ error: $v.$anyError || errorText !== '' }"
-          @submit.prevent="handleRedeem"
+          @submit.prevent="handleOrderCard"
         >
           <div class="input-group" :class="{ error: $v.email.$error }">
             <label>

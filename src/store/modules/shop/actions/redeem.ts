@@ -10,13 +10,13 @@ import {
 } from '@/services/mover/nibble-shop/types';
 import { RootStoreState } from '@/store/types';
 
+import { checkAccountStateIsReady } from '../../account/utils/state';
 import { RedeemParams } from '../types';
-import { checkAccountStateIsReady } from './../../account/utils/state';
-import { ShopStoreState } from './../types';
+import { ShopStoreState } from '../types';
 import { RedeemPayload } from './claim';
 
 export default {
-  async nibbleShopRedeemServerRequest(
+  async requestToNibbleShopRedeemServer(
     { commit, rootState },
     params: RedeemParams
   ): Promise<void> {
@@ -71,7 +71,7 @@ export default {
       throw error;
     }
   },
-  async redeemNibbleNFTChain(
+  async redeemNibbleNFT(
     { rootState, state },
     payload: RedeemPayload
   ): Promise<void> {

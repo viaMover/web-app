@@ -15,8 +15,6 @@ export default {
       return;
     }
 
-    console.log('refreshAssetsInfoList');
-
     if (state.isLoading) {
       return Promise.resolve();
     }

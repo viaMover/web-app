@@ -43,7 +43,7 @@ const values: Globals = {
   isEarningsOlympusEnabled: false,
   isDebitCardTopUpEnabled: false,
   isDebitCardChangeSkinEnabled: false,
-  isVaultsRaceEnabled: true
+  isVaultsRaceEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>

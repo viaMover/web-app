@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TokenDate } from '@/store/modules/shop/types';
@@ -12,7 +14,7 @@ import { Step } from '@/components/forms/form-loader/types';
 
 export const getNibbleTokenData = async (
   tokenId: string,
-  tokenAddres: string,
+  tokenAddress: string,
   accountAddress: string,
   network: Network,
   web3: Web3
@@ -22,7 +24,7 @@ export const getNibbleTokenData = async (
   } as TransactionsParams;
   const contract = new web3.eth.Contract(
     NFT_NIBBLE_SHOP_ABI as AbiItem[],
-    tokenAddres
+    tokenAddress
   );
 
   const balance = await contract.methods
@@ -51,7 +53,7 @@ export const getNibbleTokenData = async (
 };
 
 export const claimNibbleToken = async (
-  tokenAddres: string,
+  tokenAddress: string,
   accountAddress: string,
   feeAmount: string,
   network: Network,
@@ -59,7 +61,7 @@ export const claimNibbleToken = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = tokenAddres;
+  const contractAddress = tokenAddress;
 
   const contract = new web3.eth.Contract(
     NFT_NIBBLE_SHOP_ABI as AbiItem[],
@@ -67,7 +69,7 @@ export const claimNibbleToken = async (
   );
 
   console.info(
-    `Fee amount to claim nibble shop NFT token[${tokenAddres}]: ${feeAmount}`
+    `Fee amount to claim nibble shop NFT token[${tokenAddress}]: ${feeAmount}`
   );
 
   const transacionParamsEstimate: TransactionsParams = {
@@ -92,12 +94,25 @@ export const claimNibbleToken = async (
       );
       gasLimit = gasLimitWithBuffer;
     } else {
-      Sentry.captureException(`Empty gas limit in nibble shop token claim`);
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: 'nibble-shop.claim.claimNibbleToken',
+        message: 'failed to estimate claim txn',
+        data: {
+          error: 'gasLimitObj is null'
+        }
+      });
       gasLimit = '0';
     }
   } catch (err) {
-    console.error("Can't estimate nibble shop token claim", err);
-    Sentry.captureException(err);
+    Sentry.addBreadcrumb({
+      type: 'error',
+      category: 'nibble-shop.claim.claimNibbleToken',
+      message: 'failed to estimate claim txn',
+      data: {
+        error: err
+      }
+    });
     gasLimit = '0';
   }
 
@@ -111,14 +126,21 @@ export const claimNibbleToken = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    contract.methods
-      .claim()
+    (contract.methods.claim() as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
+        Sentry.addBreadcrumb({
+          type: 'debug',
+          category: 'nibble-shop.claim.claim',
+          message: 'transaction receipt',
+          data: {
+            receipt
+          }
+        });
         console.log(`Claim txn receipt: ${receipt}`);
         resolve();
       })
@@ -165,12 +187,25 @@ export const redeemNibbleToken = async (
       );
       gasLimit = gasLimitWithBuffer;
     } else {
-      Sentry.captureException('Empty gas limit in nibble shop token redeem');
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: 'nibble-shop.redeem.redeemNibbleToken',
+        message: 'failed to estimate redeem txn',
+        data: {
+          error: 'gasLimitObj is null'
+        }
+      });
       gasLimit = '0';
     }
   } catch (err) {
-    console.error("Can't estimate nibble shop token redeem", err);
-    Sentry.captureException(err);
+    Sentry.addBreadcrumb({
+      type: 'error',
+      category: 'nibble-shop.redeem.redeemNibbleToken',
+      message: 'failed to estimate redeem txn',
+      data: {
+        error: err
+      }
+    });
     gasLimit = '0';
   }
 
@@ -183,14 +218,21 @@ export const redeemNibbleToken = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    contract.methods
-      .redeem(tokenIntId, signature)
+    (contract.methods.redeem(tokenIntId, signature) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Redeem txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: unknown) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
+        Sentry.addBreadcrumb({
+          type: 'debug',
+          category: 'nibble-shop.redeem.redeem',
+          message: 'transaction receipt',
+          data: {
+            receipt
+          }
+        });
         console.log(`Redeem txn receipt: ${receipt}`);
         resolve();
       })

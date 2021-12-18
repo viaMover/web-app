@@ -374,9 +374,12 @@ export default {
       );
       const loadPowercardPromise = dispatch('fetchPowercardData');
 
-      const gamesPromise = dispatch('games/init', undefined, {
-        root: true
-      });
+      let gamesPromise = Promise.resolve();
+      if (isFeatureEnabled('isVaultsRaceEnabled')) {
+        gamesPromise = dispatch('games/init', undefined, {
+          root: true
+        });
+      }
 
       const promisesResults = await Promise.allSettled([
         savingsInfoPromise,

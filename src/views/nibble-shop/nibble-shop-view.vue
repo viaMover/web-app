@@ -78,6 +78,7 @@ import { ActionButton, EmojiTextButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
 import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
 import { SimpleLoaderModal } from '@/components/modals';
+
 export default Vue.extend({
   name: 'NibbleShopView',
   components: {
@@ -136,6 +137,7 @@ export default Vue.extend({
   mounted() {
     if (this.product === undefined) {
       this.$router.push({ name: 'not-found-route' });
+      return;
     }
     this.transactionStep = undefined;
     this.actionError = '';

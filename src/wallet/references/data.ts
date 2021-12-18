@@ -221,7 +221,6 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
-    NFT_CEO_OF_MONEY: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',

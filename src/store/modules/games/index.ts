@@ -1,5 +1,6 @@
 import { Module } from 'vuex';
 
+import { isProduction } from '@/settings/globals';
 import actions from '@/store/modules/games/actions';
 import getters from '@/store/modules/games/getters';
 import mutations from '@/store/modules/games/mutations';
@@ -8,7 +9,7 @@ import { RootStoreState } from '@/store/types';
 
 export default {
   namespaced: true,
-  strict: true,
+  strict: !isProduction,
   state: {
     isLoading: false,
 
