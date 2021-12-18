@@ -12,7 +12,7 @@ import {
 } from './types';
 
 const nibbleShopApiClient = axios.create({
-  baseURL: `${baseUrl}/v2/nft/redeem`,
+  baseURL: `${baseUrl}/v2/nft`,
   headers: {
     Accept: 'application/json'
   }
@@ -26,7 +26,7 @@ export const redeemNibbleShopNFT = async (
   try {
     const response = (
       await nibbleShopApiClient.post<NibbleShopRedeemResponsePayload>(
-        `/${urlCode}`,
+        `/${urlCode}/redeem`,
         {
           data: data,
           sig: signature
