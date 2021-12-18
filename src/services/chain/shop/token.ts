@@ -157,7 +157,7 @@ export const claimNibbleToken = async (
 };
 
 export const redeemNibbleToken = async (
-  tokenAddres: string,
+  tokenAddress: string,
   tokenIntId: number,
   accountAddress: string,
   signature: string,
@@ -168,7 +168,7 @@ export const redeemNibbleToken = async (
 ): Promise<void> => {
   const contract = new web3.eth.Contract(
     NFT_NIBBLE_SHOP_ABI as AbiItem[],
-    tokenAddres
+    tokenAddress
   );
 
   const transacionParamsEstimate: TransactionsParams = {
