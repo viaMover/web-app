@@ -61,9 +61,6 @@
             <span v-if="!$v.email.required" class="error-message">
               {{ $t('nibbleShop.errors.email.required') }}
             </span>
-            <span v-if="!$v.email.valid" class="error-message">
-              {{ $t('nibbleShop.errors.email.invalid') }}
-            </span>
           </div>
 
           <div class="input-group" :class="{ error: $v.name.$error }">
@@ -81,9 +78,6 @@
             </label>
             <span v-if="!$v.name.required" class="error-message">
               {{ $t('nibbleShop.errors.name.required') }}
-            </span>
-            <span v-if="!$v.name.valid" class="error-message">
-              {{ $t('nibbleShop.errors.name.invalid') }}
             </span>
           </div>
 
@@ -147,9 +141,6 @@
             </label>
             <span v-if="!$v.postCode.required" class="error-message">
               {{ $t('nibbleShop.errors.postCode.required') }}
-            </span>
-            <span v-if="!$v.postCode.valid" class="error-message">
-              {{ $t('nibbleShop.errors.postCode.invalid') }}
             </span>
           </div>
 
@@ -231,19 +222,15 @@ export default Vue.extend({
       required
     },
     name: {
-      valid: vString,
       required
     },
     country: {
-      alpha,
       required
     },
     address: {
-      valid: vStringNum,
       required
     },
     postCode: {
-      valid: vStringNum,
       required
     }
   },

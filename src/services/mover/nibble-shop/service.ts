@@ -7,7 +7,8 @@ import { ErrorResponse as MoverApiErrorResponse } from '../responses';
 import {
   NibbleShopApiError,
   NibbleShopRedeemPayload,
-  NibbleShopRedeemRequestPayload
+  NibbleShopRedeemRequestPayload,
+  NibbleShopRedeemResponsePayload
 } from './types';
 
 const nibbleShopApiClient = axios.create({
@@ -24,10 +25,13 @@ export const redeemNibbleShopNFT = async (
 ): Promise<Result<void, string, void>> => {
   try {
     const response = (
-      await nibbleShopApiClient.post(`/${urlCode}`, {
-        data: data,
-        sig: signature
-      } as NibbleShopRedeemRequestPayload)
+      await nibbleShopApiClient.post<NibbleShopRedeemResponsePayload>(
+        `/${urlCode}`,
+        {
+          data: data,
+          sig: signature
+        } as NibbleShopRedeemRequestPayload
+      )
     ).data;
 
     if (response.status !== 'ok') {

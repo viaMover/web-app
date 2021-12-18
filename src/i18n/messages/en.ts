@@ -1139,9 +1139,7 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
         invalid: 'Enter a valid email address'
       },
       name: {
-        required: 'Name is required',
-        invalid:
-          "Name should not contain symbols rather than letters, space, apostrophe (') or hyphen (-)"
+        required: 'Name is required'
       },
       country: {
         required: 'Country is required'
@@ -1150,8 +1148,7 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
         required: 'Address is required'
       },
       postCode: {
-        required: 'Post code is required',
-        invalid: 'Enter a valid postal code'
+        required: 'Post code is required'
       }
     }
   };

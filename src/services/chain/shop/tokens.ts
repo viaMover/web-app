@@ -5,7 +5,7 @@ export const allNibbleShopTokens: Asset[] = [
     active: true,
     id: '$CEO1',
     urlId: 'ceo',
-    intId: '0',
+    intId: 0,
     address: '0x1', //TODO:fill
     feeAmount: '0.042',
     balance: 0,
@@ -26,7 +26,7 @@ export const allNibbleShopTokens: Asset[] = [
   {
     active: false,
     id: '$SJ1',
-    intId: '0',
+    intId: 0,
     urlId: 'sj',
     address: '0x1',
     feeAmount: '49.99',
@@ -48,7 +48,7 @@ export const allNibbleShopTokens: Asset[] = [
   {
     active: false,
     id: '$IC1',
-    intId: '0',
+    intId: 0,
     urlId: 'ic',
     address: '0x1',
     feeAmount: '49.99',
@@ -70,7 +70,7 @@ export const allNibbleShopTokens: Asset[] = [
   {
     active: false,
     id: '$PWR01',
-    intId: '0',
+    intId: 0,
     urlId: 'pwr',
     address: '0x1',
     feeAmount: '49.99',

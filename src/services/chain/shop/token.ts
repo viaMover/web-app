@@ -36,19 +36,24 @@ export const getNibbleTokenData = async (
     .call(transactionParams);
 
   const reedemCount = await contract.methods
-    .redeemCount(accountAddress)
+    .totalRedeemed(accountAddress)
     .call(transactionParams);
 
   const tokenIntId = await contract.methods
     .tokenOfOwnerByIndex(accountAddress, 0)
     .call(transactionParams);
 
+  const feeAmount = await contract.methods
+    .feeAmount(accountAddress)
+    .call(transactionParams);
+
   return {
     tokenId: tokenId,
-    tokenIntId: tokenIntId.toString(),
-    balance: balance.toString(),
-    totalClaimed: totalClaimed.toString(),
-    redeemCount: parseInt(reedemCount.toString())
+    tokenIntId: parseInt(tokenIntId.toString()),
+    balance: parseInt(balance.toString()),
+    totalClaimed: parseInt(totalClaimed.toString()),
+    redeemCount: parseInt(reedemCount.toString()),
+    feeAmount: feeAmount.toString()
   };
 };
 
@@ -80,7 +85,7 @@ export const claimNibbleToken = async (
   let gasLimit = undefined;
   try {
     const gasLimitObj = await contract.methods
-      .claim()
+      .claimNFT()
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
@@ -126,7 +131,7 @@ export const claimNibbleToken = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    (contract.methods.claim() as ContractSendMethod)
+    (contract.methods.claimNFT() as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
@@ -153,7 +158,7 @@ export const claimNibbleToken = async (
 
 export const redeemNibbleToken = async (
   tokenAddres: string,
-  tokenIntId: string,
+  tokenIntId: number,
   accountAddress: string,
   signature: string,
   network: Network,

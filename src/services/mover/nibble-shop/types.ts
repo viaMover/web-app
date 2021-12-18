@@ -1,3 +1,4 @@
+import { MoverResponse } from './../responses';
 export class NibbleShopApiError<T> extends Error {
   constructor(
     readonly message: string,
@@ -8,14 +9,16 @@ export class NibbleShopApiError<T> extends Error {
   }
 }
 
+export type NibbleShopRedeemResponsePayload = MoverResponse<void>;
+
 export type NibbleShopRedeemPayload = {
-  tokenId: string; // from contract
   accountAddress: string;
+  address: string;
+  country: string;
   email: string;
   name: string;
-  country: string;
-  address: string;
   postalCode: string;
+  tokenId: number; // from contract
 };
 export type NibbleShopRedeemRequestPayload = {
   data: NibbleShopRedeemPayload;

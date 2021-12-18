@@ -2,7 +2,7 @@ export type Asset = {
   active: boolean;
   id: string;
   urlId: string;
-  intId: string;
+  intId: number;
   address: string;
   feeAmount: string;
   balance: number;
@@ -23,11 +23,12 @@ export type Asset = {
 
 export type TokenDate = {
   tokenId: string;
-  tokenIntId: string;
+  tokenIntId: number;
   balance: number;
   initialQuantity?: number;
   totalClaimed: number;
   redeemCount: number;
+  feeAmount: string;
 };
 
 export type SetAssetData = {
@@ -48,7 +49,7 @@ export type ShopStoreState = {
 };
 
 export type RedeemParams = {
-  tokenIntId: string;
+  tokenIntId: number;
   tokenUrl: string;
   email: string;
   name: string;

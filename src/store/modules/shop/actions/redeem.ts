@@ -57,7 +57,7 @@ export default {
             `An error occurred during redeem nibble shop token: ${res.shortError} (${res.error})`
           );
 
-          // TODO: add proper errors
+          // TODO: add proper errors if needed
           // if (res.shortError === 'ALREADY_REGISTERED') {
           //   throw new NibbleShopApiError('alreadyRegistered');
           // }
