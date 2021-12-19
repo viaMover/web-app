@@ -84,9 +84,11 @@ export const claimDice = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: gasLimit ? web3.utils.toBN(gasLimit).toNumber() : undefined,
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {

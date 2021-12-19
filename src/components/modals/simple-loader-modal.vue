@@ -14,7 +14,7 @@
     <div class="modal__body">
       <div class="modal__body-header"></div>
       <div class="modal__body-content">
-        <loader-form v-if="loaderStep != undefined" :step="loaderStep" />
+        <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
       </div>
     </div>
   </div>
@@ -24,13 +24,13 @@
 import Vue from 'vue';
 
 import { BackButton } from '@/components/buttons';
-import { LoaderForm } from '@/components/forms';
+import { FormLoader } from '@/components/forms';
 
 export default Vue.extend({
   name: 'SimpleLoaderModal',
   components: {
     BackButton,
-    LoaderForm
+    FormLoader
   },
   props: {
     showCloseButton: {

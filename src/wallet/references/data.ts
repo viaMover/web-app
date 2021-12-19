@@ -13,6 +13,7 @@ import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
+import NFT_NIBBLE_SHOP_ABI from './abi/nft-nibble-shop.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
 import NFT_RARI_ABI from './abi/nft-rari.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
@@ -558,6 +559,7 @@ export {
   NFT_OLYMPUS_ABI,
   NFT_VAULTS_ABI,
   NFT_DICE_ABI,
+  NFT_NIBBLE_SHOP_ABI,
   SUSHI_UNI_PAIR_V2_ABI,
   NFT_RARI_ABI,
   POWERCARD_RARI_ID,

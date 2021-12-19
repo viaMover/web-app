@@ -1,5 +1,6 @@
 import { IVueI18n } from 'vue-i18n';
 
+import { GamesStoreState } from '@/store/modules/games/types';
 import { GovernanceStoreState } from '@/store/modules/governance/types';
 import { ModalsStoreState } from '@/store/modules/modals/types';
 import { NFTStoreState } from '@/store/modules/nft/types';
@@ -21,6 +22,7 @@ export interface RootStoreState {
   governance?: GovernanceStoreState;
   radar?: RadarStoreState;
   modals?: ModalsStoreState;
+  games?: GamesStoreState;
   earnings?: EarningsStoreState;
   // rootState members end
 }

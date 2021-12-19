@@ -39,6 +39,41 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: '/vaults-race/view/:address',
+    name: 'vaults-race-view',
+    component: () =>
+      import(
+        /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-view.vue'
+      ),
+    beforeEnter: checkFeatureFlag('isVaultsRaceEnabled')
+  },
+  {
+    path: '/vaults-race',
+    component: () =>
+      import(
+        /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-root.vue'
+      ),
+    children: [
+      {
+        path: '',
+        name: 'vaults-race-view-all',
+        component: () =>
+          import(
+            /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-view-all.vue'
+          )
+      },
+      {
+        path: 'statistics',
+        name: 'vaults-race-statistics',
+        component: () =>
+          import(
+            /* webpackChunkName: "vaults-race" */ '@/views/vaults-race/vaults-race-statistics.vue'
+          )
+      }
+    ],
+    beforeEnter: checkFeatureFlag('isVaultsRaceEnabled')
+  },
+  {
     path: '/release-radar',
     component: () =>
       import(
@@ -257,6 +292,14 @@ const routes: Array<RouteConfig> = [
         component: () =>
           import(
             /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
+          )
+      },
+      {
+        path: 'redeem/:id',
+        name: 'nibble-shop-redeem',
+        component: () =>
+          import(
+            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
           )
       }
     ],

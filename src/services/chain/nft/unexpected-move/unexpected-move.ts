@@ -104,9 +104,11 @@ export const claimUnexpectedMove = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {
@@ -177,9 +179,11 @@ export const claimAndExchangeUnexpectedMove = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {
@@ -248,9 +252,11 @@ export const exchangeUnexpectedMove = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {

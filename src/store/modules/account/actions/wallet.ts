@@ -359,7 +359,6 @@ export default {
 
       const treasuryFreshData = dispatch('fetchTreasuryFreshData');
       const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
-
       const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
         root: true
       });
@@ -367,7 +366,7 @@ export default {
       let nibbleShopInfoPromise = Promise.resolve();
       if (isFeatureEnabled('isNibbleShopEnabled')) {
         nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
-          dispatch('shop/loadAssetsInfoList', undefined, {
+          dispatch('shop/refreshAssetsInfoList', undefined, {
             root: true
           })
         );
@@ -377,6 +376,13 @@ export default {
       );
       const loadPowercardPromise = dispatch('fetchPowercardData');
 
+      let gamesPromise = Promise.resolve();
+      if (isFeatureEnabled('isVaultsRaceEnabled')) {
+        gamesPromise = dispatch('games/init', undefined, {
+          root: true
+        });
+      }
+
       const promisesResults = await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
@@ -385,7 +391,8 @@ export default {
         nftInfoPromise,
         loadAvatarPromise,
         nibbleShopInfoPromise,
-        loadPowercardPromise
+        loadPowercardPromise,
+        gamesPromise
       ]);
 
       const promisesErrors = promisesResults

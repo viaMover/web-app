@@ -966,6 +966,49 @@ const messages: VueI18n.LocaleMessageObject = {
   }
 };
 
+if (isFeatureEnabled('isVaultsRaceEnabled')) {
+  messages.vaultsRace = {
+    lblGames: 'Games',
+    txtGamesAlt: 'Vaults race promo image',
+    lblMyVaults: 'My Vaults',
+    lblVaults: 'Vaults',
+    lblRollDice: 'Roll dice',
+    lblManageVaults: 'Manage Vaults',
+    lblLeaderboard: 'Leaderboard',
+    lblGlobalStatistics: 'Global Statistics',
+    lblWeeklyChallenge: 'Weekly challenge',
+    lblAccountNumber: 'Account number',
+    lblCurrentScore: 'Current weekly score',
+    lblOpenSeaCollection: 'OpenSea collection',
+    lblWeeklyChallengeDescription:
+      'A vault with the highest score at the end of the week, ' +
+      'gets to win the prize. Roll dice daily to participate.',
+    txtPageDescriptionPartOne:
+      'You will roll 20-sided dice. It means that you can get ' +
+      'a score from 1 to 20. Your result will be stored on ' +
+      'chain during a weekly challenge. When the challenge ' +
+      'ends everyone’s score is cleared, and the game restarts.',
+    btn: {
+      rollDice: 'Roll Dice',
+      comeBackTomorrow: 'Come back tomorrow'
+    },
+    statistics: {
+      lblGlobalLeaderboard: 'Global Leaderboard',
+      txtGlobalStatisticsDescription:
+        'Vaults challenge global leaderboard and statistic. ' +
+        'Find out about current leaders and other ' +
+        'interesting stats.',
+      lblThisWeekChallengeDates: 'This week challenge dates',
+      lblTotalParticipantingVaults: 'Total participanting vaults',
+      lblThisWeekPrize: 'This week prize',
+      lblDaysRemainingInTheWeek: 'Days remaining in the week',
+      lblLeadingVault: 'Leading Vault',
+      lblPositionInTheRace: 'Position in the race',
+      lblTotalPointsScored: 'Total points scored'
+    }
+  };
+}
+
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   messages.radar = {
     lblTokenOfTheDay: 'Token of the day',
@@ -1029,21 +1072,27 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
     lblBuyWith: 'Buy with',
     lblBalance: 'Balance',
     lblRedeem: 'Redeem',
+    lblRedeemAnItem: 'Redeem an item',
+    txtRedeemDescription:
+      'Burn a digital token, and receive a ' +
+      'physical item delivered to you anywhere in the world.',
     lblSell: 'Sell',
-    lblFullName: 'Full name',
-    lblEmail: 'Email',
+    lblYourName: 'Your name',
+    lblYourEmail: 'Your email',
     lblCountry: 'Country',
-    lblFullAddress: 'Full address',
+    lblDeliveryAddress: 'Delivery address',
     lblTownOrCity: 'Town or city',
     lblPostalCode: 'Postal code',
     lblPlaceholders: {
-      fullName: 'Antoshi Nakamoto',
-      email: 'your@email.com',
-      country: 'Nakamoto Land',
-      fullAddress: 'Street name, house or apartment number',
-      townOrCity: 'Nakamoto Town',
-      postalCode: 'Just a code'
+      email: 'email@example.com',
+      yourName: 'Antoshi Nakamoto',
+      country: 'Cryptoland',
+      deliveryAddress: 'Street, house or apartment number',
+      postalCode: '######'
     },
+    lblFullName: 'Full name',
+    lblEmail: 'Email',
+    lblFullAddress: 'Full address',
     txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
     txtProductAlt: '{title} product image',
     lblTotalAvailable: 'Total available',
@@ -1092,6 +1141,27 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
         description:
           'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
           'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
+      }
+    },
+    errors: {
+      default: 'Oh no. Something went wrong',
+      cantClaim: 'There are no avaialble NFT tokens to claim',
+      cantRedeem: 'You have no NFT to redeem',
+      email: {
+        required: 'Email is required',
+        invalid: 'Enter a valid email address'
+      },
+      name: {
+        required: 'Name is required'
+      },
+      country: {
+        required: 'Country is required'
+      },
+      address: {
+        required: 'Address is required'
+      },
+      postCode: {
+        required: 'Post code is required'
       }
     }
   };
