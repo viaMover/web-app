@@ -19,7 +19,7 @@
         :id="product.id"
         :key="product.id"
         :name="product.title"
-        :price="product.price"
+        :price="product.feeAmount"
         :src="product.preview.videoSrc"
       />
     </ul>
@@ -47,7 +47,6 @@ export default Vue.extend({
         alt: this.$t('nibbleShop.txtLogoAlt'),
         src: require('@/assets/images/Nibble-Shop.png'),
         sources: [
-          { src: require('@/assets/images/Nibble-Shop.png') },
           {
             variant: '2x',
             src: require('@/assets/images/Nibble-Shop@2x.png')
