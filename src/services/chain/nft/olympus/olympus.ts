@@ -2,13 +2,12 @@ import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import store from '@/store/index';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { NFT_OLYMPUS_ABI, NFT_OLYMPUS_ADDRESS } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
+import { Step } from '@/components/forms/form-loader/types';
 
 import { OlympusData } from './types';
 
@@ -104,9 +103,11 @@ export const claimOlympus = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString(),
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null,
     value: feeAmount
   };
 

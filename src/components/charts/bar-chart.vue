@@ -30,6 +30,8 @@ import {
 } from 'chart.js';
 
 import {
+  EthereumMonthBalanceItem,
+  OlympusMonthBalanceItem,
   SavingsMonthBalanceItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
@@ -56,7 +58,12 @@ export default Vue.extend({
     },
     chartDataSource: {
       type: Array as PropType<
-        Array<SavingsMonthBalanceItem | TreasuryMonthBonusesItem>
+        Array<
+          | SavingsMonthBalanceItem
+          | TreasuryMonthBonusesItem
+          | OlympusMonthBalanceItem
+          | EthereumMonthBalanceItem
+        >
       >,
       required: true
     },

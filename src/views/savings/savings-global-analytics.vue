@@ -44,17 +44,14 @@
         <statement-list-item
           :description="$t('savings.lblEstimatedEarningsTomorrow')"
           :value="estimatedEarningsTomorrowNative"
-          value-class="estimation"
         />
         <statement-list-item
           :description="$t('savings.lblEstimatedEarningsNextMonth')"
           :value="estimatedEarningsNextMonthNative"
-          value-class="estimation"
         />
         <statement-list-item
           :description="$t('savings.lblEstimatedEarningsAnnually')"
           :value="estimatedEarningsAnnuallyNative"
-          value-class="estimation"
         />
       </statement-list>
     </div>

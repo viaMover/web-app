@@ -92,7 +92,7 @@ export const mapServiceState = (
     case 'CARD_ORDER_PENDING':
     case 'CARD_SHIPPED':
       return { cardState: 'pending', orderState: undefined };
-    case 'ACTIVE':
+    case 'CARD_ACTIVE':
     default:
       return { cardState: 'active', orderState: undefined };
   }

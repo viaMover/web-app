@@ -25,7 +25,7 @@ const messages: VueI18n.LocaleMessageObject = {
   txtDashboardMobile:
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
-  lblUSDcTokenAlt: 'USDc token image',
+  lblTokenAlt: '{symbol} token image',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -953,6 +953,49 @@ const messages: VueI18n.LocaleMessageObject = {
   }
 };
 
+if (isFeatureEnabled('isVaultsRaceEnabled')) {
+  messages.vaultsRace = {
+    lblGames: 'Games',
+    txtGamesAlt: 'Vaults race promo image',
+    lblMyVaults: 'My Vaults',
+    lblVaults: 'Vaults',
+    lblRollDice: 'Roll dice',
+    lblManageVaults: 'Manage Vaults',
+    lblLeaderboard: 'Leaderboard',
+    lblGlobalStatistics: 'Global Statistics',
+    lblWeeklyChallenge: 'Weekly challenge',
+    lblAccountNumber: 'Account number',
+    lblCurrentScore: 'Current weekly score',
+    lblOpenSeaCollection: 'OpenSea collection',
+    lblWeeklyChallengeDescription:
+      'A vault with the highest score at the end of the week, ' +
+      'gets to win the prize. Roll dice daily to participate.',
+    txtPageDescriptionPartOne:
+      'You will roll 20-sided dice. It means that you can get ' +
+      'a score from 1 to 20. Your result will be stored on ' +
+      'chain during a weekly challenge. When the challenge ' +
+      'ends everyone’s score is cleared, and the game restarts.',
+    btn: {
+      rollDice: 'Roll Dice',
+      comeBackTomorrow: 'Come back tomorrow'
+    },
+    statistics: {
+      lblGlobalLeaderboard: 'Global Leaderboard',
+      txtGlobalStatisticsDescription:
+        'Vaults challenge global leaderboard and statistic. ' +
+        'Find out about current leaders and other ' +
+        'interesting stats.',
+      lblThisWeekChallengeDates: 'This week challenge dates',
+      lblTotalParticipantingVaults: 'Total participanting vaults',
+      lblThisWeekPrize: 'This week prize',
+      lblDaysRemainingInTheWeek: 'Days remaining in the week',
+      lblLeadingVault: 'Leading Vault',
+      lblPositionInTheRace: 'Position in the race',
+      lblTotalPointsScored: 'Total points scored'
+    }
+  };
+}
+
 if (isFeatureEnabled('isReleaseRadarEnabled')) {
   messages.radar = {
     lblTokenOfTheDay: 'Token of the day',
@@ -1016,21 +1059,27 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
     lblBuyWith: 'Buy with',
     lblBalance: 'Balance',
     lblRedeem: 'Redeem',
+    lblRedeemAnItem: 'Redeem an item',
+    txtRedeemDescription:
+      'Burn a digital token, and receive a ' +
+      'physical item delivered to you anywhere in the world.',
     lblSell: 'Sell',
-    lblFullName: 'Full name',
-    lblEmail: 'Email',
+    lblYourName: 'Your name',
+    lblYourEmail: 'Your email',
     lblCountry: 'Country',
-    lblFullAddress: 'Full address',
+    lblDeliveryAddress: 'Delivery address',
     lblTownOrCity: 'Town or city',
     lblPostalCode: 'Postal code',
     lblPlaceholders: {
-      fullName: 'Antoshi Nakamoto',
-      email: 'your@email.com',
-      country: 'Nakamoto Land',
-      fullAddress: 'Street name, house or apartment number',
-      townOrCity: 'Nakamoto Town',
-      postalCode: 'Just a code'
+      email: 'email@example.com',
+      yourName: 'Antoshi Nakamoto',
+      country: 'Cryptoland',
+      deliveryAddress: 'Street, house or apartment number',
+      postalCode: '######'
     },
+    lblFullName: 'Full name',
+    lblEmail: 'Email',
+    lblFullAddress: 'Full address',
     txtLogoAlt: '@:nibbleShop.lblNibbleShop image',
     txtProductAlt: '{title} product image',
     lblTotalAvailable: 'Total available',
@@ -1080,6 +1129,139 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
           'What a power! So, if you have the Powercard NFT, you can get this T-Shirt. The club is small, and elite. ' +
           'There are only 21 Power T-Shirts, and there are only 21 Powercards. You do the math.'
       }
+    },
+    errors: {
+      default: 'Oh no. Something went wrong',
+      cantClaim: 'There are no avaialble NFT tokens to claim',
+      cantRedeem: 'You have no NFT to redeem',
+      email: {
+        required: 'Email is required',
+        invalid: 'Enter a valid email address'
+      },
+      name: {
+        required: 'Name is required'
+      },
+      country: {
+        required: 'Country is required'
+      },
+      address: {
+        required: 'Address is required'
+      },
+      postCode: {
+        required: 'Post code is required'
+      }
+    }
+  };
+}
+
+if (isFeatureEnabled('isEarningsEnabled')) {
+  messages.earnings = {
+    icon: '🌻',
+    lblEarnings: 'Earnings',
+    lblMyEarnings: 'My Earnings',
+    lblEarningsBalance: 'Earnings Balance',
+    lblEarningsStatements: 'Earnings Statements',
+    lblWhatDoWeDeposit: 'What do we deposit',
+    lblAmountWeDepositIn: 'Amount we deposit in',
+    lblWhatDoWeWithdraw: 'What do we withdraw',
+    lblAmountWeWithdrawIn: 'Amount we withdraw in',
+    lblAndTotalOf: 'And it will be a total of',
+    lblReviewYourStake: 'Review your stake',
+    lblInProgress: 'In progress',
+    txtNotNativeAsset:
+      'You chose a non {targetSymbol} asset. It means that it will be converted to {targetSymbol} at the time of the deposit at the current market rate.',
+    btnStake: 'Stake {symbol}',
+    btnWithdraw: 'Withdraw {symbol}',
+    btnStart: 'Start earning',
+    btnView: 'View',
+    lblAndItWillBe: 'And it will be a total of',
+    lblOverview: '{token} Overview',
+    txtOverview:
+      'Earnings is a non-custodial and permissionless product. ' +
+      'Check the global statistics across the board.',
+    txtYouCouldApproximately:
+      'You could approximately earn in a year if you stake $10,000 now.',
+    txtIfYouKeepAsset:
+      'If you keep your staked assets, you could earn in a year.',
+    txtIfYouStake: 'If you stake {token} now, you are getting',
+    txtAPYOnAll: 'APY on all {token} staking',
+    lblDepositedAssets: 'My total deposited assets value',
+    lblCurrentVariableAPY: 'Current variable APY',
+    lbl30DayAverageAPY: '30-day average APY',
+    lblTotalAssetsUnderManagement: 'Total assets under management',
+    lblEarningsStats: 'Earnings Stats',
+    lblEarnedToday: 'Earned today',
+    lblEarnedThisMonth: 'Earned this month',
+    lblEarnedInTotal: 'Earned in total',
+    lblEarningsEstimation: 'Earnings Estimation',
+    lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
+    lblEstimatedEarningsThisMonth: 'Estimated earnings this month',
+    lblEstimatedEarningsAnnually: 'Estimated earnings annually',
+    statement: {
+      lblBalance: '{month} balance',
+      lblTotalEarnedInMonth: 'Total earned in {month}',
+      lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}',
+      lblDeposits: '{month} deposits',
+      lblWithdrawals: '{month} withdrawals',
+      lblSavedFees: 'Saved fees',
+      lblPayoutsToEarnings: 'Payouts to Earnings'
+    },
+    lblEarnedRelativeMonthlyChange: 'Yield earned this month',
+    lblEarnedRelativeMonthlyChangeExtendedMonthOnlyPrefix:
+      'Yield earned in {date}',
+    ethereum: {
+      lblEthereum: 'Ethereum',
+      lblManage: 'Manage Ethereum',
+      lblStake: 'Stake Ethereum',
+      txtStake: 'Get {apy} APY on staking ETH in Ethereum 2.0',
+      txtStakePictureAlt: 'Stake Ethereum',
+      lblWithdraw: 'Withdraw Ethereum',
+      txtWithdraw: 'Remove your staked assets fully or partially',
+      txtWithdrawPictureAlt: 'Withdraw Ethereum',
+      lblGlobalAnalytics: 'Global analytics',
+      txtGlobalAnalytics: 'All information about Ethereum',
+      txtGlobalAnalyticsPictureAlt: 'Global analytics',
+      txtNavIconAlt: 'Ethereum',
+      lblEthTokenAlt: 'Ethereum token image',
+      txtNativeAsset:
+        'Ethereum is a native asset, and is used for staking in ' +
+        'Ethereum 2.0. Your returns will also be in ETH.',
+      txtStakeDescription:
+        'Once you stake your assets in Ethereum 2.0, Mover is constantly ' +
+        'searching for the highest paying option. Mover does automatic ' +
+        'rebalancing, yield collection, and capital optimization.',
+      txtPotentialEarnings: 'You could earn in a year. Considering all changes.'
+    },
+    olympus: {
+      lblOlympus: 'Olympus',
+      lblOlympusDAO: 'OlympusDAO',
+      lblManage: 'Manage Olympus',
+      lblStake: 'Stake Olympus',
+      txtStake: 'Get {apy} APY by staking your OHM',
+      txtStakePictureAlt: 'Stake Olympus',
+      lblWithdraw: 'Withdraw OHM',
+      txtWithdraw: 'Remove your assets from Olympus fully or partially',
+      txtWithdrawPictureAlt: 'Withdraw Olympus',
+      lblGlobalAnalytics: 'Global analytics',
+      txtGlobalAnalytics: 'All information about Olympus',
+      txtGlobalAnalyticsPictureAlt: 'Global analytics',
+      txtOHMisNativeAsset:
+        'OHM is a native asset of Olympus DAO. It is a rebase token, so your ' +
+        'interest is automatically incremented into your principal amount.',
+      txtWithdrawDescription:
+        'You can withdraw the entire or partial balance. Available balance ' +
+        'consists of principal amount you deposited together with the ' +
+        'accumulated yield.',
+      txtStakeDescription:
+        'Once you stake your assets in Ethereum 2.0, Mover is constantly searching for the highest paying option. ' +
+        'Mover does automatic rebalancing, yield collection, and capital optimization.',
+      txtPotentialEarnings:
+        'You could earn in a year. Considering all changes.',
+      txtNativeAsset:
+        '{symbol} is a native asset of Olympus DAO. It is a rebase token, ' +
+        'so your interest is automatically incremented into your principal amount.',
+      txtNavIconAlt: 'Olympus',
+      lblOHMTokenAlt: 'Olympus token image'
     }
   };
 }

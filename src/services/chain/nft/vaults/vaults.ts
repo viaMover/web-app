@@ -8,7 +8,7 @@ import { Network } from '@/utils/networkTypes';
 import { NFT_VAULTS_ABI, NFT_VAULTS_ADDRESS } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader';
+import { Step } from '@/components/forms/form-loader';
 
 export const getVaultsData = async (
   accountAddress: string,

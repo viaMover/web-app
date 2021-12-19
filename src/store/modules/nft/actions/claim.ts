@@ -16,7 +16,7 @@ import { RootStoreState } from '@/store/types';
 import { greaterThan, lessThan } from '@/utils/bigmath';
 import { currentTimestamp } from '@/utils/time';
 
-import { Step } from '@/components/controls/form-loader';
+import { Step } from '@/components/forms/form-loader';
 
 import { checkAccountStateIsReady } from '../../account/utils/state';
 import { NFTStoreState } from './../types';

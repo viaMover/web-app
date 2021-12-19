@@ -1,6 +1,6 @@
 <template>
   <li class="item">
-    <h3 class="description">
+    <h3 class="description" :class="descriptionClasses">
       <slot name="description">{{ description }}</slot>
     </h3>
     <span class="value">
@@ -22,6 +22,26 @@ export default Vue.extend({
     value: {
       type: [String, Number],
       default: ''
+    },
+    thinDescription: {
+      type: Boolean,
+      default: false
+    },
+    boldDescription: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    descriptionClasses(): string {
+      let cls = '';
+      if (this.thinDescription) {
+        cls += 'thin ';
+      }
+      if (this.boldDescription) {
+        cls += 'bold ';
+      }
+      return cls;
     }
   }
 });

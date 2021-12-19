@@ -8,7 +8,7 @@
       r="15.91549430918954"
       :stroke="strokeColor"
       stroke-width="2"
-    ></circle>
+    />
     <circle
       class="donut-segment"
       cx="18"
@@ -19,7 +19,7 @@
       :stroke-dasharray="dashArray"
       :stroke-dashoffset="dashOffset"
       stroke-width="3"
-    ></circle>
+    />
   </svg>
 </template>
 
