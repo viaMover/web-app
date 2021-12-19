@@ -1,3 +1,5 @@
+@import (reference) './_variables.less';
+
 .shop__wrapper {
   display: -webkit-box;
   display: -webkit-flex;
@@ -28,7 +30,7 @@
   font-weight: 700;
   font-size: 40px;
   line-height: 54px;
-  color: #000;
+  color: @black;
 }
 
 .shop__wrapper-info .error-message {
@@ -69,7 +71,7 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 22px;
-  color: #000;
+  color: @black;
 }
 
 .shop__wrapper-info .items__item span {
@@ -86,12 +88,12 @@
   margin-top: 38px;
   padding: 9px 24px 7px;
   border-radius: 25px;
-  color: #fff;
+  color: @white;
   font-family: 'Bold', sans-serif;
   font-weight: 700;
   font-size: 14px;
   line-height: 24px;
-  background-color: #000;
+  background-color: @black;
 }
 
 .shop__wrapper-info .info__more {
@@ -99,7 +101,7 @@
 }
 
 .shop__wrapper-info .info__more p {
-  color: #000;
+  color: @black;
   font-family: 'Medium', sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -129,7 +131,7 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: #000;
+  color: @black;
 }
 
 .shop__wrapper-info .info__more ul li button .description {
@@ -161,6 +163,7 @@
   width: 100%;
   height: 100%;
   border: none;
+  object-fit: cover;
 }
 
 .shop__wrapper-illustration video.unexpected-move {
@@ -172,7 +175,7 @@
 }
 
 .shop__wrapper-illustration video.moving-with-olympus {
-  background-color: #000;
+  background-color: @black;
 }
 
 .shop__wrapper-illustration video.vaults {

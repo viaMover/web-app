@@ -3,6 +3,8 @@ import { SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 import { SmallTokenInfo } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
+import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import ERC721_ABI from './abi/erc721-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
@@ -11,6 +13,7 @@ import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
+import NFT_NIBBLE_SHOP_ABI from './abi/nft-nibble-shop.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
 import NFT_RARI_ABI from './abi/nft-rari.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
@@ -47,7 +50,11 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
     MASTER_CHEF_POOL_INDEX: 257,
     EURS_TOKEN_ADDRESS: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x7cc34ea5d7103d01b76e0dccf1ddad9f376801e9'
+    UNISWAP_EURS_WETH_POOL_ADDRESS:
+      '0x7cc34ea5d7103d01b76e0dccf1ddad9f376801e9',
+    OHM_ADDRESS: '0x383518188c0c6d7730d91b2c03a03c837814a899',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -68,12 +75,15 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1'
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -94,10 +104,13 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
     UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
@@ -121,10 +134,13 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
     UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
@@ -147,10 +163,13 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
     UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
@@ -173,10 +192,13 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
     UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   },
@@ -199,10 +221,13 @@ const ADDRESSES = {
     NFT_OLYMPUS: '0x1',
     NFT_VAULTS: '0x1',
     NFT_DICE: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
     UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1'
   }
@@ -358,6 +383,18 @@ const NFT_DICE_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].NFT_DICE ?? '0x1';
 };
 
+const OHM_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].OHM_ADDRESS ?? '0x1';
+};
+
+const ETH_V2_STAKER_POOL_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].ETH_V2_STAKER_POOL ?? '0x1';
+};
+
+const OHM_STAKER_POOL_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].OHM_STAKER_POOL ?? '0x1';
+};
+
 const POWERCARD_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].POWERCARD ?? '0x1';
 };
@@ -413,6 +450,16 @@ const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
     address: SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network),
     decimals: 18,
     symbol: 'SLP'
+  };
+};
+
+const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: OHM_ADDRESS(network),
+    symbol: 'OHM',
+    decimals: 9,
+    iconURL:
+      'https://assets.coingecko.com/coins/images/14483/large/token_OHM_%281%29.png?1628311611'
   };
 };
 
@@ -477,6 +524,7 @@ export {
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
+  getOhmAssetData,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
   getEURSAssetData,
@@ -511,6 +559,7 @@ export {
   NFT_OLYMPUS_ABI,
   NFT_VAULTS_ABI,
   NFT_DICE_ABI,
+  NFT_NIBBLE_SHOP_ABI,
   SUSHI_UNI_PAIR_V2_ABI,
   NFT_RARI_ABI,
   POWERCARD_RARI_ID,
@@ -522,5 +571,10 @@ export {
   MASTER_CHEF_ABI,
   EURS_TOKEN_ADDRESS,
   UNISWAP_EURS_WETH_POOL_ADDRESS,
-  ERC721_ABI
+  ERC721_ABI,
+  EARNINGS_ETHEREUM_ABI,
+  EARNINGS_OLYMPUS_ABI,
+  ETH_V2_STAKER_POOL_ADDRESS,
+  OHM_STAKER_POOL_ADDRESS,
+  OHM_ADDRESS
 };

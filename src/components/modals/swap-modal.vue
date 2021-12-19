@@ -18,6 +18,7 @@
         <asset-field
           :amount="input.amount"
           :asset="input.asset"
+          :exclude-tokens="excludedInputTokens"
           field-role="input"
           has-couple-tokens
           :label="$t('swaps.lblSwapFrom')"
@@ -153,12 +154,11 @@ import { GasData, SmallToken, Token, TokenWithBalance } from '@/wallet/types';
 import { ActionButton } from '@/components/buttons';
 import {
   AssetField,
-  FormLoader,
   GasSelector,
   SlippageSelector
 } from '@/components/controls';
-import { Step } from '@/components/controls/form-loader';
 import { GasMode, GasModeData } from '@/components/controls/gas-selector.vue';
+import { FormLoader, Step } from '@/components/forms/form-loader';
 import Modal from '@/components/modals/modal.vue';
 
 import { Slippage } from '../controls/slippage-selector.vue';
@@ -363,6 +363,12 @@ export default Vue.extend({
       }
 
       return [this.input.asset];
+    },
+    excludedInputTokens(): Array<Token> {
+      if (this.output.asset === undefined) {
+        return [];
+      }
+      return [this.output.asset];
     },
     isInfoAvailable(): boolean {
       return !this.loading && !!this.transferData;
