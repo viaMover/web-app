@@ -7,7 +7,7 @@ export const allNibbleShopTokens: Asset[] = [
     id: '$CEO1',
     urlId: 'ceo',
     intId: 0,
-    address: '0xf2bfa8f74f6b5f8ea92c92d03021bfc1ba806267',
+    address: '0x802630d770df0296ef4ae17d146172e5eb69ef70',
     feeAmount: toWei('0.042', 18),
     balance: 0,
     initialQuantity: 42,
