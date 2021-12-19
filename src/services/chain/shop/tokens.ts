@@ -8,7 +8,7 @@ export const allNibbleShopTokens: Asset[] = [
     urlId: 'ceo',
     intId: 0,
     address: '0x8c4075ef135aaebb2f0fd445635e305a162e4411',
-    feeAmount: toWei('0.042', 18),
+    feeAmount: toWei('0.069', 18),
     balance: 0,
     initialQuantity: 42,
     redeemCount: 0,
