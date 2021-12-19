@@ -1109,8 +1109,8 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
       $CEO1: {
         description:
           'Nothing really to add here. This cap is hand-made for all the CEOs of all the monies. ' +
-          'CEOs are very busy, thus it is a limited addition with only 30 caps ever to be made. ' +
-          'This is a genesis limited addition with only 30 caps ever to be made. One size fits all CEOs.'
+          'CEOs are very busy, thus it is a limited addition with only 42 caps ever to be made. ' +
+          'One size fits all CEOs. This item can be redeemed for a physical cap with free worldwide delivery.'
       },
       $SJ1: {
         description:
