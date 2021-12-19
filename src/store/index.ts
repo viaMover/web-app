@@ -10,6 +10,7 @@ import {
   earningsModule as earnings,
   registerNestedModules as earningsRegisterNestedModules
 } from './modules/earnings';
+import games from './modules/games';
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
@@ -51,6 +52,10 @@ if (isFeatureEnabled('isEarningsEnabled')) {
 
 if (isFeatureEnabled('isDebitCardEnabled')) {
   store.registerModule('debitCard', debitCard);
+}
+
+if (isFeatureEnabled('isVaultsRaceEnabled')) {
+  store.registerModule('games', games);
 }
 
 export default store;

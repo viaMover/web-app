@@ -1,3 +1,5 @@
+@import (reference) "./_variables.less";
+
 .nibble-shop {
   background-color: #fafafc;
   min-height: 100vh;
@@ -66,16 +68,25 @@
 }
 
 .nibble-shop-wrapper .list__item a h3 {
-  font-family: 'Medium', sans-serif;
-  font-weight: 500;
+  @font-medium();
+  font-weight: 700;
   margin-top: 16px;
   font-size: 14px;
   line-height: 22px;
 }
 
 .nibble-shop-wrapper .list__item a .price {
-  font-family: 'Medium', sans-serif;
-  font-weight: 500;
+  @font-medium();
   margin-top: 4px;
   color: rgba(60, 60, 67, 0.6);
+}
+
+.redeem__sidebar-wrapper {
+  margin-top: 116px;
+}
+
+.redeem__menu-wrapper {
+  .black-link.button-active.button {
+    margin-top: 40px;
+  }
 }

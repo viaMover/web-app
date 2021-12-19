@@ -11,7 +11,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'ShopList',
+  name: 'ShopListItem',
   props: {
     title: {
       type: String,
