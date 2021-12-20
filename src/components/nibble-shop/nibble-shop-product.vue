@@ -10,7 +10,7 @@
         :src="src"
       />
       <h3>{{ name }}</h3>
-      <p class="price">{{ price }}</p>
+      <p class="price">{{ productPrice }}</p>
     </router-link>
   </li>
 </template>
@@ -19,6 +19,8 @@
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
 import { mapState } from 'vuex';
+
+import { fromWei } from '@/utils/bigmath';
 
 export default Vue.extend({
   name: 'NibbleShopProduct',
@@ -42,6 +44,9 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('shop', { products: 'assets' }),
+    productPrice(): string {
+      return `Ξ${fromWei(this.price, 18)}`;
+    },
     routeTo(): RawLocation {
       return {
         name: 'nibble-shop-view',
