@@ -7,23 +7,23 @@
     <prepare-form
       v-if="step === 'prepare'"
       :asset="inputAsset"
-      has-select-modal
-      :header-description="
-        $t('treasury.claimAndBurn.txtClaimAndBurnPageDescription')
-      "
-      :header-title="$t('treasury.claimAndBurn.lblClaimAndBurn')"
+      :header-description="$t('treasury.claimAndBurnMOBO.txtPageDescription')"
+      :header-title="$t('treasury.claimAndBurnMOBO.lblClaimAndBurn')"
       :input-amount="inputAmount"
       :input-amount-native="inputAmountNative"
-      :input-asset-heading="$t('treasury.claimAndBurn.lblWhatDoWeBurn')"
+      :input-asset-heading="$t('treasury.claimAndBurnMOBO.lblWhatDoWeBurn')"
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
-      :operation-description="$t('treasury.claimAndBurn.txtYouApproximateExit')"
+      :operation-description="
+        $t('treasury.claimAndBurnMOBO.txtYouApproximateExit')
+      "
       :operation-title="claimingForStr"
-      :output-asset-heading-text="$t('treasury.claimAndBurn.lblAmountWeBurnIn')"
+      :output-asset-heading-text="
+        $t('treasury.claimAndBurnMOBO.lblAmountWeBurnIn')
+      "
       :selected-token-description="description"
       :transfer-error="transferError"
-      @open-select-modal="handleOpenSelectModal"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
       @toggle-input-mode="handleToggleInputMode"
@@ -32,10 +32,10 @@
     <review-form
       v-else-if="step === 'review'"
       :amount="inputAmount"
-      :button-text="$t('treasury.claimAndBurn.btnClaimAndBurnWithAssets')"
-      :header-title="$t('treasury.claimAndBurn.lblReviewYourDecrease')"
-      :input-amount-native-title="$t('treasury.claimAndBurn.lblAndTotalOf')"
-      :input-amount-title="$t('treasury.claimAndBurn.lblAmountWeBurnIn')"
+      :button-text="$t('treasury.claimAndBurnMOBO.btnClaimAndBurnWithAssets')"
+      :header-title="$t('treasury.claimAndBurnMOBO.lblReviewYourClaim')"
+      :input-amount-native-title="$t('treasury.claimAndBurnMOBO.lblAndTotalOf')"
+      :input-amount-title="$t('treasury.claimAndBurnMOBO.lblAmountWeBurnIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="inputAmountNative"
       :token="inputAsset"
@@ -52,9 +52,9 @@
       </template>
       <template v-slot:second-token-image>
         <token-image
-          :address="inputAsset.address"
-          :src="inputAsset.logo"
-          :symbol="inputAsset.symbol"
+          :address="usdcTokenInfo.address"
+          :src="usdcTokenInfo.iconURL"
+          :symbol="usdcTokenInfo.symbol"
           wrapper-class="item-coin"
         />
       </template>
@@ -70,9 +70,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import { getExitingAmount, getMaxBurn } from '@/services/chain';
-import { Modal as ModalType } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
 import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
@@ -81,10 +78,10 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
-import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
+import { claimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMobo';
+import { estimateClaimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMoboEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
-import { getMoveAssetData } from '@/wallet/references/data';
+import { getMoboAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
   SmallTokenInfoWithIcon,
@@ -105,7 +102,7 @@ import { TokenImage } from '@/components/tokens';
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
-  name: 'TreasuryClaimAndBurnWrapper',
+  name: 'TreasuryClaimAndBurnMOBOWrapper',
   components: {
     TokenImage,
     CustomPicture,
@@ -141,13 +138,10 @@ export default Vue.extend({
 
       //prepare-form
       inputMode: 'TOKEN' as InputMode,
-      inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '',
       inputAmountNative: '',
-      claimingFor: '0',
-      maxBurnedAmount: undefined as undefined | string,
       transferError: undefined as undefined | string,
-      isLoading: true,
+      isLoading: false,
       isProcessing: false,
       isTokenSelectedByUser: false,
 
@@ -163,80 +157,43 @@ export default Vue.extend({
       'currentAddress',
       'provider',
       'tokens',
-      'nativeCurrency'
+      'nativeCurrency',
+      'treasuryBonus'
     ]),
-    ...mapGetters('account', [
-      'treasuryBonusNative',
-      'getTokenColor',
-      'moveNativePrice'
-    ]),
+    ...mapGetters('account', {
+      usdcNativePrice: 'usdcNativePrice',
+      treasuryBonusNative: 'treasuryBonusNative',
+      getTokenColor: 'getTokenColor'
+    }),
+    inputAsset(): TokenWithBalance {
+      return {
+        address: this.moboTokenInfo.address,
+        decimals: this.moboTokenInfo.decimals,
+        symbol: this.moboTokenInfo.symbol,
+        name: 'MOBO',
+        priceUSD: this.usdcNativePrice,
+        logo: this.moboTokenInfo.iconURL,
+        balance: this.treasuryBonus,
+        marketCap: Number.MAX_SAFE_INTEGER
+      };
+    },
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },
-    moveTokenInfo(): SmallTokenInfoWithIcon {
-      return getMoveAssetData(this.networkInfo.network);
+    moboTokenInfo(): SmallTokenInfoWithIcon {
+      return getMoboAssetData(this.networkInfo.network);
+    },
+    usdcTokenInfo(): SmallTokenInfoWithIcon {
+      return getUSDCAssetData(this.networkInfo.network);
     },
     claimingForStr(): string {
-      if (this.inputAsset === undefined) {
-        return '~ $0';
+      if (this.inputAmountNative === '') {
+        return '~ $0.00';
       }
-      return `~ $${formatToNative(this.claimingFor)}`;
+      return `~ $${formatToNative(this.inputAmountNative)}`;
     },
     description(): string {
-      return (
-        this.inputAsset !== undefined
-          ? (this.$t('treasury.claimAndBurn.txtYouChooseMove') as string)
-          : ''
-      ) as string;
-    },
-    availableTokens(): Array<TokenWithBalance> {
-      const move = getMoveAssetData(this.networkInfo.network);
-      const moveWalletBalance =
-        this.tokens.find((t: TokenWithBalance) =>
-          sameAddress(t.address, move.address)
-        )?.balance ?? '0';
-
-      return [
-        {
-          address: move.address,
-          decimals: move.decimals,
-          name: move.name,
-          symbol: move.symbol,
-          priceUSD: this.moveNativePrice,
-          logo: move.iconURL,
-          balance: moveWalletBalance,
-          marketCap: Number.MAX_SAFE_INTEGER
-        }
-      ];
-    }
-  },
-  watch: {
-    tokens: {
-      immediate: true,
-      async handler(newVal: Array<TokenWithBalance>) {
-        this.isLoading = true;
-        try {
-          if (!this.isTokenSelectedByUser) {
-            const move = newVal.find((t: TokenWithBalance) =>
-              sameAddress(t.address, this.moveTokenInfo.address)
-            );
-            if (move) {
-              this.inputAsset = move;
-            }
-          }
-
-          this.maxBurnedAmount = await getMaxBurn(
-            this.currentAddress,
-            this.networkInfo.network,
-            this.provider.web3
-          );
-        } catch (err) {
-          console.log(`can't load max burn: ${JSON.stringify(err)}`);
-          Sentry.captureException(err);
-        } finally {
-          this.isLoading = false;
-        }
-      }
+      return this.$t('treasury.claimAndBurnMOBO.txtYouChooseMOBO') as string;
     }
   },
   methods: {
@@ -257,7 +214,7 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateClaimAndBurnCompound(
+      const resp = await estimateClaimAndBurnMOBOCompound(
         inputAsset,
         inputAmount,
         this.networkInfo.network,
@@ -266,7 +223,7 @@ export default Vue.extend({
       );
       if (resp.error) {
         this.transferError = this.$t('estimationError') as string;
-        Sentry.captureException("can't estimate claim and burn");
+        Sentry.captureException("can't estimate claim and burn MOBO");
         throw new Error(`Can't estimate action ${resp.error}`);
       }
       return resp;
@@ -279,9 +236,6 @@ export default Vue.extend({
       this.inputMode = 'NATIVE';
     },
     async handleSelectMaxAmount(): Promise<void> {
-      if (this.inputAsset === undefined) {
-        return;
-      }
       if (this.inputMode === 'TOKEN') {
         await this.updateAmount(this.inputAsset.balance, 'TOKEN');
       } else {
@@ -293,30 +247,7 @@ export default Vue.extend({
         );
       }
     },
-    async handleOpenSelectModal(): Promise<void> {
-      const token = await this.setModalIsDisplayed({
-        id: ModalType.SearchToken,
-        value: true,
-        payload: {
-          forceTokenArray: this.availableTokens
-        }
-      });
-
-      if (token === undefined) {
-        return;
-      }
-
-      this.isTokenSelectedByUser = true;
-      this.inputAsset = token;
-      this.transferError = undefined;
-      this.inputAmount = '';
-      this.inputAmountNative = '';
-    },
     async handleTxReview(): Promise<void> {
-      if (this.inputAsset === undefined) {
-        return;
-      }
-
       this.isSubsidizedEnabled = false;
       this.isProcessing = true;
       try {
@@ -328,13 +259,19 @@ export default Vue.extend({
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
 
-        console.info('Claim and burn action gaslimit:', this.actionGasLimit);
-        console.info('Claim and burn approve gaslimit:', this.approveGasLimit);
+        console.info(
+          'Claim and burn MOBO action gaslimit:',
+          this.actionGasLimit
+        );
+        console.info(
+          'Claim and burn MOBO approve gaslimit:',
+          this.approveGasLimit
+        );
       } catch (err) {
         this.isSubsidizedEnabled = false;
         this.isProcessing = false;
         console.error(err);
-        Sentry.captureException("can't estimate claim and burn for subs");
+        Sentry.captureException("can't estimate claim and burn MOBO for subs");
         return;
       }
 
@@ -345,7 +282,7 @@ export default Vue.extend({
       await this.updateAmount(val, this.inputMode);
     },
     async updateAmount(value: string, mode: InputMode): Promise<void> {
-      if (this.inputAsset === undefined || this.isLoading) {
+      if (this.isLoading) {
         return;
       }
 
@@ -358,26 +295,12 @@ export default Vue.extend({
             convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
           ).toFixed(2);
 
-          if (this.maxBurnedAmount === undefined) {
+          if (greaterThan(this.inputAmount, this.inputAsset.balance)) {
             this.transferError = this.$t(
-              'treasury.claimAndBurn.lblBurnError'
+              'treasury.claimAndBurnMOBO.lblBurnLimitReached'
             ) as string;
             return;
           }
-
-          if (greaterThan(this.inputAmount, this.maxBurnedAmount)) {
-            this.transferError = this.$t(
-              'treasury.claimAndBurn.lblBurnLimitReached'
-            ) as string;
-            return;
-          }
-
-          this.claimingFor = await getExitingAmount(
-            this.currentAddress,
-            this.inputAmount,
-            this.networkInfo.network,
-            this.provider.web3
-          );
 
           this.transferError = undefined;
         } else {
@@ -388,25 +311,12 @@ export default Vue.extend({
           );
           this.inputAmountNative = value;
 
-          if (this.maxBurnedAmount === undefined) {
+          if (greaterThan(this.inputAmount, this.inputAsset.balance)) {
             this.transferError = this.$t(
-              'treasury.claimAndBurn.lblBurnError'
+              'treasury.claimAndBurnMOBO.lblBurnLimitReached'
             ) as string;
             return;
           }
-
-          if (greaterThan(this.inputAmount, this.maxBurnedAmount)) {
-            this.transferError = this.$t(
-              'treasury.claimAndBurn.lblBurnLimitReached'
-            ) as string;
-            return;
-          }
-          this.claimingFor = await getExitingAmount(
-            this.currentAddress,
-            this.inputAmount,
-            this.networkInfo.network,
-            this.provider.web3
-          );
           this.transferError = undefined;
         }
       } catch (err) {
@@ -423,36 +333,58 @@ export default Vue.extend({
       }
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
-      if (this.inputAsset === undefined) {
-        console.error('inputAsset is empty during `handleTxStart`');
-        Sentry.captureException("can't start treasury claim and burn TX");
-        return;
-      }
-
       if (this.inputAmount === '') {
         console.error('inputAmount is empty during `handleTxStart`');
-        Sentry.captureException("can't start treasury claim and burn TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'treasury.claim-and-burn-mobo.handleTxStart',
+          message: 'inputAmount is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start treasury claim and burn MOBO TX");
         return;
       }
 
       if (this.actionGasLimit === undefined) {
         console.error('action gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start treasury claim and burn TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'treasury.claim-and-burn-mobo.handleTxStart',
+          message: 'action gas limit is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start treasury claim and burn MOBO TX");
         return;
       }
 
       if (this.approveGasLimit === undefined) {
         console.error('approve gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start treasury claim and burn TX");
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'treasury.claim-and-burn-mobo.handleTxStart',
+          message: 'approve gas limit is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start treasury claim and burn MOBO TX");
         return;
       }
 
       console.log('is smart treasury:', args.isSmartTreasury);
+      Sentry.addBreadcrumb({
+        type: 'debug',
+        category: 'treasury.claim-and-burn-mobo.handleTxStart',
+        data: {
+          isSmartTreasury: args.isSmartTreasury,
+          inputAsset: this.inputAsset,
+          inputAmount: this.inputAmount,
+          network: this.networkInfo.network,
+          currentAddress: this.currentAddress,
+          actionGasLimit: this.actionGasLimit,
+          approveGasLimit: this.approveGasLimit
+        }
+      });
 
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await claimAndBurnCompound(
+        await claimAndBurnMOBOCompound(
           this.inputAsset,
           this.inputAmount,
           this.networkInfo.network,
@@ -468,7 +400,7 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (err) {
         this.transactionStep = 'Reverted';
-        console.log('Treasury claim and burn txn reverted');
+        console.log('Treasury claim and burn MOBO txn reverted');
         Sentry.captureException(err);
       }
     }
