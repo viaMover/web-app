@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { sameAddress } from '@/utils/address';
@@ -94,7 +96,7 @@ export const deposit = async (
     console.log('[treasury deposit] input amount in WEI:', inputAmountInWEI);
     console.log('[treasury deposit] transactionParams:', transactionParams);
 
-    let depositFunc: any;
+    let depositFunc: ContractSendMethod;
     if (sameAddress(inputAsset.address, move.address)) {
       depositFunc = holyHand.methods.depositToTreasury(inputAmountInWEI, '0');
     } else if (sameAddress(inputAsset.address, slp.address)) {
@@ -112,7 +114,7 @@ export const deposit = async (
           console.log(`Treasury deposit txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Treasury deposit txn receipt: ${receipt}`);
           resolve();
         })

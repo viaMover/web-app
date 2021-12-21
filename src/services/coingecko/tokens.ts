@@ -17,12 +17,6 @@ type CoingeckoAllTokensResponse = {
   tokens: Array<CoingeckoToken>;
 };
 
-type CoingeckoEthPriceResponse = {
-  ethereum: {
-    usd: number;
-  };
-};
-
 const URL = 'https://tokens.coingecko.com/uniswap/all.json';
 
 export const GetAllTokens = async (): Promise<
@@ -38,13 +32,77 @@ export const GetAllTokens = async (): Promise<
 };
 
 export const getEthPrice = async (): Promise<Result<string, string>> => {
-  const url =
-    'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd';
-  try {
-    const response = (await axios.get<CoingeckoEthPriceResponse>(url)).data;
-    console.log(response);
-    return { isError: false, result: String(response.ethereum.usd ?? '0') };
-  } catch (err) {
-    return { isError: true, error: err };
+  const resp = await getPrice('ethereum', 'usd');
+  if (resp.isError) {
+    return resp;
   }
+
+  return {
+    isError: false,
+    result: String(resp.result?.['ethereum']?.['usd'] ?? '0')
+  };
+};
+
+export const getUsdcPriceInEur = async (): Promise<Result<string, string>> => {
+  const resp = await getPrice('usd-coin', 'eur');
+  if (resp.isError) {
+    return resp;
+  }
+
+  return {
+    isError: false,
+    result: String(resp.result?.['usd-coin']?.['eur'] ?? '0')
+  };
+};
+
+export const getPrice = async (
+  ids: string | Array<string>,
+  currencies: string | Array<string>,
+  opts?: GetSimplePriceOptions
+): Promise<Result<SimplePriceRecord, string>> => {
+  try {
+    const res = await axios.get<SimplePriceRecord>(
+      'https://api.coingecko.com/api/v3/simple/price',
+      {
+        params: {
+          ...opts,
+          ids: Array.isArray(ids) ? ids.join(',') : ids,
+          vs_currencies: Array.isArray(currencies)
+            ? currencies.join(',')
+            : currencies
+        },
+        transformResponse: (
+          data: string | Record<string, unknown> | Array<unknown>
+        ): Record<string, unknown> | Array<unknown> => {
+          if (typeof data === 'string') {
+            return JSON.parse(data);
+          }
+
+          return data;
+        },
+        validateStatus: (status): boolean => {
+          return status === 200;
+        }
+      }
+    );
+
+    return { isError: false, result: res.data };
+  } catch (error) {
+    return {
+      isError: true,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+};
+
+type SimplePriceRecord = {
+  [id: string]: {
+    [currency: string]: number;
+  };
+};
+type GetSimplePriceOptions = {
+  include_market_cap?: boolean;
+  include_24hr_vol?: boolean;
+  include_24hr_change?: boolean;
+  include_last_updated_at?: boolean;
 };
