@@ -37,7 +37,7 @@ const values: Globals = {
   isIntercomEnabled: !isDevelop(),
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
-  isDebitCardTopUpEnabled: false,
+  isDebitCardTopUpEnabled: true,
   isDebitCardChangeSkinEnabled: false,
   isEarningsMonthlyChartEnabled: false,
   isEarningsEnabled: false,
