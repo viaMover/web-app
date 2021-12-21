@@ -53,6 +53,7 @@ const ADDRESSES = {
     UNISWAP_EURS_WETH_POOL_ADDRESS:
       '0x7cc34ea5d7103d01b76e0dccf1ddad9f376801e9',
     OHM_ADDRESS: '0x383518188c0c6d7730d91b2c03a03c837814a899',
+    OHM_V2_ADDRESS: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
     ETH_V2_STAKER_POOL: '0x1',
     OHM_STAKER_POOL: '0x1',
     WBTC_TOKEN_ADDRESS: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -87,6 +88,7 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     EURS_TOKEN_ADDRESS: '0x1',
@@ -125,6 +127,7 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     ETH_V2_STAKER_POOL: '0x1',
@@ -164,6 +167,7 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     ETH_V2_STAKER_POOL: '0x1',
@@ -202,6 +206,7 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     ETH_V2_STAKER_POOL: '0x1',
@@ -240,6 +245,7 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     ETH_V2_STAKER_POOL: '0x1',
@@ -278,6 +284,7 @@ const ADDRESSES = {
     MASTER_CHEF_ADDRESS: '0x1',
     MASTER_CHEF_POOL_INDEX: 0,
     OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
     POWERCARD: '0x1',
     POWERCARD_STAKER: '0x1',
     ETH_V2_STAKER_POOL: '0x1',
@@ -448,6 +455,10 @@ const NFT_DICE_ADDRESS = (network: Network): string => {
 
 const OHM_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].OHM_ADDRESS ?? '0x1';
+};
+
+const OHM_V2_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].OHM_V2_ADDRESS ?? '0x1';
 };
 
 const ETH_V2_STAKER_POOL_ADDRESS = (network: Network): string => {
@@ -628,6 +639,7 @@ const validTopUpAssets = (network: Network): Array<string> => {
     FRAX_TOKEN_ADDRESS(network),
     RAI_TOKEN_ADDRESS(network),
     OHM_ADDRESS(network),
+    OHM_V2_ADDRESS(network),
     FEI_TOKEN_ADDRESS(network),
     USDT_TOKEN_ADDRESS(network),
     USDC_TOKEN_ADDRESS(network),
@@ -694,5 +706,15 @@ export {
   ETH_V2_STAKER_POOL_ADDRESS,
   OHM_STAKER_POOL_ADDRESS,
   OHM_ADDRESS,
+  WBTC_TOKEN_ADDRESS,
+  RENBTC_TOKEN_ADDRESS,
+  UST_TOKEN_ADDRESS,
+  MIM_TOKEN_ADDRESS,
+  FRAX_TOKEN_ADDRESS,
+  RAI_TOKEN_ADDRESS,
+  OHM_V2_ADDRESS,
+  FEI_TOKEN_ADDRESS,
+  USDT_TOKEN_ADDRESS,
+  SHIB_TOKEN_ADDRESS,
   validTopUpAssets
 };
