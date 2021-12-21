@@ -178,15 +178,16 @@ const messages: VueI18n.LocaleMessageObject = {
     topUp: {
       lblTopUp: 'Card top up',
       txtTopUp:
-        'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
+        'You can top up your card with any asset, and it will be automatically settled for your EUR balance.',
       txtApproximateEUREstimation: 'That would be approximately in Euro',
       lblWhatDoWeTopUp: 'What do we top up',
       lblAmountWeDepositIn: 'Amount we deposit in',
       btnChooseAmount: 'Choose the amount to top up',
       txtNativeAsset:
-        '{name} is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
+        'USDC is a native asset used for the conversion, so there is no additional gas fees for conversion required.',
       txtNonNativeAsset:
-        'You chose neither a non ETH asset nor an USDC asset. It means that it will be converted to ETH at the time of the deposit at the current market rate.',
+        'You chose a non USDC asset. It means that it will be converted ' +
+        'to USDC at the time of the top up at the current market rate.',
       lblReviewYourTopUp: 'Review your top up',
       lblAmountWeTopUpIn: 'Amount we top up in',
       lblAndItWillBeTotalOf: 'And it will be total of',
@@ -950,6 +951,18 @@ const messages: VueI18n.LocaleMessageObject = {
         }
       }
     }
+  },
+  transactionTypes: {
+    // lowercased human-readable type as a key
+    'deposit in savings': 'Deposit',
+    withdraw: 'Withdraw',
+    receive: 'Receive',
+    'decrease boost': 'Decrease Boost',
+    'card top up': 'Card top up',
+    send: 'Send',
+    self: 'Self',
+    approve: 'Approve',
+    unknown: 'Unknown'
   }
 };
 

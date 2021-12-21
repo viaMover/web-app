@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/vue';
-import find from 'lodash-es/find';
 
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
@@ -31,7 +30,7 @@ const mapStatus = (status: string): TransactionStatus => {
 };
 
 // Temporary fix for zerion
-const mapZerionoSymbol = (assetSymbol: string): string => {
+const mapZerionSymbol = (assetSymbol: string): string => {
   if (assetSymbol === 'HH') return 'MOVE';
   if (assetSymbol === 'mobo') return 'MOBO';
   return assetSymbol;
@@ -97,7 +96,8 @@ export const mapZerionTxns = async (
     );
     if (isError<TransactionMoveTypeData[], string, void>(moverTypesDataRes)) {
       console.error(
-        `Error from mover transaction service: ${moverTypesDataRes.error}`
+        'Error from mover transaction service',
+        moverTypesDataRes.error
       );
     } else {
       moverTypesData = moverTypesDataRes.result;
@@ -130,16 +130,14 @@ export const mapZerionTxns = async (
       const unknownTxns = tryToParseToUnknown(t, moverTypesData);
       if (unknownTxns !== undefined) {
         //txns = txns.concat(unknownTxns);
-        console.log('Unknown txns:');
-        console.log(unknownTxns);
+        console.debug('Unknown txns:', unknownTxns);
         return;
       }
     });
 
-    console.log('txns:', txns);
+    console.debug('txns:', txns);
     return txns;
   } catch (e) {
-    console.log('huy', e);
     Sentry.captureException(e);
     return [];
   }
@@ -167,7 +165,7 @@ const parseTradeTransaction = (
             asset: {
               address: c.asset.asset_code,
               decimals: c.asset.decimals,
-              symbol: mapZerionoSymbol(c.asset.symbol),
+              symbol: mapZerionSymbol(c.asset.symbol),
               change: String(c.value),
               iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
@@ -191,7 +189,7 @@ const parseTradeTransaction = (
             asset: {
               address: c.asset.asset_code,
               decimals: c.asset.decimals,
-              symbol: mapZerionoSymbol(c.asset.symbol),
+              symbol: mapZerionSymbol(c.asset.symbol),
               change: String(c.value),
               iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
@@ -222,7 +220,7 @@ const parseTradeTransaction = (
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
-          symbol: mapZerionoSymbol(c.asset.symbol),
+          symbol: mapZerionSymbol(c.asset.symbol),
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
@@ -256,7 +254,7 @@ const parseReceiveTransaction = (
       asset: {
         address: c.asset.asset_code,
         decimals: c.asset.decimals,
-        symbol: mapZerionoSymbol(c.asset.symbol),
+        symbol: mapZerionSymbol(c.asset.symbol),
         change: String(c.value),
         iconURL: c.asset.icon_url ?? '',
         price: String(c.price ?? '0'),
@@ -291,7 +289,7 @@ const parseAuthorizeTransaction = (
           address: tx.meta.asset.asset_code,
           decimals: tx.meta.asset.decimals,
           iconURL: tx.meta.asset.icon_url ?? '',
-          symbol: mapZerionoSymbol(tx.meta.asset.symbol)
+          symbol: mapZerionSymbol(tx.meta.asset.symbol)
         },
         blockNumber: String(tx.block_number),
         hash: tx.hash,
@@ -321,7 +319,7 @@ const parseSendTransaction = (
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
-          symbol: mapZerionoSymbol(c.asset.symbol),
+          symbol: mapZerionSymbol(c.asset.symbol),
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
@@ -395,13 +393,3 @@ const tryToParseToUnknown = (
     }
   ];
 };
-
-const potentialNftTransaction = (txns: Array<ZerionTransaction>): boolean =>
-  find<ZerionTransaction>(txns, (txn) => {
-    return true;
-    // return (
-    //   !txn.protocol &&
-    //   (txn.type === 'send' || txn.type === 'receive') &&
-    //   txn.meta?.asset?.asset_code !== 'ETH'
-    // );
-  }) !== undefined;

@@ -37,12 +37,12 @@ const values: Globals = {
   isIntercomEnabled: !isDevelop(),
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
+  isDebitCardTopUpEnabled: true,
+  isDebitCardChangeSkinEnabled: false,
   isEarningsMonthlyChartEnabled: false,
   isEarningsEnabled: false,
   isEarningsEthereumEnabled: false,
   isEarningsOlympusEnabled: false,
-  isDebitCardTopUpEnabled: false,
-  isDebitCardChangeSkinEnabled: false,
   isVaultsRaceEnabled: false
 };
 

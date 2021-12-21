@@ -37,5 +37,5 @@ export const mapCountryCodeToEmoji = (
     return '';
   }
 
-  return ` ${getFlagEmoji(countryCode)}`;
+  return `${withSpace ? ' ' : ''}${getFlagEmoji(countryCode)}`;
 };

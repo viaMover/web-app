@@ -42,12 +42,20 @@ type BaseResponse = {
 };
 
 export type CardInfo = {
+  // card status while it's should be active
+  // (e.g. frozen, expired)
+  // Note: check if this field is active
+  status: CardStatus;
+  // customer name
   displayName: string;
   last4Digits: string;
+  // expiration month (natural, 1-based index)
   expMonth: number;
+  // expiraton year (natural, 1-based index)
   expYear: number;
   currency: string;
   type: string;
+  // ISO string
   issueDate: string;
   temporaryBlocked: boolean;
   iban: string;

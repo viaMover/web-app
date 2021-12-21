@@ -470,6 +470,40 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_beneficiary",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_tokenFrom",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_expectedMinimumReceived",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_convertData",
+        "type": "bytes"
+      }
+    ],
+    "name": "cardTopUp",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function",
+    "payable": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_poolAddress",
         "type": "address"
       },
