@@ -53,7 +53,7 @@
       :image="currentSkin.previewPicture"
       :input-amount-native-title="$t('debitCard.topUp.lblAndItWillBeTotalOf')"
       :input-amount-title="$t('debitCard.topUp.lblAmountWeTopUpIn')"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
@@ -231,6 +231,9 @@ export default Vue.extend({
     },
     approximateEUREstimationText(): string {
       return `~ €${formatToNative(this.approximateEUREstimationAmount)}`;
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.approximateEUREstimationAmount)} EUR`;
     },
     formattedUSDCTotal(): string {
       if (this.inputAsset === undefined) {
