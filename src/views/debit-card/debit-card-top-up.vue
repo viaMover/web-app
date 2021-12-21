@@ -91,7 +91,11 @@ import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
-import { getEURSAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import {
+  getEURSAssetData,
+  getUSDCAssetData,
+  validTopUpAssets
+} from '@/wallet/references/data';
 import {
   SmallToken,
   SmallTokenInfo,
@@ -240,6 +244,15 @@ export default Vue.extend({
       }
 
       return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
+    },
+    validTokens(): Array<TokenWithBalance> {
+      const validAssetAddresses = validTopUpAssets(
+        this.networkInfo.network
+      ).map((address: string) => address.toLowerCase());
+
+      return this.tokens.filter((token: TokenWithBalance) =>
+        validAssetAddresses.includes(token.address.toLowerCase())
+      );
     }
   },
   watch: {
@@ -564,7 +577,8 @@ export default Vue.extend({
         id: ModalType.SearchToken,
         value: true,
         payload: {
-          useWalletTokens: true
+          useWalletTokens: true,
+          forceTokenArray: this.validTokens
         }
       });
 
