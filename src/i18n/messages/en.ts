@@ -231,6 +231,7 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     errors: {
       default: 'Oh no. Something went wrong',
+      minAmount: 'Minimum amount to top up is {min} EURs',
       email: {
         required: 'Email is required',
         invalid: 'Enter a valid email address'
