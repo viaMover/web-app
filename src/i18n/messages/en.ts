@@ -178,7 +178,7 @@ const messages: VueI18n.LocaleMessageObject = {
     topUp: {
       lblTopUp: 'Card top up',
       txtTopUp:
-        'You can top up your card with any asset, and it will be automatically convered to Ethereum to be able to settle for EUR balance.',
+        'You can top up your card with any asset, and it will be automatically settled for your EUR balance.',
       txtApproximateEUREstimation: 'That would be approximately in Euro',
       lblWhatDoWeTopUp: 'What do we top up',
       lblAmountWeDepositIn: 'Amount we deposit in',
