@@ -49,7 +49,7 @@ export default {
       info.statusHistory?.map(mapServiceHistoryItem) ?? []
     );
 
-    if (info.cardInfo !== undefined) {
+    if (info.cardInfo?.status === 'CARD_ACTIVE') {
       commit('setCardInfo', mapServiceCardInfo(info.cardInfo));
       // an actual status will be represented here once the card is in active status
       const mappedState = mapServiceState(info.cardInfo.status);
