@@ -18,7 +18,8 @@ export type CardStatus =
   | 'KYC_PENDING' // user has passed KYC, it is being verified (wait)
   | 'CARD_ORDER_PENDING' // user has verified phone and passed KYC, we would order card;
   | 'CARD_SHIPPED' // the card is ordered, to be shipped
-  | 'CARD_ACTIVE'; // the card is active
+  | 'CARD_ACTIVE' // the card is active (outer status)
+  | 'ACTIVE'; // the card is active (inner status)
 
 export type EventHistoryItemMinimal = {
   timestamp: number;
