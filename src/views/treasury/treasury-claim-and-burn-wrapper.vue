@@ -39,7 +39,7 @@
       :input-amount-native-title="$t('treasury.decreaseBoost.lblAndTotalOf')"
       :input-amount-title="$t('treasury.decreaseBoost.lblAmountWeRemoveIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
@@ -174,6 +174,14 @@ export default Vue.extend({
     ]),
     hasBackButton(): boolean {
       return this.step !== 'loader';
+    },
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
     },
     moveTokenInfo(): SmallTokenInfoWithIcon {
       return getMoveAssetData(this.networkInfo.network);

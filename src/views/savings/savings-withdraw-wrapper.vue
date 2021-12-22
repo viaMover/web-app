@@ -34,7 +34,7 @@
       :input-amount-native-title="$t('savings.withdraw.lblAndTotalOf')"
       :input-amount-title="$t('savings.withdraw.lblAmountWeWithdrawIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
@@ -146,11 +146,20 @@ export default Vue.extend({
       'savingsAPY',
       'provider',
       'ethPrice',
-      'gasPrices'
+      'gasPrices',
+      'nativeCurrency'
     ]),
     ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     hasBackButton(): boolean {
       return this.step !== 'loader';
+    },
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
     },
     USDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
