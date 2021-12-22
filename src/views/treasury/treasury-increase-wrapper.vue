@@ -44,7 +44,7 @@
       :input-amount-native-title="$t('treasury.increaseBoost.lblAndTotalOf')"
       :input-amount-title="$t('treasury.increaseBoost.lblAmountWeDepositIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
