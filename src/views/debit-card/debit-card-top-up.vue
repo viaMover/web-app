@@ -20,7 +20,7 @@
       :operation-title="approximateEUREstimationText"
       :output-asset-heading-text="$t('debitCard.topUp.lblAmountWeDepositIn')"
       :selected-token-description="description"
-      :transfer-error="transferError"
+      :transfer-error="transferErrorComplex"
       @open-select-modal="handleOpenSelectModal"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
@@ -53,7 +53,7 @@
       :image="currentSkin.previewPicture"
       :input-amount-native-title="$t('debitCard.topUp.lblAndItWillBeTotalOf')"
       :input-amount-title="$t('debitCard.topUp.lblAmountWeTopUpIn')"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
@@ -83,6 +83,7 @@ import {
   divide,
   fromWei,
   isZero,
+  lessThan,
   multiply,
   toWei
 } from '@/utils/bigmath';
@@ -114,6 +115,8 @@ import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { SecondaryPage } from '@/components/layout/secondary-page';
 
 type ProcessStep = 'prepare' | 'review' | 'loader';
+
+const MINIMUM_AMOUNT = '25';
 
 export default Vue.extend({
   name: 'DebitCardTopUp',
@@ -206,6 +209,16 @@ export default Vue.extend({
 
       return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
     },
+    transferErrorComplex(): string | undefined {
+      if (this.transferError !== undefined) {
+        return this.transferError;
+      }
+      return lessThan(this.approximateEUREstimationAmount, MINIMUM_AMOUNT)
+        ? this.$t('debitCard.errors.minAmount', {
+            min: MINIMUM_AMOUNT
+          }).toString()
+        : undefined;
+    },
     description(): string {
       return (
         this.isSwapNeeded
@@ -218,6 +231,9 @@ export default Vue.extend({
     },
     approximateEUREstimationText(): string {
       return `~ €${formatToNative(this.approximateEUREstimationAmount)}`;
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.approximateEUREstimationAmount)} EUR`;
     },
     formattedUSDCTotal(): string {
       if (this.inputAsset === undefined) {
@@ -497,6 +513,7 @@ export default Vue.extend({
       this.isLoading = true;
 
       try {
+        this.approximateEUREstimationAmount = '0';
         this.transferError = undefined;
         if (!this.isSwapNeeded) {
           this.transferData = undefined;
