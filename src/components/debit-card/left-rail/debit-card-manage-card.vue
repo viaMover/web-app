@@ -8,9 +8,14 @@
     </template>
     <template v-else>
       <left-rail-section-nav-item-image
-        v-if="isFeatureEnabled('isDebitCardTopUpEnabled')"
+        v-if="
+          isFeatureEnabled('isDebitCardTopUpEnabled') && cardState === 'active'
+        "
         :description="$t('debitCard.txtCardTopUp')"
-        navigate-to="debit-card-top-up"
+        :navigate-to="{
+          name: 'debit-card-top-up',
+          params: { step: 'prepare' }
+        }"
         :title="$t('debitCard.lblCardTopUp')"
         use-partial-match-active-class
       >
@@ -87,7 +92,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('debitCard', {
-      isLoading: 'isLoading'
+      isLoading: 'isLoading',
+      cardState: 'cardState'
     })
   },
   methods: {

@@ -1,5 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
@@ -189,20 +191,21 @@ export const deposit = async (
     );
 
     await new Promise<void>((resolve, reject) => {
-      holyHand.methods
-        .depositToPool(
+      (
+        holyHand.methods.depositToPool(
           poolAddress,
           inputCurrencyAddress,
           inputAmountInWEI,
           expectedMinimumReceived,
           bytesData
-        )
+        ) as ContractSendMethod
+      )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Savings deposit txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Savings deposit txn receipt: ${receipt}`);
           resolve();
         })

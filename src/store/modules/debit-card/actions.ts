@@ -49,13 +49,20 @@ export default {
       info.statusHistory?.map(mapServiceHistoryItem) ?? []
     );
 
-    if (info.cardInfo !== undefined) {
+    if (info.status === 'CARD_ACTIVE' && info.cardInfo !== undefined) {
       commit('setCardInfo', mapServiceCardInfo(info.cardInfo));
+      // an actual status will be represented here once the card is in active status
+      const mappedState = mapServiceState(info.cardInfo.status);
+      commit('setCardState', mappedState.cardState);
+      commit('setOrderState', mappedState.orderState);
 
+      // check if card is frozen by the issuer / bank
       if (info.cardInfo.temporaryBlocked) {
         commit('setCardState', 'frozen');
       }
 
+      // check if the card is expired and blocked
+      // by the issuer / bank
       const now = dayjs();
       const expirationDate = dayjs(
         new Date(info.cardInfo.expYear, info.cardInfo.expMonth - 1, 1)

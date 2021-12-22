@@ -18,7 +18,8 @@ export type CardStatus =
   | 'KYC_PENDING' // user has passed KYC, it is being verified (wait)
   | 'CARD_ORDER_PENDING' // user has verified phone and passed KYC, we would order card;
   | 'CARD_SHIPPED' // the card is ordered, to be shipped
-  | 'CARD_ACTIVE'; // the card is active
+  | 'CARD_ACTIVE' // the card is active (outer status)
+  | 'ACTIVE'; // the card is active (inner status)
 
 export type EventHistoryItemMinimal = {
   timestamp: number;
@@ -42,12 +43,20 @@ type BaseResponse = {
 };
 
 export type CardInfo = {
+  // card status while it's should be active
+  // (e.g. frozen, expired)
+  // Note: check if this field is active
+  status: CardStatus;
+  // customer name
   displayName: string;
   last4Digits: string;
+  // expiration month (natural, 1-based index)
   expMonth: number;
+  // expiraton year (natural, 1-based index)
   expYear: number;
   currency: string;
   type: string;
+  // ISO string
   issueDate: string;
   temporaryBlocked: boolean;
   iban: string;
