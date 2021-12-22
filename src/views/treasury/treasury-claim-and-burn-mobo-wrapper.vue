@@ -25,10 +25,12 @@
       :selected-token-description="description"
       :transfer-error="transferError"
       @review-tx="handleTxReview"
-      @select-max-amount="handleSelectMaxAmount"
       @toggle-input-mode="handleToggleInputMode"
-      @update-amount="handleUpdateAmount"
-    />
+    >
+      <template v-slot:input>
+        <span class="input-span">{{ value }}</span>
+      </template>
+    </prepare-form>
     <review-form
       v-else-if="step === 'review'"
       :amount="inputAmount"
@@ -70,12 +72,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import {
-  convertAmountFromNativeValue,
-  convertNativeAmountFromAmount,
-  greaterThan,
-  multiply
-} from '@/utils/bigmath';
+import { convertNativeAmountFromAmount, notZero } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { claimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMobo';
@@ -192,8 +189,31 @@ export default Vue.extend({
       }
       return `~ $${formatToNative(this.inputAmountNative)}`;
     },
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    value(): string {
+      if (this.inputMode === 'TOKEN') {
+        return `${this.inputAmount} ${this.inputAsset.symbol}`;
+      }
+
+      return `${this.inputAmountNative} ${this.nativeCurrencySymbol}`;
+    },
     description(): string {
       return this.$t('treasury.claimAndBurnMOBO.txtYouChooseMOBO') as string;
+    }
+  },
+  beforeMount() {
+    this.inputAmount = this.inputAsset.balance;
+    this.inputAmountNative = new BigNumber(
+      convertNativeAmountFromAmount(
+        this.inputAsset.balance,
+        this.inputAsset.priceUSD
+      )
+    ).toFixed(2);
+
+    if (!notZero(this.inputAmount)) {
+      this.transferError = 'TODO error';
     }
   },
   methods: {
@@ -235,18 +255,6 @@ export default Vue.extend({
       }
       this.inputMode = 'NATIVE';
     },
-    async handleSelectMaxAmount(): Promise<void> {
-      if (this.inputMode === 'TOKEN') {
-        await this.updateAmount(this.inputAsset.balance, 'TOKEN');
-      } else {
-        await this.updateAmount(
-          new BigNumber(
-            multiply(this.inputAsset.balance, this.inputAsset.priceUSD)
-          ).toFixed(2, BigNumber.ROUND_DOWN),
-          'NATIVE'
-        );
-      }
-    },
     async handleTxReview(): Promise<void> {
       this.isSubsidizedEnabled = false;
       this.isProcessing = true;
@@ -277,60 +285,6 @@ export default Vue.extend({
 
       this.isProcessing = false;
       this.step = 'review';
-    },
-    async handleUpdateAmount(val: string): Promise<void> {
-      await this.updateAmount(val, this.inputMode);
-    },
-    async updateAmount(value: string, mode: InputMode): Promise<void> {
-      if (this.isLoading) {
-        return;
-      }
-
-      this.isLoading = true;
-
-      try {
-        if (mode === 'TOKEN') {
-          this.inputAmount = value;
-          this.inputAmountNative = new BigNumber(
-            convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
-          ).toFixed(2);
-
-          if (greaterThan(this.inputAmount, this.inputAsset.balance)) {
-            this.transferError = this.$t(
-              'treasury.claimAndBurnMOBO.lblBurnLimitReached'
-            ) as string;
-            return;
-          }
-
-          this.transferError = undefined;
-        } else {
-          this.inputAmount = convertAmountFromNativeValue(
-            value,
-            this.inputAsset.priceUSD,
-            this.inputAsset.decimals
-          );
-          this.inputAmountNative = value;
-
-          if (greaterThan(this.inputAmount, this.inputAsset.balance)) {
-            this.transferError = this.$t(
-              'treasury.claimAndBurnMOBO.lblBurnLimitReached'
-            ) as string;
-            return;
-          }
-          this.transferError = undefined;
-        }
-      } catch (err) {
-        this.transferError = this.$t('exchangeError') as string;
-        console.error(`transfer error: ${err}`);
-        Sentry.captureException(err);
-        if (mode === 'TOKEN') {
-          this.inputAmountNative = '0';
-        } else {
-          this.inputAmount = '0';
-        }
-      } finally {
-        this.isLoading = false;
-      }
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
       if (this.inputAmount === '') {
