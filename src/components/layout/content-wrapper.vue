@@ -1,18 +1,18 @@
 <template>
   <div class="dashboard">
-    <back-button
-      v-if="hasBackButton"
-      class="page-back-button"
-      @close="handleBack"
-    />
     <slot name="left-rail" />
-    <back-button
-      v-if="hasCloseButton"
-      class="page-close-button"
-      :mode="isBlackCloseButton ? 'CLOSE-BLACK' : 'CLOSE'"
-      @close="handleClose"
-    />
     <div class="page-content" :class="pageContentClass">
+      <back-button
+        v-if="hasBackButton"
+        class="page-back-button"
+        @back="handleBack"
+      />
+      <close-button
+        v-if="hasCloseButton"
+        class="page-close-button"
+        :is-black="isBlackCloseButton"
+        @close="handleClose"
+      />
       <main class="wrapper">
         <slot></slot>
       </main>
@@ -24,12 +24,13 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import { BackButton } from '@/components/buttons';
+import { BackButton, CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'ContentWrapper',
   components: {
-    BackButton
+    BackButton,
+    CloseButton
   },
   props: {
     hasLeftRail: {

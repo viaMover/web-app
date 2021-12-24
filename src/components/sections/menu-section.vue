@@ -1,7 +1,7 @@
 <template>
-  <div class="general-desktop__menu-wrapper-navigation">
-    <div class="general-desktop__menu-wrapper-navigation-left">
-      <menu-list>
+  <div class="navigation-wrapper">
+    <nav class="card items">
+      <ul>
         <menu-list-emoji-card-item
           :description="debitCardDescription"
           :description-class="debitCardDescriptionClass"
@@ -58,10 +58,11 @@
           pic="Bonds"
           :title="$t('menu.lblBonds')"
         />
-      </menu-list>
-    </div>
-    <div class="general-desktop__menu-wrapper-navigation-right">
-      <menu-list>
+      </ul>
+    </nav>
+
+    <nav class="link items">
+      <ul>
         <menu-list-icon-item
           :icon="$t('menu.lblSwapTokenEmoji')"
           :modal-id="ModalType.Swap"
@@ -93,8 +94,8 @@
           :icon="$t('menu.lblPurchaseBondsEmoji')"
           :text="$t('menu.lblPurchaseBonds')"
         />
-      </menu-list>
-    </div>
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -108,7 +109,6 @@ import { add } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 
 import {
-  MenuList,
   MenuListEmojiCardItem,
   MenuListIconItem
 } from '@/components/home/menu-list';
@@ -117,7 +117,6 @@ import { CustomPicture } from '@/components/html5';
 export default Vue.extend({
   name: 'MenuSection',
   components: {
-    MenuList,
     MenuListEmojiCardItem,
     MenuListIconItem,
     CustomPicture

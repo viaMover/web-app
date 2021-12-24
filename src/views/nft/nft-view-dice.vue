@@ -19,7 +19,6 @@
           />
         </shop-list>
         <action-button
-          button-class="button button-active"
           :text="$t('NFTs.btn.dice.get.txt')"
           @button-click="handleClaim(20)"
         />

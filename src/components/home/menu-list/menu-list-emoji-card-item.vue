@@ -1,5 +1,5 @@
 <template>
-  <li :class="itemClass">
+  <li class="item" :class="itemClass">
     <router-link class="button-active" :to="{ name: this.navigateToName }">
       <div class="image">
         <slot name="picture">

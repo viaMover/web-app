@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <li class="item">
     <button class="button-active" @click="handleClick">
       <span class="icon">{{ icon }}</span>
       <span class="description">{{ text }}</span>

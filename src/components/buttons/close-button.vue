@@ -1,20 +1,26 @@
 <template>
   <action-button class="button round" @button-click="handleClick">
-    <arrow-left-icon />
+    <img
+      v-if="isBlack"
+      :alt="$t('icon.txtCloseIconAlt')"
+      src="@/assets/images/back_cross.svg"
+    />
+    <img
+      v-else
+      :alt="$t('icon.txtCloseIconAlt')"
+      src="@/assets/images/cross.svg"
+    />
   </action-button>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import ArrowLeftIcon from '@/components/controls/arrow-left-icon.vue';
-
 import ActionButton from './action-button.vue';
 
 export default Vue.extend({
   name: 'BackButton',
   components: {
-    ArrowLeftIcon,
     ActionButton
   },
   props: {
@@ -25,7 +31,7 @@ export default Vue.extend({
   },
   methods: {
     handleClick() {
-      this.$emit('back');
+      this.$emit('close');
     }
   }
 });
