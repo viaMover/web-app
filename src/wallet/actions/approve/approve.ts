@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { MAXUINT256 } from '@/utils/consts';
@@ -30,14 +32,18 @@ export const approve = async (
         maxFeePerGas: gasPrice ? undefined : null
       } as TransactionsParams;
 
-      tokenContract.methods
-        .approve(spenderAddress, MAXUINT256)
+      (
+        tokenContract.methods.approve(
+          spenderAddress,
+          MAXUINT256
+        ) as ContractSendMethod
+      )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Approve txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Approve txn receipt: ${receipt}`);
           resolve();
         })

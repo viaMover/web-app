@@ -37,7 +37,7 @@
           <p>
             {{ $t('forms.lblSwappingFor') }}
             <custom-picture
-              :alt="$t('lblUSDcTokenAlt')"
+              :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
               class="token"
               :sources="usdcPicture.sources"
               :src="usdcPicture.src"
@@ -57,7 +57,7 @@
       :input-amount-native-title="$t('savings.deposit.lblAndTotalOf')"
       :input-amount-title="$t('savings.deposit.lblAmountWeDepositIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
@@ -198,6 +198,11 @@ export default Vue.extend({
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
     },
     isSwapNeeded(): boolean {
       if (this.inputAsset === undefined) {

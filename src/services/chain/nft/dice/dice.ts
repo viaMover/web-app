@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { floorDivide, multiply } from '@/utils/bigmath';
@@ -7,7 +9,7 @@ import { Network } from '@/utils/networkTypes';
 import { NFT_DICE_ABI, NFT_DICE_ADDRESS } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
+import { Step } from '@/components/forms/form-loader/types';
 
 import { DiceData, DiceType } from './types';
 
@@ -82,20 +84,21 @@ export const claimDice = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: gasLimit ? web3.utils.toBN(gasLimit).toNumber() : undefined,
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {
-    dice.methods
-      .claimNFT(diceType)
+    (dice.methods.claimNFT(diceType) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
         console.log(`Claim txn receipt: ${receipt}`);
         resolve();
       })

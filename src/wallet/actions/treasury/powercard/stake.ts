@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
@@ -9,8 +11,6 @@ import {
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
-
 import { approvePowercard, isPowercardApproved } from './approve';
 
 export const stakePowercardCompound = async (
@@ -19,7 +19,7 @@ export const stakePowercardCompound = async (
   accountAddress: string,
   actionGasLimit: string,
   approveGasLimit: string,
-  changeStepToProcess: (step: Step) => Promise<void>
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   if (network !== Network.mainnet) {
     throw new Error(
@@ -65,11 +65,9 @@ export const stake = async (
   accountAddress: string,
   contractAddress: string,
   gasLimit: string,
-  changeStepToProcess: (step: Step) => Promise<void>
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   console.log('Executing powercard stake...');
-  changeStepToProcess('Confirm');
-
   const contractABI = POWERCARD_STAKER_ABI;
 
   try {
@@ -88,14 +86,13 @@ export const stake = async (
     console.log('[powercard stake] transactionParams:', transactionParams);
 
     await new Promise<void>((resolve, reject) => {
-      powercardStaker.methods
-        .stakePowercard()
+      (powercardStaker.methods.stakePowercard() as ContractSendMethod)
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Powercard stake txn hash: ${hash}`);
-          changeStepToProcess('Process');
+          changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Powercard stake txn receipt: ${receipt}`);
           resolve();
         })

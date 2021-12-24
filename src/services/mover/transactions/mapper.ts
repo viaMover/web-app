@@ -37,6 +37,8 @@ export const getTransactionHumanType = (
         return 'Receive';
       }
       return 'Decrease Boost';
+    case 'card_topup':
+      return 'Card top up';
     case 'execute_swap':
     case 'unknown':
     default:

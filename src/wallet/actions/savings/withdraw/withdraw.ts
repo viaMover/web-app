@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { getPureEthAddress } from '@/utils/address';
@@ -102,14 +104,18 @@ export const withdraw = async (
     );
 
     await new Promise<void>((resolve, reject) => {
-      holyHand.methods
-        .withdrawFromPool(poolAddress, outputAmountInWEI)
+      (
+        holyHand.methods.withdrawFromPool(
+          poolAddress,
+          outputAmountInWEI
+        ) as ContractSendMethod
+      )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Savings withdraw txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Savings withdraw txn receipt: ${receipt}`);
           resolve();
         })

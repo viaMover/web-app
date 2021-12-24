@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
@@ -9,22 +11,18 @@ import {
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
-
 export const approvePowercard = async (
   approveGasLimit: string,
   contractAddress: string,
   accountAddress: string,
   network: Network,
   web3: Web3,
-  changeStepToProcess: (step: Step) => Promise<void>
+  changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
   if (network !== Network.mainnet) {
     console.log('Powercard is disabled for not ethereum mainnet: ', network);
     return;
   }
-
-  changeStepToProcess('Confirm');
 
   try {
     const transactionParams = {
@@ -46,14 +44,18 @@ export const approvePowercard = async (
     console.log('[powercard approve] transactionParams:', transactionParams);
 
     await new Promise<void>((resolve, reject) => {
-      rari.methods
-        .setApprovalForAll(contractAddress, true)
+      (
+        rari.methods.setApprovalForAll(
+          contractAddress,
+          true
+        ) as ContractSendMethod
+      )
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Powercard approve txn hash: ${hash}`);
-          changeStepToProcess('Process');
+          changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Powercard approve txn receipt: ${receipt}`);
           resolve();
         })

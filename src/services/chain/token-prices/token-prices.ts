@@ -9,6 +9,7 @@ import {
   getEURSAssetData,
   getUSDCAssetData,
   MOVE_ADDRESS,
+  OHM_ADDRESS,
   SUSHISWAP_MOVE_WETH_POOL_ADDRESS,
   UNISWAP_EURS_WETH_POOL_ADDRESS,
   UNISWAP_USDC_WETH_POOL_ADDRESS,
@@ -74,6 +75,69 @@ export const getMOVEPriceInWETH = async (
   } catch (error) {
     throw new Error(
       `error get MOVE price in WETH from SUSHISWAP MOVE-WETH pool: ${JSON.stringify(
+        error
+      )}`
+    );
+  }
+};
+
+export const getOlympusPriceInWETH = async (
+  accountAddress: string,
+  network: Network,
+  web3: Web3
+): Promise<string> => {
+  if (network !== Network.mainnet) {
+    console.log(
+      'get Olympus price in WETH is disabled for not ethereum mainnet: ',
+      network
+    );
+    return '0';
+  }
+
+  const contractAddressOHM = OHM_ADDRESS(network);
+  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+
+  const contractSushiswapOHMWETHPoolAddress =
+    SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network);
+
+  const contractOHM = new web3.eth.Contract(
+    ERC20_ABI as AbiItem[],
+    contractAddressOHM
+  );
+
+  const contractWETH = new web3.eth.Contract(
+    ERC20_ABI as AbiItem[],
+    contractAddressWETH
+  );
+
+  try {
+    console.log('get OHM-WETH price...');
+    const transactionParams = {
+      from: accountAddress
+    } as TransactionsParams;
+
+    const olympusPoolAmountResponse = await contractOHM.methods
+      .balanceOf(contractSushiswapOHMWETHPoolAddress)
+      .call(transactionParams);
+
+    const olympusPoolAmount = olympusPoolAmountResponse.toString();
+    console.log('sushiswap OHM-WETH pool, MOVE amount: ', olympusPoolAmount);
+
+    const wethPoolAmountResponse = await contractWETH.methods
+      .balanceOf(contractSushiswapOHMWETHPoolAddress)
+      .call(transactionParams);
+
+    const wethPoolAmount = wethPoolAmountResponse.toString();
+    console.log('sushiswap OHM-WETH pool, WETH amount: ', wethPoolAmount);
+
+    // IMPORTANT: we can divide WEI by WEI coz OHM has the same decimals as WETH
+    const olympusPriceInWETH = divide(wethPoolAmount, olympusPoolAmount);
+    console.log('olympusPriceInWETH: ', olympusPriceInWETH);
+
+    return olympusPriceInWETH;
+  } catch (error) {
+    throw new Error(
+      `error get OHM price in WETH from SUSHISWAP OHM-WETH pool: ${JSON.stringify(
         error
       )}`
     );

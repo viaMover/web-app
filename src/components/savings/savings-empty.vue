@@ -1,19 +1,25 @@
 <template>
   <secondary-page hide-title>
-    <div class="savings__menu-wrapper-graph">
-      <div class="savings__menu-wrapper-balance">
-        <span class="balance">{{ savingsBalance }}</span>
-        <p class="black">{{ $t('savings.txtYouCouldApproximately') }}</p>
-      </div>
+    <div class="empty-state-graph-wrapper">
+      <secondary-page-simple-title
+        class="balance"
+        :description="$t('savings.txtYouCouldApproximately')"
+        :title="savingsBalance"
+      />
       <bar-chart
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
       />
       <p class="margin-top">{{ $t('savings.txtIfYouDeposit') }}</p>
-      <div class="savings__menu-wrapper-body">
-        <span class="title">{{ currentVariableAPY }}</span>
-        <p class="description black">{{ $t('savings.lblAPYOnAllSavings') }}</p>
+      <div class="body margin-top-20">
+        <product-info-wrapper>
+          <product-info-item
+            :description="$t('savings.lblAPYOnAllSavings')"
+            is-black-description
+            :title="currentVariableAPY"
+          />
+        </product-info-wrapper>
         <action-button
           button-class="button button-active bold"
           :text="$t('savings.lblStartSaving')"
@@ -26,31 +32,28 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 import { SavingsMonthBalanceItem } from '@/services/mover';
-import { Modal as ModalType } from '@/store/modules/modals/types';
 import { divide, multiply } from '@/utils/bigmath';
 import { formatPercents, formatToNative } from '@/utils/format';
 
-import ActionButton from '@/components/buttons/action-button.vue';
+import { ActionButton } from '@/components/buttons';
 import { BarChart } from '@/components/charts';
-import { SecondaryPage } from '@/components/layout';
+import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
   components: {
+    ProductInfoItem,
+    ProductInfoWrapper,
+    SecondaryPageSimpleTitle,
     ActionButton,
     SecondaryPage,
     BarChart
   },
-  data() {
-    return {
-      popoverParentId: 'savings-empty-action-buttons'
-    };
-  },
   computed: {
-    ...mapGetters('account', { hasActiveSavings: 'hasActiveSavings' }),
     ...mapState('account', { apy: 'savingsAPY' }),
     savingsBalance(): string {
       const apyNative = multiply(divide(this.apy, '100'), '10000');
@@ -70,32 +73,7 @@ export default Vue.extend({
       }));
     }
   },
-  watch: {
-    hasActiveSavings(newVal: boolean) {
-      if (newVal) {
-        this.replaceActiveSavingsRoute();
-      }
-    }
-  },
-  beforeMount() {
-    if (this.hasActiveSavings) {
-      this.replaceActiveSavingsRoute();
-    }
-  },
   methods: {
-    ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
-    replaceActiveSavingsRoute(): void {
-      this.$router.replace({
-        name: 'savings-manage'
-      });
-    },
-    toggleDeposit(): void {
-      this.setModalIsDisplayed({
-        id: ModalType.SavingsDeposit,
-        value: true,
-        payload: {}
-      });
-    },
     async handleDepositClick(): Promise<void> {
       await this.$router.push({
         name: 'savings-deposit'

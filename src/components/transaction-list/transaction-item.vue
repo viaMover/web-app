@@ -49,10 +49,20 @@ export default Vue.extend({
   computed: {
     ...mapState('account', ['networkInfo']),
     head(): string {
-      return getTransactionHumanType(
+      const moverTransactionHeader = getTransactionHumanType(
         this.transaction,
         this.networkInfo.network
       );
+
+      if (
+        this.$te(`transactionTypes.${moverTransactionHeader.toLowerCase()}`)
+      ) {
+        return this.$t(
+          `transactionTypes.${moverTransactionHeader.toLowerCase()}`
+        ) as string;
+      }
+
+      return moverTransactionHeader;
     },
     subhead(): string {
       if (

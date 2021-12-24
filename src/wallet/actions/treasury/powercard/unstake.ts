@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
@@ -84,14 +86,13 @@ export const unstake = async (
     console.log('[powercard stake] transactionParams:', transactionParams);
 
     await new Promise<void>((resolve, reject) => {
-      powercardStaker.methods
-        .unstakePowercard()
+      (powercardStaker.methods.unstakePowercard() as ContractSendMethod)
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Powercard unstake txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Powercard unstake txn receipt: ${receipt}`);
           resolve();
         })

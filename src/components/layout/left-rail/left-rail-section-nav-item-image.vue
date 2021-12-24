@@ -12,10 +12,12 @@
     </div>
     <div class="info">
       <slot name="title">
-        <h3 :class="titleClass">{{ title }}</h3>
+        <h3 v-if="title !== ''" :class="titleClass">{{ title }}</h3>
       </slot>
       <slot name="description">
-        <p :class="descriptionClass">{{ description }}</p>
+        <p v-if="description !== ''" :class="descriptionClass">
+          {{ description }}
+        </p>
       </slot>
     </div>
   </router-link>

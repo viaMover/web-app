@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { floorDivide, multiply, sub } from '@/utils/bigmath';
@@ -10,7 +12,7 @@ import {
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/controls/form-loader/types';
+import { Step } from '@/components/forms/form-loader/types';
 
 import { UnexpectedMoveData } from './types';
 
@@ -102,20 +104,21 @@ export const claimUnexpectedMove = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {
-    unexpectedMove.methods
-      .claimNFT(signature)
+    (unexpectedMove.methods.claimNFT(signature) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
         console.log(`Claim txn receipt: ${receipt}`);
         resolve();
       })
@@ -176,20 +179,21 @@ export const claimAndExchangeUnexpectedMove = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {
-    unexpectedMove.methods
-      .claimAsMoverToken(signature)
+    (unexpectedMove.methods.claimAsMoverToken(signature) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim and exchange txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
         console.log(`Claim and exchange txn receipt: ${receipt}`);
         resolve();
       })
@@ -248,20 +252,21 @@ export const exchangeUnexpectedMove = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: gasPriceInGwei
+      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
+      : undefined,
+    maxFeePerGas: gasPriceInGwei ? undefined : null,
+    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
   };
 
   await new Promise<void>((resolve, reject) => {
-    unexpectedMove.methods
-      .burnNFTForMoverTokens()
+    (unexpectedMove.methods.burnNFTForMoverTokens() as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Exchange txn hash: ${hash}`);
         changeStep('Process');
       })
-      .once('receipt', (receipt: any) => {
+      .once('receipt', (receipt: TransactionReceipt) => {
         console.log(`Exchange txn receipt: ${receipt}`);
         resolve();
       })

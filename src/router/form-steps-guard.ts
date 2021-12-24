@@ -8,7 +8,7 @@ export const formStepsGuard =
       return;
     }
 
-    if (from.name !== routeName) {
+    if (from.name !== routeName || to.params.step === undefined) {
       next({
         name: routeName,
         params: { step: 'prepare' }
