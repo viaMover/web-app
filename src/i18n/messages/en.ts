@@ -578,7 +578,7 @@ const messages: VueI18n.LocaleMessageObject = {
       lblAndTotalOf: 'The amount you will receive',
       lblReviewYourClaim: 'Review your claim',
       lblBurnLimitReached: 'Burn limit reached',
-      lblDontHaveMOBO: `You don't have any MOBO to convert to UDSC`
+      lblDontHaveMOBO: `You don't have any MOBO to convert to USDC`
     },
     claimAndBurn: {
       lblClaimAndBurn: 'Claim & Burn',

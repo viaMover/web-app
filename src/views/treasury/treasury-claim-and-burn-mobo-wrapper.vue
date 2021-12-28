@@ -39,8 +39,7 @@
       :header-title="$t('treasury.claimAndBurnMOBO.lblReviewYourClaim')"
       :input-amount-native-title="$t('treasury.claimAndBurnMOBO.lblAndTotalOf')"
       :input-amount-title="$t('treasury.claimAndBurnMOBO.lblAmountWeBurnIn')"
-      :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
@@ -80,11 +79,7 @@ import { claimAndBurnMOBO } from '@/wallet/actions/treasury/claimAndBurnMobo/cla
 import { estimateClaimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMoboEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getMoboAssetData, getUSDCAssetData } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -144,7 +139,6 @@ export default Vue.extend({
       isTokenSelectedByUser: false,
 
       //to tx
-      isSubsidizedEnabled: false,
       actionGasLimit: undefined as string | undefined
     };
   },
@@ -192,6 +186,11 @@ export default Vue.extend({
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
     },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
+    },
     value(): string {
       if (this.inputMode === 'TOKEN') {
         return `${this.inputAmount} ${this.inputAsset.symbol}`;
@@ -232,13 +231,8 @@ export default Vue.extend({
         });
       }
     },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
+    async estimateAction(): Promise<CompoundEstimateResponse> {
       const resp = await estimateClaimAndBurnMOBOCompound(
-        inputAsset,
-        inputAmount,
         this.networkInfo.network,
         this.provider.web3,
         this.currentAddress
@@ -258,13 +252,9 @@ export default Vue.extend({
       this.inputMode = 'NATIVE';
     },
     async handleTxReview(): Promise<void> {
-      this.isSubsidizedEnabled = false;
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
-          this.inputAsset
-        );
+        const gasLimits = await this.estimateAction();
 
         this.actionGasLimit = gasLimits.actionGasLimit;
 
@@ -273,7 +263,6 @@ export default Vue.extend({
           this.actionGasLimit
         );
       } catch (err) {
-        this.isSubsidizedEnabled = false;
         this.isProcessing = false;
         console.error(err);
         Sentry.captureException("can't estimate claim and burn MOBO for subs");

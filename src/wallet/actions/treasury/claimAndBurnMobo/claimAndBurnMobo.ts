@@ -4,7 +4,10 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import {
+  SMART_TREASURY_ABI,
+  SMART_TREASURY_ADDRESS
+} from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 export const claimAndBurnMOBO = async (
@@ -17,11 +20,11 @@ export const claimAndBurnMOBO = async (
 ): Promise<void> => {
   console.log('Executing treasury claim and burn MOBO...');
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
-  const contractABI = HOLY_HAND_ABI;
+  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractABI = SMART_TREASURY_ABI;
 
   try {
-    const holyHand = new web3.eth.Contract(
+    const treasury = new web3.eth.Contract(
       contractABI as AbiItem[],
       contractAddress
     );
@@ -37,7 +40,7 @@ export const claimAndBurnMOBO = async (
     } as TransactionsParams;
 
     await new Promise<void>((resolve, reject) => {
-      (holyHand.methods.burnMOBO() as ContractSendMethod)
+      (treasury.methods.burnMOBO() as ContractSendMethod)
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Treasury claim and burn MOBO txn hash: ${hash}`);

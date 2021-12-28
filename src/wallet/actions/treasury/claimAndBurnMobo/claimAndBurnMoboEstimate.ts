@@ -1,106 +1,48 @@
 import Web3 from 'web3';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { sameAddress } from '@/utils/address';
-import { floorDivide, multiply, toWei } from '@/utils/bigmath';
+import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
-import { needApprove } from '@/wallet/actions/approve/needApprove';
 import {
   CompoundEstimateResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
 import {
-  getMoboAssetData,
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS
+  SMART_TREASURY_ABI,
+  SMART_TREASURY_ADDRESS
 } from '@/wallet/references/data';
-import ethDefaults from '@/wallet/references/defaults';
-import { SmallToken, TransactionsParams } from '@/wallet/types';
+import { TransactionsParams } from '@/wallet/types';
 
 export const estimateClaimAndBurnMOBOCompound = async (
-  inputAsset: SmallToken,
-  inputAmount: string,
   network: Network,
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
-
-  let isApproveNeeded = true;
-  try {
-    isApproveNeeded = await needApprove(
-      accountAddress,
-      inputAsset,
-      inputAmount,
-      contractAddress,
-      web3
-    );
-  } catch (err) {
-    console.error(`Can't estimate approve: ${err}`);
-    return {
-      error: true,
-      approveGasLimit: '0',
-      actionGasLimit: '0'
-    };
-  }
-
-  if (isApproveNeeded) {
-    console.log("Needs approve, can't do a proper estimation");
-    try {
-      const approveGasLimit = await estimateApprove(
-        accountAddress,
-        inputAsset.address,
-        contractAddress,
-        web3
-      );
-      return {
-        error: false,
-        actionGasLimit: ethDefaults.basic_holy_treasury_burn,
-        approveGasLimit: approveGasLimit
-      };
-    } catch (err) {
-      console.error(`Can't estimate approve: ${err}`);
-      return {
-        error: true,
-        actionGasLimit: '0',
-        approveGasLimit: '0'
-      };
-    }
-  } else {
-    const claimAndBurnEstimate = await estimateClaimAndBurnMOBO(
-      inputAsset,
-      inputAmount,
-      network,
-      web3,
-      accountAddress
-    );
-    return {
-      error: claimAndBurnEstimate.error,
-      approveGasLimit: '0',
-      actionGasLimit: claimAndBurnEstimate.gasLimit
-    };
-  }
+  const claimAndBurnEstimate = await estimateClaimAndBurnMOBO(
+    network,
+    web3,
+    accountAddress
+  );
+  return {
+    error: claimAndBurnEstimate.error,
+    approveGasLimit: '0',
+    actionGasLimit: claimAndBurnEstimate.gasLimit
+  };
 };
 
 export const estimateClaimAndBurnMOBO = async (
-  inputAsset: SmallToken,
-  inputAmount: string,
   network: Network,
   web3: Web3,
   accountAddress: string
 ): Promise<EstimateResponse> => {
   console.log('Estimating treasury claim and burn MOBO...');
 
-  if (!sameAddress(inputAsset.address, getMoboAssetData(network).address)) {
-    throw 'Only MOBO can be burned';
-  }
-
-  const contractAddress = HOLY_HAND_ADDRESS(network);
-  const contractABI = HOLY_HAND_ABI;
+  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractABI = SMART_TREASURY_ABI;
 
   try {
-    const holyHand = new web3.eth.Contract(
+    const treasury = new web3.eth.Contract(
       contractABI as AbiItem[],
       contractAddress
     );
@@ -109,20 +51,9 @@ export const estimateClaimAndBurnMOBO = async (
       from: accountAddress
     } as TransactionsParams;
 
-    const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
-
-    console.log(
-      '[treasury claim and burn MOBO estimation] input amount in WEI:',
-      inputAmountInWEI
-    );
-    console.log(
-      '[treasury claim and burn MOBO estimation] transactionParams:',
-      transactionParams
-    );
-
-    const gasLimitObj = await holyHand.methods
-      .claimAndBurnMOBO(inputAmountInWEI)
-      .estimateGas(transactionParams);
+    const gasLimitObj = await (
+      treasury.methods.burnMOBO() as ContractSendMethod
+    ).estimateGas(transactionParams);
 
     if (gasLimitObj) {
       const gasLimit = gasLimitObj.toString();
