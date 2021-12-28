@@ -6,6 +6,7 @@
   >
     <prepare-form
       v-if="step === 'prepare'"
+      allow-zero-amount
       :asset="inputAsset"
       :header-description="$t('treasury.claimAndBurnMOBO.txtPageDescription')"
       :header-title="$t('treasury.claimAndBurnMOBO.lblClaimAndBurn')"
@@ -75,7 +76,7 @@ import BigNumber from 'bignumber.js';
 import { convertNativeAmountFromAmount, notZero } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { claimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMobo';
+import { claimAndBurnMOBO } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMobo';
 import { estimateClaimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMoboEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getMoboAssetData, getUSDCAssetData } from '@/wallet/references/data';
@@ -144,8 +145,7 @@ export default Vue.extend({
 
       //to tx
       isSubsidizedEnabled: false,
-      actionGasLimit: undefined as string | undefined,
-      approveGasLimit: undefined as string | undefined
+      actionGasLimit: undefined as string | undefined
     };
   },
   computed: {
@@ -213,7 +213,9 @@ export default Vue.extend({
     ).toFixed(2);
 
     if (!notZero(this.inputAmount)) {
-      this.transferError = 'TODO error';
+      this.transferError = this.$t(
+        'treasury.claimAndBurnMOBO.lblDontHaveMOBO'
+      ) as string;
     }
   },
   methods: {
@@ -265,15 +267,10 @@ export default Vue.extend({
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
-        this.approveGasLimit = gasLimits.approveGasLimit;
 
         console.info(
           'Claim and burn MOBO action gaslimit:',
           this.actionGasLimit
-        );
-        console.info(
-          'Claim and burn MOBO approve gaslimit:',
-          this.approveGasLimit
         );
       } catch (err) {
         this.isSubsidizedEnabled = false;
@@ -309,17 +306,6 @@ export default Vue.extend({
         return;
       }
 
-      if (this.approveGasLimit === undefined) {
-        console.error('approve gas limit is empty during `handleTxStart`');
-        Sentry.addBreadcrumb({
-          type: 'error',
-          category: 'treasury.claim-and-burn-mobo.handleTxStart',
-          message: 'approve gas limit is empty during `handleTxStart`'
-        });
-        Sentry.captureException("can't start treasury claim and burn MOBO TX");
-        return;
-      }
-
       console.log('is smart treasury:', args.isSmartTreasury);
       Sentry.addBreadcrumb({
         type: 'debug',
@@ -330,22 +316,18 @@ export default Vue.extend({
           inputAmount: this.inputAmount,
           network: this.networkInfo.network,
           currentAddress: this.currentAddress,
-          actionGasLimit: this.actionGasLimit,
-          approveGasLimit: this.approveGasLimit
+          actionGasLimit: this.actionGasLimit
         }
       });
 
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await claimAndBurnMOBOCompound(
-          this.inputAsset,
-          this.inputAmount,
+        await claimAndBurnMOBO(
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
           this.actionGasLimit,
-          this.approveGasLimit,
           async () => {
             this.transactionStep = 'Process';
           }

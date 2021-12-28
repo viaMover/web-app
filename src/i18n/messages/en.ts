@@ -575,7 +575,8 @@ const messages: VueI18n.LocaleMessageObject = {
       lblBurnError: 'Burn conditions error',
       lblAndTotalOf: 'The amount you will receive',
       lblReviewYourClaim: 'Review your claim',
-      lblBurnLimitReached: 'Burn limit reached'
+      lblBurnLimitReached: 'Burn limit reached',
+      lblDontHaveMOBO: `You don't have any MOBO to convert to UDSC`
     },
     claimAndBurn: {
       lblClaimAndBurn: 'Claim & Burn',

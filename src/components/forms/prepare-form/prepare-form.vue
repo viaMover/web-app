@@ -127,6 +127,10 @@ export default Vue.extend({
       type: Boolean,
       required: true
     },
+    allowZeroAmount: {
+      type: Boolean,
+      default: false
+    },
     asset: {
       type: Object as PropType<TokenWithBalance | undefined>,
       default: undefined
@@ -205,14 +209,17 @@ export default Vue.extend({
       if (this.asset === undefined) {
         return this.$t('forms.lblChooseToken') as string;
       }
-      if (this.transferError !== undefined) {
-        return this.transferError;
-      }
-      if (!notZero(this.inputAmount)) {
+      if (!notZero(this.inputAmount) && !this.allowZeroAmount) {
         return this.$t('forms.lblChooseAmount') as string;
       }
-      if (greaterThan(this.inputAmount, this.asset?.balance ?? 0)) {
+      if (
+        greaterThan(this.inputAmount, this.asset?.balance ?? 0) &&
+        !this.allowZeroAmount
+      ) {
         return this.$t('lblInsufficientBalance') as string;
+      }
+      if (this.transferError !== undefined) {
+        return this.transferError;
       }
       return undefined;
     },
