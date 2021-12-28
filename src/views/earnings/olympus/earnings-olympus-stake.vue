@@ -55,7 +55,7 @@
       :input-amount-native-title="$t('earnings.lblAndTotalOf')"
       :input-amount-title="$t('earnings.lblAmountWeDepositIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleCreateTx"
     />
@@ -159,6 +159,14 @@ export default Vue.extend({
     ...mapGetters('account', {
       treasuryBonusNative: 'treasuryBonusNative'
     }),
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
+    },
     showBackButton(): boolean {
       return this.currentStep !== 'loader';
     },

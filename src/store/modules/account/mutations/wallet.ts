@@ -49,24 +49,7 @@ export default {
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
     state.tokens = sortAndDeduplicateTokens(tokens);
-
-    const searchOptions = {
-      keys: [
-        {
-          name: 'name',
-          weight: 1
-        },
-        {
-          name: 'symbol',
-          weight: 2.5
-        }
-      ],
-      findAllMatches: true,
-      threshold: 0,
-      shouldSort: true
-    };
-    const index = Fuse.createIndex(searchOptions.keys, state.tokens);
-    state.tokensSearcher = undefined; //new Fuse(state.tokens, searchOptions, index);
+    state.tokensSearcher = undefined;
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];

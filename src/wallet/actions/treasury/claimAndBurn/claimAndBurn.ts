@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { sameAddress } from '@/utils/address';
@@ -101,14 +103,13 @@ export const claimAndBurn = async (
     );
 
     await new Promise<void>((resolve, reject) => {
-      holyHand.methods
-        .claimAndBurn(inputAmountInWEI)
+      (holyHand.methods.claimAndBurn(inputAmountInWEI) as ContractSendMethod)
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Treasury claim and burn txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Treasury claim and burnt txn receipt: ${receipt}`);
           resolve();
         })

@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { sameAddress } from '@/utils/address';
@@ -78,7 +80,7 @@ export const withdraw = async (
     console.log('[treasury withdraw] output amount in WEI:', outputAmountInWEI);
     console.log('[treasury withdraw] transactionParams:', transactionParams);
 
-    let withdrawFunc: any;
+    let withdrawFunc: ContractSendMethod;
     if (sameAddress(outputAsset.address, move.address)) {
       withdrawFunc = holyHand.methods.withdraw(outputAmountInWEI, '0');
     } else if (sameAddress(outputAsset.address, slp.address)) {
@@ -96,7 +98,7 @@ export const withdraw = async (
           console.log(`Treasury withdraw txn hash: ${hash}`);
           changeStepToProcess();
         })
-        .once('receipt', (receipt: any) => {
+        .once('receipt', (receipt: TransactionReceipt) => {
           console.log(`Treasury withdraw txn receipt: ${receipt}`);
           resolve();
         })

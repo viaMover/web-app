@@ -1,5 +1,9 @@
 import Vue from 'vue';
-import VueRouter, { RawLocation, RouteConfig } from 'vue-router';
+import VueRouter, {
+  NavigationFailureType,
+  RawLocation,
+  RouteConfig
+} from 'vue-router';
 
 import { loadLanguageAsync } from '@/i18n';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
@@ -405,7 +409,7 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
       ),
     children: [
       {
-        path: 'top-up/step/:step?',
+        path: 'top-up/step/:step',
         name: 'debit-card-top-up',
         component: () =>
           import(
@@ -649,5 +653,17 @@ router.beforeEach((to, from, next) => {
 });
 
 router.beforeResolve(requireWalletAuth(['connect-wallet', 'not-found-route']));
+
+router.onError((error) => {
+  if (
+    VueRouter.isNavigationFailure(error, NavigationFailureType.duplicated) ||
+    VueRouter.isNavigationFailure(error, NavigationFailureType.redirected)
+  ) {
+    console.warn(`prevented navigation: ${error.message} (${error.type})`);
+    return;
+  }
+
+  throw error;
+});
 
 export default router;
