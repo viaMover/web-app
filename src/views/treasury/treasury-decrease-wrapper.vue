@@ -43,7 +43,7 @@
       :input-amount-native-title="$t('treasury.decreaseBoost.lblAndTotalOf')"
       :input-amount-title="$t('treasury.decreaseBoost.lblAmountWeRemoveIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="inputAmountNative"
+      :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     />
@@ -69,7 +69,7 @@ import {
   multiply,
   sub
 } from '@/utils/bigmath';
-import { formatToDecimals } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
 import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
@@ -162,10 +162,19 @@ export default Vue.extend({
       'provider',
       'ethPrice',
       'gasPrices',
+      'nativeCurrency',
       'powercardState'
     ]),
     hasBackButton(): boolean {
       return this.step !== 'loader';
+    },
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    formattedNativeAmount(): string {
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
     },
     moveTokenInfo(): SmallTokenInfoWithIcon {
       return getMoveAssetData(this.networkInfo.network);

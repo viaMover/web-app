@@ -40,7 +40,7 @@
       </div>
       <div class="item">
         <h2>{{ inputAmountNativeTitle }}</h2>
-        <span>{{ formattedNativeAmount }}</span>
+        <span>{{ nativeAmount }}</span>
       </div>
     </div>
     <div v-if="isSubsidizedEnabled">
@@ -141,9 +141,6 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', ['networkInfo', 'nativeCurrency']),
-    nativeCurrencySymbol(): string {
-      return this.nativeCurrency.toUpperCase();
-    },
     formattedAmount(): string {
       return `${formatToDecimals(this.amount, 4)} ${this.token.symbol}`;
     },
@@ -155,11 +152,6 @@ export default Vue.extend({
         return this.$t('lblNoData') as string;
       }
       return `$${formatToNative(this.estimatedGasCost)}`;
-    },
-    formattedNativeAmount(): string {
-      return `${formatToNative(this.nativeAmount)} ${
-        this.nativeCurrencySymbol
-      }`;
     }
   },
   methods: {

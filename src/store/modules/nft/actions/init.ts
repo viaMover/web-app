@@ -10,8 +10,7 @@ import {
   getOlympusData,
   getSweetAndSourData,
   getUnexpectedMoveData,
-  getVaultsData,
-  VaultsData
+  getVaultsData
 } from '@/services/chain';
 import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';

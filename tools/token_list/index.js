@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   existsSync,
   mkdirSync,
@@ -6,13 +7,18 @@ import {
   readFileSync,
   writeFileSync
 } from 'fs';
-import simpleGit from 'simple-git';
-import { basename, join } from 'path';
-import Vibrant from 'node-vibrant';
 import logger from 'node-color-log';
-import axios from 'axios';
+import Vibrant from 'node-vibrant';
+import { basename, join } from 'path';
+import simpleGit from 'simple-git';
 
-const alsoIncludedAddresses = ['0x383518188c0c6d7730d91b2c03a03c837814a899'];
+const alsoIncludedAddresses = [
+  '0x383518188c0c6d7730d91b2c03a03c837814a899', // OHM
+  '0x04f2694c8fcee23e8fd0dfea1d4f5bb8c352111f', // SOHM
+  '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f', // GOHM
+  '0x8cd309e14575203535ef120b5b0ab4dded0c2073', // WSOHM
+  '0x090185f2135308bad17527004364ebcc2d37e5f6' // SPELL
+];
 
 const isDirEmpty = (dir) => {
   if (!existsSync(dir)) {
@@ -77,6 +83,10 @@ const getCoingekoList = async () => {
 
 const getExtendedCoingeckoTokenData = async (id) => {
   try {
+    if (id === undefined) {
+      return undefined;
+    }
+
     return (
       await axios.get(
         `https://api.coingecko.com/api/v3/coins/${id}?localization=false&tickers=false&market_data=false&community_data=true&developer_data=false&sparkline=false`
@@ -94,12 +104,13 @@ const getExtendedCoingeckoTokenData = async (id) => {
 
 const getEthplorerTokenData = async (address, deep = 0) => {
   try {
-    const result = await axios.get(
-      `https://api.ethplorer.io/getTokenInfo/${address}?apiKey=freekey`
-    );
-
-    // handle too many requests
-    if (result.status === 429) {
+    return (
+      await axios.get(
+        `https://api.ethplorer.io/getTokenInfo/${address}?apiKey=freekey`
+      )
+    ).data;
+  } catch (e) {
+    if (axios.isAxiosError(e) && e.response?.status === 429) {
       if (deep > 2) {
         logger.error(
           'failed to get ethplorer info for',
@@ -109,15 +120,13 @@ const getEthplorerTokenData = async (address, deep = 0) => {
         return undefined;
       }
 
+      logger.warn('ethplorer api returns 429 for', address, 'waiting');
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve();
         }, 10000);
       }).then(async () => await getEthplorerTokenData(address, deep + 1));
     }
-
-    return result.data;
-  } catch (e) {
     logger.error('failed to get ethplorer info for', address, e.message ?? e);
     return undefined;
   }
@@ -179,68 +188,65 @@ const enrichWithTWdata = async (assetAddresses) => {
 };
 
 const enrichWithCoingeckoData = async (assets) => {
-  const coingeckoList = await getCoingekoList();
+  const coingeckoList = (await getCoingekoList()).filter(
+    (c) => c?.platforms?.ethereum
+  );
   return await Promise.all(
     assets.map(async (as) => {
-      const coingeckoAsset = coingeckoList
-        .filter((c) => c?.platforms?.ethereum)
-        .find((cas) => {
-          return (
-            (cas?.platforms?.ethereum ?? '').toLowerCase() ===
-            (as?.id ?? '').toLowerCase()
-          );
-        });
-      if (coingeckoAsset !== undefined) {
-        if (as.isIncomplete) {
-          const [coingeckoExtendedToken, ethplorerToken] = await Promise.all([
-            getExtendedCoingeckoTokenData(coingeckoAsset.id),
-            getEthplorerTokenData(as.id)
-          ]);
+      const coingeckoAsset = coingeckoList.find((cas) => {
+        return (
+          (cas?.platforms?.ethereum ?? '').toLowerCase() ===
+          (as?.id ?? '').toLowerCase()
+        );
+      });
 
-          if (
-            coingeckoExtendedToken === undefined ||
-            ethplorerToken === undefined
-          ) {
-            logger.warn('failed to get remote info for', as.id);
-            return as;
-          }
+      if (as.isIncomplete) {
+        const [coingeckoExtendedToken, ethplorerToken] = await Promise.all([
+          getExtendedCoingeckoTokenData(coingeckoAsset?.id),
+          getEthplorerTokenData(as.id)
+        ]);
 
-          const recoveredData = {
-            ...as,
-            isIncomplete: false,
-            coingeckoId: coingeckoAsset.id,
-            name: coingeckoAsset.name,
-            symbol: coingeckoAsset.symbol.toUpperCase(),
-            description: coingeckoExtendedToken.description?.en ?? '',
-            explorer:
-              coingeckoExtendedToken?.links?.blockchain_site?.find((url) =>
-                url.includes('etherscan.io/token/')
-              ) ?? `https://etherscan.io/token/${as.id}`,
-            status: 'active',
-            type: 'ERC20',
-            decimals: Number.parseInt(ethplorerToken.decimals),
-            website:
-              coingeckoExtendedToken.links?.homepage?.find((url) => !!url) ??
-              '',
-            imageUrl: coingeckoExtendedToken.image?.large ?? undefined,
-            color: undefined
-          };
-
-          if (recoveredData.imageUrl) {
-            recoveredData.color = await getAssetImageColor(
-              recoveredData.imageUrl,
-              as.id
-            );
-          }
-
-          delete recoveredData.isIncomplete;
-
-          return recoveredData;
+        if (
+          coingeckoExtendedToken === undefined ||
+          ethplorerToken === undefined
+        ) {
+          logger.warn('failed to get remote info for', as.id);
+          return as;
         }
 
-        return { ...as, coingeckoId: coingeckoAsset.id };
+        const recoveredData = {
+          ...as,
+          isIncomplete: false,
+          coingeckoId: coingeckoAsset.id,
+          name: coingeckoAsset.name,
+          symbol: coingeckoAsset.symbol.toUpperCase(),
+          description: coingeckoExtendedToken.description?.en ?? '',
+          explorer:
+            coingeckoExtendedToken?.links?.blockchain_site?.find((url) =>
+              url.includes('etherscan.io/token/')
+            ) ?? `https://etherscan.io/token/${as.id}`,
+          status: 'active',
+          type: 'ERC20',
+          decimals: Number.parseInt(ethplorerToken.decimals),
+          website:
+            coingeckoExtendedToken.links?.homepage?.find((url) => !!url) ?? '',
+          imageUrl: coingeckoExtendedToken.image?.large ?? undefined,
+          color: undefined
+        };
+
+        if (recoveredData.imageUrl) {
+          recoveredData.color = await getAssetImageColor(
+            recoveredData.imageUrl,
+            as.id
+          );
+        }
+
+        delete recoveredData.isIncomplete;
+
+        return recoveredData;
       }
-      return { ...as, coingeckoId: undefined };
+
+      return { ...as, coingeckoId: coingeckoAsset?.id };
     })
   );
 };

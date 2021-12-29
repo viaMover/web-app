@@ -169,7 +169,9 @@ export default {
   ): Promise<void> {
     try {
       const web3Inst = new Web3(payload.provider);
-      (web3Inst.eth as any).maxListenersWarningThreshold = 200;
+      (
+        web3Inst.eth as unknown as { maxListenersWarningThreshold: number }
+      ).maxListenersWarningThreshold = 200;
       commit('setProvider', {
         providerBeforeClose: payload.providerBeforeCloseCb,
         web3: web3Inst,
@@ -416,7 +418,9 @@ export default {
     const debitCardAvailableSkinsPromise = isFeatureEnabled(
       'isDebitCardEnabled'
     )
-      ? dispatch('debitCard/loadAvailableSkins', true)
+      ? dispatch('debitCard/loadAvailableSkins', undefined, {
+          root: true
+        })
       : Promise.resolve();
 
     const promisesResults = await Promise.allSettled([
@@ -435,7 +439,7 @@ export default {
     }
   },
   async waitWallet({ commit, state }): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve) => {
       const checkWalletConnection = async () => {
         console.log('checkWalletConnection...');
         if (!state.isDetecting) {

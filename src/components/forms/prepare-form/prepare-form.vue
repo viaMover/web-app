@@ -58,16 +58,18 @@
             {{ currentInputSymbol }}
           </span>
         </p>
-        <dynamic-input
-          :disabled="isLoading"
-          input-class="deposit__form-input eth-input"
-          name="text"
-          placeholder="0.00"
-          :symbol="currentInputSymbol"
-          type="text"
-          :value="inputValue"
-          @update-value="handleUpdateValue"
-        />
+        <slot name="input">
+          <dynamic-input
+            :disabled="isLoading"
+            input-class="deposit__form-input eth-input"
+            name="text"
+            placeholder="0.00"
+            :symbol="currentInputSymbol"
+            type="text"
+            :value="inputValue"
+            @update-value="handleUpdateValue"
+          />
+        </slot>
         <slot name="swap-message" />
         <action-button
           button-class="black-link button-active"
@@ -125,6 +127,10 @@ export default Vue.extend({
     isProcessing: {
       type: Boolean,
       required: true
+    },
+    allowZeroAmount: {
+      type: Boolean,
+      default: false
     },
     asset: {
       type: Object as PropType<TokenWithBalance | undefined>,
@@ -204,10 +210,13 @@ export default Vue.extend({
       if (this.asset === undefined) {
         return this.$t('forms.lblChooseToken') as string;
       }
-      if (!notZero(this.inputAmount)) {
+      if (!notZero(this.inputAmount) && !this.allowZeroAmount) {
         return this.$t('forms.lblChooseAmount') as string;
       }
-      if (greaterThan(this.inputAmount, this.asset?.balance ?? 0)) {
+      if (
+        greaterThan(this.inputAmount, this.asset?.balance ?? 0) &&
+        !this.allowZeroAmount
+      ) {
         return this.$t('lblInsufficientBalance') as string;
       }
       if (this.transferError !== undefined) {
