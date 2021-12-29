@@ -36,8 +36,6 @@ export const estimateClaimAndBurnMOBO = async (
   web3: Web3,
   accountAddress: string
 ): Promise<EstimateResponse> => {
-  console.log('Estimating treasury claim and burn MOBO...');
-
   const contractAddress = SMART_TREASURY_ADDRESS(network);
   const contractABI = SMART_TREASURY_ABI;
 
@@ -71,9 +69,7 @@ export const estimateClaimAndBurnMOBO = async (
       throw new Error('empty gas limit');
     }
   } catch (error) {
-    console.error(
-      `can't estimate treasury claim and burn MOBO due to: ${error}`
-    );
+    console.error(`can't estimate treasury claim and burn MOBO`, error);
     return {
       error: true,
       gasLimit: '0'

@@ -18,8 +18,6 @@ export const claimAndBurnMOBO = async (
   changeStepToProcess: () => Promise<void>,
   gasPriceInGwei?: string
 ): Promise<void> => {
-  console.log('Executing treasury claim and burn MOBO...');
-
   const contractAddress = SMART_TREASURY_ADDRESS(network);
   const contractABI = SMART_TREASURY_ABI;
 
@@ -47,18 +45,16 @@ export const claimAndBurnMOBO = async (
           changeStepToProcess();
         })
         .once('receipt', (receipt: TransactionReceipt) => {
-          console.log(`Treasury claim and burnt MOBO txn receipt: ${receipt}`);
+          console.log(`Treasury claim and burnt MOBO txn receipt`, receipt);
           resolve();
         })
         .once('error', (error: Error) => {
-          console.log(`Treasury claim and burn MOBO txn error: ${error}`);
+          console.log(`Treasury claim and burn MOBO txn`, error);
           reject(error);
         });
     });
   } catch (error) {
-    console.error(
-      `can't execute treasury claim and burn MOBO due to: ${error}`
-    );
+    console.error(`can't execute treasury claim and burn MOBO`, error);
     throw error;
   }
 };

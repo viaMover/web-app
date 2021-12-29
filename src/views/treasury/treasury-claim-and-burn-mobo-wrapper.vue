@@ -95,7 +95,7 @@ import { TokenImage } from '@/components/tokens';
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
-  name: 'TreasuryClaimAndBurnMOBOWrapper',
+  name: 'TreasuryClaimAndBurnMoboWrapper',
   components: {
     TokenImage,
     CustomPicture,
@@ -264,7 +264,7 @@ export default Vue.extend({
         );
       } catch (err) {
         this.isProcessing = false;
-        console.error(err);
+        console.error('failed to handle transaction review', err);
         Sentry.captureException("can't estimate claim and burn MOBO for subs");
         return;
       }
@@ -325,7 +325,7 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (err) {
         this.transactionStep = 'Reverted';
-        console.log('Treasury claim and burn MOBO txn reverted');
+        console.log('Treasury claim and burn MOBO txn reverted', err);
         Sentry.captureException(err);
       }
     }
