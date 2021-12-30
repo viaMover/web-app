@@ -96,6 +96,7 @@
 import Vue, { PropType } from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
+import BigNumber from 'bignumber.js';
 import { Properties as CssProperties } from 'csstype';
 
 import { greaterThan, multiply, notZero } from '@/utils/bigmath';
@@ -232,13 +233,16 @@ export default Vue.extend({
       }
 
       if (this.inputMode === 'TOKEN') {
-        return `${formatToDecimals(this.asset.balance, 4)} ${
-          this.asset.symbol
-        }`;
+        return `${formatToDecimals(
+          this.asset.balance,
+          4,
+          BigNumber.ROUND_DOWN
+        )} ${this.asset.symbol}`;
       }
       return `$${formatToDecimals(
         multiply(this.asset.balance, this.asset.priceUSD),
-        2
+        2,
+        BigNumber.ROUND_DOWN
       )} ${this.nativeCurrencySymbol}`;
     },
     selectorStyle(): CssProperties {

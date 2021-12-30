@@ -274,8 +274,7 @@ export default Vue.extend({
       );
       if (resp.error) {
         this.transferError = this.$t('estimationError') as string;
-        Sentry.captureException("can't estimate claim and burn");
-        throw new Error(`Can't estimate action ${resp.error}`);
+        throw new Error("Can't estimate action");
       }
       return resp;
     },
