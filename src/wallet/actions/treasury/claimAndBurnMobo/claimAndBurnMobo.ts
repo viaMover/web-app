@@ -38,7 +38,7 @@ export const claimAndBurnMOBO = async (
     } as TransactionsParams;
 
     await new Promise<void>((resolve, reject) => {
-      (treasury.methods.burnMOBO() as ContractSendMethod)
+      (treasury.methods.claimUSDCforBonus() as ContractSendMethod)
         .send(transactionParams)
         .once('transactionHash', (hash: string) => {
           console.log(`Treasury claim and burn MOBO txn hash: ${hash}`);

@@ -50,7 +50,7 @@ export const estimateClaimAndBurnMOBO = async (
     } as TransactionsParams;
 
     const gasLimitObj = await (
-      treasury.methods.burnMOBO() as ContractSendMethod
+      treasury.methods.claimUSDCforBonus() as ContractSendMethod
     ).estimateGas(transactionParams);
 
     if (gasLimitObj) {
