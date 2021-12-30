@@ -164,7 +164,7 @@ export default Vue.extend({
         name: 'MOBO',
         priceUSD: this.usdcNativePrice,
         logo: this.moboTokenInfo.iconURL,
-        balance: this.treasuryBonus,
+        balance: this.treasuryBonus ?? '0',
         marketCap: Number.MAX_SAFE_INTEGER
       };
     },
