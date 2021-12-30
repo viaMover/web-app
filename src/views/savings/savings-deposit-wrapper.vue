@@ -409,8 +409,7 @@ export default Vue.extend({
       );
       if (resp.error) {
         this.transferError = this.$t('estimationError') as string;
-        Sentry.captureException("can't estimate savings deposit");
-        throw new Error(`Can't estimate action ${resp.error}`);
+        throw new Error("Can't estimate action");
       }
       return resp;
     },
