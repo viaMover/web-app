@@ -32,12 +32,10 @@
     <review-form
       v-else-if="step === 'review'"
       :amount="inputAmount"
-      :button-text="
-        $t('treasury.decreaseBoost.btnDecreaseBoostInSmartTreasury')
-      "
-      :header-title="$t('treasury.decreaseBoost.lblReviewYourDecrease')"
-      :input-amount-native-title="$t('treasury.decreaseBoost.lblAndTotalOf')"
-      :input-amount-title="$t('treasury.decreaseBoost.lblAmountWeRemoveIn')"
+      :button-text="$t('treasury.claimAndBurn.btnClaimAndBurnWithAssets')"
+      :header-title="$t('treasury.claimAndBurn.lblReviewYourDecrease')"
+      :input-amount-native-title="$t('treasury.claimAndBurn.lblAndTotalOf')"
+      :input-amount-title="$t('treasury.claimAndBurn.lblAmountWeBurnIn')"
       :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="formattedNativeAmount"
       :token="inputAsset"
@@ -241,7 +239,7 @@ export default Vue.extend({
             this.provider.web3
           );
         } catch (err) {
-          console.log(`can't load max burn: ${JSON.stringify(err)}`);
+          console.error(`can't load max burn`, err);
           Sentry.captureException(err);
         } finally {
           this.isLoading = false;
@@ -276,8 +274,7 @@ export default Vue.extend({
       );
       if (resp.error) {
         this.transferError = this.$t('estimationError') as string;
-        Sentry.captureException("can't estimate claim and burn");
-        throw new Error(`Can't estimate action ${resp.error}`);
+        throw new Error("Can't estimate action");
       }
       return resp;
     },
@@ -343,7 +340,7 @@ export default Vue.extend({
       } catch (err) {
         this.isSubsidizedEnabled = false;
         this.isProcessing = false;
-        console.error(err);
+        console.error('failed to handle transaction review', err);
         Sentry.captureException("can't estimate claim and burn for subs");
         return;
       }
@@ -421,7 +418,7 @@ export default Vue.extend({
         }
       } catch (err) {
         this.transferError = this.$t('exchangeError') as string;
-        console.error(`transfer error: ${err}`);
+        console.error(`transfer error`, err);
         Sentry.captureException(err);
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';
@@ -478,7 +475,7 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (err) {
         this.transactionStep = 'Reverted';
-        console.log('Treasury claim and burn txn reverted');
+        console.error('Treasury claim and burn txn reverted', err);
         Sentry.captureException(err);
       }
     }

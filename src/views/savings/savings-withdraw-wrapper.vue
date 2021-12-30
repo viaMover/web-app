@@ -213,8 +213,7 @@ export default Vue.extend({
         this.currentAddress
       );
       if (resp.error) {
-        Sentry.captureException("can't estimate savings deposit");
-        throw new Error(`Can't estimate action ${resp.error}`);
+        throw new Error("Can't estimate action");
       }
       return resp;
     },
