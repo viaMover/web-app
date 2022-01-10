@@ -27,7 +27,21 @@ export const getAllTokens = (network: Network): Array<Token> => {
   } else {
     assets = getTestnetAssets(network);
   }
-  return assets.sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
+  return deduplicateByAddress(
+    assets.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    })
+  );
+};
+
+const deduplicateByAddress = (tokens: Array<Token>): Array<Token> => {
+  const knownAddresses = new Set();
+  return tokens.reduce((acc, t) => {
+    if (knownAddresses.has(t.address)) {
+      return acc;
+    }
+
+    knownAddresses.add(t.address);
+    return [...acc, t];
+  }, new Array<Token>());
 };
