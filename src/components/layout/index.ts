@@ -7,7 +7,6 @@ export {
 } from './secondary-page';
 export {
   LeftRailSection,
-  LeftRailSectionItem,
   LeftRailSectionNavItemImage,
   LeftRailSectionNavItemImageSkeleton,
   LeftRailSectionNavItemEmoji,
