@@ -14,7 +14,7 @@ export type EmitChartRequestPayload = {
 export default {
   emitChartRequest({ state }, payload: EmitChartRequestPayload): void {
     try {
-      state.explorer?.GetChartData(
+      state.explorer?.getChartData(
         payload.assetCode,
         payload.nativeCurrency,
         payload.ChartTypes

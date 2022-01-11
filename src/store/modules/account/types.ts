@@ -2,13 +2,13 @@ import Fuse from 'fuse.js';
 import Web3 from 'web3';
 
 import { PowercardState } from '@/services/chain';
+import { Explorer } from '@/services/explorer';
 import {
   SavingsInfo,
   SavingsReceipt,
   TreasuryInfo,
   TreasuryReceipt
 } from '@/services/mover';
-import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -41,6 +41,11 @@ export type Avatar = {
 );
 
 export type TokenInfo = {
+  decimals: number;
+  symbol: string;
+  name: string;
+  priceUSD: string;
+  logo: string;
   color: string;
   marketCap: number;
 };
