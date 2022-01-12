@@ -174,28 +174,10 @@
     justify-content: space-between;
     gap: 64px;
 
-    .items {
-      flex: 1 0 45%;
+    @import (multiple) "../modules/_navigation-group.less";
 
-      &.card {
-        .item {
-          margin-bottom: 32px;
-        }
-      }
-
-      &.link {
-        .item {
-          margin-bottom: 24px;
-        }
-      }
-
-      .item {
-        list-style: none;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
+    .group .items .item {
+      margin-bottom: 8px;
     }
   }
 }

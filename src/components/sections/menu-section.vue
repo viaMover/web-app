@@ -1,100 +1,104 @@
 <template>
   <div class="navigation-wrapper">
-    <nav class="card items">
-      <ul>
-        <menu-list-emoji-card-item
+    <nav class="sections">
+      <left-rail-section hide-header>
+        <left-rail-section-nav-item-image
           :description="debitCardDescription"
           :description-class="debitCardDescriptionClass"
-          :disabled="!isFeatureEnabled('isDebitCardEnabled')"
-          has-webp-sources
-          navigate-to-name="debit-card-manage"
-          pic="BeautifulCard"
+          navigate-to="debit-card-manage"
           :title="$t('menu.lblBeautifulCard')"
+          :title-class="
+            !isFeatureEnabled('isDebitCardEnabled') ? 'muted' : undefined
+          "
         >
-          <template
-            v-if="isFeatureEnabled('isDebitCardEnabled')"
-            v-slot:picture
-          >
-            <pu-skeleton
-              v-if="isDebitCardInfoLoading"
-              class="image"
-              tag="div"
-            />
+          <template v-slot:picture>
+            <pu-skeleton v-if="isDebitCardInfoLoading" class="icon" tag="div" />
             <custom-picture
               v-else
-              :alt="debitCardCurrentSkin.previewPicture.alt"
-              :sources="debitCardCurrentSkin.previewPicture.sources"
-              :src="debitCardCurrentSkin.previewPicture.src"
-              :webp-sources="debitCardCurrentSkin.previewPicture.webpSources"
+              :alt="debitCardSkin.alt"
+              :sources="debitCardSkin.sources"
+              :src="debitCardSkin.src"
+              :webp-sources="debitCardSkin.webpSources"
             />
           </template>
-        </menu-list-emoji-card-item>
-        <menu-list-emoji-card-item
+        </left-rail-section-nav-item-image>
+
+        <left-rail-section-nav-item-image
           :description="savingsBalance"
-          has-webp-sources
-          navigate-to-name="savings-manage"
-          pic="Savings"
+          navigate-to="savings-manage"
           :title="$t('savings.lblSavings')"
-        />
-        <menu-list-emoji-card-item
+        >
+          <template v-slot:picture>
+            <custom-picture
+              :alt="savingsPicture.alt"
+              :sources="savingsPicture.sources"
+              :src="savingsPicture.src"
+              :webp-sources="savingsPicture.webpSources"
+            />
+          </template>
+        </left-rail-section-nav-item-image>
+
+        <left-rail-section-nav-item-image
           :description="treasuryBalance"
-          has-webp-sources
-          navigate-to-name="treasury-manage"
-          pic="SmartTreasury"
+          navigate-to="treasury-manage"
           :title="$t('treasury.lblSmartTreasury')"
-        />
-        <menu-list-emoji-card-item
+        >
+          <template v-slot:picture>
+            <custom-picture
+              :alt="treasuryPicture.alt"
+              :sources="treasuryPicture.sources"
+              :src="treasuryPicture.src"
+              :webp-sources="treasuryPicture.webpSources"
+            />
+          </template>
+        </left-rail-section-nav-item-image>
+
+        <left-rail-section-nav-item-image
           v-if="isFeatureEnabled('isEarningsEnabled')"
           :description="earningsBalance"
-          navigate-to-name="earnings-manage"
-          pic="earnings-ethereum-and-olympus"
+          navigate-to="earnings-manage"
           :title="$t('earnings.lblEarnings')"
-        />
-        <menu-list-emoji-card-item
-          v-if="isFeatureEnabled('isBondsEnabled')"
-          description="$942,184.11"
-          has-webp-sources
-          navigate-to-name="bonds"
-          pic="Bonds"
-          :title="$t('menu.lblBonds')"
-        />
-      </ul>
+        >
+          <template v-slot:picture>
+            <custom-picture
+              :alt="earningsPicture.alt"
+              :sources="earningsPicture.sources"
+              :src="earningsPicture.src"
+              :webp-sources="earningsPicture.webpSources"
+            />
+          </template>
+        </left-rail-section-nav-item-image>
+      </left-rail-section>
     </nav>
 
-    <nav class="link items">
-      <ul>
-        <menu-list-icon-item
-          :icon="$t('menu.lblSwapTokenEmoji')"
-          :modal-id="ModalType.Swap"
+    <nav class="actions">
+      <left-rail-section hide-header>
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('menu.lblSwapTokenEmoji')"
+          :navigate-to="undefined"
           :text="$t('menu.lblSwapToken')"
+          @click="handleOpenSwapModal(undefined)"
         />
-        <menu-list-icon-item
-          :icon="$t('menu.lblGetMoveEmoji')"
-          :modal-id="ModalType.Swap"
-          :modal-payload="{ swapType: SwapType.getMove }"
+
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('menu.lblGetMoveEmoji')"
+          :navigate-to="undefined"
           :text="$t('menu.lblGetMove')"
+          @click="handleOpenSwapModal({ swapType: SwapType.getMove })"
         />
-        <menu-list-icon-item
-          v-if="isFeatureEnabled('isBondsEnabled')"
-          :icon="$t('menu.lblProvideLiquidityMoveEmoji')"
-          :text="$t('menu.lblProvideLiquidityMove')"
-        />
-        <menu-list-icon-item
-          :icon="$t('menu.lblDepositInSavingsEmoji')"
+
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('menu.lblDepositInSavingsEmoji')"
+          navigate-to="savings-deposit"
           :text="$t('menu.lblDepositInSavings')"
-          @button-click="openDepositInSavings"
         />
-        <menu-list-icon-item
-          :icon="$t('menu.lblIncreaseBoostEmoji')"
+
+        <left-rail-section-nav-item-emoji
+          :emoji="$t('menu.lblIncreaseBoostEmoji')"
+          navigate-to="treasury-increase"
           :text="$t('menu.lblIncreaseBoost')"
-          @button-click="openDepositInTreasury"
         />
-        <menu-list-icon-item
-          v-if="isFeatureEnabled('isBondsEnabled')"
-          :icon="$t('menu.lblPurchaseBondsEmoji')"
-          :text="$t('menu.lblPurchaseBonds')"
-        />
-      </ul>
+      </left-rail-section>
     </nav>
   </div>
 </template>
@@ -104,27 +108,71 @@ import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
+import { defaultSkin } from '@/store/modules/debit-card/consts';
+import { mapSkin } from '@/store/modules/debit-card/getters';
 import { Modal as ModalType, SwapType } from '@/store/modules/modals/types';
 import { add } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
-  MenuListEmojiCardItem,
-  MenuListIconItem
-} from '@/components/home/menu-list';
-import { CustomPicture } from '@/components/html5';
+  LeftRailSection,
+  LeftRailSectionNavItemEmoji,
+  LeftRailSectionNavItemImage
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'MenuSection',
   components: {
-    MenuListEmojiCardItem,
-    MenuListIconItem,
-    CustomPicture
+    LeftRailSection,
+    CustomPicture,
+    LeftRailSectionNavItemImage,
+    LeftRailSectionNavItemEmoji
   },
   data() {
     return {
       ModalType: ModalType,
-      SwapType: SwapType
+      SwapType: SwapType,
+      savingsPicture: {
+        src: require('@/assets/images/Savings@1x.png'),
+        alt: this.$t('savings.lblSavings'),
+        webpSources: [
+          { src: require('@/assets/images/Savings@1x.webp') },
+          { src: require('@/assets/images/Savings@2x.webp'), variant: '2x' }
+        ],
+        sources: [
+          { src: require('@/assets/images/Savings@2x.png'), variant: '2x' }
+        ]
+      } as PictureDescriptor,
+      treasuryPicture: {
+        src: require('@/assets/images/SmartTreasury@1x.png'),
+        alt: this.$t('treasury.lblSmartTreasury'),
+        webpSources: [
+          { src: require('@/assets/images/SmartTreasury@1x.webp') },
+          {
+            src: require('@/assets/images/SmartTreasury@2x.webp'),
+            variant: '2x'
+          }
+        ],
+        sources: [
+          {
+            src: require('@/assets/images/SmartTreasury@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor,
+      earningsPicture: {
+        src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
+        alt: isFeatureEnabled('isEarningsEnabled')
+          ? this.$t('earnings.lblEarnings')
+          : '',
+        sources: [
+          {
+            src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor
     };
   },
   computed: {
@@ -185,6 +233,13 @@ export default Vue.extend({
       }
 
       return '';
+    },
+    debitCardSkin(): PictureDescriptor {
+      if (!isFeatureEnabled('isDebitCardEnabled')) {
+        return mapSkin(this.$store.state)(defaultSkin).previewPicture;
+      }
+
+      return this.debitCardCurrentSkin.previewPicture;
     }
   },
   async mounted() {
@@ -203,6 +258,9 @@ export default Vue.extend({
   },
   methods: {
     isFeatureEnabled,
+    ...mapActions('modals', {
+      setIsModalDisplayed: 'setIsDisplayed'
+    }),
     ...(isFeatureEnabled('isEarningsEnabled') &&
       mapActions('earnings', {
         loadEarningsMinimalInfo: 'loadMinimalInfo'
@@ -217,6 +275,13 @@ export default Vue.extend({
     async openDepositInTreasury(): Promise<void> {
       await this.$router.push({
         name: 'treasury-increase'
+      });
+    },
+    handleOpenSwapModal(payload: unknown): void {
+      this.setIsModalDisplayed({
+        id: ModalType.Swap,
+        value: true,
+        payload: payload ?? {}
       });
     }
   }

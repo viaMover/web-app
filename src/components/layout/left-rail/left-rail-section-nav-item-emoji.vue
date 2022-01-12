@@ -1,23 +1,21 @@
 <template>
-  <router-link
+  <component
+    :is="containerComponent"
     :active-class="activeClass"
-    class="left-rail-section-nav-item emoji"
+    class="item emoji button-like"
     :class="containerClass"
     exact-active-class="active"
     :style="containerStyles"
     :to="navigateToRoute"
+    @click="handleClick"
   >
-    <div class="emoji">
-      <slot name="emoji">
-        <span>{{ emoji }}</span>
-      </slot>
+    <div class="icon">
+      <slot name="emoji">{{ emoji }}</slot>
     </div>
-    <div class="info">
-      <slot>
-        <p :class="textClass">{{ text }}</p>
-      </slot>
-    </div>
-  </router-link>
+    <h3 class="info" :class="textClass">
+      <slot>{{ text }}</slot>
+    </h3>
+  </component>
 </template>
 
 <script lang="ts">
@@ -26,14 +24,16 @@ import { RawLocation } from 'vue-router';
 
 import { Properties } from 'csstype';
 
-import '@/styles/_left_rail_section_nav_item.less';
-
+// The component may serve as a styled plain button
+//
+// To achieve such behaviour one should pass an undefined to
+// `navigateTo` prop and expect @click event appear
 export default Vue.extend({
   name: 'LeftRailSectionNavItemEmoji',
   props: {
     navigateTo: {
-      type: [String, Object] as PropType<RawLocation>,
-      required: true
+      type: [String, Object] as PropType<RawLocation | undefined>,
+      default: undefined
     },
     containerClass: {
       type: String,
@@ -61,7 +61,14 @@ export default Vue.extend({
     }
   },
   computed: {
-    navigateToRoute(): RawLocation {
+    containerComponent(): string {
+      if (this.navigateTo === undefined) {
+        return 'div';
+      }
+
+      return 'router-link';
+    },
+    navigateToRoute(): RawLocation | undefined {
       if (typeof this.navigateTo === 'string') {
         return { name: this.navigateTo };
       }
@@ -74,6 +81,17 @@ export default Vue.extend({
       }
 
       return 'active';
+    }
+  },
+  methods: {
+    handleClick(event: MouseEvent): void {
+      if (this.navigateTo !== undefined) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.$emit('click');
     }
   }
 });

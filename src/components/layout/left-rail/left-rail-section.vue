@@ -1,12 +1,12 @@
 <template>
-  <div class="page-sidebar-wrapper-item">
-    <h3>
+  <section class="group">
+    <h2 v-if="!hideHeader" class="header">
       <slot name="section-name">{{ sectionName }}</slot>
-    </h3>
-    <component :is="itemsContainerTag" :class="itemsContainerClass">
+    </h2>
+    <ul class="items">
       <slot></slot>
-    </component>
-  </div>
+    </ul>
+  </section>
 </template>
 
 <script lang="ts">
@@ -19,14 +19,9 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    itemsContainerTag: {
-      type: String,
-      default: 'ul',
-      validator: (tag) => ['div', 'ul'].includes(tag)
-    },
-    itemsContainerClass: {
-      type: String,
-      default: 'item-group'
+    hideHeader: {
+      type: Boolean,
+      default: false
     }
   }
 });

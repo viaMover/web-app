@@ -17,7 +17,9 @@
         <slot></slot>
       </main>
     </div>
-    <slot name="modals"></slot>
+    <div class="modals">
+      <slot name="modals"></slot>
+    </div>
   </div>
 </template>
 

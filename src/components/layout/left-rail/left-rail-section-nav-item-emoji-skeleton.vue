@@ -9,7 +9,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import '@/styles/_left_rail_section_nav_item.less';
+// import '@/styles/_left_rail_section_nav_item.less';
 
 export default Vue.extend({
   name: 'LeftRailSectionNavItemEmojiSkeleton'
