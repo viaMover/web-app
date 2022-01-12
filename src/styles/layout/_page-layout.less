@@ -105,7 +105,14 @@ html {
       margin: 0 auto;
 
       @media screen and (max-width: 767px) {
-        display: block;
+        display: flex;
+      }
+
+      .page-content {
+        .wrapper {
+          width: 100%;
+          padding: @button-page-inset;
+        }
       }
     }
   }

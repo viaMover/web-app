@@ -1,0 +1,159 @@
+/*
+  This bundle should never be imported to the final bundle
+    as it serves as an intermediary dependency for left-rail
+    and home page navigation at the moment. So in search of
+    deduplication we had to extract this ruleset to the
+    'module' even it does not have the unique selector set
+*/
+
+.group {
+  margin-bottom: 40px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .header {
+    font-size: 16px;
+    line-height: 24px;
+    color: @text-primary;
+    @font-bold();
+
+    margin-bottom: 24px;
+  }
+
+  .items {
+    .item {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 24px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &.active {
+        background-color: @background-left-rail-darkest;
+      }
+
+      &:not(.active):hover {
+        background-color: @background-left-rail-darker;
+      }
+
+      .icon {
+        flex-grow: 0;
+        flex-shrink: 0;
+        align-self: center;
+        margin-right: 16px;
+
+        @media screen and (max-width: 1279px) {
+          margin-right: 8px;
+        }
+      }
+
+      .info {
+        flex: auto;
+        color: @text-primary;
+      }
+
+      &.emoji {
+        padding: 16px;
+
+        @media screen and (max-width: 1279px) {
+          padding: 8px;
+        }
+
+        .icon {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-self: flex-start;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+
+          img,
+          .pu-skeleton {
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        .info {
+          font-size: 16px;
+          line-height: 24px;
+          @font-medium();
+        }
+      }
+
+      &.picture {
+        padding: 8px 16px;
+
+        @media screen and (max-width: 1279px) {
+          padding-right: 8px;
+          padding-left: 8px;
+        }
+
+        .icon,
+        picture {
+          flex-grow: 0;
+          flex-shrink: 0;
+          align-self: flex-start;
+          margin-right: 16px;
+          height: 40px;
+          max-width: 56px;
+
+          img,
+          .pu-skeleton {
+            height: 40px;
+            max-width: 56px;
+            @drop-shadow-filter();
+          }
+
+          .pu-skeleton {
+            width: 56px;
+          }
+
+          @media screen and (max-width: 1279px) {
+            margin-right: 8px;
+          }
+        }
+
+        .info {
+          .title {
+            font-size: 14px;
+            line-height: 22px;
+            margin-bottom: 4px;
+            @font-bold();
+
+            &.muted {
+              color: @text-muted;
+            }
+
+            &.medium {
+              @font-medium();
+            }
+          }
+
+          .description {
+            font-size: 14px;
+            line-height: 22px;
+            color: @text-muted;
+            @font-medium();
+
+            &.bold {
+              @font-bold();
+            }
+
+            &.emphasize {
+              color: @text-primary;
+            }
+          }
+        }
+      }
+    }
+  }
+}

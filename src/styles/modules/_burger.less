@@ -1,6 +1,6 @@
 .burger {
   &-bg {
-    background: rgba(0, 0, 0, 0.2);
+    background: @dimmer-background;
     position: fixed;
     top: 0;
     left: 0;
@@ -42,8 +42,8 @@
       padding: 24px;
       display: block;
       background: @background;
-      @drop-shadow();
       border-radius: 16px;
+      @drop-shadow();
 
       ul {
         list-style-type: none;

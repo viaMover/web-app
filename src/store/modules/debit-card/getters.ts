@@ -103,7 +103,9 @@ export default {
   }
 } as GetterTree<DebitCardStoreState, RootStoreState>;
 
-const mapSkin = (rootState: RootStoreState): ((skin: SkinMinimal) => Skin) => {
+export const mapSkin = (
+  rootState: RootStoreState
+): ((skin: SkinMinimal) => Skin) => {
   return (skin: SkinMinimal): Skin => {
     let description = '';
     if (

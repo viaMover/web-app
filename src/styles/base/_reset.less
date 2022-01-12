@@ -12,6 +12,10 @@
   @font-regular();
 }
 
+html {
+  overflow: hidden;
+}
+
 textarea,
 input {
   &::-webkit-input-placeholder,
@@ -24,14 +28,30 @@ input {
   }
 }
 
-input[type='search'] {
-  ::-webkit-search-decoration,
-  ::-webkit-search-cancel-button,
-  ::-webkit-search-results-button,
-  ::-webkit-search-results-decoration {
-    display: none;
-    width: 0;
-    height: 0;
+input {
+  background-color: @input-background;
+  border: @default-border-input;
+  outline: @default-outline-input;
+
+  &[type='search'] {
+    ::-webkit-search-decoration,
+    ::-webkit-search-cancel-button,
+    ::-webkit-search-results-button,
+    ::-webkit-search-results-decoration {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 }
 

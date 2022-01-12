@@ -44,12 +44,16 @@
         />
       </div>
       <div class="modal-wrapper-info-buttons">
-        <button class="flip button-active" type="button" @click="flipAssets">
+        <button
+          class="button transparent fit icon no-padding flip"
+          type="button"
+          @click="flipAssets"
+        >
           <flip-picture />
           <span>Flip</span>
         </button>
         <button
-          class="tx-details button-active"
+          class="button transparent fit icon no-padding tx-details"
           :class="{ disabled: !isInfoAvailable }"
           type="button"
           @click="expandInfo"
@@ -57,39 +61,41 @@
           <details-picture />
           <span>Swap Details</span>
         </button>
-        <div v-if="showInfo" class="tx-details__content">
-          <div class="tx-details__content-item">
-            <p class="description">Minimum received</p>
-            <div class="value">
-              <span>{{ minimalReceived }}</span>
+        <transition appear name="fade">
+          <div v-if="showInfo" class="tx-details__content">
+            <div class="tx-details__content-item">
+              <p class="description">Minimum received</p>
+              <div class="value">
+                <span>{{ minimalReceived }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Rate</p>
+              <div class="value">
+                <span>{{ rateString }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Smart Treasury cover</p>
+              <div class="value">
+                <span>{{ treasuryCover }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Swapping via</p>
+              <div class="value">
+                <span>{{ swappingVia }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Slippage</p>
+              <slippage-selector
+                :slippage="slippage"
+                @selected-slippage-changed="handleSelectedSlippageChanged"
+              />
             </div>
           </div>
-          <div class="tx-details__content-item">
-            <p class="description">Rate</p>
-            <div class="value">
-              <span>{{ rateString }}</span>
-            </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Smart Treasury cover</p>
-            <div class="value">
-              <span>{{ treasuryCover }}</span>
-            </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Swapping via</p>
-            <div class="value">
-              <span>{{ swappingVia }}</span>
-            </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Slippage</p>
-            <slippage-selector
-              :slippage="slippage"
-              @selected-slippage-changed="handleSelectedSlippageChanged"
-            />
-          </div>
-        </div>
+        </transition>
       </div>
       <div class="modal-wrapper-info-button">
         <action-button

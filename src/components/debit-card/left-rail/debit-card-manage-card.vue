@@ -1,8 +1,5 @@
 <template>
-  <left-rail-section
-    items-container-tag="div"
-    :section-name="$t('debitCard.lblManageCard')"
-  >
+  <left-rail-section :section-name="$t('debitCard.lblManageCard')">
     <template v-if="isLoading">
       <left-rail-section-nav-item-image-skeleton v-for="idx in 2" :key="idx" />
     </template>

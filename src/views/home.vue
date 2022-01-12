@@ -37,8 +37,6 @@ import {
 } from '@/components/sections';
 import { TransactionList } from '@/components/transaction-list';
 
-import '@/styles/_general.less';
-
 export default Vue.extend({
   name: 'Home',
   components: {
