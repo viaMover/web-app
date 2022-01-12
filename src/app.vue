@@ -19,35 +19,7 @@
           <preload v-if="showPreload" key="preload" class="dashboard" />
           <router-view v-else key="viewport" class="dashboard" />
         </transition>
-        <div class="dashboard dashboard-mobile">
-          <a
-            class="logo button-active"
-            href="https://viamover.com/"
-            rel="external"
-            target="_blank"
-          >
-            <img alt="logo" src="@/assets/images/logo.svg" />
-          </a>
-          <div class="page-content">
-            <div class="dashboard-mobile__wrapper">
-              <div class="dashboard-mobile__wrapper-gif">
-                <video
-                  autoplay="autoplay"
-                  data-keepplaying="data-keepplaying"
-                  loop="loop"
-                  muted="muted"
-                  playsinline="playsinline"
-                  src="@/assets/videos/welcome.webm"
-                ></video>
-              </div>
-              <h1>{{ $t('lblDashboardMobile') }}</h1>
-              <p>{{ $t('txtDashboardMobile') }}</p>
-              <a class="black-link button-active" href="https://viamover.com/">
-                {{ $t('btnDashboardMobile') }}
-              </a>
-            </div>
-          </div>
-        </div>
+        <mobile />
       </div>
     </pu-skeleton-theme>
     <!-- <div class="page">
@@ -435,6 +407,7 @@ import Web3ModalVue from 'web3modal-vue';
 
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import Mobile from '@/views/mobile.vue';
 import Preload from '@/views/preload.vue';
 
 // import '@/styles/_common.less';
@@ -449,6 +422,7 @@ export default Vue.extend({
   name: 'App',
   components: {
     Preload,
+    Mobile,
     Web3ModalVue
   },
   provide() {
