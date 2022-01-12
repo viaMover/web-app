@@ -30,7 +30,7 @@ export const BuildExplorer = async (
     accountAddress,
     nativeCurrency,
     network,
-    '0NgMT3ZAGjyEaEs4EgJ58QpqFEafmWsmBwAn1kasrYQmJ5MB700CUnCwntLMMU6y',
+    '',
     setTransactions,
     setTokens,
     setChartData

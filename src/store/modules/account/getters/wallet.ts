@@ -84,7 +84,7 @@ export default {
     }
     return multiply(state.slpPriceInWeth, state.ethPrice);
   },
-  getTokenFromMapByAddres(state): (address?: string) => Token | undefined {
+  getTokenFromMapByAddress(state): (address?: string) => Token | undefined {
     return (address?: string) => {
       if (state.tokenInfoMap === undefined) {
         return undefined;

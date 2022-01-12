@@ -12,6 +12,18 @@ export type Erc20TokensResponse = {
   balance: string;
 };
 
+export type Erc20TokenMetadata = {
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: string;
+  logo: string | null;
+  logo_hash: string | null;
+  thumbnail: string | null;
+  block_number: string;
+  validated: number;
+};
+
 export type Erc20TransactionResponse = {
   total: number;
   page: number;
@@ -34,10 +46,10 @@ export type NativeTransactionResponse = {
   total: number;
   page: number;
   page_size: number;
-  result: NativeTransactions[];
+  result: NativeTransaction[];
 };
 
-export type NativeTransactions = {
+export type NativeTransaction = {
   hash: string;
   nonce: string;
   transaction_index: string;

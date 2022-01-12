@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 
 import { getPriceByAddress, NetworkAliases } from '@/services/coingecko/tokens';
 import { Explorer } from '@/services/explorer';
+import { isError } from '@/services/responses';
 import store from '@/store/index';
 import { sameAddress } from '@/utils/address';
 import { fromWei } from '@/utils/bigmath';
@@ -17,10 +18,16 @@ import {
   TransactionTypes
 } from '@/wallet/types';
 
+import { getMoverTransactionsTypes } from '../mover/transactions/service';
+import { TransactionMoveTypeData } from '../mover/transactions/types';
 import {
+  Erc20TokenMetadata,
   Erc20TokensResponse,
+  Erc20Transaction,
   Erc20TransactionResponse,
-  NativeBalanceResponse
+  NativeBalanceResponse,
+  NativeTransaction,
+  NativeTransactionResponse
 } from './responses';
 
 export class MoralisExplorer implements Explorer {
@@ -57,8 +64,8 @@ export class MoralisExplorer implements Explorer {
     const tokensWithPrices = await this.enrichTokensWithPrices(tokens);
     const tokensWihNative = await this.enrichTokensWithNative(tokensWithPrices);
     this.setTokens(tokensWihNative);
-    const erc20Transactions = await this.getErc20Transactions();
-    this.setTransactions(erc20Transactions);
+    const transactions = await this.getAllTransactions(tokensWithPrices);
+    this.setTransactions(transactions);
   }
 
   public getChartData = (
@@ -211,24 +218,113 @@ export class MoralisExplorer implements Explorer {
     }
   };
 
-  private getErc20Transactions = async (): Promise<Transaction[]> => {
-    try {
-      const moverData = getMoveAssetData(this.network);
-      const res = (
-        await this.apiClient.get(
-          `${
-            this.accountAddress
-          }/erc20/transfers?chain=${this.getNetworkAlias()}`
-        )
-      ).data as Erc20TransactionResponse;
-      return res.result.reduce<Transaction[]>((acc, txn) => {
-        const token: Token | undefined = store.getters[
-          'account/getTokenFromMapByAddres'
-        ](txn.address);
+  private getAllTransactions = async (
+    walletTokens: Token[]
+  ): Promise<Transaction[]> => {
+    const ethData = getEthAssetData();
+
+    const erc20Transactions = await this.getErc20Transactions();
+    const nativeTransactions = await this.getNativeTransactions();
+
+    const allTransactionsHashes = [
+      ...erc20Transactions.map((t) => t.transaction_hash),
+      ...nativeTransactions.map((t) => t.hash)
+    ];
+
+    let moverTypesData: TransactionMoveTypeData[] = [];
+    const moverTypesDataRes = await getMoverTransactionsTypes(
+      allTransactionsHashes
+    );
+    if (isError<TransactionMoveTypeData[], string, void>(moverTypesDataRes)) {
+      console.error(
+        'Error from mover transaction service',
+        moverTypesDataRes.error
+      );
+    } else {
+      moverTypesData = moverTypesDataRes.result;
+    }
+
+    // TODO: probably we have to get unkown tokens from Moralis by request
+    // const unknownTokens = erc20Transactions.reduce<string[]>((acc, txn) => {
+    //   const token: Token | undefined = store.getters[
+    //     'account/getTokenFromMapByAddress'
+    //   ](txn.address);
+    //   if (token === undefined) {
+    //     acc.push(txn.address);
+    //   }
+    //   return acc;
+    // }, []);
+
+    const nativeParsedTransactions = nativeTransactions.reduce<Transaction[]>(
+      (acc, txn) => {
+        if (txn.input === '0x') {
+          // assume this is an eth transfer transaction
+          const direction = sameAddress(txn.to_address, this.accountAddress)
+            ? sameAddress(txn.from_address, this.accountAddress)
+              ? 'self'
+              : 'in'
+            : 'out';
+
+          acc.push({
+            asset: {
+              address: ethData.address,
+              decimals: ethData.decimals,
+              symbol: ethData.symbol,
+              change: txn.value,
+              iconURL: ethData.iconURL,
+              price: store.getters['account/ethPrice'],
+              direction: direction
+            },
+            blockNumber: txn.block_number,
+            hash: txn.hash,
+            uniqHash: txn.hash,
+            from: txn.from_address,
+            nonce: txn.nonce,
+            to: txn.to_address,
+            timestamp: dayjs(txn.block_timestamp).unix(),
+            type: TransactionTypes.transferERC20,
+            fee: { ethPrice: '0', feeInWEI: '0' },
+            status: 'confirmed',
+            isOffchain: false,
+            moverType:
+              moverTypesData.find((t) => t.txID === txn.hash)?.moverTypes ??
+              'unknown'
+          });
+        }
+        return acc;
+      },
+      [] as Transaction[]
+    );
+
+    const erc20ParsedTransactions = erc20Transactions.reduce<Transaction[]>(
+      (acc, txn) => {
+        let token: Token | undefined = walletTokens.find((t) =>
+          sameAddress(t.address, txn.address)
+        );
 
         if (token === undefined) {
-          return acc;
+          token = store.getters['account/getTokenFromMapByAddress'](
+            txn.address
+          );
+          if (token === undefined) {
+            return acc;
+          }
         }
+
+        let isSwapTransaction = false;
+        if (
+          erc20Transactions.filter(
+            (t) => t.transaction_hash === txn.transaction_hash
+          ).length > 1
+        ) {
+          isSwapTransaction = true;
+        }
+
+        const direction = sameAddress(txn.to_address, this.accountAddress)
+          ? sameAddress(txn.from_address, this.accountAddress)
+            ? 'self'
+            : 'in'
+          : 'out';
 
         acc.push({
           asset: {
@@ -237,25 +333,89 @@ export class MoralisExplorer implements Explorer {
             symbol: token.symbol,
             change: txn.value,
             iconURL: token.logo,
-            price: '0',
-            direction: 'in'
+            price: token.priceUSD === '' ? '0' : token.priceUSD,
+            direction: direction
           },
           blockNumber: txn.block_number,
           hash: txn.transaction_hash,
-          uniqHash: txn.transaction_hash,
+          uniqHash: isSwapTransaction
+            ? direction === 'in'
+              ? `${txn.transaction_hash}-1`
+              : `${txn.transaction_hash}-0`
+            : txn.transaction_hash,
           from: txn.from_address,
           nonce: '0',
-          to: txn.from_address,
+          to: txn.to_address,
           timestamp: dayjs(txn.block_timestamp).unix(),
-          type: TransactionTypes.transferERC20,
+          type: isSwapTransaction
+            ? direction === 'in'
+              ? TransactionTypes.transferERC20
+              : TransactionTypes.swapERC20
+            : TransactionTypes.transferERC20,
           fee: { ethPrice: '0', feeInWEI: '0' },
           status: 'confirmed',
           isOffchain: false,
-          moverType: 'unknown'
+          moverType:
+            moverTypesData.find((t) => t.txID === txn.transaction_hash)
+              ?.moverTypes ?? 'unknown'
         });
 
         return acc;
-      }, [] as Transaction[]);
+      },
+      [] as Transaction[]
+    );
+
+    const allParsedTransactions = [
+      ...erc20ParsedTransactions,
+      ...nativeParsedTransactions
+    ];
+
+    return allParsedTransactions;
+  };
+
+  private getErc20TokensMetadata = async (
+    addresses: string[]
+  ): Promise<Token[]> => {
+    try {
+      const res = (
+        await this.apiClient.get(`${this.accountAddress}/erc20/metadata}`, {
+          params: {
+            chain: this.getNetworkAlias(),
+            storeIds: addresses
+          }
+        })
+      ).data as Erc20TokenMetadata[];
+      return res.map((t) => ({
+        address: t.address,
+        decimals: parseInt(t.decimals),
+        logo: t.logo ?? '',
+        marketCap: 0,
+        name: t.name,
+        priceUSD: '0',
+        symbol: t.symbol
+      }));
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(
+          `Can't get erc20 tokens metadata from Moralis, response: ${e.toJSON()}`
+        );
+      }
+      throw new Error(
+        `Can't get erc20 tokens metadata from Moralis: ${String(e)}`
+      );
+    }
+  };
+
+  private getErc20Transactions = async (): Promise<Erc20Transaction[]> => {
+    try {
+      const res = (
+        await this.apiClient.get(
+          `${
+            this.accountAddress
+          }/erc20/transfers?chain=${this.getNetworkAlias()}`
+        )
+      ).data as Erc20TransactionResponse;
+      return res.result;
     } catch (e) {
       if (axios.isAxiosError(e)) {
         throw new Error(
@@ -264,6 +424,26 @@ export class MoralisExplorer implements Explorer {
       }
       throw new Error(
         `Can't get erc20 transactions from Moralis: ${String(e)}`
+      );
+    }
+  };
+
+  private getNativeTransactions = async (): Promise<NativeTransaction[]> => {
+    try {
+      const res = (
+        await this.apiClient.get(
+          `${this.accountAddress}?chain=${this.getNetworkAlias()}`
+        )
+      ).data as NativeTransactionResponse;
+      return res.result;
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        throw new Error(
+          `Can't get native transactions from Moralis, response: ${e.toJSON()}`
+        );
+      }
+      throw new Error(
+        `Can't get native transactions from Moralis: ${String(e)}`
       );
     }
   };
