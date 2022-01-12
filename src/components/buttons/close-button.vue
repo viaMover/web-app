@@ -1,5 +1,5 @@
 <template>
-  <action-button class="button round" @button-click="handleClick">
+  <action-button class="round" @button-click="handleClick">
     <img
       v-if="isBlack"
       :alt="$t('icon.txtCloseIconAlt')"
@@ -19,7 +19,7 @@ import Vue from 'vue';
 import ActionButton from './action-button.vue';
 
 export default Vue.extend({
-  name: 'BackButton',
+  name: 'CloseButton',
   components: {
     ActionButton
   },
