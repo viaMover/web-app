@@ -17,8 +17,6 @@ import Vue from 'vue';
 
 import ContentWrapper from '@/components/layout/content-wrapper.vue';
 
-import '@/styles/_404.less';
-
 export default Vue.extend({
   name: 'View404',
   components: {
