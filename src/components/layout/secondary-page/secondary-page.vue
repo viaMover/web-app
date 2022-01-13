@@ -1,6 +1,10 @@
 <template>
   <div class="secondary-page-wrapper">
-    <back-button v-if="hasBackButton" @close="handleBack" />
+    <back-button
+      v-if="hasBackButton"
+      class="page-back-button"
+      @back="handleBack"
+    />
     <div v-if="!hideTitle" class="heading page-secondary page-heading">
       <slot name="title">
         <h2 class="title page-title" :class="[titleClass]">{{ title }}</h2>

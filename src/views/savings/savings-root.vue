@@ -1,10 +1,9 @@
 <template>
   <content-wrapper
+    class="savings"
     has-close-button
     has-left-rail
     is-black-close-button
-    left-rail-inner-wrapper-class="page-sidebar-wrapper"
-    wrapper-class="savings"
     @close="handleClose"
   >
     <template v-slot:left-rail>
