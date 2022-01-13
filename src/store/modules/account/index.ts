@@ -31,6 +31,7 @@ export default {
     avatars: [],
     addresses: [],
     currentAddress: undefined,
+    isTransactionsLoaded: false,
     transactions: [],
     tokens: [],
     tokensSearcher: undefined,

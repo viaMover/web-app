@@ -1,28 +1,60 @@
 <template>
   <div>
-    <form class="transaction-search-form" @submit.prevent.stop="">
-      <input
-        v-model.trim="searchTerm"
-        name="transaction-search"
-        :placeholder="$t('search.lblSearchTransaction')"
-        type="search"
-      />
-      <button class="button-active" type="button" @click.prevent.stop="">
-        🔍
-      </button>
-    </form>
-    <div class="transactions-list">
-      <div v-if="!transactionGroups.length" class="empty-state">
-        {{ $t('lblConnectWalletTransactionHistory') }}
+    <template v-if="!isTransactionsLoaded">
+      <form class="transaction-search-form" @submit.prevent.stop="">
+        <div class="preload-wrapper__sidebar-search">
+          <PuSkeleton class="search" tag="div" />
+        </div>
+      </form>
+      <div class="preload-wrapper__sidebar-items">
+        <div class="preload-wrapper__sidebar-items-item">
+          <PuSkeleton class="title" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+          <PuSkeleton class="subtitle" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+          <PuSkeleton class="subtitle" tag="div" />
+        </div>
+        <div class="preload-wrapper__sidebar-items-item">
+          <PuSkeleton class="title" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+          <PuSkeleton class="subtitle" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+          <PuSkeleton class="subtitle" tag="div" />
+        </div>
+        <div class="preload-wrapper__sidebar-items-item">
+          <PuSkeleton class="title" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+          <PuSkeleton class="subtitle" tag="div" />
+          <PuSkeleton class="description" tag="div" />
+          <PuSkeleton class="subtitle" tag="div" />
+        </div>
       </div>
-      <transaction-group
-        v-for="txGroup in filteredTransactionGroups"
-        v-else
-        :key="txGroup.date"
-        :heading-text="formatDate(txGroup.timeStamp)"
-        :transactions="txGroup.transactions"
-      />
-    </div>
+    </template>
+    <template v-else>
+      <form class="transaction-search-form" @submit.prevent.stop="">
+        <input
+          v-model.trim="searchTerm"
+          name="transaction-search"
+          :placeholder="$t('search.lblSearchTransaction')"
+          type="search"
+        />
+        <button class="button-active" type="button" @click.prevent.stop="">
+          🔍
+        </button>
+      </form>
+      <div class="transactions-list">
+        <div v-if="!transactionGroups.length" class="empty-state">
+          {{ $t('lblConnectWalletTransactionHistory') }}
+        </div>
+        <transaction-group
+          v-for="txGroup in filteredTransactionGroups"
+          v-else
+          :key="txGroup.date"
+          :heading-text="formatDate(txGroup.timeStamp)"
+          :transactions="txGroup.transactions"
+        />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -57,7 +89,7 @@ export default Vue.extend({
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
     }),
-    ...mapState('account', ['networkInfo']),
+    ...mapState('account', ['networkInfo', 'isTransactionsLoaded']),
     filteredTransactionGroups(): Array<TransactionGroupType> {
       let searchType = 'byName';
       if (isValidTxHash(this.searchTermDebounced)) {

@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/vue';
+import { addABI, decodeMethod } from 'abi-decoder';
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
@@ -41,6 +42,7 @@ export class MoralisExplorer implements Explorer {
     private readonly network: Network,
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
+    private readonly setIsTransactionsLoaded: (val: boolean) => void,
     private readonly setTokens: (tokens: Array<TokenWithBalance>) => void,
     private readonly setChartData: (
       chartData: Record<string, Array<[number, number]>>
@@ -53,9 +55,35 @@ export class MoralisExplorer implements Explorer {
         'X-API-Key': apiKey
       }
     });
+    addABI([
+      {
+        constant: false,
+        inputs: [
+          {
+            name: '_spender',
+            type: 'address'
+          },
+          {
+            name: '_value',
+            type: 'uint256'
+          }
+        ],
+        name: 'approve',
+        outputs: [
+          {
+            name: '',
+            type: 'bool'
+          }
+        ],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function'
+      }
+    ]);
   }
 
   async init(): Promise<void> {
+    this.setIsTransactionsLoaded(false);
     await this.refreshWalletData();
   }
 
@@ -66,6 +94,7 @@ export class MoralisExplorer implements Explorer {
     this.setTokens(tokensWihNative);
     const transactions = await this.getAllTransactions(tokensWithPrices);
     this.setTransactions(transactions);
+    this.setIsTransactionsLoaded(true);
   }
 
   public getChartData = (
@@ -290,6 +319,43 @@ export class MoralisExplorer implements Explorer {
               moverTypesData.find((t) => t.txID === txn.hash)?.moverTypes ??
               'unknown'
           });
+        } else {
+          const method = decodeMethod(txn.input);
+          if (method?.name === 'approve') {
+            let token: Token | undefined = walletTokens.find((t) =>
+              sameAddress(t.address, txn.to_address)
+            );
+
+            if (token === undefined) {
+              token = store.getters['account/getTokenFromMapByAddress'](
+                txn.to_address
+              );
+              if (token === undefined) {
+                return acc;
+              }
+            }
+
+            acc.push({
+              asset: {
+                address: token.address,
+                decimals: token.decimals,
+                symbol: token.symbol,
+                iconURL: token.logo
+              },
+              blockNumber: txn.block_number,
+              hash: txn.hash,
+              uniqHash: txn.hash,
+              nonce: txn.nonce,
+              timestamp: dayjs(txn.block_timestamp).unix(),
+              type: TransactionTypes.approvalERC20,
+              fee: { ethPrice: '0', feeInWEI: '0' },
+              status: 'confirmed',
+              isOffchain: false,
+              moverType:
+                moverTypesData.find((t) => t.txID === txn.hash)?.moverTypes ??
+                'unknown'
+            });
+          }
         }
         return acc;
       },

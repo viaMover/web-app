@@ -269,7 +269,7 @@ export default {
 
           const explorerInitPromise = BuildExplorer(
             state.currentAddress,
-            'usd',
+            state.nativeCurrency,
             state.networkInfo.network,
             (txns: Array<Transaction>) => {
               commit('setWalletTransactions', txns);
@@ -291,6 +291,9 @@ export default {
             },
             (chartData: Record<string, [number, number][]>) => {
               commit('setChartData', chartData);
+            },
+            (val: boolean) => {
+              commit('setIsTransactionsLoaded', val);
             }
           );
 

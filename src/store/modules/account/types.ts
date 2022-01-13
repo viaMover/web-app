@@ -59,6 +59,7 @@ export type AccountStoreState = {
   balance: undefined | string;
   networkInfo: undefined | NetworkInfo;
   currentAddress: undefined | string;
+  isTransactionsLoaded: boolean;
   transactions: Array<Transaction>;
   tokens: Array<TokenWithBalance>;
   tokensSearcher: Fuse<TokenWithBalance> | undefined;
