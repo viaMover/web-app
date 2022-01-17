@@ -327,9 +327,7 @@ export class MoralisExplorer implements Explorer {
             );
 
             if (token === undefined) {
-              token = store.getters['account/getTokenFromMapByAddress'](
-                txn.to_address
-              );
+              token = store.state?.account?.tokenInfoMap?.[txn.to_address];
               if (token === undefined) {
                 return acc;
               }
@@ -369,9 +367,7 @@ export class MoralisExplorer implements Explorer {
         );
 
         if (token === undefined) {
-          token = store.getters['account/getTokenFromMapByAddress'](
-            txn.address
-          );
+          token = store.state?.account?.tokenInfoMap?.[txn.to_address];
           if (token === undefined) {
             return acc;
           }

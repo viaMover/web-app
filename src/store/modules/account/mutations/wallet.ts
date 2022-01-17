@@ -87,15 +87,7 @@ export default {
 
       return {
         ...acc,
-        [token.address.toLowerCase()]: {
-          color: token.color,
-          marketCap: token.marketCap,
-          decimals: token.decimals,
-          symbol: token.symbol,
-          name: token.name,
-          priceUSD: token.priceUSD,
-          logo: token.logo
-        }
+        [token.address.toLowerCase()]: token
       };
     }, {});
   },

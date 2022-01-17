@@ -84,31 +84,6 @@ export default {
     }
     return multiply(state.slpPriceInWeth, state.ethPrice);
   },
-  getTokenFromMapByAddress(state): (address?: string) => Token | undefined {
-    return (address?: string) => {
-      if (state.tokenInfoMap === undefined) {
-        return undefined;
-      }
-
-      if (address === undefined) {
-        return undefined;
-      }
-
-      if (state.tokenInfoMap[address.toLowerCase()] === undefined) {
-        return undefined;
-      }
-
-      return {
-        address: address,
-        decimals: state.tokenInfoMap[address.toLowerCase()].decimals,
-        logo: state.tokenInfoMap[address.toLowerCase()].logo,
-        marketCap: state.tokenInfoMap[address.toLowerCase()].marketCap,
-        name: state.tokenInfoMap[address.toLowerCase()].name,
-        priceUSD: state.tokenInfoMap[address.toLowerCase()].priceUSD,
-        symbol: state.tokenInfoMap[address.toLowerCase()].symbol
-      };
-    };
-  },
   getTokenColor(state): (address?: string) => string | undefined {
     return (address?: string) => {
       if (state.tokenInfoMap === undefined) {

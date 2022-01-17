@@ -40,16 +40,6 @@ export type Avatar = {
   | { type: 'image'; imageSrc: string; imageAlt: string }
 );
 
-export type TokenInfo = {
-  decimals: number;
-  symbol: string;
-  name: string;
-  priceUSD: string;
-  logo: string;
-  color: string;
-  marketCap: number;
-};
-
 export type AccountStoreState = {
   web3Modal: any;
 
@@ -65,7 +55,7 @@ export type AccountStoreState = {
   tokensSearcher: Fuse<TokenWithBalance> | undefined;
   allTokens: Array<Token>;
   allTokensSearcher: Fuse<Token> | undefined;
-  tokenInfoMap: Record<string, TokenInfo> | undefined;
+  tokenInfoMap: Record<string, Token> | undefined;
   provider: ProviderData | undefined;
   isDetecting: boolean;
   isWalletLoading: boolean;
