@@ -1,32 +1,32 @@
 <template>
   <div>
-    <template v-if="!isTransactionsLoaded">
+    <template v-if="!isTransactionsListLoaded">
       <form class="transaction-search-form" @submit.prevent.stop="">
         <div class="preload-wrapper__sidebar-search">
-          <PuSkeleton class="search" tag="div" />
+          <pu-skeleton class="search" tag="div" />
         </div>
       </form>
       <div class="preload-wrapper__sidebar-items">
         <div class="preload-wrapper__sidebar-items-item">
-          <PuSkeleton class="title" tag="div" />
-          <PuSkeleton class="description" tag="div" />
-          <PuSkeleton class="subtitle" tag="div" />
-          <PuSkeleton class="description" tag="div" />
-          <PuSkeleton class="subtitle" tag="div" />
+          <pu-skeleton class="title" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
         </div>
         <div class="preload-wrapper__sidebar-items-item">
-          <PuSkeleton class="title" tag="div" />
-          <PuSkeleton class="description" tag="div" />
-          <PuSkeleton class="subtitle" tag="div" />
-          <PuSkeleton class="description" tag="div" />
-          <PuSkeleton class="subtitle" tag="div" />
+          <pu-skeleton class="title" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
         </div>
         <div class="preload-wrapper__sidebar-items-item">
-          <PuSkeleton class="title" tag="div" />
-          <PuSkeleton class="description" tag="div" />
-          <PuSkeleton class="subtitle" tag="div" />
-          <PuSkeleton class="description" tag="div" />
-          <PuSkeleton class="subtitle" tag="div" />
+          <pu-skeleton class="title" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
         </div>
       </div>
     </template>
@@ -89,7 +89,7 @@ export default Vue.extend({
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
     }),
-    ...mapState('account', ['networkInfo', 'isTransactionsLoaded']),
+    ...mapState('account', ['networkInfo', 'isTransactionsListLoaded']),
     filteredTransactionGroups(): Array<TransactionGroupType> {
       let searchType = 'byName';
       if (isValidTxHash(this.searchTermDebounced)) {

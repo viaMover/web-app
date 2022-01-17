@@ -3,7 +3,7 @@ import { addABI, decodeMethod } from 'abi-decoder';
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
-import { getPriceByAddress, NetworkAliases } from '@/services/coingecko/tokens';
+import { getPriceByAddress, NetworkAliase } from '@/services/coingecko/tokens';
 import { Explorer } from '@/services/explorer';
 import { isError } from '@/services/responses';
 import store from '@/store/index';
@@ -36,13 +36,39 @@ export class MoralisExplorer implements Explorer {
   readonly apiURL: string = 'https://deep-index.moralis.io/api/v2/';
   private readonly apiClient: AxiosInstance;
 
+  private static readonly erc20AbiApprove = [
+    {
+      constant: false,
+      inputs: [
+        {
+          name: '_spender',
+          type: 'address'
+        },
+        {
+          name: '_value',
+          type: 'uint256'
+        }
+      ],
+      name: 'approve',
+      outputs: [
+        {
+          name: '',
+          type: 'bool'
+        }
+      ],
+      payable: false,
+      stateMutability: 'nonpayable',
+      type: 'function'
+    }
+  ];
+
   constructor(
     private readonly accountAddress: string,
     private readonly nativeCurrency: string,
     private readonly network: Network,
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
-    private readonly setIsTransactionsLoaded: (val: boolean) => void,
+    private readonly setIsTransactionsListLoaded: (val: boolean) => void,
     private readonly setTokens: (tokens: Array<TokenWithBalance>) => void,
     private readonly setChartData: (
       chartData: Record<string, Array<[number, number]>>
@@ -55,35 +81,11 @@ export class MoralisExplorer implements Explorer {
         'X-API-Key': apiKey
       }
     });
-    addABI([
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_spender',
-            type: 'address'
-          },
-          {
-            name: '_value',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [
-          {
-            name: '',
-            type: 'bool'
-          }
-        ],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      }
-    ]);
+    addABI(MoralisExplorer.erc20AbiApprove);
   }
 
   async init(): Promise<void> {
-    this.setIsTransactionsLoaded(false);
+    this.setIsTransactionsListLoaded(false);
     await this.refreshWalletData();
   }
 
@@ -94,33 +96,31 @@ export class MoralisExplorer implements Explorer {
     this.setTokens(tokensWihNative);
     const transactions = await this.getAllTransactions(tokensWithPrices);
     this.setTransactions(transactions);
-    this.setIsTransactionsLoaded(true);
+    this.setIsTransactionsListLoaded(true);
   }
 
   public getChartData = (
     assetCode: string,
     nativeCurrency: string,
-    ChartTypes: string
+    chartTypes: string
   ): void => {
     console.log('Not implemented yet');
   };
 
-  // PRIVATE SECTION
-
-  private getNetworkAlias(): NetworkAliases {
+  private getNetworkAlias(): NetworkAliase {
     switch (this.network) {
       case Network.mainnet:
-        return NetworkAliases.Eth;
+        return NetworkAliase.Eth;
       case Network.binance:
-        return NetworkAliases.Bsc;
+        return NetworkAliase.Bsc;
       case Network.binanceTest:
-        return NetworkAliases.BscTestnet;
+        return NetworkAliase.BscTestnet;
       case Network.kovan:
-        return NetworkAliases.Koven;
+        return NetworkAliase.Koven;
       case Network.rinkeby:
-        return NetworkAliases.Rinkeby;
+        return NetworkAliase.Rinkeby;
       case Network.ropsten:
-        return NetworkAliases.Ropster;
+        return NetworkAliase.Ropsten;
       default:
         throw new Error(`Moralis doesn't have alias for ${this.network}`);
     }

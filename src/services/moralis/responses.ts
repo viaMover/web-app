@@ -28,7 +28,7 @@ export type Erc20TransactionResponse = {
   total: number;
   page: number;
   page_size: number;
-  result: Erc20Transaction[];
+  result: Array<Erc20Transaction>;
 };
 
 export type Erc20Transaction = {
@@ -46,7 +46,7 @@ export type NativeTransactionResponse = {
   total: number;
   page: number;
   page_size: number;
-  result: NativeTransaction[];
+  result: Array<NativeTransaction>;
 };
 
 export type NativeTransaction = {

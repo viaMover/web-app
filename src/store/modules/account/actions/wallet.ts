@@ -255,7 +255,7 @@ export default {
         const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
         commit('setEthPrice', ethPriceInUSD);
       } catch (e) {
-        console.error("Can't get ETH price, stop loading data");
+        console.error("Can't get ETH price, stop loading data", e);
         Sentry.captureException(e);
         return;
       }
@@ -293,7 +293,7 @@ export default {
               commit('setChartData', chartData);
             },
             (val: boolean) => {
-              commit('setIsTransactionsLoaded', val);
+              commit('setIsTransactionsListLoaded', val);
             }
           );
 

@@ -154,19 +154,19 @@ export const InitZerionExplorer = (
     getChartData: (
       assetCode: string,
       nativeCurrency: string,
-      chartType: string
+      chartTypes: string
     ) => {
       assetSocket.emit('get', {
         payload: {
           asset_codes: [assetCode],
-          charts_type: chartType,
+          charts_type: chartTypes,
           currency: nativeCurrency.toLowerCase()
         },
         scope: ['charts']
       });
     },
     refreshWalletData: () => {
-      console.log("Zerion doesn't have straigh refresh function");
+      console.log("Zerion doesn't have straight refresh function");
     }
   };
 };

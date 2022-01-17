@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/vue';
 
+import { APIKeys } from '@/settings';
 import { Network } from '@/utils/networkTypes';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 
@@ -9,7 +10,7 @@ export interface Explorer {
   getChartData: (
     assetCode: string,
     nativeCurrency: string,
-    ChartTypes: string
+    chartTypes: string
   ) => void;
   refreshWalletData: () => void;
 }
@@ -25,15 +26,15 @@ export const BuildExplorer = async (
   updateTokens: (tokens: Array<TokenWithBalance>) => void,
   removeTokens: (tokens: Array<string>) => void,
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void,
-  setIsTransactionsLoaded: (val: boolean) => void
+  setIsTransactionsListLoaded: (val: boolean) => void
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
     nativeCurrency,
     network,
-    '0NgMT3ZAGjyEaEs4EgJ58QpqFEafmWsmBwAn1kasrYQmJ5MB700CUnCwntLMMU6y',
+    APIKeys.MORALIS_API_KEY,
     setTransactions,
-    setIsTransactionsLoaded,
+    setIsTransactionsListLoaded,
     setTokens,
     setChartData
   );
@@ -48,7 +49,7 @@ export const BuildExplorer = async (
   }
 
   // For zerion we assume that transactions are loaded from start
-  setIsTransactionsLoaded(true);
+  setIsTransactionsListLoaded(true);
 
   return InitZerionExplorer(
     accountAddress,
