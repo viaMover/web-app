@@ -2,7 +2,7 @@
   <div class="secondary-page-wrapper">
     <back-button
       v-if="hasBackButton"
-      class="page-back-button"
+      class="page-back-button absolute"
       @back="handleBack"
     />
     <div v-if="!hideTitle" class="heading page-secondary page-heading">

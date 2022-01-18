@@ -17,10 +17,10 @@ html {
       border-right: 1px solid @border-background;
       flex-grow: 0;
       flex-shrink: 0;
-      width: 412px;
+      width: @left-rail-base-width;
 
       @media screen and (max-width: 1279px) {
-        width: 320px;
+        width: @left-rail-small-width;
       }
 
       .wrapper {
@@ -97,6 +97,16 @@ html {
         top: @button-page-inset;
         left: @button-page-inset;
         z-index: 10;
+
+        &.absolute {
+          position: fixed;
+          top: @button-page-inset;
+          left: @left-rail-base-width + @button-page-inset;
+
+          @media screen and (max-width: 1279px) {
+            left: @left-rail-small-width + @button-page-inset;
+          }
+        }
       }
     }
 
