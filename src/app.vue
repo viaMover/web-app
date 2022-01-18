@@ -16,12 +16,11 @@
             <router-view
               v-if="$route.meta.hasOwnPreload"
               key="preload-custom"
-              class="dashboard"
               name="preload"
             />
-            <preload-default v-else key="preload-default" class="dashboard" />
+            <preload-default v-else key="preload-default" />
           </template>
-          <router-view v-else key="viewport" class="dashboard" />
+          <router-view v-else key="viewport" />
         </transition>
         <mobile />
       </div>

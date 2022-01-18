@@ -1,5 +1,5 @@
 <template>
-  <content-wrapper class="dashboard dashboard-mobile mobile centered">
+  <content-wrapper class="dashboard-mobile mobile centered">
     <a
       class="logo button-like"
       href="https://viamover.com/"
