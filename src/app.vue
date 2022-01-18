@@ -1,12 +1,8 @@
 <template>
   <div id="app">
     <pu-skeleton-theme
-      :color="colors ? colors['skeleton-color'] : 'var(--color-skeleton-color)'"
-      :highlight="
-        colors
-          ? colors['skeleton-highlight-color']
-          : 'var(--color-skeleton-highlight-color)'
-      "
+      :color="skeletonColor"
+      :highlight="skeletonHighlightColor"
     >
       <div class="page">
         <web3-modal-vue
@@ -27,7 +23,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 import MewConnect from '@myetherwallet/mewconnect-web-client';
 import Portis from '@portis/web3';
@@ -49,19 +45,9 @@ export default Vue.extend({
     Mobile,
     Web3ModalVue
   },
-  provide() {
-    const provided = {};
-    Object.defineProperty(provided, 'themeColors', {
-      enumerable: true,
-      get: () => this.colors
-    });
-
-    return provided;
-  },
   data() {
     return {
       isLeftRailTransactions: true,
-      theme: 'light',
       providerOptions: {
         mewconnect: {
           package: MewConnect,
@@ -75,11 +61,14 @@ export default Vue.extend({
             id: APIKeys.PORTUS_DAPP_ID
           }
         }
-      },
-      colors: {}
+      }
     };
   },
   computed: {
+    ...mapState({
+      colors: 'colors',
+      theme: 'theme'
+    }),
     ...mapGetters('account', {
       isWalletReady: 'isWalletReady',
       entireBalanceNative: 'entireBalance'
@@ -96,6 +85,15 @@ export default Vue.extend({
       } else {
         return this.$t('lblPageTitleDefault') as string;
       }
+    },
+    skeletonColor(): string {
+      return this.colors['skeleton-color'] ?? 'var(--color-skeleton-color)';
+    },
+    skeletonHighlightColor(): string {
+      return (
+        this.colors['skeleton-highlight-color'] ??
+        'var(--color-skeleton-highlight-color)'
+      );
     }
   },
   watch: {
@@ -107,8 +105,7 @@ export default Vue.extend({
       this.setPageTitle(newVal);
     }
   },
-  mounted() {
-    this.computeProviderColors();
+  async mounted() {
     this.setI18n(this.$i18n);
     this.setPageTitle(this.pageTitle);
     this.setIsDetecting(true);
@@ -126,10 +123,12 @@ export default Vue.extend({
       }
       this.setIsDetecting(false);
     });
+    await this.initTheme();
   },
   methods: {
     ...mapActions({
-      setI18n: 'setI18n'
+      setI18n: 'setI18n',
+      initTheme: 'initTheme'
     }),
     ...mapMutations('account', {
       setWeb3Modal: 'setWeb3Modal',
@@ -140,18 +139,6 @@ export default Vue.extend({
     }),
     setPageTitle(title: string): void {
       document.title = title;
-    },
-    computeProviderColors(): void {
-      const computedStyle = getComputedStyle(document.documentElement);
-      this.colors = Object.values(computedStyle)
-        .filter((item) => item.startsWith('--color'))
-        .reduce((colors, color) => {
-          return {
-            ...colors,
-            [color.replace('--color-', '')]:
-              computedStyle.getPropertyValue(color)
-          };
-        }, {});
     }
   }
 });
