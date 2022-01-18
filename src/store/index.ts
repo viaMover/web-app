@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
+import { Theme } from '@/settings/theme';
 
 import actions from './actions';
 import account from './modules/account';
@@ -25,7 +26,10 @@ const store = new Vuex.Store<RootStoreState>({
   strict: false, // should never be true as recursion level is too deep
   state: {
     appVersion: '0.0.1',
-    i18n: null
+    i18n: null,
+    isThemeInitialized: false,
+    theme: Theme.Light,
+    colors: {}
   },
   actions: actions,
   mutations: mutations,

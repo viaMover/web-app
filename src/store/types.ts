@@ -1,5 +1,6 @@
 import { IVueI18n } from 'vue-i18n';
 
+import { Theme } from '@/settings/theme';
 import { GamesStoreState } from '@/store/modules/games/types';
 import { GovernanceStoreState } from '@/store/modules/governance/types';
 import { ModalsStoreState } from '@/store/modules/modals/types';
@@ -13,6 +14,9 @@ import { EarningsStoreState } from './modules/earnings/types';
 export interface RootStoreState {
   appVersion: string;
   i18n: IVueI18n | null;
+  isThemeInitialized: boolean;
+  theme: Theme;
+  colors: Record<string, string>;
 
   // rootState members
 

@@ -52,7 +52,7 @@ export default Vue.extend({
     },
     accentColor: {
       type: String,
-      default: 'rgba(251, 157, 83, 0.8)'
+      default: 'var(--color-product-savings)'
     },
     chartDataSource: {
       type: Array as PropType<

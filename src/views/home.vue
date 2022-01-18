@@ -49,11 +49,6 @@ export default Vue.extend({
     SwapModal,
     SearchModal
   },
-  inject: {
-    themeColors: {
-      default: {}
-    }
-  },
   methods: {
     isFeatureEnabled
   }

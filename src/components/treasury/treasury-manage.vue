@@ -8,7 +8,7 @@
       />
       <div class="manage-graph-wrapper">
         <bar-chart
-          accent-color="#F593AE"
+          :accent-color="chartColor"
           :chart-data-source="chartDataSource"
           :is-loading="isTreasuryInfoLoading || treasuryInfo === undefined"
           @item-selected="handleItemSelected"
@@ -62,6 +62,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({
+      colors: 'colors'
+    }),
     ...mapState('account', {
       isTreasuryInfoLoading: 'isTreasuryInfoLoading',
       treasuryInfo: 'treasuryInfo',
@@ -130,6 +133,9 @@ export default Vue.extend({
           this.usdcNativePrice
         )
       );
+    },
+    chartColor(): string {
+      return this.colors['product-treasury'];
     }
   },
   methods: {

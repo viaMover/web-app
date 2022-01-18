@@ -8,6 +8,7 @@
       />
       <div class="manage-graph-wrapper">
         <bar-chart
+          :accent-color="chartColor"
           :chart-data-source="chartDataSource"
           :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
           @item-selected="handleItemSelected"
@@ -61,6 +62,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({
+      colors: 'colors'
+    }),
     ...mapState('account', {
       savingsInfo: 'savingsInfo',
       isSavingsInfoLoading: 'isSavingsInfoLoading',
@@ -129,6 +133,9 @@ export default Vue.extend({
           this.usdcNativePrice
         )
       );
+    },
+    chartColor(): string {
+      return this.colors['product-savings'];
     }
   },
   methods: {

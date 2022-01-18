@@ -1,4 +1,23 @@
 :root {
+  // by default we apply light theme colors
+  @light-theme-colors();
+
+  // and if user has dark color scheme preferred, then the
+  // default for them would be overridden unless exact theme is specified
+  @media screen and (prefers-color-scheme: dark) {
+    @dark-theme-colors();
+  }
+
+  &.light {
+    @light-theme-colors();
+  }
+
+  &.dark {
+    @dark-theme-colors();
+  }
+}
+
+@light-theme-colors: {
   --color-background: rgb(250, 250, 252);
   --color-background-left-rail: rgb(246, 246, 246);
   --color-background-left-rail-darker: rgb(241, 241, 241);
@@ -46,11 +65,13 @@
   --color-input-search-background: rgb(241, 241, 241);
   --default-border-input: none;
   --default-outline-input: none;
+}
 
-  &.dark-theme {
-    // TODO: add variables;
-    --color-button-transparent-background: transparent;
-  }
+@dark-theme-colors: {
+  --color-skeleton-color: green;
+  --color-button-transparent-background: transparent;
+  --color-product-savings: blue;
+  --color-product-treasury: red;
 }
 
 @background: var(--color-background);
