@@ -93,10 +93,13 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/savings',
-    component: () =>
-      import(
-        /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
-      ),
+    components: {
+      // preload: ProductPreload,
+      default: () =>
+        import(
+          /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
+        )
+    },
     children: [
       {
         path: '',
@@ -142,10 +145,13 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/treasury',
-    component: () =>
-      import(
-        /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
-      ),
+    components: {
+      // preload: ProductPreload,
+      default: () =>
+        import(
+          /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
+        )
+    },
     children: [
       {
         path: '',

@@ -37,10 +37,18 @@
 
       &.active {
         background-color: @background-left-rail-darkest;
+
+        &.skeleton {
+          background-color: initial;
+        }
       }
 
       &:not(.active):hover {
         background-color: @background-left-rail-darker;
+
+        &.skeleton {
+          background-color: initial;
+        }
       }
 
       .icon {

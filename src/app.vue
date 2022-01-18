@@ -12,7 +12,15 @@
           :theme="theme"
         />
         <transition appear name="fade">
-          <preload v-if="showPreload" key="preload" class="dashboard" />
+          <template v-if="showPreload">
+            <router-view
+              v-if="$route.meta.hasOwnPreload"
+              key="preload-custom"
+              class="dashboard"
+              name="preload"
+            />
+            <preload-default v-else key="preload-default" class="dashboard" />
+          </template>
           <router-view v-else key="viewport" class="dashboard" />
         </transition>
         <mobile />
@@ -32,7 +40,7 @@ import Web3ModalVue from 'web3modal-vue';
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import Mobile from '@/views/mobile.vue';
-import Preload from '@/views/preload.vue';
+import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/actions/wallet';
@@ -41,7 +49,7 @@ import { InitCallbacks } from './web3/callbacks';
 export default Vue.extend({
   name: 'App',
   components: {
-    Preload,
+    PreloadDefault,
     Mobile,
     Web3ModalVue
   },
