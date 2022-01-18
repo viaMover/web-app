@@ -16,8 +16,6 @@ import Vue from 'vue';
 
 import { CloseButton } from '@/components/buttons';
 
-import '@/styles/_shop.less';
-
 export default Vue.extend({
   name: 'ShopWrapper',
   components: {

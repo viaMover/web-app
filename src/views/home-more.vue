@@ -26,8 +26,6 @@ import {
 } from '@/components/sections';
 import VaultsRaceSection from '@/components/sections/vaults-race-section.vue';
 
-import '@/styles/_more.less';
-
 export default Vue.extend({
   name: 'HomeMore',
   components: {

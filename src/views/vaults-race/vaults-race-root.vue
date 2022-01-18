@@ -23,8 +23,6 @@ import Vue from 'vue';
 import { ContentWrapper } from '@/components/layout';
 import { VaultsRaceLeftRail } from '@/components/vaults-race';
 
-import '@/styles/_games.less';
-
 export default Vue.extend({
   name: 'VaultsRaceRoot',
   components: {

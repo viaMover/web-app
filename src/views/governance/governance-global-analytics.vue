@@ -103,8 +103,6 @@ import {
 } from '@/components/governance';
 import { ContentWrapper, SecondaryPage } from '@/components/layout';
 
-import '@/styles/_overview.less';
-
 export default Vue.extend({
   name: 'GovernanceGlobalAnalytics',
   components: {

@@ -6,8 +6,6 @@ import Vuelidate from 'vuelidate';
 import { Integrations } from '@sentry/tracing';
 import * as Sentry from '@sentry/vue';
 
-// import '@/styles/_fonts.less';
-// import '@/styles/_page_transitions.less';
 import '@/styles/styles.less';
 
 import App from './app.vue';

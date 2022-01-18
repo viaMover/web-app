@@ -31,8 +31,6 @@ import { EarningsNavLeftRailItem } from '@/components/earnings';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal } from '@/components/modals';
 
-import '@/styles/_earnings.less';
-
 export default Vue.extend({
   name: 'EarningsRoot',
   components: {

@@ -34,8 +34,6 @@ import { DebitCardManageCard, DebitCardMyCard } from '@/components/debit-card';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal, SearchSkinModal } from '@/components/modals';
 
-import '@/styles/_debit-card.less';
-
 export default Vue.extend({
   name: 'DebitCardRoot',
   components: {

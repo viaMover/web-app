@@ -37,8 +37,6 @@ import {
   GovernanceProposalsItemSkeleton
 } from '@/components/governance';
 
-import '@/styles/_governance-proposals-item.less';
-
 import SectionBase from './section-base/section-base.vue';
 
 export default Vue.extend({

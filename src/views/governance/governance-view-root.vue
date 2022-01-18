@@ -57,8 +57,6 @@ import {
   LeftRailSectionNavItemEmojiSkeleton
 } from '@/components/layout';
 
-import '@/styles/_overview.less';
-
 export default Vue.extend({
   name: 'GovernanceViewRoot',
   components: {

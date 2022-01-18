@@ -109,8 +109,6 @@ import {
 } from '@/components/layout';
 import { SearchModal } from '@/components/modals';
 
-import '@/styles/_savings.less';
-
 export default Vue.extend({
   name: 'SavingsRoot',
   components: {
