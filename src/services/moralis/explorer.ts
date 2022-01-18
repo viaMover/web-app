@@ -90,11 +90,32 @@ export class MoralisExplorer implements Explorer {
   }
 
   public async refreshWalletData(): Promise<void> {
-    const tokens = await this.getErc20Tokens();
-    const tokensWithPrices = await this.enrichTokensWithPrices(tokens);
-    const tokensWihNative = await this.enrichTokensWithNative(tokensWithPrices);
+    const tokensWithPricePromise = this.getErc20Tokens().then((tokens) =>
+      this.enrichTokensWithPrices(tokens)
+    );
+    const erc20TransactionsPromise = this.getErc20Transactions();
+    const nativeTransactionsPromise = this.getNativeTransactions();
+
+    const [tokensWithPrices, erc20Transactions, nativeTransactions] =
+      await Promise.all([
+        tokensWithPricePromise,
+        erc20TransactionsPromise,
+        nativeTransactionsPromise
+      ]);
+
+    const tokensWihNativePromise =
+      this.enrichTokensWithNative(tokensWithPrices);
+    const transactionsPromise = this.parseTransactions(
+      tokensWithPrices,
+      erc20Transactions,
+      nativeTransactions
+    );
+
+    const [tokensWihNative, transactions] = await Promise.all([
+      tokensWihNativePromise,
+      transactionsPromise
+    ]);
     this.setTokens(tokensWihNative);
-    const transactions = await this.getAllTransactions(tokensWithPrices);
     this.setTransactions(transactions);
     this.setIsTransactionsListLoaded(true);
   }
@@ -247,13 +268,12 @@ export class MoralisExplorer implements Explorer {
     }
   };
 
-  private getAllTransactions = async (
-    walletTokens: Token[]
+  private parseTransactions = async (
+    walletTokens: Array<Token>,
+    erc20Transactions: Array<Erc20Transaction>,
+    nativeTransactions: Array<NativeTransaction>
   ): Promise<Transaction[]> => {
     const ethData = getEthAssetData();
-
-    const erc20Transactions = await this.getErc20Transactions();
-    const nativeTransactions = await this.getNativeTransactions();
 
     const allTransactionsHashes = [
       ...erc20Transactions.map((t) => t.transaction_hash),
@@ -360,7 +380,8 @@ export class MoralisExplorer implements Explorer {
       [] as Transaction[]
     );
 
-    const erc20ParsedTransactions = erc20Transactions.reduce<Transaction[]>(
+    const addressesOfTokensWithoutPrices: Array<string> = [];
+    let erc20ParsedTransactions = erc20Transactions.reduce<Transaction[]>(
       (acc, txn) => {
         let token: Token | undefined = walletTokens.find((t) =>
           sameAddress(t.address, txn.address)
@@ -371,6 +392,7 @@ export class MoralisExplorer implements Explorer {
           if (token === undefined) {
             return acc;
           }
+          addressesOfTokensWithoutPrices.push(token.address);
         }
 
         let isSwapTransaction = false;
@@ -426,6 +448,40 @@ export class MoralisExplorer implements Explorer {
       },
       [] as Transaction[]
     );
+
+    const uniqueAddressesOfTokensWithoutPrices = [
+      ...new Set(addressesOfTokensWithoutPrices)
+    ];
+
+    if (uniqueAddressesOfTokensWithoutPrices.length > 0) {
+      const pricesResponse = await getPriceByAddress(
+        'ethereum',
+        uniqueAddressesOfTokensWithoutPrices,
+        [this.nativeCurrency]
+      );
+      if (pricesResponse.isError) {
+        Sentry.captureMessage(
+          `Can't get token prices from coingecko: for additional transaction tokens ${pricesResponse.error}`
+        );
+      } else {
+        erc20ParsedTransactions = erc20ParsedTransactions.map((txn) => {
+          if ('asset' in txn && txn.asset !== undefined) {
+            const loadedPrice =
+              pricesResponse.result?.[txn.asset.address]?.[this.nativeCurrency];
+            if (loadedPrice && 'price' in txn.asset) {
+              return {
+                ...txn,
+                asset: {
+                  ...txn.asset,
+                  price: String(loadedPrice)
+                }
+              };
+            }
+          }
+          return txn;
+        });
+      }
+    }
 
     const allParsedTransactions = [
       ...erc20ParsedTransactions,
