@@ -354,12 +354,12 @@ export default {
         throw e;
       }
 
-      const savingsFreshData = dispatch('fetchSavingsFreshData');
-      const savingsInfoPromise = dispatch('fetchSavingsInfo');
-
       const treasuryFreshData = dispatch('fetchTreasuryFreshData');
       const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
       const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
+        root: true
+      });
+      const savingsInfoPromise = dispatch('savings/loadInfo', undefined, {
         root: true
       });
 
@@ -386,7 +386,6 @@ export default {
       const promisesResults = await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
-        savingsFreshData,
         treasuryFreshData,
         nftInfoPromise,
         loadAvatarPromise,
@@ -410,9 +409,11 @@ export default {
   },
   async updateWalletAfterTxn({ dispatch }): Promise<void> {
     const loadPowercardPromise = dispatch('fetchPowercardData');
-    const savingsFreshData = dispatch('fetchSavingsFreshData');
     const treasuryFreshData = dispatch('fetchTreasuryFreshData');
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
+      root: true
+    });
+    const savingsInfoPromise = dispatch('savings/loadMinimalInfo', undefined, {
       root: true
     });
     const debitCardAvailableSkinsPromise = isFeatureEnabled(
@@ -424,7 +425,7 @@ export default {
       : Promise.resolve();
 
     const promisesResults = await Promise.allSettled([
-      savingsFreshData,
+      savingsInfoPromise,
       treasuryFreshData,
       nftInfoPromise,
       loadPowercardPromise,

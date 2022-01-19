@@ -1,15 +1,37 @@
-import { GetterTree } from 'vuex';
-
 import gt from 'lodash-es/gt';
 
 import { SavingsMonthBalanceItem } from '@/services/mover';
-import { AccountStoreState } from '@/store/modules/account/types';
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
-export default {
-  savingsInfoBalanceUSDC(state): string {
+import { SavingsStoreState } from './types';
+
+enum Getters {
+  savingsInfoBalanceUSDC,
+  savingsInfoBalanceNative,
+  savingsInfoEarnedThisMonthNative,
+  savingsInfoEarnedTotalNative,
+  savingsInfoTotalPoolBalanceNative,
+  savingsEstimatedEarningsTomorrowNative,
+  savingsEstimatedEarningsNextMonthNative,
+  savingsEstimatedEarningsAnnuallyNative,
+  savingsEndOfMonthBalanceNative,
+  savingsMonthEarnedNative,
+  savingsMonthAverageEarnedNative,
+  savingsMonthTotalDepositsNative,
+  savingsMonthTotalWithdrawalsNative,
+  savingsMonthStatsOptions,
+  hasActiveSavings,
+  savingsAvg30DaysAPY,
+  savingsMonthPaidToTreasury,
+  savingsMonthPaidToTreasuryNative,
+  savingsMonthSavedFees,
+  savingsMonthSavedFeesNative
+}
+
+const getters: GettersFuncs<typeof Getters, SavingsStoreState> = {
+  savingsInfoBalanceUSDC(state, _, rootState): string {
     if (state.savingsBalance !== undefined) {
       return state.savingsBalance;
     }
@@ -17,61 +39,61 @@ export default {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      state.networkInfo === undefined
+      rootState.account!.networkInfo === undefined
     ) {
       return '0';
     }
 
     return fromWei(
       state.savingsInfo.currentBalance,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
   },
   savingsInfoBalanceNative(state, getters): string {
     return multiply(getters.savingsInfoBalanceUSDC, getters.usdcNativePrice);
   },
-  savingsInfoEarnedThisMonthNative(state, getters): string {
+  savingsInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      state.networkInfo === undefined
+      rootState.account!.networkInfo === undefined
     ) {
       return '0';
     }
 
     const valueInUSDC = fromWei(
       state.savingsInfo.earnedThisMonth,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
 
     return multiply(valueInUSDC, getters.usdcNativePrice);
   },
-  savingsInfoEarnedTotalNative(state): string {
+  savingsInfoEarnedTotalNative(state, _, rootState): string {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      state.networkInfo === undefined
+      rootState.account!.networkInfo === undefined
     ) {
       return '0';
     }
 
     return fromWei(
       state.savingsInfo.earnedTotal,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
   },
-  savingsInfoTotalPoolBalanceNative(state, getters): string {
+  savingsInfoTotalPoolBalanceNative(state, getters, rootState): string {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      state.networkInfo === undefined
+      rootState.account!.networkInfo === undefined
     ) {
       return '0';
     }
 
     const balanceUSDC = fromWei(
       state.savingsInfo.currentPoolBalance,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
     return multiply(balanceUSDC, getters.usdcNativePrice);
   },
@@ -111,11 +133,11 @@ export default {
     const multiplier = divide(state.savingsAPY, 100);
     return multiply(getters.savingsInfoBalanceNative, multiplier);
   },
-  savingsEndOfMonthBalanceNative(state, getters): string {
+  savingsEndOfMonthBalanceNative(state, getters, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.endOfMonthBalance === 0
     ) {
       return '0';
@@ -123,16 +145,16 @@ export default {
 
     const balanceInUSDC = fromWei(
       state.savingsReceipt.endOfMonthBalance,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
 
     return multiply(balanceInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthEarnedNative(state, getters): string {
+  savingsMonthEarnedNative(state, getters, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.earnedThisMonth === 0
     ) {
       return '0';
@@ -140,15 +162,15 @@ export default {
 
     const earnedInUSDC = fromWei(
       state.savingsReceipt.earnedThisMonth,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
     return multiply(earnedInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthAverageEarnedNative(state, getters): string {
+  savingsMonthAverageEarnedNative(state, getters, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.avgDailyEarnings === 0
     ) {
       return '0';
@@ -156,15 +178,15 @@ export default {
 
     const earnedInUSDC = fromWei(
       state.savingsReceipt.avgDailyEarnings,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
     return multiply(earnedInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthTotalDepositsNative(state, getters): string {
+  savingsMonthTotalDepositsNative(state, getters, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.totalDeposits === 0
     ) {
       return '0';
@@ -172,16 +194,16 @@ export default {
 
     const depositsInUSDC = fromWei(
       state.savingsReceipt.totalDeposits,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
 
     return multiply(depositsInUSDC, getters.usdcNativePrice);
   },
-  savingsMonthTotalWithdrawalsNative(state, getters): string {
+  savingsMonthTotalWithdrawalsNative(state, getters, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.totalWithdrawals === 0
     ) {
       return '0';
@@ -189,7 +211,7 @@ export default {
 
     const withdrawalsInUSDC = fromWei(
       state.savingsReceipt.totalWithdrawals,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
 
     return multiply(withdrawalsInUSDC, getters.usdcNativePrice);
@@ -256,11 +278,11 @@ export default {
 
     return multiply(state.savingsInfo.avg30DaysAPY, 100);
   },
-  savingsMonthPaidToTreasury(state): string {
+  savingsMonthPaidToTreasury(state, _, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.paidToTreasury === 0
     ) {
       return '0';
@@ -268,7 +290,7 @@ export default {
 
     return fromWei(
       state.savingsReceipt.paidToTreasury,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
   },
   savingsMonthPaidToTreasuryNative(state, getters): string {
@@ -277,11 +299,11 @@ export default {
       getters.usdcNativePrice
     );
   },
-  savingsMonthSavedFees(state): string {
+  savingsMonthSavedFees(state, _, rootState): string {
     if (
       state.savingsReceipt === undefined ||
       state.isSavingsReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account!.networkInfo === undefined ||
       state.savingsReceipt.savedFees === 0
     ) {
       return '0';
@@ -289,10 +311,13 @@ export default {
 
     return fromWei(
       state.savingsReceipt.savedFees,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
   },
   savingsMonthSavedFeesNative(state, getters): string {
     return multiply(getters.savingsMonthSavedFees, getters.usdcNativePrice);
   }
-} as GetterTree<AccountStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

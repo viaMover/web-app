@@ -1,10 +1,21 @@
-import { MutationTree } from 'vuex';
-
 import { SavingsInfo, SavingsReceipt } from '@/services/mover';
+import { MutationFuncs } from '@/store/types';
 
-import { AccountStoreState } from '../types';
+import { SavingsStoreState } from './types';
 
-export default {
+enum Mutations {
+  setSavingsAPY,
+  setSavingsDPY,
+  setSavingsBalance,
+  setIsSavingsInfoLoading,
+  setSavingsInfoError,
+  setSavingsInfo,
+  setIsSavingsReceiptLoading,
+  setSavingsReceiptError,
+  setSavingsReceipt
+}
+
+const mutations: MutationFuncs<typeof Mutations, SavingsStoreState> = {
   setSavingsAPY(state, apy: string): void {
     state.savingsAPY = apy;
   },
@@ -32,4 +43,7 @@ export default {
   setSavingsReceipt(state, receipt: SavingsReceipt): void {
     state.savingsReceipt = receipt;
   }
-} as MutationTree<AccountStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

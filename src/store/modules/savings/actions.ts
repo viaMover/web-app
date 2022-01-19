@@ -1,39 +1,59 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 
 import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
 import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { AccountStoreState } from '@/store/modules/account/types';
-import { RootStoreState } from '@/store/types';
+import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ActionFuncs } from '@/store/types';
 
-export type SavingsGetReceiptPayload = {
-  year: number;
-  month: number;
-};
+import { MutationType } from './mutations';
+import { SavingsGetReceiptPayload, SavingsStoreState } from './types';
 
-export default {
-  async fetchSavingsFreshData({ commit, state }): Promise<void> {
-    if (
-      state.currentAddress === undefined ||
-      state.networkInfo === undefined ||
-      state.provider === undefined
-    ) {
+enum Actions {
+  loadMinimalInfo,
+  loadInfo,
+  fetchSavingsFreshData,
+  fetchSavingsInfo,
+  fetchSavingsReceipt
+}
+
+const actions: ActionFuncs<typeof Actions, SavingsStoreState, MutationType> = {
+  async loadMinimalInfo({ dispatch }): Promise<void> {
+    await dispatch('fetchSavingsFreshData');
+  },
+  async loadInfo({ dispatch }): Promise<void> {
+    const savingsFreshData = dispatch('fetchSavingsFreshData');
+    const savingsInfoPromise = dispatch('fetchSavingsInfo');
+
+    const promisesResults = await Promise.allSettled([
+      savingsInfoPromise,
+      savingsFreshData
+    ]);
+
+    const promisesErrors = promisesResults
+      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+      .map((p) => p.reason);
+
+    if (promisesErrors.length > 0) {
+      Sentry.captureException(promisesErrors);
+    }
+  },
+  async fetchSavingsFreshData({ commit, rootState }): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
     try {
       const getSavingsApyPromise = getSavingsAPY(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
+        rootState.account!.currentAddress!,
+        rootState.account!.networkInfo!.network,
+        rootState.account!.provider!.web3
       );
 
       const getSavingsBalancePromise = getSavingsBalance(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
+        rootState.account!.currentAddress!,
+        rootState.account!.networkInfo!.network,
+        rootState.account!.provider!.web3
       );
 
       const [savingsAPY, savingsBalance] = await Promise.all([
@@ -52,8 +72,8 @@ export default {
       commit('setSavingsBalance', '0');
     }
   },
-  async fetchSavingsInfo({ commit, state }): Promise<void> {
-    if (state.currentAddress === undefined) {
+  async fetchSavingsInfo({ commit, rootState }): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
@@ -61,7 +81,7 @@ export default {
     commit('setSavingsInfoError', undefined);
     commit('setSavingsInfo', undefined);
 
-    const info = await getSavingsInfo(state.currentAddress);
+    const info = await getSavingsInfo(rootState.account!.currentAddress!);
 
     if (isError(info)) {
       commit('setSavingsInfoError', info.error);
@@ -74,10 +94,10 @@ export default {
     commit('setIsSavingsInfoLoading', false);
   },
   async fetchSavingsReceipt(
-    { commit, state },
+    { commit, state, rootState },
     { year, month }: SavingsGetReceiptPayload
   ): Promise<void> {
-    if (state.currentAddress === undefined) {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
@@ -98,7 +118,11 @@ export default {
     commit('setSavingsReceiptError', undefined);
     commit('setSavingsReceipt', undefined);
 
-    const receipt = await getSavingsReceipt(state.currentAddress, year, month);
+    const receipt = await getSavingsReceipt(
+      rootState.account!.currentAddress!,
+      year,
+      month
+    );
 
     if (isError(receipt)) {
       commit('setSavingsReceiptError', receipt.error);
@@ -110,4 +134,7 @@ export default {
     commit('setSavingsReceipt', receipt.result);
     commit('setIsSavingsReceiptLoading', false);
   }
-} as ActionTree<AccountStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;
