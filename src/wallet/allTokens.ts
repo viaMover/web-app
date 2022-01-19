@@ -21,7 +21,8 @@ export const getAllTokens = (network: Network): Array<Token> => {
               : asset.name,
           logo: asset.imageUrl ?? getTokenLogo(asset.id),
           color: asset.color,
-          marketCap: asset.marketCap ?? 0
+          marketCap: asset.marketCap ?? 0,
+          priceUSD: '0'
         } as Token)
     );
   } else {

@@ -526,6 +526,19 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
+const getEthAssetData = (): SmallTokenInfoWithIcon & {
+  name: string;
+} => {
+  return {
+    address: 'eth',
+    decimals: 18,
+    symbol: 'ETH',
+    name: 'Ethereum',
+    iconURL:
+      'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+  };
+};
+
 const getMoveAssetData = (
   network: Network
 ): SmallTokenInfoWithIcon & {
@@ -653,6 +666,7 @@ export {
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
+  getEthAssetData,
   getOhmAssetData,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,

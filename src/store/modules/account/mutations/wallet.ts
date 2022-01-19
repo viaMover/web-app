@@ -2,7 +2,7 @@ import { MutationTree } from 'vuex';
 
 import Fuse from 'fuse.js';
 
-import { Explorer } from '@/services/zerion/explorer';
+import { Explorer } from '@/services/explorer';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance } from '@/wallet/types';
@@ -87,10 +87,7 @@ export default {
 
       return {
         ...acc,
-        [token.address.toLowerCase()]: {
-          color: token.color,
-          marketCap: token.marketCap
-        }
+        [token.address.toLowerCase()]: token
       };
     }, {});
   },

@@ -37,6 +37,9 @@ export const getMoverTransactionsTypes = async (
 
     return { isError: false, result: response.payload };
   } catch (err) {
-    return { isError: true, error: err };
+    return {
+      isError: true,
+      error: err instanceof Error ? err.message : String(err)
+    };
   }
 };
