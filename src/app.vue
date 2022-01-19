@@ -9,7 +9,7 @@
       />
       <div class="dashboard">
         <transition-group appear name="fade">
-          <preload v-show="showPreload" key="preload" />
+          <preload v-if="showPreload" key="preload" />
           <router-view v-cloak v-if="!showPreload" key="viewport" />
         </transition-group>
       </div>
@@ -85,7 +85,7 @@ export default Vue.extend({
         portis: {
           package: Portis,
           options: {
-            id: APIKeys.PORTUS_DAPP_ID
+            id: APIKeys.PORTIS_DAPP_ID
           }
         }
       }

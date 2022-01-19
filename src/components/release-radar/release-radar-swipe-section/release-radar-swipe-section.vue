@@ -1,6 +1,6 @@
 <template>
   <release-radar-page-section :title="title">
-    <PuSkeleton
+    <pu-skeleton
       circle
       class="skeleton-icon"
       :count="4"
@@ -9,7 +9,7 @@
       tag="div"
       width="80px"
     />
-    <PuSkeleton
+    <pu-skeleton
       class="skeleton-title"
       :count="4"
       :loading="isLoading"

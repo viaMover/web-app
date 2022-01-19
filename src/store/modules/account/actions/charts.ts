@@ -8,16 +8,16 @@ import { RootStoreState } from '@/store/types';
 export type EmitChartRequestPayload = {
   assetCode: string;
   nativeCurrency: string;
-  ChartTypes: string;
+  chartsType: string;
 };
 
 export default {
   emitChartRequest({ state }, payload: EmitChartRequestPayload): void {
     try {
-      state.explorer?.GetChartData(
+      state.explorer?.getChartData(
         payload.assetCode,
         payload.nativeCurrency,
-        payload.ChartTypes
+        payload.chartsType
       );
     } catch (err) {
       console.error(`Can't get chart data: ${err}`);

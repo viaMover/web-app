@@ -12,6 +12,9 @@ export default {
       ...state.transactions
     ]);
   },
+  setIsTransactionsListLoaded(state, val: boolean): void {
+    state.isTransactionsListLoaded = val;
+  },
   setWalletTransactions(state, transactions: Array<Transaction>): void {
     state.transactions = sortAndDeduplicateTransactions(transactions);
   },
