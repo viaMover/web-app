@@ -41,6 +41,8 @@ import {
   TItem
 } from '@/store/modules/account/utils/charts';
 
+// TODO: make component redraw itself on color change to reflect application theme change
+
 export default Vue.extend({
   name: 'BarChart',
   props: {
