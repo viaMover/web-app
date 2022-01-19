@@ -10,7 +10,7 @@ export interface Explorer {
   getChartData: (
     assetCode: string,
     nativeCurrency: string,
-    chartTypes: string
+    chartsType: string
   ) => void;
   refreshWalletData: () => void;
 }

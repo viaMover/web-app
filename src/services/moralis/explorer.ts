@@ -3,7 +3,7 @@ import { addABI, decodeMethod } from 'abi-decoder';
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
-import { getPriceByAddress, NetworkAliase } from '@/services/coingecko/tokens';
+import { getPriceByAddress, NetworkAlias } from '@/services/coingecko/tokens';
 import { Explorer } from '@/services/explorer';
 import { isError } from '@/services/responses';
 import store from '@/store/index';
@@ -123,25 +123,25 @@ export class MoralisExplorer implements Explorer {
   public getChartData = (
     assetCode: string,
     nativeCurrency: string,
-    chartTypes: string
+    chartsType: string
   ): void => {
     console.log('Not implemented yet');
   };
 
-  private getNetworkAlias(): NetworkAliase {
+  private getNetworkAlias(): NetworkAlias {
     switch (this.network) {
       case Network.mainnet:
-        return NetworkAliase.Eth;
+        return NetworkAlias.Eth;
       case Network.binance:
-        return NetworkAliase.Bsc;
+        return NetworkAlias.Bsc;
       case Network.binanceTest:
-        return NetworkAliase.BscTestnet;
+        return NetworkAlias.BscTestnet;
       case Network.kovan:
-        return NetworkAliase.Koven;
+        return NetworkAlias.Koven;
       case Network.rinkeby:
-        return NetworkAliase.Rinkeby;
+        return NetworkAlias.Rinkeby;
       case Network.ropsten:
-        return NetworkAliase.Ropsten;
+        return NetworkAlias.Ropsten;
       default:
         throw new Error(`Moralis doesn't have alias for ${this.network}`);
     }

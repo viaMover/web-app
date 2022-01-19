@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { Result } from '../responses';
 
-export enum NetworkAliase {
+export enum NetworkAlias {
   Eth = 'eth',
   Ropsten = 'ropsten',
   Rinkeby = 'rinkeby',

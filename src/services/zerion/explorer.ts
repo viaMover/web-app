@@ -154,12 +154,12 @@ export const InitZerionExplorer = (
     getChartData: (
       assetCode: string,
       nativeCurrency: string,
-      chartTypes: string
+      chartsType: string
     ) => {
       assetSocket.emit('get', {
         payload: {
           asset_codes: [assetCode],
-          charts_type: chartTypes,
+          charts_type: chartsType,
           currency: nativeCurrency.toLowerCase()
         },
         scope: ['charts']
