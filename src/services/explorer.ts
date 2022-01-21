@@ -13,6 +13,8 @@ export interface Explorer {
     chartsType: string
   ) => void;
   refreshWalletData: () => void;
+  hasInfinityLoader: () => boolean;
+  LoadMoreTransactions(nativeOnly: boolean): Promise<boolean>;
 }
 
 export const BuildExplorer = async (
@@ -22,6 +24,7 @@ export const BuildExplorer = async (
   setTransactions: (txns: Array<Transaction>) => void,
   updateTransactions: (txns: Array<Transaction>) => void,
   removeTransactions: (txns: Array<string>) => void,
+  setTransactionsOffset: (offset: number) => void,
   setTokens: (tokens: Array<TokenWithBalance>) => void,
   updateTokens: (tokens: Array<TokenWithBalance>) => void,
   removeTokens: (tokens: Array<string>) => void,
@@ -34,6 +37,8 @@ export const BuildExplorer = async (
     network,
     APIKeys.MORALIS_API_KEY,
     setTransactions,
+    updateTransactions,
+    setTransactionsOffset,
     setIsTransactionsListLoaded,
     setTokens,
     setChartData
