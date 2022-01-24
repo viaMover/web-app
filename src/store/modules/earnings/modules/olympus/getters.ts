@@ -1,15 +1,24 @@
-import { GetterTree } from 'vuex';
-
 import gt from 'lodash-es/gt';
 
 import { OlympusMonthBalanceItem } from '@/services/mover';
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsOlympusStoreState } from './types';
 
-export default {
+enum Getters {
+  balanceNative,
+  apyNative,
+  hasActiveEarnings,
+  olympusInfoEarnedThisMonthNative,
+  olympusEarnedThisMonth,
+  olympusEarnedThisMonthNative,
+  olympusMonthStatsOptions,
+  ohmNativePrice
+}
+
+const getters: GettersFuncs<typeof Getters, EarningsOlympusStoreState> = {
   balanceNative(state): string {
     if (!state.olympusBalance) {
       return '0';
@@ -24,10 +33,7 @@ export default {
     return multiply(divide(state.olympusAPY, '100'), '10000');
   },
   hasActiveEarnings(state): boolean {
-    if (state.olympusBalance !== undefined && gt(state.olympusBalance, 0)) {
-      return true;
-    }
-    return false;
+    return state.olympusBalance !== undefined && gt(state.olympusBalance, 0);
   },
   olympusInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (
@@ -92,4 +98,7 @@ export default {
     }
     return multiply(state.olympusPriceInWeth, rootState.account.ethPrice);
   }
-} as GetterTree<EarningsOlympusStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

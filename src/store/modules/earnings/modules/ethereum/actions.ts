@@ -1,5 +1,3 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 
 import {
@@ -8,14 +6,26 @@ import {
 } from '@/services/chain/earnings/ethereum';
 import { getEthereumInfo, getEthereumReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { RootStoreState } from '@/store/types';
+import { ActionFuncs } from '@/store/types';
 
+import { MutationType } from './mutations';
 import {
   EarningsEthereumStoreState,
   FetchEthereumReceiptPayload
 } from './types';
 
-export default {
+enum Actions {
+  loadMinimalInfo,
+  loadInfo,
+  fetchEthereumInfo,
+  fetchEthereumReceipt
+}
+
+const actions: ActionFuncs<
+  typeof Actions,
+  EarningsEthereumStoreState,
+  MutationType
+> = {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     await dispatch('fetchEthereumInfo');
   },
@@ -104,4 +114,7 @@ export default {
     }
     commit('setEthereumReceipt', receipt);
   }
-} as ActionTree<EarningsEthereumStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

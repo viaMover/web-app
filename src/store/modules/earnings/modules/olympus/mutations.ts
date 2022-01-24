@@ -1,10 +1,22 @@
-import { MutationTree } from 'vuex';
-
 import { OlympusInfo } from '@/services/mover';
+import { MutationFuncs } from '@/store/types';
 
 import { EarningsOlympusStoreState, SetOlympusReceiptPayload } from './types';
 
-export default {
+enum Mutations {
+  setIsLoading,
+  setOlympusAPY,
+  setOlympusBalance,
+  setOlympusInfo,
+  setOlympusInfoError,
+  setIsOlympusInfoLoading,
+  setOlympusPriceInWeth,
+  setOlympusReceipt,
+  setOlympusReceiptError,
+  setIsOlympusReceiptLoading
+}
+
+const mutations: MutationFuncs<typeof Mutations, EarningsOlympusStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
@@ -36,4 +48,7 @@ export default {
   setIsOlympusReceiptLoading(state, status: boolean): void {
     state.isOlympusReceiptLoading = status;
   }
-} as MutationTree<EarningsOlympusStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

@@ -1,15 +1,24 @@
-import { GetterTree } from 'vuex';
-
 import gt from 'lodash-es/gt';
 
 import { EthereumMonthBalanceItem, EthereumReceipt } from '@/services/mover';
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsEthereumStoreState } from './types';
 
-export default {
+enum Getters {
+  balanceNative,
+  apyNative,
+  hasActiveEarnings,
+  ethereumInfoEarnedThisMonthNative,
+  ethereumEarnedThisMonth,
+  ethereumEarnedThisMonthNative,
+  ethereumMonthStatsOptions,
+  ethereumReceipt
+}
+
+const getters: GettersFuncs<typeof Getters, EarningsEthereumStoreState> = {
   balanceNative(state): string {
     if (!state.ethereumBalance) {
       return '0';
@@ -101,4 +110,7 @@ export default {
       return state.ethereumReceiptCache[`${year}/${month}`];
     };
   }
-} as GetterTree<EarningsEthereumStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

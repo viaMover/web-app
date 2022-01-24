@@ -1,11 +1,14 @@
-import { ActionTree } from 'vuex';
+import { ActionFuncs } from '@/store/types';
 
-import { RootStoreState } from '@/store/types';
-
+import { MutationType } from './mutations';
 import { EarningsStoreState } from './types';
 import { ActiveProviders } from './utils';
 
-export default {
+enum Actions {
+  loadMinimalInfo
+}
+
+const actions: ActionFuncs<typeof Actions, EarningsStoreState, MutationType> = {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     const providersLoadInfoPromises = new Array<Promise<void>>();
 
@@ -15,4 +18,7 @@ export default {
 
     await Promise.allSettled(providersLoadInfoPromises);
   }
-} as ActionTree<EarningsStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;
