@@ -6,7 +6,9 @@ import { GovernanceStoreState } from '@/store/modules/governance/types';
 import { ModalsStoreState } from '@/store/modules/modals/types';
 import { NFTStoreState } from '@/store/modules/nft/types';
 import { RadarStoreState } from '@/store/modules/radar/types';
+import { SavingsStoreState } from '@/store/modules/savings/types';
 import { ShopStoreState } from '@/store/modules/shop/types';
+import { TreasuryStoreState } from '@/store/modules/treasury/types';
 
 import { AccountStoreState } from './modules/account/types';
 import { EarningsStoreState } from './modules/earnings/types';
@@ -25,6 +27,8 @@ export interface RootStoreState {
   modals?: ModalsStoreState;
   games?: GamesStoreState;
   earnings?: EarningsStoreState;
+  savings?: SavingsStoreState;
+  treasury?: TreasuryStoreState;
   // rootState members end
 }
 

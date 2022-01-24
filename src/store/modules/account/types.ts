@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
+import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
@@ -74,4 +75,21 @@ export type AccountStoreState = {
   gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
+};
+
+export type EmitChartRequestPayload = {
+  assetCode: string;
+  nativeCurrency: string;
+  chartsType: string;
+};
+
+export type RefreshWalletPayload = {
+  injected: boolean;
+  init: boolean;
+};
+
+export type InitWalletPayload = {
+  provider: provider;
+  injected: boolean;
+  providerBeforeCloseCb: () => void;
 };

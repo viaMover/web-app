@@ -1,16 +1,54 @@
-import { GetterTree } from 'vuex';
-
 import dayjs from 'dayjs';
 
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { add, multiply } from '@/utils/bigmath';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
-import { AccountStoreState, TransactionGroup } from '../types';
+import { AccountStoreState, TransactionGroup } from './types';
 
-export default {
+enum Getters {
+  getPendingTransactions,
+  getPendingOffchainTransactions,
+  getTransactionByHash,
+  getTransactionByQueueId,
+  transactionsGroupedByDay,
+  isWalletConnected,
+  isWalletReady,
+  entireBalance,
+  ethPrice,
+  moveNativePrice,
+  usdcNativePrice,
+  slpNativePrice,
+  getTokenColor,
+  getTokenMarketCap,
+  searchInAllTokens,
+  allTokensSortedByMarketCap,
+  searchInWalletTokens,
+  getOffchainExplorerHanlder,
+  getCurrentAddresses
+}
+
+const getters: GettersFuncs<typeof Getters, AccountStoreState> = {
+  getPendingTransactions(state): Transaction[] {
+    return state.transactions.filter((t) => t.status === 'pending');
+  },
+  getPendingOffchainTransactions(state): Transaction[] {
+    return state.transactions.filter(
+      (t) => t.status === 'pending' && t.isOffchain === true
+    );
+  },
+  getTransactionByHash(state): (hash: string) => Transaction | undefined {
+    return (hash: string): Transaction | undefined => {
+      return state.transactions.find((t) => t.hash === hash);
+    };
+  },
+  getTransactionByQueueId(state): (queueId: string) => Transaction | undefined {
+    return (queueId: string): Transaction | undefined => {
+      return state.transactions.find((t) => t.subsidizedQueueId === queueId);
+    };
+  },
   transactionsGroupedByDay(state): Array<TransactionGroup> {
     const groupsByDay = state.transactions.reduce(
       (
@@ -40,7 +78,7 @@ export default {
   isWalletReady(state): boolean {
     return !state.isWalletLoading;
   },
-  entireBalance(state, getters): string {
+  entireBalance(state, getters, rootState): string {
     let balance = '0';
     balance = state.tokens.reduce<string>((acc, token) => {
       const tokenPrice = multiply(token.balance, token.priceUSD);
@@ -50,10 +88,13 @@ export default {
       return acc;
     }, '0');
 
-    if (state.networkInfo !== undefined && state.savingsBalance !== undefined) {
+    if (
+      state.networkInfo !== undefined &&
+      rootState.savings?.savingsBalance !== undefined
+    ) {
       balance = add(
         balance,
-        multiply(state.savingsBalance, getters.usdcNativePrice)
+        multiply(rootState.savings.savingsBalance, getters.usdcNativePrice)
       );
     }
 
@@ -196,4 +237,7 @@ export default {
   getCurrentAddresses(state): string[] {
     return state.addresses;
   }
-} as GetterTree<AccountStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

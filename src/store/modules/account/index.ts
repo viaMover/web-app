@@ -4,16 +4,9 @@ import { isProduction } from '@/settings';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { RootStoreState } from '@/store/types';
 
-import chartsActions from './actions/charts';
-import gasActions from './actions/gas';
-import transactionActions from './actions/transactions';
-import utilityActions from './actions/utility';
-import walletActions from './actions/wallet';
-import transactionsGetters from './getters/transactions';
-import walletGetters from './getters/wallet';
-import transactionMutations from './mutations/transactions';
-import utilityMutations from './mutations/utility';
-import walletMutations from './mutations/wallet';
+import actions from './actions';
+import getters from './getters';
+import mutations from './mutations';
 
 export default {
   namespaced: true,
@@ -65,20 +58,7 @@ export default {
     isDebitCardSectionVisible: true,
     isDepositCardSectionVisible: true
   },
-  actions: {
-    ...chartsActions,
-    ...gasActions,
-    ...transactionActions,
-    ...utilityActions,
-    ...walletActions
-  },
-  getters: {
-    ...transactionsGetters,
-    ...walletGetters
-  },
-  mutations: {
-    ...transactionMutations,
-    ...utilityMutations,
-    ...walletMutations
-  }
+  actions,
+  getters,
+  mutations
 } as Module<AccountStoreState, RootStoreState>;
