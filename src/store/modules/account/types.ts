@@ -1,7 +1,7 @@
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
 
-import { Explorer } from '@/services/zerion/explorer';
+import { Explorer } from '@/services/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -33,11 +33,6 @@ export type Avatar = {
   | { type: 'image'; imageSrc: string; imageAlt: string }
 );
 
-export type TokenInfo = {
-  color: string;
-  marketCap: number;
-};
-
 export type AccountStoreState = {
   web3Modal: any;
 
@@ -47,12 +42,13 @@ export type AccountStoreState = {
   balance: undefined | string;
   networkInfo: undefined | NetworkInfo;
   currentAddress: undefined | string;
+  isTransactionsListLoaded: boolean;
   transactions: Array<Transaction>;
   tokens: Array<TokenWithBalance>;
   tokensSearcher: Fuse<TokenWithBalance> | undefined;
   allTokens: Array<Token>;
   allTokensSearcher: Fuse<Token> | undefined;
-  tokenInfoMap: Record<string, TokenInfo> | undefined;
+  tokenInfoMap: Record<string, Token> | undefined;
   provider: ProviderData | undefined;
   isDetecting: boolean;
   isWalletLoading: boolean;

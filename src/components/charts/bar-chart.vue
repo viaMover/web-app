@@ -1,7 +1,7 @@
 <template>
   <div class="chart-group-wrapper" :class="wrapperClass">
     <PuSkeletonTheme v-if="isLoading" color="#dcdcdc">
-      <PuSkeleton
+      <pu-skeleton
         class="pu-skeleton"
         height="166px"
         :loading="true"
