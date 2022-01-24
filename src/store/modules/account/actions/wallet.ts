@@ -354,8 +354,9 @@ export default {
         throw e;
       }
 
-      const treasuryFreshData = dispatch('fetchTreasuryFreshData');
-      const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
+      const treasuryInfoPromise = dispatch('treasury/loadInfo', undefined, {
+        root: true
+      });
       const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
         root: true
       });
@@ -374,7 +375,6 @@ export default {
       const loadAvatarPromise = nftInfoPromise.then(() =>
         dispatch('loadAvatar')
       );
-      const loadPowercardPromise = dispatch('fetchPowercardData');
 
       let gamesPromise = Promise.resolve();
       if (isFeatureEnabled('isVaultsRaceEnabled')) {
@@ -386,11 +386,9 @@ export default {
       const promisesResults = await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
-        treasuryFreshData,
         nftInfoPromise,
         loadAvatarPromise,
         nibbleShopInfoPromise,
-        loadPowercardPromise,
         gamesPromise
       ]);
 
@@ -408,14 +406,17 @@ export default {
     }
   },
   async updateWalletAfterTxn({ dispatch }): Promise<void> {
-    const loadPowercardPromise = dispatch('fetchPowercardData');
-    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
     const savingsInfoPromise = dispatch('savings/loadMinimalInfo', undefined, {
       root: true
     });
+    const treasuryInfoPromise = dispatch(
+      'treasury/loadMinimalInfo',
+      undefined,
+      { root: true }
+    );
     const debitCardAvailableSkinsPromise = isFeatureEnabled(
       'isDebitCardEnabled'
     )
@@ -426,9 +427,8 @@ export default {
 
     const promisesResults = await Promise.allSettled([
       savingsInfoPromise,
-      treasuryFreshData,
+      treasuryInfoPromise,
       nftInfoPromise,
-      loadPowercardPromise,
       debitCardAvailableSkinsPromise
     ]);
     const promisesErrors = promisesResults

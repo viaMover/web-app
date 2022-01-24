@@ -1,8 +1,6 @@
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
 
-import { PowercardState } from '@/services/chain';
-import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
 import { Explorer } from '@/services/zerion/explorer';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
@@ -80,25 +78,4 @@ export type AccountStoreState = {
   gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
-
-  // Treasury
-  treasuryBalanceMove: string | undefined;
-  treasuryBalanceLP: string | undefined;
-  treasuryBonus: string | undefined;
-  treasuryAPY: string | undefined;
-  treasuryTotalStakedMove: string | undefined;
-  treasuryTotalStakedMoveEthLP: string | undefined;
-
-  powercardBalance: string | undefined;
-  powercardState: PowercardState | undefined;
-  powercardActiveTime: number;
-  powercardCooldownTime: number;
-
-  isTreasuryInfoLoading: boolean;
-  treasuryInfo: TreasuryInfo | undefined;
-  treasuryInfoError: string | undefined;
-
-  isTreasuryReceiptLoading: boolean;
-  treasuryReceipt: TreasuryReceipt | undefined;
-  treasuryReceiptError: string | undefined;
 };

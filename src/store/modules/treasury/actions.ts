@@ -1,5 +1,3 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 
 import {
@@ -14,88 +12,123 @@ import {
 import { getPowercardTimings } from '@/services/chain/treasury/powercard';
 import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { AccountStoreState } from '@/store/modules/account/types';
-import { RootStoreState } from '@/store/types';
+import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ActionFuncs } from '@/store/types';
 
-export type TreasuryGetReceiptPayload = {
-  year: number;
-  month: number;
-};
+import { MutationType } from './mutations';
+import { TreasuryGetReceiptPayload, TreasuryStoreState } from './types';
 
-export default {
-  async fetchPowercardData({ commit, state }): Promise<void> {
-    if (
-      state.currentAddress === undefined ||
-      state.networkInfo === undefined ||
-      state.provider === undefined
-    ) {
+enum Actions {
+  loadMinimalInfo,
+  loadInfo,
+  fetchPowercardData,
+  fetchTreasuryFreshData,
+  fetchTreasuryInfo,
+  fetchTreasuryReceipt
+}
+
+const actions: ActionFuncs<typeof Actions, TreasuryStoreState, MutationType> = {
+  async loadMinimalInfo({ dispatch }): Promise<void> {
+    const loadPowercardPromise = dispatch('fetchPowercardData');
+    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+
+    const promisesResults = await Promise.allSettled([
+      treasuryFreshData,
+      loadPowercardPromise
+    ]);
+
+    const promisesErrors = promisesResults
+      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+      .map((p) => p.reason);
+
+    if (promisesErrors.length > 0) {
+      Sentry.captureException(promisesErrors);
+    }
+  },
+  async loadInfo({ dispatch }): Promise<void> {
+    const loadPowercardPromise = dispatch('fetchPowercardData');
+    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+    const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
+
+    const promisesResults = await Promise.allSettled([
+      treasuryFreshData,
+      loadPowercardPromise,
+      treasuryInfoPromise
+    ]);
+
+    const promisesErrors = promisesResults
+      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+      .map((p) => p.reason);
+
+    if (promisesErrors.length > 0) {
+      Sentry.captureException(promisesErrors);
+    }
+  },
+  async fetchPowercardData({ commit, rootState }): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
     const powercardBalanceData = await powercardBalance(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.currentAddress!,
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     commit('setPowercardBalance', powercardBalanceData);
 
     const getPowercardStateData = await getPowercardState(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.currentAddress!,
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     commit('setPowercardState', getPowercardStateData);
 
     if (getPowercardStateData === 'Staked') {
       const getPowercardTimingsData = await getPowercardTimings(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
+        rootState.account!.currentAddress!,
+        rootState.account!.networkInfo!.network,
+        rootState.account!.provider!.web3
       );
 
       commit('setPowercardActiveTime', getPowercardTimingsData.activeTime);
       commit('setPowercardCooldownTime', getPowercardTimingsData.cooldownTime);
     }
   },
-  async fetchTreasuryFreshData({ commit, state, getters }): Promise<void> {
-    if (
-      state.currentAddress === undefined ||
-      state.networkInfo === undefined ||
-      state.provider === undefined
-    ) {
+  async fetchTreasuryFreshData({ commit, getters, rootState }): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
     const getTreasuryBalancesPromise = getTreasuryBalance(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.currentAddress!,
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     const getTreasuryBonusPromise = getTreasuryBonus(
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.currentAddress!,
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     const getTreasuryAPYPromise = getTreasuryAPY(
       getters.usdcNativePrice,
       getters.moveNativePrice,
-      state.currentAddress,
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.currentAddress!,
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     const getTotalStakedMovePromise = getTotalStakedMove(
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
-      state.networkInfo.network,
-      state.provider.web3
+      rootState.account!.networkInfo!.network,
+      rootState.account!.provider!.web3
     );
 
     const [
@@ -119,8 +152,8 @@ export default {
     commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
     commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
   },
-  async fetchTreasuryInfo({ commit, state }): Promise<void> {
-    if (state.currentAddress === undefined) {
+  async fetchTreasuryInfo({ commit, rootState }): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
@@ -128,7 +161,7 @@ export default {
     commit('setTreasuryInfoError', undefined);
     commit('setTreasuryInfo', undefined);
 
-    const info = await getTreasuryInfo(state.currentAddress);
+    const info = await getTreasuryInfo(rootState.account!.currentAddress!);
 
     if (isError(info)) {
       commit('setTreasuryInfoError', info.error);
@@ -141,10 +174,10 @@ export default {
     commit('setIsTreasuryInfoLoading', false);
   },
   async fetchTreasuryReceipt(
-    { commit, state },
+    { commit, state, rootState },
     { year, month }: TreasuryGetReceiptPayload
   ): Promise<void> {
-    if (state.currentAddress === undefined) {
+    if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
@@ -161,7 +194,11 @@ export default {
     commit('setTreasuryReceiptError', undefined);
     commit('setTreasuryReceipt', undefined);
 
-    const receipt = await getTreasuryReceipt(state.currentAddress, year, month);
+    const receipt = await getTreasuryReceipt(
+      rootState.account!.currentAddress!,
+      year,
+      month
+    );
 
     if (isError(receipt)) {
       commit('setTreasuryReceiptError', receipt.error);
@@ -173,4 +210,7 @@ export default {
     commit('setTreasuryReceipt', receipt.result);
     commit('setIsTreasuryReceiptLoading', false);
   }
-} as ActionTree<AccountStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

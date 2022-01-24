@@ -7,14 +7,11 @@ import { RootStoreState } from '@/store/types';
 import chartsActions from './actions/charts';
 import gasActions from './actions/gas';
 import transactionActions from './actions/transactions';
-import treasuryActions from './actions/treasury';
 import utilityActions from './actions/utility';
 import walletActions from './actions/wallet';
 import transactionsGetters from './getters/transactions';
-import treasuryGetters from './getters/treasury';
 import walletGetters from './getters/wallet';
 import transactionMutations from './mutations/transactions';
-import treasuryMutations from './mutations/treasury';
 import utilityMutations from './mutations/utility';
 import walletMutations from './mutations/wallet';
 
@@ -65,44 +62,21 @@ export default {
     refreshError: undefined,
 
     isDebitCardSectionVisible: true,
-    isDepositCardSectionVisible: true,
-
-    treasuryBalanceMove: undefined,
-    treasuryBalanceLP: undefined,
-    treasuryBonus: undefined,
-    treasuryAPY: undefined,
-    treasuryTotalStakedMove: undefined,
-    treasuryTotalStakedMoveEthLP: undefined,
-
-    powercardBalance: undefined,
-    powercardState: undefined,
-    powercardActiveTime: 0,
-    powercardCooldownTime: 0,
-
-    isTreasuryInfoLoading: false,
-    treasuryInfo: undefined,
-    treasuryInfoError: undefined,
-
-    isTreasuryReceiptLoading: false,
-    treasuryReceipt: undefined,
-    treasuryReceiptError: undefined
+    isDepositCardSectionVisible: true
   },
   actions: {
     ...chartsActions,
     ...gasActions,
-    ...treasuryActions,
     ...transactionActions,
     ...utilityActions,
     ...walletActions
   },
   getters: {
     ...transactionsGetters,
-    ...treasuryGetters,
     ...walletGetters
   },
   mutations: {
     ...transactionMutations,
-    ...treasuryMutations,
     ...utilityMutations,
     ...walletMutations
   }

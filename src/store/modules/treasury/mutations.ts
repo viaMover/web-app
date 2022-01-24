@@ -1,11 +1,29 @@
-import { MutationTree } from 'vuex';
-
 import { PowercardState } from '@/services/chain';
 import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
+import { MutationFuncs } from '@/store/types';
 
-import { AccountStoreState } from '../types';
+import { TreasuryStoreState } from './types';
 
-export default {
+enum Mutations {
+  setTreasuryBalanceMove,
+  setTreasuryBalanceLP,
+  setTreasuryBonus,
+  setTreasuryAPY,
+  setTreasuryTotalStakedMove,
+  setTreasuryTotalStakedMoveEthLP,
+  setIsTreasuryInfoLoading,
+  setTreasuryInfoError,
+  setTreasuryInfo,
+  setIsTreasuryReceiptLoading,
+  setTreasuryReceiptError,
+  setTreasuryReceipt,
+  setPowercardBalance,
+  setPowercardState,
+  setPowercardActiveTime,
+  setPowercardCooldownTime
+}
+
+const mutations: MutationFuncs<typeof Mutations, TreasuryStoreState> = {
   setTreasuryBalanceMove(state, moveBalance: string): void {
     state.treasuryBalanceMove = moveBalance;
   },
@@ -54,4 +72,7 @@ export default {
   setPowercardCooldownTime(state, cooldownTime: number): void {
     state.powercardCooldownTime = cooldownTime;
   }
-} as MutationTree<AccountStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

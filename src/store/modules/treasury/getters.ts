@@ -1,9 +1,8 @@
-import { GetterTree } from 'vuex';
-
 import gt from 'lodash-es/gt';
 
 import { TreasuryMonthBonusesItem } from '@/services/mover';
-import { RootStoreState } from '@/store/types';
+import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
+import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
 import { add, fromWei, multiply } from '@/utils/bigmath';
 import {
@@ -12,33 +11,67 @@ import {
   getUSDCAssetData
 } from '@/wallet/references/data';
 
-import { AccountStoreState } from '../types';
-import { calcTreasuryBoost } from './../utils/treasury';
+import { TreasuryStoreState } from './types';
 
-export default {
+enum Getters {
+  treasuryBonusNative,
+  treasuryBoost,
+  hasActiveTreasury,
+  treasuryMonthStatsOptions,
+  treasuryEarnedThisMonth,
+  treasuryEarnedThisMonthNative,
+  treasuryStakedMove,
+  treasuryStakedMoveLP,
+  treasuryStakedBalanceNative,
+  treasuryTotalStakedBalanceNative,
+  treasuryEarnedTotal,
+  treasuryEarnedTotalNative,
+  treasuryEarnedToday,
+  treasuryEarnedTodayNative,
+  treasurySpentToday,
+  treasurySpentTodayNative,
+  treasurySpentThisMonth,
+  treasurySpentThisMonthNative,
+  treasurySpentTotal,
+  treasurySpentTotalNative,
+  treasuryMonthEarnedThisMonth,
+  treasuryMonthEarnedThisMonthNative,
+  treasuryMonthBalanceNative,
+  treasuryMonthDepositedNative,
+  treasuryMonthWithdrewNative,
+  treasuryMonthBonusesUsed,
+  treasuryMonthBonusesUsedNative,
+  treasuryMonthAvgDailyEarnings,
+  treasuryMonthAvgDailyEarningsNative,
+  treasuryMonthAvgDailySpendings,
+  treasuryMonthAvgDailySpendingsNative
+}
+
+const getters: GettersFuncs<typeof Getters, TreasuryStoreState> = {
   treasuryBonusNative(state, getters): string {
     if (state.treasuryBonus === undefined) {
       return '0';
     }
     return multiply(state.treasuryBonus, getters.usdcNativePrice);
   },
-  treasuryBoost(state): string {
+  treasuryBoost(state, _, rootState): string {
     if (
       state.treasuryBalanceMove === undefined ||
       state.treasuryBalanceLP === undefined ||
-      state.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
 
-    const network = state.networkInfo.network;
+    const network = rootState.account.networkInfo.network;
+    const tokens = rootState.account.tokens;
 
     const walletBalanceMove =
-      state.tokens.find((t) =>
+      tokens.find((t) =>
         sameAddress(t.address, getMoveAssetData(network).address)
       )?.balance ?? '0';
     const walletBalanceLP =
-      state.tokens.find((t) =>
+      tokens.find((t) =>
         sameAddress(t.address, getMoveWethLPAssetData(network).address)
       )?.balance ?? '0';
 
@@ -129,11 +162,11 @@ export default {
       }, new Array<TreasuryMonthBonusesItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
-  treasuryEarnedThisMonth(state): string {
+  treasuryEarnedThisMonth(state, _, rootSate): string {
     if (
       state.isTreasuryInfoLoading ||
       state.treasuryInfo === undefined ||
-      state.networkInfo === undefined ||
+      rootSate.account?.networkInfo === undefined ||
       state.treasuryInfo.earnedThisMonth === 0
     ) {
       return '0';
@@ -141,13 +174,13 @@ export default {
 
     return fromWei(
       state.treasuryInfo.earnedThisMonth,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootSate.account.networkInfo.network).decimals
     );
   },
   treasuryEarnedThisMonthNative(state, getters): string {
     return multiply(getters.treasuryEarnedThisMonth, getters.usdcNativePrice);
   },
-  treasuryStakedMove(state): string {
+  treasuryStakedMove(state, _, rootState): string {
     let balanceMove = '0';
 
     if (state.treasuryBalanceMove !== undefined) {
@@ -158,18 +191,18 @@ export default {
       balanceMove == '0' &&
       !state.isTreasuryInfoLoading &&
       state.treasuryInfo !== undefined &&
-      state.networkInfo !== undefined &&
+      rootState.account?.networkInfo !== undefined &&
       state.treasuryInfo.currentStakedMove > 0
     ) {
       balanceMove = fromWei(
         state.treasuryInfo.currentStakedMove,
-        getMoveAssetData(state.networkInfo.network).decimals
+        getMoveAssetData(rootState.account.networkInfo.network).decimals
       );
     }
 
     return balanceMove;
   },
-  treasuryStakedMoveLP(state): string {
+  treasuryStakedMoveLP(state, _, rootState): string {
     let balanceMoveLP = '0';
 
     if (state.treasuryBalanceLP !== undefined) {
@@ -180,12 +213,12 @@ export default {
       balanceMoveLP == '0' &&
       !state.isTreasuryInfoLoading &&
       state.treasuryInfo !== undefined &&
-      state.networkInfo !== undefined &&
+      rootState.account?.networkInfo !== undefined &&
       state.treasuryInfo.currentStakedMoveLP > 0
     ) {
       balanceMoveLP = fromWei(
         state.treasuryInfo.currentStakedMoveLP,
-        getMoveWethLPAssetData(state.networkInfo.network).decimals
+        getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
       );
     }
 
@@ -203,7 +236,7 @@ export default {
 
     return add(stakedMoveNative, stakedMoveEthLPNative);
   },
-  treasuryTotalStakedBalanceNative(state, getters): string {
+  treasuryTotalStakedBalanceNative(state, getters, rootState): string {
     let balanceMove = '0';
     let balanceMoveLP = '0';
     if (state.treasuryTotalStakedMove !== undefined) {
@@ -217,7 +250,7 @@ export default {
     if (
       !state.isTreasuryInfoLoading &&
       state.treasuryInfo !== undefined &&
-      state.networkInfo !== undefined
+      rootState.account?.networkInfo !== undefined
     ) {
       if (
         balanceMove === '0' &&
@@ -225,7 +258,7 @@ export default {
       ) {
         balanceMove = fromWei(
           state.treasuryInfo.currentTotalStakedMove,
-          getMoveAssetData(state.networkInfo.network).decimals
+          getMoveAssetData(rootState.account.networkInfo.network).decimals
         );
       }
 
@@ -235,7 +268,7 @@ export default {
       ) {
         balanceMoveLP = fromWei(
           state.treasuryInfo.currentTotalStakedMoveLP,
-          getMoveWethLPAssetData(state.networkInfo.network).decimals
+          getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
         );
       }
     }
@@ -245,11 +278,11 @@ export default {
 
     return add(balanceMoveNative, balanceMoveLPNative);
   },
-  treasuryEarnedTotal(state): string {
+  treasuryEarnedTotal(state, _, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
       state.treasuryInfo === undefined ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryInfo.earnedTotal === 0
     ) {
       return '0';
@@ -257,17 +290,17 @@ export default {
 
     return fromWei(
       state.treasuryInfo.earnedTotal,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryEarnedTotalNative(state, getters): string {
     return multiply(getters.treasuryEarnedTotal, getters.usdcNativePrice);
   },
-  treasuryEarnedToday(state): string {
+  treasuryEarnedToday(state, _, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
       state.treasuryInfo === undefined ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryInfo.earnedToday === 0
     ) {
       return '0';
@@ -275,17 +308,17 @@ export default {
 
     return fromWei(
       state.treasuryInfo.earnedToday,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryEarnedTodayNative(state, getters): string {
     return multiply(getters.treasuryEarnedToday, getters.usdcNativePrice);
   },
-  treasurySpentToday(state): string {
+  treasurySpentToday(state, _, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
       state.treasuryInfo === undefined ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryInfo.spentToday === 0
     ) {
       return '0';
@@ -293,17 +326,17 @@ export default {
 
     return fromWei(
       state.treasuryInfo.spentToday,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasurySpentTodayNative(state, getters): string {
     return multiply(getters.treasurySpentToday, getters.usdcNativePrice);
   },
-  treasurySpentThisMonth(state): string {
+  treasurySpentThisMonth(state, _, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
       state.treasuryInfo === undefined ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryInfo.spentThisMonth === 0
     ) {
       return '0';
@@ -311,17 +344,17 @@ export default {
 
     return fromWei(
       state.treasuryInfo.spentThisMonth,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasurySpentThisMonthNative(state, getters): string {
     return multiply(getters.treasurySpentThisMonth, getters.usdcNativePrice);
   },
-  treasurySpentTotal(state): string {
+  treasurySpentTotal(state, _, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
       state.treasuryInfo === undefined ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryInfo.spentTotal === 0
     ) {
       return '0';
@@ -329,17 +362,17 @@ export default {
 
     return fromWei(
       state.treasuryInfo.spentTotal,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasurySpentTotalNative(state, getters): string {
     return multiply(getters.treasurySpentTotal, getters.usdcNativePrice);
   },
-  treasuryMonthEarnedThisMonth(state): string {
+  treasuryMonthEarnedThisMonth(state, _, rootState): string {
     if (
       state.isTreasuryReceiptLoading ||
       state.treasuryReceipt === undefined ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryReceipt.earnedThisMonth === 0
     ) {
       return '0';
@@ -347,7 +380,7 @@ export default {
 
     return fromWei(
       state.treasuryReceipt.earnedThisMonth,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryMonthEarnedThisMonthNative(state, getters): string {
@@ -356,11 +389,11 @@ export default {
       getters.usdcNativePrice
     );
   },
-  treasuryMonthBalanceNative(state, getters): string {
+  treasuryMonthBalanceNative(state, getters, rootState): string {
     if (
       state.isTreasuryReceiptLoading ||
       state.treasuryReceipt === undefined ||
-      state.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
@@ -369,7 +402,7 @@ export default {
     if (state.treasuryReceipt.endOfMonthBalanceMove > 0) {
       const moveBalance = fromWei(
         state.treasuryReceipt.endOfMonthBalanceMove,
-        getMoveAssetData(state.networkInfo.network).decimals
+        getMoveAssetData(rootState.account.networkInfo.network).decimals
       );
       moveBalanceNative = multiply(moveBalance, getters.moveNativePrice);
     }
@@ -378,18 +411,18 @@ export default {
     if (state.treasuryReceipt.endOfMonthBalanceMoveLP > 0) {
       const moveLPBalance = fromWei(
         state.treasuryReceipt.endOfMonthBalanceMoveLP,
-        getMoveWethLPAssetData(state.networkInfo.network).decimals
+        getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
       );
       moveLPBalanceNative = multiply(moveLPBalance, getters.slpNativePrice);
     }
 
     return add(moveBalanceNative, moveLPBalanceNative);
   },
-  treasuryMonthDepositedNative(state, getters): string {
+  treasuryMonthDepositedNative(state, getters, rootState): string {
     if (
       state.isTreasuryReceiptLoading ||
       state.treasuryReceipt === undefined ||
-      state.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
@@ -398,7 +431,7 @@ export default {
     if (state.treasuryReceipt.totalDepositsMove > 0) {
       const moveDeposits = fromWei(
         state.treasuryReceipt.totalDepositsMove,
-        getMoveAssetData(state.networkInfo.network).decimals
+        getMoveAssetData(rootState.account.networkInfo.network).decimals
       );
       moveDepositsNative = multiply(moveDeposits, getters.moveNativePrice);
     }
@@ -407,18 +440,18 @@ export default {
     if (state.treasuryReceipt.totalDepositsMoveLP > 0) {
       const moveLPDeposits = fromWei(
         state.treasuryReceipt.totalDepositsMoveLP,
-        getMoveWethLPAssetData(state.networkInfo.network).decimals
+        getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
       );
       moveLPDepositsNative = multiply(moveLPDeposits, getters.slpNativePrice);
     }
 
     return add(moveDepositsNative, moveLPDepositsNative);
   },
-  treasuryMonthWithdrewNative(state, getters): string {
+  treasuryMonthWithdrewNative(state, getters, rootState): string {
     if (
       state.isTreasuryReceiptLoading ||
       state.treasuryReceipt === undefined ||
-      state.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
@@ -427,7 +460,7 @@ export default {
     if (state.treasuryReceipt.totalWithdrawalsMove > 0) {
       const moveWithdrawals = fromWei(
         state.treasuryReceipt.totalWithdrawalsMove,
-        getMoveAssetData(state.networkInfo.network).decimals
+        getMoveAssetData(rootState.account.networkInfo.network).decimals
       );
       moveWithdrawalsNative = multiply(
         moveWithdrawals,
@@ -439,7 +472,7 @@ export default {
     if (state.treasuryReceipt.totalWithdrawalsMoveLP > 0) {
       const moveLPWithdrawals = fromWei(
         state.treasuryReceipt.totalWithdrawalsMoveLP,
-        getMoveWethLPAssetData(state.networkInfo.network).decimals
+        getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
       );
       moveLPWithdrawalsNative = multiply(
         moveLPWithdrawals,
@@ -449,11 +482,11 @@ export default {
 
     return add(moveWithdrawalsNative, moveLPWithdrawalsNative);
   },
-  treasuryMonthBonusesUsed(state): string {
+  treasuryMonthBonusesUsed(state, _, rootState): string {
     if (
       state.treasuryReceipt === undefined ||
       state.isTreasuryReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryReceipt.spentThisMonth === 0
     ) {
       return '0';
@@ -461,17 +494,17 @@ export default {
 
     return fromWei(
       state.treasuryReceipt.spentThisMonth,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryMonthBonusesUsedNative(state, getters): string {
     return multiply(getters.treasuryMonthBonusesUsed, getters.usdcNativePrice);
   },
-  treasuryMonthAvgDailyEarnings(state): string {
+  treasuryMonthAvgDailyEarnings(state, _, rootState): string {
     if (
       state.treasuryReceipt === undefined ||
       state.isTreasuryReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryReceipt.avgDailyEarnings === 0
     ) {
       return '0';
@@ -479,7 +512,7 @@ export default {
 
     return fromWei(
       state.treasuryReceipt.avgDailyEarnings,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryMonthAvgDailyEarningsNative(state, getters): string {
@@ -488,11 +521,11 @@ export default {
       getters.usdcNativePrice
     );
   },
-  treasuryMonthAvgDailySpendings(state): string {
+  treasuryMonthAvgDailySpendings(state, _, rootState): string {
     if (
       state.treasuryReceipt === undefined ||
       state.isTreasuryReceiptLoading ||
-      state.networkInfo === undefined ||
+      rootState.account?.networkInfo === undefined ||
       state.treasuryReceipt.avgDailySpendings === 0
     ) {
       return '0';
@@ -500,7 +533,7 @@ export default {
 
     return fromWei(
       state.treasuryReceipt.avgDailySpendings,
-      getUSDCAssetData(state.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryMonthAvgDailySpendingsNative(state, getters): string {
@@ -509,4 +542,7 @@ export default {
       getters.usdcNativePrice
     );
   }
-} as GetterTree<AccountStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;
