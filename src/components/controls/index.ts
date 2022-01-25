@@ -11,3 +11,4 @@ export { default as NavBar } from './nav-bar.vue';
 export { default as EmojiCard } from './emoji-card.vue';
 export { default as Card } from './card.vue';
 export { default as DynamicInput } from './dynamic-input.vue';
+export { default as CustomSwitch } from './custom-switch.vue';
