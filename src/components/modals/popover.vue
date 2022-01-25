@@ -53,9 +53,10 @@ export default Vue.extend({
       return;
     }
 
-    const thisElem = this.$refs.popper as HTMLElement;
+    const thisEl = this.$refs.popper as HTMLElement;
 
-    this.popperInstance = createPopper(parentEl, thisElem, {
+    this.popperInstance = createPopper(parentEl, thisEl, {
+      strategy: 'absolute',
       placement: this.placement as Placement,
       modifiers: [
         offset,
