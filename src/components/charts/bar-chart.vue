@@ -1,18 +1,14 @@
 <template>
-  <div class="chart-group-wrapper" :class="wrapperClass">
-    <PuSkeletonTheme v-if="isLoading" color="#dcdcdc">
-      <PuSkeleton
-        class="pu-skeleton"
-        height="166px"
-        :loading="true"
-        tag="div"
-        width="100%"
-      />
-    </PuSkeletonTheme>
+  <div>
+    <pu-skeleton
+      v-if="isLoading"
+      class="pu-skeleton"
+      height="166px"
+      tag="div"
+      width="100%"
+    />
     <div v-show="!isLoading" class="chart">
-      <div class="chart--body">
-        <canvas ref="chartCanvas"></canvas>
-      </div>
+      <canvas ref="chartCanvas"></canvas>
     </div>
   </div>
 </template>
@@ -158,7 +154,7 @@ export default Vue.extend({
       const el = this.$refs.chartCanvas as HTMLCanvasElement;
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const that = this;
-      const chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
+      this.chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
         type: 'bar',
         data: this.chartData,
         options: {
@@ -176,7 +172,7 @@ export default Vue.extend({
                 : 'default';
           },
           maintainAspectRatio: false,
-          responsive: false,
+          responsive: true,
           normalized: true,
           plugins: {
             legend: {
@@ -192,7 +188,7 @@ export default Vue.extend({
           datasets: {
             bar: {
               minBarLength: 10,
-              barThickness: 56,
+              barThickness: 'flex',
               maxBarThickness: 56
             }
           },
@@ -261,9 +257,6 @@ export default Vue.extend({
           }
         } as ChartOptions<'bar'>
       });
-      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 176);
-
-      this.chartInstance = chartInstance;
     }
   }
 });
