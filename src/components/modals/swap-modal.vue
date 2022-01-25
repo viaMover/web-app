@@ -12,7 +12,7 @@
       </h3>
       <span v-else>&nbsp;</span>
     </template>
-    <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
+    <form-loader v-if="loaderStep !== undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
         <asset-field
@@ -99,7 +99,7 @@
       </div>
       <div class="modal-wrapper-info-button">
         <action-button
-          :button-class="buttonClass"
+          class="primary"
           :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
@@ -355,13 +355,6 @@ export default Vue.extend({
         return greaterThan(remaining, 0) ? remaining : '0';
       }
       return this.input.asset.balance;
-    },
-    buttonClass(): string {
-      if (this.actionAvaialble) {
-        return 'button active button-active';
-      } else {
-        return 'button inactive button-active';
-      }
     },
     excludedOutputTokens(): Array<Token> {
       if (this.input.asset === undefined) {
