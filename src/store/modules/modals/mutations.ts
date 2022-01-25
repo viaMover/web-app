@@ -1,8 +1,15 @@
-import { MutationTree } from 'vuex';
+import { MutationFuncs } from '@/store/types';
 
 import { ModalsStoreState, ModalState, TModalKey } from './types';
 
-export default {
+enum Mutations {
+  pushStack,
+  popStack,
+  setStateEntry,
+  setIsStateEntryVisible
+}
+
+const mutations: MutationFuncs<typeof Mutations, ModalsStoreState> = {
   pushStack(state, entry: TModalKey): void {
     state.stack = [entry, ...state.stack];
   },
@@ -24,4 +31,7 @@ export default {
   ): void {
     state.state[args.id].isVisible = args.isVisible;
   }
-} as MutationTree<ModalsStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

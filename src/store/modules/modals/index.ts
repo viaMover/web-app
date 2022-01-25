@@ -1,10 +1,9 @@
-import { Module } from 'vuex';
-
 import { isProduction } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule } from '@/store/types';
 
-import actions from './actions';
-import mutations from './mutations';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 import { Modal, ModalsStoreState } from './types';
 
 export default {
@@ -97,5 +96,6 @@ export default {
     stack: []
   },
   actions,
-  mutations
-} as Module<ModalsStoreState, RootStoreState>;
+  mutations,
+  getters
+} as AugmentedModule<ModalsStoreState, ActionType, GetterType, MutationType>;

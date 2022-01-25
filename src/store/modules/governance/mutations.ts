@@ -1,12 +1,25 @@
-import { MutationTree } from 'vuex';
-
 import dayjs from 'dayjs';
 
 import { ProposalInfo, Space } from '@/services/mover/governance';
+import { MutationFuncs } from '@/store/types';
 
 import { GovernanceStoreState } from './types';
 
-export default {
+enum Mutations {
+  setIsLoading,
+  setIsLoadingLastProposal,
+  setError,
+  setLoadingPromise,
+  clearItems,
+  upsertItems,
+  setSpaceInfo,
+  setPowerNeededToBecomeAProposer,
+  setCommunityVotingPower,
+  setVotingPowerSelf,
+  setBlockNumberCached
+}
+
+const mutations: MutationFuncs<typeof Mutations, GovernanceStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
@@ -65,4 +78,7 @@ export default {
       updatedAt: dayjs().unix()
     };
   }
-} as MutationTree<GovernanceStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

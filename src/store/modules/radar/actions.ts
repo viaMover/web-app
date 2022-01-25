@@ -1,10 +1,14 @@
-import { ActionTree } from 'vuex';
+import { ActionFuncs } from '@/store/types';
 
-import { RootStoreState } from '@/store/types';
-
+import { MutationType } from './mutations';
 import { Asset, RadarStoreState } from './types';
 
-export default {
+enum Actions {
+  loadPersonalList,
+  loadCuratedList
+}
+
+const actions: ActionFuncs<typeof Actions, RadarStoreState, MutationType> = {
   async loadPersonalList({ state, commit }): Promise<Array<Asset>> {
     if (
       state.isLoadingPersonalList &&
@@ -123,4 +127,7 @@ export default {
       }, 1500);
     });
   }
-} as ActionTree<RadarStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

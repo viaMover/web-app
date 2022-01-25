@@ -1,9 +1,14 @@
-import { ActionTree } from 'vuex';
-
 import { GamesStoreState, VaultRaceAccount } from '@/store/modules/games/types';
-import { RootStoreState } from '@/store/types';
+import { ActionFuncs } from '@/store/types';
 
-export default {
+import { MutationType } from './mutations';
+
+enum Actions {
+  init,
+  rollDice
+}
+
+const actions: ActionFuncs<typeof Actions, GamesStoreState, MutationType> = {
   async init({ commit }): Promise<void> {
     commit('setIsLoading', true);
     const vrAccounts: Array<VaultRaceAccount> = [
@@ -42,4 +47,7 @@ export default {
   rollDice({ commit }, address: string): void {
     commit('setVaultsRaceAccounts', address);
   }
-} as ActionTree<GamesStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

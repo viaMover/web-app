@@ -1,8 +1,17 @@
-import { MutationTree } from 'vuex';
+import { MutationFuncs } from '@/store/types';
 
 import { Asset, RadarStoreState } from './types';
 
-export default {
+enum Mutations {
+  setIsLoadingPersonalList,
+  setIsLoadingCuratedList,
+  setLoadingPersonalListPromise,
+  setLoadingCuratedListPromise,
+  setCuratedList,
+  setPersonalList
+}
+
+const mutations: MutationFuncs<typeof Mutations, RadarStoreState> = {
   setIsLoadingPersonalList(state, isLoading): void {
     state.isLoadingPersonalList = isLoading;
   },
@@ -27,4 +36,7 @@ export default {
   setCuratedList(state, list: Array<Asset> | undefined): void {
     state.curatedList = list;
   }
-} as MutationTree<RadarStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

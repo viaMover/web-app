@@ -1,7 +1,10 @@
-import { GetterTree } from 'vuex';
-
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 
 import { ShopStoreState } from './types';
 
-export default {} as GetterTree<ShopStoreState, RootStoreState>;
+enum Getters {}
+
+const getters: GettersFuncs<typeof Getters, ShopStoreState> = {};
+
+export type GetterType = typeof getters;
+export default getters;

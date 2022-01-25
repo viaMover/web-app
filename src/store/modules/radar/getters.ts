@@ -1,10 +1,13 @@
-import { GetterTree } from 'vuex';
-
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 
 import { Asset, RadarStoreState } from './types';
 
-export default {
+enum Getters {
+  personalList,
+  curatedList
+}
+
+const getters: GettersFuncs<typeof Getters, RadarStoreState> = {
   personalList(store): Array<Asset> {
     if (store.personalList === undefined) {
       return [];
@@ -17,4 +20,7 @@ export default {
     }
     return store.curatedList;
   }
-} as GetterTree<RadarStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

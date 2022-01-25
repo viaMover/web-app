@@ -1,15 +1,25 @@
-import { MutationTree } from 'vuex';
-
 import {
+  DiceData,
   OlympusData,
   SweetAndSourData,
-  UnexpectedMoveData
+  UnexpectedMoveData,
+  VaultsData
 } from '@/services/chain';
-import { DiceData, VaultsData } from '@/services/chain';
+import { MutationFuncs } from '@/store/types';
 
 import { NftAsset, NFTStoreState } from './types';
 
-export default {
+enum Mutations {
+  setIsLoading,
+  setNFTs,
+  setUnexpectedMoveData,
+  setSweetAndSourData,
+  setVaultsData,
+  setDiceData,
+  setOlympusData
+}
+
+const mutations: MutationFuncs<typeof Mutations, NFTStoreState> = {
   setIsLoading(state, isLoading): void {
     state.isLoading = isLoading;
   },
@@ -39,4 +49,7 @@ export default {
     state.OlympusEndTs = data.claimEnd;
     state.OlympusBalance = data.balance;
   }
-} as MutationTree<NFTStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

@@ -1,9 +1,14 @@
-import { GetterTree } from 'vuex';
-
 import { GamesStoreState, VaultRaceAccount } from '@/store/modules/games/types';
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 
-export default {
+enum Getters {
+  vaultsRaceAccounts,
+  vaultsRaceAccountsCount,
+  vaultsRaceAccount,
+  leaderVaultsRaceAccount
+}
+
+const getters: GettersFuncs<typeof Getters, GamesStoreState> = {
   vaultsRaceAccounts(state): Array<VaultRaceAccount> {
     if (state.vaultsRaceAccounts === undefined) {
       return [];
@@ -34,4 +39,7 @@ export default {
 
     return state.vaultsRaceAccounts[0];
   }
-} as GetterTree<GamesStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;
