@@ -1,13 +1,13 @@
 <template>
-  <left-rail-section
+  <navigation-section
     items-container-tag="div"
     :section-name="$t('governance.lblMyGovernance')"
   >
     <template v-if="isLoading">
-      <left-rail-section-nav-item-image-skeleton />
+      <navigation-section-item-image-skeleton />
     </template>
     <template v-else>
-      <left-rail-section-nav-item-image
+      <navigation-section-item-image
         :description="governancePower"
         description-class="bold"
         navigate-to="governance-view-all"
@@ -21,9 +21,9 @@
             :src="picture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
+      </navigation-section-item-image>
     </template>
-  </left-rail-section>
+  </navigation-section>
 </template>
 
 <script lang="ts">
@@ -34,17 +34,17 @@ import { formatToDecimals } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
-  LeftRailSection,
-  LeftRailSectionNavItemImage,
-  LeftRailSectionNavItemImageSkeleton
-} from '@/components/layout';
+  NavigationSection,
+  NavigationSectionItemImage,
+  NavigationSectionItemImageSkeleton
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'GovernanceNavMyGovernance',
   components: {
-    LeftRailSection,
-    LeftRailSectionNavItemImage,
-    LeftRailSectionNavItemImageSkeleton,
+    NavigationSection,
+    NavigationSectionItemImage,
+    NavigationSectionItemImageSkeleton,
     CustomPicture
   },
   data() {

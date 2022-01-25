@@ -1,6 +1,11 @@
 <template>
-  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
-    <p class="description">{{ explanatoryText }}</p>
+  <secondary-page has-back-button hide-info @back="handleBack">
+    <template v-slot:title>
+      <secondary-page-header
+        :description="explanatoryText"
+        :title="pageTitle"
+      />
+    </template>
 
     <governance-overview-section-skeleton v-if="isProposalLoading">
       <governance-overview-section-item-skeleton />
@@ -20,12 +25,10 @@
       </governance-overview-section-item>
     </governance-overview-section>
 
-    <button
-      class="black-link button-active"
-      :class="{ disabled: isLoading || isProposalLoading }"
+    <action-button
+      class="primary"
       :disabled="isLoading || isProposalLoading"
-      type="button"
-      @click="handleVote"
+      @button-click="handleVote"
     >
       <div v-if="isLoading" class="loader-icon">
         <img
@@ -36,7 +39,7 @@
       <template v-else>
         {{ voteButtonText }}
       </template>
-    </button>
+    </action-button>
     <p v-if="errorText" class="error">
       {{ errorText }}
     </p>
@@ -58,22 +61,25 @@ import { GovernanceApiError } from '@/services/mover/governance';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { formatToDecimals } from '@/utils/format';
 
+import { ActionButton } from '@/components/buttons';
 import {
   GovernanceOverviewSection,
   GovernanceOverviewSectionItem,
   GovernanceOverviewSectionItemSkeleton,
   GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
-import { SecondaryPage } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceVote',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     GovernanceOverviewSection,
     GovernanceOverviewSectionSkeleton,
     GovernanceOverviewSectionItem,
-    GovernanceOverviewSectionItemSkeleton
+    GovernanceOverviewSectionItemSkeleton,
+    ActionButton
   },
   data() {
     return {

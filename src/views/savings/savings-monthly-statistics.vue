@@ -1,14 +1,19 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <secondary-page-simple-title
-      class="monthly-statements-title"
-      :description="pageSubtitle"
-      :title="pageTitle"
-    />
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
+  >
+    <template v-slot:title>
+      <secondary-page-header :description="pageSubtitle" :title="pageTitle" />
+    </template>
+
     <savings-monthly-chart-wrapper
       v-if="isFeatureEnabled('isSavingsMonthlyChartEnabled')"
       :page-date="pageDate"
     />
+
     <savings-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
@@ -23,7 +28,7 @@ import { isFeatureEnabled } from '@/settings';
 import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
 import { dateFromExplicitPair } from '@/utils/time';
 
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import {
   SavingsMonthlyChartWrapper,
   SavingsMonthlyStatement
@@ -31,7 +36,7 @@ import {
 export default Vue.extend({
   name: 'SavingsMonthlyStatistics',
   components: {
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     SecondaryPage,
     SavingsMonthlyChartWrapper,
     SavingsMonthlyStatement

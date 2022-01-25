@@ -15,7 +15,7 @@
     <div class="item__link">
       <span v-if="tagText !== ''" class="tag">{{ tagText }}</span>
       <action-button
-        button-class="button button-active"
+        class="primary"
         :disabled="disabledButton"
         :text="buttonText"
         @button-click="handleButton"

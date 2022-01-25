@@ -19,7 +19,7 @@
           />
         </shop-list>
         <action-button
-          button-class="button button-active"
+          class="button button-active"
           :text="$t('NFTs.btn.sweetAndSour.get.txt')"
           @button-click="handleClaim"
         />

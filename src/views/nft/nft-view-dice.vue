@@ -27,7 +27,6 @@
           <ul>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
                 :text="$t('NFTs.btn.dice.fourSide.txt')"
                 @button-click="handleClaim(4)"
@@ -35,7 +34,6 @@
             </li>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
                 :text="$t('NFTs.btn.dice.sixSide.txt')"
                 @button-click="handleClaim(6)"
@@ -43,7 +41,6 @@
             </li>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
                 :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
                 @button-click="handleClaim(66)"
@@ -51,7 +48,6 @@
             </li>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
                 :text="$t('NFTs.btn.dice.eightSide.txt')"
                 @button-click="handleClaim(8)"
@@ -59,7 +55,6 @@
             </li>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
                 :text="$t('NFTs.btn.dice.tenSide.txt')"
                 @button-click="handleClaim(10)"
@@ -67,7 +62,6 @@
             </li>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
                 :text="$t('NFTs.btn.dice.twelveSide.txt')"
                 @button-click="handleClaim(12)"
@@ -99,16 +93,12 @@
         >
           <context-button-item @click="selectDice(4)">
             <emoji-text-button
-              button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
               :text="$t('NFTs.btn.dice.fourSide.txt')"
             />
           </context-button-item>
           <context-button-item @click="selectDice(6)">
             <emoji-text-button
-              button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
               :text="$t('NFTs.btn.dice.sixSide.txt')"
             />
@@ -116,39 +106,30 @@
           <context-button-item @click="selectDice(66)">
             <emoji-text-button
               button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
               :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
             />
           </context-button-item>
           <context-button-item @click="selectDice(8)">
             <emoji-text-button
-              button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
               :text="$t('NFTs.btn.dice.eightSide.txt')"
             />
           </context-button-item>
           <context-button-item @click="selectDice(10)">
             <emoji-text-button
-              button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
               :text="$t('NFTs.btn.dice.tenSide.txt')"
             />
           </context-button-item>
           <context-button-item @click="selectDice(12)">
             <emoji-text-button
-              button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
               :text="$t('NFTs.btn.dice.twelveSide.txt')"
             />
           </context-button-item>
           <context-button-item @click="selectDice(20)">
             <emoji-text-button
-              button-class="button-active"
-              disabled
               :emoji="$t('NFTs.btn.dice.twentySide.emoji')"
               :text="$t('NFTs.btn.dice.twentySide.txt')"
             />

@@ -46,30 +46,22 @@
 
     <div class="navigation-wrapper">
       <div class="sections">
-        <div class="group">
-          <div class="items">
-            <pu-skeleton
-              v-for="idx in 3"
-              :key="idx"
-              class="item picture skeleton"
-              height="48px"
-              width="200px"
-            />
-          </div>
-        </div>
+        <navigation-section
+          hide-header
+          is-loading
+          skeleton-component="navigation-section-item-image-skeleton"
+          skeleton-component-width="200px"
+          :skeleton-components-count="3"
+        />
       </div>
       <div class="actions">
-        <div class="group">
-          <div class="items">
-            <pu-skeleton
-              v-for="idx in 4"
-              :key="idx"
-              class="item emoji skeleton"
-              height="24px"
-              width="200px"
-            />
-          </div>
-        </div>
+        <navigation-section
+          hide-header
+          is-loading
+          skeleton-component="navigation-section-item-emoji-skeleton"
+          skeleton-component-width="200px"
+          :skeleton-components-count="4"
+        />
       </div>
     </div>
   </content-wrapper>
@@ -78,12 +70,14 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import ContentWrapper from '@/components/layout/content-wrapper.vue';
+import { ContentWrapper } from '@/components/layout';
+import { NavigationSection } from '@/components/navigation';
 
 export default Vue.extend({
   name: 'PreloadDefault',
   components: {
-    ContentWrapper
+    ContentWrapper,
+    NavigationSection
   }
 });
 </script>

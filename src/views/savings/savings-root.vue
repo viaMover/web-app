@@ -1,6 +1,6 @@
 <template>
   <content-wrapper
-    class="savings"
+    class="product savings"
     has-close-button
     has-left-rail
     is-black-close-button
@@ -10,8 +10,8 @@
       <nav class="left-rail navigation">
         <div class="wrapper">
           <div class="list">
-            <left-rail-section :section-name="$t('savings.lblMySavings')">
-              <left-rail-section-nav-item-image
+            <navigation-section :section-name="$t('savings.lblMySavings')">
+              <navigation-section-item-image
                 :description="savingsBalance"
                 description-class="bold emphasize"
                 navigate-to="savings-manage"
@@ -26,10 +26,11 @@
                     :webp-sources="savings.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-            </left-rail-section>
-            <left-rail-section :section-name="$t('savings.lblManageSavings')">
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+            </navigation-section>
+
+            <navigation-section :section-name="$t('savings.lblManageSavings')">
+              <navigation-section-item-image
                 :description="
                   $t('savings.deposit.txtDepositShortDescription', {
                     apy: formattedAPY
@@ -47,8 +48,9 @@
                     :webp-sources="savings.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
                 v-if="hasActiveSavings"
                 :description="
                   $t('savings.withdraw.txtWithdrawShortDescription')
@@ -65,8 +67,9 @@
                     :webp-sources="withdraw.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
                 :description="$t('savings.txtGlobalAnalytics')"
                 description-class="disabled"
                 navigate-to="savings-global-analytics"
@@ -80,8 +83,8 @@
                     :webp-sources="global.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-            </left-rail-section>
+              </navigation-section-item-image>
+            </navigation-section>
           </div>
         </div>
       </nav>
@@ -102,20 +105,20 @@ import { mapGetters, mapState } from 'vuex';
 import { formatPercents, formatToNative } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
-import {
-  ContentWrapper,
-  LeftRailSection,
-  LeftRailSectionNavItemImage
-} from '@/components/layout';
+import { ContentWrapper } from '@/components/layout';
 import { SearchModal } from '@/components/modals';
+import {
+  NavigationSection,
+  NavigationSectionItemImage
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'SavingsRoot',
   components: {
     ContentWrapper,
     SearchModal,
-    LeftRailSection,
-    LeftRailSectionNavItemImage,
+    NavigationSection,
+    NavigationSectionItemImage,
     CustomPicture
   },
   data() {

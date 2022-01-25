@@ -20,6 +20,10 @@ html {
       width: @left-rail-base-width;
 
       @media screen and (max-width: 1279px) {
+        &.transactions {
+          display: none;
+        }
+
         width: @left-rail-small-width;
       }
 
@@ -34,7 +38,7 @@ html {
         scrollbar-width: thin;
 
         @media screen and (max-width: 1279px) {
-          padding: 80px 16px;
+          padding: 80px 0;
         }
       }
     }
@@ -74,11 +78,12 @@ html {
 
       .wrapper {
         clear: none;
-        padding: 80px 32px;
-        width: 780px;
+        padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+        max-width: 780px;
         margin-left: 128px;
 
         @media screen and (max-width: 1279px) {
+          padding: @page-inset-top @page-inset-right-small @page-inset-bottom @page-inset-left-small;
           margin: 0 auto;
         }
       }

@@ -1,6 +1,6 @@
 <template>
   <content-wrapper
-    class="smart-treasury"
+    class="product smart-treasury"
     has-close-button
     has-left-rail
     is-black-close-button
@@ -10,10 +10,10 @@
       <nav class="left-rail navigation">
         <div class="wrapper">
           <div class="list">
-            <left-rail-section
+            <navigation-section
               :section-name="$t('treasury.lblMySmartTreasury')"
             >
-              <left-rail-section-nav-item-image
+              <navigation-section-item-image
                 :description="balance"
                 description-class="bold"
                 navigate-to="treasury-manage"
@@ -28,12 +28,12 @@
                     :webp-sources="treasury.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-            </left-rail-section>
-            <left-rail-section
+              </navigation-section-item-image>
+            </navigation-section>
+            <navigation-section
               :section-name="$t('treasury.leftRail.lblManageSmartTreasury')"
             >
-              <left-rail-section-nav-item-image
+              <navigation-section-item-image
                 :description="
                   $t('treasury.leftRail.lblIncreaseBoostDescription')
                 "
@@ -48,8 +48,9 @@
                     :webp-sources="increase.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
                 v-if="hasActiveTreasury"
                 :description="
                   $t('treasury.leftRail.lblDecreaseBoostDescription')
@@ -65,8 +66,9 @@
                     :webp-sources="decrease.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
                 v-if="hasMoveOnBalance"
                 :description="
                   $t('treasury.leftRail.lblClaimAndBurnDescription')
@@ -82,8 +84,9 @@
                     :webp-sources="claimAndBurn.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
                 :description="$t('treasury.leftRail.lblPowerCardDescription')"
                 navigate-to="treasury-powercard"
                 :title="$t('treasury.leftRail.lblPowerCard')"
@@ -96,8 +99,9 @@
                     :webp-sources="powerCard.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-              <left-rail-section-nav-item-image
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
                 :description="
                   $t('treasury.leftRail.lblGlobalAnalyticsDescription')
                 "
@@ -112,8 +116,8 @@
                     :webp-sources="analytics.webpSources"
                   />
                 </template>
-              </left-rail-section-nav-item-image>
-            </left-rail-section>
+              </navigation-section-item-image>
+            </navigation-section>
           </div>
         </div>
       </nav>
@@ -139,22 +143,20 @@ import { Token } from '@/wallet/types';
 
 import { PictureDescriptor } from '@/components/html5';
 import { CustomPicture } from '@/components/html5';
-import {
-  ContentWrapper,
-  LeftRailSection,
-  LeftRailSectionNavItemImage
-} from '@/components/layout';
+import { ContentWrapper } from '@/components/layout';
 import { SearchModal } from '@/components/modals';
-
-// import '@/styles/_treasury.less';
+import {
+  NavigationSection,
+  NavigationSectionItemImage
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'TreasuryRoot',
   components: {
     ContentWrapper,
     SearchModal,
-    LeftRailSectionNavItemImage,
-    LeftRailSection,
+    NavigationSection,
+    NavigationSectionItemImage,
     CustomPicture
   },
   data() {

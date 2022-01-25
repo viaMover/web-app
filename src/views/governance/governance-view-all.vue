@@ -1,22 +1,23 @@
 <template>
   <content-wrapper
-    base-class="info__wrapper"
+    class="governance"
     has-close-button
     has-left-rail
     is-black-close-button
-    page-container-class="product-item__wrapper governance__menu"
-    wrapper-class="governance"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <div class="progressive-left-rail">
-        <governance-nav-my-governance />
-        <governance-nav-manage-governance />
-      </div>
+      <governance-nav-my-governance />
+      <governance-nav-manage-governance />
     </template>
 
-    <secondary-page :title="$t('governance.lblGetInvolved')">
-      <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
+    <secondary-page class="view view-all" hide-info>
+      <template v-slot:title>
+        <secondary-page-header
+          :description="$t('governance.txtGetInvolved')"
+          :title="$t('governance.lblGetInvolved')"
+        />
+      </template>
 
       <governance-proposals />
     </secondary-page>
@@ -31,13 +32,18 @@ import {
   GovernanceNavMyGovernance,
   GovernanceProposals
 } from '@/components/governance';
-import { ContentWrapper, SecondaryPage } from '@/components/layout';
+import {
+  ContentWrapper,
+  SecondaryPage,
+  SecondaryPageHeader
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceViewAll',
   components: {
     ContentWrapper,
     SecondaryPage,
+    SecondaryPageHeader,
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
     GovernanceProposals

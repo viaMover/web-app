@@ -123,14 +123,45 @@
     &.navigation {
       .wrapper {
         display: flex;
+        flex-flow: column nowrap;
 
         .list {
-          flex: auto;
+          width: 100%;
+          flex: 1 0 auto;
           display: flex;
           flex-flow: column nowrap;
           justify-content: space-between;
 
           @import (multiple) "./private/_navigation-group.less";
+
+          .group {
+            .header {
+              @media screen and (max-width: 1279px) {
+                display: none;
+              }
+            }
+
+            .items {
+              .item {
+                @media screen and (max-width: 1279px) {
+                  justify-content: center;
+                }
+
+                .info {
+                  @media screen and (max-width: 1279px) {
+                    display: none;
+                  }
+                }
+
+                &.emoji .icon,
+                &.picture picture {
+                  @media screen and (max-width: 1279px) {
+                    margin-right: 0;
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

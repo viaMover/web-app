@@ -1,5 +1,10 @@
 <template>
-  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
+  <secondary-page
+    class="analytics"
+    has-back-button
+    :title="pageTitle"
+    @back="handleBack"
+  >
     <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
 
     <template v-if="isLoading">

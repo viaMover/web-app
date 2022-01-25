@@ -1,11 +1,11 @@
 <template>
-  <secondary-page
-    has-back-button
-    :title="proposal ? proposal.proposal.title : ''"
-    @back="handleBack"
-  >
-    <template v-if="isLoading" v-slot:title>
-      <pu-skeleton class="title page-title" tag="h2" />
+  <secondary-page class="view" has-back-button hide-info @back="handleBack">
+    <template v-slot:title>
+      <pu-skeleton v-if="isLoading" class="title page-title" tag="h2" />
+      <secondary-page-header
+        v-else
+        :title="proposal ? proposal.proposal.title : ''"
+      />
     </template>
 
     <div class="content">
@@ -28,12 +28,17 @@ import { mapState } from 'vuex';
 import { ProposalWithVotes } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
 
-import { Markdown, SecondaryPage } from '@/components/layout';
+import {
+  Markdown,
+  SecondaryPage,
+  SecondaryPageHeader
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceView',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     Markdown
   },
   computed: {

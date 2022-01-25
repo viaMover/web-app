@@ -8,23 +8,23 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <left-rail-section>
-        <template>
-          <left-rail-section-nav-item-emoji
-            emoji="📦"
-            navigate-to="nibble-shop-redeem"
-            :text="$t('nibbleShop.lblRedeem')"
-          />
-        </template>
-      </left-rail-section>
+      <navigation-section hide-header>
+        <navigation-section-item-emoji
+          emoji="📦"
+          navigate-to="nibble-shop-redeem"
+          :text="$t('nibbleShop.lblRedeem')"
+        />
+      </navigation-section>
     </template>
 
-    <secondary-page has-back-button @back="handleBack">
-      <secondary-page-simple-title
-        class="page-title"
-        :description="$t('nibbleShop.txtRedeemDescription')"
-        :title="$t('nibbleShop.lblRedeemAnItem')"
-      />
+    <secondary-page class="redeem" has-back-button hide-info @back="handleBack">
+      <template v-slot:title>
+        <secondary-page-header
+          :description="$t('nibbleShop.txtRedeemDescription')"
+          :title="$t('nibbleShop.lblRedeemAnItem')"
+        />
+      </template>
+
       <div class="container">
         <form
           class="form order with-bottom-margin"
@@ -37,7 +37,7 @@
               <input
                 v-model.trim="productName"
                 class="small-font disabled bold-label"
-                :disabled="true"
+                disabled="disabled"
                 name="productName"
                 type="text"
               />
@@ -149,7 +149,7 @@
 
           <action-button
             ref="button"
-            button-class="black-link button-active button"
+            class="primary"
             :disabled="isLoading"
             propagate-original-event
             type="submit"
@@ -193,26 +193,26 @@ import { Asset, RedeemParams } from '@/store/modules/shop/types';
 
 import { ActionButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import {
-  ContentWrapper,
-  LeftRailSection,
-  LeftRailSectionNavItemEmoji
-} from '@/components/layout';
+import { ContentWrapper } from '@/components/layout';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
 import { SimpleLoaderModal } from '@/components/modals';
+import {
+  NavigationSection,
+  NavigationSectionItemEmoji
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'NibbleShopRedeem',
   components: {
     ActionButton,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     SecondaryPage,
     ContentWrapper,
-    LeftRailSection,
-    LeftRailSectionNavItemEmoji,
+    NavigationSection,
+    NavigationSectionItemEmoji,
     SimpleLoaderModal
   },
   validations: {

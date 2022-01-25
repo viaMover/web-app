@@ -6,14 +6,14 @@
       </aside>
     </template>
 
-    <header-balance />
+    <home-masthead />
 
     <div class="cards">
       <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
       <deposit-card-section v-else />
     </div>
 
-    <menu-section />
+    <home-navigation-section />
 
     <template v-slot:modals>
       <swap-modal key="swap-modal" />
@@ -27,25 +27,21 @@ import Vue from 'vue';
 
 import { isFeatureEnabled } from '@/settings';
 
+import { HomeMasthead, HomeNavigationSection } from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal, SwapModal } from '@/components/modals';
-import {
-  DebitCardSection,
-  DepositCardSection,
-  HeaderBalance,
-  MenuSection
-} from '@/components/sections';
+import { DebitCardSection, DepositCardSection } from '@/components/sections';
 import { TransactionList } from '@/components/transaction-list';
 
 export default Vue.extend({
   name: 'Home',
   components: {
-    DebitCardSection,
-    DepositCardSection,
-    MenuSection,
     ContentWrapper,
     TransactionList,
-    HeaderBalance,
+    HomeMasthead,
+    HomeNavigationSection,
+    DebitCardSection,
+    DepositCardSection,
     SwapModal,
     SearchModal
   },

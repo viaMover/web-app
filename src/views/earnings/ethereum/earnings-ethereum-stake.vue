@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="stake"
     :has-back-button="showBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >

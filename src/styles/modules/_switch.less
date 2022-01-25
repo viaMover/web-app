@@ -1,0 +1,59 @@
+.switch {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+
+  p {
+    font-size: 16px;
+    line-height: 22px;
+    margin-right: 108px;
+    @font-medium();
+  }
+
+  .switch-button {
+    display: inline-block;
+    position: relative;
+    width: 56px;
+    height: 32px;
+    border-radius: 80px;
+    border: 1px solid @border-background;
+    background: @background;
+    transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    vertical-align: middle;
+    cursor: pointer;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: white; // TODO recolor
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      transition:
+        left 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        -webkit-box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:active::before {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 20px rgba(128, 128, 128, 0.1);
+    }
+  }
+
+  input:checked + .switch-button {
+    background: @button-primary-background;
+  }
+
+  input:checked + .switch-button::before {
+    left: 27px;
+    background: @background;
+  }
+
+  input:checked + .switch-button:active::before {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 20px rgba(0, 150, 136, 0.2);
+  }
+}

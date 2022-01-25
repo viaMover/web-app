@@ -1,24 +1,26 @@
 <template>
-  <secondary-page hide-title>
-    <div>
-      <secondary-page-simple-title
+  <secondary-page class="manage" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
         class="manage-balance-wrapper"
         :description="$t('earnings.lblEarningsBalance')"
-        :title="olympusBalance"
+        :title="ethereumBalance"
       />
-      <div class="manage-graph-wrapper">
-        <bar-chart
-          :chart-data-source="chartDataSource"
-          :is-loading="isEthereumInfoLoading || ethereumInfo === undefined"
-          @item-selected="handleItemSelected"
-        />
-        <p>
-          {{ selectedItemPrefix }}
-          <b>{{ selectedItemValue }}</b>
-        </p>
-      </div>
+    </template>
+
+    <div class="manage-graph-wrapper">
+      <bar-chart
+        :chart-data-source="chartDataSource"
+        :is-loading="isEthereumInfoLoading || ethereumInfo === undefined"
+        @item-selected="handleItemSelected"
+      />
+      <p>
+        {{ selectedItemPrefix }}
+        <b>{{ selectedItemValue }}</b>
+      </p>
     </div>
-    <statement-nav-list
+
+    <statements-nav-list
       :button-text="$t('earnings.btnView')"
       :icon="$t('earnings.icon')"
       :in-progress-text="$t('earnings.lblInProgress')"
@@ -47,14 +49,14 @@ import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
-import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
+import { StatementsNavList } from '@/components/statements-nav-list';
 
 export default Vue.extend({
   name: 'EarningsEthereumManage',
   components: {
-    StatementNavList,
-    SecondaryPageSimpleTitle,
+    StatementsNavList,
+    SecondaryPageHeader,
     SecondaryPage,
     BarChart
   },

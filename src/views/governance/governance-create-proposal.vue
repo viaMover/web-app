@@ -1,26 +1,24 @@
 <template>
   <content-wrapper
-    base-class="info__wrapper"
+    class="governance create-a-proposal"
     has-close-button
     has-left-rail
     is-black-close-button
-    page-container-class="product-item__wrapper create-a-proposal__wrapper"
-    wrapper-class="create-a-proposal"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <div class="progressive-left-rail">
-        <governance-nav-my-governance />
-        <governance-nav-manage-governance />
-      </div>
+      <governance-nav-my-governance />
+      <governance-nav-manage-governance />
     </template>
 
-    <secondary-page
-      has-back-button
-      :title="$t('governance.lblCreateAProposal')"
-      @back="handleBack"
-    >
-      <p class="description">{{ $t('governance.txtCreateAProposal') }}</p>
+    <secondary-page has-back-button hide-info @back="handleBack">
+      <template v-slot:title>
+        <secondary-page-header
+          :description="$t('governance.txtCreateAProposal')"
+          :title="$t('governance.lblCreateAProposal')"
+        />
+      </template>
+
       <div class="column">
         <div class="item">
           <span>{{ daysToRun }}</span>
@@ -120,10 +118,10 @@
               }}
             </span>
           </div>
-          <button
-            class="black-link button-active"
-            :class="{ disabled: isLoading }"
+          <action-button
+            class="primary"
             :disabled="isLoading"
+            propagate-original-event
             tabindex="4"
             type="submit"
           >
@@ -136,7 +134,7 @@
             <template v-else>
               {{ $t('governance.lblCreateAProposal') }}
             </template>
-          </button>
+          </action-button>
           <span class="error-message">
             {{ errorText }}
           </span>
@@ -163,20 +161,28 @@ import {
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { formatToDecimals } from '@/utils/format';
 
+import { ActionButton } from '@/components/buttons';
 import {
   GovernanceNavManageGovernance,
   GovernanceNavMyGovernance
 } from '@/components/governance';
-import { ContentWrapper, Markdown, SecondaryPage } from '@/components/layout';
+import {
+  ContentWrapper,
+  Markdown,
+  SecondaryPage,
+  SecondaryPageHeader
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceCreateProposal',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     ContentWrapper,
     Markdown,
     GovernanceNavMyGovernance,
-    GovernanceNavManageGovernance
+    GovernanceNavManageGovernance,
+    ActionButton
   },
   data() {
     return {

@@ -23,7 +23,7 @@
           />
         </shop-list>
         <action-button
-          button-class="button button-active"
+          class="primary"
           :text="$t('NFTs.btn.vaults.get.txt')"
           @button-click="handleClaim"
         />

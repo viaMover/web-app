@@ -23,7 +23,7 @@
           />
         </shop-list>
         <action-button
-          button-class="button button-active"
+          class="primary"
           :text="$t('NFTs.btn.unexpectedMove.get.txt')"
           @button-click="handleClaim"
         />
@@ -35,7 +35,6 @@
           <ul>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
                 :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
                 @button-click="handleClaimAndExchange"
@@ -43,7 +42,6 @@
             </li>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
                 :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
                 @button-click="handleExchange"

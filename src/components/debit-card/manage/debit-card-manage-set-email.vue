@@ -1,8 +1,11 @@
 <template>
-  <secondary-page :title="$t('debitCard.lblBeautifulCard')">
-    <p class="description subtitle black">
-      {{ $t('debitCard.txtBeautifulCard') }}
-    </p>
+  <secondary-page class="manage set-email" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
+        :description="$t('debitCard.txtBeautifulCard')"
+        :title="$t('debitCard.lblBeautifulCard')"
+      />
+    </template>
 
     <div class="content">
       <div class="container">
@@ -11,27 +14,24 @@
       <p class="description">
         {{ $t('debitCard.txtBeautifulCardBenifits') }}
       </p>
-      <div class="container info-group card-info">
-        <div class="item">
-          <div class="title">{{ $t('debitCard.lblFree') }}</div>
-          <p class="description subtitle black">
-            {{ $t('debitCard.txtFree') }}
-          </p>
-        </div>
-        <div class="item">
-          <div class="title">{{ $t('debitCard.lblNoLimit') }}</div>
-          <p class="description subtitle black">
-            {{ $t('debitCard.txtNoLimit') }}
-          </p>
-        </div>
-        <div class="item">
-          <div class="title">{{ $t('debitCard.lblEUR') }}</div>
-          <p class="description subtitle black">{{ $t('debitCard.txtEUR') }}</p>
-        </div>
-      </div>
+
+      <product-info-wrapper>
+        <product-info-item
+          :description="$t('debitCard.txtFree')"
+          :title="$t('debitCard.lblFree')"
+        />
+        <product-info-item
+          :description="$t('debitCard.txtNoLimit')"
+          :title="$t('debitCard.lblNoLimit')"
+        />
+        <product-info-item
+          :description="$t('debitCard.txtEUR')"
+          :title="$t('debitCard.lblEUR')"
+        />
+      </product-info-wrapper>
 
       <form
-        class="form email"
+        class="form info email"
         :class="{ error: $v.$anyError || errorText !== '' }"
         @submit.prevent="handleSetEmail"
       >
@@ -56,26 +56,28 @@
           </span>
         </div>
 
-        <action-button
-          ref="button"
-          button-class="black-link button-active action-button"
-          :disabled="isLoading"
-          propagate-original-event
-          type="submit"
-        >
-          <div v-if="isLoading" class="loader-icon">
-            <img
-              :alt="$t('icon.txtPendingIconAlt')"
-              src="@/assets/images/ios-spinner-white.svg"
-            />
-          </div>
-          <template v-else>
-            {{ $t('debitCard.btnValidateOrOrderCard') }}
-          </template>
-        </action-button>
-        <span v-if="errorText !== ''" class="error-message">
-          {{ errorText }}
-        </span>
+        <div class="actions">
+          <action-button
+            ref="button"
+            class="primary"
+            :disabled="isLoading"
+            propagate-original-event
+            type="submit"
+          >
+            <div v-if="isLoading" class="loader-icon">
+              <img
+                :alt="$t('icon.txtPendingIconAlt')"
+                src="@/assets/images/ios-spinner-white.svg"
+              />
+            </div>
+            <template v-else>
+              {{ $t('debitCard.btnValidateOrOrderCard') }}
+            </template>
+          </action-button>
+          <span v-if="errorText !== ''" class="error-message">
+            {{ errorText }}
+          </span>
+        </div>
       </form>
     </div>
   </secondary-page>
@@ -90,16 +92,20 @@ import { DebitCardApiError } from '@/services/mover/debit-card';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 
 import { ActionButton } from '@/components/buttons';
-import { SecondaryPage } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
+import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 import DebitCardImage from '../debit-card-image.vue';
 
 export default Vue.extend({
   name: 'DebitCardManageSetEmail',
   components: {
-    ActionButton,
+    SecondaryPage,
+    SecondaryPageHeader,
     DebitCardImage,
-    SecondaryPage
+    ProductInfoWrapper,
+    ProductInfoItem,
+    ActionButton
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 <template>
   <content-wrapper
-    base-class="info__wrapper"
+    class="governance"
     has-close-button
     has-left-rail
     is-black-close-button
@@ -9,18 +9,20 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <div class="progressive-left-rail">
-        <governance-nav-my-governance />
-        <governance-nav-manage-governance />
-      </div>
+      <governance-nav-my-governance />
+      <governance-nav-manage-governance />
     </template>
 
     <secondary-page
+      class="analytics"
       has-back-button
-      :title="$t('governance.lblGovernanceOverview')"
+      hide-info
       @back="handleBack"
     >
-      <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
+      <secondary-page-header
+        :description="$t('governance.txtGetInvolved')"
+        :title="$t('governance.lblGovernanceOverview')"
+      />
 
       <template v-if="isLoading">
         <governance-overview-section-skeleton>
@@ -101,13 +103,18 @@ import {
   GovernanceOverviewSectionItemSkeleton,
   GovernanceOverviewSectionSkeleton
 } from '@/components/governance';
-import { ContentWrapper, SecondaryPage } from '@/components/layout';
+import {
+  ContentWrapper,
+  SecondaryPage,
+  SecondaryPageHeader
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceGlobalAnalytics',
   components: {
     ContentWrapper,
     SecondaryPage,
+    SecondaryPageHeader,
     GovernanceNavMyGovernance,
     GovernanceNavManageGovernance,
     GovernanceOverviewSection,

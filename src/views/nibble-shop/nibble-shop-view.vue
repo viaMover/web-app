@@ -17,7 +17,7 @@
           />
         </shop-list>
         <action-button
-          button-class="button button-active"
+          class="primary"
           :text="$t('nibbleShop.btn.get.txt', { item: productShortName })"
           @button-click="handleClaim"
         />
@@ -29,7 +29,6 @@
           <ul>
             <li>
               <emoji-text-button
-                button-class="button-active"
                 :emoji="$t('nibbleShop.btn.redeem.emoji')"
                 :text="$t('nibbleShop.btn.redeem.txt')"
                 @button-click="handleRedeem"

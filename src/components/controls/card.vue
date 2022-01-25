@@ -13,10 +13,7 @@
           >
             {{ buttonText }}
           </action-button>
-          <action-button
-            button-class="button round"
-            @button-click="handleCloseButton"
-          >
+          <action-button class="round" @button-click="handleCloseButton">
             <img
               v-if="isBlackCloseBtn"
               :alt="$t('icon.txtCloseIconAlt')"

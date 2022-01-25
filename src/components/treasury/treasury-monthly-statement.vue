@@ -1,34 +1,34 @@
 <template>
-  <statement-list>
-    <statement-list-item
-      :description="$t('treasury.statement.lblBalance', { month: monthName })"
-      :value="balance"
+  <analytics-list>
+    <analytics-list-item
+      :description="balance"
+      :title="$t('treasury.statement.lblBalance', { month: monthName })"
     />
-    <statement-list-item
-      :description="$t('treasury.statement.lblRewardsEarned')"
-      :value="rewardsEarned"
+    <analytics-list-item
+      :description="rewardsEarned"
+      :title="$t('treasury.statement.lblRewardsEarned')"
     />
-    <statement-list-item
-      :description="$t('treasury.statement.lblAverageDailyEarnings')"
-      :value="averageDailyEarnings"
+    <analytics-list-item
+      :description="averageDailyEarnings"
+      :title="$t('treasury.statement.lblAverageDailyEarnings')"
     />
-    <statement-list-item
-      :description="$t('treasury.statement.lblRewardsUsed')"
-      :value="rewardsUsed"
+    <analytics-list-item
+      :description="rewardsUsed"
+      :title="$t('treasury.statement.lblRewardsUsed')"
     />
-    <statement-list-item
-      :description="$t('treasury.statement.lblAverageDailySpendings')"
-      :value="averageDailySpendings"
+    <analytics-list-item
+      :description="averageDailySpendings"
+      :title="$t('treasury.statement.lblAverageDailySpendings')"
     />
-    <statement-list-item
-      :description="$t('treasury.statement.lblReservedAssets')"
-      :value="reservedAssets"
+    <analytics-list-item
+      :description="reservedAssets"
+      :title="$t('treasury.statement.lblReservedAssets')"
     />
-    <statement-list-item
-      :description="$t('treasury.statement.lblRemovedAssets')"
-      :value="removedAssets"
+    <analytics-list-item
+      :description="removedAssets"
+      :title="$t('treasury.statement.lblRemovedAssets')"
     />
-  </statement-list>
+  </analytics-list>
 </template>
 
 <script lang="ts">
@@ -39,16 +39,13 @@ import dayjs from 'dayjs';
 
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 
 export default Vue.extend({
   name: 'TreasuryMonthlyStatements',
   components: {
-    StatementListItem,
-    StatementList
+    AnalyticsListItem,
+    AnalyticsList
   },
   props: {
     pageDate: {

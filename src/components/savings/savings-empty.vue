@@ -1,32 +1,34 @@
 <template>
-  <secondary-page hide-title>
-    <div class="empty-state-graph-wrapper">
-      <secondary-page-simple-title
-        class="balance"
+  <secondary-page class="manage empty" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
         :description="$t('savings.txtYouCouldApproximately')"
         :title="savingsBalance"
       />
+    </template>
+
+    <div class="chart-wrapper">
       <bar-chart
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
       />
       <p class="margin-top">{{ $t('savings.txtIfYouDeposit') }}</p>
-      <div class="body margin-top-20">
-        <product-info-wrapper>
-          <product-info-item
-            :description="$t('savings.lblAPYOnAllSavings')"
-            is-black-description
-            :title="currentVariableAPY"
-          />
-        </product-info-wrapper>
-        <action-button
-          button-class="button button-active bold"
-          :text="$t('savings.lblStartSaving')"
-          @button-click="handleDepositClick"
-        />
-      </div>
     </div>
+
+    <product-info-wrapper>
+      <product-info-item
+        :description="$t('savings.lblAPYOnAllSavings')"
+        is-black-description
+        :title="currentVariableAPY"
+      />
+    </product-info-wrapper>
+
+    <action-button
+      class="primary"
+      :text="$t('savings.lblStartSaving')"
+      @button-click="handleDepositClick"
+    />
   </secondary-page>
 </template>
 
@@ -40,17 +42,17 @@ import { formatPercents, formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
   name: 'SavingsEmpty',
   components: {
+    SecondaryPage,
+    SecondaryPageHeader,
     ProductInfoItem,
     ProductInfoWrapper,
-    SecondaryPageSimpleTitle,
     ActionButton,
-    SecondaryPage,
     BarChart
   },
   computed: {

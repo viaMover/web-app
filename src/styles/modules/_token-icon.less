@@ -6,7 +6,8 @@
   height: $width;
 
   img {
-    width: 38px;
+    border-radius: 50%;
+    width: inherit;
     height: $width;
     @drop-shadow-filter();
   }
@@ -23,6 +24,26 @@
 
     img {
       width: 28px;
+      height: $width;
+    }
+  }
+
+  &.smallest {
+    flex: 0 0 24px;
+    margin-right: 8px;
+    width: 24px;
+    height: $width;
+  }
+
+  &.inline {
+    flex: 0 0 1em;
+    margin-right: 8px;
+    margin-left: 8px;
+    height: 1.15em;
+    width: $height;
+
+    img {
+      width: inherit;
       height: $width;
     }
   }
@@ -49,5 +70,9 @@
       text-overflow: ellipsis;
       @font-bold();
     }
+  }
+
+  &.skeleton {
+    @drop-shadow();
   }
 }

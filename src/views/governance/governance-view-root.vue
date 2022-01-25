@@ -9,35 +9,30 @@
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <div class="progressive-left-rail">
-        <left-rail-section>
-          <template v-if="isLoading">
-            <left-rail-section-nav-item-emoji-skeleton
-              v-for="idx in 3"
-              :key="idx"
-            />
-          </template>
-          <template v-else>
-            <left-rail-section-nav-item-emoji
-              v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
-              :emoji="$t('governance.btnVoteFor.emoji')"
-              :navigate-to="voteForPage"
-              :text="$t('governance.btnVoteFor.txt')"
-            />
-            <left-rail-section-nav-item-emoji
-              v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
-              :emoji="$t('governance.btnVoteAgainst.emoji')"
-              :navigate-to="voteAgainstPage"
-              :text="$t('governance.btnVoteAgainst.txt')"
-            />
-            <left-rail-section-nav-item-emoji
-              :emoji="$t('governance.btnProposalAnalytics.emoji')"
-              :navigate-to="analyticsPage"
-              :text="$t('governance.btnProposalAnalytics.txt')"
-            />
-          </template>
-        </left-rail-section>
-      </div>
+      <navigation-section
+        hide-header
+        :is-loading="isLoading"
+        skeleton-component="navigation-section-item-emoji-skeleton"
+        :skeleton-components-count="3"
+      >
+        <navigation-section-item-emoji
+          v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
+          :emoji="$t('governance.btnVoteFor.emoji')"
+          :navigate-to="voteForPage"
+          :text="$t('governance.btnVoteFor.txt')"
+        />
+        <navigation-section-item-emoji
+          v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
+          :emoji="$t('governance.btnVoteAgainst.emoji')"
+          :navigate-to="voteAgainstPage"
+          :text="$t('governance.btnVoteAgainst.txt')"
+        />
+        <navigation-section-item-emoji
+          :emoji="$t('governance.btnProposalAnalytics.emoji')"
+          :navigate-to="analyticsPage"
+          :text="$t('governance.btnProposalAnalytics.txt')"
+        />
+      </navigation-section>
     </template>
     <router-view />
   </content-wrapper>
@@ -50,19 +45,17 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { ProposalInfo } from '@/services/mover/governance';
 
+import { ContentWrapper } from '@/components/layout';
 import {
-  ContentWrapper,
-  LeftRailSection,
-  LeftRailSectionNavItemEmoji,
-  LeftRailSectionNavItemEmojiSkeleton
-} from '@/components/layout';
+  NavigationSection,
+  NavigationSectionItemEmoji
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'GovernanceViewRoot',
   components: {
-    LeftRailSection,
-    LeftRailSectionNavItemEmoji,
-    LeftRailSectionNavItemEmojiSkeleton,
+    NavigationSection,
+    NavigationSectionItemEmoji,
     ContentWrapper
   },
   computed: {

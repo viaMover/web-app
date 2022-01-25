@@ -1,13 +1,13 @@
 <template>
-  <left-rail-section
+  <navigation-section
     items-container-tag="div"
     :section-name="$t('earnings.lblMyEarnings')"
   >
     <template v-if="isLoading">
-      <left-rail-section-nav-item-image-skeleton v-for="idx in 2" :key="idx" />
+      <navigation-section-item-image-skeleton v-for="idx in 2" :key="idx" />
     </template>
     <template v-else>
-      <left-rail-section-nav-item-image
+      <navigation-section-item-image
         v-if="isFeatureEnabled('isEarningsEthereumEnabled')"
         :description="earningsEthereumBalance"
         description-class="bold"
@@ -22,8 +22,8 @@
             :src="navPicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
-      <left-rail-section-nav-item-image
+      </navigation-section-item-image>
+      <navigation-section-item-image
         v-if="isFeatureEnabled('isEarningsOlympusEnabled')"
         :description="earningsOlympusBalance"
         description-class="bold"
@@ -38,9 +38,9 @@
             :src="navPicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
+      </navigation-section-item-image>
     </template>
-  </left-rail-section>
+  </navigation-section>
 </template>
 
 <script lang="ts">
@@ -52,17 +52,17 @@ import { formatToNative } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
-  LeftRailSection,
-  LeftRailSectionNavItemImage,
-  LeftRailSectionNavItemImageSkeleton
-} from '@/components/layout';
+  NavigationSection,
+  NavigationSectionItemImage,
+  NavigationSectionItemImageSkeleton
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'EarningsNavLeftRailItem',
   components: {
-    LeftRailSection,
-    LeftRailSectionNavItemImage,
-    LeftRailSectionNavItemImageSkeleton,
+    NavigationSection,
+    NavigationSectionItemImage,
+    NavigationSectionItemImageSkeleton,
     CustomPicture
   },
   data() {
