@@ -37,6 +37,8 @@ export class MoralisExplorer implements Explorer {
   private readonly apiClient: AxiosInstance;
   private static readonly TRANSACTIONS_PER_BATCH = 25;
 
+  private transactionsOffset = 0;
+
   private static readonly erc20AbiApprove = [
     {
       constant: false,
@@ -70,7 +72,6 @@ export class MoralisExplorer implements Explorer {
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
     private readonly updateTransactions: (txns: Array<Transaction>) => void,
-    private readonly setTransactionsOffset: (offset: number) => void,
     private readonly setIsTransactionsListLoaded: (val: boolean) => void,
     private readonly setTokens: (tokens: Array<TokenWithBalance>) => void,
     private readonly setChartData: (
@@ -92,7 +93,7 @@ export class MoralisExplorer implements Explorer {
     await this.refreshWalletData();
   }
 
-  public hasInfinityLoader(): boolean {
+  public hasInfiniteLoader(): boolean {
     return true;
   }
 
@@ -132,19 +133,21 @@ export class MoralisExplorer implements Explorer {
       ]);
       this.setTokens(tokensWihNative);
       this.setTransactions(transactions);
-      this.setTransactionsOffset(MoralisExplorer.TRANSACTIONS_PER_BATCH);
+      this.transactionsOffset = MoralisExplorer.TRANSACTIONS_PER_BATCH;
     } finally {
       this.setIsTransactionsListLoaded(true);
     }
   }
 
-  public async LoadMoreTransactions(nativeOnly = false): Promise<boolean> {
+  public async loadMoreTransactions(nativeOnly = false): Promise<boolean> {
     try {
       this.setIsTransactionsListLoaded(false);
 
-      const offset = store.state.account?.transactionsOffset ?? 0;
+      const offset = this.transactionsOffset;
 
-      let erc20TransactionsPromise = Promise.resolve<Erc20Transaction[]>([]);
+      let erc20TransactionsPromise = Promise.resolve<Array<Erc20Transaction>>(
+        []
+      );
       if (!nativeOnly) {
         erc20TransactionsPromise = this.getErc20Transactions(
           MoralisExplorer.TRANSACTIONS_PER_BATCH,
@@ -181,15 +184,13 @@ export class MoralisExplorer implements Explorer {
         // after txns mapping, we didn't get the ones we needed
         // it happens only for native txns
         // so we have to make a query again only for native
-        this.setTransactionsOffset(
-          offset + MoralisExplorer.TRANSACTIONS_PER_BATCH
-        );
-        return await this.LoadMoreTransactions(true);
+        this.transactionsOffset =
+          offset + MoralisExplorer.TRANSACTIONS_PER_BATCH;
+        return await this.loadMoreTransactions(true);
       } else {
         this.updateTransactions(transactions);
-        this.setTransactionsOffset(
-          offset + MoralisExplorer.TRANSACTIONS_PER_BATCH
-        );
+        this.transactionsOffset =
+          offset + MoralisExplorer.TRANSACTIONS_PER_BATCH;
       }
     } finally {
       this.setIsTransactionsListLoaded(true);
@@ -605,7 +606,7 @@ export class MoralisExplorer implements Explorer {
   private getErc20Transactions = async (
     limit: number,
     offset = 0
-  ): Promise<Erc20Transaction[]> => {
+  ): Promise<Array<Erc20Transaction>> => {
     try {
       const res = (
         await this.apiClient.get(

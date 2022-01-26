@@ -34,7 +34,6 @@ export default {
 
     isTransactionsListLoaded: false,
     transactions: [],
-    transactionsOffset: 0,
 
     tokens: [],
     tokensSearcher: undefined,

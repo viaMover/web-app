@@ -280,9 +280,6 @@ export default {
             (txnsHashes: Array<string>) => {
               commit('removeWalletTransaction', txnsHashes);
             },
-            (offset: number) => {
-              commit('setTransactionsOffset', offset);
-            },
             (tokens: Array<TokenWithBalance>) => {
               commit('setWalletTokens', tokens);
             },

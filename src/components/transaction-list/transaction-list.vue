@@ -54,7 +54,7 @@
             :transactions="txGroup.transactions"
           />
           <infinite-loading
-            v-if="hasInfinityLoader"
+            v-if="hasInfiniteLoader"
             @infinite="infiniteHandler"
           ></infinite-loading>
         </template>
@@ -105,8 +105,8 @@ export default Vue.extend({
         !this.isTransactionsListLoaded && this.transactionGroups.length === 0
       );
     },
-    hasInfinityLoader(): boolean {
-      return this.explorer?.hasInfinityLoader ?? false;
+    hasInfiniteLoader(): boolean {
+      return this.explorer?.hasInfiniteLoader ?? false;
     },
     filteredTransactionGroups(): Array<TransactionGroupType> {
       let searchType = 'byName';
@@ -183,24 +183,24 @@ export default Vue.extend({
       }
       return date.format('DD MMMM');
     },
-    async infiniteHandler($state: StateChanger): Promise<void> {
+    async infiniteHandler(state: StateChanger): Promise<void> {
       if (this.searchTermDebounced) {
-        $state.reset();
+        state.reset();
         return;
       }
 
       const explorer = this.explorer;
       if (explorer === undefined) {
-        $state.complete();
+        state.complete();
         return;
       }
 
-      const hasMoreResults = await explorer.LoadMoreTransactions();
+      const hasMoreResults = await explorer.loadMoreTransactions();
 
       if (hasMoreResults) {
-        $state.loaded();
+        state.loaded();
       } else {
-        $state.complete();
+        state.complete();
       }
     }
   }

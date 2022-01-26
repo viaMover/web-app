@@ -51,7 +51,6 @@ export type AccountStoreState = {
   currentAddress: undefined | string;
 
   isTransactionsListLoaded: boolean;
-  transactionsOffset: number;
   transactions: Array<Transaction>;
 
   tokens: Array<TokenWithBalance>;
