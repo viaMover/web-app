@@ -631,7 +631,7 @@ export class MoralisExplorer implements Explorer {
   private getNativeTransactions = async (
     limit: number,
     offset = 0
-  ): Promise<NativeTransaction[]> => {
+  ): Promise<Array<NativeTransaction>> => {
     try {
       const res = (
         await this.apiClient.get(
