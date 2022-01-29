@@ -52,10 +52,15 @@ input {
   }
 
   &[type="search"] {
-    ::-webkit-search-decoration,
-    ::-webkit-search-cancel-button,
-    ::-webkit-search-results-button,
-    ::-webkit-search-results-decoration {
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+    }
+
+    &::-ms-clear,
+    &::-ms-reveal {
       display: none;
       width: 0;
       height: 0;
@@ -106,6 +111,6 @@ button {
   border: none;
 }
 
-.pu-skeleton {
-  line-height: unset;
+span.pu-skeleton {
+  line-height: normal;
 }

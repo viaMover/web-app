@@ -1,13 +1,20 @@
 <template>
-  <div class="governance__menu-wrapper-item">
-    <div class="item__info active">
+  <div class="item">
+    <div class="info">
       <pu-skeleton circle class="progress-loader" tag="div" />
-      <div class="item__info-label">
-        <pu-skeleton tag="p" width="200px" />
-        <pu-skeleton tag="span" width="80px" />
+      <div class="text">
+        <pu-skeleton class="title" tag="h3" width="200px" />
+        <pu-skeleton class="description" tag="div" width="80px" />
       </div>
     </div>
-    <pu-skeleton class="item__link" height="42px" tag="div" width="91px" />
+    <div class="action">
+      <pu-skeleton
+        class="button disabled no-padding skeleton"
+        height="40px"
+        tag="div"
+        width="80px"
+      />
+    </div>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="statements-item">
+  <div class="item">
     <div class="info">
       <div class="icon"><span>🗳</span></div>
       <progress-loader
@@ -9,14 +9,14 @@
         :value="itemProgress"
       />
       <div class="text">
-        <h4 class="title">{{ item.title }}</h4>
+        <h3 class="title">{{ item.title }}</h3>
         <div class="description">{{ statusText }}</div>
       </div>
     </div>
     <div class="action">
       <router-link
         class="button"
-        :class="{ 'black-link': item.state !== 'closed' }"
+        :class="{ primary: item.state !== 'closed' }"
         :to="{ name: 'governance-view', params: { id: item.id } }"
       >
         {{ buttonText }}

@@ -1,92 +1,68 @@
 <template>
-  <content-wrapper
-    class="governance"
-    has-close-button
-    has-left-rail
-    is-black-close-button
-    page-container-class="overview__wrapper governance-overview__menu-wrapper"
-    wrapper-class="governance-overview"
-    @close="handleClose"
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
   >
-    <template v-slot:left-rail>
-      <governance-nav-my-governance />
-      <governance-nav-manage-governance />
-    </template>
-
-    <secondary-page
-      class="analytics"
-      has-back-button
-      hide-info
-      @back="handleBack"
-    >
+    <template v-slot:title>
       <secondary-page-header
         :description="$t('governance.txtGetInvolved')"
         :title="$t('governance.lblGovernanceOverview')"
       />
+    </template>
 
-      <template v-if="isLoading">
-        <governance-overview-section-skeleton>
-          <governance-overview-section-item-skeleton
-            v-for="idx in 3"
-            :key="idx"
-          />
-        </governance-overview-section-skeleton>
+    <analytics-list>
+      <analytics-list-item
+        :description="myVotingPower"
+        :is-loading="isLoading"
+        :title="$t('governance.lblMyVotingPower')"
+      />
+      <analytics-list-item
+        :description="timesVoted"
+        :is-loading="isLoading"
+        :title="$t('governance.lblTimesVoted')"
+      />
+      <analytics-list-item
+        :description="proposalsCreated"
+        :is-loading="isLoading"
+        :title="$t('governance.lblProposalsCreated')"
+      />
+    </analytics-list>
 
-        <governance-overview-section-skeleton has-title>
-          <governance-overview-section-item-skeleton
-            v-for="idx in 6"
-            :key="idx"
-          />
-        </governance-overview-section-skeleton>
-      </template>
-      <template v-else>
-        <governance-overview-section>
-          <governance-overview-section-item
-            :description="$t('governance.lblMyVotingPower')"
-            :value="myVotingPower"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblTimesVoted')"
-            :value="timesVoted"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblProposalsCreated')"
-            :value="proposalsCreated"
-          />
-        </governance-overview-section>
-
-        <governance-overview-section
-          has-title
-          :title="$t('governance.lblGovernanceStats')"
-        >
-          <governance-overview-section-item
-            :description="$t('governance.lblPowerNeeded')"
-            :value="powerNeeded"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblCommunityVotingPower')"
-            :value="communityVotingPower"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblTotalNumberOfProposals')"
-            :value="totalNumberOfProposals"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblOpenProposals')"
-            :value="openProposals"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblSucceededProposals')"
-            :value="succeededProposals"
-          />
-          <governance-overview-section-item
-            :description="$t('governance.lblDefeatedProposals')"
-            :value="defeatedProposals"
-          />
-        </governance-overview-section>
-      </template>
-    </secondary-page>
-  </content-wrapper>
+    <analytics-list has-title :title="$t('governance.lblGovernanceStats')">
+      <analytics-list-item
+        :description="powerNeeded"
+        :is-loading="isLoading"
+        :title="$t('governance.lblPowerNeeded')"
+      />
+      <analytics-list-item
+        :description="communityVotingPower"
+        :is-loading="isLoading"
+        :title="$t('governance.lblCommunityVotingPower')"
+      />
+      <analytics-list-item
+        :description="totalNumberOfProposals"
+        :is-loading="isLoading"
+        :title="$t('governance.lblTotalNumberOfProposals')"
+      />
+      <analytics-list-item
+        :description="openProposals"
+        :is-loading="isLoading"
+        :title="$t('governance.lblOpenProposals')"
+      />
+      <analytics-list-item
+        :description="succeededProposals"
+        :is-loading="isLoading"
+        :title="$t('governance.lblSucceededProposals')"
+      />
+      <analytics-list-item
+        :description="defeatedProposals"
+        :is-loading="isLoading"
+        :title="$t('governance.lblDefeatedProposals')"
+      />
+    </analytics-list>
+  </secondary-page>
 </template>
 
 <script lang="ts">
@@ -95,32 +71,16 @@ import { mapGetters, mapState } from 'vuex';
 
 import { formatToDecimals } from '@/utils/format';
 
-import {
-  GovernanceNavManageGovernance,
-  GovernanceNavMyGovernance,
-  GovernanceOverviewSection,
-  GovernanceOverviewSectionItem,
-  GovernanceOverviewSectionItemSkeleton,
-  GovernanceOverviewSectionSkeleton
-} from '@/components/governance';
-import {
-  ContentWrapper,
-  SecondaryPage,
-  SecondaryPageHeader
-} from '@/components/layout';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceGlobalAnalytics',
   components: {
-    ContentWrapper,
     SecondaryPage,
     SecondaryPageHeader,
-    GovernanceNavMyGovernance,
-    GovernanceNavManageGovernance,
-    GovernanceOverviewSection,
-    GovernanceOverviewSectionSkeleton,
-    GovernanceOverviewSectionItem,
-    GovernanceOverviewSectionItemSkeleton
+    AnalyticsList,
+    AnalyticsListItem
   },
   computed: {
     ...mapState('governance', {

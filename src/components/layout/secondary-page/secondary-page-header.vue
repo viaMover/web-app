@@ -1,7 +1,7 @@
 <template>
   <div class="secondary-page-header">
-    <h1 class="title">{{ title }}</h1>
-    <div class="description">{{ description }}</div>
+    <h1 v-if="title" class="title">{{ title }}</h1>
+    <div v-if="description" class="description">{{ description }}</div>
   </div>
 </template>
 
@@ -13,11 +13,11 @@ export default Vue.extend({
   props: {
     title: {
       type: String,
-      default: ''
+      default: undefined
     },
     description: {
       type: String,
-      default: ''
+      default: undefined
     }
   }
 });

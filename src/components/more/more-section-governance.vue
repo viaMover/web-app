@@ -1,29 +1,23 @@
 <template>
-  <section-base
-    container-class="more__wrapper__menu-item governance"
+  <more-section-base
+    class="governance"
     has-expand-button
     :heading-text="$t('governance.lblGovernance')"
     :name="$t('governance.lblGovernance')"
     navigate-to-name="governance-view-all"
   >
-    <governance-proposals-item
-      v-if="!isLoading && lastProposal !== undefined"
-      class="no-border no-padding"
-      :item="lastProposal"
-    />
-    <governance-proposals-item-skeleton
-      v-else-if="isLoading"
-      class="no-border no-padding"
-      :number="1"
-    />
+    <div class="item-container">
+      <governance-proposals-item
+        v-if="!isLoading && lastProposal !== undefined"
+        :item="lastProposal"
+      />
+      <governance-proposals-item-skeleton v-else-if="isLoading" />
+    </div>
 
-    <router-link
-      class="link button-active"
-      :to="{ name: 'governance-view-all' }"
-    >
+    <router-link class="button" :to="{ name: 'governance-view-all' }">
       {{ $t('governance.btnSeeAll.simple') }}
     </router-link>
-  </section-base>
+  </more-section-base>
 </template>
 
 <script lang="ts">
@@ -37,12 +31,12 @@ import {
   GovernanceProposalsItemSkeleton
 } from '@/components/governance';
 
-import SectionBase from './section-base/section-base.vue';
+import MoreSectionBase from './more-section-base.vue';
 
 export default Vue.extend({
-  name: 'GovernanceSection',
+  name: 'MoreSectionGovernance',
   components: {
-    SectionBase,
+    MoreSectionBase,
     GovernanceProposalsItem,
     GovernanceProposalsItemSkeleton
   },

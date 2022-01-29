@@ -17,11 +17,10 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { Card } from '@/components/controls';
-
-import { PictureDescriptor } from '../html5';
+import { PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
-  name: 'DebitCardSection',
+  name: 'HomeCardsDebitCard',
   components: {
     Card
   },

@@ -1,19 +1,20 @@
 <template>
   <content-wrapper
-    base-class="nibble-shop"
+    class="nibble-shop view view-all"
     has-back-button
-    page-container-class="nibble-shop"
+    page-content-class="centered"
     @back="handleClose"
     @close="handleClose"
   >
     <custom-picture
       :alt="headerImage.alt"
-      class="image"
+      class="section-logo"
       :sources="headerImage.sources"
       :src="headerImage.src"
       :webp-sources="headerImage.webpSources"
     />
-    <ul class="list">
+
+    <div class="product-tiles">
       <nibble-shop-product
         v-for="product in products"
         :id="product.id"
@@ -22,7 +23,7 @@
         :price="product.feeAmount"
         :src="product.preview.videoSrc"
       />
-    </ul>
+    </div>
   </content-wrapper>
 </template>
 

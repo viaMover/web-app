@@ -1,20 +1,25 @@
 <template>
   <div class="dashboard">
-    <slot name="left-rail" />
-    <div class="page-content" :class="pageContentClass">
+    <div class="page-content two-sided" :class="pageContentClass">
       <back-button
         v-if="hasBackButton"
-        class="navigation page-back-button"
+        class="navigation page-back-button absolute"
         @back="handleBack"
       />
       <close-button
         v-if="hasCloseButton"
-        class="navigation page-close-button"
+        class="navigation page-close-button absolute"
         is-black
         @close="handleClose"
       />
       <main class="wrapper">
-        <slot></slot>
+        <div class="side left">
+          <slot name="left" />
+        </div>
+        <div class="side right">
+          <slot name="right" />
+          <slot name="context-button" />
+        </div>
       </main>
     </div>
     <div class="modals">
@@ -29,16 +34,12 @@ import Vue, { PropType } from 'vue';
 import { BackButton, CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
-  name: 'ContentWrapper',
+  name: 'ContentWrapperTwoSided',
   components: {
     BackButton,
     CloseButton
   },
   props: {
-    hasLeftRail: {
-      type: Boolean,
-      default: false
-    },
     hasCloseButton: {
       type: Boolean,
       default: false

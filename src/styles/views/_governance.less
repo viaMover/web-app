@@ -1,0 +1,30 @@
+.governance {
+  .view:not(.view-all) {
+    .secondary-page-header {
+      margin-bottom: 16px;
+    }
+
+    .text > p,
+    .markdown-body {
+      color: @text-muted;
+      word-break: normal;
+      white-space: pre-wrap;
+      @font-medium();
+    }
+
+    .text {
+      .skeleton-text {
+        & > * {
+          font-size: 14px;
+          line-height: 16px;
+          display: block;
+          margin-bottom: 4px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}

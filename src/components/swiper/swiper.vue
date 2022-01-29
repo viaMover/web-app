@@ -15,8 +15,6 @@ import Vue from 'vue';
 
 import Swiper from 'swiper';
 
-// import 'swiper/swiper.less';
-
 export default Vue.extend({
   name: 'Swiper',
   props: {

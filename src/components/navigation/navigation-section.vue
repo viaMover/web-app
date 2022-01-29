@@ -23,8 +23,8 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import NavigationSectionItemEmojiSkeleton from './components/navigation-section-item-emoji-skeleton.vue';
-import NavigationSectionItemImageSkeleton from './components/navigation-section-item-image-skeleton.vue';
+import NavigationSectionItemEmojiSkeleton from './navigation-section-item-emoji-skeleton.vue';
+import NavigationSectionItemImageSkeleton from './navigation-section-item-image-skeleton.vue';
 
 export default Vue.extend({
   name: 'NavigationSection',

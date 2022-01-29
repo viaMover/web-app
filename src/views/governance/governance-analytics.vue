@@ -1,69 +1,57 @@
 <template>
-  <secondary-page
-    class="analytics"
-    has-back-button
-    :title="pageTitle"
-    @back="handleBack"
-  >
-    <p class="description">{{ $t('governance.txtGetInvolved') }}</p>
-
-    <template v-if="isLoading">
-      <governance-overview-section-skeleton>
-        <governance-overview-section-item-skeleton
-          v-for="idx in 4"
-          :key="idx"
-        />
-      </governance-overview-section-skeleton>
-
-      <governance-overview-section-skeleton has-title>
-        <governance-overview-section-item-skeleton
-          v-for="idx in 4"
-          :key="idx"
-        />
-      </governance-overview-section-skeleton>
+  <secondary-page class="analytics" has-back-button @back="handleBack">
+    <template v-slot:title>
+      <secondary-page-header
+        :description="$t('governance.txtGetInvolved')"
+        :title="pageTitle"
+      />
     </template>
-    <template v-else-if="proposalInfo !== undefined">
-      <governance-overview-section>
-        <governance-overview-section-item
-          :description="$t('governance.lblProposalId')"
-          :value="proposalInfo.proposal.id"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblVotingEnds')"
-          :value="votingEndsText"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblProposer')"
-          :value="proposalInfo.proposal.author"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblVotingActivity')"
-          :value="votingActivity"
-        />
-      </governance-overview-section>
 
-      <governance-overview-section
-        has-title
-        :title="$t('governance.lblProposalStats')"
-      >
-        <governance-overview-section-item
-          :description="$t('governance.lblCommunityVotingPower')"
-          :value="communityVotingPower"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblVotesFor')"
-          :value="votesFor"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblVotesAgainst')"
-          :value="votesAgainst"
-        />
-        <governance-overview-section-item
-          :description="$t('governance.lblCurrentOutcome')"
-          :value="currentOutcome"
-        />
-      </governance-overview-section>
-    </template>
+    <analytics-list>
+      <analytics-list-item
+        :description="proposalId"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblProposalId')"
+      />
+      <analytics-list-item
+        :description="votingEndsText"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblVotingEnds')"
+      />
+      <analytics-list-item
+        :description="proposalAuthor"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblProposer')"
+      />
+      <analytics-list-item
+        :description="votingActivity"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblVotingActivity')"
+      />
+    </analytics-list>
+
+    <analytics-list has-title :title="$t('governance.lblProposalStats')">
+      <analytics-list-item
+        :description="communityVotingPower"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblCommunityVotingPower')"
+      />
+      <analytics-list-item
+        :description="votesFor"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblVotesFor')"
+      />
+      <analytics-list-item
+        :description="votesAgainst"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblVotesAgainst')"
+      />
+      <analytics-list-item
+        :description="currentOutcome"
+        :is-loading="displayAsIsLoading"
+        :title="$t('governance.lblCurrentOutcome')"
+      />
+    </analytics-list>
   </secondary-page>
 </template>
 
@@ -76,22 +64,17 @@ import dayjs from 'dayjs';
 import { ProposalInfo } from '@/services/mover/governance';
 import { formatToDecimals } from '@/utils/format';
 
-import {
-  GovernanceOverviewSection,
-  GovernanceOverviewSectionItem,
-  GovernanceOverviewSectionItemSkeleton,
-  GovernanceOverviewSectionSkeleton
-} from '@/components/governance';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { SecondaryPage } from '@/components/layout';
+import SecondaryPageHeader from '@/components/layout/secondary-page/secondary-page-header.vue';
 
 export default Vue.extend({
   name: 'GovernanceAnalytics',
   components: {
+    SecondaryPageHeader,
     SecondaryPage,
-    GovernanceOverviewSection,
-    GovernanceOverviewSectionSkeleton,
-    GovernanceOverviewSectionItem,
-    GovernanceOverviewSectionItemSkeleton
+    AnalyticsList,
+    AnalyticsListItem
   },
   computed: {
     ...mapState('governance', {
@@ -109,9 +92,11 @@ export default Vue.extend({
       return this.$route.params.id;
     },
     proposalInfo(): ProposalInfo | undefined {
-      return this.items.find(
-        (proposalInfo: ProposalInfo) =>
-          proposalInfo.proposal.id === this.proposalId
+      return (
+        this.items.find(
+          (proposalInfo: ProposalInfo) =>
+            proposalInfo.proposal.id === this.proposalId
+        ) ?? undefined
       );
     },
     pageTitle(): string {
@@ -120,6 +105,13 @@ export default Vue.extend({
       }
 
       return this.proposalInfo.proposal.title;
+    },
+    proposalAuthor(): string {
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
+      return this.proposalInfo.proposal.author;
     },
     votingEndsText(): string {
       if (this.proposalInfo === undefined) {
@@ -153,6 +145,9 @@ export default Vue.extend({
       }
 
       return this.$t('governance.lblOutcome.quorumNotReached').toString();
+    },
+    displayAsIsLoading(): boolean {
+      return this.proposalInfo === undefined;
     }
   },
   watch: {

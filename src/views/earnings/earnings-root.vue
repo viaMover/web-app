@@ -3,7 +3,6 @@
     base-class="info__wrapper"
     has-close-button
     has-left-rail
-    is-black-close-button
     page-container-class=""
     wrapper-class="earnings"
     @close="handleClose"

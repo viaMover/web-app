@@ -3,9 +3,15 @@
     <h3 class="title" :class="titleClass">
       <slot name="description">{{ title }}</slot>
     </h3>
-    <div class="description" :class="descriptionClass">
+    <pu-skeleton
+      class="description"
+      :class="descriptionClass"
+      :loading="isLoading"
+      tag="div"
+      width="350px"
+    >
       <slot>{{ description }}</slot>
-    </div>
+    </pu-skeleton>
   </li>
 </template>
 
@@ -30,6 +36,10 @@ export default Vue.extend({
     descriptionClass: {
       type: String,
       default: undefined
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   }
 });

@@ -1,6 +1,6 @@
 <template>
-  <section-base
-    container-class="more__wrapper__menu-item"
+  <more-section-base
+    container-class="vaults-race"
     has-expand-button
     :heading-text="$t('vaultsRace.lblGames')"
     :name="$t('vaultsRace.lblGames')"
@@ -12,7 +12,7 @@
       :src="image.src"
       :webp-sources="image.webpSources"
     />
-  </section-base>
+  </more-section-base>
 </template>
 
 <script lang="ts">
@@ -21,13 +21,13 @@ import Vue from 'vue';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
 
-import SectionBase from './section-base/section-base.vue';
+import MoreSectionBase from './more-section-base.vue';
 
 export default Vue.extend({
-  name: 'VaultsRaceSection',
+  name: 'MoreSectionVaultsRace',
   components: {
-    CustomPicture,
-    SectionBase
+    MoreSectionBase,
+    CustomPicture
   },
   data() {
     return {

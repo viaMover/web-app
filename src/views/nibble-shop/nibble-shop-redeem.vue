@@ -2,7 +2,6 @@
   <content-wrapper
     has-close-button
     has-left-rail
-    is-black-close-button
     left-rail-inner-wrapper-class="page-sidebar-wrapper"
     wrapper-class="redeem"
     @close="handleClose"

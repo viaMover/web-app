@@ -1,22 +1,28 @@
 <template>
-  <section-base
-    container-class="more__wrapper__menu-item"
+  <more-section-base
     has-expand-button
     :heading-text="$t('nibbleShop.lblNibbleShop')"
     :name="$t('nibbleShop.lblNibbleShop')"
     navigate-to-name="nibble-shop-view-all"
   >
-    <div class="item__list">
+    <swiper
+      allow-touch-move
+      class="product-carousel"
+      grab-cursor
+      mousewheel
+      :slides-per-view="4.3"
+      :space-between="0"
+      use-navigation-buttons
+    >
       <nibble-shop-product-mini
         v-for="product in products"
         :id="product.id"
         :key="product.title"
-        class="button-active"
         :name="product.title"
         :src="product.preview.videoSrc"
       />
-    </div>
-  </section-base>
+    </swiper>
+  </more-section-base>
 </template>
 
 <script lang="ts">
@@ -24,13 +30,15 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 
 import { NibbleShopProductMini } from '@/components/nibble-shop';
+import { Swiper } from '@/components/swiper';
 
-import SectionBase from './section-base/section-base.vue';
+import MoreSectionBase from './more-section-base.vue';
 
 export default Vue.extend({
-  name: 'NibbleShopSection',
+  name: 'MoreSectionNibbleShop',
   components: {
-    SectionBase,
+    MoreSectionBase,
+    Swiper,
     NibbleShopProductMini
   },
   computed: {

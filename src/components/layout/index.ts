@@ -1,4 +1,5 @@
 export { default as ContentWrapper } from './content-wrapper.vue';
+export { default as ContentWrapperTwoSided } from './content-wrapper-two-sided.vue';
 export { default as ShopWrapper } from './shop-wrapper/shop-wrapper.vue';
 export {
   SecondaryPage,

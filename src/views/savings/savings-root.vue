@@ -3,7 +3,6 @@
     class="product savings"
     has-close-button
     has-left-rail
-    is-black-close-button
     @close="handleClose"
   >
     <template v-slot:left-rail>

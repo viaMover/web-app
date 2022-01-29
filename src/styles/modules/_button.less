@@ -22,6 +22,14 @@
 
   &.icon-only {
     justify-content: center;
+
+    &.inherit-size {
+      picture,
+      img {
+        width: inherit;
+        height: inherit;
+      }
+    }
   }
 
   &:active {
@@ -32,6 +40,13 @@
     height: @button-height;
     width: $height;
     padding: @padding-small;
+  }
+
+  &.round,
+  &.skeleton {
+    * {
+      border-radius: 20px;
+    }
   }
 
   &.transparent {

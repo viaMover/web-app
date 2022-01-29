@@ -50,7 +50,7 @@
       />
 
       <home-masthead-nav-bar-item
-        navigate-to-name="home-more"
+        navigate-to-name="more"
         :text="$t('lblMore')"
       />
     </home-masthead-nav-bar>

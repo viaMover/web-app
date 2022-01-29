@@ -9,8 +9,8 @@
     <home-masthead />
 
     <div class="cards">
-      <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-      <deposit-card-section v-else />
+      <home-cards-debit-card v-if="isFeatureEnabled('isDebitCardEnabled')" />
+      <home-cards-savings-deposit v-else />
     </div>
 
     <home-navigation-section />
@@ -27,10 +27,14 @@ import Vue from 'vue';
 
 import { isFeatureEnabled } from '@/settings';
 
-import { HomeMasthead, HomeNavigationSection } from '@/components/home';
+import {
+  HomeCardsDebitCard,
+  HomeCardsSavingsDeposit,
+  HomeMasthead,
+  HomeNavigationSection
+} from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal, SwapModal } from '@/components/modals';
-import { DebitCardSection, DepositCardSection } from '@/components/sections';
 import { TransactionList } from '@/components/transaction-list';
 
 export default Vue.extend({
@@ -40,8 +44,8 @@ export default Vue.extend({
     TransactionList,
     HomeMasthead,
     HomeNavigationSection,
-    DebitCardSection,
-    DepositCardSection,
+    HomeCardsDebitCard,
+    HomeCardsSavingsDeposit,
     SwapModal,
     SearchModal
   },
