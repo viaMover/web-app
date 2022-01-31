@@ -14,6 +14,7 @@
             <a
               class="link"
               href="https://viamover.com/terms_of_use"
+              rel="external help"
               target="_blank"
             >
               {{ $t('connect.lblTermsAndConditions') }}
