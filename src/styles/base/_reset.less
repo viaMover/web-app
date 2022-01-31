@@ -10,6 +10,7 @@
   line-height: @line-height-normal;
   user-select: none;
   scrollbar-width: thin;
+  scrollbar-color: @scrollbar-thumb @scrollbar-track;
   @font-regular();
 }
 
@@ -114,4 +115,17 @@ button {
 
 span.pu-skeleton {
   line-height: normal;
+}
+
+::-webkit-scrollbar {
+  width: calc(4px + .25em);
+}
+
+::-webkit-scrollbar-track {
+  background: @scrollbar-track;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: @scrollbar-thumb;
+  border-radius: 20px;
 }
