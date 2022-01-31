@@ -2,14 +2,14 @@ import { MutationFuncs } from '@/store/types';
 
 import { ModalsStoreState, ModalState, TModalKey } from './types';
 
-enum Mutations {
-  pushStack,
-  popStack,
-  setStateEntry,
-  setIsStateEntryVisible
-}
+type Mutations = {
+  pushStack: void;
+  popStack: void;
+  setStateEntry: void;
+  setIsStateEntryVisible: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, ModalsStoreState> = {
+const mutations: MutationFuncs<Mutations, ModalsStoreState> = {
   pushStack(state, entry: TModalKey): void {
     state.stack = [entry, ...state.stack];
   },

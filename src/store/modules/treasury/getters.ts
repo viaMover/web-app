@@ -13,41 +13,44 @@ import {
 
 import { TreasuryStoreState } from './types';
 
-enum Getters {
-  treasuryBonusNative,
-  treasuryBoost,
-  hasActiveTreasury,
-  treasuryMonthStatsOptions,
-  treasuryEarnedThisMonth,
-  treasuryEarnedThisMonthNative,
-  treasuryStakedMove,
-  treasuryStakedMoveLP,
-  treasuryStakedBalanceNative,
-  treasuryTotalStakedBalanceNative,
-  treasuryEarnedTotal,
-  treasuryEarnedTotalNative,
-  treasuryEarnedToday,
-  treasuryEarnedTodayNative,
-  treasurySpentToday,
-  treasurySpentTodayNative,
-  treasurySpentThisMonth,
-  treasurySpentThisMonthNative,
-  treasurySpentTotal,
-  treasurySpentTotalNative,
-  treasuryMonthEarnedThisMonth,
-  treasuryMonthEarnedThisMonthNative,
-  treasuryMonthBalanceNative,
-  treasuryMonthDepositedNative,
-  treasuryMonthWithdrewNative,
-  treasuryMonthBonusesUsed,
-  treasuryMonthBonusesUsedNative,
-  treasuryMonthAvgDailyEarnings,
-  treasuryMonthAvgDailyEarningsNative,
-  treasuryMonthAvgDailySpendings,
-  treasuryMonthAvgDailySpendingsNative
-}
+type Getters = {
+  treasuryBonusNative: string;
+  treasuryBoost: string;
+  hasActiveTreasury: boolean;
+  treasuryMonthStatsOptions: Array<TreasuryMonthBonusesItem>;
+  treasuryEarnedThisMonth: string;
+  treasuryEarnedThisMonthNative: string;
+  treasuryStakedMove: string;
+  treasuryStakedMoveLP: string;
+  treasuryStakedBalanceNative: string;
+  treasuryTotalStakedBalanceNative: string;
+  treasuryEarnedTotal: string;
+  treasuryEarnedTotalNative: string;
+  treasuryEarnedToday: string;
+  treasuryEarnedTodayNative: string;
+  treasurySpentToday: string;
+  treasurySpentTodayNative: string;
+  treasurySpentThisMonth: string;
+  treasurySpentThisMonthNative: string;
+  treasurySpentTotal: string;
+  treasurySpentTotalNative: string;
+  treasuryMonthEarnedThisMonth: string;
+  treasuryMonthEarnedThisMonthNative: string;
+  treasuryMonthBalanceNative: string;
+  treasuryMonthDepositedNative: string;
+  treasuryMonthWithdrewNative: string;
+  treasuryMonthBonusesUsed: string;
+  treasuryMonthBonusesUsedNative: string;
+  treasuryMonthAvgDailyEarnings: string;
+  treasuryMonthAvgDailyEarningsNative: string;
+  treasuryMonthAvgDailySpendings: string;
+  treasuryMonthAvgDailySpendingsNative: string;
+  usdcNativePrice: string;
+  moveNativePrice: string;
+  slpNativePrice: string;
+};
 
-const getters: GettersFuncs<typeof Getters, TreasuryStoreState> = {
+const getters: GettersFuncs<Getters, TreasuryStoreState> = {
   treasuryBonusNative(state, getters): string {
     if (state.treasuryBonus === undefined) {
       return '0';
@@ -541,6 +544,15 @@ const getters: GettersFuncs<typeof Getters, TreasuryStoreState> = {
       getters.treasuryMonthAvgDailySpendings,
       getters.usdcNativePrice
     );
+  },
+  moveNativePrice(state, _, rootState, rootGetters): string {
+    return rootGetters['account/usdcNativePrice'];
+  },
+  slpNativePrice(state, _, rootState, rootGetters): string {
+    return rootGetters['account/slpNativePrice'];
+  },
+  usdcNativePrice(state, _, rootState, rootGetters): string {
+    return rootGetters['account/usdcNativePrice'];
   }
 };
 

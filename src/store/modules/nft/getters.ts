@@ -3,12 +3,12 @@ import { greaterThan } from '@/utils/bigmath';
 
 import { NFTStoreState } from './types';
 
-enum Getters {
-  canExchangeUnexpectedMove,
-  hasOlympus
-}
+type Getters = {
+  canExchangeUnexpectedMove: boolean;
+  hasOlympus: boolean;
+};
 
-const getters: GettersFuncs<typeof Getters, NFTStoreState> = {
+const getters: GettersFuncs<Getters, NFTStoreState> = {
   canExchangeUnexpectedMove(state): boolean {
     return greaterThan(state.UnexpectedMoveBalance, '0');
   },

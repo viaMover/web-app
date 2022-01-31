@@ -2,9 +2,15 @@ import { MutationFuncs } from '@/store/types';
 
 import { EarningsStoreState } from './types';
 
-enum Mutations {}
+type Mutations = {
+  doNothing: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, EarningsStoreState> = {};
+const mutations: MutationFuncs<Mutations, EarningsStoreState> = {
+  doNothing(): void {
+    //;
+  }
+};
 
 export type MutationType = typeof mutations;
 export default mutations;

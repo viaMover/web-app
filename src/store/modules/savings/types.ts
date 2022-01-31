@@ -1,13 +1,12 @@
 import { SavingsInfo, SavingsReceipt } from '@/services/mover';
+import { DataStore } from '@/store/types';
 
 export type SavingsStoreState = {
   isSavingsInfoLoading: boolean;
   savingsInfo: SavingsInfo | undefined;
   savingsInfoError: string | undefined;
 
-  isSavingsReceiptLoading: boolean;
-  savingsReceipt: SavingsReceipt | undefined;
-  savingsReceiptError: string | undefined;
+  receipts: DataStore<SavingsReceipt>;
 
   savingsBalance: string | undefined;
   savingsAPY: string | undefined;
@@ -17,4 +16,10 @@ export type SavingsStoreState = {
 export type SavingsGetReceiptPayload = {
   year: number;
   month: number;
+};
+
+export type SetSavingsReceiptPayload = {
+  year: number;
+  month: number;
+  receipt: Promise<SavingsReceipt> | undefined;
 };

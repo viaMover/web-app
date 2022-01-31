@@ -1,14 +1,20 @@
 import { ActionFuncs } from '@/store/types';
 
+import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import { EarningsStoreState } from './types';
 import { ActiveProviders } from './utils';
 
-enum Actions {
-  loadMinimalInfo
-}
+type Actions = {
+  loadMinimalInfo: Promise<void>;
+};
 
-const actions: ActionFuncs<typeof Actions, EarningsStoreState, MutationType> = {
+const actions: ActionFuncs<
+  Actions,
+  EarningsStoreState,
+  MutationType,
+  GetterType
+> = {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     const providersLoadInfoPromises = new Array<Promise<void>>();
 

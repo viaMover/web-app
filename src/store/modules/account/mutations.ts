@@ -15,44 +15,44 @@ import { getNetworkByChainId } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
-enum Mutations {
-  addTransaction,
-  setIsTransactionsListLoaded,
-  setWalletTransactions,
-  updateWalletTransactions,
-  removeWalletTransaction,
-  toggleIsDebitCardSectionVisible,
-  toggleIsDepositCardSectionVisible,
-  setEthPrice,
-  setMovePriceInWeth,
-  setUsdcPriceInWeth,
-  setSLPPriceInWETH,
-  setEursPriceInWeth,
-  setExplorer,
-  setOffchainExplorerHandler,
-  setChartData,
-  setCurrentWallet,
-  setWalletTokens,
-  updateWalletTokens,
-  removeWalletTokens,
-  setAllTokens,
-  setRefreshEror,
-  setIsDetecting,
-  setProvider,
-  setAccountData,
-  clearWalletData,
-  setGasPrices,
-  setGasUpdating,
-  setGasUpdaterHandle,
-  clearGasUpdaterHandle,
-  pushGasListenerCaller,
-  popGasListenerCaller,
-  setAvatars,
-  setAvatar,
-  setWeb3Modal
-}
+type Mutations = {
+  addTransaction: void;
+  setIsTransactionsListLoaded: void;
+  setWalletTransactions: void;
+  updateWalletTransactions: void;
+  removeWalletTransaction: void;
+  toggleIsDebitCardSectionVisible: void;
+  toggleIsDepositCardSectionVisible: void;
+  setEthPrice: void;
+  setMovePriceInWeth: void;
+  setUsdcPriceInWeth: void;
+  setSLPPriceInWETH: void;
+  setEursPriceInWeth: void;
+  setExplorer: void;
+  setOffchainExplorerHandler: void;
+  setChartData: void;
+  setCurrentWallet: void;
+  setWalletTokens: void;
+  updateWalletTokens: void;
+  removeWalletTokens: void;
+  setAllTokens: void;
+  setRefreshEror: void;
+  setIsDetecting: void;
+  setProvider: void;
+  setAccountData: void;
+  clearWalletData: void;
+  setGasPrices: void;
+  setGasUpdating: void;
+  setGasUpdaterHandle: void;
+  clearGasUpdaterHandle: void;
+  pushGasListenerCaller: void;
+  popGasListenerCaller: void;
+  setAvatars: void;
+  setAvatar: void;
+  setWeb3Modal: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, AccountStoreState> = {
+const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   addTransaction(state, newTransaction: Transaction): void {
     state.transactions = sortAndDeduplicateTransactions([
       newTransaction,

@@ -7,18 +7,19 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsOlympusStoreState } from './types';
 
-enum Getters {
-  balanceNative,
-  apyNative,
-  hasActiveEarnings,
-  olympusInfoEarnedThisMonthNative,
-  olympusEarnedThisMonth,
-  olympusEarnedThisMonthNative,
-  olympusMonthStatsOptions,
-  ohmNativePrice
-}
+type Getters = {
+  balanceNative: string;
+  apyNative: string;
+  hasActiveEarnings: boolean;
+  olympusInfoEarnedThisMonthNative: string;
+  olympusEarnedThisMonth: string;
+  olympusEarnedThisMonthNative: string;
+  olympusMonthStatsOptions: Array<OlympusMonthBalanceItem>;
+  ohmNativePrice: string;
+  usdcNativePrice: string;
+};
 
-const getters: GettersFuncs<typeof Getters, EarningsOlympusStoreState> = {
+const getters: GettersFuncs<Getters, EarningsOlympusStoreState> = {
   balanceNative(state): string {
     if (!state.olympusBalance) {
       return '0';
@@ -97,6 +98,9 @@ const getters: GettersFuncs<typeof Getters, EarningsOlympusStoreState> = {
       return '0';
     }
     return multiply(state.olympusPriceInWeth, rootState.account.ethPrice);
+  },
+  usdcNativePrice(state, getters, _, rootGetters): string {
+    return rootGetters['account/usdcNativePrice'];
   }
 };
 

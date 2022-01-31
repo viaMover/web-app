@@ -38,6 +38,7 @@ import {
   getOlympusAvatar,
   isOlympusAvatar
 } from '../../../../data/olympus-avatar';
+import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
   AccountData,
@@ -52,25 +53,30 @@ import {
 const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
 
-enum Actions {
-  emitChartRequest,
-  startGasListening,
-  stopGasListening,
-  addTransaction,
-  toggleIsDebitCardSectionVisible,
-  toggleIsDepositCardSectionVisible,
-  setCurrentWallet,
-  setIsDetecting,
-  loadAvatar,
-  toggleAvatar,
-  initWallet,
-  refreshWallet,
-  updateWalletAfterTxn,
-  waitWallet,
-  disconnectWallet
-}
+type Actions = {
+  emitChartRequest: void;
+  startGasListening: void;
+  stopGasListening: void;
+  addTransaction: void;
+  toggleIsDebitCardSectionVisible: void;
+  toggleIsDepositCardSectionVisible: void;
+  setCurrentWallet: Promise<void>;
+  setIsDetecting: void;
+  loadAvatar: Promise<void>;
+  toggleAvatar: Promise<void>;
+  initWallet: Promise<void>;
+  refreshWallet: Promise<void>;
+  updateWalletAfterTxn: Promise<void>;
+  waitWallet: Promise<boolean>;
+  disconnectWallet: Promise<void>;
+};
 
-const actions: ActionFuncs<typeof Actions, AccountStoreState, MutationType> = {
+const actions: ActionFuncs<
+  Actions,
+  AccountStoreState,
+  MutationType,
+  GetterType
+> = {
   emitChartRequest({ state }, payload: EmitChartRequestPayload): void {
     try {
       state.explorer?.getChartData(

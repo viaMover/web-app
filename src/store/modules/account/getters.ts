@@ -8,29 +8,29 @@ import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 import { AccountStoreState, TransactionGroup } from './types';
 
-enum Getters {
-  getPendingTransactions,
-  getPendingOffchainTransactions,
-  getTransactionByHash,
-  getTransactionByQueueId,
-  transactionsGroupedByDay,
-  isWalletConnected,
-  isWalletReady,
-  entireBalance,
-  ethPrice,
-  moveNativePrice,
-  usdcNativePrice,
-  slpNativePrice,
-  getTokenColor,
-  getTokenMarketCap,
-  searchInAllTokens,
-  allTokensSortedByMarketCap,
-  searchInWalletTokens,
-  getOffchainExplorerHanlder,
-  getCurrentAddresses
-}
+type Getters = {
+  getPendingTransactions: Transaction[];
+  getPendingOffchainTransactions: Transaction[];
+  getTransactionByHash: (hash: string) => Transaction | undefined;
+  getTransactionByQueueId: (queueId: string) => Transaction | undefined;
+  transactionsGroupedByDay: Array<TransactionGroup>;
+  isWalletConnected: boolean;
+  isWalletReady: boolean;
+  entireBalance: string;
+  ethPrice: string;
+  moveNativePrice: string;
+  usdcNativePrice: string;
+  slpNativePrice: string;
+  getTokenColor: (address?: string) => string | undefined;
+  getTokenMarketCap: (address?: string) => number;
+  searchInAllTokens: (searchTerm: string, offset?: number) => Array<Token>;
+  allTokensSortedByMarketCap: Array<Token>;
+  searchInWalletTokens: (searchTerm: string) => Array<TokenWithBalance>;
+  getOffchainExplorerHanlder: OffchainExplorerHanler | undefined;
+  getCurrentAddresses: string[];
+};
 
-const getters: GettersFuncs<typeof Getters, AccountStoreState> = {
+const getters: GettersFuncs<Getters, AccountStoreState> = {
   getPendingTransactions(state): Transaction[] {
     return state.transactions.filter((t) => t.status === 'pending');
   },
@@ -78,7 +78,7 @@ const getters: GettersFuncs<typeof Getters, AccountStoreState> = {
   isWalletReady(state): boolean {
     return !state.isWalletLoading;
   },
-  entireBalance(state, getters, rootState): string {
+  entireBalance(state, getters, rootState, rootGetters): string {
     let balance = '0';
     balance = state.tokens.reduce<string>((acc, token) => {
       const tokenPrice = multiply(token.balance, token.priceUSD);
@@ -98,9 +98,9 @@ const getters: GettersFuncs<typeof Getters, AccountStoreState> = {
       );
     }
 
-    balance = add(balance, getters.treasuryStakedBalanceNative);
+    balance = add(balance, rootGetters['treasury/treasuryStakedBalanceNative']);
 
-    balance = add(balance, getters.treasuryBonusNative);
+    balance = add(balance, rootGetters['treasury/treasuryBonusNative']);
 
     return balance;
   },

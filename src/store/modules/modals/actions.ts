@@ -1,5 +1,6 @@
 import { ActionFuncs } from '@/store/types';
 
+import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
   ModalsStoreState,
@@ -15,11 +16,16 @@ type SetVisibilityArgs<K extends TModalKey> = {
   waitForResult?: boolean;
 };
 
-enum Actions {
-  setIsDisplayed
-}
+type Actions = {
+  setIsDisplayed: Promise<TModalReturn<TModalKey>>;
+};
 
-const actions: ActionFuncs<typeof Actions, ModalsStoreState, MutationType> = {
+const actions: ActionFuncs<
+  Actions,
+  ModalsStoreState,
+  MutationType,
+  GetterType
+> = {
   async setIsDisplayed(
     { state, commit, dispatch },
     { id, value, payload }: SetVisibilityArgs<TModalKey>

@@ -6,21 +6,23 @@ import { getOlympusInfo, getOlympusReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { ActionFuncs } from '@/store/types';
 
+import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import { EarningsOlympusStoreState, FetchOlympusReceiptPayload } from './types';
 
-enum Actions {
-  loadMinimalInfo,
-  loadInfo,
-  fetchOlympusInfo,
-  fetchOlympusPriceInWeth,
-  fetchOlympusReceipt
-}
+type Actions = {
+  loadMinimalInfo: Promise<void>;
+  loadInfo: Promise<void>;
+  fetchOlympusInfo: Promise<void>;
+  fetchOlympusPriceInWeth: Promise<void>;
+  fetchOlympusReceipt: Promise<void>;
+};
 
 const actions: ActionFuncs<
-  typeof Actions,
+  Actions,
   EarningsOlympusStoreState,
-  MutationType
+  MutationType,
+  GetterType
 > = {
   async loadMinimalInfo({ dispatch, commit }): Promise<void> {
     commit('setIsLoading', true);

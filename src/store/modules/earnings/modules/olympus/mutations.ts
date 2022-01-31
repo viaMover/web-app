@@ -3,20 +3,20 @@ import { MutationFuncs } from '@/store/types';
 
 import { EarningsOlympusStoreState, SetOlympusReceiptPayload } from './types';
 
-enum Mutations {
-  setIsLoading,
-  setOlympusAPY,
-  setOlympusBalance,
-  setOlympusInfo,
-  setOlympusInfoError,
-  setIsOlympusInfoLoading,
-  setOlympusPriceInWeth,
-  setOlympusReceipt,
-  setOlympusReceiptError,
-  setIsOlympusReceiptLoading
-}
+type Mutations = {
+  setIsLoading: void;
+  setOlympusAPY: void;
+  setOlympusBalance: void;
+  setOlympusInfo: void;
+  setOlympusInfoError: void;
+  setIsOlympusInfoLoading: void;
+  setOlympusPriceInWeth: void;
+  setOlympusReceipt: void;
+  setOlympusReceiptError: void;
+  setIsOlympusReceiptLoading: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, EarningsOlympusStoreState> = {
+const mutations: MutationFuncs<Mutations, EarningsOlympusStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },

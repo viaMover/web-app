@@ -2,11 +2,11 @@ import { GettersFuncs } from '@/store/types';
 
 import { EarningsStoreState } from './types';
 
-enum Getters {
-  earningsBalanceNative
-}
+type Getters = {
+  earningsBalanceNative: string;
+};
 
-const getters: GettersFuncs<typeof Getters, EarningsStoreState> = {
+const getters: GettersFuncs<Getters, EarningsStoreState> = {
   earningsBalanceNative(): string {
     return '0';
   }

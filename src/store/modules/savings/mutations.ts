@@ -1,21 +1,19 @@
-import { SavingsInfo, SavingsReceipt } from '@/services/mover';
+import { SavingsInfo } from '@/services/mover';
 import { MutationFuncs } from '@/store/types';
 
-import { SavingsStoreState } from './types';
+import { SavingsStoreState, SetSavingsReceiptPayload } from './types';
 
-enum Mutations {
-  setSavingsAPY,
-  setSavingsDPY,
-  setSavingsBalance,
-  setIsSavingsInfoLoading,
-  setSavingsInfoError,
-  setSavingsInfo,
-  setIsSavingsReceiptLoading,
-  setSavingsReceiptError,
-  setSavingsReceipt
-}
+type Mutations = {
+  setSavingsAPY: void;
+  setSavingsDPY: void;
+  setSavingsBalance: void;
+  setIsSavingsInfoLoading: void;
+  setSavingsInfoError: void;
+  setSavingsInfo: void;
+  setSavingsReceipt: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, SavingsStoreState> = {
+const mutations: MutationFuncs<Mutations, SavingsStoreState> = {
   setSavingsAPY(state, apy: string): void {
     state.savingsAPY = apy;
   },
@@ -34,14 +32,15 @@ const mutations: MutationFuncs<typeof Mutations, SavingsStoreState> = {
   setSavingsInfo(state, info: SavingsInfo | undefined): void {
     state.savingsInfo = info;
   },
-  setIsSavingsReceiptLoading(state, isLoading: boolean): void {
-    state.isSavingsReceiptLoading = isLoading;
-  },
-  setSavingsReceiptError(state, error: string | undefined): void {
-    state.savingsReceiptError = error;
-  },
-  setSavingsReceipt(state, receipt: SavingsReceipt): void {
-    state.savingsReceipt = receipt;
+  setSavingsReceipt(state, payload: SetSavingsReceiptPayload): void {
+    if (payload.receipt === undefined) {
+      state.receipts[`${payload.year}/${payload.month}`] = undefined;
+    } else {
+      state.receipts[`${payload.year}/${payload.month}`] = {
+        data: payload.receipt,
+        expDate: Date.now() + 600000 // add 10 min
+      };
+    }
   }
 };
 

@@ -32,32 +32,56 @@ export interface RootStoreState {
   // rootState members end
 }
 
-export interface AugmentedActionContext<T, S, M extends MutationFuncs<T, S>>
-  extends Omit<ActionContext<S, RootStoreState>, 'commit'> {
+export type DataStoreWrapper<T> = {
+  expDate: number;
+  data: Promise<T>;
+};
+
+export type DataStoreItem<T> = DataStoreWrapper<T> | undefined;
+
+export type DataStore<T> = {
+  [key: string]: DataStoreItem<T>;
+};
+
+export interface AugmentedActionContext<
+  S,
+  M extends MutationFuncs<any, S>,
+  G extends GettersFuncs<any, S>
+> extends Omit<ActionContext<S, RootStoreState>, 'commit' | 'getters'> {
   commit<K extends keyof M>(
     key: K,
     payload?: Parameters<M[K]>[1]
   ): ReturnType<M[K]>;
+  getters: {
+    [K in keyof G]: ReturnType<G[K]>;
+  };
 }
 
 export type MutationFuncs<T, S> = {
-  [K in keyof T]: (state: S, payload?: any) => any;
-};
-
-export type ActionFuncs<T, S, M extends MutationFuncs<any, S>> = {
-  [K in keyof T]: (
-    context: AugmentedActionContext<any, S, M>,
-    payload?: any
-  ) => any;
+  [K in keyof T]: (state: S, payload?: any) => T[K];
 };
 
 export type GettersFuncs<T, S> = {
   [K in keyof T]: (
     state: S,
-    getters: any,
+    getters: {
+      [k in keyof T]: T[k];
+    },
     rootState: RootStoreState,
     rootGetters: any
-  ) => any;
+  ) => T[K];
+};
+
+export type ActionFuncs<
+  T,
+  S,
+  M extends MutationFuncs<any, S>,
+  G extends GettersFuncs<any, S>
+> = {
+  [K in keyof T]: (
+    context: AugmentedActionContext<S, M, G>,
+    payload?: any
+  ) => T[K];
 };
 
 export interface AugmentedModule<S, A, G, M>

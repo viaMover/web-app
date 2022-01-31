@@ -12,15 +12,15 @@ import {
   SkinMinimal
 } from './types';
 
-enum Getters {
-  availableSkins,
-  currentSkin,
-  cardStateText,
-  searchInAvailableSkins,
-  actionHistoryGroupedByDay
-}
+type Getters = {
+  availableSkins: Array<Skin>;
+  currentSkin: Skin;
+  cardStateText: string;
+  searchInAvailableSkins: (searchTerm: string) => Array<Skin>;
+  actionHistoryGroupedByDay: Array<EventHistoryItemGroup>;
+};
 
-const getters: GettersFuncs<typeof Getters, DebitCardStoreState> = {
+const getters: GettersFuncs<Getters, DebitCardStoreState> = {
   availableSkins(state, getters, rootState): Array<Skin> {
     if (state.availableSkins === undefined) {
       return [defaultSkin].map(mapSkin(rootState));

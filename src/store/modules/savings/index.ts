@@ -14,9 +14,7 @@ export default {
     savingsInfo: undefined,
     savingsInfoError: undefined,
 
-    isSavingsReceiptLoading: false,
-    savingsReceipt: undefined,
-    savingsReceiptError: undefined,
+    receipts: {},
 
     savingsBalance: undefined,
     savingsAPY: undefined,

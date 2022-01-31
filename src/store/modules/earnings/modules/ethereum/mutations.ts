@@ -3,19 +3,19 @@ import { MutationFuncs } from '@/store/types';
 
 import { EarningsEthereumStoreState, SetEthereumReceiptPayload } from './types';
 
-enum Mutations {
-  setIsLoading,
-  setEthereumAPY,
-  setEthereumBalance,
-  setEthereumInfo,
-  setEthereumInfoError,
-  setIsEthereumInfoLoading,
-  setEthereumReceipt,
-  setEthereumReceiptError,
-  setIsEthereumReceiptLoading
-}
+type Mutations = {
+  setIsLoading: void;
+  setEthereumAPY: void;
+  setEthereumBalance: void;
+  setEthereumInfo: void;
+  setEthereumInfoError: void;
+  setIsEthereumInfoLoading: void;
+  setEthereumReceipt: void;
+  setEthereumReceiptError: void;
+  setIsEthereumReceiptLoading: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, EarningsEthereumStoreState> = {
+const mutations: MutationFuncs<Mutations, EarningsEthereumStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },

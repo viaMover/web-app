@@ -2,12 +2,12 @@ import { GettersFuncs } from '@/store/types';
 
 import { Asset, RadarStoreState } from './types';
 
-enum Getters {
-  personalList,
-  curatedList
-}
+type Getters = {
+  personalList: Array<Asset>;
+  curatedList: Array<Asset>;
+};
 
-const getters: GettersFuncs<typeof Getters, RadarStoreState> = {
+const getters: GettersFuncs<Getters, RadarStoreState> = {
   personalList(store): Array<Asset> {
     if (store.personalList === undefined) {
       return [];

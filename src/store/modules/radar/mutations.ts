@@ -2,16 +2,16 @@ import { MutationFuncs } from '@/store/types';
 
 import { Asset, RadarStoreState } from './types';
 
-enum Mutations {
-  setIsLoadingPersonalList,
-  setIsLoadingCuratedList,
-  setLoadingPersonalListPromise,
-  setLoadingCuratedListPromise,
-  setCuratedList,
-  setPersonalList
-}
+type Mutations = {
+  setIsLoadingPersonalList: void;
+  setIsLoadingCuratedList: void;
+  setLoadingPersonalListPromise: void;
+  setLoadingCuratedListPromise: void;
+  setCuratedList: void;
+  setPersonalList: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, RadarStoreState> = {
+const mutations: MutationFuncs<Mutations, RadarStoreState> = {
   setIsLoadingPersonalList(state, isLoading): void {
     state.isLoadingPersonalList = isLoading;
   },

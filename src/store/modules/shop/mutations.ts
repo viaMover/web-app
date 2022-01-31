@@ -4,12 +4,12 @@ import { MutationFuncs } from '@/store/types';
 
 import { SetAssetData, ShopStoreState } from './types';
 
-enum Mutations {
-  setIsLoading,
-  setAsset
-}
+type Mutations = {
+  setIsLoading: void;
+  setAsset: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, ShopStoreState> = {
+const mutations: MutationFuncs<Mutations, ShopStoreState> = {
   setIsLoading(state, isLoading): void {
     state.isLoading = isLoading;
   },

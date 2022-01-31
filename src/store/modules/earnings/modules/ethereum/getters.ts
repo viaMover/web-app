@@ -7,18 +7,19 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsEthereumStoreState } from './types';
 
-enum Getters {
-  balanceNative,
-  apyNative,
-  hasActiveEarnings,
-  ethereumInfoEarnedThisMonthNative,
-  ethereumEarnedThisMonth,
-  ethereumEarnedThisMonthNative,
-  ethereumMonthStatsOptions,
-  ethereumReceipt
-}
+type Getters = {
+  balanceNative: string;
+  apyNative: string;
+  hasActiveEarnings: boolean;
+  ethereumInfoEarnedThisMonthNative: string;
+  ethereumEarnedThisMonth: string;
+  ethereumEarnedThisMonthNative: string;
+  ethereumMonthStatsOptions: Array<EthereumMonthBalanceItem>;
+  ethereumReceipt: (year: number, month: number) => EthereumReceipt | undefined;
+  usdcNativePrice: string;
+};
 
-const getters: GettersFuncs<typeof Getters, EarningsEthereumStoreState> = {
+const getters: GettersFuncs<Getters, EarningsEthereumStoreState> = {
   balanceNative(state): string {
     if (!state.ethereumBalance) {
       return '0';
@@ -33,10 +34,7 @@ const getters: GettersFuncs<typeof Getters, EarningsEthereumStoreState> = {
     return multiply(divide(state.ethereumAPY, '100'), '10000');
   },
   hasActiveEarnings(state): boolean {
-    if (state.ethereumBalance !== undefined && gt(state.ethereumBalance, 0)) {
-      return true;
-    }
-    return false;
+    return state.ethereumBalance !== undefined && gt(state.ethereumBalance, 0);
   },
   ethereumInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (
@@ -109,6 +107,9 @@ const getters: GettersFuncs<typeof Getters, EarningsEthereumStoreState> = {
       }
       return state.ethereumReceiptCache[`${year}/${month}`];
     };
+  },
+  usdcNativePrice(state, getters, _, rootGetters): string {
+    return rootGetters['account/usdcNativePrice'];
   }
 };
 

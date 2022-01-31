@@ -1,14 +1,14 @@
 import { GamesStoreState, VaultRaceAccount } from '@/store/modules/games/types';
 import { GettersFuncs } from '@/store/types';
 
-enum Getters {
-  vaultsRaceAccounts,
-  vaultsRaceAccountsCount,
-  vaultsRaceAccount,
-  leaderVaultsRaceAccount
-}
+type Getters = {
+  vaultsRaceAccounts: Array<VaultRaceAccount>;
+  vaultsRaceAccountsCount: number;
+  vaultsRaceAccount: (address: string) => VaultRaceAccount | undefined;
+  leaderVaultsRaceAccount: VaultRaceAccount | undefined;
+};
 
-const getters: GettersFuncs<typeof Getters, GamesStoreState> = {
+const getters: GettersFuncs<Getters, GamesStoreState> = {
   vaultsRaceAccounts(state): Array<VaultRaceAccount> {
     if (state.vaultsRaceAccounts === undefined) {
       return [];

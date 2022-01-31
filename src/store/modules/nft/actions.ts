@@ -28,22 +28,23 @@ import { ActionFuncs } from '@/store/types';
 import { greaterThan, lessThan } from '@/utils/bigmath';
 import { currentTimestamp } from '@/utils/time';
 
+import { GetterType } from './getters';
 import { MutationType } from './mutations';
 
-enum Actions {
-  loadNFTInfo,
-  refreshNftStats,
-  checkOlympusClaimable,
-  claimOlympus,
-  claimVaults,
-  claimDice,
-  claimSweetAndSour,
-  claimUnexpectedMove,
-  claimAndExchangeUnexpectedMove,
-  exchangeUnexpectedMove
-}
+type Actions = {
+  loadNFTInfo: Promise<void>;
+  refreshNftStats: Promise<void>;
+  checkOlympusClaimable: boolean;
+  claimOlympus: Promise<void>;
+  claimVaults: Promise<void>;
+  claimDice: Promise<void>;
+  claimSweetAndSour: Promise<void>;
+  claimUnexpectedMove: Promise<void>;
+  claimAndExchangeUnexpectedMove: Promise<void>;
+  exchangeUnexpectedMove: Promise<void>;
+};
 
-const actions: ActionFuncs<typeof Actions, NFTStoreState, MutationType> = {
+const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {

@@ -4,20 +4,30 @@ import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
 import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { GetterType } from '@/store/modules/savings/getters';
 import { ActionFuncs } from '@/store/types';
 
 import { MutationType } from './mutations';
-import { SavingsGetReceiptPayload, SavingsStoreState } from './types';
+import {
+  SavingsGetReceiptPayload,
+  SavingsStoreState,
+  SetSavingsReceiptPayload
+} from './types';
 
-enum Actions {
-  loadMinimalInfo,
-  loadInfo,
-  fetchSavingsFreshData,
-  fetchSavingsInfo,
-  fetchSavingsReceipt
-}
+type Actions = {
+  loadMinimalInfo: Promise<void>;
+  loadInfo: Promise<void>;
+  fetchSavingsFreshData: Promise<void>;
+  fetchSavingsInfo: Promise<void>;
+  fetchSavingsReceipt: Promise<void>;
+};
 
-const actions: ActionFuncs<typeof Actions, SavingsStoreState, MutationType> = {
+const actions: ActionFuncs<
+  Actions,
+  SavingsStoreState,
+  MutationType,
+  GetterType
+> = {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     await dispatch('fetchSavingsFreshData');
   },
@@ -94,45 +104,34 @@ const actions: ActionFuncs<typeof Actions, SavingsStoreState, MutationType> = {
     commit('setIsSavingsInfoLoading', false);
   },
   async fetchSavingsReceipt(
-    { commit, state, rootState },
+    { commit, state, rootState, getters },
     { year, month }: SavingsGetReceiptPayload
   ): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
-    if (
-      !state.isSavingsReceiptLoading &&
-      state.savingsReceipt !== undefined &&
-      state.savingsReceipt.hourlyBalances.length > 0
-    ) {
-      const { year: loadedYear, month: loadedMonth } =
-        state.savingsReceipt.hourlyBalances[0];
-
-      if (month === loadedMonth && year === loadedYear) {
-        return;
-      }
-    }
-
-    commit('setIsSavingsReceiptLoading', true);
-    commit('setSavingsReceiptError', undefined);
-    commit('setSavingsReceipt', undefined);
-
-    const receipt = await getSavingsReceipt(
-      rootState.account!.currentAddress!,
-      year,
-      month
-    );
-
-    if (isError(receipt)) {
-      commit('setSavingsReceiptError', receipt.error);
-      commit('setIsSavingsReceiptLoading', false);
-      Sentry.captureException(`can't get savings receipt: ${receipt.error}`);
+    if (getters.savingsReceipt(year, month) !== undefined) {
       return;
     }
 
-    commit('setSavingsReceipt', receipt.result);
-    commit('setIsSavingsReceiptLoading', false);
+    const receiptPromise = getSavingsReceipt(
+      rootState.account!.currentAddress!,
+      year,
+      month
+    ).then((item) => {
+      if (item.isError) {
+        throw new Error(item.error);
+      }
+
+      return item.result;
+    });
+
+    commit('setSavingsReceipt', {
+      year: year,
+      month: month,
+      receipt: receiptPromise
+    } as SetSavingsReceiptPayload);
   }
 };
 

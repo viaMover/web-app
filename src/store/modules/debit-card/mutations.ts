@@ -9,25 +9,25 @@ import {
   SkinMinimal
 } from './types';
 
-enum Mutations {
-  setIsLoading,
-  setIsInitialized,
-  setError,
-  setCardState,
-  setCardEventHistory,
-  setCardInfo,
-  setCurrentSkin,
-  setAvailableSkins,
-  setLoadingPromise,
-  setEmail,
-  setEmailHash,
-  setEmailSignature,
-  setPhoneNumber,
-  setOrderState,
-  setKycLink
-}
+type Mutations = {
+  setIsLoading: void;
+  setIsInitialized: void;
+  setError: void;
+  setCardState: void;
+  setCardEventHistory: void;
+  setCardInfo: void;
+  setCurrentSkin: void;
+  setAvailableSkins: void;
+  setLoadingPromise: void;
+  setEmail: void;
+  setEmailHash: void;
+  setEmailSignature: void;
+  setPhoneNumber: void;
+  setOrderState: void;
+  setKycLink: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, DebitCardStoreState> = {
+const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },

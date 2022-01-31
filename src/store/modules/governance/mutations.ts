@@ -5,21 +5,21 @@ import { MutationFuncs } from '@/store/types';
 
 import { GovernanceStoreState } from './types';
 
-enum Mutations {
-  setIsLoading,
-  setIsLoadingLastProposal,
-  setError,
-  setLoadingPromise,
-  clearItems,
-  upsertItems,
-  setSpaceInfo,
-  setPowerNeededToBecomeAProposer,
-  setCommunityVotingPower,
-  setVotingPowerSelf,
-  setBlockNumberCached
-}
+type Mutations = {
+  setIsLoading: void;
+  setIsLoadingLastProposal: void;
+  setError: void;
+  setLoadingPromise: void;
+  clearItems: void;
+  upsertItems: void;
+  setSpaceInfo: void;
+  setPowerNeededToBecomeAProposer: void;
+  setCommunityVotingPower: void;
+  setVotingPowerSelf: void;
+  setBlockNumberCached: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, GovernanceStoreState> = {
+const mutations: MutationFuncs<Mutations, GovernanceStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },

@@ -4,26 +4,26 @@ import { MutationFuncs } from '@/store/types';
 
 import { TreasuryStoreState } from './types';
 
-enum Mutations {
-  setTreasuryBalanceMove,
-  setTreasuryBalanceLP,
-  setTreasuryBonus,
-  setTreasuryAPY,
-  setTreasuryTotalStakedMove,
-  setTreasuryTotalStakedMoveEthLP,
-  setIsTreasuryInfoLoading,
-  setTreasuryInfoError,
-  setTreasuryInfo,
-  setIsTreasuryReceiptLoading,
-  setTreasuryReceiptError,
-  setTreasuryReceipt,
-  setPowercardBalance,
-  setPowercardState,
-  setPowercardActiveTime,
-  setPowercardCooldownTime
-}
+type Mutations = {
+  setTreasuryBalanceMove: void;
+  setTreasuryBalanceLP: void;
+  setTreasuryBonus: void;
+  setTreasuryAPY: void;
+  setTreasuryTotalStakedMove: void;
+  setTreasuryTotalStakedMoveEthLP: void;
+  setIsTreasuryInfoLoading: void;
+  setTreasuryInfoError: void;
+  setTreasuryInfo: void;
+  setIsTreasuryReceiptLoading: void;
+  setTreasuryReceiptError: void;
+  setTreasuryReceipt: void;
+  setPowercardBalance: void;
+  setPowercardState: void;
+  setPowercardActiveTime: void;
+  setPowercardCooldownTime: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, TreasuryStoreState> = {
+const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
   setTreasuryBalanceMove(state, moveBalance: string): void {
     state.treasuryBalanceMove = moveBalance;
   },

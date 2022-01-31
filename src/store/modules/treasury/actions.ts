@@ -15,19 +15,25 @@ import { isError } from '@/services/responses';
 import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
 import { ActionFuncs } from '@/store/types';
 
+import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import { TreasuryGetReceiptPayload, TreasuryStoreState } from './types';
 
-enum Actions {
-  loadMinimalInfo,
-  loadInfo,
-  fetchPowercardData,
-  fetchTreasuryFreshData,
-  fetchTreasuryInfo,
-  fetchTreasuryReceipt
-}
+type Actions = {
+  loadMinimalInfo: Promise<void>;
+  loadInfo: Promise<void>;
+  fetchPowercardData: Promise<void>;
+  fetchTreasuryFreshData: Promise<void>;
+  fetchTreasuryInfo: Promise<void>;
+  fetchTreasuryReceipt: Promise<void>;
+};
 
-const actions: ActionFuncs<typeof Actions, TreasuryStoreState, MutationType> = {
+const actions: ActionFuncs<
+  Actions,
+  TreasuryStoreState,
+  MutationType,
+  GetterType
+> = {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     const loadPowercardPromise = dispatch('fetchPowercardData');
     const treasuryFreshData = dispatch('fetchTreasuryFreshData');

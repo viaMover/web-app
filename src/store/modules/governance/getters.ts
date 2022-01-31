@@ -18,31 +18,31 @@ import {
   ProposalState
 } from './types';
 
-enum Getters {
-  proposalsIds,
-  proposalsOrderedByEndingDesc,
-  lastProposal,
-  timesVoted,
-  proposalsCreated,
-  totalNumberOfProposals,
-  openProposals,
-  succeededProposals,
-  defeatedProposals,
-  proposalCumulativeInfo,
-  proposalVotedFor,
-  proposalVotedAgainst,
-  proposalCommunityVotingPower,
-  proposalVotingActivity,
-  proposalState,
-  minimumVotingThreshold,
-  isAlreadyVoted,
-  ipfsLink,
-  hasEnoughVotingPowerToVote,
-  hasEnoughVotingPowerToBecomeAProposer,
-  votingPowerSelfOnProposal
-}
+type Getters = {
+  proposalsIds: Array<string>;
+  proposalsOrderedByEndingDesc: Array<ProposalInfo>;
+  lastProposal: ProposalInfo | undefined;
+  timesVoted: number;
+  proposalsCreated: number;
+  totalNumberOfProposals: number;
+  openProposals: number;
+  succeededProposals: number;
+  defeatedProposals: number;
+  proposalCumulativeInfo: ProposalCumulativeInfo;
+  proposalVotedFor: (id: string) => number;
+  proposalVotedAgainst: (id: string) => number;
+  proposalCommunityVotingPower: (id: string) => string;
+  proposalVotingActivity: (id: string) => string;
+  proposalState: (id: string) => ProposalState;
+  minimumVotingThreshold: string;
+  isAlreadyVoted: (id: string) => boolean;
+  ipfsLink: (id: string) => string | undefined;
+  hasEnoughVotingPowerToVote: (id: string) => boolean;
+  hasEnoughVotingPowerToBecomeAProposer: boolean;
+  votingPowerSelfOnProposal: (id: string) => string;
+};
 
-const getters: GettersFuncs<typeof Getters, GovernanceStoreState> = {
+const getters: GettersFuncs<Getters, GovernanceStoreState> = {
   proposalsIds(state): Array<string> {
     return state.items.map((proposalInfo) => proposalInfo.proposal.id);
   },

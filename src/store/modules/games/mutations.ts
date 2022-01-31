@@ -1,13 +1,13 @@
 import { GamesStoreState } from '@/store/modules/games/types';
 import { MutationFuncs } from '@/store/types';
 
-enum Mutations {
-  setVaultsRaceAccounts,
-  setIsLoading,
-  rollDice
-}
+type Mutations = {
+  setVaultsRaceAccounts: void;
+  setIsLoading: void;
+  rollDice: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, GamesStoreState> = {
+const mutations: MutationFuncs<Mutations, GamesStoreState> = {
   setVaultsRaceAccounts(state, accounts): void {
     state.vaultsRaceAccounts = accounts;
   },

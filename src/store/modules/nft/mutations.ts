@@ -9,17 +9,17 @@ import { MutationFuncs } from '@/store/types';
 
 import { NftAsset, NFTStoreState } from './types';
 
-enum Mutations {
-  setIsLoading,
-  setNFTs,
-  setUnexpectedMoveData,
-  setSweetAndSourData,
-  setVaultsData,
-  setDiceData,
-  setOlympusData
-}
+type Mutations = {
+  setIsLoading: void;
+  setNFTs: void;
+  setUnexpectedMoveData: void;
+  setSweetAndSourData: void;
+  setVaultsData: void;
+  setDiceData: void;
+  setOlympusData: void;
+};
 
-const mutations: MutationFuncs<typeof Mutations, NFTStoreState> = {
+const mutations: MutationFuncs<Mutations, NFTStoreState> = {
   setIsLoading(state, isLoading): void {
     state.isLoading = isLoading;
   },
