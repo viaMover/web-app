@@ -11,7 +11,6 @@
           <div class="list">
             <navigation-section
               :is-loading="isLoading"
-              items-container-tag="div"
               :section-name="$t('debitCard.lblMyCard')"
               skeleton-component="navigation-section-item-image-skeleton"
             >

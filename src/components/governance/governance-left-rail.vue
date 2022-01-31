@@ -2,10 +2,7 @@
   <nav class="left-rail navigation">
     <div class="wrapper">
       <div class="list">
-        <navigation-section
-          items-container-tag="div"
-          :section-name="$t('governance.lblMyGovernance')"
-        >
+        <navigation-section :section-name="$t('governance.lblMyGovernance')">
           <template v-if="isLoading">
             <navigation-section-item-image-skeleton />
           </template>
@@ -29,7 +26,6 @@
         </navigation-section>
 
         <navigation-section
-          items-container-tag="div"
           :section-name="$t('governance.lblManageGovernance')"
         >
           <template v-if="isLoading">

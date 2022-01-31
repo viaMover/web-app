@@ -1,8 +1,5 @@
 <template>
-  <navigation-section
-    items-container-tag="div"
-    :section-name="$t('earnings.ethereum.lblManage')"
-  >
+  <navigation-section :section-name="$t('earnings.ethereum.lblManage')">
     <template v-if="isLoading">
       <navigation-section-item-image-skeleton v-for="idx in 2" :key="idx" />
     </template>
