@@ -68,11 +68,29 @@
               </navigation-section-item-image>
 
               <navigation-section-item-image
-                v-if="hasMoveOnBalance"
+                v-if="showClaimAndBurnMove"
                 :description="
                   $t('treasury.leftRail.lblClaimAndBurnDescription')
                 "
                 navigate-to="treasury-claim-and-burn"
+                :title="$t('treasury.leftRail.lblClaimAndBurn')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="claimAndBurn.alt"
+                    :sources="claimAndBurn.sources"
+                    :src="claimAndBurn.src"
+                    :webp-sources="claimAndBurn.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
+                v-if="showClaimAndBurnMOBO"
+                :description="
+                  $t('treasury.leftRail.lblClaimAndBurnMOBODescription')
+                "
+                navigate-to="treasury-claim-and-burn-mobo"
                 :title="$t('treasury.leftRail.lblClaimAndBurn')"
               >
                 <template v-slot:picture>
@@ -134,6 +152,7 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
+import { isFeatureEnabled } from '@/settings';
 import { sameAddress } from '@/utils/address';
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
@@ -258,6 +277,15 @@ export default Vue.extend({
     },
     balance(): string {
       return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
+    },
+    showClaimAndBurnMove(): boolean {
+      return (
+        this.hasMoveOnBalance &&
+        isFeatureEnabled('isTreasuryClaimAndBurnMOVEEnabled')
+      );
+    },
+    showClaimAndBurnMOBO(): boolean {
+      return isFeatureEnabled('isTreasuryClaimAndBurnMOBOEnabled');
     }
   },
   methods: {

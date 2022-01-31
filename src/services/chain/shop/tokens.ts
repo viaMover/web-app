@@ -47,25 +47,25 @@ export const allNibbleShopTokens: Asset[] = [
     }
   },
   {
-    active: false,
-    id: '$IC1',
+    active: true,
+    id: '$OGSHIRT1',
     intId: 0,
-    urlId: 'ic',
-    address: '0x1',
-    feeAmount: '49.99',
+    urlId: 'ogshirt',
+    address: '0x6e0c982c05b6fb0d7465476ddef7b1b7cbe26fcb',
+    feeAmount: toWei('0.1', 18),
     balance: 0,
     initialQuantity: 0,
     redeemCount: 0,
     totalClaimed: 0,
-    title: 'Classic T-Shirt',
-    shortName: 'classic T-Shirt',
+    title: 'The OG T-Shirt',
+    shortName: 'the OG T-shirt',
     preview: {
-      videoSrc: require('@/assets/videos/ClassicTShirt.webm'),
-      background: '#f0f6f8'
+      videoSrc: require('@/assets/videos/OGT.mp4'),
+      background: '#dbdbdb'
     },
     page: {
-      videoSrc: require('@/assets/videos/ClassicTShirt.webm'),
-      background: '#f0f6f8'
+      videoSrc: require('@/assets/videos/OGT.mp4'),
+      background: '#dbdbdb'
     }
   },
   {

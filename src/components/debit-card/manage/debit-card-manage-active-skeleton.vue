@@ -28,7 +28,6 @@ import Vue from 'vue';
 import { AnalyticsList } from '@/components/analytics-list';
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
-// TODO revisit, make dedicated preload components
 export default Vue.extend({
   name: 'DebitCardManageActiveSkeleton',
   components: {

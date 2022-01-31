@@ -2,25 +2,7 @@
   <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
       <aside class="left-rail transactions">
-        <div class="wrapper">
-          <pu-skeleton class="form search" rounded tag="form" />
-
-          <div class="list">
-            <div v-for="idx in 3" :key="idx" class="group">
-              <pu-skeleton class="header" tag="h2" />
-              <div class="items">
-                <div v-for="innerIdx in 2" :key="innerIdx" class="item">
-                  <pu-skeleton circle class="icon token-icon" tag="div" />
-                  <div class="description">
-                    <pu-skeleton class="title" tag="h3" />
-                    <pu-skeleton class="value" tag="div" />
-                  </div>
-                  <pu-skeleton class="outcome" tag="div" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <preload-left-rail-transactions />
       </aside>
     </template>
 
@@ -73,10 +55,13 @@ import Vue from 'vue';
 import { ContentWrapper } from '@/components/layout';
 import { NavigationSection } from '@/components/navigation';
 
+import PreloadLeftRailTransactions from './preload-left-rail-transactions.vue';
+
 export default Vue.extend({
   name: 'PreloadDefault',
   components: {
     ContentWrapper,
+    PreloadLeftRailTransactions,
     NavigationSection
   }
 });

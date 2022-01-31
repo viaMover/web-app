@@ -16,6 +16,8 @@ export interface Globals {
   isDebitCardTopUpEnabled: boolean;
   isDebitCardChangeSkinEnabled: boolean;
   isVaultsRaceEnabled: boolean;
+  isTreasuryClaimAndBurnMOBOEnabled: boolean;
+  isTreasuryClaimAndBurnMOVEEnabled: boolean;
 }
 
 export const isProduction = (): boolean => {
@@ -43,7 +45,9 @@ const values: Globals = {
   isEarningsEnabled: false,
   isEarningsEthereumEnabled: false,
   isEarningsOlympusEnabled: false,
-  isVaultsRaceEnabled: false
+  isVaultsRaceEnabled: false,
+  isTreasuryClaimAndBurnMOBOEnabled: true,
+  isTreasuryClaimAndBurnMOVEEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>

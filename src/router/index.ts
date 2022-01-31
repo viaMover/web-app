@@ -197,6 +197,15 @@ const routes: Array<RouteConfig> = [
             )
         },
         {
+          path: 'claim-and-burn-mobo',
+          name: 'treasury-claim-and-burn-mobo',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-mobo-wrapper.vue'
+            ),
+          beforeEnter: checkFeatureFlag('isTreasuryClaimAndBurnMOBOEnabled')
+        },
+        {
           path: 'powercard',
           name: 'treasury-powercard',
           component: () =>

@@ -1,5 +1,12 @@
 [
   {
+    "inputs": [],
+    "name": "claimUSDCforBonus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {

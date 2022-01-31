@@ -54,7 +54,6 @@ export default Vue.extend({
   },
   data() {
     return {
-      isLeftRailTransactions: true,
       providerOptions: {
         mewconnect: {
           package: MewConnect,
@@ -65,7 +64,7 @@ export default Vue.extend({
         portis: {
           package: Portis,
           options: {
-            id: APIKeys.PORTUS_DAPP_ID
+            id: APIKeys.PORTIS_DAPP_ID
           }
         }
       }

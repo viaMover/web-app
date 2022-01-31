@@ -443,6 +443,7 @@ const messages: VueI18n.LocaleMessageObject = {
       lblDecreaseBoostDescription: 'Remove assets from Treasury',
       lblClaimAndBurn: 'Claim & Burn',
       lblClaimAndBurnDescription: 'Burn MOVE and claim USDC',
+      lblClaimAndBurnMOBODescription: 'Burn MOBO and claim USDC',
       lblPowerCard: 'Powercard',
       lblPowerCardDescription: 'NFT with benefits',
       lblGlobalAnalytics: 'Global analytics',
@@ -559,6 +560,26 @@ const messages: VueI18n.LocaleMessageObject = {
         'Estimated new Treasury boost is {estimatedAmount}x. ' +
         'As a reminder, your current boost rate is {currentAmount}x.'
     },
+    claimAndBurnMOBO: {
+      lblClaimAndBurn: 'Claim & Burn',
+      txtYouApproximateExit: 'Your approximate exit one-time payout.',
+      txtPageDescription:
+        'MOBO will be deprecated, and replaced with a new upgraded system. ' +
+        'You can now exchange it 1:1 for USDC. You will burn your MOBO ' +
+        'tokens, and receive a one-time payout in USDC.',
+      txtYouChooseMOBO:
+        'You chose MOBO. You will burn your MOBO tokens in exchange for a ' +
+        'one-time payout from the Treasury.',
+      lblWhatDoWeBurn: 'What do we burn',
+      lblAmountWeBurnIn: 'Amount we burn in',
+      lblChooseAmount: 'Choose the amount to burn',
+      btnClaimAndBurnWithAssets: 'Claim USDC and burn MOBO',
+      lblBurnError: 'Burn conditions error',
+      lblAndTotalOf: 'The amount you will receive',
+      lblReviewYourClaim: 'Review your claim',
+      lblBurnLimitReached: 'Burn limit reached',
+      lblDontHaveMOBO: `You don't have any MOBO to convert to USDC`
+    },
     claimAndBurn: {
       lblClaimAndBurn: 'Claim & Burn',
       txtYouApproximateExit: 'Your approximate exit one-time payout.',
@@ -579,7 +600,7 @@ const messages: VueI18n.LocaleMessageObject = {
       lblChooseAmount: 'Choose the amount to burn',
       lblReviewYourClaim: 'Review your claim',
       lblAndTotalOf: 'The amount you will receive',
-      btnClaimAndBurnWithAssets: 'Claim {asset1} and burn {asset2}',
+      btnClaimAndBurnWithAssets: 'Claim USDC and burn MOVE',
       btnClaimAndBurn: 'Claim & Burn',
       lblThePayout: 'The payout',
       txtThePayout:
@@ -1132,11 +1153,13 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
           'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
           'This mask is also a limited edition with only 30 ever to be released.'
       },
-      $IC1: {
+      $OGSHIRT1: {
         description:
-          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
-          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
-          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
+          'This is the second limited edition redeemable Mover drop. ' +
+          'The T-shirt is hand-crafted from the finest fabric the CEO could find. ' +
+          'On the inside, it contains a QR with a hash linked to this NFT to prove authenticity and exclusivity. ' +
+          'On the outside, the art is so realistic, with the colors so vivid you can almost feel them. ' +
+          'Hence, there are only 42 OG T-Shirts ever to be produced.'
       },
       $PWR01: {
         description:

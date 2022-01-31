@@ -1115,30 +1115,36 @@ button > .loader-icon > img {
       margin-top: 10px;
       border: none;
       background-color: transparent;
-      font-family: "Bold", sans-serif;
-      font-weight: 700;
       font-size: 24px;
       line-height: 40px;
       color: @black;
+      @font-bold();
     }
 
     input::placeholder {
       opacity: 0.4;
-      font-family: "Bold", sans-serif;
-      font-weight: 700;
+      @font-bold();
     }
 
     input.min-width {
       min-width: 55px;
     }
 
-    .input-symbol {
-      margin-left: 10px;
-      font-family: "Bold", sans-serif;
-      font-weight: 700;
+    .input-span {
+      display: block;
+      margin-top: 10px;
       font-size: 24px;
       line-height: 40px;
       color: @black;
+      @font-bold();
+    }
+
+    .input-symbol {
+      margin-left: 10px;
+      font-size: 24px;
+      line-height: 40px;
+      color: @black;
+      @font-bold();
     }
 
     .input-symbol.inactive {
@@ -1162,10 +1168,9 @@ button > .loader-icon > img {
     input::-moz-placeholder,
     input:-moz-placeholder,
     input:-ms-input-placeholder {
-      font-family: "Bold", sans-serif;
-      font-weight: 700;
       color: @black;
       opacity: 0.2;
+      @font-bold();
     }
 
     .black-link {
@@ -1254,20 +1259,18 @@ button > .loader-icon > img {
       margin-left: 8px;
 
       p {
-        font-family: "Medium", sans-serif;
-        font-weight: 500;
         font-size: 16px;
         line-height: 24px;
+        @font-medium();
       }
 
       span {
         display: inline-block;
         margin-left: 6px;
-        font-family: "Medium", sans-serif;
-        font-weight: 500;
         font-size: 12px;
         line-height: 15px;
         color: rgba(60, 60, 67, 0.6);
+        @font-medium();
       }
     }
 
@@ -1292,8 +1295,6 @@ button > .loader-icon > img {
       height: 24px;
 
       span {
-        font-family: "Bold", sans-serif;
-        font-weight: 700;
         font-size: 6px;
         line-height: 8px;
         color: @black;
@@ -1301,6 +1302,26 @@ button > .loader-icon > img {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        @font-bold();
+      }
+
+      .img-stub {
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        background-color: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 16px rgba(0, 0, 0, 50%);
+
+        span {
+          font-size: 6px;
+          line-height: 8px;
+          color: @black;
+          text-align: center;
+          @font-bold();
+        }
       }
     }
   }
@@ -1502,9 +1523,11 @@ button > .loader-icon > img {
     }
 
     .switch-button:active::before {
-      -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28),
+      -webkit-box-shadow:
+ 0 2px 8px rgba(0, 0, 0, 0.28),
         0 0 0 20px rgba(128, 128, 128, 0.1);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28),
+      box-shadow:
+ 0 2px 8px rgba(0, 0, 0, 0.28),
         0 0 0 20px rgba(128, 128, 128, 0.1);
     }
 
@@ -1518,9 +1541,11 @@ button > .loader-icon > img {
     }
 
     input:checked + .switch-button:active::before {
-      -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28),
+      -webkit-box-shadow:
+ 0 2px 8px rgba(0, 0, 0, 0.28),
         0 0 0 20px rgba(0, 150, 136, 0.2);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28),
+      box-shadow:
+ 0 2px 8px rgba(0, 0, 0, 0.28),
         0 0 0 20px rgba(0, 150, 136, 0.2);
     }
   }
@@ -1927,6 +1952,7 @@ form {
         &.bold-label {
           font-size: 16px;
           @font-medium();
+
           color: @black;
         }
 
@@ -1941,8 +1967,9 @@ form {
             color: @black;
             opacity: 0.2;
           }
+
           &.disabled {
-            color: #3C3C43;
+            color: #3c3c43;
             opacity: 0.6;
           }
         }
@@ -1957,14 +1984,18 @@ form {
           &::placeholder {
             @font-bold();
           }
+
           &.small-font {
             line-height: 24px;
             @font-medium();
+
             font-size: 14px;
           }
+
           &.bold-label {
             line-height: 24px;
             @font-medium();
+
             font-size: 16px;
           }
         }

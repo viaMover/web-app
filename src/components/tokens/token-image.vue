@@ -7,7 +7,7 @@
       :style="shadowStyles"
     />
   </div>
-  <div v-else class="icon fallback" :style="shadowStyles">
+  <div v-else class="icon token-icon fallback">
     <span>{{ truncatedSymbol }}</span>
   </div>
 </template>
@@ -57,7 +57,7 @@ export default Vue.extend({
       return this.src !== '' && !this.loadingFailed;
     },
     color(): string | undefined {
-      return this.getTokenColor(this.address) ?? 'var(--shadow)';
+      return this.getTokenColor(this.address) ?? 'var(--color-shadow)';
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {
