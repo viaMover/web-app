@@ -1,62 +1,77 @@
 <template>
-  <div>
-    <shop-wrapper has-close-button @close="handleClose">
-      <template v-slot:info>
-        <h1 class="info__title">{{ $t('NFTs.lblSweetAndSour') }}</h1>
-        <p class="info__description">
+  <content-wrapper-two-sided
+    class="shop nft-drops view sweet-and-sour"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ $t('NFTs.lblSweetAndSour') }}</h1>
+        <p class="description">
           {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartOne') }}
           <br /><br />
           {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartTwo') }}
         </p>
-        <shop-list>
-          <shop-list-item
-            :title="$t('NFTs.lblTotalAmount')"
-            :value="formatToDecimals(totalAmount, 0)"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblTotalClaimed')"
-            :value="formatToDecimals(totalClaimed, 0)"
-          />
-        </shop-list>
-        <action-button
-          class="button button-active"
-          :text="$t('NFTs.btn.sweetAndSour.get.txt')"
-          @button-click="handleClaim"
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="formatToDecimals(totalAmount, 0)"
+          :title="$t('NFTs.lblTotalAmount')"
         />
-        <div v-if="error !== undefined" class="error-message">
+        <analytics-list-item
+          :description="formatToDecimals(totalClaimed, 0)"
+          :title="$t('NFTs.lblTotalClaimed')"
+        />
+      </analytics-list>
+
+      <div class="actions">
+        <div class="group default">
+          <action-button
+            class="primary"
+            :text="$t('NFTs.btn.sweetAndSour.get.txt')"
+            @button-click="handleClaim"
+          />
+        </div>
+
+        <div v-if="error !== undefined" class="group error-message">
           {{ error }}
         </div>
-      </template>
-      <template v-slot:illustration>
-        <video
-          autoplay="autoplay"
-          class="sweet-and-sour"
-          data-keepplaying="data-keepplaying"
-          loop="loop"
-          muted="muted"
-          playsinline="playsinline"
-        >
-          <source
-            src="https://storage.googleapis.com/movermedia/SweetAndSour.webm"
-            type="video/webm"
-          />
-          <source
-            src="https://storage.googleapis.com/movermedia/SAS.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://ipfs.io/ipfs/QmZE2K69rBaBze3Kb6UTPyr7wXr2spJ6V1mCxc6HvqEfbA/SAS.mp4"
-            type="video/mp4"
-          />
-        </video>
-      </template>
-    </shop-wrapper>
-    <simple-loader-modal
-      v-if="transactionStep !== undefined"
-      :loader-step="transactionStep"
-      @close="transactionStep = undefined"
-    />
-  </div>
+      </div>
+    </template>
+
+    <template v-slot:right>
+      <video
+        autoplay="autoplay"
+        class="sweet-and-sour"
+        data-keepplaying="data-keepplaying"
+        loop="loop"
+        muted="muted"
+        playsinline="playsinline"
+      >
+        <source
+          src="https://storage.googleapis.com/movermedia/SweetAndSour.webm"
+          type="video/webm"
+        />
+        <source
+          src="https://storage.googleapis.com/movermedia/SAS.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="https://ipfs.io/ipfs/QmZE2K69rBaBze3Kb6UTPyr7wXr2spJ6V1mCxc6HvqEfbA/SAS.mp4"
+          type="video/mp4"
+        />
+      </video>
+    </template>
+
+    <template v-slot:modals>
+      <simple-loader-modal
+        v-if="transactionStep !== undefined"
+        :loader-step="transactionStep"
+        @close="transactionStep = undefined"
+      />
+    </template>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -67,18 +82,19 @@ import { getSweetAndSourClaimSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/actions/claim';
 import { formatToDecimals } from '@/utils/format';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
+import { ContentWrapperTwoSided } from '@/components/layout';
 import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewSweetAndSour',
   components: {
+    AnalyticsListItem,
+    AnalyticsList,
+    ContentWrapperTwoSided,
     ActionButton,
-    ShopList,
-    ShopListItem,
-    ShopWrapper,
     SimpleLoaderModal
   },
   data() {

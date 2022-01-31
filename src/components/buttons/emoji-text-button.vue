@@ -15,7 +15,6 @@
 <script lang="ts">
 import Vue from 'vue';
 
-// TODO:  revisit this component while implementing new layout on the NFT/Nibble Shop views
 export default Vue.extend({
   name: 'EmojiTextButton',
   props: {

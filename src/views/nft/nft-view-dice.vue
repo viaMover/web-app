@@ -1,85 +1,92 @@
 <template>
   <content-wrapper-two-sided
-    class="nft-drops"
-    has-back-button
+    class="shop nft-drops view dice"
     has-close-button
     @close="handleClose"
   >
     <template v-slot:left>
-      <h1 class="info__title">{{ $t('NFTs.lblDiceProject') }}</h1>
-      <p class="info__description">
-        {{ $t('NFTs.txtNFTs.dice.pageDescriptionPartOne') }}
-        <br /><br />
-        <i18n path="NFTs.txtNFTs.dice.pageDescriptionPartTwo">
-          <a href="https://diceproject.org" target="_blank">
-            <b>{{ $t('NFTs.lblDiceProject') }}</b>
-          </a>
-        </i18n>
-      </p>
+      <div class="page-header">
+        <h1 class="title">{{ $t('NFTs.lblDiceProject') }}</h1>
+        <div class="description">
+          {{ $t('NFTs.txtNFTs.dice.pageDescriptionPartOne') }}
+          <br /><br />
+          <i18n path="NFTs.txtNFTs.dice.pageDescriptionPartTwo">
+            <a
+              class="link"
+              href="https://diceproject.org"
+              rel="external help"
+              target="_blank"
+            >
+              {{ $t('NFTs.lblDiceProject') }}
+            </a>
+          </i18n>
+        </div>
+      </div>
+
       <analytics-list>
         <analytics-list-item
           :description="totalClaimed"
           :title="$t('NFTs.lblTotalClaimed')"
         />
       </analytics-list>
-      <action-button
-        class="primary"
-        :text="$t('NFTs.btn.dice.get.txt')"
-        @button-click="handleClaim(20)"
-      />
-      <div class="info__more">
-        <p>{{ $t('NFTs.lblOtherDiceOptions') }}</p>
-        <ul>
-          <li>
+
+      <div class="actions">
+        <div class="group default">
+          <action-button
+            class="primary"
+            :text="$t('NFTs.btn.dice.get.txt')"
+            @button-click="handleClaim(20)"
+          />
+        </div>
+
+        <div class="group">
+          <h2 class="title">{{ $t('NFTs.lblOtherDiceOptions') }}</h2>
+          <div class="items">
             <emoji-text-button
+              class="item"
               :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
               :text="$t('NFTs.btn.dice.fourSide.txt')"
               @button-click="handleClaim(4)"
             />
-          </li>
-          <li>
             <emoji-text-button
+              class="item"
               :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
               :text="$t('NFTs.btn.dice.sixSide.txt')"
               @button-click="handleClaim(6)"
             />
-          </li>
-          <li>
             <emoji-text-button
+              class="item"
               :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
               :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
               @button-click="handleClaim(66)"
             />
-          </li>
-          <li>
             <emoji-text-button
+              class="item"
               :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
               :text="$t('NFTs.btn.dice.eightSide.txt')"
               @button-click="handleClaim(8)"
             />
-          </li>
-          <li>
             <emoji-text-button
+              class="item"
               :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
               :text="$t('NFTs.btn.dice.tenSide.txt')"
               @button-click="handleClaim(10)"
             />
-          </li>
-          <li>
             <emoji-text-button
+              class="item"
               :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
               :text="$t('NFTs.btn.dice.twelveSide.txt')"
               @button-click="handleClaim(12)"
             />
-          </li>
-          <li>
-            <div v-if="actionError !== undefined" class="error-message">
-              {{ actionError }}
-            </div>
-          </li>
-        </ul>
+          </div>
+        </div>
+
+        <div v-if="actionError !== undefined" class="group error-message">
+          {{ actionError }}
+        </div>
       </div>
     </template>
+
     <template v-slot:right>
       <iframe
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
