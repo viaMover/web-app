@@ -30,9 +30,6 @@ textarea {
 }
 
 input {
-  background-color: @input-background;
-  border: @default-border-input;
-  outline: @default-outline-input;
   font-size: 24px;
   line-height: 40px;
   color: @text-primary;
@@ -80,9 +77,12 @@ input {
   }
 }
 
+input,
+textarea,
 select {
-  border: unset;
-  background-color: transparent;
+  background-color: @input-background;
+  border: @default-border-input;
+  outline: @default-outline-input;
 }
 
 a {

@@ -12,125 +12,117 @@
       />
     </template>
 
-    <div class="column">
-      <div class="item">
-        <span>{{ daysToRun }}</span>
-        <p>{{ $t('governance.lblDaysToRun') }}</p>
-      </div>
-      <div class="item">
-        <span>{{ minimumVotingThresholdText }}</span>
-        <p>{{ $t('governance.lblMinimumVotingThreshold') }}</p>
-      </div>
-    </div>
+    <product-info-wrapper>
+      <product-info-item
+        :description="$t('governance.lblDaysToRun')"
+        :title="daysToRun"
+      />
+      <product-info-item
+        :description="$t('governance.lblMinimumVotingThreshold')"
+        :title="minimumVotingThresholdText"
+      />
+    </product-info-wrapper>
 
-    <p class="text">{{ $t('governance.txtCreateAProposalTip') }}</p>
+    <div class="tip">{{ $t('governance.txtCreateAProposalTip') }}</div>
 
-    <div class="statements">
-      <form
-        :class="{ error: $v.proposalTemplate.$error || !!errorText }"
-        @submit.prevent="handleSubmit"
-      >
-        <div class="input-group">
-          <label>
-            {{ $t('governance.lblProposalTitle') }}
-            <input
-              v-model="proposalTemplate.title"
-              autocomplete="off"
-              autofocus
-              :name="$t('governance.lblProposalTitle')"
-              :placeholder="$t('governance.txtProposalTitlePlaceholder')"
-              tabindex="1"
-              type="text"
-            />
-          </label>
-          <span
-            v-if="!$v.proposalTemplate.title.required"
-            class="error-message"
-          >
-            {{ $t('governance.createProposal.validations.title.required') }}
-          </span>
-          <span
-            v-if="!$v.proposalTemplate.title.maxLength"
-            class="error-message"
-            tabindex="2"
-          >
-            {{
-              $t('governance.createProposal.validations.title.maxLength', {
-                boundary: $v.proposalTemplate.title.$params.maxLength
-              })
-            }}
-          </span>
-        </div>
-        <div class="input-group">
-          <label>
-            {{ $t('governance.lblProposalDescription') }}
-            <span
-              v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
-              class="toggle-preview"
-              :title="$t('governance.txtTogglePreview')"
-              @click.prevent.stop="togglePreview"
-            >
-              {{ $t('governance.btnTogglePreview') }}
-            </span>
-            <textarea
-              v-if="!isPreviewEnabled"
-              ref="textarea"
-              v-model="proposalTemplate.description"
-              autocomplete="off"
-              :placeholder="$t('governance.txtProposalDescriptionPlaceholder')"
-              tabindex="2"
-              @blur="resizeTextArea"
-              @drop="resizeTextArea"
-              @focus="resizeTextArea"
-              @input.passive="resizeTextArea"
-              @paste="resizeTextArea"
-            />
-            <markdown v-else :text="proposalTemplate.description" />
-          </label>
-          <span
-            v-if="!$v.proposalTemplate.description.required"
-            class="error-message"
-          >
-            {{
-              $t('governance.createProposal.validations.description.required')
-            }}
-          </span>
-          <span
-            v-if="!$v.proposalTemplate.description.maxLength"
-            class="error-message"
-          >
-            {{
-              $t(
-                'governance.createProposal.validations.description.maxLength',
-                {
-                  boundary: $v.proposalTemplate.description.$params.maxLength
-                }
-              )
-            }}
-          </span>
-        </div>
-        <action-button
-          class="primary"
-          :disabled="isLoading"
-          propagate-original-event
-          tabindex="4"
-          type="submit"
-        >
-          <div v-if="isLoading" class="loader-icon">
-            <img
-              :alt="$t('icon.txtPendingIconAlt')"
-              src="@/assets/images/ios-spinner-white.svg"
-            />
-          </div>
-          <template v-else>
-            {{ $t('governance.lblCreateAProposal') }}
-          </template>
-        </action-button>
-        <span class="error-message">
-          {{ errorText }}
+    <form
+      class="form create-a-proposal"
+      :class="{ error: $v.proposalTemplate.$error || !!errorText }"
+      @submit.prevent="handleSubmit"
+    >
+      <div class="input-group">
+        <label>
+          {{ $t('governance.lblProposalTitle') }}
+          <input
+            v-model="proposalTemplate.title"
+            autocomplete="off"
+            autofocus
+            :name="$t('governance.lblProposalTitle')"
+            :placeholder="$t('governance.txtProposalTitlePlaceholder')"
+            tabindex="1"
+            type="text"
+          />
+        </label>
+        <span v-if="!$v.proposalTemplate.title.required" class="error-message">
+          {{ $t('governance.createProposal.validations.title.required') }}
         </span>
-      </form>
-    </div>
+        <span
+          v-if="!$v.proposalTemplate.title.maxLength"
+          class="error-message"
+          tabindex="2"
+        >
+          {{
+            $t('governance.createProposal.validations.title.maxLength', {
+              boundary: $v.proposalTemplate.title.$params.maxLength
+            })
+          }}
+        </span>
+      </div>
+      <div class="input-group">
+        <label>
+          {{ $t('governance.lblProposalDescription') }}
+          <span
+            v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
+            class="toggle-preview"
+            :title="$t('governance.txtTogglePreview')"
+            @click.prevent.stop="togglePreview"
+          >
+            {{ $t('governance.btnTogglePreview') }}
+          </span>
+          <textarea
+            v-if="!isPreviewEnabled"
+            ref="textarea"
+            v-model="proposalTemplate.description"
+            autocomplete="off"
+            class="no-resize"
+            :placeholder="$t('governance.txtProposalDescriptionPlaceholder')"
+            tabindex="2"
+            @blur="resizeTextArea"
+            @drop="resizeTextArea"
+            @focus="resizeTextArea"
+            @input.passive="resizeTextArea"
+            @paste="resizeTextArea"
+          />
+          <markdown v-else :text="proposalTemplate.description" />
+        </label>
+        <span
+          v-if="!$v.proposalTemplate.description.required"
+          class="error-message"
+        >
+          {{ $t('governance.createProposal.validations.description.required') }}
+        </span>
+        <span
+          v-if="!$v.proposalTemplate.description.maxLength"
+          class="error-message"
+        >
+          {{
+            $t('governance.createProposal.validations.description.maxLength', {
+              boundary: $v.proposalTemplate.description.$params.maxLength
+            })
+          }}
+        </span>
+      </div>
+      <action-button
+        class="primary"
+        :disabled="isLoading"
+        propagate-original-event
+        tabindex="4"
+        type="submit"
+      >
+        <div v-if="isLoading" class="loader-icon">
+          <img
+            :alt="$t('icon.txtPendingIconAlt')"
+            src="@/assets/images/ios-spinner-white.svg"
+          />
+        </div>
+        <template v-else>
+          {{ $t('governance.lblCreateAProposal') }}
+        </template>
+      </action-button>
+      <span class="error-message">
+        {{ errorText }}
+      </span>
+    </form>
   </secondary-page>
 </template>
 
@@ -157,10 +149,13 @@ import {
   SecondaryPage,
   SecondaryPageHeader
 } from '@/components/layout';
+import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
   name: 'GovernanceCreateProposal',
   components: {
+    ProductInfoWrapper,
+    ProductInfoItem,
     SecondaryPage,
     SecondaryPageHeader,
     Markdown,
@@ -272,7 +267,7 @@ export default Vue.extend({
           return;
         }
 
-        el.style.height = `${el.scrollHeight}px`;
+        el.style.height = `${el.scrollHeight + 8}px`;
       }, 250);
     }
   },
