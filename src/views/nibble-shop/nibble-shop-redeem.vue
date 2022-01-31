@@ -1,19 +1,24 @@
 <template>
   <content-wrapper
+    class="shop"
     has-close-button
     has-left-rail
-    left-rail-inner-wrapper-class="page-sidebar-wrapper"
-    wrapper-class="redeem"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <navigation-section hide-header>
-        <navigation-section-item-emoji
-          emoji="📦"
-          navigate-to="nibble-shop-redeem"
-          :text="$t('nibbleShop.lblRedeem')"
-        />
-      </navigation-section>
+      <nav class="left-rail navigation">
+        <div class="wrapper">
+          <div class="list">
+            <navigation-section hide-header>
+              <navigation-section-item-emoji
+                emoji="📦"
+                navigate-to="nibble-shop-redeem"
+                :text="$t('nibbleShop.lblRedeem')"
+              />
+            </navigation-section>
+          </div>
+        </div>
+      </nav>
     </template>
 
     <secondary-page class="redeem" has-back-button hide-info @back="handleBack">
@@ -26,7 +31,7 @@
 
       <div class="container">
         <form
-          class="form order with-bottom-margin"
+          class="form order"
           :class="{ error: $v.$anyError || errorText !== '' }"
           @submit.prevent="handleRedeem"
         >
