@@ -66,6 +66,9 @@ export default {
   ethPrice(state): string {
     return state.ethPrice ?? '0';
   },
+  baseTokenPrice(state): string {
+    return state.ethPrice ?? '0';
+  },
   moveNativePrice(state): string {
     if (state.movePriceInWeth === undefined || state.ethPrice === undefined) {
       return '0';

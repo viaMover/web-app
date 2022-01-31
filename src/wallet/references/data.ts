@@ -25,6 +25,14 @@ import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C',
     MOBO_ADDRESS: '0x94f748bfd1483750a7df01acd993213ab64c960f',
     HOLY_HAND_ADDRESS: '0x1eF7A557cfA8436ee08790e3F2b190b8937fDa0E',
@@ -67,6 +75,14 @@ const ADDRESSES = {
     SHIB_TOKEN_ADDRESS: '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE'
   },
   [Network.ropsten]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
     MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0x1',
@@ -106,6 +122,14 @@ const ADDRESSES = {
     SHIB_TOKEN_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0x1',
     MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0x1',
@@ -145,6 +169,14 @@ const ADDRESSES = {
     SHIB_TOKEN_ADDRESS: '0x1'
   },
   [Network.kovan]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
     MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0xA5D1f7a25377187E6c7d0A464D1e51D3Aa697B41',
@@ -185,6 +217,14 @@ const ADDRESSES = {
     SHIB_TOKEN_ADDRESS: '0x1'
   },
   [Network.matic]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
     MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0x1',
@@ -224,6 +264,14 @@ const ADDRESSES = {
     SHIB_TOKEN_ADDRESS: '0x1'
   },
   [Network.binance]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0x1',
     MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0x1',
@@ -263,6 +311,14 @@ const ADDRESSES = {
     SHIB_TOKEN_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
+    BASE_ASSET: {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    },
     MOVE_ADDRESS: '0x1',
     MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0x1',
@@ -276,6 +332,147 @@ const ADDRESSES = {
     USDC_TOKEN_ADDRESS: '0x64544969ed7ebf5f083679233325356ebe738930',
     WETH_TOKEN_ADDRESS: '0xf670e09e0221a4100fbc83f4f49eda6e7bc923b0',
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
+    NFT_UNEXPECTED_MOVE: '0x1',
+    NFT_SWEET_AND_SOUR: '0x1',
+    NFT_OLYMPUS: '0x1',
+    NFT_VAULTS: '0x1',
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
+    WBTC_TOKEN_ADDRESS: '0x1',
+    RENBTC_TOKEN_ADDRESS: '0x1',
+    UST_TOKEN_ADDRESS: '0x1',
+    MIM_TOKEN_ADDRESS: '0x1',
+    FRAX_TOKEN_ADDRESS: '0x1',
+    RAI_TOKEN_ADDRESS: '0x1',
+    FEI_TOKEN_ADDRESS: '0x1',
+    USDT_TOKEN_ADDRESS: '0x1',
+    SHIB_TOKEN_ADDRESS: '0x1'
+  },
+  [Network.fantom]: {
+    BASE_ASSET: {
+      address: 'ftm',
+      decimals: 18,
+      symbol: 'FTM',
+      name: 'Fantom',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/fantom/info/logo.png'
+    },
+    MOVE_ADDRESS: '0x1',
+    MOBO_ADDRESS: '0x1',
+    HOLY_HAND_ADDRESS: '0x1',
+    HOLY_PASSAGE_ADDRESS: '0x1',
+    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
+    HOLY_VISOR_ADDRESS: '0x1',
+    SMART_TREASURY_ADDRESS: '0x1',
+    SUSHI_TOKEN_ADDRESS: '0x1',
+    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
+    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
+    USDC_TOKEN_ADDRESS: '0x1',
+    WETH_TOKEN_ADDRESS: '0x1',
+    BALANCE_CHECKER_ADDRESS: '0x1',
+    NFT_UNEXPECTED_MOVE: '0x1',
+    NFT_SWEET_AND_SOUR: '0x1',
+    NFT_OLYMPUS: '0x1',
+    NFT_VAULTS: '0x1',
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
+    WBTC_TOKEN_ADDRESS: '0x1',
+    RENBTC_TOKEN_ADDRESS: '0x1',
+    UST_TOKEN_ADDRESS: '0x1',
+    MIM_TOKEN_ADDRESS: '0x1',
+    FRAX_TOKEN_ADDRESS: '0x1',
+    RAI_TOKEN_ADDRESS: '0x1',
+    FEI_TOKEN_ADDRESS: '0x1',
+    USDT_TOKEN_ADDRESS: '0x1',
+    SHIB_TOKEN_ADDRESS: '0x1'
+  },
+  [Network.arbitrum]: {
+    BASE_ASSET: {
+      address: 'areth',
+      decimals: 18,
+      symbol: 'ARETH',
+      name: 'Arbitrum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/arbitrum/info/logo.png'
+    },
+    MOVE_ADDRESS: '0x1',
+    MOBO_ADDRESS: '0x1',
+    HOLY_HAND_ADDRESS: '0x1',
+    HOLY_PASSAGE_ADDRESS: '0x1',
+    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
+    HOLY_VISOR_ADDRESS: '0x1',
+    SMART_TREASURY_ADDRESS: '0x1',
+    SUSHI_TOKEN_ADDRESS: '0x1',
+    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
+    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
+    USDC_TOKEN_ADDRESS: '0x1',
+    WETH_TOKEN_ADDRESS: '0x1',
+    BALANCE_CHECKER_ADDRESS: '0x1',
+    NFT_UNEXPECTED_MOVE: '0x1',
+    NFT_SWEET_AND_SOUR: '0x1',
+    NFT_OLYMPUS: '0x1',
+    NFT_VAULTS: '0x1',
+    NFT_DICE: '0x1',
+    MASTER_CHEF_ADDRESS: '0x1',
+    MASTER_CHEF_POOL_INDEX: 0,
+    OHM_ADDRESS: '0x1',
+    OHM_V2_ADDRESS: '0x1',
+    POWERCARD: '0x1',
+    POWERCARD_STAKER: '0x1',
+    ETH_V2_STAKER_POOL: '0x1',
+    OHM_STAKER_POOL: '0x1',
+    EURS_TOKEN_ADDRESS: '0x1',
+    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
+    WBTC_TOKEN_ADDRESS: '0x1',
+    RENBTC_TOKEN_ADDRESS: '0x1',
+    UST_TOKEN_ADDRESS: '0x1',
+    MIM_TOKEN_ADDRESS: '0x1',
+    FRAX_TOKEN_ADDRESS: '0x1',
+    RAI_TOKEN_ADDRESS: '0x1',
+    FEI_TOKEN_ADDRESS: '0x1',
+    USDT_TOKEN_ADDRESS: '0x1',
+    SHIB_TOKEN_ADDRESS: '0x1'
+  },
+  [Network.avalanche]: {
+    BASE_ASSET: {
+      address: 'avax',
+      decimals: 9,
+      symbol: 'AVAX',
+      name: 'Avalanche X-Chain',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchex/info/logo.png'
+    },
+    MOVE_ADDRESS: '0x1',
+    MOBO_ADDRESS: '0x1',
+    HOLY_HAND_ADDRESS: '0x1',
+    HOLY_PASSAGE_ADDRESS: '0x1',
+    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
+    HOLY_VISOR_ADDRESS: '0x1',
+    SMART_TREASURY_ADDRESS: '0x1',
+    SUSHI_TOKEN_ADDRESS: '0x1',
+    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
+    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
+    USDC_TOKEN_ADDRESS: '0x1',
+    WETH_TOKEN_ADDRESS: '0x1',
+    BALANCE_CHECKER_ADDRESS: '0x1',
     NFT_UNEXPECTED_MOVE: '0x1',
     NFT_SWEET_AND_SOUR: '0x1',
     NFT_OLYMPUS: '0x1',
@@ -526,17 +723,12 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
-const getEthAssetData = (): SmallTokenInfoWithIcon & {
+const getBaseAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & {
   name: string;
 } => {
-  return {
-    address: 'eth',
-    decimals: 18,
-    symbol: 'ETH',
-    name: 'Ethereum',
-    iconURL:
-      'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
-  };
+  return ADDRESSES[network].BASE_ASSET;
 };
 
 const getMoveAssetData = (
@@ -666,7 +858,7 @@ export {
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
-  getEthAssetData,
+  getBaseAssetData,
   getOhmAssetData,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,

@@ -27,7 +27,7 @@ import {
 import { RootStoreState } from '@/store/types';
 import { Network } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
-import { getEthereumPrice } from '@/wallet/ethPrice';
+import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import {
   clearOffchainExplorer,
   initOffchainExplorer
@@ -249,11 +249,13 @@ export default {
         commit('setAllTokens', allTokens);
       }
 
-      console.info('refresh eth price...');
-      // TODO: works only for USD
+      console.info('base token price...');
       try {
-        const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
-        commit('setEthPrice', ethPriceInUSD);
+        const baseTokenPriceInUSD = await getBaseTokenPrice(
+          state.networkInfo.network
+        );
+        // TODO: set base token price
+        commit('setEthPrice', baseTokenPriceInUSD);
       } catch (e) {
         console.error("Can't get ETH price, stop loading data", e);
         Sentry.captureException(e);

@@ -5,7 +5,10 @@ export enum Network {
   rinkeby = 'rinkeby',
   mainnet = 'mainnet',
   matic = 'matic',
-  ropsten = 'ropsten'
+  ropsten = 'ropsten',
+  avalanche = 'avalanche',
+  arbitrum = 'arbitrum',
+  fantom = 'fantom'
 }
 
 export type NetworkInfo = {
@@ -56,6 +59,24 @@ export const networks = new Array<NetworkInfo>(
     chainId: 97,
     network: Network.binanceTest,
     explorer: 'https://testnet.bscscan.com',
+    subsidizedUrl: undefined
+  },
+  {
+    chainId: 43114,
+    network: Network.avalanche,
+    explorer: 'https://snowtrace.io/',
+    subsidizedUrl: undefined
+  },
+  {
+    chainId: 42161,
+    network: Network.arbitrum,
+    explorer: 'https://arbiscan.io/',
+    subsidizedUrl: undefined
+  },
+  {
+    chainId: 250,
+    network: Network.fantom,
+    explorer: 'https://ftmscan.com',
     subsidizedUrl: undefined
   }
 );
