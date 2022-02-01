@@ -17,7 +17,9 @@ const alsoIncludedAddresses = [
   '0x04f2694c8fcee23e8fd0dfea1d4f5bb8c352111f', // SOHM
   '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f', // GOHM
   '0x8cd309e14575203535ef120b5b0ab4dded0c2073', // WSOHM
-  '0x090185f2135308bad17527004364ebcc2d37e5f6' // SPELL
+  '0x090185f2135308bad17527004364ebcc2d37e5f6', // SPELL
+  '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b', // AXS
+  '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25' // SLP
 ];
 
 const isDirEmpty = (dir) => {
