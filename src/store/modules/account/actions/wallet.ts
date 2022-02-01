@@ -16,7 +16,7 @@ import {
   getUSDCPriceInWETH
 } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
-import { InitExplorer } from '@/services/zerion/explorer';
+import { BuildExplorer } from '@/services/explorer';
 import {
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
@@ -249,15 +249,27 @@ export default {
         commit('setAllTokens', allTokens);
       }
 
+      console.info('refresh eth price...');
+      // TODO: works only for USD
+      try {
+        const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
+        commit('setEthPrice', ethPriceInUSD);
+      } catch (e) {
+        console.error("Can't get ETH price, stop loading data", e);
+        Sentry.captureException(e);
+        return;
+      }
+
       console.info('Updating wallet tokens from Etherscan...');
       if (state.networkInfo.network === Network.mainnet) {
         if (payload.init) {
           console.log('Starting Offchain Explorer...');
           initOffchainExplorer(state.networkInfo.network);
-          console.log('Starting Zerion...');
-          const explorer = InitExplorer(
+          console.log('Starting Chain explorer...');
+
+          const explorerInitPromise = BuildExplorer(
             state.currentAddress,
-            'usd',
+            state.nativeCurrency,
             state.networkInfo.network,
             (txns: Array<Transaction>) => {
               commit('setWalletTransactions', txns);
@@ -279,9 +291,19 @@ export default {
             },
             (chartData: Record<string, [number, number][]>) => {
               commit('setChartData', chartData);
+            },
+            (val: boolean) => {
+              commit('setIsTransactionsListLoaded', val);
             }
           );
-          commit('setExplorer', explorer);
+
+          explorerInitPromise
+            .then((explorer) => {
+              commit('setExplorer', explorer);
+            })
+            .catch((error) => {
+              Sentry.captureException(error);
+            });
         }
       } else {
         console.info('Not mainnet - should use balancer');
@@ -295,17 +317,6 @@ export default {
         );
         console.info('tokensWithAmount: ', tokensWithAmount);
         commit('setWalletTokens', tokensWithAmount);
-      }
-
-      console.info('refresh eth price...');
-      // TODO: works only for USD
-      try {
-        const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
-        commit('setEthPrice', ethPriceInUSD);
-      } catch (e) {
-        console.error("Can't get ETH price, stop loading data");
-        Sentry.captureException(e);
-        return;
       }
 
       const getMovePriceInWethPromise = getMOVEPriceInWETH(

@@ -1,6 +1,7 @@
 import findIndex from 'lodash-es/findIndex';
 import io from 'socket.io-client';
 
+import { Explorer } from '@/services/explorer';
 import { APIKeys } from '@/settings';
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
@@ -16,15 +17,7 @@ import {
 import { mapZerionTokens } from './tokens';
 import { mapZerionTxns } from './transactions';
 
-export type Explorer = {
-  GetChartData: (
-    assetCode: string,
-    nativeCurrency: string,
-    ChartTypes: string
-  ) => void;
-};
-
-export const InitExplorer = (
+export const InitZerionExplorer = (
   accountAddress: string,
   nativeCurrency: string,
   network: Network,
@@ -158,19 +151,28 @@ export const InitExplorer = (
   );
 
   return {
-    GetChartData: (
+    getChartData: (
       assetCode: string,
       nativeCurrency: string,
-      chartType: string
+      chartsType: string
     ) => {
       assetSocket.emit('get', {
         payload: {
           asset_codes: [assetCode],
-          charts_type: chartType,
+          charts_type: chartsType,
           currency: nativeCurrency.toLowerCase()
         },
         scope: ['charts']
       });
+    },
+    refreshWalletData: () => {
+      console.log("Zerion doesn't have straight refresh function");
+    },
+    hasInfiniteLoader: (): boolean => {
+      return false;
+    },
+    async loadMoreTransactions(nativeOnly: boolean): Promise<boolean> {
+      return false;
     }
   };
 };

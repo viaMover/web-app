@@ -105,7 +105,6 @@ export default Vue.extend({
         if (this.transaction.asset.direction === 'self') {
           return `$0.00`;
         }
-        console.log('1312312', changeNative);
         return `${getSignIfNeeded(changeNative, sign)}$${formatToNative(
           changeNative
         )}`;

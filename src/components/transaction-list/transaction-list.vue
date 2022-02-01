@@ -1,33 +1,71 @@
 <template>
   <div>
-    <form class="transaction-search-form" @submit.prevent.stop="">
-      <input
-        v-model.trim="searchTerm"
-        name="transaction-search"
-        :placeholder="$t('search.lblSearchTransaction')"
-        type="search"
-      />
-      <button class="button-active" type="button" @click.prevent.stop="">
-        🔍
-      </button>
-    </form>
-    <div class="transactions-list">
-      <div v-if="!transactionGroups.length" class="empty-state">
-        {{ $t('lblConnectWalletTransactionHistory') }}
+    <template v-if="showSkeleton">
+      <form class="transaction-search-form" @submit.prevent.stop="">
+        <div class="preload-wrapper__sidebar-search">
+          <pu-skeleton class="search" tag="div" />
+        </div>
+      </form>
+      <div class="preload-wrapper__sidebar-items">
+        <div class="preload-wrapper__sidebar-items-item">
+          <pu-skeleton class="title" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+        </div>
+        <div class="preload-wrapper__sidebar-items-item">
+          <pu-skeleton class="title" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+        </div>
+        <div class="preload-wrapper__sidebar-items-item">
+          <pu-skeleton class="title" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+          <pu-skeleton class="description" tag="div" />
+          <pu-skeleton class="subtitle" tag="div" />
+        </div>
       </div>
-      <transaction-group
-        v-for="txGroup in filteredTransactionGroups"
-        v-else
-        :key="txGroup.date"
-        :heading-text="formatDate(txGroup.timeStamp)"
-        :transactions="txGroup.transactions"
-      />
-    </div>
+    </template>
+    <template v-else>
+      <form class="transaction-search-form" @submit.prevent.stop="">
+        <input
+          v-model.trim="searchTerm"
+          name="transaction-search"
+          :placeholder="$t('search.lblSearchTransaction')"
+          type="search"
+        />
+        <button class="button-active" type="button" @click.prevent.stop="">
+          🔍
+        </button>
+      </form>
+      <div class="transactions-list">
+        <div v-if="!transactionGroups.length" class="empty-state">
+          {{ $t('lblConnectWalletTransactionHistory') }}
+        </div>
+        <template v-else>
+          <transaction-group
+            v-for="txGroup in filteredTransactionGroups"
+            :key="txGroup.date"
+            :heading-text="formatDate(txGroup.timeStamp)"
+            :transactions="txGroup.transactions"
+          />
+          <infinite-loading
+            v-if="hasInfiniteLoader"
+            @infinite="infiniteHandler"
+          ></infinite-loading>
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import InfiniteLoading, { StateChanger } from 'vue-infinite-loading';
 import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
@@ -39,11 +77,11 @@ import { isValidTxHash, sameAddress } from '@/utils/address';
 import { Transaction } from '@/wallet/types';
 
 import TransactionGroup from './transaction-group.vue';
-
 export default Vue.extend({
   name: 'TransactionList',
   components: {
-    TransactionGroup
+    TransactionGroup,
+    InfiniteLoading
   },
   data() {
     return {
@@ -57,7 +95,19 @@ export default Vue.extend({
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
     }),
-    ...mapState('account', ['networkInfo']),
+    ...mapState('account', [
+      'networkInfo',
+      'isTransactionsListLoaded',
+      'explorer'
+    ]),
+    showSkeleton(): boolean {
+      return (
+        !this.isTransactionsListLoaded && this.transactionGroups.length === 0
+      );
+    },
+    hasInfiniteLoader(): boolean {
+      return this.explorer?.hasInfiniteLoader ?? false;
+    },
     filteredTransactionGroups(): Array<TransactionGroupType> {
       let searchType = 'byName';
       if (isValidTxHash(this.searchTermDebounced)) {
@@ -132,6 +182,26 @@ export default Vue.extend({
         });
       }
       return date.format('DD MMMM');
+    },
+    async infiniteHandler(state: StateChanger): Promise<void> {
+      if (this.searchTermDebounced) {
+        state.reset();
+        return;
+      }
+
+      const explorer = this.explorer;
+      if (explorer === undefined) {
+        state.complete();
+        return;
+      }
+
+      const hasMoreResults = await explorer.loadMoreTransactions();
+
+      if (hasMoreResults) {
+        state.loaded();
+      } else {
+        state.complete();
+      }
     }
   }
 });
