@@ -302,41 +302,43 @@ export class MoralisExplorer implements Explorer {
           `${this.accountAddress}/erc20?chain=${this.getNetworkAlias()}`
         )
       ).data as Erc20TokensResponse[];
-      return res.map((t) => {
-        let assetName = '';
-        let assetSymbol = '';
-        let assetLogo = '';
+      return res
+        .filter((t) => t.decimals !== null && t.name !== null)
+        .map((t) => {
+          let assetName = '';
+          let assetSymbol = '';
+          let assetLogo = '';
 
-        if (sameAddress(t.token_address, moverData.address)) {
-          assetName = moverData.name;
-          assetSymbol = moverData.symbol;
-          assetLogo = moverData.iconURL;
-        } else {
-          assetName = t.name;
-          if (assetName.length > MAX_ASSET_NAME) {
-            assetName = assetName.substring(0, MAX_ASSET_NAME);
+          if (sameAddress(t.token_address, moverData.address)) {
+            assetName = moverData.name;
+            assetSymbol = moverData.symbol;
+            assetLogo = moverData.iconURL;
+          } else {
+            assetName = t.name;
+            if (assetName.length > MAX_ASSET_NAME) {
+              assetName = assetName.substring(0, MAX_ASSET_NAME);
+            }
+            assetSymbol = t.symbol;
+            assetLogo = t.logo ?? '';
           }
-          assetSymbol = t.symbol;
-          assetLogo = t.logo ?? '';
-        }
 
-        if (assetSymbol === 'mobo') {
-          assetSymbol = 'MOBO';
-        }
+          if (assetSymbol === 'mobo') {
+            assetSymbol = 'MOBO';
+          }
 
-        return {
-          address: t.token_address,
-          balance: fromWei(t.balance, t.decimals),
-          decimals: parseInt(t.decimals),
-          logo: assetLogo,
-          marketCap: store.getters['account/getTokenMarketCap'](
-            t.token_address
-          ),
-          name: assetName,
-          priceUSD: '0',
-          symbol: assetSymbol
-        };
-      });
+          return {
+            address: t.token_address,
+            balance: fromWei(t.balance, t.decimals),
+            decimals: parseInt(t.decimals),
+            logo: assetLogo,
+            marketCap: store.getters['account/getTokenMarketCap'](
+              t.token_address
+            ),
+            name: assetName,
+            priceUSD: '0',
+            symbol: assetSymbol
+          };
+        });
     } catch (e) {
       if (axios.isAxiosError(e)) {
         throw new Error(
