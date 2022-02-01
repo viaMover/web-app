@@ -17,12 +17,10 @@
         <product-info-wrapper is-short>
           <product-info-item
             :description="$t('treasury.lblMaximumBoost')"
-            is-black-description
             :title="currentMaxBoost"
           />
           <product-info-item
             :description="$t('treasury.lblGasCostCoverage')"
-            is-black-description
             :title="currentCostCoverage"
           />
         </product-info-wrapper>

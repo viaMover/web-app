@@ -91,6 +91,24 @@ a {
   color: @text-link;
   transition: 0.1s;
 
+  &.link {
+    &.underline {
+      text-decoration: underline;
+    }
+
+    &.muted {
+      color: @text-muted;
+    }
+
+    &.bold {
+      @font-bold();
+    }
+
+    &.medium {
+      @font-medium();
+    }
+  }
+
   &:hover {
     color: @text-link-hover;
   }

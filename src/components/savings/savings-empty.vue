@@ -19,7 +19,6 @@
     <product-info-wrapper>
       <product-info-item
         :description="$t('savings.lblAPYOnAllSavings')"
-        is-black-description
         :title="currentVariableAPY"
       />
     </product-info-wrapper>

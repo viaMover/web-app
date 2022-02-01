@@ -22,7 +22,6 @@
     <product-info-wrapper>
       <product-info-item
         :description="$t('earnings.txtAPYOnAll', { token: 'Ethereum' })"
-        is-black-description
         :title="currentVariableAPY"
       />
     </product-info-wrapper>

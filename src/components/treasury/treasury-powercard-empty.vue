@@ -27,17 +27,14 @@
       <product-info-wrapper>
         <product-info-item
           :description="$t('treasury.powercard.lblAdditionalBoost')"
-          is-black-description
           :title="additionalBoost"
         />
         <product-info-item
           :description="$t('treasury.powercard.lblActive')"
-          is-black-description
           :title="activeTime"
         />
         <product-info-item
           :description="$t('treasury.powercard.lblCooldown')"
-          is-black-description
           :title="cooldownTime"
         />
       </product-info-wrapper>

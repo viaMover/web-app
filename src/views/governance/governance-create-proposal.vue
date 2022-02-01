@@ -104,7 +104,7 @@
       </div>
       <action-button
         class="primary"
-        :disabled="isLoading"
+        :disabled="isLoading || isStoreLoading"
         propagate-original-event
         tabindex="4"
         type="submit"
@@ -175,7 +175,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('governance', {
-      daysToRun: 'proposalDurationDays'
+      daysToRun: 'proposalDurationDays',
+      isStoreLoading: 'isLoading'
     }),
     ...mapGetters('governance', {
       minimumVotingThreshold: 'minimumVotingThreshold'
