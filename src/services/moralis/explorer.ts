@@ -35,6 +35,9 @@ export class MoralisExplorer implements Explorer {
   readonly name: string = 'Moralis';
   readonly apiURL: string = 'https://deep-index.moralis.io/api/v2/';
   private readonly apiClient: AxiosInstance;
+  private static readonly TRANSACTIONS_PER_BATCH = 25;
+
+  private transactionsOffset = 0;
 
   private static readonly erc20AbiApprove = [
     {
@@ -68,6 +71,7 @@ export class MoralisExplorer implements Explorer {
     private readonly network: Network,
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
+    private readonly updateTransactions: (txns: Array<Transaction>) => void,
     private readonly setIsTransactionsListLoaded: (val: boolean) => void,
     private readonly setTokens: (tokens: Array<TokenWithBalance>) => void,
     private readonly setChartData: (
@@ -89,35 +93,110 @@ export class MoralisExplorer implements Explorer {
     await this.refreshWalletData();
   }
 
-  public async refreshWalletData(): Promise<void> {
-    const tokensWithPricePromise = this.getErc20Tokens().then((tokens) =>
-      this.enrichTokensWithPrices(tokens)
-    );
-    const erc20TransactionsPromise = this.getErc20Transactions();
-    const nativeTransactionsPromise = this.getNativeTransactions();
+  public hasInfiniteLoader(): boolean {
+    return true;
+  }
 
-    const [tokensWithPrices, erc20Transactions, nativeTransactions] =
-      await Promise.all([
-        tokensWithPricePromise,
+  public async refreshWalletData(): Promise<void> {
+    try {
+      this.setIsTransactionsListLoaded(false);
+      const tokensWithPricePromise = this.getErc20Tokens().then((tokens) =>
+        this.enrichTokensWithPrices(tokens)
+      );
+      const erc20TransactionsPromise = this.getErc20Transactions(
+        MoralisExplorer.TRANSACTIONS_PER_BATCH,
+        0
+      );
+      const nativeTransactionsPromise = this.getNativeTransactions(
+        MoralisExplorer.TRANSACTIONS_PER_BATCH,
+        0
+      );
+
+      const [tokensWithPrices, erc20Transactions, nativeTransactions] =
+        await Promise.all([
+          tokensWithPricePromise,
+          erc20TransactionsPromise,
+          nativeTransactionsPromise
+        ]);
+
+      const tokensWihNativePromise =
+        this.enrichTokensWithNative(tokensWithPrices);
+      const transactionsPromise = this.parseTransactions(
+        tokensWithPrices,
+        erc20Transactions,
+        nativeTransactions
+      );
+
+      const [tokensWihNative, transactions] = await Promise.all([
+        tokensWihNativePromise,
+        transactionsPromise
+      ]);
+      this.setTokens(tokensWihNative);
+      this.setTransactions(transactions);
+      this.transactionsOffset = MoralisExplorer.TRANSACTIONS_PER_BATCH;
+    } finally {
+      this.setIsTransactionsListLoaded(true);
+    }
+  }
+
+  public async loadMoreTransactions(nativeOnly = false): Promise<boolean> {
+    try {
+      this.setIsTransactionsListLoaded(false);
+
+      const offset = this.transactionsOffset;
+
+      let erc20TransactionsPromise = Promise.resolve<Array<Erc20Transaction>>(
+        []
+      );
+      if (!nativeOnly) {
+        erc20TransactionsPromise = this.getErc20Transactions(
+          MoralisExplorer.TRANSACTIONS_PER_BATCH,
+          offset
+        );
+      }
+      const nativeTransactionsPromise = this.getNativeTransactions(
+        MoralisExplorer.TRANSACTIONS_PER_BATCH,
+        offset
+      );
+
+      const [erc20Transactions, nativeTransactions] = await Promise.all([
         erc20TransactionsPromise,
         nativeTransactionsPromise
       ]);
 
-    const tokensWihNativePromise =
-      this.enrichTokensWithNative(tokensWithPrices);
-    const transactionsPromise = this.parseTransactions(
-      tokensWithPrices,
-      erc20Transactions,
-      nativeTransactions
-    );
+      if (erc20Transactions.length === 0 && nativeTransactions.length === 0) {
+        return false;
+      }
 
-    const [tokensWihNative, transactions] = await Promise.all([
-      tokensWihNativePromise,
-      transactionsPromise
-    ]);
-    this.setTokens(tokensWihNative);
-    this.setTransactions(transactions);
-    this.setIsTransactionsListLoaded(true);
+      const tokens = store.state?.account?.tokens;
+
+      if (tokens === undefined) {
+        return true;
+      }
+
+      const transactions = await this.parseTransactions(
+        tokens,
+        erc20Transactions,
+        nativeTransactions
+      );
+
+      if (transactions.length === 0) {
+        // after txns mapping, we didn't get the ones we needed
+        // it happens only for native txns
+        // so we have to make a query again only for native
+        this.transactionsOffset =
+          offset + MoralisExplorer.TRANSACTIONS_PER_BATCH;
+        return await this.loadMoreTransactions(true);
+      } else {
+        this.updateTransactions(transactions);
+        this.transactionsOffset =
+          offset + MoralisExplorer.TRANSACTIONS_PER_BATCH;
+      }
+    } finally {
+      this.setIsTransactionsListLoaded(true);
+    }
+
+    return true;
   }
 
   public getChartData = (
@@ -223,41 +302,43 @@ export class MoralisExplorer implements Explorer {
           `${this.accountAddress}/erc20?chain=${this.getNetworkAlias()}`
         )
       ).data as Erc20TokensResponse[];
-      return res.map((t) => {
-        let assetName = '';
-        let assetSymbol = '';
-        let assetLogo = '';
+      return res
+        .filter((t) => t.decimals !== null && t.name !== null)
+        .map((t) => {
+          let assetName = '';
+          let assetSymbol = '';
+          let assetLogo = '';
 
-        if (sameAddress(t.token_address, moverData.address)) {
-          assetName = moverData.name;
-          assetSymbol = moverData.symbol;
-          assetLogo = moverData.iconURL;
-        } else {
-          assetName = t.name;
-          if (assetName.length > MAX_ASSET_NAME) {
-            assetName = assetName.substring(0, MAX_ASSET_NAME);
+          if (sameAddress(t.token_address, moverData.address)) {
+            assetName = moverData.name;
+            assetSymbol = moverData.symbol;
+            assetLogo = moverData.iconURL;
+          } else {
+            assetName = t.name;
+            if (assetName.length > MAX_ASSET_NAME) {
+              assetName = assetName.substring(0, MAX_ASSET_NAME);
+            }
+            assetSymbol = t.symbol;
+            assetLogo = t.logo ?? '';
           }
-          assetSymbol = t.symbol;
-          assetLogo = t.logo ?? '';
-        }
 
-        if (assetSymbol === 'mobo') {
-          assetSymbol = 'MOBO';
-        }
+          if (assetSymbol === 'mobo') {
+            assetSymbol = 'MOBO';
+          }
 
-        return {
-          address: t.token_address,
-          balance: fromWei(t.balance, t.decimals),
-          decimals: parseInt(t.decimals),
-          logo: assetLogo,
-          marketCap: store.getters['account/getTokenMarketCap'](
-            t.token_address
-          ),
-          name: assetName,
-          priceUSD: '0',
-          symbol: assetSymbol
-        };
-      });
+          return {
+            address: t.token_address,
+            balance: fromWei(t.balance, t.decimals),
+            decimals: parseInt(t.decimals),
+            logo: assetLogo,
+            marketCap: store.getters['account/getTokenMarketCap'](
+              t.token_address
+            ),
+            name: assetName,
+            priceUSD: '0',
+            symbol: assetSymbol
+          };
+        });
     } catch (e) {
       if (axios.isAxiosError(e)) {
         throw new Error(
@@ -524,13 +605,16 @@ export class MoralisExplorer implements Explorer {
     }
   };
 
-  private getErc20Transactions = async (): Promise<Erc20Transaction[]> => {
+  private getErc20Transactions = async (
+    limit: number,
+    offset = 0
+  ): Promise<Array<Erc20Transaction>> => {
     try {
       const res = (
         await this.apiClient.get(
           `${
             this.accountAddress
-          }/erc20/transfers?chain=${this.getNetworkAlias()}`
+          }/erc20/transfers?chain=${this.getNetworkAlias()}&limit=${limit}&offset=${offset}`
         )
       ).data as Erc20TransactionResponse;
       return res.result;
@@ -546,11 +630,16 @@ export class MoralisExplorer implements Explorer {
     }
   };
 
-  private getNativeTransactions = async (): Promise<NativeTransaction[]> => {
+  private getNativeTransactions = async (
+    limit: number,
+    offset = 0
+  ): Promise<Array<NativeTransaction>> => {
     try {
       const res = (
         await this.apiClient.get(
-          `${this.accountAddress}?chain=${this.getNetworkAlias()}`
+          `${
+            this.accountAddress
+          }?chain=${this.getNetworkAlias()}&limit=${limit}&offset=${offset}`
         )
       ).data as NativeTransactionResponse;
       return res.result;

@@ -1153,11 +1153,13 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
           'all other folks on the street. It’s also how you can spot a fellow mover in the wild. ' +
           'This mask is also a limited edition with only 30 ever to be released.'
       },
-      $IC1: {
+      $OGSHIRT1: {
         description:
-          'What can be better than a classic? An instant classic. This limited edition T-shirt is an instant ' +
-          'classic. The print is hand-made, with the highest quality and attention to details. In fact, this ' +
-          'T-shirt is so attentive, that it has all attention. There are only 50 of these ever to be made.'
+          'This is the second limited edition redeemable Mover drop. ' +
+          'The T-shirt is hand-crafted from the finest fabric the CEO could find. ' +
+          'On the inside, it contains a QR with a hash linked to this NFT to prove authenticity and exclusivity. ' +
+          'On the outside, the art is so realistic, with the colors so vivid you can almost feel them. ' +
+          'Hence, there are only 42 OG T-Shirts ever to be produced.'
       },
       $PWR01: {
         description:
