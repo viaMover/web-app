@@ -14,7 +14,7 @@ export default {
     savingsInfo: undefined,
     savingsInfoError: undefined,
 
-    receipts: {},
+    receipts: new Map(),
 
     savingsBalance: undefined,
     savingsAPY: undefined,

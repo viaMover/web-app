@@ -5,6 +5,10 @@ import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
 import { GetterType } from '@/store/modules/savings/getters';
+import {
+  getFromPersistStoreWithExpire,
+  setToPersistStore
+} from '@/store/modules/savings/utils';
 import { ActionFuncs } from '@/store/types';
 
 import { MutationType } from './mutations';
@@ -15,6 +19,7 @@ import {
 } from './types';
 
 type Actions = {
+  restoreReceipts: Promise<void>;
   loadMinimalInfo: Promise<void>;
   loadInfo: Promise<void>;
   fetchSavingsFreshData: Promise<void>;
@@ -28,16 +33,49 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
+  async restoreReceipts({ commit }): Promise<void> {
+    const end = new Date();
+    end.setMonth(end.getMonth() - 12);
+    for (
+      let i = new Date();
+      i.getTime() > end.getTime();
+      i.setMonth(i.getMonth() - 1)
+    ) {
+      const receipt = await getFromPersistStoreWithExpire(
+        'treasuryReceipts',
+        `${i.getFullYear()}/${i.getMonth() + 1}`
+      );
+      commit('setSavingsReceipt', {
+        year: i.getFullYear(),
+        month: i.getMonth() + 1,
+        receipt: Promise.resolve(receipt)
+      } as SetSavingsReceiptPayload);
+    }
+  },
   async loadMinimalInfo({ dispatch }): Promise<void> {
-    await dispatch('fetchSavingsFreshData');
+    const savingsFreshDataPromise = dispatch('fetchSavingsFreshData');
+    const restoreReceiptsPromise = dispatch('restoreReceipts');
+
+    const promisesResults = await Promise.allSettled([
+      savingsFreshDataPromise,
+      restoreReceiptsPromise
+    ]);
+
+    const promisesErrors = promisesResults
+      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+      .map((p) => p.reason);
+
+    if (promisesErrors.length > 0) {
+      Sentry.captureException(promisesErrors);
+    }
   },
   async loadInfo({ dispatch }): Promise<void> {
-    const savingsFreshData = dispatch('fetchSavingsFreshData');
+    const loadMinimalInfoPromise = dispatch('loadMinimalInfo');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
 
     const promisesResults = await Promise.allSettled([
       savingsInfoPromise,
-      savingsFreshData
+      loadMinimalInfoPromise
     ]);
 
     const promisesErrors = promisesResults
@@ -132,6 +170,19 @@ const actions: ActionFuncs<
       month: month,
       receipt: receiptPromise
     } as SetSavingsReceiptPayload);
+
+    (async () => {
+      for (const [key, value] of state.receipts.entries()) {
+        if (value !== undefined) {
+          await setToPersistStore(
+            'savingsReceipts',
+            key,
+            await value.data,
+            Date.now() + 600000
+          );
+        }
+      }
+    })().then();
   }
 };
 

@@ -34,14 +34,12 @@ export interface RootStoreState {
 
 export type DataStoreWrapper<T> = {
   expDate: number;
-  data: Promise<T>;
+  data: T;
 };
 
-export type DataStoreItem<T> = DataStoreWrapper<T> | undefined;
+export type DataStoreItem<T> = DataStoreWrapper<Promise<T>> | undefined;
 
-export type DataStore<T> = {
-  [key: string]: DataStoreItem<T>;
-};
+export type DataStore<T> = Map<string, DataStoreItem<T>>;
 
 export interface AugmentedActionContext<
   S,

@@ -33,13 +33,14 @@ const mutations: MutationFuncs<Mutations, SavingsStoreState> = {
     state.savingsInfo = info;
   },
   setSavingsReceipt(state, payload: SetSavingsReceiptPayload): void {
+    const key = `${payload.year}/${payload.month}`;
     if (payload.receipt === undefined) {
-      state.receipts[`${payload.year}/${payload.month}`] = undefined;
+      state.receipts.delete(key);
     } else {
-      state.receipts[`${payload.year}/${payload.month}`] = {
+      state.receipts.set(key, {
         data: payload.receipt,
         expDate: Date.now() + 600000 // add 10 min
-      };
+      });
     }
   }
 };

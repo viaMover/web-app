@@ -1,5 +1,6 @@
 import { PowercardState } from '@/services/chain';
 import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
+import { DataStore } from '@/store/types';
 
 export type TreasuryStoreState = {
   treasuryBalanceMove: string | undefined;
@@ -13,9 +14,7 @@ export type TreasuryStoreState = {
   treasuryInfo: TreasuryInfo | undefined;
   treasuryInfoError: string | undefined;
 
-  isTreasuryReceiptLoading: boolean;
-  treasuryReceipt: TreasuryReceipt | undefined;
-  treasuryReceiptError: string | undefined;
+  receipts: DataStore<TreasuryReceipt>;
 
   powercardBalance: string | undefined;
   powercardState: PowercardState | undefined;
@@ -26,4 +25,10 @@ export type TreasuryStoreState = {
 export type TreasuryGetReceiptPayload = {
   year: number;
   month: number;
+};
+
+export type SetTreasuryReceiptPayload = {
+  year: number;
+  month: number;
+  receipt: Promise<TreasuryReceipt> | undefined;
 };

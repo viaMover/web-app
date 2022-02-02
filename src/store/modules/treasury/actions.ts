@@ -13,13 +13,22 @@ import { getPowercardTimings } from '@/services/chain/treasury/powercard';
 import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
 import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import {
+  getFromPersistStoreWithExpire,
+  setToPersistStore
+} from '@/store/modules/savings/utils';
 import { ActionFuncs } from '@/store/types';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
-import { TreasuryGetReceiptPayload, TreasuryStoreState } from './types';
+import {
+  SetTreasuryReceiptPayload,
+  TreasuryGetReceiptPayload,
+  TreasuryStoreState
+} from './types';
 
 type Actions = {
+  restoreReceipts: Promise<void>;
   loadMinimalInfo: Promise<void>;
   loadInfo: Promise<void>;
   fetchPowercardData: Promise<void>;
@@ -34,13 +43,34 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
+  async restoreReceipts({ commit }): Promise<void> {
+    const end = new Date();
+    end.setMonth(end.getMonth() - 12);
+    for (
+      let i = new Date();
+      i.getTime() > end.getTime();
+      i.setMonth(i.getMonth() - 1)
+    ) {
+      const receipt = await getFromPersistStoreWithExpire(
+        'treasuryReceipts',
+        `${i.getFullYear()}/${i.getMonth() + 1}`
+      );
+      commit('setTreasuryReceipt', {
+        year: i.getFullYear(),
+        month: i.getMonth() + 1,
+        receipt: Promise.resolve(receipt)
+      } as SetTreasuryReceiptPayload);
+    }
+  },
   async loadMinimalInfo({ dispatch }): Promise<void> {
     const loadPowercardPromise = dispatch('fetchPowercardData');
     const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+    const restoreReceiptsPromise = dispatch('restoreReceipts');
 
     const promisesResults = await Promise.allSettled([
       treasuryFreshData,
-      loadPowercardPromise
+      loadPowercardPromise,
+      restoreReceiptsPromise
     ]);
 
     const promisesErrors = promisesResults
@@ -52,13 +82,11 @@ const actions: ActionFuncs<
     }
   },
   async loadInfo({ dispatch }): Promise<void> {
-    const loadPowercardPromise = dispatch('fetchPowercardData');
-    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
+    const loadMinimalInfoPromise = dispatch('loadMinimalInfo');
     const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
 
     const promisesResults = await Promise.allSettled([
-      treasuryFreshData,
-      loadPowercardPromise,
+      loadMinimalInfoPromise,
       treasuryInfoPromise
     ]);
 
@@ -180,41 +208,47 @@ const actions: ActionFuncs<
     commit('setIsTreasuryInfoLoading', false);
   },
   async fetchTreasuryReceipt(
-    { commit, state, rootState },
+    { commit, state, rootState, getters },
     { year, month }: TreasuryGetReceiptPayload
   ): Promise<void> {
     if (!checkAccountStateIsReady(rootState)) {
       return;
     }
 
-    if (
-      state.treasuryReceipt !== undefined &&
-      state.treasuryReceiptError === undefined &&
-      state.treasuryReceipt.hourlyBalances[0].year === year &&
-      state.treasuryReceipt.hourlyBalances[0].month === month
-    ) {
+    if (getters.treasuryReceipt(year, month) !== undefined) {
       return;
     }
 
-    commit('setIsTreasuryReceiptLoading', true);
-    commit('setTreasuryReceiptError', undefined);
-    commit('setTreasuryReceipt', undefined);
-
-    const receipt = await getTreasuryReceipt(
+    const receiptPromise = getTreasuryReceipt(
       rootState.account!.currentAddress!,
       year,
       month
-    );
+    ).then((item) => {
+      if (isError(item)) {
+        throw new Error(item.error);
+      }
 
-    if (isError(receipt)) {
-      commit('setTreasuryReceiptError', receipt.error);
-      commit('setIsTreasuryReceiptLoading', false);
-      Sentry.captureException(`can't get treasury receipt: ${receipt.error}`);
-      return;
-    }
+      return item.result;
+    });
 
-    commit('setTreasuryReceipt', receipt.result);
-    commit('setIsTreasuryReceiptLoading', false);
+    commit('setTreasuryReceipt', {
+      year: year,
+      month: month,
+      receipt: receiptPromise
+    } as SetTreasuryReceiptPayload);
+
+    (async () => {
+      for (const [key, value] of state.receipts.entries()) {
+        if (value !== undefined) {
+          await setToPersistStore(
+            'treasuryReceipts',
+            key,
+            await value.data,
+            Date.now() + 600000
+          );
+        }
+      }
+    })().then();
   }
 };
 

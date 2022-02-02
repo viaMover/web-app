@@ -1,3 +1,5 @@
+import gt from 'lodash-es/gt';
+
 import { SavingsMonthBalanceItem, SavingsReceipt } from '@/services/mover';
 import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
@@ -20,7 +22,7 @@ type Getters = {
   // savingsMonthTotalDepositsNative: string;
   // savingsMonthTotalWithdrawalsNative: string;
   savingsMonthStatsOptions: Array<SavingsMonthBalanceItem>;
-  // hasActiveSavings: boolean;
+  hasActiveSavings: boolean;
   savingsAvg30DaysAPY: string;
   // savingsMonthPaidToTreasury: string;
   // savingsMonthPaidToTreasuryNative: string;
@@ -233,44 +235,44 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
       }, new Array<SavingsMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
-  // hasActiveSavings(state): boolean {
-  //   if (state.savingsBalance !== undefined && gt(state.savingsBalance, 0)) {
-  //     return true;
-  //   }
-  //
-  //   if (state.savingsInfo !== undefined && !state.isSavingsInfoLoading) {
-  //     const isCurrentBalanceNotEmpty = state.savingsInfo.currentBalance > 0;
-  //     const isEarnedTotalNotEmpty = state.savingsInfo.earnedTotal > 0;
-  //
-  //     if (isCurrentBalanceNotEmpty || isEarnedTotalNotEmpty) {
-  //       return true;
-  //     }
-  //
-  //     const hadAtLeastOneMonthWithNonZeroBalance =
-  //       state.savingsInfo.last12MonthsBalances.some((item) => item.balance > 0);
-  //     if (hadAtLeastOneMonthWithNonZeroBalance) {
-  //       return true;
-  //     }
-  //   }
-  //
-  //   if (state.savingsReceipt !== undefined && !state.isSavingsReceiptLoading) {
-  //     const isEndOfMonthBalanceNotEmpty =
-  //       state.savingsReceipt.endOfMonthBalance > 0;
-  //     const isTotalDepositsNotEmpty = state.savingsReceipt.totalDeposits > 0;
-  //     const isTotalWithdrawalsNotEmpty =
-  //       state.savingsReceipt.totalWithdrawals > 0;
-  //
-  //     if (
-  //       isEndOfMonthBalanceNotEmpty ||
-  //       isTotalDepositsNotEmpty ||
-  //       isTotalWithdrawalsNotEmpty
-  //     ) {
-  //       return true;
-  //     }
-  //   }
-  //
-  //   return false;
-  // },
+  hasActiveSavings(state): boolean {
+    if (state.savingsBalance !== undefined && gt(state.savingsBalance, 0)) {
+      return true;
+    }
+
+    if (state.savingsInfo !== undefined && !state.isSavingsInfoLoading) {
+      const isCurrentBalanceNotEmpty = state.savingsInfo.currentBalance > 0;
+      const isEarnedTotalNotEmpty = state.savingsInfo.earnedTotal > 0;
+
+      if (isCurrentBalanceNotEmpty || isEarnedTotalNotEmpty) {
+        return true;
+      }
+
+      const hadAtLeastOneMonthWithNonZeroBalance =
+        state.savingsInfo.last12MonthsBalances.some((item) => item.balance > 0);
+      if (hadAtLeastOneMonthWithNonZeroBalance) {
+        return true;
+      }
+    }
+
+    // if (state.savingsReceipt !== undefined && !state.isSavingsReceiptLoading) {
+    //   const isEndOfMonthBalanceNotEmpty =
+    //     state.savingsReceipt.endOfMonthBalance > 0;
+    //   const isTotalDepositsNotEmpty = state.savingsReceipt.totalDeposits > 0;
+    //   const isTotalWithdrawalsNotEmpty =
+    //     state.savingsReceipt.totalWithdrawals > 0;
+    //
+    //   if (
+    //     isEndOfMonthBalanceNotEmpty ||
+    //     isTotalDepositsNotEmpty ||
+    //     isTotalWithdrawalsNotEmpty
+    //   ) {
+    //     return true;
+    //   }
+    // }
+
+    return false;
+  },
   savingsAvg30DaysAPY(state): string {
     if (state.savingsInfo === undefined || state.isSavingsInfoLoading) {
       return '0';

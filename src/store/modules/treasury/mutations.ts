@@ -1,8 +1,8 @@
 import { PowercardState } from '@/services/chain';
-import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
+import { TreasuryInfo } from '@/services/mover';
 import { MutationFuncs } from '@/store/types';
 
-import { TreasuryStoreState } from './types';
+import { SetTreasuryReceiptPayload, TreasuryStoreState } from './types';
 
 type Mutations = {
   setTreasuryBalanceMove: void;
@@ -14,8 +14,6 @@ type Mutations = {
   setIsTreasuryInfoLoading: void;
   setTreasuryInfoError: void;
   setTreasuryInfo: void;
-  setIsTreasuryReceiptLoading: void;
-  setTreasuryReceiptError: void;
   setTreasuryReceipt: void;
   setPowercardBalance: void;
   setPowercardState: void;
@@ -51,14 +49,16 @@ const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
   setTreasuryInfo(state, info: TreasuryInfo | undefined): void {
     state.treasuryInfo = info;
   },
-  setIsTreasuryReceiptLoading(state, isLoading: boolean): void {
-    state.isTreasuryReceiptLoading = isLoading;
-  },
-  setTreasuryReceiptError(state, error: string | undefined): void {
-    state.treasuryReceiptError = error;
-  },
-  setTreasuryReceipt(state, receipt: TreasuryReceipt): void {
-    state.treasuryReceipt = receipt;
+  setTreasuryReceipt(state, payload: SetTreasuryReceiptPayload): void {
+    const key = `${payload.year}/${payload.month}`;
+    if (payload.receipt === undefined) {
+      state.receipts.delete(key);
+    } else {
+      state.receipts.set(key, {
+        data: payload.receipt,
+        expDate: Date.now() + 600000 // add 10 min
+      });
+    }
   },
   setPowercardBalance(state, balance: string): void {
     state.powercardBalance = balance;

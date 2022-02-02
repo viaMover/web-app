@@ -14,9 +14,7 @@ export default {
     treasuryInfo: undefined,
     treasuryInfoError: undefined,
 
-    isTreasuryReceiptLoading: false,
-    treasuryReceipt: undefined,
-    treasuryReceiptError: undefined,
+    receipts: {},
 
     treasuryBalanceMove: undefined,
     treasuryBalanceLP: undefined,
