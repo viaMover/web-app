@@ -1,0 +1,78 @@
+.token-icon {
+  flex: 0 0 38px;
+  margin-right: 16px;
+  border-radius: 50%;
+  width: 38px;
+  height: $width;
+
+  img {
+    border-radius: 50%;
+    width: inherit;
+    height: $width;
+    @drop-shadow-filter();
+  }
+
+  @media screen and (max-width: 1279px) {
+    margin-right: 8px;
+  }
+
+  &.small {
+    flex: 0 0 28px;
+    margin-right: 8px;
+    width: 28px;
+    height: $width;
+
+    img {
+      width: 28px;
+      height: $width;
+    }
+  }
+
+  &.smallest {
+    flex: 0 0 24px;
+    margin-right: 8px;
+    width: 24px;
+    height: $width;
+  }
+
+  &.inline {
+    flex: 0 0 1em;
+    margin-right: 8px;
+    margin-left: 8px;
+    height: 1.15em;
+    width: $height;
+
+    img {
+      width: inherit;
+      height: $width;
+    }
+  }
+
+  &.no-margin {
+    margin-right: 0;
+  }
+
+  &.fallback {
+    border-radius: 50%;
+    background-color: @background-left-rail-darker;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    @drop-shadow();
+
+    span {
+      font-size: 9px;
+      line-height: 16px;
+      color: @text-primary;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      @font-bold();
+    }
+  }
+
+  &.skeleton {
+    @drop-shadow();
+  }
+}

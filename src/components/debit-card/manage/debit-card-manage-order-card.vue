@@ -1,10 +1,12 @@
 <template>
-  <secondary-page hide-title>
-    <secondary-page-simple-title
-      class="page-title max-width"
-      :description="$t('debitCard.txtOrderCard')"
-      :title="$t('debitCard.lblOrderCard')"
-    />
+  <secondary-page class="manage order-card" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
+        class="page-title max-width"
+        :description="$t('debitCard.txtOrderCard')"
+        :title="$t('debitCard.lblOrderCard')"
+      />
+    </template>
 
     <div class="content">
       <div class="floating right container">
@@ -187,7 +189,7 @@
 
           <action-button
             ref="button"
-            button-class="black-link button-active action-button"
+            class="primary"
             :disabled="isLoading"
             propagate-original-event
             type="submit"
@@ -234,7 +236,7 @@ import { mapCountryCodeToEmoji } from '@/utils/emoji';
 import { validateName } from '@/utils/validators';
 
 import { ActionButton } from '@/components/buttons';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 import DebitCardImage from '../debit-card-image.vue';
 
@@ -244,7 +246,7 @@ export default Vue.extend({
     ActionButton,
     DebitCardImage,
     SecondaryPage,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     TheMask
   },
   data() {

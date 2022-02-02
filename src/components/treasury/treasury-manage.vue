@@ -1,32 +1,31 @@
 <template>
-  <secondary-page hide-title>
-    <div>
-      <secondary-page-simple-title
-        class="manage-balance-wrapper"
+  <secondary-page class="manage" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
         :description="$t('treasury.lblTreasuryBalance')"
         :title="stakedBalance"
       />
-      <div class="manage-graph-wrapper">
-        <bar-chart
-          accent-color="#F593AE"
-          :chart-data-source="chartDataSource"
-          :is-loading="isTreasuryInfoLoading || treasuryInfo === undefined"
-          @item-selected="handleItemSelected"
-        />
-        <p>
-          {{ selectedItemPrefix }}
-          <b>{{ selectedItemValue }}</b>
-        </p>
+    </template>
+
+    <div class="chart-wrapper">
+      <bar-chart
+        :accent-color="chartColor"
+        :chart-data-source="chartDataSource"
+        :is-loading="isTreasuryInfoLoading || treasuryInfo === undefined"
+        @item-selected="handleItemSelected"
+      />
+      <div class="bottom-text">
+        {{ selectedItemPrefix }}
+        <span class="emphasize">{{ selectedItemValue }}</span>
       </div>
     </div>
-    <statement-nav-list
+    <statements-nav-list
       :button-text="$t('treasury.btnView.simple')"
       :icon="$t('treasury.icon')"
       :in-progress-text="$t('treasury.lblInProgress')"
       :items="treasuryMonthStatsOptions"
       navigate-to-name="treasury-month-stats"
       :title="$t('treasury.lblSmartTreasuryStatements')"
-      wrapper-class="manage-statements-list"
     />
   </secondary-page>
 </template>
@@ -44,16 +43,16 @@ import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
-import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
+import { StatementsNavList } from '@/components/statements-nav-list';
 
 export default Vue.extend({
   name: 'TreasuryManage',
   components: {
     BarChart,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     SecondaryPage,
-    StatementNavList
+    StatementsNavList
   },
   data() {
     return {
@@ -62,6 +61,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({
+      colors: 'colors'
+    }),
     ...mapState('account', {
       isTreasuryInfoLoading: 'isTreasuryInfoLoading',
       treasuryInfo: 'treasuryInfo',
@@ -130,6 +132,9 @@ export default Vue.extend({
           this.usdcNativePrice
         )
       );
+    },
+    chartColor(): string {
+      return this.colors['product-treasury'];
     }
   },
   methods: {

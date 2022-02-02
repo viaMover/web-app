@@ -1,6 +1,11 @@
 <template>
-  <secondary-page :title="$t('debitCard.lblBeautifulCard')">
-    <p class="description black">{{ $t('debitCard.txtBeautifulCard') }}</p>
+  <secondary-page class="manage pending">
+    <template v-slot:title>
+      <secondary-page-header
+        :description="$t('debitCard.txtBeautifulCard')"
+        :title="$t('debitCard.lblBeautifulCard')"
+      />
+    </template>
 
     <div class="content">
       <div class="container history">
@@ -38,7 +43,7 @@ import dayjs from 'dayjs';
 
 import { EventHistoryItemMinimal } from '@/store/modules/debit-card/types';
 
-import { SecondaryPage } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 import DebitCardHistoryGroup from '../debit-card-history/debit-card-history-group.vue';
 
@@ -46,6 +51,7 @@ export default Vue.extend({
   name: 'DebitCardManagePending',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     DebitCardHistoryGroup
   },
   computed: {
@@ -66,11 +72,7 @@ export default Vue.extend({
         .sort((a, b) => a.timestamp - b.timestamp)[
         this.eventHistory.length - 1
       ];
-      if (lastEvent.type === 'kyc_process_started') {
-        return true;
-      }
-
-      return false;
+      return lastEvent.type === 'kyc_process_started';
     }
   },
   methods: {

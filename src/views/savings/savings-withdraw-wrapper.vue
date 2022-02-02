@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="withdraw"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >

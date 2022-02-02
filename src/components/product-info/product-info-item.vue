@@ -5,7 +5,7 @@
         {{ title }}
       </slot>
     </span>
-    <p class="description" :class="{ black: isBlackDescription }">
+    <p class="description">
       <slot>
         {{ description }}
       </slot>
@@ -20,16 +20,12 @@ export default Vue.extend({
   name: 'ProductInfoItem',
   props: {
     title: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
     description: {
       type: [String, Number],
       default: ''
-    },
-    isBlackDescription: {
-      type: Boolean,
-      default: false
     }
   }
 });

@@ -1,0 +1,183 @@
+.page {
+  .dashboard.home {
+    .page-content {
+      .wrapper {
+        padding-top: 40px;
+      }
+    }
+  }
+}
+
+.home {
+  .masthead {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    margin-bottom: 80px;
+
+    .avatar {
+      flex-grow: 0;
+      flex-shrink: 0;
+      width: 48px;
+      height: $width;
+      margin-right: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @drop-shadow();
+
+      .icon {
+        font-size: 24px;
+        line-height: 28px;
+        display: block;
+        @font-roboto();
+      }
+
+      .image {
+        width: 100%;
+        height: $width;
+        object-fit: cover;
+      }
+    }
+
+    .title {
+      flex: 0 0 auto;
+      margin-right: 24px;
+
+      .selector {
+        margin-bottom: 4px;
+        background-color: transparent;
+
+        .title {
+          font-size: 14px;
+          line-height: 22px;
+          color: @text-muted;
+          margin-right: 4px;
+          @font-medium();
+        }
+      }
+
+      .balance {
+        font-size: 14px;
+        line-height: 22px;
+        color: @text-primary;
+        @font-bold();
+      }
+    }
+
+    .nav-bar {
+      flex: 1 0 50%;
+      align-self: stretch;
+
+      .items {
+        width: 100%;
+        list-style: none;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-end;
+        align-items: center;
+        column-gap: 20px;
+        row-gap: 4px;
+
+        .item {
+          height: 100%;
+
+          .link {
+            font-size: 14px;
+            line-height: 22px;
+            color: @text-primary;
+            @font-bold();
+          }
+        }
+      }
+    }
+  }
+
+  .cards {
+    .card {
+      padding: 24px;
+      background-color: @card;
+      border-radius: 12px;
+      display: flex;
+      flex-flow: row nowrap;
+      margin-bottom: 40px;
+      @drop-shadow();
+
+      .info {
+        flex: 1 0 50%;
+
+        .text {
+          margin-bottom: 24px;
+
+          .title {
+            font-size: 24px;
+            line-height: 40px;
+            color: @text-primary;
+            @font-bold();
+          }
+
+          .description {
+            font-size: 14px;
+            line-height: 22px;
+            color: @text-muted;
+            @font-medium();
+          }
+        }
+
+        .buttons {
+          display: flex;
+          flex-flow: row nowrap;
+          column-gap: 24px;
+        }
+      }
+
+      .image {
+        flex: 0 1 auto;
+
+        img {
+          max-height: 100%;
+          max-width: 100%;
+          object-fit: cover;
+        }
+      }
+
+      &.order-debit-card {
+        background-color: @card-order-debit-card;
+
+        .info {
+          .text {
+            .title {
+              color: @text-primary-order-debit-card;
+            }
+
+            .description {
+              color: @text-muted-order-debit-card;
+            }
+          }
+        }
+
+        .buttons {
+          .cta {
+            background-color: @button-order-debit-card;
+            color: @text-primary;
+          }
+        }
+      }
+    }
+  }
+
+  .navigation-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 64px;
+
+    @import (multiple) "../modules/private/_navigation-group.less";
+
+    .group .items .item {
+      margin-bottom: 8px;
+    }
+  }
+}

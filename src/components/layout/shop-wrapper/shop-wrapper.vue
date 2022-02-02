@@ -6,11 +6,7 @@
     <div class="shop__wrapper-illustration">
       <slot name="illustration"></slot>
     </div>
-    <back-button
-      v-if="hasCloseButton"
-      mode="CLOSE-BLACK"
-      @close="handleClose"
-    />
+    <close-button v-if="hasCloseButton" @close="handleClose" />
     <slot name="context-menu"></slot>
   </div>
 </template>
@@ -18,14 +14,12 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { BackButton } from '@/components/buttons';
-
-import '@/styles/_shop.less';
+import { CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'ShopWrapper',
   components: {
-    BackButton
+    CloseButton
   },
   props: {
     hasCloseButton: {

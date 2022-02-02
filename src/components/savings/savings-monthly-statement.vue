@@ -1,42 +1,40 @@
 <template>
-  <statement-list>
-    <statement-list-item
-      :description="$t('savings.statement.lblBalance', { month: monthName })"
-      :value="balanceNative"
+  <analytics-list>
+    <analytics-list-item
+      :description="balanceNative"
+      :title="$t('savings.statement.lblBalance', { month: monthName })"
     />
-    <statement-list-item
-      :description="
+    <analytics-list-item
+      :description="totalEarned"
+      :title="
         $t('savings.statement.lblTotalEarnedInMonth', { month: monthName })
       "
-      :value="totalEarned"
     />
-    <statement-list-item
-      :description="
+    <analytics-list-item
+      :description="averageDailyEarnings"
+      :title="
         $t('savings.statement.lblAverageDailyEarningsInMonth', {
           month: monthName
         })
       "
-      :value="averageDailyEarnings"
     />
-    <statement-list-item
-      :description="$t('savings.statement.lblDeposits', { month: monthName })"
-      :value="depositsNative"
+    <analytics-list-item
+      :description="depositsNative"
+      :title="$t('savings.statement.lblDeposits', { month: monthName })"
     />
-    <statement-list-item
-      :description="
-        $t('savings.statement.lblWithdrawals', { month: monthName })
-      "
-      :value="withdrawalsNative"
+    <analytics-list-item
+      :description="withdrawalsNative"
+      :title="$t('savings.statement.lblWithdrawals', { month: monthName })"
     />
-    <statement-list-item
-      :description="$t('savings.statement.lblSavedFees')"
-      :value="savedFeesNative"
+    <analytics-list-item
+      :description="savedFeesNative"
+      :title="$t('savings.statement.lblSavedFees')"
     />
-    <statement-list-item
-      :description="$t('savings.statement.lblPayoutsToTreasury')"
-      :value="payoutsToTreasuryNative"
+    <analytics-list-item
+      :description="payoutsToTreasuryNative"
+      :title="$t('savings.statement.lblPayoutsToTreasury')"
     />
-  </statement-list>
+  </analytics-list>
 </template>
 
 <script lang="ts">
@@ -47,16 +45,13 @@ import dayjs from 'dayjs';
 
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
 
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 
 export default Vue.extend({
   name: 'SavingsMonthStatements',
   components: {
-    StatementList,
-    StatementListItem
+    AnalyticsList,
+    AnalyticsListItem
   },
   props: {
     pageDate: {

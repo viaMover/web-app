@@ -1,63 +1,70 @@
 <template>
-  <div>
-    <div>
-      <secondary-page-simple-title
-        class="page-title max-width"
-        :description="headerDescription"
-        :title="headerTitle"
-      />
-      <div class="secondary_page-token-info">
-        <span>{{ operationTitle }}</span>
-        <p>{{ operationDescription }}</p>
-      </div>
-    </div>
-    <form class="secondary_page-body" @submit.prevent="handleReviewTx">
-      <h2>{{ inputAssetHeading }}</h2>
-      <div class="info">
-        <pu-skeleton v-if="isLoading" circle class="icon" tag="div" />
-        <token-image
-          v-else
-          :address="asset ? asset.address : ''"
-          :src="asset ? asset.logo : ''"
-          :symbol="asset ? asset.symbol : ''"
-          wrapper-class="icon"
-        />
-        <div class="coin">
-          <p>
-            {{ asset ? asset.name : $t('forms.lblChooseToken') }}
-            <span>
-              {{ asset ? asset.symbol : '' }}
-            </span>
-          </p>
+  <div class="action prepare">
+    <secondary-page-header
+      class="max-width"
+      :description="headerDescription"
+      :title="headerTitle"
+    />
+    <secondary-page-info
+      :description="operationDescription"
+      :title="operationTitle"
+    />
+
+    <form class="action form prepare" @submit.prevent="handleReviewTx">
+      <div class="input section">
+        <h2 class="title">{{ inputAssetHeading }}</h2>
+        <div class="info">
+          <pu-skeleton
+            v-if="isLoading"
+            circle
+            class="token-icon smallest skeleton"
+            tag="div"
+          />
+          <token-image
+            v-else
+            :address="asset ? asset.address : ''"
+            class="smallest"
+            :src="asset ? asset.logo : ''"
+            :symbol="asset ? asset.symbol : ''"
+          />
+          <div class="token">
+            <div class="name">
+              {{ asset ? asset.name : $t('forms.lblChooseToken') }}
+              <span class="symbol">
+                {{ asset ? asset.symbol : '' }}
+              </span>
+            </div>
+          </div>
+          <button
+            v-if="hasSelectModal"
+            class="round smallest icon button"
+            :style="selectorStyle"
+            type="button"
+            @click.stop.prevent="handleOpenSelectModal"
+          >
+            <arrow-down-icon :stroke="asset ? '#fff' : '#000'" />
+          </button>
         </div>
-        <button
-          v-if="hasSelectModal"
-          class="button-active button-arrow"
-          :style="selectorStyle"
-          type="button"
-          @click.stop.prevent="handleOpenSelectModal"
-        >
-          <arrow-down-icon :stroke="asset ? '#fff' : '#000'" />
-        </button>
-      </div>
-      <div class="available">
-        <p>
+
+        <div class="available">
           {{ $t('forms.lblAvailable') }}
-          <span @click="handleSelectMaxAmount">{{ formattedMaxAmount }}</span>
-        </p>
-      </div>
-      <div class="description">
-        <p>
+          <span class="selector button-like" @click="handleSelectMaxAmount">{{
+            formattedMaxAmount
+          }}</span>
+        </div>
+
+        <div class="description">
           {{ selectedTokenDescription }}
-        </p>
+        </div>
       </div>
-      <div class="form">
-        <p>
+
+      <div class="output section">
+        <h2 class="title">
           {{ outputAssetHeadingText }}
-          <span class="form-button" @click="handleToggleInputMode">
+          <span class="selector button-like" @click="handleToggleInputMode">
             {{ currentInputSymbol }}
           </span>
-        </p>
+        </h2>
         <slot name="input">
           <dynamic-input
             :disabled="isLoading"
@@ -71,8 +78,11 @@
           />
         </slot>
         <slot name="swap-message" />
+      </div>
+
+      <div class="actions">
         <action-button
-          button-class="black-link button-active"
+          class="primary"
           :disabled="!isButtonActive"
           propagate-original-event
           type="submit"
@@ -107,14 +117,18 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { InputMode } from '@/components/forms/prepare-form/types';
-import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
+import {
+  SecondaryPageHeader,
+  SecondaryPageInfo
+} from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
   name: 'PrepareForm',
   components: {
     TokenImage,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
+    SecondaryPageInfo,
     ActionButton,
     ArrowDownIcon,
     DynamicInput

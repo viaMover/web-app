@@ -1,18 +1,16 @@
 <template>
-  <li class="list__item">
-    <router-link class="button button-primary button-active" :to="routeTo">
-      <video
-        autoplay="autoplay"
-        data-keepplaying="data-keepplaying"
-        loop="loop"
-        muted="muted"
-        playsinline="playsinline"
-        :src="src"
-      />
-      <h3>{{ name }}</h3>
-      <p class="price">{{ productPrice }}</p>
-    </router-link>
-  </li>
+  <router-link class="button-like item" :to="routeTo">
+    <video
+      autoplay="autoplay"
+      data-keepplaying="data-keepplaying"
+      loop="loop"
+      muted="muted"
+      playsinline="playsinline"
+      :src="src"
+    />
+    <h3 class="title">{{ name }}</h3>
+    <p class="description">{{ productPrice }}</p>
+  </router-link>
 </template>
 
 <script lang="ts">

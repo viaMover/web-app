@@ -28,7 +28,7 @@ export type ProviderData = {
 
 export type Avatar = {
   id: string;
-  className: string;
+  color: string;
 } & (
   | { type: 'symbol'; symbol: string }
   | { type: 'image'; imageSrc: string; imageAlt: string }

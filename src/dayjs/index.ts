@@ -6,8 +6,13 @@ import duration from 'dayjs/plugin/duration';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import utc from 'dayjs/plugin/utc';
 
+import { isDevelop } from '@/settings';
+
 export function init(): void {
-  dayjs.extend(dayjsDevHelper);
+  if (isDevelop()) {
+    dayjs.extend(dayjsDevHelper);
+  }
+
   dayjs.extend(customParseFormat);
   dayjs.extend(utc);
   dayjs.extend(calendar);

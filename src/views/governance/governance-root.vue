@@ -1,15 +1,29 @@
 <template>
-  <router-view />
+  <content-wrapper
+    class="governance"
+    has-close-button
+    has-left-rail
+    @close="handleClose"
+  >
+    <template v-slot:left-rail>
+      <router-view name="leftRail" />
+    </template>
+
+    <router-view />
+  </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions } from 'vuex';
 
-import '@/styles/_governance.less';
+import { ContentWrapper } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceRoot',
+  components: {
+    ContentWrapper
+  },
   watch: {
     $route: {
       async handler() {
@@ -24,7 +38,10 @@ export default Vue.extend({
     ...mapActions('governance', {
       loadGovernanceInfo: 'loadGovernanceInfo',
       loadVotingPowerSelf: 'loadCurrentVotingPowerSelf'
-    })
+    }),
+    handleClose(): void {
+      this.$router.replace({ name: 'home' });
+    }
   }
 });
 </script>

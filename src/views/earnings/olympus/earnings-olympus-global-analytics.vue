@@ -1,79 +1,81 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <div>
-      <secondary-page-simple-title
-        class="page-title"
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
+  >
+    <template v-slot:title>
+      <secondary-page-header
         :description="$t('earnings.txtOverview')"
         :title="$t('earnings.lblOverview', { token: 'Olympus' })"
       />
-      <statement-list>
-        <statement-list-item
-          :description="$t('earnings.lblDepositedAssets')"
-          :value="depositAsset"
-        />
-        <statement-list-item
-          :description="$t('earnings.lblCurrentVariableAPY')"
-          :value="currentVariableAPY"
-        />
-        <statement-list-item
-          :description="$t('earnings.lbl30DayAverageAPY')"
-          :value="monthAverageAPY"
-        />
-        <statement-list-item
-          :description="$t('earnings.lblTotalAssetsUnderManagement')"
-          :value="totalAssetsUnderManagement"
-        />
-      </statement-list>
-      <statement-list :title="$t('earnings.lblEarningsStats')">
-        <statement-list-item
-          :description="$t('earnings.lblEarnedToday')"
-          :value="earnedToday"
-        />
-        <statement-list-item
-          :description="$t('earnings.lblEarnedThisMonth')"
-          :value="earnedThisMonth"
-        />
-        <statement-list-item
-          :description="$t('earnings.lblEarnedInTotal')"
-          :value="earnedInTotal"
-        />
-      </statement-list>
-      <statement-list :title="$t('earnings.lblEarningsEstimation')">
-        <statement-list-item
-          :description="$t('earnings.lblEstimatedEarningsTomorrow')"
-          :value="estimatedEarningsTomorrow"
-        />
-        <statement-list-item
-          :description="$t('earnings.lblEstimatedEarningsThisMonth')"
-          :value="estimatedEarningsThisMonth"
-        />
-        <statement-list-item
-          :description="$t('earnings.lblEstimatedEarningsAnnually')"
-          :value="estimatedEarningsAnnually"
-        />
-      </statement-list>
-    </div>
+    </template>
+
+    <analytics-list>
+      <analytics-list-item
+        :description="depositAsset"
+        :title="$t('earnings.lblDepositedAssets')"
+      />
+      <analytics-list-item
+        :description="currentVariableAPY"
+        :title="$t('earnings.lblCurrentVariableAPY')"
+      />
+      <analytics-list-item
+        :description="monthAverageAPY"
+        :title="$t('earnings.lbl30DayAverageAPY')"
+      />
+      <analytics-list-item
+        :description="totalAssetsUnderManagement"
+        :title="$t('earnings.lblTotalAssetsUnderManagement')"
+      />
+    </analytics-list>
+    <analytics-list :title="$t('earnings.lblEarningsStats')">
+      <analytics-list-item
+        :description="earnedToday"
+        :title="$t('earnings.lblEarnedToday')"
+      />
+      <analytics-list-item
+        :description="earnedThisMonth"
+        :title="$t('earnings.lblEarnedThisMonth')"
+      />
+      <analytics-list-item
+        :description="earnedInTotal"
+        :title="$t('earnings.lblEarnedInTotal')"
+      />
+    </analytics-list>
+    <analytics-list :title="$t('earnings.lblEarningsEstimation')">
+      <analytics-list-item
+        :description="estimatedEarningsTomorrow"
+        :title="$t('earnings.lblEstimatedEarningsTomorrow')"
+      />
+      <analytics-list-item
+        :description="estimatedEarningsThisMonth"
+        :title="$t('earnings.lblEstimatedEarningsThisMonth')"
+      />
+      <analytics-list-item
+        :description="estimatedEarningsAnnually"
+        :title="$t('earnings.lblEstimatedEarningsAnnually')"
+      />
+    </analytics-list>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'EarningsOlympusGlobalAnalytics',
   components: {
-    StatementListItem,
-    StatementList,
-    SecondaryPageSimpleTitle,
+    AnalyticsList,
+    AnalyticsListItem,
+    SecondaryPageHeader,
     SecondaryPage
   },
   computed: {

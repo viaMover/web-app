@@ -6,8 +6,6 @@
 import Vue from 'vue';
 import { mapActions } from 'vuex';
 
-import '@/styles/_release_radar.less';
-
 export default Vue.extend({
   name: 'ReleaseRadarRoot',
   beforeMount() {

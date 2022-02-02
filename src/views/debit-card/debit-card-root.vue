@@ -1,18 +1,80 @@
 <template>
   <content-wrapper
-    base-class="info__wrapper"
+    class="product debit-card"
     has-close-button
     has-left-rail
-    is-black-close-button
-    page-container-class=""
-    wrapper-class="debit-card"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <div class="progressive-left-rail">
-        <debit-card-my-card />
-        <debit-card-manage-card v-if="showManageCard" />
-      </div>
+      <nav class="left-rail navigation">
+        <div class="wrapper">
+          <div class="list">
+            <navigation-section
+              :is-loading="isLoading"
+              :section-name="$t('debitCard.lblMyCard')"
+              skeleton-component="navigation-section-item-image-skeleton"
+            >
+              <navigation-section-item-image
+                :description="cardStateText"
+                :description-class="descriptionClass"
+                navigate-to="debit-card-manage"
+                :title="$t('debitCard.lblBeautifulCard')"
+                title-class="medium disabled"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="currentSkinPicture.alt"
+                    :sources="currentSkinPicture.sources"
+                    :src="currentSkinPicture.src"
+                  />
+                </template>
+              </navigation-section-item-image>
+            </navigation-section>
+
+            <navigation-section
+              v-if="showManageCard"
+              :is-loading="isLoading"
+              :section-name="$t('debitCard.lblManageCard')"
+              skeleton-component="navigation-section-item-image-skeleton"
+              :skeleton-components-count="2"
+            >
+              <navigation-section-item-image
+                v-if="showTopUp"
+                :description="$t('debitCard.txtCardTopUp')"
+                :navigate-to="{
+                  name: 'debit-card-top-up',
+                  params: { step: 'prepare' }
+                }"
+                :title="$t('debitCard.lblCardTopUp')"
+                use-partial-match-active-class
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="topUpPicture.alt"
+                    :sources="topUpPicture.sources"
+                    :src="topUpPicture.src"
+                  />
+                </template>
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
+                v-if="showChangeSkin"
+                :description="$t('debitCard.txtChangeSkin')"
+                navigate-to="debit-card-change-skin"
+                :title="$t('debitCard.lblChangeSkin')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="changeSkinPicture.alt"
+                    :sources="changeSkinPicture.sources"
+                    :src="changeSkinPicture.src"
+                  />
+                </template>
+              </navigation-section-item-image>
+            </navigation-section>
+          </div>
+        </div>
+      </nav>
     </template>
 
     <router-view />
@@ -26,44 +88,92 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 
-import { DebitCardManageCard, DebitCardMyCard } from '@/components/debit-card';
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal, SearchSkinModal } from '@/components/modals';
-
-import '@/styles/_debit-card.less';
+import {
+  NavigationSection,
+  NavigationSectionItemImage
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'DebitCardRoot',
   components: {
     ContentWrapper,
-    DebitCardMyCard,
-    DebitCardManageCard,
     SearchSkinModal,
-    SearchModal
+    SearchModal,
+    NavigationSection,
+    NavigationSectionItemImage,
+    CustomPicture
+  },
+  data() {
+    return {
+      topUpPicture: {
+        src: require('@/assets/images/CardTopUpPreview.png'),
+        alt: this.$t('debitCard.lblCardTopUp') as string,
+        sources: [
+          {
+            src: require('@/assets/images/CardTopUpPreview@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor,
+      changeSkinPicture: {
+        src: require('@/assets/images/CardChangeSkinPreview.png'),
+        alt: this.$t('debitCard.lblChangeSkin') as string,
+        sources: [
+          {
+            src: require('@/assets/images/CardChangeSkinPreview@2x.png'),
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor
+    };
   },
   computed: {
     ...mapState('debitCard', {
+      isLoading: 'isLoading',
       cardState: 'cardState'
     }),
-    showManageCard(): boolean {
-      const isTopUpEnabled =
-        isFeatureEnabled('isDebitCardTopUpEnabled') &&
-        this.cardState === 'active';
-      const isChangeSkinEnabled =
-        isFeatureEnabled('isDebitCardChangeSkinEnabled') &&
-        ['active', 'frozen', 'expired'].includes(this.cardState);
+    ...mapGetters('debitCard', {
+      cardStateText: 'cardStateText',
+      currentSkin: 'currentSkin'
+    }),
+    currentSkinPicture(): PictureDescriptor {
+      return this.currentSkin.previewPicture;
+    },
+    descriptionClass(): string {
+      if (['frozen', 'expired'].includes(this.cardState)) {
+        return 'bold error';
+      }
 
-      return isTopUpEnabled || isChangeSkinEnabled;
+      return 'bold';
+    },
+    showTopUp(): boolean {
+      return (
+        isFeatureEnabled('isDebitCardTopUpEnabled') &&
+        this.cardState === 'active'
+      );
+    },
+    showChangeSkin(): boolean {
+      return (
+        isFeatureEnabled('isDebitCardChangeSkinEnabled') &&
+        ['active', 'frozen', 'expired'].includes(this.cardState)
+      );
+    },
+    showManageCard(): boolean {
+      return this.showTopUp || this.showChangeSkin;
     }
   },
   async mounted() {
     await this.loadInfo(true);
   },
   methods: {
+    isFeatureEnabled,
     ...mapActions('debitCard', {
       loadInfo: 'loadInfo'
     }),

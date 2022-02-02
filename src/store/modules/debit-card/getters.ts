@@ -109,7 +109,9 @@ const getters: GettersFuncs<Getters, DebitCardStoreState> = {
   }
 };
 
-const mapSkin = (rootState: RootStoreState): ((skin: SkinMinimal) => Skin) => {
+export const mapSkin = (
+  rootState: RootStoreState
+): ((skin: SkinMinimal) => Skin) => {
   return (skin: SkinMinimal): Skin => {
     let description = '';
     if (

@@ -1,32 +1,36 @@
 <template>
   <content-wrapper
-    base-class="nft-drops"
+    class="nft-drops view view-all"
     has-back-button
-    page-container-class="nft-drops"
+    page-content-class="centered"
     @back="handleClose"
     @close="handleClose"
   >
     <custom-picture
       :alt="headerImage.alt"
-      class="image"
+      class="section-logo"
       :sources="headerImage.sources"
       :src="headerImage.src"
       :webp-sources="headerImage.webpSources"
     />
-    <ul class="list">
-      <li v-for="nft in nftList" :key="nft.name" class="list__item">
-        <router-link class="button-active" :to="routeTo(nft.name)">
-          <custom-picture
-            :alt="nft.bigPicture.alt"
-            :sources="nft.bigPicture.sources"
-            :src="nft.bigPicture.src"
-            :webp-sources="nft.bigPicture.webpSources"
-          />
-          <h3>{{ nft.name }}</h3>
-          <p class="description">{{ nft.description }}</p>
-        </router-link>
-      </li>
-    </ul>
+
+    <div class="product-tiles">
+      <router-link
+        v-for="nft in nftList"
+        :key="nft.name"
+        class="item button-like"
+        :to="routeTo(nft.name)"
+      >
+        <custom-picture
+          :alt="nft.bigPicture.alt"
+          :sources="nft.bigPicture.sources"
+          :src="nft.bigPicture.src"
+          :webp-sources="nft.bigPicture.webpSources"
+        />
+        <h3 class="title">{{ nft.name }}</h3>
+        <div class="description">{{ nft.description }}</div>
+      </router-link>
+    </div>
   </content-wrapper>
 </template>
 

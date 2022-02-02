@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="top-up"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >
@@ -473,12 +475,14 @@ export default Vue.extend({
               this.eursPriceInWeth,
               this.usdcPriceInWeth
             );
-            const amountInEurs = multiply(this.inputAmountNative, eursPerUsdc);
 
             // if no transfer data is available or some conditions
             // are not met then we use a fallback to give user
             // much more rough estimate of output amount
-            this.approximateEUREstimationAmount = amountInEurs;
+            this.approximateEUREstimationAmount = multiply(
+              this.inputAmountNative,
+              eursPerUsdc
+            );
           }
         },
         250

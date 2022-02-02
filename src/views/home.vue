@@ -1,19 +1,22 @@
 <template>
-  <content-wrapper has-left-rail wrapper-class="general-desktop">
+  <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
-      <transaction-list />
+      <aside class="left-rail transactions">
+        <transaction-list />
+      </aside>
     </template>
 
-    <header-balance />
-    <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-    <deposit-card-section v-else />
-    <menu-section />
+    <home-masthead />
+
+    <div class="cards">
+      <home-cards-debit-card v-if="isFeatureEnabled('isDebitCardEnabled')" />
+      <home-cards-savings-deposit v-else />
+    </div>
+
+    <home-navigation-section />
 
     <template v-slot:modals>
       <swap-modal key="swap-modal" />
-      <savings-deposit-modal key="savings-deposit-modal" />
-      <savings-withdraw-modal key="savings-withdraw-modal" />
-      <treasury-increase-boost-modal key="treasury-increase-boost-modal" />
       <search-modal key="search-modal" />
     </template>
   </content-wrapper>
@@ -24,38 +27,27 @@ import Vue from 'vue';
 
 import { isFeatureEnabled } from '@/settings';
 
+import {
+  HomeCardsDebitCard,
+  HomeCardsSavingsDeposit,
+  HomeMasthead,
+  HomeNavigationSection
+} from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
-import {
-  SavingsDepositModal,
-  SavingsWithdrawModal,
-  SearchModal,
-  SwapModal,
-  TreasuryIncreaseBoostModal
-} from '@/components/modals';
-import {
-  DebitCardSection,
-  DepositCardSection,
-  HeaderBalance,
-  MenuSection
-} from '@/components/sections';
+import { SearchModal, SwapModal } from '@/components/modals';
 import { TransactionList } from '@/components/transaction-list';
-
-import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'Home',
   components: {
-    DebitCardSection,
-    DepositCardSection,
-    MenuSection,
     ContentWrapper,
     TransactionList,
-    HeaderBalance,
+    HomeMasthead,
+    HomeNavigationSection,
+    HomeCardsDebitCard,
+    HomeCardsSavingsDeposit,
     SwapModal,
-    SearchModal,
-    SavingsDepositModal,
-    SavingsWithdrawModal,
-    TreasuryIncreaseBoostModal
+    SearchModal
   },
   methods: {
     isFeatureEnabled

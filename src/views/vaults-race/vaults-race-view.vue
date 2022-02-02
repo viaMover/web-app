@@ -20,7 +20,7 @@
         />
       </shop-list>
       <action-button
-        button-class="button button-active"
+        class="primary"
         :text="$t('vaultsRace.btn.rollDice')"
         @button-click="handleRoll"
       />

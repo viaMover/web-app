@@ -1,10 +1,12 @@
 <template>
-  <secondary-page hide-title>
-    <secondary-page-simple-title
-      class="page-title max-width"
-      :description="$t('debitCard.txtOrderCard')"
-      :title="$t('debitCard.lblOrderCard')"
-    />
+  <secondary-page class="manage change-phone" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
+        class="max-width"
+        :description="$t('debitCard.txtOrderCard')"
+        :title="$t('debitCard.lblOrderCard')"
+      />
+    </template>
 
     <div class="content">
       <div class="floating right container">
@@ -13,7 +15,7 @@
 
       <div class="container margin-top-80">
         <form
-          class="form change-phone"
+          class="form info change-phone"
           :class="{ error: $v.$anyError || errorText !== '' }"
           @submit.prevent="handleChangePhoneNumber"
         >
@@ -51,7 +53,7 @@
 
           <action-button
             ref="button"
-            button-class="black-link button-active action-button"
+            class="button primary"
             :disabled="isLoading"
             propagate-original-event
             type="submit"
@@ -89,17 +91,17 @@ import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { mapCountryCodeToEmoji } from '@/utils/emoji';
 
 import { ActionButton } from '@/components/buttons';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 import DebitCardImage from '../debit-card-image.vue';
 
 export default Vue.extend({
   name: 'DebitCardManageChangePhone',
   components: {
+    SecondaryPage,
+    SecondaryPageHeader,
     ActionButton,
     DebitCardImage,
-    SecondaryPage,
-    SecondaryPageSimpleTitle,
     TheMask
   },
   data() {

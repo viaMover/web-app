@@ -1,15 +1,13 @@
 <template>
-  <div class="item__list-item">
-    <router-link class="item__list-item" :to="routeTo">
-      <custom-picture
-        :alt="item.picture.alt"
-        :sources="item.picture.sources"
-        :src="item.picture.src"
-        :webp-sources="item.picture.webpSources"
-      />
-      <h3>{{ item.name }}</h3>
-    </router-link>
-  </div>
+  <router-link class="button-like item" :to="routeTo">
+    <custom-picture
+      :alt="item.picture.alt"
+      :sources="item.picture.sources"
+      :src="item.picture.src"
+      :webp-sources="item.picture.webpSources"
+    />
+    <h3 class="title">{{ item.name }}</h3>
+  </router-link>
 </template>
 
 <script lang="ts">

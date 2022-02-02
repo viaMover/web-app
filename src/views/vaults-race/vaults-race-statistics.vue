@@ -1,29 +1,39 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <secondary-page-simple-title
-      class="page-title"
-      :description="$t('vaultsRace.statistics.txtGlobalStatisticsDescription')"
-      :title="$t('vaultsRace.statistics.lblGlobalLeaderboard')"
-    />
-    <statement-list>
-      <statement-list-item
-        :description="$t('vaultsRace.statistics.lblThisWeekChallengeDates')"
-        :value="challengeDates"
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
+  >
+    <template v-slot:title>
+      <secondary-page-header
+        :description="
+          $t('vaultsRace.statistics.txtGlobalStatisticsDescription')
+        "
+        :title="$t('vaultsRace.statistics.lblGlobalLeaderboard')"
       />
-      <statement-list-item
-        :description="$t('vaultsRace.statistics.lblTotalParticipantingVaults')"
-        :value="totalVaults"
+    </template>
+
+    <analytics-list>
+      <analytics-list-item
+        :description="challengeDates"
+        :title="$t('vaultsRace.statistics.lblThisWeekChallengeDates')"
       />
-      <statement-list-item
-        :description="$t('vaultsRace.statistics.lblThisWeekPrize')"
-        :value="weekPrize"
+      <analytics-list-item
+        :description="totalVaults"
+        :title="$t('vaultsRace.statistics.lblTotalParticipantingVaults')"
       />
-      <statement-list-item
-        :description="$t('vaultsRace.statistics.lblDaysRemainingInTheWeek')"
-        :value="daysRemain"
+      <analytics-list-item
+        :description="weekPrize"
+        :title="$t('vaultsRace.statistics.lblThisWeekPrize')"
       />
-    </statement-list>
-    <statement-list :title="$t('vaultsRace.statistics.lblLeadingVault')">
+      <analytics-list-item
+        :description="daysRemain"
+        :title="$t('vaultsRace.statistics.lblDaysRemainingInTheWeek')"
+      />
+    </analytics-list>
+
+    <analytics-list :title="$t('vaultsRace.statistics.lblLeadingVault')">
       <div>
         <div class="item__info">
           <div class="item__info-icon">
@@ -40,15 +50,15 @@
           </div>
         </div>
       </div>
-      <statement-list-item
-        :description="$t('vaultsRace.statistics.lblPositionInTheRace')"
-        :value="account ? account.position : ''"
+      <analytics-list-item
+        :description="account ? account.position : ''"
+        :title="$t('vaultsRace.statistics.lblPositionInTheRace')"
       />
-      <statement-list-item
-        :description="$t('vaultsRace.statistics.lblTotalPointsScored')"
-        :value="account ? account.score : ''"
+      <analytics-list-item
+        :description="account ? account.score : ''"
+        :title="$t('vaultsRace.statistics.lblTotalPointsScored')"
       />
-    </statement-list>
+    </analytics-list>
   </secondary-page>
 </template>
 
@@ -56,24 +66,21 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ProgressLoader } from '@/components/layout';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'VaultsRaceStatistics',
   components: {
     ProgressLoader,
     SecondaryPage,
-    SecondaryPageSimpleTitle,
-    StatementListItem,
-    StatementList
+    SecondaryPageHeader,
+    AnalyticsListItem,
+    AnalyticsList
   },
   computed: {
     ...mapGetters('games', { account: 'leaderVaultsRaceAccount' }),

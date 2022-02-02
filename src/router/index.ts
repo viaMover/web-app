@@ -6,13 +6,18 @@ import VueRouter, {
 } from 'vue-router';
 
 import { loadLanguageAsync } from '@/i18n';
+import {
+  wrapWithCustomPreloadView,
+  wrapWithMeta
+} from '@/router/descending-meta-wrapper';
 import { checkFeatureFlag } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
 import { ActiveProviders } from '@/store/modules/earnings/utils';
 import ConnectWallet from '@/views/connect-wallet.vue';
 import Home from '@/views/home.vue';
-import HomeMore from '@/views/home-more.vue';
+import More from '@/views/more.vue';
+import PreloadMore from '@/views/preload/preload-more.vue';
 import View404 from '@/views/view-404.vue';
 
 import { formStepsGuard } from './form-steps-guard';
@@ -25,19 +30,24 @@ const routes: Array<RouteConfig> = [
     name: 'home',
     component: Home
   },
-  {
-    path: '/more',
-    name: 'home-more',
-    component: HomeMore
-  },
-  {
-    path: '/connect-wallet',
-    name: 'connect-wallet',
-    component: ConnectWallet,
-    meta: {
+  wrapWithCustomPreloadView(
+    {
+      path: '/more',
+      name: 'more',
+      component: More
+    },
+    PreloadMore
+  ),
+  wrapWithMeta(
+    {
+      path: '/connect-wallet',
+      name: 'connect-wallet',
+      component: ConnectWallet
+    },
+    {
       skipPreloadScreen: true
     }
-  },
+  ),
   {
     path: '/vaults-race/view/:address',
     name: 'vaults-race-view',
@@ -91,130 +101,141 @@ const routes: Array<RouteConfig> = [
     ],
     beforeEnter: checkFeatureFlag('isReleaseRadarEnabled')
   },
-  {
-    path: '/savings',
-    component: () =>
+  wrapWithCustomPreloadView(
+    {
+      path: '/savings',
+      component: () =>
+        import(
+          /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
+        ),
+      children: [
+        {
+          path: '',
+          name: 'savings-manage',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
+            )
+        },
+        {
+          path: 'deposit',
+          name: 'savings-deposit',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit-wrapper.vue'
+            )
+        },
+        {
+          path: 'withdraw',
+          name: 'savings-withdraw',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw-wrapper.vue'
+            )
+        },
+        {
+          path: 'analytics',
+          name: 'savings-global-analytics',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings"*/ '@/views/savings/savings-global-analytics.vue'
+            )
+        },
+        {
+          path: 'month-statistics/:year/:month',
+          name: 'savings-month-stats',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
+            )
+        }
+      ]
+    },
+    () =>
       import(
-        /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
-      ),
-    children: [
-      {
-        path: '',
-        name: 'savings-manage',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
-          )
-      },
-      {
-        path: 'deposit',
-        name: 'savings-deposit',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit-wrapper.vue'
-          )
-      },
-      {
-        path: 'withdraw',
-        name: 'savings-withdraw',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw-wrapper.vue'
-          )
-      },
-      {
-        path: 'analytics',
-        name: 'savings-global-analytics',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings"*/ '@/views/savings/savings-global-analytics.vue'
-          )
-      },
-      {
-        path: 'month-statistics/:year/:month',
-        name: 'savings-month-stats',
-        component: () =>
-          import(
-            /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
-          )
-      }
-    ]
-  },
-  {
-    path: '/treasury',
-    component: () =>
+        /* webpackChunkName: "savings" */ '@/views/preload/preload-product.vue'
+      )
+  ),
+  wrapWithCustomPreloadView(
+    {
+      path: '/treasury',
+      component: () =>
+        import(
+          /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
+        ),
+      children: [
+        {
+          path: '',
+          name: 'treasury-manage',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage-wrapper.vue'
+            )
+        },
+        {
+          path: 'increase',
+          name: 'treasury-increase',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-wrapper.vue'
+            )
+        },
+        {
+          path: 'decrease',
+          name: 'treasury-decrease',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-wrapper.vue'
+            )
+        },
+        {
+          path: 'claim-and-burn',
+          name: 'treasury-claim-and-burn',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-wrapper.vue'
+            )
+        },
+        {
+          path: 'claim-and-burn-mobo',
+          name: 'treasury-claim-and-burn-mobo',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-mobo-wrapper.vue'
+            ),
+          beforeEnter: checkFeatureFlag('isTreasuryClaimAndBurnMOBOEnabled')
+        },
+        {
+          path: 'powercard',
+          name: 'treasury-powercard',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-powercard-wrapper.vue'
+            )
+        },
+        {
+          path: 'analytics',
+          name: 'treasury-global-analytics',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-global-analytics.vue'
+            )
+        },
+        {
+          path: 'month-statistics/:year/:month',
+          name: 'treasury-month-stats',
+          component: () =>
+            import(
+              /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
+            )
+        }
+      ]
+    },
+    () =>
       import(
-        /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
-      ),
-    children: [
-      {
-        path: '',
-        name: 'treasury-manage',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage-wrapper.vue'
-          )
-      },
-      {
-        path: 'increase',
-        name: 'treasury-increase',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-wrapper.vue'
-          )
-      },
-      {
-        path: 'decrease',
-        name: 'treasury-decrease',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-wrapper.vue'
-          )
-      },
-      {
-        path: 'claim-and-burn',
-        name: 'treasury-claim-and-burn',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-wrapper.vue'
-          ),
-        beforeEnter: checkFeatureFlag('isTreasuryClaimAndBurnMOVEEnabled')
-      },
-      {
-        path: 'claim-and-burn-mobo',
-        name: 'treasury-claim-and-burn-mobo',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-mobo-wrapper.vue'
-          ),
-        beforeEnter: checkFeatureFlag('isTreasuryClaimAndBurnMOBOEnabled')
-      },
-      {
-        path: 'powercard',
-        name: 'treasury-powercard',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-powercard-wrapper.vue'
-          )
-      },
-      {
-        path: 'analytics',
-        name: 'treasury-global-analytics',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-global-analytics.vue'
-          )
-      },
-      {
-        path: 'month-statistics/:year/:month',
-        name: 'treasury-month-stats',
-        component: () =>
-          import(
-            /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
-          )
-      }
-    ]
-  },
+        /* webpackChunkName: "treasury" */ '@/views/preload/preload-product.vue'
+      )
+  ),
   {
     path: '/governance',
     component: () =>
@@ -225,17 +246,29 @@ const routes: Array<RouteConfig> = [
       {
         path: 'create',
         name: 'governance-create',
-        component: () =>
-          import(
-            /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
-          )
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
+            ),
+          leftRail: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+            )
+        }
       },
       {
         path: 'view/:id',
-        component: () =>
-          import(
-            /* webpackChunkName: "governance" */ '@/views/governance/governance-view-root.vue'
-          ),
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/views/governance/governance-view-root.vue'
+            ),
+          leftRail: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail-view.vue'
+            )
+        },
         children: [
           {
             path: '',
@@ -266,18 +299,30 @@ const routes: Array<RouteConfig> = [
       {
         path: 'global-analytics',
         name: 'governance-global-analytics',
-        component: () =>
-          import(
-            /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
-          )
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
+            ),
+          leftRail: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+            )
+        }
       },
       {
         path: '',
         name: 'governance-view-all',
-        component: () =>
-          import(
-            /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
-          )
+        components: {
+          default: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
+            ),
+          leftRail: () =>
+            import(
+              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+            )
+        }
       }
     ]
   },
@@ -378,20 +423,16 @@ const routes: Array<RouteConfig> = [
       }
     ]
   },
-  {
-    path: '/transactions/:txHash',
-    name: 'transaction',
-    component: () =>
-      import(/* webpackChunkName: "transaction" */ '@/views/transaction.vue')
-  },
-  {
-    path: '/404',
-    name: 'not-found-route',
-    component: View404,
-    meta: {
+  wrapWithMeta(
+    {
+      path: '/404',
+      name: 'not-found-route',
+      component: View404
+    },
+    {
       skipPreloadScreen: true
     }
-  }
+  )
 ];
 
 const router = new VueRouter({

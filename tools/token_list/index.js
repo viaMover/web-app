@@ -287,7 +287,7 @@ const save = (assets) => {
 const generateNewList = async () => {
   await updateTrustwalletRepo();
   let assets = await iterateOverAssets();
-  assets = [...assets, ...alsoIncludedAddresses];
+  assets = Array.from(new Set([...assets, ...alsoIncludedAddresses]));
   assets = await enrichWithTWdata(assets);
   assets = await enrichWithCoingeckoData(assets);
   assets = await filterCompleteTokenData(assets);

@@ -1,66 +1,37 @@
 <template>
-  <div>
-    <template v-if="showSkeleton">
-      <form class="transaction-search-form" @submit.prevent.stop="">
-        <div class="preload-wrapper__sidebar-search">
-          <pu-skeleton class="search" tag="div" />
-        </div>
-      </form>
-      <div class="preload-wrapper__sidebar-items">
-        <div class="preload-wrapper__sidebar-items-item">
-          <pu-skeleton class="title" tag="div" />
-          <pu-skeleton class="description" tag="div" />
-          <pu-skeleton class="subtitle" tag="div" />
-          <pu-skeleton class="description" tag="div" />
-          <pu-skeleton class="subtitle" tag="div" />
-        </div>
-        <div class="preload-wrapper__sidebar-items-item">
-          <pu-skeleton class="title" tag="div" />
-          <pu-skeleton class="description" tag="div" />
-          <pu-skeleton class="subtitle" tag="div" />
-          <pu-skeleton class="description" tag="div" />
-          <pu-skeleton class="subtitle" tag="div" />
-        </div>
-        <div class="preload-wrapper__sidebar-items-item">
-          <pu-skeleton class="title" tag="div" />
-          <pu-skeleton class="description" tag="div" />
-          <pu-skeleton class="subtitle" tag="div" />
-          <pu-skeleton class="description" tag="div" />
-          <pu-skeleton class="subtitle" tag="div" />
-        </div>
-      </div>
-    </template>
-    <template v-else>
-      <form class="transaction-search-form" @submit.prevent.stop="">
+  <transition name="fade">
+    <preload-left-rail-transactions v-if="showSkeleton" />
+    <div v-else class="wrapper">
+      <form class="form search" @submit.prevent.stop="">
         <input
           v-model.trim="searchTerm"
+          class="search-term"
           name="transaction-search"
           :placeholder="$t('search.lblSearchTransaction')"
           type="search"
         />
-        <button class="button-active" type="button" @click.prevent.stop="">
-          🔍
-        </button>
+        <button class="icon" type="submit">🔍</button>
       </form>
-      <div class="transactions-list">
-        <div v-if="!transactionGroups.length" class="empty-state">
-          {{ $t('lblConnectWalletTransactionHistory') }}
-        </div>
-        <template v-else>
-          <transaction-group
-            v-for="txGroup in filteredTransactionGroups"
-            :key="txGroup.date"
-            :heading-text="formatDate(txGroup.timeStamp)"
-            :transactions="txGroup.transactions"
-          />
-          <infinite-loading
-            v-if="hasInfiniteLoader"
-            @infinite="infiniteHandler"
-          ></infinite-loading>
-        </template>
+
+      <div v-if="!transactionGroups.length" class="empty-state">
+        {{ $t('lblConnectWalletTransactionHistory') }}
       </div>
-    </template>
-  </div>
+
+      <transition-group v-else class="list" name="list-transition" tag="div">
+        <transaction-group
+          v-for="txGroup in filteredTransactionGroups"
+          :key="txGroup.timeStamp"
+          class="list-transition-item"
+          :heading-text="formatDate(txGroup.timeStamp)"
+          :transactions="txGroup.transactions"
+        />
+      </transition-group>
+      <infinite-loading
+        v-if="hasInfiniteLoader"
+        @infinite="infiniteHandler"
+      ></infinite-loading>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -74,13 +45,16 @@ import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
 import { tryToGetTransactionAssetSymbol } from '@/store/modules/account/utils/transactions';
 import { isValidTxHash, sameAddress } from '@/utils/address';
+import PreloadLeftRailTransactions from '@/views/preload/preload-left-rail-transactions.vue';
 import { Transaction } from '@/wallet/types';
 
 import TransactionGroup from './transaction-group.vue';
+
 export default Vue.extend({
   name: 'TransactionList',
   components: {
     TransactionGroup,
+    PreloadLeftRailTransactions,
     InfiniteLoading
   },
   data() {

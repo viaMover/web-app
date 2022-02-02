@@ -1,62 +1,77 @@
 <template>
-  <div>
-    <shop-wrapper has-close-button @close="handleClose">
-      <template v-slot:info>
-        <h1 class="info__title">{{ $t('NFTs.lblMovingWithOlympus') }}</h1>
-        <p class="info__description">
+  <content-wrapper-two-sided
+    class="shop nft-drops view moving-with-olympus"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ $t('NFTs.lblMovingWithOlympus') }}</h1>
+        <div class="description">
           {{ $t('NFTs.txtNFTs.movingWithOlympus.pageDescriptionPartOne') }}
           <br /><br />
           {{ $t('NFTs.txtNFTs.movingWithOlympus.pageDescriptionPartTwo') }}
-        </p>
-        <shop-list>
-          <shop-list-item
-            :title="$t('NFTs.lblAvailableFrom')"
-            :value="availableFromString"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblAvailableTo')"
-            :value="availableToString"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblTotalClaimed')"
-            :value="formatToDecimals(totalClaimed, 0)"
-          />
-        </shop-list>
-        <action-button
-          button-class="button button-active"
-          :text="$t('NFTs.btn.movingWithOlympus.get.txt')"
-          @button-click="handleClaim"
+        </div>
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="availableFromString"
+          :title="$t('NFTs.lblAvailableFrom')"
         />
-        <div v-if="error !== undefined" class="error-message">
+        <analytics-list-item
+          :description="availableToString"
+          :title="$t('NFTs.lblAvailableTo')"
+        />
+        <analytics-list-item
+          :description="formatToDecimals(totalClaimed, 0)"
+          :title="$t('NFTs.lblTotalClaimed')"
+        />
+      </analytics-list>
+
+      <div class="actions">
+        <div class="group default">
+          <action-button
+            class="primary"
+            :text="$t('NFTs.btn.movingWithOlympus.get.txt')"
+            @button-click="handleClaim"
+          />
+        </div>
+
+        <div v-if="error !== undefined" class="group error-message">
           {{ error }}
         </div>
-      </template>
-      <template v-slot:illustration>
-        <video
-          autoplay="autoplay"
-          class="moving-with-olympus"
-          data-keepplaying="data-keepplaying"
-          loop="loop"
-          muted="muted"
-          playsinline="playsinline"
-        >
-          <source
-            src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
-            type="video/mp4"
-          />
-        </video>
-      </template>
-    </shop-wrapper>
-    <simple-loader-modal
-      v-if="transactionStep !== undefined"
-      :loader-step="transactionStep"
-      @close="transactionStep = undefined"
-    />
-  </div>
+      </div>
+    </template>
+
+    <template v-slot:right>
+      <video
+        autoplay="autoplay"
+        class="moving-with-olympus"
+        data-keepplaying="data-keepplaying"
+        loop="loop"
+        muted="muted"
+        playsinline="playsinline"
+      >
+        <source
+          src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
+          type="video/mp4"
+        />
+      </video>
+    </template>
+
+    <template v-slot:modals>
+      <simple-loader-modal
+        v-if="transactionStep !== undefined"
+        :loader-step="transactionStep"
+        @close="transactionStep = undefined"
+      />
+    </template>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -68,18 +83,19 @@ import dayjs from 'dayjs';
 import { ChangePayload } from '@/store/modules/nft/actions/claim';
 import { formatToDecimals } from '@/utils/format';
 
-import ActionButton from '@/components/buttons/action-button.vue';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import { ActionButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { ContentWrapperTwoSided } from '@/components/layout';
+import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewMovingWithOlympus',
   components: {
+    ContentWrapperTwoSided,
     ActionButton,
-    ShopList,
-    ShopListItem,
-    ShopWrapper,
+    AnalyticsList,
+    AnalyticsListItem,
     SimpleLoaderModal
   },
   data() {

@@ -1,10 +1,14 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <secondary-page-simple-title
-      class="monthly-statements-title"
-      :description="pageSubtitle"
-      :title="pageTitle"
-    />
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
+  >
+    <template v-slot:title>
+      <secondary-page-header :description="pageSubtitle" :title="pageTitle" />
+    </template>
+
     <treasury-monthly-chart-wrapper
       v-if="isFeatureEnabled('isTreasuryMonthlyChartEnabled')"
     />
@@ -22,7 +26,7 @@ import { isFeatureEnabled } from '@/settings';
 import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
 import { dateFromExplicitPair } from '@/utils/time';
 
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import {
   TreasuryMonthlyChartWrapper,
   TreasuryMonthlyStatement
@@ -31,8 +35,8 @@ import {
 export default Vue.extend({
   name: 'TreasuryMonthlyStatistics',
   components: {
-    SecondaryPageSimpleTitle,
     SecondaryPage,
+    SecondaryPageHeader,
     TreasuryMonthlyChartWrapper,
     TreasuryMonthlyStatement
   },

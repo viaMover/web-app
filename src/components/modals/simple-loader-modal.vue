@@ -5,10 +5,9 @@
       class="modal__dimmer"
       @click="handleDimmerClick"
     />
-    <back-button
+    <close-button
       v-if="showCloseButton"
       class="modal__close-button"
-      mode="CLOSE-BLACK"
       @close="handleClose"
     />
     <div class="modal__body">
@@ -23,13 +22,13 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { BackButton } from '@/components/buttons';
+import { CloseButton } from '@/components/buttons';
 import { FormLoader } from '@/components/forms';
 
 export default Vue.extend({
   name: 'SimpleLoaderModal',
   components: {
-    BackButton,
+    CloseButton,
     FormLoader
   },
   props: {

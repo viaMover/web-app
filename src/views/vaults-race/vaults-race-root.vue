@@ -1,16 +1,46 @@
 <template>
   <content-wrapper
+    class="vaults-race"
     has-close-button
     has-left-rail
-    is-black-close-button
-    left-rail-inner-wrapper-class="page-sidebar-wrapper"
-    wrapper-class="vaults-race"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <keep-alive>
-        <component :is="'vaults-race-left-rail'" />
-      </keep-alive>
+      <navigation-section :section-name="$t('vaultsRace.lblMyVaults')">
+        <navigation-section-item-image
+          :description="vaultsDescription"
+          description-class="bold"
+          navigate-to="vaults-race-view-all"
+          :title="$t('vaultsRace.lblVaults')"
+          title-class="disabled"
+        >
+          <template v-slot:picture>
+            <custom-picture
+              :alt="race.alt"
+              :sources="race.sources"
+              :src="race.src"
+              :webp-sources="race.webpSources"
+            />
+          </template>
+        </navigation-section-item-image>
+      </navigation-section>
+      <navigation-section :section-name="$t('vaultsRace.lblManageVaults')">
+        <navigation-section-item-image
+          :description="$t('vaultsRace.lblGlobalStatistics')"
+          description-class="disabled"
+          navigate-to="vaults-race-statistics"
+          :title="$t('vaultsRace.lblLeaderboard')"
+        >
+          <template v-slot:picture>
+            <custom-picture
+              :alt="leaderboard.alt"
+              :sources="leaderboard.sources"
+              :src="leaderboard.src"
+              :webp-sources="leaderboard.webpSources"
+            />
+          </template>
+        </navigation-section-item-image>
+      </navigation-section>
     </template>
 
     <router-view />
@@ -19,17 +49,71 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
-import { VaultsRaceLeftRail } from '@/components/vaults-race';
-
-import '@/styles/_games.less';
+import {
+  NavigationSection,
+  NavigationSectionItemImage
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'VaultsRaceRoot',
   components: {
     ContentWrapper,
-    VaultsRaceLeftRail
+    NavigationSection,
+    NavigationSectionItemImage,
+    CustomPicture
+  },
+  data() {
+    return {
+      //TODO insert new image
+      race: {
+        alt: '',
+        src: require('@/assets/images/Savings@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.webp')
+          }
+        ]
+      } as PictureDescriptor,
+      leaderboard: {
+        alt: '',
+        src: require('@/assets/images/Savings@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.webp')
+          }
+        ]
+      } as PictureDescriptor
+    };
+  },
+  computed: {
+    ...mapGetters('games', {
+      vaultsRaceAccountsCount: 'vaultsRaceAccountsCount'
+    }),
+    vaultsDescription(): string {
+      return `${this.vaultsRaceAccountsCount} accounts`;
+    }
   },
   methods: {
     handleClose(): void {

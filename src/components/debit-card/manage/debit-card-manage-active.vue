@@ -1,29 +1,35 @@
 <template>
-  <secondary-page :title="$t('debitCard.lblBeautifulCard')">
-    <p class="description">{{ $t('debitCard.txtVisaDebitCard') }}</p>
+  <secondary-page class="manage active" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
+        :description="$t('debitCard.txtVisaDebitCard')"
+        :title="$t('debitCard.lblBeautifulCard')"
+      />
+    </template>
 
     <div class="content">
       <div class="container">
         <debit-card-image :skin="currentSkin" />
       </div>
-      <statement-list class="container">
-        <statement-list-item
-          :description="$t('debitCard.lblLast4Digits')"
-          :value="last4Digits"
+
+      <analytics-list class="container">
+        <analytics-list-item
+          :description="last4Digits"
+          :title="$t('debitCard.lblLast4Digits')"
         />
-        <statement-list-item
-          :description="$t('debitCard.lblExpiryDate')"
-          :value="expiryDate"
+        <analytics-list-item
+          :description="expiryDate"
+          :title="$t('debitCard.lblExpiryDate')"
         />
-        <statement-list-item
-          :description="$t('debitCard.lblIBAN')"
-          :value="iban"
+        <analytics-list-item
+          :description="iban"
+          :title="$t('debitCard.lblIBAN')"
         />
-        <statement-list-item
-          :description="$t('debitCard.lblBIC')"
-          :value="bic"
+        <analytics-list-item
+          :description="bic"
+          :title="$t('debitCard.lblBIC')"
         />
-      </statement-list>
+      </analytics-list>
     </div>
   </secondary-page>
 </template>
@@ -32,20 +38,18 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { SecondaryPage } from '@/components/layout';
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 import DebitCardImage from '../debit-card-image.vue';
 
 export default Vue.extend({
   name: 'DebitCardManageActive',
   components: {
-    StatementList,
-    StatementListItem,
     SecondaryPage,
+    SecondaryPageHeader,
+    AnalyticsList,
+    AnalyticsListItem,
     DebitCardImage
   },
   computed: {

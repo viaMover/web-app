@@ -1,43 +1,47 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
+  <secondary-page
+    class="powercard empty"
+    hide-info
+    hide-title
+    @back="handleBack"
+  >
     <template v-if="txStep === undefined">
-      <div>
-        <secondary-page-simple-title
-          class="page-title max-width"
-          :description="$t('treasury.powercard.txtThePowercardPageDescription')"
-          :title="$t('treasury.powercard.lblThePowercard')"
-        />
-        <custom-picture
-          :alt="powercard.alt"
-          picture-class="margin-top-60"
-          :sources="powercard.sources"
-          :src="powercard.src"
-          :webp-sources="powercard.webpSources"
-        />
-        <p class="margin-top-40 medium gray">
-          {{ $t('treasury.powercard.lblIfYouActivateCard') }}
-        </p>
+      <secondary-page-header
+        class="max-width"
+        :description="$t('treasury.powercard.txtThePowercardPageDescription')"
+        :title="$t('treasury.powercard.lblThePowercard')"
+      />
+
+      <custom-picture
+        :alt="powercard.alt"
+        class="picture powercard"
+        :sources="powercard.sources"
+        :src="powercard.src"
+        :webp-sources="powercard.webpSources"
+      />
+
+      <div class="action description">
+        {{ $t('treasury.powercard.lblIfYouActivateCard') }}
       </div>
-      <div class="power-card-empty-body">
-        <product-info-wrapper>
-          <product-info-item
-            :description="$t('treasury.powercard.lblAdditionalBoost')"
-            is-black-description
-            :title="additionalBoost"
-          />
-          <product-info-item
-            :description="$t('treasury.powercard.lblActive')"
-            is-black-description
-            :title="activeTime"
-          />
-          <product-info-item
-            :description="$t('treasury.powercard.lblCooldown')"
-            is-black-description
-            :title="cooldownTime"
-          />
-        </product-info-wrapper>
+
+      <product-info-wrapper>
+        <product-info-item
+          :description="$t('treasury.powercard.lblAdditionalBoost')"
+          :title="additionalBoost"
+        />
+        <product-info-item
+          :description="$t('treasury.powercard.lblActive')"
+          :title="activeTime"
+        />
+        <product-info-item
+          :description="$t('treasury.powercard.lblCooldown')"
+          :title="cooldownTime"
+        />
+      </product-info-wrapper>
+
+      <div class="actions">
         <action-button
-          button-class="button button-active black-link margin-top-40"
+          class="button primary"
           :disabled="!stakeAvailable"
           :text="$t('treasury.powercard.btnActivateThePowercard')"
           @button-click="handleActivateCard"
@@ -68,7 +72,7 @@ import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
 import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
@@ -79,7 +83,7 @@ export default Vue.extend({
     ProductInfoWrapper,
     CustomPicture,
     ActionButton,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     SecondaryPage,
     LoaderForm
   },

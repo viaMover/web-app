@@ -1,0 +1,29 @@
+.fade {
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+  }
+
+  &-enter,
+  &-leave {
+    &-active {
+      transition: opacity 0.25s ease-in-out;
+    }
+  }
+}
+
+.list-transition {
+  &-item {
+    transition: all 0.25s;
+  }
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  &-leave-active {
+    position: absolute;
+  }
+}

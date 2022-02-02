@@ -1,11 +1,12 @@
 <template>
-  <secondary-page hide-title>
-    <div class="empty-state-graph-wrapper">
-      <secondary-page-simple-title
-        class="balance"
+  <secondary-page hide-info>
+    <template v-slot:title>
+      <secondary-page-header
         :description="$t('treasury.txtTreasuryEmptyDescription')"
         :title="treasuryBalance"
       />
+    </template>
+    <div class="chart-wrapper">
       <bar-chart
         :chart-data-source="chartDataSource"
         disable-selecting
@@ -16,17 +17,15 @@
         <product-info-wrapper is-short>
           <product-info-item
             :description="$t('treasury.lblMaximumBoost')"
-            is-black-description
             :title="currentMaxBoost"
           />
           <product-info-item
             :description="$t('treasury.lblGasCostCoverage')"
-            is-black-description
             :title="currentCostCoverage"
           />
         </product-info-wrapper>
         <action-button
-          button-class="button button-active bold"
+          class="primary"
           :text="$t('treasury.lblStartBoosting')"
           @button-click="handleStartBoosting"
         />
@@ -43,7 +42,7 @@ import { formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
@@ -51,7 +50,7 @@ export default Vue.extend({
   components: {
     ProductInfoItem,
     ProductInfoWrapper,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     BarChart,
     SecondaryPage,
     ActionButton

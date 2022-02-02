@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="claim-and-burn"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >
