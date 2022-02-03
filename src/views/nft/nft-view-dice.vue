@@ -30,61 +30,68 @@
         />
       </analytics-list>
 
-      <div class="actions">
-        <div class="group default">
-          <action-button
-            class="primary"
-            :text="$t('NFTs.btn.dice.get.txt')"
-            @button-click="handleClaim(20)"
-          />
-        </div>
-
-        <div class="group">
-          <h2 class="title">{{ $t('NFTs.lblOtherDiceOptions') }}</h2>
-          <div class="items">
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
-              :text="$t('NFTs.btn.dice.fourSide.txt')"
-              @button-click="handleClaim(4)"
-            />
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
-              :text="$t('NFTs.btn.dice.sixSide.txt')"
-              @button-click="handleClaim(6)"
-            />
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
-              :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
-              @button-click="handleClaim(66)"
-            />
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
-              :text="$t('NFTs.btn.dice.eightSide.txt')"
-              @button-click="handleClaim(8)"
-            />
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
-              :text="$t('NFTs.btn.dice.tenSide.txt')"
-              @button-click="handleClaim(10)"
-            />
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
-              :text="$t('NFTs.btn.dice.twelveSide.txt')"
-              @button-click="handleClaim(12)"
+      <form
+        class="form"
+        :class="{ error: actionError !== undefined }"
+        @submit.prevent="handleClaim(20)"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              propagate-original-event
+              :text="$t('NFTs.btn.dice.get.txt')"
+              type="submit"
             />
           </div>
-        </div>
 
-        <div v-if="actionError !== undefined" class="group error-message">
-          {{ actionError }}
+          <div class="group">
+            <h2 class="title">{{ $t('NFTs.lblOtherDiceOptions') }}</h2>
+            <div class="items">
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
+                :text="$t('NFTs.btn.dice.fourSide.txt')"
+                @button-click="handleClaim(4)"
+              />
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
+                :text="$t('NFTs.btn.dice.sixSide.txt')"
+                @button-click="handleClaim(6)"
+              />
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
+                :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
+                @button-click="handleClaim(66)"
+              />
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
+                :text="$t('NFTs.btn.dice.eightSide.txt')"
+                @button-click="handleClaim(8)"
+              />
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
+                :text="$t('NFTs.btn.dice.tenSide.txt')"
+                @button-click="handleClaim(10)"
+              />
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
+                :text="$t('NFTs.btn.dice.twelveSide.txt')"
+                @button-click="handleClaim(12)"
+              />
+            </div>
+          </div>
+
+          <div v-if="actionError !== undefined" class="group error-message">
+            {{ actionError }}
+          </div>
         </div>
-      </div>
+      </form>
     </template>
 
     <template v-slot:right>

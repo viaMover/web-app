@@ -29,41 +29,48 @@
         />
       </analytics-list>
 
-      <div class="actions">
-        <div class="group default">
-          <action-button
-            class="primary"
-            :text="$t('NFTs.btn.unexpectedMove.get.txt')"
-            @button-click="handleClaim"
-          />
-        </div>
-
-        <div v-if="getNftError !== undefined" class="group error-message">
-          {{ getNftError }}
-        </div>
-
-        <div class="group">
-          <h3 class="title">{{ $t('NFTs.lblWhatElseCanDo') }}</h3>
-          <div class="items">
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
-              :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
-              @button-click="handleClaimAndExchange"
-            />
-            <emoji-text-button
-              class="item"
-              :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
-              :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
-              @button-click="handleExchange"
+      <form
+        class="form"
+        :class="{ error: !!actionError || !!getNftError }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              propagate-original-event
+              :text="$t('NFTs.btn.unexpectedMove.get.txt')"
+              type="submit"
             />
           </div>
-        </div>
 
-        <div v-if="actionError !== undefined" class="group error-message">
-          {{ actionError }}
+          <div v-if="getNftError !== undefined" class="group error-message">
+            {{ getNftError }}
+          </div>
+
+          <div class="group">
+            <h3 class="title">{{ $t('NFTs.lblWhatElseCanDo') }}</h3>
+            <div class="items">
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
+                :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
+                @button-click="handleClaimAndExchange"
+              />
+              <emoji-text-button
+                class="item"
+                :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
+                :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
+                @button-click="handleExchange"
+              />
+            </div>
+          </div>
+
+          <div v-if="actionError !== undefined" class="group error-message">
+            {{ actionError }}
+          </div>
         </div>
-      </div>
+      </form>
     </template>
 
     <template v-slot:right>

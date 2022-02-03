@@ -29,19 +29,26 @@
         />
       </analytics-list>
 
-      <div class="actions">
-        <div class="group default">
-          <action-button
-            class="primary"
-            :text="$t('NFTs.btn.movingWithOlympus.get.txt')"
-            @button-click="handleClaim"
-          />
-        </div>
+      <form
+        class="form"
+        :class="{ error: !!error }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              propagate-original-event
+              :text="$t('NFTs.btn.movingWithOlympus.get.txt')"
+              type="submit"
+            />
+          </div>
 
-        <div v-if="error !== undefined" class="group error-message">
-          {{ error }}
+          <div v-if="error !== undefined" class="group error-message">
+            {{ error }}
+          </div>
         </div>
-      </div>
+      </form>
     </template>
 
     <template v-slot:right>

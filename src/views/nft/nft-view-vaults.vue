@@ -34,19 +34,25 @@
         />
       </analytics-list>
 
-      <div class="actions">
-        <div class="group default">
-          <action-button
-            class="primary"
-            :text="$t('NFTs.btn.vaults.get.txt')"
-            @button-click="handleClaim"
-          />
-        </div>
+      <form
+        class="form"
+        :class="{ error: !!getNftError }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              :text="$t('NFTs.btn.vaults.get.txt')"
+              @button-click="handleClaim"
+            />
+          </div>
 
-        <div v-if="getNftError !== undefined" class="group error-message">
-          {{ getNftError }}
+          <div v-if="getNftError !== undefined" class="group error-message">
+            {{ getNftError }}
+          </div>
         </div>
-      </div>
+      </form>
     </template>
 
     <template v-slot:right>
