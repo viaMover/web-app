@@ -351,6 +351,26 @@
     }
   }
 
+  > .actions {
+    .group {
+      margin-bottom: 24px;
+
+      // `margin-top` is used here instead of margin-bottom due
+      // to specific selector required to handle such a case
+      &.default + .group:not(.error-message) {
+        margin-top: 80px;
+      }
+
+      &.error-message {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
   .error-message {
     display: none;
   }
