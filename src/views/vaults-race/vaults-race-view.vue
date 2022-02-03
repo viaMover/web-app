@@ -1,34 +1,47 @@
 <template>
-  <shop-wrapper has-close-button @close="handleClose">
-    <template v-slot:info>
-      <h1 class="info__title">{{ $t('vaultsRace.lblRollDice') }}</h1>
-      <p class="info__description">
-        {{ $t('vaultsRace.txtPageDescriptionPartOne') }}
-      </p>
-      <shop-list>
-        <shop-list-item
+  <content-wrapper-two-sided
+    class="shop vaults-race"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ $t('vaultsRace.lblRollDice') }}</h1>
+        <p class="description">
+          {{ $t('vaultsRace.txtPageDescriptionPartOne') }}
+        </p>
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="item ? item.address : ''"
           :title="$t('vaultsRace.lblAccountNumber')"
-          :value="item ? item.address : ''"
         />
-        <shop-list-item
+        <analytics-list-item
+          :description="item ? item.score : ''"
           :title="$t('vaultsRace.lblCurrentScore')"
-          :value="item ? item.score : ''"
         />
-        <shop-list-item
+        <analytics-list-item
+          description="view"
           :title="$t('vaultsRace.lblOpenSeaCollection')"
-          value="view"
         />
-      </shop-list>
-      <action-button
-        class="primary"
-        :text="$t('vaultsRace.btn.rollDice')"
-        @button-click="handleRoll"
-      />
-      <div v-if="error !== undefined" class="error-message">
-        {{ error }}
+      </analytics-list>
+
+      <div class="actions">
+        <div class="group default">
+          <action-button
+            class="primary"
+            :text="$t('vaultsRace.btn.rollDice')"
+            @button-click="handleRoll"
+          />
+        </div>
+
+        <div v-if="error !== undefined" class="group error-message">
+          {{ error }}
+        </div>
       </div>
     </template>
-    <template v-slot:illustration>
+    <template v-slot:right>
       <video
         autoplay="autoplay"
         class="moving-with-olympus"
@@ -43,7 +56,7 @@
         />
       </video>
     </template>
-  </shop-wrapper>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -52,14 +65,18 @@ import { mapGetters } from 'vuex';
 
 import { VaultRaceAccount } from '@/store/modules/games/types';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import ActionButton from '@/components/buttons/action-button.vue';
-import ShopList from '@/components/layout/shop-wrapper/shop-list/shop-list.vue';
-import ShopListItem from '@/components/layout/shop-wrapper/shop-list/shop-list-item.vue';
-import ShopWrapper from '@/components/layout/shop-wrapper/shop-wrapper.vue';
+import ContentWrapperTwoSided from '@/components/layout/content-wrapper-two-sided.vue';
 
 export default Vue.extend({
   name: 'VaultsRaceView',
-  components: { ActionButton, ShopListItem, ShopList, ShopWrapper },
+  components: {
+    ContentWrapperTwoSided,
+    ActionButton,
+    AnalyticsList,
+    AnalyticsListItem
+  },
   data() {
     return {
       error: undefined as string | undefined
