@@ -43,7 +43,9 @@
       </navigation-section>
     </template>
 
-    <router-view />
+    <transition mode="out-in" name="fade">
+      <router-view />
+    </transition>
   </content-wrapper>
 </template>
 

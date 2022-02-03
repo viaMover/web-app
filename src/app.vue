@@ -11,7 +11,7 @@
           :provider-options="providerOptions"
           :theme="theme"
         />
-        <transition appear name="fade">
+        <transition mode="out-in" name="fade">
           <template v-if="showPreload">
             <router-view
               v-if="$route.meta.hasOwnPreload"

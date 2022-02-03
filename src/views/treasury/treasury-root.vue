@@ -140,7 +140,9 @@
       </nav>
     </template>
 
-    <router-view />
+    <transition mode="out-in" name="fade">
+      <router-view />
+    </transition>
 
     <template v-slot:modals>
       <search-modal />
