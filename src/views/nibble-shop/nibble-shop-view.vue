@@ -23,32 +23,41 @@
         />
       </analytics-list>
 
-      <div class="actions">
-        <div class="group default">
-          <action-button
-            class="primary"
-            :text="$t('nibbleShop.btn.get.txt', { item: productShortName })"
-            @button-click="handleClaim"
-          />
-        </div>
-        <div v-if="getTokenError !== undefined" class="group error-message">
-          {{ getTokenError }}
-        </div>
-        <div class="group">
-          <h3 class="title">{{ $t('nibbleShop.lblWhatElseCanDo') }}</h3>
-          <div class="items">
-            <emoji-text-button
-              class="item"
-              :emoji="$t('nibbleShop.btn.redeem.emoji')"
-              :text="$t('nibbleShop.btn.redeem.txt')"
-              @button-click="handleRedeem"
+      <form
+        class="form"
+        :class="{ error: !!actionError || !!getTokenError }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              :text="$t('nibbleShop.btn.get.txt', { item: productShortName })"
+              @button-click="handleClaim"
             />
           </div>
+
+          <div v-if="getTokenError !== undefined" class="group error-message">
+            {{ getTokenError }}
+          </div>
+
+          <div class="group">
+            <h3 class="title">{{ $t('nibbleShop.lblWhatElseCanDo') }}</h3>
+            <div class="items">
+              <emoji-text-button
+                class="item"
+                :emoji="$t('nibbleShop.btn.redeem.emoji')"
+                :text="$t('nibbleShop.btn.redeem.txt')"
+                @button-click="handleRedeem"
+              />
+            </div>
+          </div>
+
+          <div v-if="actionError !== undefined" class="group error-message">
+            {{ actionError }}
+          </div>
         </div>
-        <div v-if="actionError !== undefined" class="group error-message">
-          {{ actionError }}
-        </div>
-      </div>
+      </form>
     </template>
 
     <template v-slot:right>
