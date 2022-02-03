@@ -102,14 +102,16 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('treasury', {
       powercardBalance: 'powercardBalance',
       powercardState: 'powercardState',
-      networkInfo: 'networkInfo',
-      provider: 'provider',
-      currentAddress: 'currentAddress',
       powercardActiveTime: 'powercardActiveTime',
       powercardCooldownTime: 'powercardCooldownTime'
+    }),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      provider: 'provider',
+      currentAddress: 'currentAddress'
     }),
     unstakeAvailable(): boolean {
       return this.powercardState === 'NotStakedCooldown';

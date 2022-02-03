@@ -180,19 +180,21 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'currentAddress',
-      'nativeCurrency',
-      'gasPrices',
-      'ethPrice',
-      'tokens',
-      'savingsAPY',
-      'usdcPriceInWeth',
-      'savingsBalance',
-      'provider'
-    ]),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      currentAddress: 'currentAddress',
+      nativeCurrency: 'nativeCurrency',
+      gasPrices: 'gasPrices',
+      ethPrice: 'ethPrice',
+      tokens: 'tokens',
+      usdcPriceInWeth: 'usdcPriceInWeth',
+      provider: 'provider'
+    }),
+    ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
+    ...mapState('savings', {
+      savingsAPY: 'savingsAPY',
+      savingsBalance: 'savingsBalance'
+    }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },

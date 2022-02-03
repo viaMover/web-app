@@ -16,18 +16,9 @@ type Getters = {
   savingsEstimatedEarningsTomorrowNative: string;
   savingsEstimatedEarningsNextMonthNative: string;
   savingsEstimatedEarningsAnnuallyNative: string;
-  // savingsEndOfMonthBalanceNative: string;
-  // savingsMonthEarnedNative: string;
-  // savingsMonthAverageEarnedNative: string;
-  // savingsMonthTotalDepositsNative: string;
-  // savingsMonthTotalWithdrawalsNative: string;
   savingsMonthStatsOptions: Array<SavingsMonthBalanceItem>;
   hasActiveSavings: boolean;
   savingsAvg30DaysAPY: string;
-  // savingsMonthPaidToTreasury: string;
-  // savingsMonthPaidToTreasuryNative: string;
-  // savingsMonthSavedFees: string;
-  // savingsMonthSavedFeesNative: string;
   savingsReceipt: (y: number, m: number) => Promise<SavingsReceipt> | undefined;
   usdcNativePrice: string;
 };
@@ -135,89 +126,6 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     const multiplier = divide(state.savingsAPY, 100);
     return multiply(getters.savingsInfoBalanceNative, multiplier);
   },
-  // savingsEndOfMonthBalanceNative(state, getters, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.endOfMonthBalance === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   const balanceInUSDC = fromWei(
-  //     state.savingsReceipt.endOfMonthBalance,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  //
-  //   return multiply(balanceInUSDC, getters.usdcNativePrice);
-  // },
-  // savingsMonthEarnedNative(state, getters, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.earnedThisMonth === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   const earnedInUSDC = fromWei(
-  //     state.savingsReceipt.earnedThisMonth,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  //   return multiply(earnedInUSDC, getters.usdcNativePrice);
-  // },
-  // savingsMonthAverageEarnedNative(state, getters, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.avgDailyEarnings === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   const earnedInUSDC = fromWei(
-  //     state.savingsReceipt.avgDailyEarnings,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  //   return multiply(earnedInUSDC, getters.usdcNativePrice);
-  // },
-  // savingsMonthTotalDepositsNative(state, getters, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.totalDeposits === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   const depositsInUSDC = fromWei(
-  //     state.savingsReceipt.totalDeposits,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  //
-  //   return multiply(depositsInUSDC, getters.usdcNativePrice);
-  // },
-  // savingsMonthTotalWithdrawalsNative(state, _, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.totalWithdrawals === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   const withdrawalsInUSDC = fromWei(
-  //     state.savingsReceipt.totalWithdrawals,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  //
-  //   return multiply(withdrawalsInUSDC, getters.usdcNativePrice);
-  // },
   savingsMonthStatsOptions(state): Array<SavingsMonthBalanceItem> {
     if (state.isSavingsInfoLoading || state.savingsInfo === undefined) {
       return [];
@@ -280,45 +188,6 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
 
     return multiply(state.savingsInfo.avg30DaysAPY, 100);
   },
-  // savingsMonthPaidToTreasury(state, _, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.paidToTreasury === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   return fromWei(
-  //     state.savingsReceipt.paidToTreasury,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  // },
-  // savingsMonthPaidToTreasuryNative(state, getters, _): string {
-  //   return multiply(
-  //     getters.savingsMonthPaidToTreasury,
-  //     getters.usdcNativePrice
-  //   );
-  // },
-  // savingsMonthSavedFees(state, _, rootState): string {
-  //   if (
-  //     state.savingsReceipt === undefined ||
-  //     state.isSavingsReceiptLoading ||
-  //     rootState.account!.networkInfo === undefined ||
-  //     state.savingsReceipt.savedFees === 0
-  //   ) {
-  //     return '0';
-  //   }
-  //
-  //   return fromWei(
-  //     state.savingsReceipt.savedFees,
-  //     getUSDCAssetData(rootState.account!.networkInfo.network).decimals
-  //   );
-  // },
-  // savingsMonthSavedFeesNative(state, getters, _): string {
-  //   return multiply(getters.savingsMonthSavedFees, getters.usdcNativePrice);
-  // },
   usdcNativePrice(state, getters, _, rootGetters): string {
     return rootGetters['account/usdcNativePrice'];
   },
@@ -326,7 +195,7 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     state
   ): (year: number, month: number) => Promise<SavingsReceipt> | undefined {
     return (year, month): Promise<SavingsReceipt> | undefined => {
-      const item = state.receipts[`${year}/${month}`];
+      const item = state.receipts.get(`${year}/${month}`);
       if (item !== undefined && item.expDate > Date.now()) {
         return item.data;
       } else {

@@ -149,24 +149,26 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', [
-      'getTokenColor',
-      'moveNativePrice',
-      'slpNativePrice',
-      'treasuryBoost'
-    ]),
-    ...mapState('account', [
-      'networkInfo',
-      'tokens',
-      'treasuryBalanceMove',
-      'treasuryBalanceLP',
-      'currentAddress',
-      'provider',
-      'ethPrice',
-      'gasPrices',
-      'nativeCurrency',
-      'powercardState'
-    ]),
+    ...mapGetters('account', {
+      getTokenColor: 'getTokenColor',
+      moveNativePrice: 'moveNativePrice',
+      slpNativePrice: 'slpNativePrice',
+      treasuryBoost: 'treasuryBoost'
+    }),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      tokens: 'tokens',
+      currentAddress: 'currentAddress',
+      provider: 'provider',
+      ethPrice: 'ethPrice',
+      gasPrices: 'gasPrices',
+      nativeCurrency: 'nativeCurrency'
+    }),
+    ...mapState('treasury', {
+      treasuryBalanceMove: 'treasuryBalanceMove',
+      treasuryBalanceLP: 'treasuryBalanceLP',
+      powercardState: 'powercardState'
+    }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },

@@ -14,7 +14,7 @@ export default {
     treasuryInfo: undefined,
     treasuryInfoError: undefined,
 
-    receipts: {},
+    receipts: new Map(),
 
     treasuryBalanceMove: undefined,
     treasuryBalanceLP: undefined,

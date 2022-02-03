@@ -24,7 +24,7 @@ type Actions = {
   loadInfo: Promise<void>;
   fetchSavingsFreshData: Promise<void>;
   fetchSavingsInfo: Promise<void>;
-  fetchSavingsReceipt: Promise<void>;
+  fetchSavingsReceipt: void;
 };
 
 const actions: ActionFuncs<
@@ -42,14 +42,16 @@ const actions: ActionFuncs<
       i.setMonth(i.getMonth() - 1)
     ) {
       const receipt = await getFromPersistStoreWithExpire(
-        'treasuryReceipts',
+        'savingsReceipts',
         `${i.getFullYear()}/${i.getMonth() + 1}`
       );
-      commit('setSavingsReceipt', {
-        year: i.getFullYear(),
-        month: i.getMonth() + 1,
-        receipt: Promise.resolve(receipt)
-      } as SetSavingsReceiptPayload);
+      if (receipt !== undefined) {
+        commit('setSavingsReceipt', {
+          year: i.getFullYear(),
+          month: i.getMonth() + 1,
+          receipt: Promise.resolve(receipt)
+        } as SetSavingsReceiptPayload);
+      }
     }
   },
   async loadMinimalInfo({ dispatch }): Promise<void> {
@@ -141,10 +143,10 @@ const actions: ActionFuncs<
     commit('setSavingsInfo', info.result);
     commit('setIsSavingsInfoLoading', false);
   },
-  async fetchSavingsReceipt(
+  fetchSavingsReceipt(
     { commit, state, rootState, getters },
     { year, month }: SavingsGetReceiptPayload
-  ): Promise<void> {
+  ): void {
     if (!checkAccountStateIsReady(rootState)) {
       return;
     }

@@ -42,7 +42,7 @@ import Mobile from '@/views/mobile.vue';
 import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { APIKeys } from './settings';
-import { InitWalletPayload } from './store/modules/account/actions/wallet';
+import { InitWalletPayload } from './store/modules/account/types';
 import { InitCallbacks } from './web3/callbacks';
 
 export default Vue.extend({

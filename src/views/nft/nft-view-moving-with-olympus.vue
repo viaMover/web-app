@@ -80,7 +80,7 @@ import { mapActions, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { ChangePayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';

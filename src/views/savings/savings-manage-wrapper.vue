@@ -18,7 +18,7 @@ export default Vue.extend({
     SavingsManage
   },
   computed: {
-    ...mapGetters('account', {
+    ...mapGetters('savings', {
       hasActiveSavings: 'hasActiveSavings'
     })
   }

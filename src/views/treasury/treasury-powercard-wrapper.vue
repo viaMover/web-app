@@ -21,7 +21,7 @@ export default Vue.extend({
     TreasuryPowercardEmpty
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('treasury', {
       powercardBalance: 'powercardBalance',
       powercardState: 'powercardState'
     }),

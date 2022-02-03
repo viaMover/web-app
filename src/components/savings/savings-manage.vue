@@ -65,12 +65,15 @@ export default Vue.extend({
     ...mapState({
       colors: 'colors'
     }),
-    ...mapState('account', {
+    ...mapState('savings', {
       savingsInfo: 'savingsInfo',
       isSavingsInfoLoading: 'isSavingsInfoLoading',
       networkInfo: 'networkInfo'
     }),
-    ...mapGetters('account', {
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
+    ...mapGetters('savings', {
       savingsMonthStatsOptions: 'savingsMonthStatsOptions',
       savingsInfoBalanceNative: 'savingsInfoBalanceNative',
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',

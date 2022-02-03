@@ -63,7 +63,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import QRCode from 'qrcode';
 
 import { APIKeys } from '@/settings';
-import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
+import { InitWalletPayload } from '@/store/modules/account/types';
 import { InitCallbacks } from '@/web3/callbacks';
 
 import { ContentWrapper } from '@/components/layout';

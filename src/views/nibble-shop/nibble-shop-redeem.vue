@@ -192,7 +192,7 @@ import * as Sentry from '@sentry/vue';
 
 import { NibbleShopApiError } from '@/services/mover/nibble-shop/types';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
-import { RedeemPayload } from '@/store/modules/shop/actions/redeem';
+import { RedeemPayload } from '@/store/modules/shop/types';
 import { Asset, RedeemParams } from '@/store/modules/shop/types';
 
 import { ActionButton } from '@/components/buttons';

@@ -55,7 +55,7 @@ export default Vue.extend({
     BarChart
   },
   computed: {
-    ...mapState('account', { apy: 'savingsAPY' }),
+    ...mapState('savings', { apy: 'savingsAPY' }),
     savingsBalance(): string {
       const apyNative = multiply(divide(this.apy, '100'), '10000');
       return `~ $${formatToNative(apyNative)}`;

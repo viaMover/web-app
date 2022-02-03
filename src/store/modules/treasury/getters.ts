@@ -562,7 +562,7 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
     state
   ): (year: number, month: number) => Promise<TreasuryReceipt> | undefined {
     return (year, month): Promise<TreasuryReceipt> | undefined => {
-      const item = state.receipts[`${year}/${month}`];
+      const item = state.receipts.get(`${year}/${month}`);
       if (item !== undefined && item.expDate > Date.now()) {
         return item.data;
       } else {

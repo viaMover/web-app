@@ -65,11 +65,13 @@ export default Vue.extend({
       colors: 'colors'
     }),
     ...mapState('account', {
-      isTreasuryInfoLoading: 'isTreasuryInfoLoading',
-      treasuryInfo: 'treasuryInfo',
       networkInfo: 'networkInfo'
     }),
-    ...mapGetters('account', {
+    ...mapState('treasury', {
+      isTreasuryInfoLoading: 'isTreasuryInfoLoading',
+      treasuryInfo: 'treasuryInfo'
+    }),
+    ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative',
       treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
       treasuryMonthStatsOptions: 'treasuryMonthStatsOptions',

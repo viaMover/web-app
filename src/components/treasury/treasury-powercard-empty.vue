@@ -107,9 +107,11 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('treasury', {
       powercardBalance: 'powercardBalance',
-      powercardState: 'powercardState',
+      powercardState: 'powercardState'
+    }),
+    ...mapState('account', {
       networkInfo: 'networkInfo',
       provider: 'provider',
       currentAddress: 'currentAddress'

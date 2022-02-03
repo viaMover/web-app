@@ -81,7 +81,7 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import { Properties } from 'csstype';
 
-import { ClaimPayload } from '@/store/modules/shop/actions/claim';
+import { ClaimPayload } from '@/store/modules/shop/types';
 import { Asset } from '@/store/modules/shop/types';
 import { fromWei } from '@/utils/bigmath';
 

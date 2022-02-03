@@ -55,11 +55,13 @@ const actions: ActionFuncs<
         'treasuryReceipts',
         `${i.getFullYear()}/${i.getMonth() + 1}`
       );
-      commit('setTreasuryReceipt', {
-        year: i.getFullYear(),
-        month: i.getMonth() + 1,
-        receipt: Promise.resolve(receipt)
-      } as SetTreasuryReceiptPayload);
+      if (receipt !== undefined) {
+        commit('setTreasuryReceipt', {
+          year: i.getFullYear(),
+          month: i.getMonth() + 1,
+          receipt: Promise.resolve(receipt)
+        } as SetTreasuryReceiptPayload);
+      }
     }
   },
   async loadMinimalInfo({ dispatch }): Promise<void> {
