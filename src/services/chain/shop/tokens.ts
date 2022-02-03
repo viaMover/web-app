@@ -54,7 +54,7 @@ export const allNibbleShopTokens: Asset[] = [
     address: '0x6e0c982c05b6fb0d7465476ddef7b1b7cbe26fcb',
     feeAmount: toWei('0.1', 18),
     balance: 0,
-    initialQuantity: 0,
+    initialQuantity: 42,
     redeemCount: 0,
     totalClaimed: 0,
     title: 'The OG T-Shirt',

@@ -72,7 +72,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919',
     FEI_TOKEN_ADDRESS: '0x956F47F50A910163D8BF957Cf5846D573E7f87CA',
     USDT_TOKEN_ADDRESS: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-    SHIB_TOKEN_ADDRESS: '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE'
+    SHIB_TOKEN_ADDRESS: '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE',
+    AXS_TOKEN_ADDRESS: '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b',
+    SLP_TOKEN_ADDRESS: '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25'
   },
   [Network.ropsten]: {
     BASE_ASSET: {
@@ -119,7 +121,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
     BASE_ASSET: {
@@ -166,7 +170,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.kovan]: {
     BASE_ASSET: {
@@ -214,7 +220,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.matic]: {
     BASE_ASSET: {
@@ -261,7 +269,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.binance]: {
     BASE_ASSET: {
@@ -308,7 +318,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
     BASE_ASSET: {
@@ -355,7 +367,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.fantom]: {
     BASE_ASSET: {
@@ -402,7 +416,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.arbitrum]: {
     BASE_ASSET: {
@@ -449,7 +465,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   },
   [Network.avalanche]: {
     BASE_ASSET: {
@@ -496,7 +514,9 @@ const ADDRESSES = {
     RAI_TOKEN_ADDRESS: '0x1',
     FEI_TOKEN_ADDRESS: '0x1',
     USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1'
+    SHIB_TOKEN_ADDRESS: '0x1',
+    AXS_TOKEN_ADDRESS: '0x1',
+    SLP_TOKEN_ADDRESS: '0x1'
   }
 };
 
@@ -710,6 +730,14 @@ const SHIB_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].SHIB_TOKEN_ADDRESS ?? '0x1';
 };
 
+const AXS_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].AXS_TOKEN_ADDRESS ?? '0x1';
+};
+
+const SLP_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].SLP_TOKEN_ADDRESS ?? '0x1';
+};
+
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
 
 const isTokenValidForTreasuryDeposit = (
@@ -848,7 +876,9 @@ const validTopUpAssets = (network: Network): Array<string> => {
     FEI_TOKEN_ADDRESS(network),
     USDT_TOKEN_ADDRESS(network),
     USDC_TOKEN_ADDRESS(network),
-    SHIB_TOKEN_ADDRESS(network)
+    SHIB_TOKEN_ADDRESS(network),
+    AXS_TOKEN_ADDRESS(network),
+    SLP_TOKEN_ADDRESS(network)
   ];
 };
 
@@ -922,5 +952,7 @@ export {
   FEI_TOKEN_ADDRESS,
   USDT_TOKEN_ADDRESS,
   SHIB_TOKEN_ADDRESS,
+  AXS_TOKEN_ADDRESS,
+  SLP_TOKEN_ADDRESS,
   validTopUpAssets
 };
