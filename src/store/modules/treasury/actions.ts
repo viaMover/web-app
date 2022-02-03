@@ -12,11 +12,11 @@ import {
 import { getPowercardTimings } from '@/services/chain/treasury/powercard';
 import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
-} from '@/store/modules/savings/utils';
+} from '@/settings/persist/utils';
+import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
 import { ActionFuncs } from '@/store/types';
 
 import { GetterType } from './getters';

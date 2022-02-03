@@ -3,12 +3,12 @@ import * as Sentry from '@sentry/vue';
 import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
 import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
-import { GetterType } from '@/store/modules/savings/getters';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
-} from '@/store/modules/savings/utils';
+} from '@/settings/persist/utils';
+import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { GetterType } from '@/store/modules/savings/getters';
 import { ActionFuncs } from '@/store/types';
 
 import { MutationType } from './mutations';
