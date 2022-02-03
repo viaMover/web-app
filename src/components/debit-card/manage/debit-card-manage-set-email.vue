@@ -7,56 +7,53 @@
       />
     </template>
 
-    <div class="content">
-      <div class="container">
-        <debit-card-image :skin="currentSkin" />
+    <debit-card-image :skin="currentSkin" />
+
+    <div class="tip">{{ $t('debitCard.txtBeautifulCardBenefits') }}</div>
+
+    <product-info-wrapper>
+      <product-info-item
+        :description="$t('debitCard.txtFree')"
+        :title="$t('debitCard.lblFree')"
+      />
+      <product-info-item
+        :description="$t('debitCard.txtNoLimit')"
+        :title="$t('debitCard.lblNoLimit')"
+      />
+      <product-info-item
+        :description="$t('debitCard.txtEUR')"
+        :title="$t('debitCard.lblEUR')"
+      />
+    </product-info-wrapper>
+
+    <form
+      class="form info email"
+      :class="{ error: $v.$anyError || errorText !== '' }"
+      @submit.prevent="handleSetEmail"
+    >
+      <div class="input-group" :class="{ error: $v.email.$error }">
+        <label>
+          {{ $t('debitCard.lblYourEmailAddress') }}
+          <input
+            v-model.trim="email"
+            autocomplete="email"
+            autofocus
+            :disabled="isLoading"
+            name="email"
+            :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
+            type="text"
+          />
+        </label>
+        <span v-if="!$v.email.required" class="error-message">
+          {{ $t('debitCard.errors.email.required') }}
+        </span>
+        <span v-if="!$v.email.isValidEmail" class="error-message">
+          {{ $t('debitCard.errors.email.invalid') }}
+        </span>
       </div>
-      <p class="description">
-        {{ $t('debitCard.txtBeautifulCardBenifits') }}
-      </p>
 
-      <product-info-wrapper>
-        <product-info-item
-          :description="$t('debitCard.txtFree')"
-          :title="$t('debitCard.lblFree')"
-        />
-        <product-info-item
-          :description="$t('debitCard.txtNoLimit')"
-          :title="$t('debitCard.lblNoLimit')"
-        />
-        <product-info-item
-          :description="$t('debitCard.txtEUR')"
-          :title="$t('debitCard.lblEUR')"
-        />
-      </product-info-wrapper>
-
-      <form
-        class="form info email"
-        :class="{ error: $v.$anyError || errorText !== '' }"
-        @submit.prevent="handleSetEmail"
-      >
-        <div class="input-group" :class="{ error: $v.email.$error }">
-          <label>
-            {{ $t('debitCard.lblYourEmailAddress') }}
-            <input
-              v-model.trim="email"
-              autocomplete="email"
-              autofocus
-              :disabled="isLoading"
-              name="email"
-              :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
-              type="text"
-            />
-          </label>
-          <span v-if="!$v.email.required" class="error-message">
-            {{ $t('debitCard.errors.email.required') }}
-          </span>
-          <span v-if="!$v.email.isValidEmail" class="error-message">
-            {{ $t('debitCard.errors.email.invalid') }}
-          </span>
-        </div>
-
-        <div class="actions">
+      <div class="actions">
+        <div class="group default">
           <action-button
             ref="button"
             class="primary"
@@ -74,12 +71,13 @@
               {{ $t('debitCard.btnValidateOrOrderCard') }}
             </template>
           </action-button>
-          <span v-if="errorText !== ''" class="error-message">
-            {{ errorText }}
-          </span>
         </div>
-      </form>
-    </div>
+
+        <div v-if="errorText !== ''" class="group error-message">
+          {{ errorText }}
+        </div>
+      </div>
+    </form>
   </secondary-page>
 </template>
 

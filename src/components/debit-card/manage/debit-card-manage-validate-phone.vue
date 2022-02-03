@@ -11,103 +11,107 @@
       <debit-card-image class="small" :skin="currentSkin" />
     </template>
 
-    <div class="container margin-top-80">
-      <form
-        class="form validate"
-        :class="{
-          error: $v.$anyError || errorText !== '',
-          disabled: !!kycLink
-        }"
-        :disabled="!!kycLink"
-        @submit.prevent="handleValidatePhoneNumber"
-      >
-        <div class="input-group" :class="{ error: $v.code.$error }">
-          <label>
-            {{ $t('debitCard.lblYourSecurityCode') }}
-            <input
-              v-model.trim="code"
-              autocomplete="one-time-code"
-              autofocus
-              :disabled="isLoading || !!kycLink"
-              maxlength="4"
-              minLength="4"
-              name="code"
-              :placeholder="$t('debitCard.txtYourSecurityCodePlaceholder')"
-              type="text"
-            />
-          </label>
-          <span v-if="!$v.code.required" class="error-message">
-            {{ $t('debitCard.errors.code.required') }}
-          </span>
-          <span v-if="!$v.code.numeric" class="error-message">
-            {{ $t('debitCard.errors.code.numeric') }}
-          </span>
-          <span v-if="!$v.code.length" class="error-message">
-            {{
-              $t('debitCard.errors.code.length', {
-                length: 4
-              })
-            }}
-          </span>
+    <form
+      class="form validate-phone"
+      :class="{
+        error: $v.$anyError || errorText !== '',
+        disabled: !!kycLink
+      }"
+      :disabled="!!kycLink"
+      @submit.prevent="handleValidatePhoneNumber"
+    >
+      <div class="input-group" :class="{ error: $v.code.$error }">
+        <label>
+          {{ $t('debitCard.lblYourSecurityCode') }}
+          <input
+            v-model.trim="code"
+            autocomplete="one-time-code"
+            autofocus
+            :disabled="isLoading || !!kycLink"
+            maxlength="4"
+            minLength="4"
+            name="code"
+            :placeholder="$t('debitCard.txtYourSecurityCodePlaceholder')"
+            type="text"
+          />
+        </label>
+        <span v-if="!$v.code.required" class="error-message">
+          {{ $t('debitCard.errors.code.required') }}
+        </span>
+        <span v-if="!$v.code.numeric" class="error-message">
+          {{ $t('debitCard.errors.code.numeric') }}
+        </span>
+        <span v-if="!$v.code.length" class="error-message">
+          {{
+            $t('debitCard.errors.code.length', {
+              length: 4
+            })
+          }}
+        </span>
+      </div>
+
+      <div class="actions">
+        <div class="group">
+          <action-button
+            ref="button"
+            class="primary"
+            :disabled="isLoading || !!kycLink"
+            propagate-original-event
+            type="submit"
+          >
+            <div v-if="isLoading" class="loader-icon">
+              <img
+                :alt="$t('icon.txtPendingIconAlt')"
+                src="@/assets/images/ios-spinner-white.svg"
+              />
+            </div>
+            <template v-else>
+              {{ $t('debitCard.btnOrderCard') }}
+            </template>
+          </action-button>
         </div>
 
-        <action-button
-          ref="button"
-          class="primary"
-          :disabled="isLoading || !!kycLink"
-          propagate-original-event
-          type="submit"
-        >
-          <div v-if="isLoading" class="loader-icon">
-            <img
-              :alt="$t('icon.txtPendingIconAlt')"
-              src="@/assets/images/ios-spinner-white.svg"
-            />
-          </div>
-          <template v-else>
-            {{ $t('debitCard.btnOrderCard') }}
-          </template>
-        </action-button>
-        <span v-if="errorText !== ''" class="error-message">
+        <div v-if="errorText !== ''" class="group error-message">
           {{ errorText }}
-        </span>
+        </div>
 
-        <button
-          class="
-            button-active button-image button-transparent button-change-number
-          "
-          :disabled="isLoading || !!kycLink"
-          type="button"
-          @click="handleChangePhoneNumber"
+        <div class="group">
+          <button
+            class="transparent icon button no-padding"
+            :disabled="isLoading || !!kycLink"
+            type="button"
+            @click="handleChangePhoneNumber"
+          >
+            <img
+              :alt="$t('icon.txtBackLinkIconAlt')"
+              src="@/assets/images/redo.svg"
+            />
+            {{ $t('debitCard.btnChangePhoneNumber') }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <form v-if="!!kycLink" class="form" @submit.prevent="handleProceed">
+      <div class="actions">
+        <i18n
+          ref="linkContainer"
+          class="group kyc-link"
+          path="debitCard.kycLink.description"
+          tag="div"
         >
-          <img
-            :alt="$t('icon.txtBackLinkIconAlt')"
-            src="@/assets/images/redo.svg"
-          />
-          {{ $t('debitCard.btnChangePhoneNumber') }}
-        </button>
-      </form>
-    </div>
+          <a class="link underline medium" :href="kycLink" target="_blank">
+            {{ $t('debitCard.kycLink.link') }}
+          </a>
+        </i18n>
 
-    <div
-      v-if="!!kycLink"
-      ref="linkContainer"
-      class="container margin-top-40 kyc-link"
-    >
-      <i18n class="description" path="debitCard.kycLink.description" tag="p">
-        <a class="link" :href="kycLink" target="_blank">
-          {{ $t('debitCard.kycLink.link') }}
-        </a>
-      </i18n>
-
-      <action-button
-        class="primary"
-        type="button"
-        @button-click="handleProceed"
-      >
-        {{ $t('debitCard.lblProceedAfterKyc') }}
-      </action-button>
-    </div>
+        <div class="group">
+          <action-button class="primary" propagate-original-event type="submit">
+            {{ $t('debitCard.lblProceedAfterKyc') }}
+          </action-button>
+        </div>
+      </div>
+    </form>
   </secondary-page>
 </template>
 

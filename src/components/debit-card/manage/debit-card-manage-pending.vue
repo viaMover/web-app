@@ -7,31 +7,27 @@
       />
     </template>
 
-    <div class="content">
-      <div class="container history">
-        <debit-card-history-group
-          v-for="group in actionHistory"
-          :key="group.timestamp"
-          :date="formatDate(group.timestamp)"
-          :items="group.events"
-        />
-      </div>
+    <debit-card-history-group
+      v-for="group in actionHistory"
+      :key="group.timestamp"
+      :date="formatDate(group.timestamp)"
+      :items="group.events"
+    />
 
-      <div
-        v-if="showKycLinkContainer"
-        ref="linkContainer"
-        class="container margin-top-40 kyc-link"
-      >
-        <i18n class="description" path="debitCard.kycLink.description" tag="p">
-          <a
-            class="link"
-            :href="kycLink"
-            target="_blank"
-            v-text="$t('debitCard.kycLink.link')"
-          />
-        </i18n>
-      </div>
-    </div>
+    <i18n
+      v-if="showKycLinkContainer"
+      class="kyc-link"
+      path="debitCard.kycLink.description"
+      tag="div"
+    >
+      <a
+        class="link underline medium"
+        :href="kycLink"
+        rel="external nofollow"
+        target="_blank"
+        v-text="$t('debitCard.kycLink.link')"
+      />
+    </i18n>
   </secondary-page>
 </template>
 

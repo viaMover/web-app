@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage change-phone" hide-info>
+  <secondary-page class="manage change-phone">
     <template v-slot:title>
       <secondary-page-header
         class="max-width"
@@ -8,49 +8,49 @@
       />
     </template>
 
-    <div class="content">
-      <div class="floating right container">
-        <debit-card-image class="small" :skin="currentSkin" />
+    <template v-slot:info>
+      <debit-card-image class="small" :skin="currentSkin" />
+    </template>
+
+    <form
+      class="form info change-phone"
+      :class="{ error: $v.$anyError || errorText !== '' }"
+      @submit.prevent="handleChangePhoneNumber"
+    >
+      <div class="input-group" :class="{ error: $v.phoneNumber.$error }">
+        <label>
+          {{ $t('debitCard.lblYourPhoneNumber') }}
+          <the-mask
+            v-model="phoneNumber"
+            autocomplete="tel"
+            :disabled="isLoading"
+            mask="+###############"
+            name="phone"
+            :placeholder="$t('debitCard.txtYourPhoneNumberPlaceholder')"
+            type="tel"
+          />
+        </label>
+        <span v-if="!$v.phoneNumber.required" class="error-message">
+          {{ $t('debitCard.errors.phoneNumber.required') }}
+        </span>
+        <span v-if="!$v.phoneNumber.minLength" class="error-message">
+          {{
+            $t('debitCard.errors.phoneNumber.minLength', {
+              minLength: $v.phoneNumber.$params.minLength.min
+            })
+          }}
+        </span>
+        <span v-if="!$v.phoneNumber.maxLength" class="error-message">
+          {{
+            $t('debitCard.errors.phoneNumber.maxLength', {
+              maxLength: $v.phoneNumber.$params.maxLength.max
+            })
+          }}
+        </span>
       </div>
 
-      <div class="container margin-top-80">
-        <form
-          class="form info change-phone"
-          :class="{ error: $v.$anyError || errorText !== '' }"
-          @submit.prevent="handleChangePhoneNumber"
-        >
-          <div class="input-group" :class="{ error: $v.phoneNumber.$error }">
-            <label>
-              {{ $t('debitCard.lblYourPhoneNumber') }}
-              <the-mask
-                v-model="phoneNumber"
-                autocomplete="tel"
-                :disabled="isLoading"
-                mask="+###############"
-                name="phone"
-                :placeholder="$t('debitCard.txtYourPhoneNumberPlaceholder')"
-                type="tel"
-              />
-            </label>
-            <span v-if="!$v.phoneNumber.required" class="error-message">
-              {{ $t('debitCard.errors.phoneNumber.required') }}
-            </span>
-            <span v-if="!$v.phoneNumber.minLength" class="error-message">
-              {{
-                $t('debitCard.errors.phoneNumber.minLength', {
-                  minLength: $v.phoneNumber.$params.minLength.min
-                })
-              }}
-            </span>
-            <span v-if="!$v.phoneNumber.maxLength" class="error-message">
-              {{
-                $t('debitCard.errors.phoneNumber.maxLength', {
-                  maxLength: $v.phoneNumber.$params.maxLength.max
-                })
-              }}
-            </span>
-          </div>
-
+      <div class="actions">
+        <div class="group default">
           <action-button
             ref="button"
             class="button primary"
@@ -68,12 +68,13 @@
               {{ $t('debitCard.btnChangePhoneNumber') }}
             </template>
           </action-button>
-          <span v-if="errorText !== ''" class="error-message">
-            {{ errorText }}
-          </span>
-        </form>
+        </div>
+
+        <div v-if="errorText !== ''" class="group error-message">
+          {{ errorText }}
+        </div>
       </div>
-    </div>
+    </form>
   </secondary-page>
 </template>
 

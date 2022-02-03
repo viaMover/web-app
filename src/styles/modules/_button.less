@@ -15,13 +15,27 @@
   @drop-shadow();
 
   &.icon {
-    & > * + * {
+    & > * + *,
+    & > img,
+    & > picture {
       justify-content: space-between;
+    }
+
+    & > picture,
+    & > img,
+    & > .icon {
+      margin-right: 8px;
     }
   }
 
   &.icon-only {
     justify-content: center;
+
+    & > picture,
+    & > img,
+    & > .icon {
+      margin-right: unset;
+    }
 
     &.inherit-size {
       picture,

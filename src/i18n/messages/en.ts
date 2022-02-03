@@ -91,7 +91,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblBeautifulCard: 'Beautiful Card',
     txtBeautifulCard:
       'The Beautiful Card is brought to you by Mover and our partner Trastra',
-    txtBeautifulCardBenifits: 'Your Beautiful Card has the following benefits',
+    txtBeautifulCardBenefits: 'Your Beautiful Card has the following benefits',
     lblFree: 'Free',
     txtFree: 'Crypto to EUR for free',
     lblNoLimit: 'No limit',
