@@ -167,6 +167,12 @@ export const InitZerionExplorer = (
     },
     refreshWalletData: () => {
       console.log("Zerion doesn't have straight refresh function");
+    },
+    hasInfiniteLoader: (): boolean => {
+      return false;
+    },
+    async loadMoreTransactions(nativeOnly: boolean): Promise<boolean> {
+      return false;
     }
   };
 };

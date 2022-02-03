@@ -13,6 +13,8 @@ export interface Explorer {
     chartsType: string
   ) => void;
   refreshWalletData: () => void;
+  hasInfiniteLoader: () => boolean;
+  loadMoreTransactions(nativeOnly: boolean): Promise<boolean>;
 }
 
 export const BuildExplorer = async (
@@ -34,6 +36,7 @@ export const BuildExplorer = async (
     network,
     APIKeys.MORALIS_API_KEY,
     setTransactions,
+    updateTransactions,
     setIsTransactionsListLoaded,
     setTokens,
     setChartData
