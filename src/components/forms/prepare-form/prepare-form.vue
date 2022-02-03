@@ -262,8 +262,8 @@ export default Vue.extend({
     selectorStyle(): CssProperties {
       if (this.asset === undefined) {
         return {
-          backgroundColor: '#f1f1f1',
-          boxShadow: '0 0 8px rgb(0, 0, 0, 0.5)'
+          backgroundColor: 'var(--color-icon-background-default)',
+          boxShadow: '0 0 8px var(--color-shadow)'
         };
       }
       const assetColor = this.getTokenColor(this.asset.address);
