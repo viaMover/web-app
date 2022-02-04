@@ -12,7 +12,7 @@
           <br /><br />
           <i18n path="NFTs.txtNFTs.dice.pageDescriptionPartTwo">
             <a
-              class="link"
+              class="link underline"
               href="https://diceproject.org"
               rel="external help"
               target="_blank"
@@ -108,7 +108,7 @@
     <template v-slot:context-button>
       <context-button
         button-class="button round navigation"
-        class="page-burger-button absolute"
+        class="page-burger-button fixed"
         :popover-parent-id="popoverParentId"
       >
         <context-button-item @click="selectDice(4)">

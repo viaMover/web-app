@@ -19,7 +19,7 @@
                 :description-class="descriptionClass"
                 navigate-to="debit-card-manage"
                 :title="$t('debitCard.lblBeautifulCard')"
-                title-class="medium disabled"
+                title-class="medium muted"
               >
                 <template v-slot:picture>
                   <custom-picture
@@ -153,7 +153,7 @@ export default Vue.extend({
         return 'bold error';
       }
 
-      return 'bold';
+      return 'bold emphasize';
     },
     showTopUp(): boolean {
       return (
