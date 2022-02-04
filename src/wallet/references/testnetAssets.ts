@@ -54,6 +54,9 @@ const assets = {
   mainnet: [],
   matic: [],
   ropsten: [],
+  avalanche: [],
+  arbitrum: [],
+  fantom: [],
   rinkeby: [
     {
       address: '0xb6c8e5f00117136571d260bfb1baff62ddfd9960',
