@@ -15,7 +15,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblWallet: 'Wallet',
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
-  lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
+  lblNewToMover: 'Looks like you are new to Mover',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',

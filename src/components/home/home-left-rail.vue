@@ -25,7 +25,7 @@
 import Vue from 'vue';
 
 import HomeTransactionsList from './home-transactions-list/home-transactions-list.vue';
-import HomeWallet from './home-wallet.vue';
+import HomeWallet from './home-wallet/home-wallet.vue';
 
 enum DisplayMode {
   Wallet = 'wallet',
@@ -41,7 +41,7 @@ export default Vue.extend({
   data() {
     return {
       DisplayMode,
-      mode: DisplayMode.History as DisplayMode,
+      mode: DisplayMode.Wallet as DisplayMode,
       modes: [DisplayMode.Wallet, DisplayMode.History]
     };
   }

@@ -160,5 +160,8 @@ export default {
   },
   setWeb3Modal(state, web3Modal: any): void {
     state.web3Modal = web3Modal;
+  },
+  setIsTokensListLoaded(state, isLoaded: boolean): void {
+    state.isTokensListLoaded = isLoaded;
   }
 } as MutationTree<AccountStoreState>;

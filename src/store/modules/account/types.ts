@@ -54,6 +54,7 @@ export type AccountStoreState = {
   transactions: Array<Transaction>;
 
   tokens: Array<TokenWithBalance>;
+  isTokensListLoaded: boolean;
   tokensSearcher: Fuse<TokenWithBalance> | undefined;
   allTokens: Array<Token>;
   allTokensSearcher: Fuse<Token> | undefined;
