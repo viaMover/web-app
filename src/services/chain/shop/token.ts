@@ -1,19 +1,16 @@
 import * as Sentry from '@sentry/vue';
-import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TokenDate } from '@/store/modules/shop/types';
-import { floorDivide, multiply } from '@/utils/bigmath';
+import { floorDivide, greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { NFT_NIBBLE_SHOP_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 import { Step } from '@/components/forms/form-loader/types';
-
-import { greaterThan } from './../../../utils/bigmath';
 
 export const getNibbleTokenData = async (
   tokenId: string,
@@ -69,11 +66,9 @@ export const claimNibbleToken = async (
   web3: Web3,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = tokenAddress;
-
   const contract = new web3.eth.Contract(
     NFT_NIBBLE_SHOP_ABI as AbiItem[],
-    contractAddress
+    tokenAddress
   );
 
   console.info(
@@ -85,7 +80,7 @@ export const claimNibbleToken = async (
     value: feeAmount
   };
 
-  let gasLimit = undefined;
+  let gasLimit: string;
   try {
     const gasLimitObj = await contract.methods
       .claimNFT()
@@ -173,17 +168,17 @@ export const redeemNibbleToken = async (
     tokenAddress
   );
 
-  const transacionParamsEstimate: TransactionsParams = {
+  const transactionParamsEstimate: TransactionsParams = {
     from: accountAddress
   };
 
   const sigKeccak = web3.utils.keccak256(signature);
 
-  let gasLimit;
+  let gasLimit: string;
   try {
     const gasLimitObj = await contract.methods
       .redeem(tokenIntId, sigKeccak)
-      .estimateGas(transacionParamsEstimate);
+      .estimateGas(transactionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
       const gasLimitWithBuffer = floorDivide(
