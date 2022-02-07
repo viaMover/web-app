@@ -1,9 +1,7 @@
 <template>
   <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
-      <aside class="left-rail transactions">
-        <transaction-list />
-      </aside>
+      <home-left-rail />
     </template>
 
     <home-masthead />
@@ -30,18 +28,18 @@ import { isFeatureEnabled } from '@/settings';
 import {
   HomeCardsDebitCard,
   HomeCardsSavingsDeposit,
+  HomeLeftRail,
   HomeMasthead,
   HomeNavigationSection
 } from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal, SwapModal } from '@/components/modals';
-import { TransactionList } from '@/components/transaction-list';
 
 export default Vue.extend({
   name: 'Home',
   components: {
     ContentWrapper,
-    TransactionList,
+    HomeLeftRail,
     HomeMasthead,
     HomeNavigationSection,
     HomeCardsDebitCard,

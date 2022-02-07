@@ -1,8 +1,10 @@
 <template>
   <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
-      <aside class="left-rail transactions">
-        <preload-left-rail-transactions />
+      <aside class="left-rail history">
+        <div class="wrapper">
+          <preload-left-rail-transactions />
+        </div>
       </aside>
     </template>
 
@@ -52,10 +54,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import PreloadLeftRailTransactions from '@/components/home/home-transactions-list/home-transactions-list-skeleton.vue';
 import { ContentWrapper } from '@/components/layout';
 import { NavigationSection } from '@/components/navigation';
-
-import PreloadLeftRailTransactions from './preload-left-rail-transactions.vue';
 
 export default Vue.extend({
   name: 'PreloadDefault',

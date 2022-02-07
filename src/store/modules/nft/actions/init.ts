@@ -16,14 +16,16 @@ import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';
 
 import { checkAccountStateIsReady } from './../../account/utils/state';
-import { NftAsset, NFTStoreState } from './../types';
+import { NftAssetWithBalance, NFTStoreState } from './../types';
 
 export default {
   async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {
-      const nftAssets: Array<NftAsset> = [
+      const nftAssets: Array<NftAssetWithBalance> = [
         {
+          id: 'dice',
+          balance: '0',
           name: 'Dice Project',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.dice.description'
@@ -69,6 +71,8 @@ export default {
           }
         },
         {
+          id: 'olympus',
+          balance: '0',
           name: 'Moving With Olympus',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.movingWithOlympus.description'
@@ -114,6 +118,8 @@ export default {
           }
         },
         {
+          id: 'sweet-and-sour',
+          balance: '0',
           name: 'Sweet & Sour',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.sweetAndSour.description'
@@ -159,6 +165,8 @@ export default {
           }
         },
         {
+          id: 'unexpected-move',
+          balance: '0',
           name: 'Unexpected Move',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.unexpectedMove.description'
@@ -204,6 +212,8 @@ export default {
           }
         },
         {
+          id: 'vaults',
+          balance: '0',
           name: 'Vaults',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.vaults.description'
@@ -252,6 +262,8 @@ export default {
 
       if (isFeatureEnabled('isSwapPassportEnabled')) {
         nftAssets.push({
+          id: 'swap-passport',
+          balance: '0',
           name: 'Swap Passport',
           description: rootState.i18n?.t(
             'NFTs.txtNFTs.swapPassport.description'

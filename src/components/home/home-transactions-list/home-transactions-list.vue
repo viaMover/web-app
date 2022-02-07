@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
-    <preload-left-rail-transactions v-if="showSkeleton" />
-    <div v-else class="wrapper">
+    <home-transactions-list-skeleton v-if="showSkeleton" />
+    <div v-else>
       <form class="form search" @submit.prevent.stop="">
         <input
           v-model.trim="searchTerm"
@@ -18,7 +18,7 @@
       </div>
 
       <transition-group v-else class="list" name="list-transition" tag="div">
-        <transaction-group
+        <home-transactions-list-group
           v-for="txGroup in filteredTransactionGroups"
           :key="txGroup.timeStamp"
           class="list-transition-item"
@@ -26,10 +26,7 @@
           :transactions="txGroup.transactions"
         />
       </transition-group>
-      <infinite-loading
-        v-if="hasInfiniteLoader"
-        @infinite="infiniteHandler"
-      ></infinite-loading>
+      <infinite-loading v-if="hasInfiniteLoader" @infinite="infiniteHandler" />
     </div>
   </transition>
 </template>
@@ -45,16 +42,16 @@ import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { TransactionGroup as TransactionGroupType } from '@/store/modules/account/types';
 import { tryToGetTransactionAssetSymbol } from '@/store/modules/account/utils/transactions';
 import { isValidTxHash, sameAddress } from '@/utils/address';
-import PreloadLeftRailTransactions from '@/views/preload/preload-left-rail-transactions.vue';
 import { Transaction } from '@/wallet/types';
 
-import TransactionGroup from './transaction-group.vue';
+import HomeTransactionsListGroup from './home-transactions-list-group.vue';
+import HomeTransactionsListSkeleton from './home-transactions-list-skeleton.vue';
 
 export default Vue.extend({
   name: 'TransactionList',
   components: {
-    TransactionGroup,
-    PreloadLeftRailTransactions,
+    HomeTransactionsListGroup,
+    HomeTransactionsListSkeleton,
     InfiniteLoading
   },
   data() {

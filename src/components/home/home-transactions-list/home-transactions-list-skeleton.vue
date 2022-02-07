@@ -1,9 +1,9 @@
 <template>
-  <div class="wrapper">
+  <div>
     <pu-skeleton class="form search" rounded tag="form" />
 
     <div class="list">
-      <div v-for="idx in 3" :key="idx" class="group">
+      <div v-for="idx in 3" :key="idx" class="group transactions">
         <pu-skeleton class="header" tag="h2" />
         <div class="items">
           <div v-for="innerIdx in 2" :key="innerIdx" class="item">
@@ -24,6 +24,6 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'PreloadLeftRailTransactions'
+  name: 'HomeTransactionsListSkeleton'
 });
 </script>

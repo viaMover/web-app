@@ -27,11 +27,14 @@ export default {
 
     SweetAndSourTotalAmount: '0',
     SweetAndSourTotalClaimed: '0',
+    SweetAndSourBalance: '0',
 
     VaultsTotalAmount: '0',
     VaultsTotalClaimed: '0',
+    VaultsBalance: '0',
 
     DiceTotalClaimed: '0',
+    DiceBalance: '0',
 
     nfts: []
   },

@@ -29,11 +29,16 @@ export const getDiceData = async (
     contractAddress
   );
 
+  const balance = await dice.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
   const totalClaimed = await dice.methods
     .totalClaimed()
     .call(transactionParams);
 
   return {
+    balance: balance.toString(),
     totalClaimed: totalClaimed.toString()
   };
 };
