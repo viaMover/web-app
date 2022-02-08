@@ -9,10 +9,10 @@
           <template v-else>
             <navigation-section-item-image
               :description="governancePower"
-              description-class="bold"
+              description-class="bold emphasize"
               navigate-to="governance-view-all"
               :title="$t('governance.lblGovernance')"
-              title-class="medium disabled"
+              title-class="medium muted"
             >
               <template v-slot:picture>
                 <custom-picture

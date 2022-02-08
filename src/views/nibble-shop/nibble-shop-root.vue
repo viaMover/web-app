@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <transition mode="out-in" name="slide">
+    <router-view />
+  </transition>
 </template>
 
 <script lang="ts">

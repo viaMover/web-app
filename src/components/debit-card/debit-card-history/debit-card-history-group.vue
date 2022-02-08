@@ -1,12 +1,13 @@
 <template>
-  <div class="group">
+  <div class="history-group">
     <div class="header">
       <p class="date">{{ date }}</p>
     </div>
-    <div class="content">
+
+    <div class="items">
       <debit-card-history-group-item
         v-for="item in items"
-        :key="item.id"
+        :key="item.timestamp"
         :description="item.description"
         :icon="item.icon"
       />

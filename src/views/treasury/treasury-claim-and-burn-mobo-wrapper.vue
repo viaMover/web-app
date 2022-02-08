@@ -29,7 +29,7 @@
       @toggle-input-mode="handleToggleInputMode"
     >
       <template v-slot:input>
-        <span class="input-span">{{ value }}</span>
+        <input disabled type="text" :value="value" />
       </template>
     </prepare-form>
     <review-form

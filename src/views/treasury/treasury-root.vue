@@ -14,10 +14,10 @@
             >
               <navigation-section-item-image
                 :description="balance"
-                description-class="bold"
+                description-class="bold emphasize"
                 navigate-to="treasury-manage"
                 :title="$t('treasury.lblSmartTreasury')"
-                title-class="disabled medium"
+                title-class="muted medium"
               >
                 <template v-slot:picture>
                   <custom-picture
@@ -140,7 +140,9 @@
       </nav>
     </template>
 
-    <router-view />
+    <transition mode="out-in" name="fade">
+      <router-view />
+    </transition>
 
     <template v-slot:modals>
       <search-modal />

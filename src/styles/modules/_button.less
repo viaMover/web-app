@@ -1,7 +1,7 @@
 .button {
   height: @button-height;
   width: auto;
-  padding: @padding-small @padding-normal;
+  padding: 8px 16px;
   color: @button-secondary-text;
   background-color: @button-secondary-background;
   cursor: pointer;
@@ -15,13 +15,27 @@
   @drop-shadow();
 
   &.icon {
-    & > * + * {
+    & > * + *,
+    & > img,
+    & > picture {
       justify-content: space-between;
+    }
+
+    & > picture,
+    & > img,
+    & > .icon {
+      margin-right: 8px;
     }
   }
 
   &.icon-only {
     justify-content: center;
+
+    & > picture,
+    & > img,
+    & > .icon {
+      margin-right: unset;
+    }
 
     &.inherit-size {
       picture,
@@ -39,7 +53,7 @@
   &.round {
     height: @button-height;
     width: $height;
-    padding: @padding-small;
+    padding: 8px;
   }
 
   &.round,

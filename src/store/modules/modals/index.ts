@@ -11,24 +11,6 @@ export default {
   strict: !isProduction(),
   state: {
     state: {
-      [Modal.SavingsDeposit]: {
-        isDisplayed: false,
-        isVisible: false,
-        stackDepth: -1,
-        waitForResult: false,
-        payload: undefined,
-        resolver: undefined,
-        needGasListener: true
-      },
-      [Modal.SavingsWithdraw]: {
-        isDisplayed: false,
-        isVisible: false,
-        stackDepth: -1,
-        waitForResult: false,
-        payload: undefined,
-        resolver: undefined,
-        needGasListener: true
-      },
       [Modal.SearchToken]: {
         isDisplayed: false,
         isVisible: false,
@@ -48,42 +30,6 @@ export default {
         needGasListener: false
       },
       [Modal.Swap]: {
-        isDisplayed: false,
-        isVisible: false,
-        stackDepth: -1,
-        waitForResult: false,
-        payload: undefined,
-        resolver: undefined,
-        needGasListener: true
-      },
-      [Modal.Transaction]: {
-        isDisplayed: false,
-        isVisible: false,
-        stackDepth: -1,
-        waitForResult: false,
-        payload: undefined,
-        resolver: undefined,
-        needGasListener: false
-      },
-      [Modal.TreasuryIncreaseBoost]: {
-        isDisplayed: false,
-        isVisible: false,
-        stackDepth: -1,
-        waitForResult: false,
-        payload: undefined,
-        resolver: undefined,
-        needGasListener: true
-      },
-      [Modal.TreasuryDecreaseBoost]: {
-        isDisplayed: false,
-        isVisible: false,
-        stackDepth: -1,
-        waitForResult: false,
-        payload: undefined,
-        resolver: undefined,
-        needGasListener: true
-      },
-      [Modal.TreasuryClaimAndBurn]: {
         isDisplayed: false,
         isVisible: false,
         stackDepth: -1,

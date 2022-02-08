@@ -53,7 +53,7 @@ html {
       overflow-y: auto;
 
       &.two-sided {
-        .page-back-button.absolute {
+        .page-back-button.fixed {
           position: fixed;
           top: @button-page-inset;
           left: @button-page-inset;
@@ -124,7 +124,7 @@ html {
         right: @button-page-inset;
         z-index: 10;
 
-        &.absolute {
+        &.fixed {
           position: fixed;
         }
       }
@@ -136,7 +136,7 @@ html {
         left: @button-page-inset;
         z-index: 10;
 
-        &.absolute {
+        &.fixed {
           position: fixed;
           top: @button-page-inset;
           left: @left-rail-base-width + @button-page-inset;
@@ -174,7 +174,7 @@ html {
   z-index: 10;
   border-radius: @button-height / 2;
 
-  &.absolute {
+  &.fixed {
     position: fixed;
   }
 }

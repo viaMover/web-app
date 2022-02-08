@@ -7,54 +7,63 @@
       />
     </template>
 
-    <form class="form change-skin" @submit.prevent="handleChangeSkin">
-      <h2>
-        {{ $t('debitCard.changeSkin.lblWhatSkinDoWeChoose') }}
-      </h2>
-      <div class="info">
-        <skin-image
-          :id="skinToBeApplied ? skinToBeApplied.id : ''"
-          :color="skinToBeApplied ? skinToBeApplied.color : undefined"
-          :fallback-src-list="skinImageFallbackSrcList"
-          :src="skinImageSrc"
-          :symbol="skinToBeApplied ? skinToBeApplied.symbol : ''"
-        />
-        <div class="coin">
-          <p>
-            {{ skinToBeApplied ? skinToBeApplied.name : '' }}
-            <span>
-              {{ skinToBeApplied ? skinToBeApplied.symbol : '' }}
-            </span>
-          </p>
-        </div>
-        <button
-          class="button-active button-arrow"
-          :style="selectorStyle"
-          type="button"
-          @click.stop.prevent="handleOpenSelectModal"
-        >
-          <arrow-down-icon stroke="#000" />
-        </button>
-      </div>
-      <div class="description">
-        <p>{{ skinToBeApplied ? skinToBeApplied.description : '' }}</p>
-      </div>
-      <action-button
-        class="primary"
-        :disabled="!isButtonActive"
-        propagate-original-event
-        type="submit"
-      >
-        <div v-if="isLoading || isProcessing" class="loader-icon">
-          <img
-            :alt="$t('icon.txtPendingIconAlt')"
-            src="@/assets/images/ios-spinner-white.svg"
+    <form class="action form change-skin" @submit.prevent="handleChangeSkin">
+      <div class="input section">
+        <h2 class="title">
+          {{ $t('debitCard.changeSkin.lblWhatSkinDoWeChoose') }}
+        </h2>
+        <div class="info">
+          <skin-image
+            :id="skinToBeApplied ? skinToBeApplied.id : ''"
+            class="smallest"
+            :color="skinToBeApplied ? skinToBeApplied.color : undefined"
+            :fallback-src-list="skinImageFallbackSrcList"
+            :src="skinImageSrc"
+            :symbol="skinToBeApplied ? skinToBeApplied.symbol : ''"
           />
+          <div class="token">
+            <div class="name">
+              {{ skinToBeApplied ? skinToBeApplied.name : '' }}
+              <span class="symbol">
+                {{ skinToBeApplied ? skinToBeApplied.symbol : '' }}
+              </span>
+            </div>
+          </div>
+          <button
+            class="round smallest icon button"
+            :style="selectorStyle"
+            type="button"
+            @click.stop.prevent="handleOpenSelectModal"
+          >
+            <arrow-down-icon stroke="#000" />
+          </button>
         </div>
-        <template v-else>
-          {{ isButtonActive ? $t('debitCard.changeSkin.btnApplySkin') : error }}
-        </template>
-      </action-button>
+
+        <div class="description">
+          {{ skinToBeApplied ? skinToBeApplied.description : '' }}
+        </div>
+      </div>
+
+      <div class="actions">
+        <action-button
+          class="primary"
+          :disabled="!isButtonActive"
+          propagate-original-event
+          type="submit"
+        >
+          <div v-if="isLoading || isProcessing" class="loader-icon">
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
+          </div>
+          <template v-else>
+            {{
+              isButtonActive ? $t('debitCard.changeSkin.btnApplySkin') : error
+            }}
+          </template>
+        </action-button>
+      </div>
     </form>
   </secondary-page>
 </template>
@@ -127,8 +136,8 @@ export default Vue.extend({
     selectorStyle(): CssProperties {
       if (this.skinToBeApplied === undefined) {
         return {
-          backgroundColor: '#f1f1f1',
-          boxShadow: '0 0 8px rgb(0, 0, 0, 0.5)'
+          backgroundColor: 'var(--color-icon-background-default)',
+          boxShadow: '0 0 8px var(--color-shadow)'
         };
       }
 
@@ -141,7 +150,7 @@ export default Vue.extend({
   },
   watch: {
     currentSkin: {
-      handler(newVal: Skin) {
+      handler(newVal: Skin | undefined) {
         if (newVal !== undefined && this.skinIsUnsaved) {
           this.skinToBeApplied = newVal;
         }

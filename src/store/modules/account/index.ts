@@ -24,8 +24,8 @@ export default {
     tokensSearcher: undefined,
     tokenInfoMap: undefined,
     provider: undefined,
-    isDetecting: false,
-    isWalletLoading: false,
+    isDetecting: true,
+    isWalletLoading: true,
     balance: undefined,
     networkInfo: undefined,
 

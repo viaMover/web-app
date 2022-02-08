@@ -3,12 +3,12 @@
     <div class="page-content two-sided" :class="pageContentClass">
       <back-button
         v-if="hasBackButton"
-        class="navigation page-back-button absolute"
+        class="navigation page-back-button fixed"
         @back="handleBack"
       />
       <close-button
         v-if="hasCloseButton"
-        class="navigation page-close-button absolute"
+        class="navigation page-close-button fixed"
         is-black
         @close="handleClose"
       />

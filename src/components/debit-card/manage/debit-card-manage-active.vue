@@ -7,30 +7,30 @@
       />
     </template>
 
-    <div class="content">
-      <div class="container">
-        <debit-card-image :skin="currentSkin" />
-      </div>
+    <debit-card-image :is-loading="isLoading" :skin="currentSkin" />
 
-      <analytics-list class="container">
-        <analytics-list-item
-          :description="last4Digits"
-          :title="$t('debitCard.lblLast4Digits')"
-        />
-        <analytics-list-item
-          :description="expiryDate"
-          :title="$t('debitCard.lblExpiryDate')"
-        />
-        <analytics-list-item
-          :description="iban"
-          :title="$t('debitCard.lblIBAN')"
-        />
-        <analytics-list-item
-          :description="bic"
-          :title="$t('debitCard.lblBIC')"
-        />
-      </analytics-list>
-    </div>
+    <analytics-list>
+      <analytics-list-item
+        :description="last4Digits"
+        :is-loading="isLoading"
+        :title="$t('debitCard.lblLast4Digits')"
+      />
+      <analytics-list-item
+        :description="expiryDate"
+        :is-loading="isLoading"
+        :title="$t('debitCard.lblExpiryDate')"
+      />
+      <analytics-list-item
+        :description="iban"
+        :is-loading="isLoading"
+        :title="$t('debitCard.lblIBAN')"
+      />
+      <analytics-list-item
+        :description="bic"
+        :is-loading="isLoading"
+        :title="$t('debitCard.lblBIC')"
+      />
+    </analytics-list>
   </secondary-page>
 </template>
 
@@ -54,7 +54,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('debitCard', {
-      cardInfo: 'cardInfo'
+      cardInfo: 'cardInfo',
+      isLoading: 'isLoading'
     }),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
