@@ -38,8 +38,8 @@ export type DicePayload = {
 export default {
   checkOlympusClaimable({ state }): boolean {
     return (
-      lessThan(currentTimestamp(), state.OlympusEndTs) &&
-      greaterThan(currentTimestamp(), state.OlympusStartTs)
+      lessThan(currentTimestamp(), state.movingWithOlympus.meta.endTs) &&
+      greaterThan(currentTimestamp(), state.movingWithOlympus.meta.startTs)
     );
   },
   async claimOlympus({ rootState }, payload: ChangePayload): Promise<void> {

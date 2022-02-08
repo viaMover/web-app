@@ -3,55 +3,57 @@ import { PictureDescriptor } from '@/components/html5';
 export type NFTStoreState = {
   isLoading: boolean;
 
-  OlympusTotalClaimed: string;
-  OlympusStartTs: string;
-  OlympusEndTs: string;
-  OlympusBalance: string;
-
-  UnexpectedMoveTotalAmount: string;
-  UnexpectedMoveTotalClaimed: string;
-  UnexpectedMoveTotalExchanged: string;
-  UnexpectedMoveBalance: string;
-
-  SweetAndSourTotalAmount: string;
-  SweetAndSourTotalClaimed: string;
-  SweetAndSourBalance: string;
-
-  VaultsTotalAmount: string;
-  VaultsTotalClaimed: string;
-  VaultsBalance: string;
-
-  DiceTotalClaimed: string;
-  DiceBalance: string;
-
-  nfts: Array<NftAssetWithBalance>;
+  movingWithOlympus: NftAsset<NftAssetId.MovingWithOlympus>;
+  unexpectedMove: NftAsset<NftAssetId.UnexpectedMove>;
+  sweetAndSour: NftAsset<NftAssetId.SweetAndSour>;
+  vaults: NftAsset<NftAssetId.Vaults>;
+  dice: NftAsset<NftAssetId.Dice>;
+  swapPassport: NftAsset<NftAssetId.SwapPassport> | undefined;
 };
 
-export type NftAssetId =
-  | 'olympus'
-  | 'unexpected-move'
-  | 'sweet-and-sour'
-  | 'vaults'
-  | 'dice'
-  | 'swap-passport';
+export enum NftAssetId {
+  MovingWithOlympus = 'olympus',
+  UnexpectedMove = 'unexpected-move',
+  SweetAndSour = 'sweet-and-sour',
+  Vaults = 'vaults',
+  Dice = 'dice',
+  SwapPassport = 'swap-passport'
+}
 
-export type NftAsset = {
-  // don't use as source of truth or unique identifier
-  //
-  // should be used as binding data for getter
-  id: NftAssetId;
+export interface NftAssetsMeta {
+  [NftAssetId.MovingWithOlympus]: {
+    totalClaimed: string;
+    startTs: string;
+    endTs: string;
+  };
+  [NftAssetId.UnexpectedMove]: {
+    totalAmount: string;
+    totalClaimed: string;
+    totalExchanged: string;
+  };
+  [NftAssetId.SweetAndSour]: {
+    totalAmount: string;
+    totalClaimed: string;
+  };
+  [NftAssetId.Vaults]: {
+    totalAmount: string;
+    totalClaimed: string;
+  };
+  [NftAssetId.Dice]: {
+    totalClaimed: string;
+  };
+  [NftAssetId.SwapPassport]: void;
+}
+
+export type TNftAssetKey = keyof NftAssetsMeta;
+export interface BaseNftAsset {
+  id: string;
   name: string;
-  description: string;
   picture: PictureDescriptor;
   bigPicture: PictureDescriptor;
-  meta: Array<MetaItem>;
-};
-
-export type NftAssetWithBalance = NftAsset & {
   balance: string;
-};
-
-export type MetaItem = {
-  name: string;
-  value: string | number;
-};
+}
+export type NftAsset<I extends TNftAssetKey> = {
+  id: I;
+  meta: NftAssetsMeta[I];
+} & BaseNftAsset;
