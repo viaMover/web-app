@@ -23,7 +23,8 @@ const alsoIncludedAddresses = [
   '0x6bb61215298f296c55b19ad842d3df69021da2ef', // DOP
   '0x9813037ee2218799597d83d4a5b6f3b6778218d9', // BONE
   '0x27c70cd1946795b66be9d954418546998b546634', // LEASH
-  '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a' // BTRFLY
+  '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a', // BTRFLY
+  '0x186e55c0bebd2f69348d94c4a27556d93c5bd36c' //wxBTRFLY
 ];
 
 const isDirEmpty = (dir) => {
