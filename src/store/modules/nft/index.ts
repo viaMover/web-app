@@ -1,6 +1,6 @@
 import { Module } from 'vuex';
 
-import { isProduction } from '@/settings';
+import { isFeatureEnabled, isProduction } from '@/settings';
 import { RootStoreState } from '@/store/types';
 
 import actionsClaim from './actions/claim';
@@ -221,44 +221,46 @@ export default {
         ]
       }
     },
-    swapPassport: {
-      id: NftAssetId.SwapPassport,
-      name: 'Swap Passport',
-      balance: '0',
-      meta: undefined,
-      picture: {
-        src: require('@/assets/images/SwapPassport.png'),
-        sources: [
-          {
-            variant: '2x',
-            src: require('@/assets/images/SwapPassport@2x.png')
+    swapPassport: isFeatureEnabled('isSwapPassportEnabled')
+      ? {
+          id: NftAssetId.SwapPassport,
+          name: 'Swap Passport',
+          balance: '0',
+          meta: undefined,
+          picture: {
+            src: require('@/assets/images/SwapPassport.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/SwapPassport@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/SwapPassport.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/SwapPassport@2x.webp')
+              }
+            ]
+          },
+          bigPicture: {
+            src: require('@/assets/images/SwapPassportBig.png'),
+            sources: [
+              {
+                variant: '2x',
+                src: require('@/assets/images/SwapPassportBig@2x.png')
+              }
+            ],
+            webpSources: [
+              { src: require('@/assets/images/SwapPassportBig.webp') },
+              {
+                variant: '2x',
+                src: require('@/assets/images/SwapPassportBig@2x.webp')
+              }
+            ]
           }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/SwapPassport.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/SwapPassport@2x.webp')
-          }
-        ]
-      },
-      bigPicture: {
-        src: require('@/assets/images/SwapPassportBig.png'),
-        sources: [
-          {
-            variant: '2x',
-            src: require('@/assets/images/SwapPassportBig@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/SwapPassportBig.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/SwapPassportBig@2x.webp')
-          }
-        ]
-      }
-    }
+        }
+      : undefined
   },
   actions: {
     ...actionsInit,

@@ -39,7 +39,7 @@
         />
         <nft-asset-card-mini
           v-for="item in nftItems"
-          :key="item.name"
+          :key="item.id"
           :item="item"
         />
       </home-wallet-collectibles-wrapper>

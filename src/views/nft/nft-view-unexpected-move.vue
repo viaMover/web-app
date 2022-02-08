@@ -16,15 +16,15 @@
 
       <analytics-list>
         <analytics-list-item
-          :description="formatToDecimals(totalAmount, 0)"
+          :description="totalAmount"
           :title="$t('NFTs.lblTotalAmount')"
         />
         <analytics-list-item
-          :description="formatToDecimals(totalClaimed, 0)"
+          :description="totalClaimed"
           :title="$t('NFTs.lblTotalClaimed')"
         />
         <analytics-list-item
-          :description="formatToDecimals(totalExchanged, 0)"
+          :description="totalExchanged"
           :title="$t('NFTs.lblTotalExchanged')"
         />
       </analytics-list>
@@ -140,13 +140,20 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      totalAmount: 'UnexpectedMoveTotalAmount',
-      totalClaimed: 'UnexpectedMoveTotalClaimed',
-      totalExchanged: 'UnexpectedMoveTotalExchanged'
+      nft: 'unexpectedMove'
     }),
     ...mapState('account', {
       currentAddress: 'currentAddress'
-    })
+    }),
+    totalAmount(): string {
+      return formatToDecimals(this.nft.meta.totalAmount, 0);
+    },
+    totalClaimed(): string {
+      return formatToDecimals(this.nft.meta.totalClaimed, 0);
+    },
+    totalExchanged(): string {
+      return formatToDecimals(this.nft.meta.totalExchanged, 0);
+    }
   },
   mounted(): void {
     this.transactionStep = undefined;
@@ -154,7 +161,6 @@ export default Vue.extend({
     this.actionError = undefined;
   },
   methods: {
-    formatToDecimals,
     ...mapActions('nft', [
       'claimUnexpectedMove',
       'refreshNftStats',

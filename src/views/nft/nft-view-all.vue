@@ -7,7 +7,7 @@
     @close="handleClose"
   >
     <custom-picture
-      :alt="headerImage.alt"
+      :alt="$t('NFTs.txtLogoAlt')"
       class="section-logo"
       :sources="headerImage.sources"
       :src="headerImage.src"
@@ -17,12 +17,12 @@
     <div class="product-tiles">
       <router-link
         v-for="nft in nftList"
-        :key="nft.name"
+        :key="nft.id"
         class="item button-like"
         :to="routeTo(nft.name)"
       >
         <custom-picture
-          :alt="nft.bigPicture.alt"
+          :alt="$t('NFTs.txtAssetAlt', { name: nft.name })"
           :sources="nft.bigPicture.sources"
           :src="nft.bigPicture.src"
           :webp-sources="nft.bigPicture.webpSources"
@@ -37,7 +37,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
@@ -51,7 +51,6 @@ export default Vue.extend({
   data() {
     return {
       headerImage: {
-        alt: this.$t('NFTs.txtLogoAlt'),
         src: require('@/assets/images/NFT-Drops.png'),
         sources: [
           { src: require('@/assets/images/NFT-Drops.png') },
@@ -71,7 +70,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('nft', { nftList: 'nfts' })
+    ...mapGetters('nft', { nftList: 'nfts' })
   },
   methods: {
     handleClose(): void {
