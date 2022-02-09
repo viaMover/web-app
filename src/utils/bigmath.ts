@@ -2,6 +2,9 @@ import BigNumber from 'bignumber.js';
 
 type BigNumberish = number | string | BigNumber;
 
+export const convertToString = (numberOne: BigNumberish): string =>
+  new BigNumber(numberOne).toFixed();
+
 export const isEqual = (
   numberOne: BigNumberish,
   numberTwo: BigNumberish
