@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { SHA3 } from 'sha3';
 
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
+import { getRealIndex } from '@/services/chain/wxbtrfly/wxbtrfly';
 import {
   BaseReturn,
   changePhoneNumber,
@@ -144,6 +145,7 @@ export default {
           throw new DebitCardApiError(res.error, res.shortError);
         }
 
+        await dispatch('loadWxBTRFLYrealIndex');
         await dispatch('handleInfoResult', res.result);
 
         commit('setIsLoading', false);
@@ -601,6 +603,30 @@ export default {
       console.error('failed to change phone number', error);
       Sentry.captureException(error);
       throw error;
+    }
+  },
+  async loadWxBTRFLYrealIndex({ commit, rootState }): Promise<void> {
+    if (rootState.account?.currentAddress === undefined) {
+      throw new Error('failed to get current address');
+    }
+
+    if (rootState.account?.provider?.web3 === undefined) {
+      throw new Error('failed to get web3 provider');
+    }
+
+    if (rootState.account?.networkInfo?.network === undefined) {
+      throw new Error('failed to get network');
+    }
+    try {
+      const wxBTRFLYrealIndex = await getRealIndex(
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3,
+        rootState.account.currentAddress
+      );
+      commit('setWxBTRFLYrealIndex', wxBTRFLYrealIndex);
+    } catch (error) {
+      console.error('failed to get WxBTRFLY realindex', error);
+      Sentry.captureException(error);
     }
   }
 } as ActionTree<DebitCardStoreState, RootStoreState>;

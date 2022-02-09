@@ -81,6 +81,7 @@ import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
   divide,
+  floorDivide,
   fromWei,
   isZero,
   lessThan,
@@ -197,6 +198,9 @@ export default Vue.extend({
       'savingsBalance',
       'provider'
     ]),
+    ...mapState('debitCard', {
+      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex'
+    }),
     ...mapGetters('account', ['treasuryBonusNative']),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
@@ -593,7 +597,11 @@ export default Vue.extend({
             ) {
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
               // difference between wxBTRFLY and BTRFLY is 9 decimals
-              inputInWei = fromWei(inputInWei, 9);
+
+              inputInWei = multiply(
+                floorDivide(inputInWei, new BigNumber(10).pow(9)),
+                floorDivide(this.wxBTRFLYrealIndex, new BigNumber(10).pow(9))
+              );
             }
 
             this.transferData = await getTransferData(
