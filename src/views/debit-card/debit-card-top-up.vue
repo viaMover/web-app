@@ -91,16 +91,23 @@ import { formatToNative } from '@/utils/format';
 import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import {
+  CompoundEstimateResponse,
+  CompoundEstimateWithUnwrapResponse
+} from '@/wallet/actions/types';
+import {
+  BTRFLY_TOKEN_ADDRESS,
+  getBTRFLYAssetData,
   getEURSAssetData,
   getUSDCAssetData,
-  validTopUpAssets
+  validTopUpAssets,
+  WX_BTRFLY_TOKEN_ADDRESS
 } from '@/wallet/references/data';
 import {
   SmallToken,
   SmallTokenInfo,
   SmallTokenInfoWithIcon,
+  tokenToSmallTokenInfo,
   TokenWithBalance
 } from '@/wallet/types';
 
@@ -171,6 +178,7 @@ export default Vue.extend({
       //to tx
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined,
+      unwrapGasLimit: undefined as string | undefined,
       approximateEUREstimationAmount: '0',
       approximateEstimationDebounceHandler: undefined as number | undefined
     };
@@ -319,6 +327,7 @@ export default Vue.extend({
 
       this.actionGasLimit = '0';
       this.approveGasLimit = '0';
+      this.unwrapGasLimit = '0';
       this.isProcessing = true;
       try {
         const gasLimits = await this.estimateAction(
@@ -329,6 +338,7 @@ export default Vue.extend({
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
+        this.unwrapGasLimit = gasLimits.unwrapGasLimit;
         if (!gasLimits.error) {
           this.changeStep('review');
         }
@@ -355,7 +365,7 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken,
       transferData: TransferData | undefined
-    ): Promise<CompoundEstimateResponse> {
+    ): Promise<CompoundEstimateWithUnwrapResponse> {
       const resp = await estimateTopUpCompound(
         inputAsset,
         this.usdcAsset,
@@ -423,7 +433,7 @@ export default Vue.extend({
 
             const referenceAmount =
               mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
-            const referenceToken =
+            let referenceToken =
               mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
             if (referenceToken === undefined) {
               // if reference token is an arbitrary token
@@ -431,6 +441,14 @@ export default Vue.extend({
               return;
             }
 
+            if (
+              sameAddress(
+                referenceToken.address,
+                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+              )
+            ) {
+              referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+            }
             if (isZero(referenceAmount) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
@@ -537,10 +555,19 @@ export default Vue.extend({
             this.inputAmountNative = new BigNumber(
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
-            const inputInWei = toWei(value, this.inputAsset.decimals);
+            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            if (
+              sameAddress(
+                referenceToken.address,
+                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+              )
+            ) {
+              referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+            }
+            const inputInWei = toWei(value, referenceToken.decimals);
             this.transferData = await getTransferData(
               this.usdcAsset.address,
-              this.inputAsset.address,
+              referenceToken.address,
               inputInWei,
               true,
               '0.01',
@@ -548,7 +575,7 @@ export default Vue.extend({
             );
           } else {
             this.inputAmountNative = value;
-            const inputInWei = toWei(
+            let inputInWei = toWei(
               convertAmountFromNativeValue(
                 value,
                 this.inputAsset.priceUSD,
@@ -556,9 +583,22 @@ export default Vue.extend({
               ),
               this.inputAsset.decimals
             );
+
+            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            if (
+              sameAddress(
+                referenceToken.address,
+                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+              )
+            ) {
+              referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+              // difference between wxBTRFLY and BTRFLY is 9 decimals
+              inputInWei = fromWei(inputInWei, 9);
+            }
+
             this.transferData = await getTransferData(
               this.usdcAsset.address,
-              this.inputAsset.address,
+              referenceToken.address,
               inputInWei,
               true,
               '0.01',
@@ -673,6 +713,16 @@ export default Vue.extend({
         return;
       }
 
+      if (this.unwrapGasLimit === undefined) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxStart',
+          message: 'unwrap gas limit is empty during `handleTxStart`'
+        });
+        Sentry.captureException("can't start top-up TX");
+        return;
+      }
+
       if (this.isNeedTransfer && this.transferData === undefined) {
         Sentry.addBreadcrumb({
           type: 'error',
@@ -695,7 +745,8 @@ export default Vue.extend({
           network: this.networkInfo.network,
           currentAddress: this.currentAddress,
           actionGasLimit: this.actionGasLimit,
-          approveGasLimit: this.approveGasLimit
+          approveGasLimit: this.approveGasLimit,
+          unwrapGasLimit: this.unwrapGasLimit
         }
       });
 
@@ -710,11 +761,12 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          async () => {
-            this.transactionStep = 'Process';
+          async (step: LoaderStep) => {
+            this.transactionStep = step;
           },
           this.actionGasLimit,
-          this.approveGasLimit
+          this.approveGasLimit,
+          this.unwrapGasLimit
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
