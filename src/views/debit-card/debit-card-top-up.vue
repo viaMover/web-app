@@ -761,8 +761,8 @@ export default Vue.extend({
           this.networkInfo.network,
           this.provider.web3,
           this.currentAddress,
-          async () => {
-            this.transactionStep = 'Process';
+          async (step: LoaderStep) => {
+            this.transactionStep = step;
           },
           this.actionGasLimit,
           this.approveGasLimit,

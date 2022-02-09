@@ -12,13 +12,15 @@ import {
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
+import { LoaderStep } from '@/components/forms';
+
 export const unwrap = async (
   inputAsset: SmallToken,
   inputAmount: string,
   network: Network,
   web3: Web3,
   accountAddress: string,
-  changeStepToProcess: () => Promise<void>,
+  changeStepToProcess: (step: LoaderStep) => Promise<void>,
   gasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void | never> => {
@@ -80,7 +82,7 @@ export const unwrap = async (
         });
 
         console.log('debug debit card top up unwrap txn hash', hash);
-        changeStepToProcess();
+        changeStepToProcess('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
         Sentry.addBreadcrumb({

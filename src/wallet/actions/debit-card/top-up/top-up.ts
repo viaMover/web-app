@@ -24,6 +24,8 @@ import {
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
+import { LoaderStep } from '@/components/forms/loader-form/types';
+
 import { unwrap } from './wxBTRFLY/top-up';
 
 export const topUpCompound = async (
@@ -34,7 +36,7 @@ export const topUpCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
-  changeStepToProcess: () => Promise<void>,
+  changeStepToProcess: (step: LoaderStep) => Promise<void>,
   actionGasLimit: string,
   approveGasLimit: string,
   unwrapGasLimit: string,
@@ -62,12 +64,12 @@ export const topUpCompound = async (
       const balanceBeforeUnwrap = await currentBalance(
         web3,
         accountAddress,
-        inputAsset.address
+        topupInputAsset.address
       );
 
       await unwrap(
-        topupInputAsset,
-        topupInputAmount,
+        inputAsset,
+        inputAmount,
         network,
         web3,
         accountAddress,
@@ -79,7 +81,7 @@ export const topUpCompound = async (
       const balanceAfterUnwrap = await currentBalance(
         web3,
         accountAddress,
-        inputAsset.address
+        topupInputAsset.address
       );
 
       topupInputAmount = sub(balanceAfterUnwrap, balanceBeforeUnwrap);
@@ -104,6 +106,8 @@ export const topUpCompound = async (
     }
   }
 
+  changeStepToProcess('Confirm');
+
   try {
     await executeTransactionWithApprove(
       topupInputAsset,
@@ -125,7 +129,7 @@ export const topUpCompound = async (
           gasPriceInGwei
         );
       },
-      changeStepToProcess,
+      () => changeStepToProcess('Process'),
       approveGasLimit,
       gasPriceInGwei
     );
@@ -150,7 +154,7 @@ export const topUp = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
-  changeStepToProcess: () => Promise<void>,
+  changeStepToProcess: (step: LoaderStep) => Promise<void>,
   gasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void | never> => {
@@ -281,7 +285,7 @@ export const topUp = async (
         });
 
         console.log('debug debit card top up txn hash', hash);
-        changeStepToProcess();
+        changeStepToProcess('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
         Sentry.addBreadcrumb({

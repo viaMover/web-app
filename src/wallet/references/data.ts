@@ -587,7 +587,7 @@ const BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].BTRFLY_TOKEN_ADDRESS ?? '0x1';
 };
 const WX_BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].BTRFLY_TOKEN_ADDRESS ?? '0x1';
+  return ADDRESSES[network].WX_BTRFLY_TOKEN_ADDRESS ?? '0x1';
 };
 
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
