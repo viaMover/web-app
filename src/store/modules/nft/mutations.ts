@@ -11,7 +11,6 @@ import { NFTStoreState } from './types';
 
 type Mutations = {
   setIsLoading: void;
-  setNFTs: void;
   setUnexpectedMoveData: void;
   setSweetAndSourData: void;
   setVaultsData: void;

@@ -6,6 +6,8 @@ import { BaseNftAsset, NFTStoreState } from './types';
 type Getters = {
   canExchangeUnexpectedMove: boolean;
   hasOlympus: boolean;
+  nfts: Array<BaseNftAsset>;
+  accountNfts: Array<BaseNftAsset>;
 };
 
 const getters: GettersFuncs<Getters, NFTStoreState> = {

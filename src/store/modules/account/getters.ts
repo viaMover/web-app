@@ -20,6 +20,7 @@ type Getters = {
   getTransactionByHash: (hash: string) => Transaction | undefined;
   getTransactionByQueueId: (queueId: string) => Transaction | undefined;
   transactionsGroupedByDay: Array<TransactionGroup>;
+  displayableWalletTokens: Array<DisplayableToken>;
   isWalletConnected: boolean;
   isWalletReady: boolean;
   entireBalance: string;
