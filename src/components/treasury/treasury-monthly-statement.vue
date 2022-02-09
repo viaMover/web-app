@@ -1,34 +1,44 @@
 <template>
-  <analytics-list>
+  <analytics-list v-if="!isError">
     <analytics-list-item
       :description="balance"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblBalance', { month: monthName })"
     />
     <analytics-list-item
       :description="rewardsEarned"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblRewardsEarned')"
     />
     <analytics-list-item
       :description="averageDailyEarnings"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblAverageDailyEarnings')"
     />
     <analytics-list-item
       :description="rewardsUsed"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblRewardsUsed')"
     />
     <analytics-list-item
       :description="averageDailySpendings"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblAverageDailySpendings')"
     />
     <analytics-list-item
       :description="reservedAssets"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblReservedAssets')"
     />
     <analytics-list-item
       :description="removedAssets"
+      :is-loading="isLoading"
       :title="$t('treasury.statement.lblRemovedAssets')"
     />
   </analytics-list>
+  <div v-else class="error-message">
+    {{ $t('treasury.lblLoadMonthStatError') }}
+  </div>
 </template>
 
 <script lang="ts">
@@ -64,7 +74,7 @@ export default Vue.extend({
   data() {
     return {
       isLoading: true,
-      isError: true,
+      isError: false,
       receipt: undefined as TreasuryReceipt | undefined
     };
   },
@@ -79,10 +89,11 @@ export default Vue.extend({
     balance(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined
       ) {
-        return '0';
+        return '$0';
       }
 
       let moveBalanceNative = '0';
@@ -113,6 +124,7 @@ export default Vue.extend({
     rewardsEarned(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined ||
         this.receipt.earnedThisMonth === 0
@@ -135,6 +147,7 @@ export default Vue.extend({
     averageDailyEarnings(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined ||
         this.receipt.avgDailyEarnings === 0
@@ -157,6 +170,7 @@ export default Vue.extend({
     rewardsUsed(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined ||
         this.receipt.spentThisMonth === 0
@@ -179,6 +193,7 @@ export default Vue.extend({
     averageDailySpendings(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined ||
         this.receipt.avgDailySpendings === 0
@@ -201,6 +216,7 @@ export default Vue.extend({
     reservedAssets(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined
       ) {
@@ -236,6 +252,7 @@ export default Vue.extend({
     removedAssets(): string {
       if (
         this.isLoading ||
+        this.isError ||
         this.receipt === undefined ||
         this.networkInfo === undefined
       ) {

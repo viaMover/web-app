@@ -1,8 +1,6 @@
-import gt from 'lodash-es/gt';
-
 import { OlympusMonthBalanceItem } from '@/services/mover';
 import { GettersFuncs } from '@/store/types';
-import { divide, fromWei, multiply } from '@/utils/bigmath';
+import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsOlympusStoreState } from './types';
@@ -34,7 +32,9 @@ const getters: GettersFuncs<Getters, EarningsOlympusStoreState> = {
     return multiply(divide(state.olympusAPY, '100'), '10000');
   },
   hasActiveEarnings(state): boolean {
-    return state.olympusBalance !== undefined && gt(state.olympusBalance, 0);
+    return (
+      state.olympusBalance !== undefined && greaterThan(state.olympusBalance, 0)
+    );
   },
   olympusInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (

@@ -77,7 +77,7 @@ export const depositCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't savings deposit: ${err}`);
+    console.error(`Can't savings deposit: `, err);
     throw err;
   }
 };

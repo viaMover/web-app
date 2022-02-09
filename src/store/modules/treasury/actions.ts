@@ -37,6 +37,8 @@ type Actions = {
   fetchTreasuryReceipt: Promise<void>;
 };
 
+export const RECEIPT_TIME_EXPIRE = 60 * 10 * 1000;
+
 const actions: ActionFuncs<
   Actions,
   TreasuryStoreState,
@@ -246,7 +248,7 @@ const actions: ActionFuncs<
             'treasuryReceipts',
             key,
             await value.data,
-            Date.now() + 600000
+            Date.now() + RECEIPT_TIME_EXPIRE
           );
         }
       }

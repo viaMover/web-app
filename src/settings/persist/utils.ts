@@ -5,19 +5,33 @@ export const getFromPersistStoreWithExpire = async <T>(
   key: string
 ): Promise<T | undefined> => {
   return new Promise((resolve) => {
-    const rawItem = window.localStorage.getItem(`${prefix}-[${key}]`);
+    let rawItem = null;
+    try {
+      rawItem = window.localStorage.getItem(`${prefix}-[${key}]`);
+    } catch (e) {
+      // case, if user block localStore
+      // ignore
+    }
     if (rawItem === null) {
       resolve(undefined);
       return;
     }
 
-    const item = JSON.parse(rawItem) as DataStoreWrapper<T>;
+    let item;
+    try {
+      item = JSON.parse(rawItem) as DataStoreWrapper<T>;
+    } catch (e) {
+      //remove bad item
+      window.localStorage.removeItem(`${prefix}-[${key}]`);
+      resolve(undefined);
+      return;
+    }
 
     if (item.expDate > Date.now()) {
       window.localStorage.removeItem(`${prefix}-[${key}]`);
       resolve(undefined);
     } else {
-      resolve(item.data as T);
+      resolve(item.data);
     }
   });
 };
@@ -27,7 +41,13 @@ export const getFromPersistStore = async <T>(
   key: string
 ): Promise<T | undefined> => {
   return new Promise((resolve) => {
-    const rawItem = window.localStorage.getItem(`${prefix}-[${key}]`);
+    let rawItem = null;
+    try {
+      rawItem = window.localStorage.getItem(`${prefix}-[${key}]`);
+    } catch (e) {
+      // case, if user block localStore
+      // ignore
+    }
     if (rawItem === null) {
       resolve(undefined);
       return;
@@ -48,10 +68,13 @@ export const setToPersistStore = async <T>(
       data: val,
       expDate: expireDate
     };
-    window.localStorage.setItem(
-      `${prefix}-[${key}]`,
-      JSON.stringify(wrappedValue)
-    );
-    resolve();
+    try {
+      window.localStorage.setItem(
+        `${prefix}-[${key}]`,
+        JSON.stringify(wrappedValue)
+      );
+    } finally {
+      resolve();
+    }
   });
 };

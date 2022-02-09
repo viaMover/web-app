@@ -1,10 +1,8 @@
-import gt from 'lodash-es/gt';
-
 import { TreasuryMonthBonusesItem, TreasuryReceipt } from '@/services/mover';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
 import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
-import { add, fromWei, multiply } from '@/utils/bigmath';
+import { add, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
@@ -82,9 +80,10 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
   hasActiveTreasury(state): boolean {
     const isTreasuryBalanceMoveNotEmpty =
       state.treasuryBalanceMove !== undefined &&
-      gt(state.treasuryBalanceMove, 0);
+      greaterThan(state.treasuryBalanceMove, 0);
     const isTreasuryBalanceLPNotEmpty =
-      state.treasuryBalanceLP !== undefined && gt(state.treasuryBalanceLP, 0);
+      state.treasuryBalanceLP !== undefined &&
+      greaterThan(state.treasuryBalanceLP, 0);
 
     if (isTreasuryBalanceMoveNotEmpty || isTreasuryBalanceLPNotEmpty) {
       return true;
@@ -109,35 +108,6 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
         return true;
       }
     }
-
-    // if (
-    //   state.treasuryReceipt !== undefined &&
-    //   !state.isTreasuryReceiptLoading
-    // ) {
-    //   const isEndOfMonthBalanceMoveNotEmpty =
-    //     state.treasuryReceipt.endOfMonthBalanceMove > 0;
-    //   const isEndOfMonthBalanceMoveLPNotEmpty =
-    //     state.treasuryReceipt.endOfMonthBalanceMoveLP > 0;
-    //   const isTotalDepositsMoveNotEmpty =
-    //     state.treasuryReceipt.totalDepositsMove > 0;
-    //   const isTotalDepositsMoveLPNotEmpty =
-    //     state.treasuryReceipt.totalDepositsMoveLP > 0;
-    //   const isTotalWithdrawalsMoveNotEmpty =
-    //     state.treasuryReceipt.totalWithdrawalsMove > 0;
-    //   const isTotalWithdrawalsMoveLPNotEmpty =
-    //     state.treasuryReceipt.totalWithdrawalsMoveLP > 0;
-    //
-    //   if (
-    //     isEndOfMonthBalanceMoveNotEmpty ||
-    //     isEndOfMonthBalanceMoveLPNotEmpty ||
-    //     isTotalDepositsMoveNotEmpty ||
-    //     isTotalDepositsMoveLPNotEmpty ||
-    //     isTotalWithdrawalsMoveNotEmpty ||
-    //     isTotalWithdrawalsMoveLPNotEmpty
-    //   ) {
-    //     return true;
-    //   }
-    // }
 
     return false;
   },
@@ -380,9 +350,8 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
       const item = state.receipts.get(`${year}/${month}`);
       if (item !== undefined && item.expDate > Date.now()) {
         return item.data;
-      } else {
-        return undefined;
       }
+      return undefined;
     };
   }
 };

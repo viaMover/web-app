@@ -1,13 +1,12 @@
-import gt from 'lodash-es/gt';
-
 import { SavingsMonthBalanceItem, SavingsReceipt } from '@/services/mover';
 import { GettersFuncs } from '@/store/types';
-import { divide, fromWei, multiply } from '@/utils/bigmath';
+import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { SavingsStoreState } from './types';
 
 type Getters = {
+  savingsBalanceNative: string;
   savingsInfoBalanceUSDC: string;
   savingsInfoBalanceNative: string;
   savingsInfoEarnedThisMonthNative: string;
@@ -24,6 +23,12 @@ type Getters = {
 };
 
 const getters: GettersFuncs<Getters, SavingsStoreState> = {
+  savingsBalanceNative(state, getters): string {
+    if (state.savingsBalance === undefined) {
+      return '0';
+    }
+    return multiply(state.savingsBalance, getters.usdcNativePrice);
+  },
   savingsInfoBalanceUSDC(state, _, rootState): string {
     if (state.savingsBalance !== undefined) {
       return state.savingsBalance;
@@ -42,7 +47,7 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
       getUSDCAssetData(rootState.account!.networkInfo.network).decimals
     );
   },
-  savingsInfoBalanceNative(state, getters, _): string {
+  savingsInfoBalanceNative(state, getters): string {
     return multiply(getters.savingsInfoBalanceUSDC, getters.usdcNativePrice);
   },
   savingsInfoEarnedThisMonthNative(state, getters, rootState): string {
@@ -144,7 +149,10 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
   hasActiveSavings(state): boolean {
-    if (state.savingsBalance !== undefined && gt(state.savingsBalance, 0)) {
+    if (
+      state.savingsBalance !== undefined &&
+      greaterThan(state.savingsBalance, 0)
+    ) {
       return true;
     }
 
@@ -162,22 +170,6 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
         return true;
       }
     }
-
-    // if (state.savingsReceipt !== undefined && !state.isSavingsReceiptLoading) {
-    //   const isEndOfMonthBalanceNotEmpty =
-    //     state.savingsReceipt.endOfMonthBalance > 0;
-    //   const isTotalDepositsNotEmpty = state.savingsReceipt.totalDeposits > 0;
-    //   const isTotalWithdrawalsNotEmpty =
-    //     state.savingsReceipt.totalWithdrawals > 0;
-    //
-    //   if (
-    //     isEndOfMonthBalanceNotEmpty ||
-    //     isTotalDepositsNotEmpty ||
-    //     isTotalWithdrawalsNotEmpty
-    //   ) {
-    //     return true;
-    //   }
-    // }
 
     return false;
   },
@@ -198,9 +190,8 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
       const item = state.receipts.get(`${year}/${month}`);
       if (item !== undefined && item.expDate > Date.now()) {
         return item.data;
-      } else {
-        return undefined;
       }
+      return undefined;
     };
   }
 };

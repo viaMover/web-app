@@ -88,15 +88,7 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       return acc;
     }, '0');
 
-    if (
-      state.networkInfo !== undefined &&
-      rootState.savings?.savingsBalance !== undefined
-    ) {
-      balance = add(
-        balance,
-        multiply(rootState.savings.savingsBalance, getters.usdcNativePrice)
-      );
-    }
+    balance = add(balance, rootGetters['savings/savingsBalanceNative']);
 
     balance = add(balance, rootGetters['treasury/treasuryStakedBalanceNative']);
 

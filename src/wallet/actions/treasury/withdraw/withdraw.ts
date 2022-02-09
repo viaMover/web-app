@@ -36,7 +36,7 @@ export const withdrawCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't treasury withdraw: ${err}`);
+    console.error(`Can't treasury withdraw: `, err);
     throw err;
   }
 };

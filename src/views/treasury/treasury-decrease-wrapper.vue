@@ -358,9 +358,7 @@ export default Vue.extend({
       } catch (err) {
         this.isSubsidizedEnabled = false;
         this.isProcessing = false;
-        console.error(
-          `can't estimate treasury decrease boost for subs: ${err}`
-        );
+        console.error(`can't estimate treasury decrease boost for subs: `, err);
         Sentry.captureException(
           "can't estimate treasury decrease boost for subs"
         );

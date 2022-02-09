@@ -613,12 +613,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data: `, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data: `, err);
         return;
       } finally {
         this.loading = false;
@@ -677,12 +677,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data: `, err);
           this.transferError = 'Swap error';
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data: `, err);
         return;
       } finally {
         this.loading = false;
@@ -741,12 +741,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data: `, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data: `, err);
         return;
       } finally {
         this.loading = false;
@@ -805,7 +805,7 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data: `, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
@@ -878,12 +878,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data: `, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data: `, err);
         return;
       } finally {
         this.loading = false;

@@ -33,11 +33,6 @@ import {
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 
-import allAvatars from '../../../../data/avatars.json';
-import {
-  getOlympusAvatar,
-  isOlympusAvatar
-} from '../../../../data/olympus-avatar';
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
@@ -49,6 +44,8 @@ import {
   ProviderData,
   RefreshWalletPayload
 } from './types';
+import allAvatars from '@/../data/avatars.json';
+import { getOlympusAvatar, isOlympusAvatar } from '@/../data/olympus-avatar';
 
 const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
@@ -85,7 +82,7 @@ const actions: ActionFuncs<
         payload.chartsType
       );
     } catch (err) {
-      console.error(`Can't get chart data: ${err}`);
+      console.error(`Can't get chart data: `, err);
       Sentry.captureException(err);
     }
   },
@@ -108,7 +105,7 @@ const actions: ActionFuncs<
         commit('setGasPrices', resp);
       } catch (err) {
         commit('setRefreshEror', err);
-        console.log(`Can't get gas prices, err: ${err}`);
+        console.log(`Can't get gas prices, err: `, err);
         Sentry.captureException(err);
       } finally {
         if (state.gasUpdating) {

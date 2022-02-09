@@ -271,7 +271,7 @@ export class MoralisExplorer implements Explorer {
         }
       ];
     } catch (err) {
-      Sentry.captureMessage(`Can't get enrich token list with native: ${err}`);
+      Sentry.captureMessage(`Can't get enrich token list with native: `, err);
       return tokens;
     }
   };

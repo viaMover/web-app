@@ -34,18 +34,8 @@ export default Vue.extend({
   data() {
     return {
       isLoading: true,
-      isError: true,
-      receipt: undefined as SavingsReceipt | undefined,
-
-      selectedDay: null as number | null,
-      earnedThisMonth: 2984.49,
-      earnedRelativeMonthlyChange: 30.37,
-      earnedRelativeMonthlyChanges: [
-        {
-          timeStamp: 1621408016,
-          value: 0.35
-        }
-      ]
+      isError: false,
+      receipt: undefined as SavingsReceipt | undefined
     };
   },
   computed: {

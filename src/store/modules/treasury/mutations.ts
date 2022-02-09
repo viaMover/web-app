@@ -1,5 +1,6 @@
 import { PowercardState } from '@/services/chain';
 import { TreasuryInfo } from '@/services/mover';
+import { RECEIPT_TIME_EXPIRE } from '@/store/modules/treasury/actions';
 import { MutationFuncs } from '@/store/types';
 
 import { SetTreasuryReceiptPayload, TreasuryStoreState } from './types';
@@ -56,7 +57,7 @@ const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
     } else {
       state.receipts.set(key, {
         data: payload.receipt,
-        expDate: Date.now() + 600000 // add 10 min
+        expDate: Date.now() + RECEIPT_TIME_EXPIRE
       });
     }
   },

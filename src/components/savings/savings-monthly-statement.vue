@@ -1,17 +1,20 @@
 <template>
-  <analytics-list>
+  <analytics-list v-if="!isError">
     <analytics-list-item
       :description="balanceNative"
+      :is-loading="isLoading"
       :title="$t('savings.statement.lblBalance', { month: monthName })"
     />
     <analytics-list-item
       :description="totalEarned"
+      :is-loading="isLoading"
       :title="
         $t('savings.statement.lblTotalEarnedInMonth', { month: monthName })
       "
     />
     <analytics-list-item
       :description="averageDailyEarnings"
+      :is-loading="isLoading"
       :title="
         $t('savings.statement.lblAverageDailyEarningsInMonth', {
           month: monthName
@@ -20,21 +23,28 @@
     />
     <analytics-list-item
       :description="depositsNative"
+      :is-loading="isLoading"
       :title="$t('savings.statement.lblDeposits', { month: monthName })"
     />
     <analytics-list-item
       :description="withdrawalsNative"
+      :is-loading="isLoading"
       :title="$t('savings.statement.lblWithdrawals', { month: monthName })"
     />
     <analytics-list-item
       :description="savedFeesNative"
+      :is-loading="isLoading"
       :title="$t('savings.statement.lblSavedFees')"
     />
     <analytics-list-item
       :description="payoutsToTreasuryNative"
+      :is-loading="isLoading"
       :title="$t('savings.statement.lblPayoutsToTreasury')"
     />
   </analytics-list>
+  <div v-else class="error-message">
+    {{ $t('savings.lblLoadMonthStatError') }}
+  </div>
 </template>
 
 <script lang="ts">
@@ -66,7 +76,7 @@ export default Vue.extend({
   data() {
     return {
       isLoading: true,
-      isError: true,
+      isError: false,
       receipt: undefined as SavingsReceipt | undefined
     };
   },
@@ -83,10 +93,11 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.endOfMonthBalance === 0
       ) {
-        return '0';
+        return '$0';
       }
 
       const balanceInUSDC = fromWei(
@@ -104,6 +115,7 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.totalDeposits === 0
       ) {
@@ -126,6 +138,7 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.totalWithdrawals === 0
       ) {
@@ -149,10 +162,11 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.savedFees === 0
       ) {
-        return '0';
+        return '$0';
       }
 
       const savingsMonthSavedFees = fromWei(
@@ -170,10 +184,11 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.paidToTreasury === 0
       ) {
-        return '0';
+        return '$0';
       }
 
       const savingsMonthPaidToTreasury = fromWei(
@@ -190,6 +205,7 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.earnedThisMonth === 0
       ) {
@@ -212,6 +228,7 @@ export default Vue.extend({
       if (
         this.receipt === undefined ||
         this.isLoading ||
+        this.isError ||
         this.networkInfo === undefined ||
         this.receipt.avgDailyEarnings === 0
       ) {

@@ -49,7 +49,7 @@ export const withdrawCompound = async (
       );
     }
   } catch (err) {
-    console.error(`Can't savings withdraw: ${err}`);
+    console.error(`Can't savings withdraw: `, err);
     throw err;
   }
 };

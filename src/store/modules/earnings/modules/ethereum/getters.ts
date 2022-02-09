@@ -1,8 +1,6 @@
-import gt from 'lodash-es/gt';
-
 import { EthereumMonthBalanceItem, EthereumReceipt } from '@/services/mover';
 import { GettersFuncs } from '@/store/types';
-import { divide, fromWei, multiply } from '@/utils/bigmath';
+import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsEthereumStoreState } from './types';
@@ -34,7 +32,10 @@ const getters: GettersFuncs<Getters, EarningsEthereumStoreState> = {
     return multiply(divide(state.ethereumAPY, '100'), '10000');
   },
   hasActiveEarnings(state): boolean {
-    return state.ethereumBalance !== undefined && gt(state.ethereumBalance, 0);
+    return (
+      state.ethereumBalance !== undefined &&
+      greaterThan(state.ethereumBalance, 0)
+    );
   },
   ethereumInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (

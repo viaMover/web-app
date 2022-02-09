@@ -27,6 +27,8 @@ type Actions = {
   fetchSavingsReceipt: void;
 };
 
+export const RECEIPT_TIME_EXPIRE = 60 * 10 * 1000;
+
 const actions: ActionFuncs<
   Actions,
   SavingsStoreState,
@@ -115,7 +117,7 @@ const actions: ActionFuncs<
       commit('setSavingsDPY', savingsAPY.dpy);
       commit('setSavingsBalance', savingsBalance);
     } catch (err) {
-      console.error(`can't get savings fresh data: ${err}`);
+      console.error(`can't get savings fresh data: `, err);
       Sentry.captureException(err);
       commit('setSavingsAPY', '0');
       commit('setSavingsDPY', '0');
@@ -180,7 +182,7 @@ const actions: ActionFuncs<
             'savingsReceipts',
             key,
             await value.data,
-            Date.now() + 600000
+            Date.now() + RECEIPT_TIME_EXPIRE
           );
         }
       }

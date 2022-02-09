@@ -1,4 +1,5 @@
 import { SavingsInfo } from '@/services/mover';
+import { RECEIPT_TIME_EXPIRE } from '@/store/modules/savings/actions';
 import { MutationFuncs } from '@/store/types';
 
 import { SavingsStoreState, SetSavingsReceiptPayload } from './types';
@@ -39,7 +40,7 @@ const mutations: MutationFuncs<Mutations, SavingsStoreState> = {
     } else {
       state.receipts.set(key, {
         data: payload.receipt,
-        expDate: Date.now() + 600000 // add 10 min
+        expDate: Date.now() + RECEIPT_TIME_EXPIRE
       });
     }
   }

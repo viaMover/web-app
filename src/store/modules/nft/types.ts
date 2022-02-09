@@ -40,16 +40,14 @@ export type MetaItem = {
   value: string | number;
 };
 
-export type ClaimPayload = {
-  signature: string;
-  changeStep: (step: Step) => void;
-};
-
 export type ChangePayload = {
   changeStep: (step: Step) => void;
 };
 
+export type ClaimPayload = {
+  signature: string;
+} & ChangePayload;
+
 export type DicePayload = {
   diceType: DiceType;
-  changeStep: (step: Step) => void;
-};
+} & ChangePayload;

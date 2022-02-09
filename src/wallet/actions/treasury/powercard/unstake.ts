@@ -55,7 +55,7 @@ export const unstakePowercardCompound = async (
       }
     );
   } catch (err) {
-    console.error(`Can't unstake powercard: ${err}`);
+    console.error(`Can't unstake powercard: `, err);
     throw err;
   }
 };

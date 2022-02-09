@@ -46,7 +46,7 @@ type Actions = {
   loadProposalInfo: Promise<ProposalInfo | undefined>;
   createProposal: Promise<CreateProposalResponse>;
   vote: Promise<VoteResponse>;
-  loadScoresSelf: Promise<Array<any>>;
+  loadScoresSelf: Promise<Array<Scores>>;
   loadScores: Promise<Scores>;
   loadPowerInfo: Promise<void>;
   loadCommunityVotingPower: Promise<string>;
@@ -361,7 +361,7 @@ const actions: ActionFuncs<
   async loadScoresSelf(
     { dispatch, rootState },
     { proposal, snapshot = 'latest' }: LoadScoresSelfPayload
-  ): Promise<Array<any>> {
+  ): Promise<Array<Scores>> {
     try {
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');

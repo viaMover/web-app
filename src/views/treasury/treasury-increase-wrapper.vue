@@ -423,7 +423,7 @@ export default Vue.extend({
       } catch (err) {
         this.isSubsidizedEnabled = false;
         this.isProcessing = false;
-        console.error(`can't estimate treasury deposit for subs: ${err}`);
+        console.error(`can't estimate treasury deposit for subs: `, err);
         Sentry.captureException("can't estimate treasury deposit for subs");
         return;
       }
