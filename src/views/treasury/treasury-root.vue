@@ -152,7 +152,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import { sameAddress } from '@/utils/address';
@@ -262,9 +262,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['networkInfo', 'tokens']),
-    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' }),
-    ...mapGetters('account', {
+    ...mapState('account', { networkInfo: 'networkInfo', tokens: 'tokens' }),
+    ...mapGetters('treasury', {
+      hasActiveTreasury: 'hasActiveTreasury',
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
     }),
     hasMoveOnBalance(): boolean {
@@ -290,7 +290,11 @@ export default Vue.extend({
       return isFeatureEnabled('isTreasuryClaimAndBurnMOBOEnabled');
     }
   },
+  async mounted() {
+    await this.loadInfo();
+  },
   methods: {
+    ...mapActions('treasury', { loadInfo: 'loadInfo' }),
     handleClose(): void {
       this.$router.replace({ name: 'home' });
     }

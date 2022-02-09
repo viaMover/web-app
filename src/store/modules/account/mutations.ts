@@ -1,22 +1,85 @@
-import { MutationTree } from 'vuex';
-
 import Fuse from 'fuse.js';
 
 import { Explorer } from '@/services/explorer';
-import { getNetworkByChainId } from '@/utils/networkTypes';
-import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
-import { GasData, Token, TokenWithBalance } from '@/wallet/types';
-
 import {
   AccountData,
   AccountStoreState,
   Avatar,
   ChartPair,
   ProviderData
-} from '../types';
-import { sortAndDeduplicateTokens } from '../utils/tokens';
+} from '@/store/modules/account/types';
+import { sortAndDeduplicateTokens } from '@/store/modules/account/utils/tokens';
+import { sortAndDeduplicateTransactions } from '@/store/modules/account/utils/transactions';
+import { MutationFuncs } from '@/store/types';
+import { getNetworkByChainId } from '@/utils/networkTypes';
+import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
-export default {
+type Mutations = {
+  addTransaction: void;
+  setIsTransactionsListLoaded: void;
+  setWalletTransactions: void;
+  updateWalletTransactions: void;
+  removeWalletTransaction: void;
+  toggleIsDebitCardSectionVisible: void;
+  toggleIsDepositCardSectionVisible: void;
+  setEthPrice: void;
+  setMovePriceInWeth: void;
+  setUsdcPriceInWeth: void;
+  setSLPPriceInWETH: void;
+  setEursPriceInWeth: void;
+  setExplorer: void;
+  setOffchainExplorerHandler: void;
+  setChartData: void;
+  setCurrentWallet: void;
+  setWalletTokens: void;
+  updateWalletTokens: void;
+  removeWalletTokens: void;
+  setAllTokens: void;
+  setRefreshEror: void;
+  setIsDetecting: void;
+  setProvider: void;
+  setAccountData: void;
+  clearWalletData: void;
+  setGasPrices: void;
+  setGasUpdating: void;
+  setGasUpdaterHandle: void;
+  clearGasUpdaterHandle: void;
+  pushGasListenerCaller: void;
+  popGasListenerCaller: void;
+  setAvatars: void;
+  setAvatar: void;
+  setWeb3Modal: void;
+};
+
+const mutations: MutationFuncs<Mutations, AccountStoreState> = {
+  addTransaction(state, newTransaction: Transaction): void {
+    state.transactions = sortAndDeduplicateTransactions([
+      newTransaction,
+      ...state.transactions
+    ]);
+  },
+  setIsTransactionsListLoaded(state, val: boolean): void {
+    state.isTransactionsListLoaded = val;
+  },
+  setWalletTransactions(state, transactions: Array<Transaction>): void {
+    state.transactions = sortAndDeduplicateTransactions(transactions);
+  },
+  updateWalletTransactions(state, newTransactions: Array<Transaction>): void {
+    const allTransactions = [...newTransactions, ...state.transactions];
+    state.transactions = sortAndDeduplicateTransactions(allTransactions);
+  },
+  removeWalletTransaction(state, removeHashes: Array<string>): void {
+    state.transactions = state.transactions.filter(
+      (t: Transaction) => !removeHashes.includes(t.hash)
+    );
+  },
+  toggleIsDebitCardSectionVisible(state): void {
+    state.isDebitCardSectionVisible = !state.isDebitCardSectionVisible;
+  },
+  toggleIsDepositCardSectionVisible(state): void {
+    state.isDepositCardSectionVisible = !state.isDepositCardSectionVisible;
+  },
   setEthPrice(state, ethPrice: string): void {
     state.ethPrice = ethPrice;
   },
@@ -164,4 +227,7 @@ export default {
   setIsTokensListLoaded(state, isLoaded: boolean): void {
     state.isTokensListLoaded = isLoaded;
   }
-} as MutationTree<AccountStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

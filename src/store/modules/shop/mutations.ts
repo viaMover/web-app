@@ -1,9 +1,15 @@
 import Vue from 'vue';
-import { MutationTree } from 'vuex';
+
+import { MutationFuncs } from '@/store/types';
 
 import { SetAssetData, ShopStoreState } from './types';
 
-export default {
+type Mutations = {
+  setIsLoading: void;
+  setAsset: void;
+};
+
+const mutations: MutationFuncs<Mutations, ShopStoreState> = {
   setIsLoading(state, isLoading): void {
     state.isLoading = isLoading;
   },
@@ -42,4 +48,7 @@ export default {
       });
     }
   }
-} as MutationTree<ShopStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

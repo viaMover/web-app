@@ -1,11 +1,28 @@
-import { MutationTree } from 'vuex';
-
 import { PowercardState } from '@/services/chain';
-import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
+import { TreasuryInfo } from '@/services/mover';
+import { RECEIPT_TIME_EXPIRE } from '@/store/modules/treasury/actions';
+import { MutationFuncs } from '@/store/types';
 
-import { AccountStoreState } from '../types';
+import { SetTreasuryReceiptPayload, TreasuryStoreState } from './types';
 
-export default {
+type Mutations = {
+  setTreasuryBalanceMove: void;
+  setTreasuryBalanceLP: void;
+  setTreasuryBonus: void;
+  setTreasuryAPY: void;
+  setTreasuryTotalStakedMove: void;
+  setTreasuryTotalStakedMoveEthLP: void;
+  setIsTreasuryInfoLoading: void;
+  setTreasuryInfoError: void;
+  setTreasuryInfo: void;
+  setTreasuryReceipt: void;
+  setPowercardBalance: void;
+  setPowercardState: void;
+  setPowercardActiveTime: void;
+  setPowercardCooldownTime: void;
+};
+
+const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
   setTreasuryBalanceMove(state, moveBalance: string): void {
     state.treasuryBalanceMove = moveBalance;
   },
@@ -33,14 +50,16 @@ export default {
   setTreasuryInfo(state, info: TreasuryInfo | undefined): void {
     state.treasuryInfo = info;
   },
-  setIsTreasuryReceiptLoading(state, isLoading: boolean): void {
-    state.isTreasuryReceiptLoading = isLoading;
-  },
-  setTreasuryReceiptError(state, error: string | undefined): void {
-    state.treasuryReceiptError = error;
-  },
-  setTreasuryReceipt(state, receipt: TreasuryReceipt): void {
-    state.treasuryReceipt = receipt;
+  setTreasuryReceipt(state, payload: SetTreasuryReceiptPayload): void {
+    const key = `${payload.year}/${payload.month}`;
+    if (payload.receipt === undefined) {
+      state.receipts.delete(key);
+    } else {
+      state.receipts.set(key, {
+        data: payload.receipt,
+        expDate: Date.now() + RECEIPT_TIME_EXPIRE
+      });
+    }
   },
   setPowercardBalance(state, balance: string): void {
     state.powercardBalance = balance;
@@ -54,4 +73,7 @@ export default {
   setPowercardCooldownTime(state, cooldownTime: number): void {
     state.powercardCooldownTime = cooldownTime;
   }
-} as MutationTree<AccountStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

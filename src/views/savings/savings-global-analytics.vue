@@ -90,11 +90,11 @@ export default Vue.extend({
     AnalyticsListItem
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('savings', {
       apy: 'savingsAPY',
       dpy: 'savingsDPY'
     }),
-    ...mapGetters('account', {
+    ...mapGetters('savings', {
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
       savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative',
       savingsEstimatedEarningsTomorrowNative:

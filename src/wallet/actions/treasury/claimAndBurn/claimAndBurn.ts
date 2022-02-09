@@ -51,7 +51,7 @@ export const claimAndBurnCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't treasury claim and burn: ${err}`);
+    console.error(`Can't treasury claim and burn:`, err);
     throw err;
   }
 };

@@ -325,6 +325,7 @@ const messages: VueI18n.LocaleMessageObject = {
     txtSavingsOverviewDescription:
       'Savings is a non-custodial and permissionless product. ' +
       'Check the global statistics across the board.',
+    lblLoadMonthStatError: 'Failed to load Savings monthly statements',
     btnDeposit: {
       simple: 'Deposit in @:savings.lblSavingsPrefix',
       emoji: '💰 @:savings.btnDeposit.simple'
@@ -438,6 +439,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSpentInTotal: 'Spent in total',
     lblReservedAssets: 'Reserved assets',
     lblCurrentCostCoverage: 'up to 100%',
+    lblLoadMonthStatError: 'Failed to load Treasury monthly statements',
     leftRail: {
       lblManageSmartTreasury: 'Manage Smart Treasury',
       lblIncreaseBoost: 'Increase Boost',

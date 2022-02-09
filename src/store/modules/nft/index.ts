@@ -1,12 +1,9 @@
-import { Module } from 'vuex';
-
 import { isFeatureEnabled, isProduction } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule } from '@/store/types';
 
-import actionsClaim from './actions/claim';
-import actionsInit from './actions/init';
-import getters from './getters';
-import mutations from './mutations';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 import { NftAssetId, NFTStoreState } from './types';
 
 export default {
@@ -262,10 +259,7 @@ export default {
         }
       : undefined
   },
-  actions: {
-    ...actionsInit,
-    ...actionsClaim
-  },
+  actions,
   getters,
   mutations
-} as Module<NFTStoreState, RootStoreState>;
+} as AugmentedModule<NFTStoreState, ActionType, GetterType, MutationType>;

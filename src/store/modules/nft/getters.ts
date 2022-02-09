@@ -1,11 +1,14 @@
-import { GetterTree } from 'vuex';
-
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { greaterThan } from '@/utils/bigmath';
 
 import { BaseNftAsset, NFTStoreState } from './types';
 
-export default {
+type Getters = {
+  canExchangeUnexpectedMove: boolean;
+  hasOlympus: boolean;
+};
+
+const getters: GettersFuncs<Getters, NFTStoreState> = {
   canExchangeUnexpectedMove(state): boolean {
     return greaterThan(state.unexpectedMove.balance, '0');
   },
@@ -32,4 +35,7 @@ export default {
       greaterThan(asset.balance, 0)
     );
   }
-} as GetterTree<NFTStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

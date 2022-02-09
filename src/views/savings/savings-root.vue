@@ -101,7 +101,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { formatPercents, formatToNative } from '@/utils/format';
 
@@ -169,8 +169,8 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', { apy: 'savingsAPY' }),
-    ...mapGetters('account', {
+    ...mapState('savings', { apy: 'savingsAPY' }),
+    ...mapGetters('savings', {
       hasActiveSavings: 'hasActiveSavings',
       savingsInfoBalanceNative: 'savingsInfoBalanceNative'
     }),
@@ -181,7 +181,11 @@ export default Vue.extend({
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     }
   },
+  async mounted() {
+    await this.loadInfo();
+  },
   methods: {
+    ...mapActions('savings', { loadInfo: 'loadInfo' }),
     handleClose(): void {
       this.$router.replace({ name: 'home' });
     }

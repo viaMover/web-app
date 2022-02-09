@@ -1,10 +1,21 @@
-import { MutationTree } from 'vuex';
-
 import { EthereumInfo } from '@/services/mover';
+import { MutationFuncs } from '@/store/types';
 
 import { EarningsEthereumStoreState, SetEthereumReceiptPayload } from './types';
 
-export default {
+type Mutations = {
+  setIsLoading: void;
+  setEthereumAPY: void;
+  setEthereumBalance: void;
+  setEthereumInfo: void;
+  setEthereumInfoError: void;
+  setIsEthereumInfoLoading: void;
+  setEthereumReceipt: void;
+  setEthereumReceiptError: void;
+  setIsEthereumReceiptLoading: void;
+};
+
+const mutations: MutationFuncs<Mutations, EarningsEthereumStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
@@ -33,4 +44,7 @@ export default {
   setIsEthereumReceiptLoading(state, status: boolean): void {
     state.isEthereumInfoLoading = status;
   }
-} as MutationTree<EarningsEthereumStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

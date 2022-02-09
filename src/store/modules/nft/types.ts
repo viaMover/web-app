@@ -1,3 +1,6 @@
+import { DiceType } from '@/services/chain';
+
+import { Step } from '@/components/forms/form-loader';
 import { PictureDescriptor } from '@/components/html5';
 
 export type NFTStoreState = {
@@ -57,3 +60,15 @@ export type NftAsset<I extends TNftAssetKey> = {
   id: I;
   meta: NftAssetsMeta[I];
 } & BaseNftAsset;
+
+export type ChangePayload = {
+  changeStep: (step: Step) => void;
+};
+
+export type ClaimPayload = {
+  signature: string;
+} & ChangePayload;
+
+export type DicePayload = {
+  diceType: DiceType;
+} & ChangePayload;

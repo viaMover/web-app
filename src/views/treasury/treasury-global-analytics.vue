@@ -106,7 +106,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', {
+    ...mapGetters('treasury', {
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative',
       treasuryBoost: 'treasuryBoost',
       treasuryTotalStakedBalanceNative: 'treasuryTotalStakedBalanceNative',
@@ -119,12 +119,15 @@ export default Vue.extend({
       treasuryStakedMove: 'treasuryStakedMove',
       treasuryStakedMoveLP: 'treasuryStakedMoveLP'
     }),
-    ...mapState('account', [
-      'powercardState',
-      'networkInfo',
-      'treasuryTotalStakedMove',
-      'treasuryTotalStakedMoveEthLP'
-    ]),
+    ...mapState('treasury', {
+      powercardState: 'powercardState',
+      networkInfo: 'networkInfo',
+      treasuryTotalStakedMove: 'treasuryTotalStakedMove',
+      treasuryTotalStakedMoveEthLP: 'treasuryTotalStakedMoveEthLP'
+    }),
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
     formattedMoveAmount(): string {
       const moveAmountNative = this.treasuryStakedMove;
       return formatToDecimals(moveAmountNative, 4);
