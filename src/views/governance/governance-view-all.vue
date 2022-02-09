@@ -15,11 +15,7 @@
 import Vue from 'vue';
 
 import { GovernanceProposals } from '@/components/governance';
-import {
-  ContentWrapper,
-  SecondaryPage,
-  SecondaryPageHeader
-} from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceViewAll',
