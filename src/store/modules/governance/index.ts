@@ -1,5 +1,3 @@
-import { Module } from 'vuex';
-
 import dayjs from 'dayjs';
 
 import {
@@ -10,11 +8,11 @@ import {
   moverSpaceId
 } from '@/services/mover/governance';
 import { isProduction } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule } from '@/store/types';
 
-import actions from './actions';
-import getters from './getters';
-import mutations from './mutations';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 import { GovernanceStoreState } from './types';
 
 const now = dayjs().unix();
@@ -44,4 +42,9 @@ export default {
   actions,
   getters,
   mutations
-} as Module<GovernanceStoreState, RootStoreState>;
+} as AugmentedModule<
+  GovernanceStoreState,
+  ActionType,
+  GetterType,
+  MutationType
+>;

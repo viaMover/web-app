@@ -1,14 +1,8 @@
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
+import { provider } from 'web3-core';
 
-import { PowercardState } from '@/services/chain';
 import { Explorer } from '@/services/explorer';
-import {
-  SavingsInfo,
-  SavingsReceipt,
-  TreasuryInfo,
-  TreasuryReceipt
-} from '@/services/mover';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -83,37 +77,21 @@ export type AccountStoreState = {
   gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
+};
 
-  isSavingsInfoLoading: boolean;
-  savingsInfo: SavingsInfo | undefined;
-  savingsInfoError: string | undefined;
+export type EmitChartRequestPayload = {
+  assetCode: string;
+  nativeCurrency: string;
+  chartsType: string;
+};
 
-  isSavingsReceiptLoading: boolean;
-  savingsReceipt: SavingsReceipt | undefined;
-  savingsReceiptError: string | undefined;
+export type RefreshWalletPayload = {
+  injected: boolean;
+  init: boolean;
+};
 
-  savingsBalance: string | undefined;
-  savingsAPY: string | undefined;
-  savingsDPY: string | undefined;
-
-  // Treasury
-  treasuryBalanceMove: string | undefined;
-  treasuryBalanceLP: string | undefined;
-  treasuryBonus: string | undefined;
-  treasuryAPY: string | undefined;
-  treasuryTotalStakedMove: string | undefined;
-  treasuryTotalStakedMoveEthLP: string | undefined;
-
-  powercardBalance: string | undefined;
-  powercardState: PowercardState | undefined;
-  powercardActiveTime: number;
-  powercardCooldownTime: number;
-
-  isTreasuryInfoLoading: boolean;
-  treasuryInfo: TreasuryInfo | undefined;
-  treasuryInfoError: string | undefined;
-
-  isTreasuryReceiptLoading: boolean;
-  treasuryReceipt: TreasuryReceipt | undefined;
-  treasuryReceiptError: string | undefined;
+export type InitWalletPayload = {
+  provider: provider;
+  injected: boolean;
+  providerBeforeCloseCb: () => void;
 };

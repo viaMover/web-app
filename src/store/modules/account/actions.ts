@@ -1,9 +1,6 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 import sample from 'lodash-es/sample';
 import Web3 from 'web3';
-import { provider } from 'web3-core';
 
 import {
   bootIntercomSession,
@@ -24,10 +21,11 @@ import {
   setAvatarToPersist,
   setIsOlympusAvatarKnownToPersist
 } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { ActionFuncs } from '@/store/types';
 import { Network } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { getEthereumPrice } from '@/wallet/ethPrice';
+import { getGasPrices } from '@/wallet/gas';
 import {
   clearOffchainExplorer,
   initOffchainExplorer
@@ -35,27 +33,113 @@ import {
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import {
   AccountData,
   AccountStoreState,
   Avatar,
-  ProviderData
-} from './../types';
+  EmitChartRequestPayload,
+  InitWalletPayload,
+  ProviderData,
+  RefreshWalletPayload
+} from './types';
 import allAvatars from '@/../data/avatars.json';
 import { getOlympusAvatar, isOlympusAvatar } from '@/../data/olympus-avatar';
 
-export type RefreshWalletPayload = {
-  injected: boolean;
-  init: boolean;
+const GAS_UPDATE_INTERVAL = 60000; // 60s
+const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
+
+type Actions = {
+  emitChartRequest: void;
+  startGasListening: void;
+  stopGasListening: void;
+  addTransaction: void;
+  toggleIsDebitCardSectionVisible: void;
+  toggleIsDepositCardSectionVisible: void;
+  setCurrentWallet: Promise<void>;
+  setIsDetecting: void;
+  loadAvatar: Promise<void>;
+  toggleAvatar: Promise<void>;
+  initWallet: Promise<void>;
+  refreshWallet: Promise<void>;
+  updateWalletAfterTxn: Promise<void>;
+  waitWallet: Promise<boolean>;
+  disconnectWallet: Promise<void>;
 };
 
-export type InitWalletPayload = {
-  provider: provider;
-  injected: boolean;
-  providerBeforeCloseCb: () => void;
-};
+const actions: ActionFuncs<
+  Actions,
+  AccountStoreState,
+  MutationType,
+  GetterType
+> = {
+  emitChartRequest({ state }, payload: EmitChartRequestPayload): void {
+    try {
+      state.explorer?.getChartData(
+        payload.assetCode,
+        payload.nativeCurrency,
+        payload.chartsType
+      );
+    } catch (err) {
+      console.error(`Can't get chart data:`, err);
+      Sentry.captureException(err);
+    }
+  },
+  startGasListening({ commit, state }, caller: string): void {
+    commit('pushGasListenerCaller', caller);
 
-export default {
+    if (state.gasUpdating) {
+      return;
+    }
+
+    commit('setGasUpdating', true);
+
+    if (state.gasUpdaterHandle !== undefined) {
+      return;
+    }
+
+    const updateGasFunc = async () => {
+      try {
+        const resp = await getGasPrices(state.networkInfo?.network);
+        commit('setGasPrices', resp);
+      } catch (err) {
+        commit('setRefreshEror', err);
+        console.log(`Can't get gas prices, err:`, err);
+        Sentry.captureException(err);
+      } finally {
+        if (state.gasUpdating) {
+          commit(
+            'setGasUpdaterHandle',
+            window.setTimeout(updateGasFunc, GAS_UPDATE_INTERVAL)
+          );
+        } else {
+          commit('clearGasUpdaterHandle');
+        }
+      }
+    };
+
+    commit(
+      'setGasUpdaterHandle',
+      window.setTimeout(updateGasFunc, GAS_INITIAL_DELAY)
+    );
+  },
+  stopGasListening({ commit, state }, caller): void {
+    commit('popGasListenerCaller', caller);
+
+    if (state.gasUpdaterCallers.length === 0 && state.gasUpdating) {
+      commit('setGasUpdating', false);
+    }
+  },
+  addTransaction({ commit }, transaction: Transaction): void {
+    commit('addTransaction', transaction);
+  },
+  toggleIsDebitCardSectionVisible({ commit }): void {
+    commit('toggleIsDebitCardSectionVisible');
+  },
+  toggleIsDepositCardSectionVisible({ commit }): void {
+    commit('toggleIsDepositCardSectionVisible');
+  },
   async setCurrentWallet({ commit }, address: string): Promise<void> {
     commit('setCurrentWallet', address);
   },
@@ -162,7 +246,6 @@ export default {
 
     await setAvatarToPersist(state.currentAddress, newAvatar);
   },
-
   async initWallet(
     { commit, dispatch },
     payload: InitWalletPayload
@@ -188,7 +271,6 @@ export default {
       console.log(err);
     }
   },
-
   async refreshWallet(
     { dispatch, commit, state },
     payload: RefreshWalletPayload
@@ -365,12 +447,13 @@ export default {
         throw e;
       }
 
-      const savingsFreshData = dispatch('fetchSavingsFreshData');
-      const savingsInfoPromise = dispatch('fetchSavingsInfo');
-
-      const treasuryFreshData = dispatch('fetchTreasuryFreshData');
-      const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
+      const treasuryInfoPromise = dispatch('treasury/loadInfo', undefined, {
+        root: true
+      });
       const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
+        root: true
+      });
+      const savingsInfoPromise = dispatch('savings/loadInfo', undefined, {
         root: true
       });
 
@@ -385,7 +468,6 @@ export default {
       const loadAvatarPromise = nftInfoPromise.then(() =>
         dispatch('loadAvatar')
       );
-      const loadPowercardPromise = dispatch('fetchPowercardData');
 
       let gamesPromise = Promise.resolve();
       if (isFeatureEnabled('isVaultsRaceEnabled')) {
@@ -397,12 +479,9 @@ export default {
       const promisesResults = await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
-        savingsFreshData,
-        treasuryFreshData,
         nftInfoPromise,
         loadAvatarPromise,
         nibbleShopInfoPromise,
-        loadPowercardPromise,
         gamesPromise
       ]);
 
@@ -420,12 +499,17 @@ export default {
     }
   },
   async updateWalletAfterTxn({ dispatch }): Promise<void> {
-    const loadPowercardPromise = dispatch('fetchPowercardData');
-    const savingsFreshData = dispatch('fetchSavingsFreshData');
-    const treasuryFreshData = dispatch('fetchTreasuryFreshData');
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
+    const savingsInfoPromise = dispatch('savings/loadMinimalInfo', undefined, {
+      root: true
+    });
+    const treasuryInfoPromise = dispatch(
+      'treasury/loadMinimalInfo',
+      undefined,
+      { root: true }
+    );
     const debitCardAvailableSkinsPromise = isFeatureEnabled(
       'isDebitCardEnabled'
     )
@@ -435,10 +519,9 @@ export default {
       : Promise.resolve();
 
     const promisesResults = await Promise.allSettled([
-      savingsFreshData,
-      treasuryFreshData,
+      savingsInfoPromise,
+      treasuryInfoPromise,
       nftInfoPromise,
-      loadPowercardPromise,
       debitCardAvailableSkinsPromise
     ]);
     const promisesErrors = promisesResults
@@ -489,4 +572,7 @@ export default {
     commit('clearWalletData');
     disconnectIntercomSession();
   }
-} as ActionTree<AccountStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

@@ -176,8 +176,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', [
-      'savingsInfoBalanceNative',
+    ...mapGetters('savings', {
+      savingsInfoBalanceNative: 'savingsInfoBalanceNative'
+    }),
+    ...mapGetters('treasury', [
       'treasuryBonusNative',
       'treasuryStakedBalanceNative'
     ]),

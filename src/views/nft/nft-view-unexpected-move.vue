@@ -112,7 +112,7 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { getUnexpectedMoveClaimSignature } from '@/services/chain';
-import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload, ClaimPayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';

@@ -1,3 +1,5 @@
+import { Step } from '@/components/forms/form-loader';
+
 export type Asset = {
   active: boolean;
   id: string;
@@ -56,4 +58,15 @@ export type RedeemParams = {
   country: string;
   address: string;
   postalCode: string;
+};
+
+export type RedeemPayload = {
+  changeStep: (step: Step) => void;
+  tokenId: string;
+  signature: string;
+};
+
+export type ClaimPayload = {
+  changeStep: (step: Step) => void;
+  tokenId: string;
 };

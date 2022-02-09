@@ -1,24 +1,50 @@
-/* eslint-disable  @typescript-eslint/no-non-null-assertion */
-
-import { ActionTree } from 'vuex';
-
 import { logger } from '@sentry/utils';
 import * as Sentry from '@sentry/vue';
 
 import {
+  claimAndExchangeUnexpectedMove,
+  claimDice,
+  claimOlympus,
+  claimSweetAndSour,
+  claimUnexpectedMove,
+  exchangeUnexpectedMove,
   getDiceData,
   getOlympusData,
   getSweetAndSourData,
   getUnexpectedMoveData,
   getVaultsData
 } from '@/services/chain';
+import { claimVaults } from '@/services/chain/nft/vaults/vaults';
 import { isFeatureEnabled } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import {
+  ChangePayload,
+  ClaimPayload,
+  DicePayload,
+  NftAsset,
+  NFTStoreState
+} from '@/store/modules/nft/types';
+import { ActionFuncs } from '@/store/types';
+import { greaterThan, lessThan } from '@/utils/bigmath';
+import { currentTimestamp } from '@/utils/time';
 
-import { checkAccountStateIsReady } from './../../account/utils/state';
-import { NftAsset, NFTStoreState } from './../types';
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 
-export default {
+type Actions = {
+  loadNFTInfo: Promise<void>;
+  refreshNftStats: Promise<void>;
+  checkOlympusClaimable: boolean;
+  claimOlympus: Promise<void>;
+  claimVaults: Promise<void>;
+  claimDice: Promise<void>;
+  claimSweetAndSour: Promise<void>;
+  claimUnexpectedMove: Promise<void>;
+  claimAndExchangeUnexpectedMove: Promise<void>;
+  exchangeUnexpectedMove: Promise<void>;
+};
+
+const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {
@@ -399,5 +425,140 @@ export default {
       console.error("can't load nft's data", err);
       Sentry.captureException(err);
     }
+  },
+  checkOlympusClaimable({ state }): boolean {
+    return (
+      lessThan(currentTimestamp(), state.OlympusEndTs) &&
+      greaterThan(currentTimestamp(), state.OlympusStartTs)
+    );
+  },
+  async claimOlympus({ rootState }, payload: ChangePayload): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimOlympus(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimVaults({ rootState }, payload: ChangePayload): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimVaults(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimDice({ rootState }, payload: DicePayload): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimDice(
+      payload.diceType,
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimSweetAndSour({ rootState }, payload: ClaimPayload): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimSweetAndSour(
+      rootState!.account!.currentAddress!,
+      payload.signature,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimUnexpectedMove(
+    { rootState },
+    payload: ClaimPayload
+  ): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    await claimUnexpectedMove(
+      rootState!.account!.currentAddress!,
+      payload.signature,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice?.price ?? '0',
+      payload.changeStep
+    );
+  },
+  async claimAndExchangeUnexpectedMove(
+    { rootState },
+    payload: ClaimPayload
+  ): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    if (fastGasPrice === undefined) {
+      throw new Error('There is no gas price, please, try again');
+    }
+
+    await claimAndExchangeUnexpectedMove(
+      rootState!.account!.currentAddress!,
+      payload.signature,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice.price,
+      payload.changeStep
+    );
+  },
+  async exchangeUnexpectedMove(
+    { rootState },
+    payload: ChangePayload
+  ): Promise<void> {
+    if (!checkAccountStateIsReady(rootState)) {
+      throw new Error('Account state is not loaded, please, try again');
+    }
+
+    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+
+    if (fastGasPrice === undefined) {
+      throw new Error('There is no gas price, please, try again');
+    }
+
+    await exchangeUnexpectedMove(
+      rootState!.account!.currentAddress!,
+      rootState!.account!.networkInfo!.network,
+      rootState!.account!.provider!.web3,
+      fastGasPrice.price,
+      payload.changeStep
+    );
   }
-} as ActionTree<NFTStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

@@ -18,7 +18,7 @@ export default Vue.extend({
     TreasuryManage
   },
   computed: {
-    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' })
+    ...mapGetters('treasury', { hasActiveTreasury: 'hasActiveTreasury' })
   }
 });
 </script>

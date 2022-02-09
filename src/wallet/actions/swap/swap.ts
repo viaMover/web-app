@@ -72,7 +72,7 @@ export const swapCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't swap: ${err}`);
+    console.error(`Can't swap:`, err);
     throw err;
   }
 };

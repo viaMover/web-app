@@ -143,18 +143,20 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'currentAddress',
-      'provider',
-      'tokens',
-      'nativeCurrency',
-      'treasuryBonus'
-    ]),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      tokens: 'tokens',
+      currentAddress: 'currentAddress',
+      provider: 'provider',
+      nativeCurrency: 'nativeCurrency',
+      treasuryBonus: 'treasuryBonus'
+    }),
     ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice',
-      treasuryBonusNative: 'treasuryBonusNative',
       getTokenColor: 'getTokenColor'
+    }),
+    ...mapGetters('treasury', {
+      treasuryBonusNative: 'treasuryBonusNative'
     }),
     inputAsset(): TokenWithBalance {
       return {

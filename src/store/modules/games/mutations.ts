@@ -1,8 +1,13 @@
-import { MutationTree } from 'vuex';
-
 import { GamesStoreState } from '@/store/modules/games/types';
+import { MutationFuncs } from '@/store/types';
 
-export default {
+type Mutations = {
+  setVaultsRaceAccounts: void;
+  setIsLoading: void;
+  rollDice: void;
+};
+
+const mutations: MutationFuncs<Mutations, GamesStoreState> = {
   setVaultsRaceAccounts(state, accounts): void {
     state.vaultsRaceAccounts = accounts;
   },
@@ -18,4 +23,7 @@ export default {
       state.vaultsRaceAccounts[idx].allowRoll = false;
     }
   }
-} as MutationTree<GamesStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

@@ -18,12 +18,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
 
 import dayjs from 'dayjs';
 
 import { isFeatureEnabled } from '@/settings';
-import { SavingsGetReceiptPayload } from '@/store/modules/account/actions/savings';
 import { dateFromExplicitPair } from '@/utils/time';
 
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
@@ -61,14 +59,7 @@ export default Vue.extend({
       return `${left} - ${right}`;
     }
   },
-  async mounted() {
-    await this.fetchTreasuryReceipt({
-      year: this.pageDate.get('year'),
-      month: this.pageDate.get('month') + 1
-    } as SavingsGetReceiptPayload);
-  },
   methods: {
-    ...mapActions('account', { fetchTreasuryReceipt: 'fetchTreasuryReceipt' }),
     isFeatureEnabled,
     handleBack(): void {
       this.$router.back();

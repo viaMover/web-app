@@ -27,7 +27,7 @@ export const estimateStakePowercardCompound = async (
   try {
     isApproved = await isPowercardApproved(contractAddress, network, web3);
   } catch (err) {
-    console.error(`Can't estimate powercard approve: ${err}`);
+    console.error(`Can't estimate powercard approve:`, err);
     return {
       error: true,
       approveGasLimit: '0',
@@ -51,7 +51,7 @@ export const estimateStakePowercardCompound = async (
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
-      console.error(`Can't estimate powercard approve: ${err}`);
+      console.error(`Can't estimate powercard approve:`, err);
       return {
         error: true,
         actionGasLimit: '0',

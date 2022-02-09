@@ -172,7 +172,7 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { DiceType } from '@/services/chain';
-import { DicePayload } from '@/store/modules/nft/actions/claim';
+import { DicePayload } from '@/store/modules/nft/types';
 
 import AnalyticsList from '@/components/analytics-list/analytics-list.vue';
 import AnalyticsListItem from '@/components/analytics-list/analytics-list-item.vue';

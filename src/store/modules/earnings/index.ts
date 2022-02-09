@@ -1,13 +1,13 @@
-import { Module, Store } from 'vuex';
+import { Store } from 'vuex';
 
 import { isFeatureEnabled, isProduction } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule, RootStoreState } from '@/store/types';
 
-import actions from './actions';
-import getters from './getters';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
 import ethereum from './modules/ethereum';
 import olympus from './modules/olympus';
-import mutations from './mutations';
+import mutations, { MutationType } from './mutations';
 import { EarningsProviderName, EarningsStoreState } from './types';
 
 export const earningsModule = {
@@ -17,7 +17,7 @@ export const earningsModule = {
   actions,
   getters,
   mutations
-} as Module<EarningsStoreState, RootStoreState>;
+} as AugmentedModule<EarningsStoreState, ActionType, GetterType, MutationType>;
 
 export const registerNestedModules = (store: Store<RootStoreState>): void => {
   if (isFeatureEnabled('isEarningsEthereumEnabled')) {

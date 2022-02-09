@@ -160,18 +160,20 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'currentAddress',
-      'provider',
-      'tokens',
-      'nativeCurrency'
-    ]),
-    ...mapGetters('account', [
-      'treasuryBonusNative',
-      'getTokenColor',
-      'moveNativePrice'
-    ]),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      tokens: 'tokens',
+      currentAddress: 'currentAddress',
+      provider: 'provider',
+      nativeCurrency: 'nativeCurrency'
+    }),
+    ...mapGetters('account', {
+      getTokenColor: 'getTokenColor',
+      moveNativePrice: 'moveNativePrice'
+    }),
+    ...mapGetters('treasury', {
+      treasuryBonusNative: 'treasuryBonusNative'
+    }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },

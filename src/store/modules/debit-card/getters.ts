@@ -1,9 +1,7 @@
-import { GetterTree } from 'vuex';
-
 import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 
-import { RootStoreState } from '../../types';
+import { GettersFuncs, RootStoreState } from '../../types';
 import { defaultSkin } from './consts';
 import {
   DebitCardStoreState,
@@ -14,7 +12,15 @@ import {
   SkinMinimal
 } from './types';
 
-export default {
+type Getters = {
+  availableSkins: Array<Skin>;
+  currentSkin: Skin;
+  cardStateText: string;
+  searchInAvailableSkins: (searchTerm: string) => Array<Skin>;
+  actionHistoryGroupedByDay: Array<EventHistoryItemGroup>;
+};
+
+const getters: GettersFuncs<Getters, DebitCardStoreState> = {
   availableSkins(state, getters, rootState): Array<Skin> {
     if (state.availableSkins === undefined) {
       return [defaultSkin].map(mapSkin(rootState));
@@ -101,7 +107,7 @@ export default {
     );
     return Object.values(groupsByDay);
   }
-} as GetterTree<DebitCardStoreState, RootStoreState>;
+};
 
 export const mapSkin = (
   rootState: RootStoreState
@@ -195,3 +201,6 @@ const mapHistoryEventItem = (
     };
   };
 };
+
+export type GetterType = typeof getters;
+export default getters;
