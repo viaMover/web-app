@@ -92,12 +92,8 @@ import { formatToNative } from '@/utils/format';
 import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
+import { CompoundEstimateWithUnwrapResponse } from '@/wallet/actions/types';
 import {
-  CompoundEstimateResponse,
-  CompoundEstimateWithUnwrapResponse
-} from '@/wallet/actions/types';
-import {
-  BTRFLY_TOKEN_ADDRESS,
   getBTRFLYAssetData,
   getEURSAssetData,
   getUSDCAssetData,
@@ -445,6 +441,8 @@ export default Vue.extend({
               return;
             }
 
+            let inputInWei = toWei(referenceAmount, referenceToken.decimals);
+
             if (
               sameAddress(
                 referenceToken.address,
@@ -452,6 +450,11 @@ export default Vue.extend({
               )
             ) {
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+
+              inputInWei = multiply(
+                floorDivide(inputInWei, new BigNumber(10).pow(9)),
+                floorDivide(this.wxBTRFLYrealIndex, new BigNumber(10).pow(9))
+              );
             }
             if (isZero(referenceAmount) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
@@ -461,7 +464,6 @@ export default Vue.extend({
               return;
             }
 
-            const inputInWei = toWei(referenceAmount, referenceToken.decimals);
             const transferData = await getTransferData(
               this.eursAsset.address,
               referenceToken.address,
@@ -495,12 +497,13 @@ export default Vue.extend({
               this.eursPriceInWeth,
               this.usdcPriceInWeth
             );
-            const amountInEurs = multiply(this.inputAmountNative, eursPerUsdc);
-
             // if no transfer data is available or some conditions
             // are not met then we use a fallback to give user
             // much more rough estimate of output amount
-            this.approximateEUREstimationAmount = amountInEurs;
+            this.approximateEUREstimationAmount = multiply(
+              this.inputAmountNative,
+              eursPerUsdc
+            );
           }
         },
         250
@@ -560,6 +563,8 @@ export default Vue.extend({
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
             let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            let inputInWei = toWei(value, referenceToken.decimals);
+
             if (
               sameAddress(
                 referenceToken.address,
@@ -567,8 +572,12 @@ export default Vue.extend({
               )
             ) {
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+
+              inputInWei = multiply(
+                floorDivide(inputInWei, new BigNumber(10).pow(9)),
+                floorDivide(this.wxBTRFLYrealIndex, new BigNumber(10).pow(9))
+              );
             }
-            const inputInWei = toWei(value, referenceToken.decimals);
             this.transferData = await getTransferData(
               this.usdcAsset.address,
               referenceToken.address,
@@ -579,6 +588,8 @@ export default Vue.extend({
             );
           } else {
             this.inputAmountNative = value;
+
+            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
             let inputInWei = toWei(
               convertAmountFromNativeValue(
                 value,
@@ -588,7 +599,6 @@ export default Vue.extend({
               this.inputAsset.decimals
             );
 
-            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
             if (
               sameAddress(
                 referenceToken.address,
@@ -596,7 +606,6 @@ export default Vue.extend({
               )
             ) {
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-              // difference between wxBTRFLY and BTRFLY is 9 decimals
 
               inputInWei = multiply(
                 floorDivide(inputInWei, new BigNumber(10).pow(9)),
