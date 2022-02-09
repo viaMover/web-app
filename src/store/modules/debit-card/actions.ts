@@ -28,7 +28,6 @@ import {
 } from '@/settings';
 
 import { RootStoreState } from '../../types';
-import { NetworkInfo, networks } from './../../../utils/networkTypes';
 import { allSkins, defaultSkin } from './consts';
 import {
   DebitCardStoreState,
@@ -620,8 +619,8 @@ export default {
     }
     try {
       const wxBTRFLYrealIndex = await getRealIndex(
-        rootState.account.networkInfo?.network,
-        rootState.account.provider?.web3,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3,
         rootState.account.currentAddress
       );
       commit('setWxBTRFLYrealIndex', wxBTRFLYrealIndex);
