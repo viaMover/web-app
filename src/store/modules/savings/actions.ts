@@ -117,7 +117,7 @@ const actions: ActionFuncs<
       commit('setSavingsDPY', savingsAPY.dpy);
       commit('setSavingsBalance', savingsBalance);
     } catch (err) {
-      console.error(`can't get savings fresh data: `, err);
+      console.error(`can't get savings fresh data:`, err);
       Sentry.captureException(err);
       commit('setSavingsAPY', '0');
       commit('setSavingsDPY', '0');

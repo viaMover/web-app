@@ -82,7 +82,7 @@ const actions: ActionFuncs<
         payload.chartsType
       );
     } catch (err) {
-      console.error(`Can't get chart data: `, err);
+      console.error(`Can't get chart data:`, err);
       Sentry.captureException(err);
     }
   },
@@ -105,7 +105,7 @@ const actions: ActionFuncs<
         commit('setGasPrices', resp);
       } catch (err) {
         commit('setRefreshEror', err);
-        console.log(`Can't get gas prices, err: `, err);
+        console.log(`Can't get gas prices, err:`, err);
         Sentry.captureException(err);
       } finally {
         if (state.gasUpdating) {

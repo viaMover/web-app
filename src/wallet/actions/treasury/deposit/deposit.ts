@@ -52,7 +52,7 @@ export const depositCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't treasury deposit: `, err);
+    console.error(`Can't treasury deposit:`, err);
     throw err;
   }
 };
