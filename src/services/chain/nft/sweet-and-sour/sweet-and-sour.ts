@@ -43,7 +43,7 @@ export const getSweetAndSourData = async (
     .call(transactionParams);
 
   return {
-    balance: balance.toString,
+    balance: balance.toString(),
     totalAmount: totalAmount.toString(),
     totalClaimed: totalClaimed.toString()
   };
