@@ -19,6 +19,7 @@
         <span class="emphasize">{{ selectedItemValue }}</span>
       </div>
     </div>
+
     <statements-nav-list
       :button-text="$t('treasury.btnView.simple')"
       :icon="$t('treasury.icon')"

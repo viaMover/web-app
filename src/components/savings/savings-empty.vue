@@ -13,7 +13,7 @@
         disable-selecting
         :is-loading="false"
       />
-      <p class="margin-top">{{ $t('savings.txtIfYouDeposit') }}</p>
+      <div class="bottom-text">{{ $t('savings.txtIfYouDeposit') }}</div>
     </div>
 
     <product-info-wrapper>

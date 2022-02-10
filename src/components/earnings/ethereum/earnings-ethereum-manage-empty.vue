@@ -14,9 +14,9 @@
         disable-selecting
         :is-loading="false"
       />
-      <p class="bottom-text">
+      <div class="bottom-text">
         {{ $t('earnings.txtIfYouStake', { token: 'Ethereum' }) }}
-      </p>
+      </div>
     </div>
 
     <product-info-wrapper>

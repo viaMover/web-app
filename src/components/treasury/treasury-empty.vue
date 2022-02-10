@@ -1,5 +1,5 @@
 <template>
-  <secondary-page hide-info>
+  <secondary-page class="manage empty" hide-info>
     <template v-slot:title>
       <secondary-page-header
         :description="$t('treasury.txtTreasuryEmptyDescription')"
@@ -12,25 +12,27 @@
         disable-selecting
         :is-loading="false"
       />
-      <p class="margin-top">{{ $t('treasury.lblIfYouReserveMoveInST') }}</p>
-      <div class="body margin-top-20">
-        <product-info-wrapper is-short>
-          <product-info-item
-            :description="$t('treasury.lblMaximumBoost')"
-            :title="currentMaxBoost"
-          />
-          <product-info-item
-            :description="$t('treasury.lblGasCostCoverage')"
-            :title="currentCostCoverage"
-          />
-        </product-info-wrapper>
-        <action-button
-          class="primary"
-          :text="$t('treasury.lblStartBoosting')"
-          @button-click="handleStartBoosting"
-        />
+      <div class="bottom-text">
+        {{ $t('treasury.lblIfYouReserveMoveInST') }}
       </div>
     </div>
+
+    <product-info-wrapper is-short>
+      <product-info-item
+        :description="$t('treasury.lblMaximumBoost')"
+        :title="currentMaxBoost"
+      />
+      <product-info-item
+        :description="$t('treasury.lblGasCostCoverage')"
+        :title="currentCostCoverage"
+      />
+    </product-info-wrapper>
+
+    <action-button
+      class="primary"
+      :text="$t('treasury.lblStartBoosting')"
+      @button-click="handleStartBoosting"
+    />
   </secondary-page>
 </template>
 
