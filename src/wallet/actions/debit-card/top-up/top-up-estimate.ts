@@ -16,12 +16,18 @@ import { Network } from '@/utils/networkTypes';
 import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
 import { needApprove } from '@/wallet/actions/approve/needApprove';
 import {
-  CompoundEstimateResponse,
+  CompoundEstimateWithUnwrapResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import {
+  HOLY_HAND_ABI,
+  HOLY_HAND_ADDRESS,
+  WX_BTRFLY_TOKEN_ADDRESS
+} from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
+
+import { estimateWXBTRFLYUnwrap } from './wxBTRFLY/estimate';
 
 export const estimateTopUpCompound = async (
   inputAsset: SmallToken,
@@ -31,8 +37,47 @@ export const estimateTopUpCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string
-): Promise<CompoundEstimateResponse> => {
+): Promise<CompoundEstimateWithUnwrapResponse> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
+
+  if (sameAddress(inputAsset.address, WX_BTRFLY_TOKEN_ADDRESS(network))) {
+    Sentry.addBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.estimateTopUpCompound',
+      message: 'For wxBTRFLY we need to unwrap it',
+      data: {
+        inputAsset: inputAsset
+      }
+    });
+    const estimation = await estimateWXBTRFLYUnwrap(
+      inputAsset,
+      inputAmount,
+      network,
+      web3,
+      accountAddress
+    );
+    if (estimation.error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.estimateTopUpCompound',
+        message: 'failed to estimate unwrap'
+      });
+      console.error("can't estimate unwrap");
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0',
+        unwrapGasLimit: '0'
+      };
+    }
+
+    return {
+      error: false,
+      actionGasLimit: ethDefaults.basic_move_card_top_up,
+      approveGasLimit: ethDefaults.basic_approval,
+      unwrapGasLimit: estimation.gasLimit
+    };
+  }
 
   let isApproveNeeded = true;
   try {
@@ -56,7 +101,8 @@ export const estimateTopUpCompound = async (
     return {
       error: true,
       approveGasLimit: '0',
-      actionGasLimit: '0'
+      actionGasLimit: '0',
+      unwrapGasLimit: '0'
     };
   }
 
@@ -78,7 +124,8 @@ export const estimateTopUpCompound = async (
       return {
         error: false,
         actionGasLimit: ethDefaults.basic_move_card_top_up,
-        approveGasLimit: approveGasLimit
+        approveGasLimit: approveGasLimit,
+        unwrapGasLimit: '0'
       };
     } catch (error) {
       Sentry.addBreadcrumb({
@@ -94,7 +141,8 @@ export const estimateTopUpCompound = async (
       return {
         error: true,
         actionGasLimit: '0',
-        approveGasLimit: '0'
+        approveGasLimit: '0',
+        unwrapGasLimit: '0'
       };
     }
   } else {
@@ -110,7 +158,8 @@ export const estimateTopUpCompound = async (
     return {
       error: estimation.error,
       approveGasLimit: '0',
-      actionGasLimit: estimation.gasLimit
+      actionGasLimit: estimation.gasLimit,
+      unwrapGasLimit: '0'
     };
   }
 };

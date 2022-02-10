@@ -22,6 +22,7 @@ import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
+import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -70,7 +71,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x6bb61215298f296c55b19ad842d3df69021da2ef',
     LEASH_TOKEN_ADDRESS: '0x27c70cd1946795b66be9d954418546998b546634',
     BONE_TOKEN_ADDRESS: '0x9813037ee2218799597d83d4a5b6f3b6778218d9',
-    BTRFLY_TOKEN_ADDRESS: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a'
+    BTRFLY_TOKEN_ADDRESS: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -115,7 +117,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x1',
     LEASH_TOKEN_ADDRESS: '0x1',
     BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1'
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
     MOVE_ADDRESS: '0x1',
@@ -160,7 +163,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x1',
     LEASH_TOKEN_ADDRESS: '0x1',
     BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1'
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -206,7 +210,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x1',
     LEASH_TOKEN_ADDRESS: '0x1',
     BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1'
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
@@ -251,7 +256,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x1',
     LEASH_TOKEN_ADDRESS: '0x1',
     BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1'
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.binance]: {
     MOVE_ADDRESS: '0x1',
@@ -296,7 +302,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x1',
     LEASH_TOKEN_ADDRESS: '0x1',
     BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1'
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
     MOVE_ADDRESS: '0x1',
@@ -341,7 +348,8 @@ const ADDRESSES = {
     DOP_TOKEN_ADDRESS: '0x1',
     LEASH_TOKEN_ADDRESS: '0x1',
     BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1'
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   }
 };
 
@@ -578,6 +586,9 @@ const LEASH_TOKEN_ADDRESS = (network: Network): string => {
 const BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].BTRFLY_TOKEN_ADDRESS ?? '0x1';
 };
+const WX_BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].WX_BTRFLY_TOKEN_ADDRESS ?? '0x1';
+};
 
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
 
@@ -631,6 +642,16 @@ const getMoboAssetData = (
     symbol: 'MOBO',
     name: 'Mover Bonus Token',
     iconURL: ''
+  };
+};
+
+const getBTRFLYAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: BTRFLY_TOKEN_ADDRESS(network),
+    decimals: 9,
+    symbol: 'BTRFLY',
+    iconURL:
+      'https://assets.coingecko.com/coins/images/21718/small/3.png?1640248507'
   };
 };
 
@@ -728,7 +749,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     DOP_TOKEN_ADDRESS(network),
     BONE_TOKEN_ADDRESS(network),
     LEASH_TOKEN_ADDRESS(network),
-    BTRFLY_TOKEN_ADDRESS(network)
+    BTRFLY_TOKEN_ADDRESS(network),
+    WX_BTRFLY_TOKEN_ADDRESS(network)
   ];
 };
 
@@ -740,6 +762,7 @@ export {
   getAssetsForTreasury,
   getEthAssetData,
   getOhmAssetData,
+  getBTRFLYAssetData,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
   getEURSAssetData,
@@ -789,6 +812,7 @@ export {
   ERC721_ABI,
   EARNINGS_ETHEREUM_ABI,
   EARNINGS_OLYMPUS_ABI,
+  WX_BTRFLY_ABI,
   ETH_V2_STAKER_POOL_ADDRESS,
   OHM_STAKER_POOL_ADDRESS,
   OHM_ADDRESS,
@@ -808,5 +832,6 @@ export {
   BONE_TOKEN_ADDRESS,
   LEASH_TOKEN_ADDRESS,
   BTRFLY_TOKEN_ADDRESS,
+  WX_BTRFLY_TOKEN_ADDRESS,
   validTopUpAssets
 };

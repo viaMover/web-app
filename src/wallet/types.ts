@@ -21,6 +21,13 @@ export type Token = {
   marketCap: number;
 };
 
+export const tokenToSmallTokenInfo = (t: Token): SmallTokenInfoWithIcon => ({
+  address: t.address,
+  decimals: t.decimals,
+  symbol: t.symbol,
+  iconURL: t.logo
+});
+
 export type TokenWithBalance = Token & {
   balance: string;
 };
