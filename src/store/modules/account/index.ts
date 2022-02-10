@@ -21,6 +21,7 @@ export default {
     transactions: [],
 
     tokens: [],
+    isTokensListLoaded: false,
     tokensSearcher: undefined,
     tokenInfoMap: undefined,
     provider: undefined,

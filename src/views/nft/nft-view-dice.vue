@@ -238,12 +238,15 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      totalClaimed: 'DiceTotalClaimed'
+      nft: 'dice'
     }),
     diceSrc(): string {
       return (
         this.dices.find((item) => item.side === this.selectedDice)?.src ?? ''
       );
+    },
+    totalClaimed(): string {
+      return this.nft.meta.totalClaimed;
     }
   },
   mounted(): void {
@@ -256,7 +259,6 @@ export default Vue.extend({
       this.$router.back();
     },
     selectDice(side: DiceType): void {
-      console.debug('hellow', side);
       this.selectedDice = side;
     },
     async handleClaim(type: DiceType): Promise<void> {

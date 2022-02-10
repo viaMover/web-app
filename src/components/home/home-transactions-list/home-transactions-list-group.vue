@@ -1,8 +1,8 @@
 <template>
-  <section class="group">
+  <section class="group transactions">
     <h2 class="header">{{ headingText }}</h2>
     <transition-group class="items" name="list-transition" tag="div">
-      <transaction-item
+      <home-transactions-list-group-item
         v-for="tx in transactions"
         :key="tx.uniqHash"
         class="list-transition-item"
@@ -17,12 +17,12 @@ import Vue, { PropType } from 'vue';
 
 import { Transaction } from '@/wallet/types';
 
-import TransactionItem from './transaction-item.vue';
+import HomeTransactionsListGroupItem from './home-transactions-list-group-item.vue';
 
 export default Vue.extend({
-  name: 'TransactionGroup',
+  name: 'HomeTransactionsListGroup',
   components: {
-    TransactionItem
+    HomeTransactionsListGroupItem
   },
   props: {
     headingText: {

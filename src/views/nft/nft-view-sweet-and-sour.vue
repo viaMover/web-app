@@ -16,11 +16,11 @@
 
       <analytics-list>
         <analytics-list-item
-          :description="formatToDecimals(totalAmount, 0)"
+          :description="totalAmount"
           :title="$t('NFTs.lblTotalAmount')"
         />
         <analytics-list-item
-          :description="formatToDecimals(totalClaimed, 0)"
+          :description="totalClaimed"
           :title="$t('NFTs.lblTotalClaimed')"
         />
       </analytics-list>
@@ -112,19 +112,23 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      totalAmount: 'SweetAndSourTotalAmount',
-      totalClaimed: 'SweetAndSourTotalClaimed'
+      nft: 'sweetAndSour'
     }),
     ...mapState('account', {
       currentAddress: 'currentAddress'
-    })
+    }),
+    totalAmount(): string {
+      return formatToDecimals(this.nft.meta.totalAmount, 0);
+    },
+    totalClaimed(): string {
+      return formatToDecimals(this.nft.meta.totalClaimed, 0);
+    }
   },
   mounted(): void {
     this.transactionStep = undefined;
     this.error = undefined;
   },
   methods: {
-    formatToDecimals,
     ...mapActions('nft', ['claimSweetAndSour', 'refreshNftStats']),
     handleClose(): void {
       this.$router.back();

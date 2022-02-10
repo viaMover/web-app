@@ -376,6 +376,9 @@ const actions: ActionFuncs<
             },
             (val: boolean) => {
               commit('setIsTransactionsListLoaded', val);
+            },
+            (val: boolean) => {
+              commit('setIsTokensListLoaded', val);
             }
           );
 

@@ -15,7 +15,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblWallet: 'Wallet',
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
-  lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
+  lblNewToMover: 'Looks like you are new to Mover',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',
@@ -26,6 +26,9 @@ const messages: VueI18n.LocaleMessageObject = {
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
   lblTokenAlt: '{symbol} token image',
+  lblHistory: 'History',
+  lblTotalBalance: 'Total balance',
+  lblCollectibles: 'Collectibles',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',

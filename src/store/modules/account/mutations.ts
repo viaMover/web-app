@@ -50,6 +50,7 @@ type Mutations = {
   setAvatars: void;
   setAvatar: void;
   setWeb3Modal: void;
+  setIsTokensListLoaded: void;
 };
 
 const mutations: MutationFuncs<Mutations, AccountStoreState> = {
@@ -223,6 +224,9 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setWeb3Modal(state, web3Modal: any): void {
     state.web3Modal = web3Modal;
+  },
+  setIsTokensListLoaded(state, isLoaded: boolean): void {
+    state.isTokensListLoaded = isLoaded;
   }
 };
 

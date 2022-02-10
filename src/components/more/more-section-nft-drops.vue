@@ -16,7 +16,7 @@
     >
       <nft-asset-card-mini
         v-for="nft in nftList"
-        :key="nft.name"
+        :key="nft.id"
         class="swiper-slide item"
         :item="nft"
       />
@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import { NftAssetCardMini } from '@/components/nft';
 import Swiper from '@/components/swiper/swiper.vue';
@@ -41,7 +41,7 @@ export default Vue.extend({
     NftAssetCardMini
   },
   computed: {
-    ...mapState('nft', { nftList: 'nfts' })
+    ...mapGetters('nft', { nftList: 'nfts' })
   }
 });
 </script>

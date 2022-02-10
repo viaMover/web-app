@@ -1,8 +1,16 @@
 <template>
   <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
-      <aside class="left-rail transactions">
-        <preload-left-rail-transactions />
+      <aside class="left-rail wallet history">
+        <div class="wrapper">
+          <pu-skeleton class="button-group skeleton" height="32px" tag="div" />
+          <div class="wallet">
+            <div class="list">
+              <preload-left-rail-wallet-tokens is-loading />
+              <preload-left-rail-wallet-collectibles is-loading />
+            </div>
+          </div>
+        </div>
       </aside>
     </template>
 
@@ -10,7 +18,7 @@
       <pu-skeleton circle class="avatar" tag="div" />
       <div class="title">
         <pu-skeleton class="selector" tag="div" width="250px" />
-        <pu-skeleton class="balance" tag="div" width="150px"></pu-skeleton>
+        <pu-skeleton class="balance" tag="div" width="150px" />
       </div>
 
       <div class="nav-bar">
@@ -52,16 +60,17 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import PreloadLeftRailWalletCollectibles from '@/components/home/home-wallet/home-wallet-collectibles-wrapper.vue';
+import PreloadLeftRailWalletTokens from '@/components/home/home-wallet/home-wallet-tokens-wrapper.vue';
 import { ContentWrapper } from '@/components/layout';
 import { NavigationSection } from '@/components/navigation';
-
-import PreloadLeftRailTransactions from './preload-left-rail-transactions.vue';
 
 export default Vue.extend({
   name: 'PreloadDefault',
   components: {
     ContentWrapper,
-    PreloadLeftRailTransactions,
+    PreloadLeftRailWalletTokens,
+    PreloadLeftRailWalletCollectibles,
     NavigationSection
   }
 });

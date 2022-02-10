@@ -16,15 +16,15 @@
 
       <analytics-list>
         <analytics-list-item
-          :description="availableFromString"
+          :description="availableFrom"
           :title="$t('NFTs.lblAvailableFrom')"
         />
         <analytics-list-item
-          :description="availableToString"
+          :description="availableTo"
           :title="$t('NFTs.lblAvailableTo')"
         />
         <analytics-list-item
-          :description="formatToDecimals(totalClaimed, 0)"
+          :description="totalClaimed"
           :title="$t('NFTs.lblTotalClaimed')"
         />
       </analytics-list>
@@ -113,15 +113,20 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      availableTo: 'OlympusEndTs',
-      totalClaimed: 'OlympusTotalClaimed',
-      availableFrom: 'OlympusStartTs'
+      nft: 'movingWithOlympus',
+      totalClaimed: 'OlympusTotalClaimed'
     }),
-    availableToString(): string {
-      return dayjs.unix(this.availableTo).utc().format('MMMM DD, HH:mm UTC');
+    availableTo(): string {
+      return dayjs.unix(this.nft.meta.endTs).utc().format('MMMM DD, HH:mm UTC');
     },
-    availableFromString(): string {
-      return dayjs.unix(this.availableFrom).utc().format('MMMM DD, HH:mm UTC');
+    availableFrom(): string {
+      return dayjs
+        .unix(this.nft.meta.startTs)
+        .utc()
+        .format('MMMM DD, HH:mm UTC');
+    },
+    totalClaimed(): string {
+      return formatToDecimals(this.nft.meta.totalClaimed, 0);
     }
   },
   mounted(): void {
@@ -129,7 +134,6 @@ export default Vue.extend({
     this.error = undefined;
   },
   methods: {
-    formatToDecimals,
     ...mapActions('nft', [
       'claimOlympus',
       'checkOlympusClaimable',

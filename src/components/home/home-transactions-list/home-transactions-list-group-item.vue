@@ -41,7 +41,7 @@ import { Transaction, TransactionTypes } from '@/wallet/types';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
-  name: 'TransactionItem',
+  name: 'HomeTransactionsListGroupItem',
   components: {
     TokenImage
   },

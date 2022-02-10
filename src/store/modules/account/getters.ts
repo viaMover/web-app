@@ -2,9 +2,15 @@ import dayjs from 'dayjs';
 
 import { GettersFuncs } from '@/store/types';
 import { add, multiply } from '@/utils/bigmath';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
-import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
+import {
+  DisplayableToken,
+  Token,
+  TokenWithBalance,
+  Transaction
+} from '@/wallet/types';
 
 import { AccountStoreState, TransactionGroup } from './types';
 
@@ -14,6 +20,7 @@ type Getters = {
   getTransactionByHash: (hash: string) => Transaction | undefined;
   getTransactionByQueueId: (queueId: string) => Transaction | undefined;
   transactionsGroupedByDay: Array<TransactionGroup>;
+  displayableWalletTokens: Array<DisplayableToken>;
   isWalletConnected: boolean;
   isWalletReady: boolean;
   entireBalance: string;
@@ -71,6 +78,16 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       {}
     );
     return Object.values(groupsByDay).reverse();
+  },
+  displayableWalletTokens(state): Array<DisplayableToken> {
+    return state.tokens.map((t: TokenWithBalance) => ({
+      address: t.address,
+      balanceFormatted: formatToDecimals(t.balance, 4),
+      symbol: t.symbol,
+      name: t.name,
+      logo: t.logo,
+      balanceNativeFormatted: formatToNative(multiply(t.balance, t.priceUSD))
+    }));
   },
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;

@@ -1,6 +1,122 @@
 .dashboard {
   .left-rail {
-    &.transactions {
+    &.wallet,
+    &.history {
+      .wrapper {
+        padding-top: 40px;
+      }
+
+      .list {
+        .group {
+          &.transactions,
+          &.tokens {
+            margin-bottom: 40px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .header,
+            .header.complex > * {
+              font-size: 16px;
+              line-height: 24px;
+              color: @text-muted;
+              @font-medium();
+            }
+
+            .header,
+            .header-complex {
+              margin-bottom: 24px;
+            }
+
+            .header.complex {
+              display: flex;
+              flex-flow: row nowrap;
+              align-items: center;
+              justify-content: space-between;
+            }
+
+            .items {
+              .item {
+                min-height: 40px;
+                display: flex;
+                flex-flow: row nowrap;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 16px;
+
+                &:hover {
+                  text-decoration: unset;
+                }
+
+                &:last-child {
+                  margin-bottom: 0;
+                }
+
+                .description {
+                  flex: 2 1 50%;
+                  margin-right: 8px;
+
+                  .title {
+                    font-size: 14px;
+                    line-height: 22px;
+                    color: @text-primary;
+                    @font-medium();
+                  }
+
+                  .value {
+                    font-size: 12px;
+                    line-height: 16px;
+                    color: @text-muted;
+                    @font-regular();
+                  }
+                }
+
+                .outcome,
+                .balance {
+                  flex: 1 0 30%;
+                  align-self: flex-start;
+                  font-size: 14px;
+                  line-height: 22px;
+                  text-align: right;
+                  color: @text-primary;
+                  @font-regular();
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &.wallet {
+      .button-group {
+        margin-bottom: 40px;
+      }
+
+      .list {
+        .group {
+          margin-bottom: 40px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          &.collectibles {
+            .header {
+              font-size: 16px;
+              line-height: 24px;
+              color: @text-muted;
+              @font-medium();
+
+              margin-bottom: 24px;
+            }
+          }
+        }
+      }
+    }
+
+    &.history {
       .wrapper {
         padding-top: 40px;
 
@@ -50,73 +166,6 @@
         line-height: 24px;
         color: @text-muted;
         @font-medium();
-      }
-
-      .list {
-        .group {
-          margin-bottom: 40px;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          .header {
-            font-size: 16px;
-            line-height: 24px;
-            color: @text-muted;
-            @font-medium();
-
-            margin-bottom: 24px;
-          }
-
-          .items {
-            .item {
-              min-height: 40px;
-              display: flex;
-              flex-flow: row nowrap;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 16px;
-
-              &:hover {
-                text-decoration: unset;
-              }
-
-              &:last-child {
-                margin-bottom: 0;
-              }
-
-              .description {
-                flex: 2 1 50%;
-                margin-right: 8px;
-
-                .title {
-                  font-size: 14px;
-                  line-height: 22px;
-                  color: @text-primary;
-                  @font-medium();
-                }
-
-                .value {
-                  font-size: 12px;
-                  line-height: 16px;
-                  color: @text-muted;
-                  @font-regular();
-                }
-              }
-
-              .outcome {
-                flex: 1 0 30%;
-                align-self: flex-start;
-                font-size: 14px;
-                line-height: 22px;
-                text-align: right;
-                color: @text-primary;
-                @font-regular();
-              }
-            }
-          }
-        }
       }
     }
 

@@ -1,7 +1,8 @@
 .product-carousel {
   width: 100%;
 
-  .swiper-wrapper {
+  .swiper-wrapper,
+  .items-wrapper {
     gap: 40px;
 
     .item {
@@ -41,6 +42,15 @@
         line-height: 22px;
         @font-medium();
       }
+    }
+  }
+
+  .items-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+
+    .item {
+      flex: 1 0 50%;
     }
   }
 }
