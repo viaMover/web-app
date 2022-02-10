@@ -5,6 +5,9 @@ type BigNumberish = number | string | BigNumber;
 export const convertToString = (numberOne: BigNumberish): string =>
   new BigNumber(numberOne).toFixed();
 
+export const getInteger = (numberOne: BigNumberish): string =>
+  new BigNumber(numberOne).toFixed(0);
+
 export const isEqual = (
   numberOne: BigNumberish,
   numberTwo: BigNumberish
