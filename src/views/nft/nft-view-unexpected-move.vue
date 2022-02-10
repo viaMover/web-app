@@ -8,9 +8,9 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblUnexpectedMove') }}</h1>
         <div class="description">
-          {{ $t('NFTs.txtNFTs.unexpectedMove.pageDescriptionPartOne') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.unexpectedMove.pageDescriptionPartTwo') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}
         </div>
       </div>
 
@@ -39,7 +39,7 @@
             <action-button
               class="primary"
               propagate-original-event
-              :text="$t('NFTs.btn.unexpectedMove.get.txt')"
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
             />
           </div>
@@ -53,14 +53,14 @@
             <div class="items">
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
-                :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
+                emoji="🦍"
+                :text="$t(`NFTs.btn.${nft.id}.claimAndExchange`)"
                 @button-click="handleClaimAndExchange"
               />
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
-                :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
+                emoji="🔄"
+                :text="$t(`NFTs.btn.${nft.id}.exchange`)"
                 @button-click="handleExchange"
               />
             </div>
@@ -81,6 +81,7 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
+        poster="@/assets/images/ios-spinner-white.svg"
       >
         <source
           src="https://storage.googleapis.com/movermedia/UnexpectedMove.webm"

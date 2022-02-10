@@ -12,7 +12,7 @@
           <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
           <i18n class="description" path="connect.txtMoverDescription" tag="p">
             <a
-              class="link"
+              class="link medium"
               href="https://viamover.com/terms_of_use"
               rel="external help"
               target="_blank"

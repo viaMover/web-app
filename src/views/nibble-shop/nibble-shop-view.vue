@@ -32,7 +32,7 @@
           <div class="group default">
             <action-button
               class="primary"
-              :text="$t('nibbleShop.btn.get.txt', { item: productShortName })"
+              :text="$t('nibbleShop.btn.get', { item: productShortName })"
               @button-click="handleClaim"
             />
           </div>
@@ -46,8 +46,8 @@
             <div class="items">
               <emoji-text-button
                 class="item"
-                :emoji="$t('nibbleShop.btn.redeem.emoji')"
-                :text="$t('nibbleShop.btn.redeem.txt')"
+                emoji="📦"
+                :text="$t('nibbleShop.btn.redeem')"
                 @button-click="handleRedeem"
               />
             </div>
@@ -67,6 +67,7 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
+        poster="@/assets/images/ios-spinner.svg"
         :style="videoStyle"
       >
         <source :src="product.page.videoSrc" type="video/webm" />

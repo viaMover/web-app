@@ -22,7 +22,7 @@
 
     <statements-nav-list
       :button-text="$t('earnings.btnView')"
-      :icon="$t('earnings.icon')"
+      icon="🌻"
       :in-progress-text="$t('earnings.lblInProgress')"
       :items="ethereumMonthStatsOptions"
       navigate-to-name="earnings-ethereum-month-stats"

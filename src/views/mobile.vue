@@ -15,8 +15,10 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
-        src="@/assets/videos/welcome.webm"
-      />
+      >
+        <source src="@/assets/videos/welcome.webm" type="video/webm" />
+        <source src="@/assets/videos/welcome.mp4" type="video/mp4" />
+      </video>
     </div>
 
     <div class="description">

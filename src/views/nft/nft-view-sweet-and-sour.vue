@@ -8,9 +8,9 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblSweetAndSour') }}</h1>
         <p class="description">
-          {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartOne') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.sweetAndSour.pageDescriptionPartTwo') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}
         </p>
       </div>
 
@@ -35,7 +35,7 @@
             <action-button
               class="primary"
               propagate-original-event
-              :text="$t('NFTs.btn.sweetAndSour.get.txt')"
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
             />
           </div>
@@ -55,6 +55,7 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
+        poster="@/assets/images/ios-spinner-white.svg"
       >
         <source
           src="https://storage.googleapis.com/movermedia/SweetAndSour.webm"
@@ -138,7 +139,7 @@ export default Vue.extend({
       try {
         sig = await getSweetAndSourClaimSignature(this.currentAddress);
       } catch {
-        this.error = this.$t('NFTs.txtOhNo').toString();
+        this.error = this.$t('NFTs.txtOhNo') as string;
         return;
       }
       try {

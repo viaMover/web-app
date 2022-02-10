@@ -8,7 +8,7 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblSwapPassport') }}</h1>
         <div class="description">
-          {{ $t('NFTs.txtNFTs.swapPassport.pageDescription') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescription`) }}
         </div>
       </div>
     </template>
@@ -21,6 +21,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
+
+import { NftAssetId } from '@/store/modules/nft/types';
 
 import { ContentWrapperTwoSided } from '@/components/layout';
 
@@ -28,6 +31,16 @@ export default Vue.extend({
   name: 'NftViewSwapPassport',
   components: {
     ContentWrapperTwoSided
+  },
+  data() {
+    return {
+      NftAssetId
+    };
+  },
+  computed: {
+    ...mapState('nft', {
+      nft: 'swapPassport'
+    })
   },
   methods: {
     handleClose(): void {

@@ -8,11 +8,11 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblDiceProject') }}</h1>
         <div class="description">
-          {{ $t('NFTs.txtNFTs.dice.pageDescriptionPartOne') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          <i18n path="NFTs.txtNFTs.dice.pageDescriptionPartTwo">
+          <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`">
             <a
-              class="link underline"
+              class="link"
               href="https://diceproject.org"
               rel="external help"
               target="_blank"
@@ -40,7 +40,7 @@
             <action-button
               class="primary"
               propagate-original-event
-              :text="$t('NFTs.btn.dice.get.txt')"
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
             />
           </div>
@@ -50,38 +50,38 @@
             <div class="items">
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
-                :text="$t('NFTs.btn.dice.fourSide.txt')"
+                emoji="🍀"
+                :text="$t(`NFTs.btn.${nft.id}.fourSide`)"
                 @button-click="handleClaim(4)"
               />
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
-                :text="$t('NFTs.btn.dice.sixSide.txt')"
+                emoji="🎲"
+                :text="$t(`NFTs.btn.${nft.id}.sixSide`)"
                 @button-click="handleClaim(6)"
               />
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
-                :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
+                emoji="👯‍♀️"
+                :text="$t(`NFTs.btn.${nft.id}.doubleSixSide`)"
                 @button-click="handleClaim(66)"
               />
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
-                :text="$t('NFTs.btn.dice.eightSide.txt')"
+                emoji="🎱"
+                :text="$t(`NFTs.btn.${nft.id}.eightSide`)"
                 @button-click="handleClaim(8)"
               />
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
-                :text="$t('NFTs.btn.dice.tenSide.txt')"
+                emoji="🔟"
+                :text="$t(`NFTs.btn.${nft.id}.tenSide`)"
                 @button-click="handleClaim(10)"
               />
               <emoji-text-button
                 class="item"
-                :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
-                :text="$t('NFTs.btn.dice.twelveSide.txt')"
+                emoji="🕛"
+                :text="$t(`NFTs.btn.${nft.id}.twelveSide`)"
                 @button-click="handleClaim(12)"
               />
             </div>
@@ -113,45 +113,45 @@
       >
         <context-button-item @click="selectDice(4)">
           <emoji-text-button
-            :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
-            :text="$t('NFTs.btn.dice.fourSide.txt')"
+            emoji="🍀"
+            :text="$t(`NFTs.btn.${nft.id}.fourSide`)"
           />
         </context-button-item>
         <context-button-item @click="selectDice(6)">
           <emoji-text-button
-            :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
-            :text="$t('NFTs.btn.dice.sixSide.txt')"
+            emoji="🎲"
+            :text="$t(`NFTs.btn.${nft.id}.sixSide`)"
           />
         </context-button-item>
         <context-button-item @click="selectDice(66)">
           <emoji-text-button
             button-class="button-active"
-            :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
-            :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
+            emoji="👯‍♀️"
+            :text="$t(`NFTs.btn.${nft.id}.doubleSixSide`)"
           />
         </context-button-item>
         <context-button-item @click="selectDice(8)">
           <emoji-text-button
-            :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
-            :text="$t('NFTs.btn.dice.eightSide.txt')"
+            emoji="🎱"
+            :text="$t(`NFTs.btn.${nft.id}.eightSide`)"
           />
         </context-button-item>
         <context-button-item @click="selectDice(10)">
           <emoji-text-button
-            :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
-            :text="$t('NFTs.btn.dice.tenSide.txt')"
+            emoji="🔟"
+            :text="$t(`NFTs.btn.${nft.id}.tenSide`)"
           />
         </context-button-item>
         <context-button-item @click="selectDice(12)">
           <emoji-text-button
-            :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
-            :text="$t('NFTs.btn.dice.twelveSide.txt')"
+            emoji="🕛"
+            :text="$t(`NFTs.btn.${nft.id}.twelveSide`)"
           />
         </context-button-item>
         <context-button-item @click="selectDice(20)">
           <emoji-text-button
-            :emoji="$t('NFTs.btn.dice.twentySide.emoji')"
-            :text="$t('NFTs.btn.dice.twentySide.txt')"
+            emoji="🧙‍♂️"
+            :text="$t(`NFTs.btn.${nft.id}.twentySide`)"
           />
         </context-button-item>
       </context-button>
@@ -174,8 +174,7 @@ import { mapActions, mapState } from 'vuex';
 import { DiceType } from '@/services/chain';
 import { DicePayload } from '@/store/modules/nft/types';
 
-import AnalyticsList from '@/components/analytics-list/analytics-list.vue';
-import AnalyticsListItem from '@/components/analytics-list/analytics-list-item.vue';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
   ActionButton,
   ContextButton,
@@ -184,7 +183,7 @@ import {
 } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
 import { ContentWrapperTwoSided } from '@/components/layout';
-import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewDice',
@@ -254,7 +253,10 @@ export default Vue.extend({
     this.actionError = undefined;
   },
   methods: {
-    ...mapActions('nft', ['claimDice', 'refreshNftStats']),
+    ...mapActions('nft', {
+      claimDice: 'claimDice',
+      refreshNftStats: 'refreshNftStats'
+    }),
     handleClose(): void {
       this.$router.back();
     },
@@ -275,7 +277,7 @@ export default Vue.extend({
         this.transactionStep = 'Success';
       } catch (err) {
         this.transactionStep = 'Reverted';
-        this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
+        this.actionError = this.$t('NFTsOhNoSomething').toString();
       }
     }
   }

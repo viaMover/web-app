@@ -8,7 +8,7 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblVaults') }}</h1>
         <p class="description">
-          {{ $t('NFTs.txtNFTs.vaults.pageDescriptionPartOne') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
           <i18n path="NFTs.txtNFTs.vaults.pageDescriptionPartTwo">
             <a
@@ -17,7 +17,7 @@
               rel="external help"
               target="_blank"
             >
-              {{ $t('NFTs.txtNFTs.vaults.faq') }}
+              {{ $t(`NFTs.txtNFTs.${nft.id}.faq`) }}
             </a>
           </i18n>
         </p>
@@ -43,7 +43,7 @@
           <div class="group default">
             <action-button
               class="primary"
-              :text="$t('NFTs.btn.vaults.get.txt')"
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
               @button-click="handleClaim"
             />
           </div>
@@ -63,6 +63,7 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
+        poster="@/assets/images/ios-spinner-white.svg"
         src="@/assets/videos/vaults.webm"
       />
     </template>

@@ -28,7 +28,9 @@
           :webp-sources="nft.bigPicture.webpSources"
         />
         <h3 class="title">{{ nft.name }}</h3>
-        <div class="description">{{ nft.description }}</div>
+        <div class="description">
+          {{ $t(`NFTs.txtNFTs.${nft.id}.description`) }}
+        </div>
       </router-link>
     </div>
   </content-wrapper>

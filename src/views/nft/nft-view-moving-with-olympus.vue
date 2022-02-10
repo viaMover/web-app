@@ -8,9 +8,9 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblMovingWithOlympus') }}</h1>
         <div class="description">
-          {{ $t('NFTs.txtNFTs.movingWithOlympus.pageDescriptionPartOne') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.movingWithOlympus.pageDescriptionPartTwo') }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}
         </div>
       </div>
 
@@ -39,7 +39,7 @@
             <action-button
               class="primary"
               propagate-original-event
-              :text="$t('NFTs.btn.movingWithOlympus.get.txt')"
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
             />
           </div>
@@ -59,6 +59,7 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
+        poster="@/assets/images/ios-spinner-white.svg"
       >
         <source
           src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"
@@ -113,8 +114,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      nft: 'movingWithOlympus',
-      totalClaimed: 'OlympusTotalClaimed'
+      nft: 'movingWithOlympus'
     }),
     availableTo(): string {
       return dayjs.unix(this.nft.meta.endTs).utc().format('MMMM DD, HH:mm UTC');
@@ -147,7 +147,7 @@ export default Vue.extend({
     },
     async handleClaim(): Promise<void> {
       if (!(await this.checkOlympusClaimable())) {
-        this.error = this.$t('NFTs.txtOhNo').toString();
+        this.error = this.$t('NFTs.txtOhNo') as string;
         return;
       }
 
