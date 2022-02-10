@@ -12,7 +12,7 @@ import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { multiply, sub, toWei } from '@/utils/bigmath';
+import { fromWei, multiply, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import {
@@ -26,6 +26,7 @@ import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { LoaderStep } from '@/components/forms/loader-form/types';
 
+import { estimateTopUpCompound } from './top-up-estimate';
 import { unwrap } from './wxBTRFLY/top-up';
 
 export const topUpCompound = async (
@@ -47,6 +48,9 @@ export const topUpCompound = async (
   let topupInputAsset = inputAsset;
   let topupInputAmount = inputAmount;
   let topupTransferData = transferData;
+
+  let topupActionGasLimit = actionGasLimit;
+  let topupApproveGasLimit = approveGasLimit;
 
   if (sameAddress(inputAsset.address, WX_BTRFLY_TOKEN_ADDRESS(network))) {
     try {
@@ -84,15 +88,44 @@ export const topUpCompound = async (
         topupInputAsset.address
       );
 
-      topupInputAmount = sub(balanceAfterUnwrap, balanceBeforeUnwrap);
+      const topupInputAmountInWei = sub(
+        balanceAfterUnwrap,
+        balanceBeforeUnwrap
+      );
+      topupInputAmount = fromWei(
+        topupInputAmountInWei,
+        topupInputAsset.decimals
+      );
       topupTransferData = await getTransferData(
         getUSDCAssetData(network).address,
         topupInputAsset.address,
-        topupInputAmount,
+        topupInputAmountInWei,
         true,
         '0.01',
         network
       );
+
+      const resp = await estimateTopUpCompound(
+        topupInputAsset,
+        outputAsset,
+        topupInputAmount,
+        topupTransferData,
+        network,
+        web3,
+        accountAddress
+      );
+
+      if (resp.error) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.unwrap.extimation',
+          message: 'failed estimate after the unwarp'
+        });
+        throw new Error("Can't estimate topup after unwrap");
+      }
+
+      topupActionGasLimit = resp.actionGasLimit;
+      topupApproveGasLimit = resp.approveGasLimit;
     } catch (err) {
       Sentry.addBreadcrumb({
         type: 'error',
@@ -125,12 +158,12 @@ export const topUpCompound = async (
           web3,
           accountAddress,
           changeStepToProcess,
-          actionGasLimit,
+          topupActionGasLimit,
           gasPriceInGwei
         );
       },
       () => changeStepToProcess('Process'),
-      approveGasLimit,
+      topupApproveGasLimit,
       gasPriceInGwei
     );
   } catch (err) {
