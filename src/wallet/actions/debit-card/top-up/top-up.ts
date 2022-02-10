@@ -12,7 +12,7 @@ import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { multiply, sub, toWei } from '@/utils/bigmath';
+import { fromWei, multiply, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import {
@@ -88,11 +88,18 @@ export const topUpCompound = async (
         topupInputAsset.address
       );
 
-      topupInputAmount = sub(balanceAfterUnwrap, balanceBeforeUnwrap);
+      const topupInputAmountInWei = sub(
+        balanceAfterUnwrap,
+        balanceBeforeUnwrap
+      );
+      topupInputAmount = fromWei(
+        topupInputAmountInWei,
+        topupInputAsset.decimals
+      );
       topupTransferData = await getTransferData(
         getUSDCAssetData(network).address,
         topupInputAsset.address,
-        topupInputAmount,
+        topupInputAmountInWei,
         true,
         '0.01',
         network
