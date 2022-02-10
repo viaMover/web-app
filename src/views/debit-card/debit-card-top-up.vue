@@ -81,8 +81,8 @@ import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
   divide,
-  floorDivide,
   fromWei,
+  getInteger,
   isZero,
   lessThan,
   multiply,
@@ -449,11 +449,13 @@ export default Vue.extend({
                 WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
               )
             ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.wxBTRFLYrealIndex, 9)
+              );
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-
-              inputInWei = multiply(
-                floorDivide(inputInWei, new BigNumber(10).pow(9)),
-                floorDivide(this.wxBTRFLYrealIndex, new BigNumber(10).pow(9))
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
               );
             }
             if (isZero(referenceAmount) || referenceAmount === '') {
@@ -571,11 +573,13 @@ export default Vue.extend({
                 WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
               )
             ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.wxBTRFLYrealIndex, 9)
+              );
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-
-              inputInWei = multiply(
-                floorDivide(inputInWei, new BigNumber(10).pow(9)),
-                floorDivide(this.wxBTRFLYrealIndex, new BigNumber(10).pow(9))
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
               );
             }
             this.transferData = await getTransferData(
@@ -605,11 +609,13 @@ export default Vue.extend({
                 WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
               )
             ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.wxBTRFLYrealIndex, 9)
+              );
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-
-              inputInWei = multiply(
-                floorDivide(inputInWei, new BigNumber(10).pow(9)),
-                floorDivide(this.wxBTRFLYrealIndex, new BigNumber(10).pow(9))
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
               );
             }
 
