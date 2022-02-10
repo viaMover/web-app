@@ -35,13 +35,16 @@
         </div>
       </div>
       <div class="right">
-        <div class="qr-code">
-          <picture v-if="wcCode !== '' && wcCodeWebp !== ''">
+        <pu-skeleton
+          class="qr-code"
+          :loading="wcCode === '' && wcCodeWebp === ''"
+          tag="div"
+        >
+          <picture>
             <source :srcset="wcCodeWebp" type="image/webp" />
             <img alt="QR code" :src="wcCode" />
           </picture>
-          <pu-skeleton v-else class="image-stub" tag="div" />
-        </div>
+        </pu-skeleton>
         <i18n
           class="description"
           path="connect.txtQrDescriptionPartOne"
