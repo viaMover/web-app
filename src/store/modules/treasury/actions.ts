@@ -16,7 +16,7 @@ import {
   getFromPersistStoreWithExpire,
   setToPersistStore
 } from '@/settings/persist/utils';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 
 import { GetterType } from './getters';
@@ -34,7 +34,7 @@ type Actions = {
   fetchPowercardData: Promise<void>;
   fetchTreasuryFreshData: Promise<void>;
   fetchTreasuryInfo: Promise<void>;
-  fetchTreasuryReceipt: Promise<void>;
+  fetchTreasuryReceipt: void;
 };
 
 export const RECEIPT_TIME_EXPIRE = 60 * 10 * 1000;
@@ -82,6 +82,7 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
+      console.warn('failed to load treasury minimal info', promisesErrors);
       Sentry.captureException(promisesErrors);
     }
   },
@@ -99,35 +100,36 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
+      console.warn('failed to load treasury info', promisesErrors);
       Sentry.captureException(promisesErrors);
     }
   },
   async fetchPowercardData({ commit, rootState }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
     const powercardBalanceData = await powercardBalance(
-      rootState.account!.currentAddress!,
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     commit('setPowercardBalance', powercardBalanceData);
 
     const getPowercardStateData = await getPowercardState(
-      rootState.account!.currentAddress!,
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     commit('setPowercardState', getPowercardStateData);
 
     if (getPowercardStateData === 'Staked') {
       const getPowercardTimingsData = await getPowercardTimings(
-        rootState.account!.currentAddress!,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       commit('setPowercardActiveTime', getPowercardTimingsData.activeTime);
@@ -135,38 +137,38 @@ const actions: ActionFuncs<
     }
   },
   async fetchTreasuryFreshData({ commit, getters, rootState }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
     const getTreasuryBalancesPromise = getTreasuryBalance(
-      rootState.account!.currentAddress!,
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     const getTreasuryBonusPromise = getTreasuryBonus(
-      rootState.account!.currentAddress!,
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     const getTreasuryAPYPromise = getTreasuryAPY(
       getters.usdcNativePrice,
       getters.moveNativePrice,
-      rootState.account!.currentAddress!,
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     const getTotalStakedMovePromise = getTotalStakedMove(
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
-      rootState.account!.networkInfo!.network,
-      rootState.account!.provider!.web3
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3
     );
 
     const [
@@ -191,7 +193,7 @@ const actions: ActionFuncs<
     commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
   },
   async fetchTreasuryInfo({ commit, rootState }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
@@ -199,7 +201,7 @@ const actions: ActionFuncs<
     commit('setTreasuryInfoError', undefined);
     commit('setTreasuryInfo', undefined);
 
-    const info = await getTreasuryInfo(rootState.account!.currentAddress!);
+    const info = await getTreasuryInfo(rootState.account.currentAddress);
 
     if (isError(info)) {
       commit('setTreasuryInfoError', info.error);
@@ -211,11 +213,11 @@ const actions: ActionFuncs<
     commit('setTreasuryInfo', info.result);
     commit('setIsTreasuryInfoLoading', false);
   },
-  async fetchTreasuryReceipt(
+  fetchTreasuryReceipt(
     { commit, state, rootState, getters },
     { year, month }: TreasuryGetReceiptPayload
-  ): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+  ): void {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
@@ -224,7 +226,7 @@ const actions: ActionFuncs<
     }
 
     const receiptPromise = getTreasuryReceipt(
-      rootState.account!.currentAddress!,
+      rootState.account.currentAddress,
       year,
       month
     ).then((item) => {
@@ -252,7 +254,7 @@ const actions: ActionFuncs<
           );
         }
       }
-    })().then();
+    })();
   }
 };
 

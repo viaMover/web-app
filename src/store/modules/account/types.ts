@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/vue';
+import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
@@ -78,6 +80,51 @@ export type AccountStoreState = {
   gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
+};
+
+export type SafeAccountStoreState = AccountStoreState & {
+  currentAddress: string;
+  networkInfo: NetworkInfo;
+  provider: ProviderData;
+};
+
+export const ensureAccountStateIsSafe = (
+  state: AccountStoreState | undefined
+): state is SafeAccountStoreState => {
+  const reasons = new Array<string>();
+  if (state === undefined) {
+    reasons.push('empty account state');
+  }
+
+  if (state?.currentAddress === undefined) {
+    reasons.push('failed to get currentAddress from state');
+  }
+
+  if (state?.provider?.web3 === undefined) {
+    reasons.push('failed to get web3 provider from state');
+  }
+
+  if (state?.networkInfo?.network === undefined) {
+    reasons.push('failed to get network from state');
+  }
+
+  if (reasons.length > 0) {
+    Sentry.addBreadcrumb({
+      type: 'error',
+      category: 'state.account.safe',
+      data: {
+        reasons
+      },
+      level: Sentry.Severity.Error,
+      message: 'account state check failed',
+      timestamp: dayjs().unix()
+    });
+
+    console.error('account state check failed:', reasons);
+    return false;
+  }
+
+  return true;
 };
 
 export type EmitChartRequestPayload = {

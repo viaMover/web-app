@@ -10,7 +10,7 @@ import {
   NibbleShopApiError,
   NibbleShopRedeemPayload
 } from '@/services/mover/nibble-shop/types';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import {
   ClaimPayload,
   RedeemParams,
@@ -37,12 +37,12 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
       params: RedeemParams
     ): Promise<string> {
       try {
-        if (!checkAccountStateIsReady(rootState)) {
-          throw new Error('Account state is not loaded, please, try again');
+        if (!ensureAccountStateIsSafe(rootState.account)) {
+          throw new Error('account state is not ready');
         }
 
         const dataPayload: NibbleShopRedeemPayload = {
-          accountAddress: rootState.account!.currentAddress!,
+          accountAddress: rootState.account.currentAddress,
           address: params.address,
           country: params.country,
           email: params.email,
@@ -52,9 +52,9 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
         };
 
         const personalDataSignature =
-          await rootState.account!.provider!.web3.eth.personal.sign(
+          await rootState.account.provider.web3.eth.personal.sign(
             JSON.stringify(dataPayload),
-            rootState.account!.currentAddress!,
+            rootState.account.currentAddress,
             ''
           );
 
@@ -88,8 +88,8 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
       { rootState, state },
       payload: RedeemPayload
     ): Promise<void> {
-      if (!checkAccountStateIsReady(rootState)) {
-        throw new Error('Account state is not loaded, please, try again');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account state is not ready');
       }
 
       const asset = state.assets.find((asset) => asset.id === payload.tokenId);
@@ -103,16 +103,16 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
       await redeemNibbleToken(
         asset.address,
         asset.intId,
-        rootState.account!.currentAddress!,
+        rootState.account.currentAddress,
         payload.signature,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3,
         payload.changeStep
       );
     },
     async refreshAssetsInfoList({ rootState, state, commit }): Promise<void> {
-      if (!checkAccountStateIsReady(rootState)) {
-        throw new Error('Account state is not loaded, please, try again');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account state is not ready');
       }
 
       if (state.isLoading) {
@@ -126,11 +126,17 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
           state.localAssets
             .filter((lt) => lt.active)
             .map(async (localToken) => {
+              // Object is possibly 'undefined' errors here are
+              // suspended with eslint directives because of
+              // TypeScript's lack of callback closure context propagation
               return getNibbleTokenData(
                 localToken.id,
                 localToken.address,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 rootState.account!.currentAddress!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 rootState.account!.networkInfo!.network,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 rootState.account!.provider!.web3
               );
             })
@@ -164,8 +170,8 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
       { rootState, state },
       payload: ClaimPayload
     ): Promise<void> {
-      if (!checkAccountStateIsReady(rootState)) {
-        throw new Error('Account state is not loaded, please, try again');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account state is not ready');
       }
 
       const asset = state.assets.find((asset) => asset.id === payload.tokenId);
@@ -178,10 +184,10 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
 
       await claimNibbleToken(
         asset.address,
-        rootState.account!.currentAddress!,
+        rootState.account.currentAddress,
         asset.feeAmount,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3,
         payload.changeStep
       );
     }

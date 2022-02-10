@@ -6,7 +6,7 @@ import {
 } from '@/services/chain/earnings/ethereum';
 import { getEthereumInfo, getEthereumReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 
 import { GetterType } from './getters';
@@ -35,21 +35,21 @@ const actions: ActionFuncs<
   async loadInfo({ commit, rootState, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {
-      if (!checkAccountStateIsReady(rootState)) {
-        throw new Error('failed to get current address');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account state is not ready');
       }
 
       const ethereumAPY = await getEthereumAPY(
-        rootState.account!.currentAddress!,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
       commit('setEthereumAPY', ethereumAPY.apy);
 
       const ethereumBalance = await getEthereumBalance(
-        rootState.account!.currentAddress!,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
       commit('setEthereumBalance', ethereumBalance);
 
@@ -62,15 +62,15 @@ const actions: ActionFuncs<
     }
   },
   async fetchEthereumInfo({ commit, rootState }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('failed to get current address');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
     commit('setIsEthereumInfoLoading', true);
     commit('setEthereumInfoError', undefined);
     commit('setEthereumInfo', undefined);
 
-    const info = await getEthereumInfo(rootState.account!.currentAddress!);
+    const info = await getEthereumInfo(rootState.account.currentAddress);
 
     commit('setIsEthereumInfoLoading', false);
     if (isError(info)) {
@@ -85,8 +85,8 @@ const actions: ActionFuncs<
     { commit, rootState, state },
     { year, month }: FetchEthereumReceiptPayload
   ): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('failed to get current address');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
     commit('setIsEthereumReceiptLoading', true);
@@ -97,7 +97,7 @@ const actions: ActionFuncs<
     }
 
     const receipt = await getEthereumReceipt(
-      rootState.account!.currentAddress!,
+      rootState.account.currentAddress,
       year,
       month
     );

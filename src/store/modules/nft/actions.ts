@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { logger } from '@sentry/utils';
 import * as Sentry from '@sentry/vue';
 
@@ -16,7 +15,7 @@ import {
   getVaultsData
 } from '@/services/chain';
 import { claimVaults } from '@/services/chain/nft/vaults/vaults';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import {
   ChangePayload,
   ClaimPayload,
@@ -46,38 +45,38 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async loadNFTInfo({ rootState, commit }): Promise<void> {
     commit('setIsLoading', true);
     try {
-      if (!checkAccountStateIsReady(rootState)) {
+      if (!ensureAccountStateIsSafe(rootState.account)) {
         return;
       }
 
       const unexpectedMoveDataPromise = getUnexpectedMoveData(
-        rootState!.account!.currentAddress!,
-        rootState!.account!.networkInfo!.network,
-        rootState!.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       const sweetAndSourDataPromise = getSweetAndSourData(
-        rootState!.account!.currentAddress!,
-        rootState!.account!.networkInfo!.network,
-        rootState!.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       const olympusDataPromise = getOlympusData(
-        rootState!.account!.currentAddress!,
-        rootState!.account!.networkInfo!.network,
-        rootState!.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       const vaultsDataPromise = getVaultsData(
-        rootState!.account!.currentAddress!,
-        rootState!.account!.networkInfo!.network,
-        rootState!.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       const diceDataPromise = getDiceData(
-        rootState!.account!.currentAddress!,
-        rootState!.account!.networkInfo!.network,
-        rootState!.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       try {
@@ -152,63 +151,63 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     );
   },
   async claimOlympus({ rootState }, payload: ChangePayload): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     await claimOlympus(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
   async claimVaults({ rootState }, payload: ChangePayload): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     await claimVaults(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
   async claimDice({ rootState }, payload: DicePayload): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     await claimDice(
       payload.diceType,
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
   async claimSweetAndSour({ rootState }, payload: ClaimPayload): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     await claimSweetAndSour(
-      rootState!.account!.currentAddress!,
+      rootState.account.currentAddress,
       payload.signature,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice?.price ?? '0',
       payload.changeStep
     );
@@ -217,17 +216,17 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     { rootState },
     payload: ClaimPayload
   ): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     await claimUnexpectedMove(
-      rootState!.account!.currentAddress!,
+      rootState.account.currentAddress,
       payload.signature,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice?.price ?? '0',
       payload.changeStep
     );
@@ -236,21 +235,21 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     { rootState },
     payload: ClaimPayload
   ): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     if (fastGasPrice === undefined) {
       throw new Error('There is no gas price, please, try again');
     }
 
     await claimAndExchangeUnexpectedMove(
-      rootState!.account!.currentAddress!,
+      rootState.account.currentAddress,
       payload.signature,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice.price,
       payload.changeStep
     );
@@ -259,20 +258,20 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     { rootState },
     payload: ChangePayload
   ): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
-      throw new Error('Account state is not loaded, please, try again');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account!.gasPrices?.FastGas;
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
 
     if (fastGasPrice === undefined) {
       throw new Error('There is no gas price, please, try again');
     }
 
     await exchangeUnexpectedMove(
-      rootState!.account!.currentAddress!,
-      rootState!.account!.networkInfo!.network,
-      rootState!.account!.provider!.web3,
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
       fastGasPrice.price,
       payload.changeStep
     );

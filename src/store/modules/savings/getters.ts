@@ -37,14 +37,14 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      rootState.account!.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
 
     return fromWei(
       state.savingsInfo.currentBalance,
-      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   savingsInfoBalanceNative(state, getters): string {
@@ -54,14 +54,14 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      rootState.account!.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
 
     const valueInUSDC = fromWei(
       state.savingsInfo.earnedThisMonth,
-      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
 
     return multiply(valueInUSDC, getters.usdcNativePrice);
@@ -70,28 +70,28 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      rootState.account!.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
 
     return fromWei(
       state.savingsInfo.earnedTotal,
-      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   savingsInfoTotalPoolBalanceNative(state, getters, rootState): string {
     if (
       state.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
-      rootState.account!.networkInfo === undefined
+      rootState.account?.networkInfo === undefined
     ) {
       return '0';
     }
 
     const balanceUSDC = fromWei(
       state.savingsInfo.currentPoolBalance,
-      getUSDCAssetData(rootState.account!.networkInfo.network).decimals
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
     return multiply(balanceUSDC, getters.usdcNativePrice);
   },

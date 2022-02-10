@@ -7,7 +7,7 @@ import {
   getFromPersistStoreWithExpire,
   setToPersistStore
 } from '@/settings/persist/utils';
-import { checkAccountStateIsReady } from '@/store/modules/account/utils/state';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { GetterType } from '@/store/modules/savings/getters';
 import { ActionFuncs } from '@/store/types';
 
@@ -70,6 +70,7 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
+      console.warn('failed to load savings minimal info', promisesErrors);
       Sentry.captureException(promisesErrors);
     }
   },
@@ -87,25 +88,26 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
+      console.warn('failed to load savings info', promisesErrors);
       Sentry.captureException(promisesErrors);
     }
   },
   async fetchSavingsFreshData({ commit, rootState }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
     try {
       const getSavingsApyPromise = getSavingsAPY(
-        rootState.account!.currentAddress!,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       const getSavingsBalancePromise = getSavingsBalance(
-        rootState.account!.currentAddress!,
-        rootState.account!.networkInfo!.network,
-        rootState.account!.provider!.web3
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
       );
 
       const [savingsAPY, savingsBalance] = await Promise.all([
@@ -125,7 +127,7 @@ const actions: ActionFuncs<
     }
   },
   async fetchSavingsInfo({ commit, rootState }): Promise<void> {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
@@ -133,7 +135,7 @@ const actions: ActionFuncs<
     commit('setSavingsInfoError', undefined);
     commit('setSavingsInfo', undefined);
 
-    const info = await getSavingsInfo(rootState.account!.currentAddress!);
+    const info = await getSavingsInfo(rootState.account.currentAddress);
 
     if (isError(info)) {
       commit('setSavingsInfoError', info.error);
@@ -149,7 +151,7 @@ const actions: ActionFuncs<
     { commit, state, rootState, getters },
     { year, month }: SavingsGetReceiptPayload
   ): void {
-    if (!checkAccountStateIsReady(rootState)) {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
@@ -158,7 +160,7 @@ const actions: ActionFuncs<
     }
 
     const receiptPromise = getSavingsReceipt(
-      rootState.account!.currentAddress!,
+      rootState.account.currentAddress,
       year,
       month
     ).then((item) => {
@@ -186,7 +188,7 @@ const actions: ActionFuncs<
           );
         }
       }
-    })().then();
+    })();
   }
 };
 
