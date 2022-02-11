@@ -1,5 +1,5 @@
 <template>
-  <router-link class="button-like" :to="routeTo">
+  <router-link class="button-like item" :to="routeTo">
     <video
       autoplay="autoplay"
       data-keepplaying="data-keepplaying"
