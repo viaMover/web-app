@@ -27,6 +27,7 @@ export type DebitCardStoreState = {
   phoneNumber: string | undefined;
   orderState: OrderState | undefined;
   kycLink: string | undefined;
+  wxBTRFLYrealIndex: string;
 };
 
 export type CardInfo = {

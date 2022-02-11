@@ -22,7 +22,8 @@ export default {
     emailSignature: undefined,
     orderState: undefined,
     phoneNumber: undefined,
-    kycLink: undefined
+    kycLink: undefined,
+    wxBTRFLYrealIndex: '1000000000'
   },
   actions,
   getters,

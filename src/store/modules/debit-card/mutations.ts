@@ -75,6 +75,9 @@ const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
   },
   setKycLink(state, link: string | undefined): void {
     state.kycLink = link;
+  },
+  setWxBTRFLYrealIndex(state, realIndex: string): void {
+    state.wxBTRFLYrealIndex = realIndex;
   }
 };
 
