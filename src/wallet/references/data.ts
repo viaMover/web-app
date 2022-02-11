@@ -22,6 +22,7 @@ import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
+import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 
 const ADDRESSES = {
   [Network.mainnet]: {
@@ -74,7 +75,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     SHIB_TOKEN_ADDRESS: '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE',
     AXS_TOKEN_ADDRESS: '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b',
-    SLP_TOKEN_ADDRESS: '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25'
+    SLP_TOKEN_ADDRESS: '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25',
+    DOP_TOKEN_ADDRESS: '0x6bb61215298f296c55b19ad842d3df69021da2ef',
+    LEASH_TOKEN_ADDRESS: '0x27c70cd1946795b66be9d954418546998b546634',
+    BONE_TOKEN_ADDRESS: '0x9813037ee2218799597d83d4a5b6f3b6778218d9',
+    BTRFLY_TOKEN_ADDRESS: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9'
   },
   [Network.ropsten]: {
     BASE_ASSET: {
@@ -123,7 +129,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.rinkeby]: {
     BASE_ASSET: {
@@ -172,7 +183,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.kovan]: {
     BASE_ASSET: {
@@ -222,7 +238,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.matic]: {
     BASE_ASSET: {
@@ -271,7 +292,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.binance]: {
     BASE_ASSET: {
@@ -320,7 +346,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.binanceTest]: {
     BASE_ASSET: {
@@ -369,7 +400,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.fantom]: {
     BASE_ASSET: {
@@ -418,7 +454,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.arbitrum]: {
     BASE_ASSET: {
@@ -467,7 +508,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   },
   [Network.avalanche]: {
     BASE_ASSET: {
@@ -516,7 +562,12 @@ const ADDRESSES = {
     USDT_TOKEN_ADDRESS: '0x1',
     SHIB_TOKEN_ADDRESS: '0x1',
     AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1'
+    SLP_TOKEN_ADDRESS: '0x1',
+    DOP_TOKEN_ADDRESS: '0x1',
+    LEASH_TOKEN_ADDRESS: '0x1',
+    BONE_TOKEN_ADDRESS: '0x1',
+    BTRFLY_TOKEN_ADDRESS: '0x1',
+    WX_BTRFLY_TOKEN_ADDRESS: '0x1'
   }
 };
 
@@ -738,6 +789,25 @@ const SLP_TOKEN_ADDRESS = (network: Network): string => {
   return ADDRESSES[network].SLP_TOKEN_ADDRESS ?? '0x1';
 };
 
+const DOP_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].DOP_TOKEN_ADDRESS ?? '0x1';
+};
+
+const BONE_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].BONE_TOKEN_ADDRESS ?? '0x1';
+};
+
+const LEASH_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].LEASH_TOKEN_ADDRESS ?? '0x1';
+};
+
+const BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].BTRFLY_TOKEN_ADDRESS ?? '0x1';
+};
+const WX_BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
+  return ADDRESSES[network].WX_BTRFLY_TOKEN_ADDRESS ?? '0x1';
+};
+
 const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
 
 const isTokenValidForTreasuryDeposit = (
@@ -785,6 +855,16 @@ const getMoboAssetData = (
     symbol: 'MOBO',
     name: 'Mover Bonus Token',
     iconURL: ''
+  };
+};
+
+const getBTRFLYAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: BTRFLY_TOKEN_ADDRESS(network),
+    decimals: 9,
+    symbol: 'BTRFLY',
+    iconURL:
+      'https://assets.coingecko.com/coins/images/21718/small/3.png?1640248507'
   };
 };
 
@@ -878,7 +958,12 @@ const validTopUpAssets = (network: Network): Array<string> => {
     USDC_TOKEN_ADDRESS(network),
     SHIB_TOKEN_ADDRESS(network),
     AXS_TOKEN_ADDRESS(network),
-    SLP_TOKEN_ADDRESS(network)
+    SLP_TOKEN_ADDRESS(network),
+    DOP_TOKEN_ADDRESS(network),
+    BONE_TOKEN_ADDRESS(network),
+    LEASH_TOKEN_ADDRESS(network),
+    BTRFLY_TOKEN_ADDRESS(network),
+    WX_BTRFLY_TOKEN_ADDRESS(network)
   ];
 };
 
@@ -890,6 +975,7 @@ export {
   getAssetsForTreasury,
   getBaseAssetData,
   getOhmAssetData,
+  getBTRFLYAssetData,
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
   getEURSAssetData,
@@ -939,6 +1025,7 @@ export {
   ERC721_ABI,
   EARNINGS_ETHEREUM_ABI,
   EARNINGS_OLYMPUS_ABI,
+  WX_BTRFLY_ABI,
   ETH_V2_STAKER_POOL_ADDRESS,
   OHM_STAKER_POOL_ADDRESS,
   OHM_ADDRESS,
@@ -954,5 +1041,10 @@ export {
   SHIB_TOKEN_ADDRESS,
   AXS_TOKEN_ADDRESS,
   SLP_TOKEN_ADDRESS,
+  DOP_TOKEN_ADDRESS,
+  BONE_TOKEN_ADDRESS,
+  LEASH_TOKEN_ADDRESS,
+  BTRFLY_TOKEN_ADDRESS,
+  WX_BTRFLY_TOKEN_ADDRESS,
   validTopUpAssets
 };

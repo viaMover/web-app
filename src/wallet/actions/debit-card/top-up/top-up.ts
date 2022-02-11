@@ -5,17 +5,29 @@ import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { TransferData } from '@/services/0x/api';
+import { getTransferData, TransferData } from '@/services/0x/api';
+import { currentBalance } from '@/services/chain/erc20/balance';
 import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
   getPureEthAddress
 } from '@/utils/address';
-import { multiply, toWei } from '@/utils/bigmath';
+import { fromWei, multiply, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import {
+  getBTRFLYAssetData,
+  getUSDCAssetData,
+  HOLY_HAND_ABI,
+  HOLY_HAND_ADDRESS,
+  WX_BTRFLY_TOKEN_ADDRESS
+} from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
+
+import { LoaderStep } from '@/components/forms/loader-form/types';
+
+import { estimateTopUpCompound } from './top-up-estimate';
+import { unwrap } from './wxBTRFLY/top-up';
 
 export const topUpCompound = async (
   inputAsset: SmallToken,
@@ -25,36 +37,133 @@ export const topUpCompound = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
-  changeStepToProcess: () => Promise<void>,
+  changeStepToProcess: (step: LoaderStep) => Promise<void>,
   actionGasLimit: string,
   approveGasLimit: string,
+  unwrapGasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void> => {
   const contractAddress = HOLY_HAND_ADDRESS(network);
 
+  let topupInputAsset = inputAsset;
+  let topupInputAmount = inputAmount;
+  let topupTransferData = transferData;
+
+  let topupActionGasLimit = actionGasLimit;
+  let topupApproveGasLimit = approveGasLimit;
+
+  if (sameAddress(inputAsset.address, WX_BTRFLY_TOKEN_ADDRESS(network))) {
+    try {
+      Sentry.addBreadcrumb({
+        type: 'info',
+        category: 'debit-card.top-up.topUpCompound',
+        message: 'For wxBTRFLY we need to unwrap it',
+        data: {
+          inputAsset: inputAsset
+        }
+      });
+
+      topupInputAsset = getBTRFLYAssetData(network);
+
+      const balanceBeforeUnwrap = await currentBalance(
+        web3,
+        accountAddress,
+        topupInputAsset.address
+      );
+
+      await unwrap(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress,
+        changeStepToProcess,
+        unwrapGasLimit,
+        gasPriceInGwei
+      );
+
+      const balanceAfterUnwrap = await currentBalance(
+        web3,
+        accountAddress,
+        topupInputAsset.address
+      );
+
+      const topupInputAmountInWei = sub(
+        balanceAfterUnwrap,
+        balanceBeforeUnwrap
+      );
+      topupInputAmount = fromWei(
+        topupInputAmountInWei,
+        topupInputAsset.decimals
+      );
+      topupTransferData = await getTransferData(
+        getUSDCAssetData(network).address,
+        topupInputAsset.address,
+        topupInputAmountInWei,
+        true,
+        '0.01',
+        network
+      );
+
+      const resp = await estimateTopUpCompound(
+        topupInputAsset,
+        outputAsset,
+        topupInputAmount,
+        topupTransferData,
+        network,
+        web3,
+        accountAddress
+      );
+
+      if (resp.error) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.unwrap.extimation',
+          message: 'failed estimate after the unwarp'
+        });
+        throw new Error("Can't estimate topup after unwrap");
+      }
+
+      topupActionGasLimit = resp.actionGasLimit;
+      topupApproveGasLimit = resp.approveGasLimit;
+    } catch (err) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.unwrap',
+        message: 'failed to unwrap for top up',
+        data: {
+          error: err
+        }
+      });
+      throw err;
+    }
+  }
+
+  changeStepToProcess('Confirm');
+
   try {
     await executeTransactionWithApprove(
-      inputAsset,
+      topupInputAsset,
       contractAddress,
-      inputAmount,
+      topupInputAmount,
       accountAddress,
       web3,
       async () => {
         await topUp(
-          inputAsset,
+          topupInputAsset,
           outputAsset,
-          inputAmount,
-          transferData,
+          topupInputAmount,
+          topupTransferData,
           network,
           web3,
           accountAddress,
           changeStepToProcess,
-          actionGasLimit,
+          topupActionGasLimit,
           gasPriceInGwei
         );
       },
-      changeStepToProcess,
-      approveGasLimit,
+      () => changeStepToProcess('Process'),
+      topupApproveGasLimit,
       gasPriceInGwei
     );
   } catch (err) {
@@ -78,7 +187,7 @@ export const topUp = async (
   network: Network,
   web3: Web3,
   accountAddress: string,
-  changeStepToProcess: () => Promise<void>,
+  changeStepToProcess: (step: LoaderStep) => Promise<void>,
   gasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void | never> => {
@@ -209,7 +318,7 @@ export const topUp = async (
         });
 
         console.log('debug debit card top up txn hash', hash);
-        changeStepToProcess();
+        changeStepToProcess('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
         Sentry.addBreadcrumb({

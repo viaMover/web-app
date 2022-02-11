@@ -57,5 +57,8 @@ export default {
   },
   setKycLink(state, link: string | undefined): void {
     state.kycLink = link;
+  },
+  setWxBTRFLYrealIndex(state, realIndex: string): void {
+    state.wxBTRFLYrealIndex = realIndex;
   }
 } as MutationTree<DebitCardStoreState>;
