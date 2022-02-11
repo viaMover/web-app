@@ -69,12 +69,10 @@ const actions: ActionFuncs<
   async loadMinimalInfo({ dispatch }): Promise<void> {
     const loadPowercardPromise = dispatch('fetchPowercardData');
     const treasuryFreshData = dispatch('fetchTreasuryFreshData');
-    const restoreReceiptsPromise = dispatch('restoreReceipts');
 
     const promisesResults = await Promise.allSettled([
       treasuryFreshData,
-      loadPowercardPromise,
-      restoreReceiptsPromise
+      loadPowercardPromise
     ]);
 
     const promisesErrors = promisesResults
@@ -89,10 +87,12 @@ const actions: ActionFuncs<
   async loadInfo({ dispatch }): Promise<void> {
     const loadMinimalInfoPromise = dispatch('loadMinimalInfo');
     const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
+    const restoreReceiptsPromise = dispatch('restoreReceipts');
 
     const promisesResults = await Promise.allSettled([
       loadMinimalInfoPromise,
-      treasuryInfoPromise
+      treasuryInfoPromise,
+      restoreReceiptsPromise
     ]);
 
     const promisesErrors = promisesResults

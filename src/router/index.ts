@@ -153,7 +153,7 @@ const routes: Array<RouteConfig> = [
     },
     () =>
       import(
-        /* webpackChunkName: "savings" */ '@/views/preload/preload-product.vue'
+        /* webpackChunkName: "savings" */ '@/views/preload/preload-product/preload-product.vue'
       )
   ),
   wrapWithCustomPreloadView(
@@ -233,7 +233,7 @@ const routes: Array<RouteConfig> = [
     },
     () =>
       import(
-        /* webpackChunkName: "treasury" */ '@/views/preload/preload-product.vue'
+        /* webpackChunkName: "treasury" */ '@/views/preload/preload-product/preload-product.vue'
       )
   ),
   {

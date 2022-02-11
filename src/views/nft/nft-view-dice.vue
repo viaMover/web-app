@@ -26,6 +26,7 @@
       <analytics-list>
         <analytics-list-item
           :description="totalClaimed"
+          :is-loading="isStoreLoading"
           :title="$t('NFTs.lblTotalClaimed')"
         />
       </analytics-list>
@@ -39,6 +40,7 @@
           <div class="group default">
             <action-button
               class="primary"
+              :disabled="isStoreLoading"
               propagate-original-event
               :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
@@ -50,36 +52,42 @@
             <div class="items">
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🍀"
                 :text="$t(`NFTs.btn.${nft.id}.fourSide`)"
                 @button-click="handleClaim(4)"
               />
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🎲"
                 :text="$t(`NFTs.btn.${nft.id}.sixSide`)"
                 @button-click="handleClaim(6)"
               />
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="👯‍♀️"
                 :text="$t(`NFTs.btn.${nft.id}.doubleSixSide`)"
                 @button-click="handleClaim(66)"
               />
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🎱"
                 :text="$t(`NFTs.btn.${nft.id}.eightSide`)"
                 @button-click="handleClaim(8)"
               />
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🔟"
                 :text="$t(`NFTs.btn.${nft.id}.tenSide`)"
                 @button-click="handleClaim(10)"
               />
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🕛"
                 :text="$t(`NFTs.btn.${nft.id}.twelveSide`)"
                 @button-click="handleClaim(12)"
@@ -237,7 +245,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      nft: 'dice'
+      nft: 'dice',
+      isStoreLoading: 'isLoading'
     }),
     diceSrc(): string {
       return (

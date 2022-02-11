@@ -1,11 +1,12 @@
 <template>
-  <router-link class="button-like item" :to="routeTo">
+  <router-link class="button-like" :to="routeTo">
     <video
       autoplay="autoplay"
       data-keepplaying="data-keepplaying"
       loop="loop"
       muted="muted"
       playsinline="playsinline"
+      poster="@/assets/images/ios-spinner.svg"
       :src="src"
     />
     <h3 class="title">{{ name }}</h3>

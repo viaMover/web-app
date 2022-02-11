@@ -1,6 +1,7 @@
 <template>
   <button
     class="button fit icon transparent no-padding"
+    :class="{ disabled: disabled }"
     :disabled="disabled"
     type="button"
     @click.prevent.stop="handleClick"

@@ -40,6 +40,7 @@ import {
   AccountStoreState,
   Avatar,
   EmitChartRequestPayload,
+  ensureAccountStateIsSafe,
   InitWalletPayload,
   ProviderData,
   RefreshWalletPayload
@@ -66,6 +67,7 @@ type Actions = {
   updateWalletAfterTxn: Promise<void>;
   waitWallet: Promise<boolean>;
   disconnectWallet: Promise<void>;
+  getBasicPrices: Promise<void>;
 };
 
 const actions: ActionFuncs<
@@ -315,6 +317,8 @@ const actions: ActionFuncs<
         return;
       }
 
+      await dispatch('getBasicPrices');
+
       Sentry.setContext('crypto_person', {
         address: state.currentAddress,
         network: state.networkInfo.network
@@ -326,20 +330,7 @@ const actions: ActionFuncs<
           network: state.networkInfo.network
         });
 
-        console.info('getting all tokens...');
-        const allTokens = getAllTokens(state.networkInfo.network);
-        commit('setAllTokens', allTokens);
-      }
-
-      console.info('refresh eth price...');
-      // TODO: works only for USD
-      try {
-        const ethPriceInUSD = await getEthereumPrice(state.networkInfo.network);
-        commit('setEthPrice', ethPriceInUSD);
-      } catch (e) {
-        console.error("Can't get ETH price, stop loading data", e);
-        Sentry.captureException(e);
-        return;
+        commit('setAllTokens', getAllTokens(state.networkInfo.network));
       }
 
       console.info('Updating wallet tokens from Etherscan...');
@@ -392,8 +383,9 @@ const actions: ActionFuncs<
         }
       } else {
         console.info('Not mainnet - should use balancer');
+        commit('setIsTokensListLoaded', false);
+        commit('setIsTransactionsListLoaded', false);
         const tokensList = getTestnetAssets(state.networkInfo.network);
-        console.info('tokensList: ', tokensList);
         const tokensWithAmount = await getWalletTokens(
           tokensList,
           state.currentAddress,
@@ -402,103 +394,32 @@ const actions: ActionFuncs<
         );
         console.info('tokensWithAmount: ', tokensWithAmount);
         commit('setWalletTokens', tokensWithAmount);
+        commit('setIsTokensListLoaded', true);
+        commit('setIsTransactionsListLoaded', true);
       }
 
-      const getMovePriceInWethPromise = getMOVEPriceInWETH(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
-      );
-
-      const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
-      );
-
-      const getEURSPriceInWETHPromise = getEURSPriceInWETH(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
-      );
-
-      try {
-        const [moveInWethPrice, usdcInWethPrice, eursInWethPrice] =
-          await Promise.all([
-            getMovePriceInWethPromise,
-            getUSDCPriceInWETHPromise,
-            getEURSPriceInWETHPromise
-          ]);
-        commit('setMovePriceInWeth', moveInWethPrice);
-        commit('setUsdcPriceInWeth', usdcInWethPrice);
-        commit('setEursPriceInWeth', eursInWethPrice);
-      } catch (e) {
-        Sentry.captureException(e);
-        throw e;
-      }
-
-      try {
-        const slpPriceInWETH = await getSLPPriceInWETH(
-          state.movePriceInWeth ?? '0',
-          state.currentAddress,
-          state.networkInfo.network,
-          state.provider.web3
-        );
-        commit('setSLPPriceInWETH', slpPriceInWETH);
-      } catch (e) {
-        Sentry.captureException(e);
-        throw e;
-      }
-
-      const treasuryInfoPromise = dispatch(
-        'treasury/loadMinimalInfo',
-        undefined,
-        {
-          root: true
-        }
-      );
+      dispatch('treasury/loadMinimalInfo', undefined, {
+        root: true
+      });
 
       dispatch('nft/loadNFTInfo', undefined, {
         root: true
       }).then(() => dispatch('loadAvatar'));
 
-      const savingsInfoPromise = dispatch(
-        'savings/loadMinimalInfo',
-        undefined,
-        {
-          root: true
-        }
-      );
+      dispatch('savings/loadMinimalInfo', undefined, {
+        root: true
+      });
 
-      let nibbleShopInfoPromise = Promise.resolve();
       if (isFeatureEnabled('isNibbleShopEnabled')) {
-        nibbleShopInfoPromise = nibbleShopInfoPromise.then(() =>
-          dispatch('shop/refreshAssetsInfoList', undefined, {
-            root: true
-          })
-        );
-      }
-
-      let gamesPromise = Promise.resolve();
-      if (isFeatureEnabled('isVaultsRaceEnabled')) {
-        gamesPromise = dispatch('games/init', undefined, {
+        dispatch('shop/refreshAssetsInfoList', undefined, {
           root: true
         });
       }
 
-      const promisesResults = await Promise.allSettled([
-        savingsInfoPromise,
-        treasuryInfoPromise,
-        nibbleShopInfoPromise,
-        gamesPromise
-      ]);
-
-      const promisesErrors = promisesResults
-        .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
-        .map((p) => p.reason);
-
-      if (promisesErrors.length > 0) {
-        Sentry.captureException(promisesErrors);
+      if (isFeatureEnabled('isVaultsRaceEnabled')) {
+        dispatch('games/init', undefined, {
+          root: true
+        });
       }
 
       console.info('Wallet refreshed');
@@ -579,6 +500,64 @@ const actions: ActionFuncs<
     clearOffchainExplorer();
     commit('clearWalletData');
     disconnectIntercomSession();
+  },
+  async getBasicPrices({ state, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(state)) {
+      throw new Error('account state is not ready');
+    }
+
+    try {
+      const getEthPriceInUsdPromise = getEthereumPrice(
+        state.networkInfo.network
+      );
+
+      const getMovePriceInWethPromise = getMOVEPriceInWETH(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      ).then((moveInWethPrice) => {
+        commit('setMovePriceInWeth', moveInWethPrice);
+        return moveInWethPrice;
+      });
+
+      const slpPriceInWETHPromise = getMovePriceInWethPromise.then(
+        (moveInWethPrice) =>
+          getSLPPriceInWETH(
+            moveInWethPrice,
+            state.currentAddress,
+            state.networkInfo.network,
+            state.provider.web3
+          )
+      );
+
+      const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+
+      const getEURSPriceInWETHPromise = getEURSPriceInWETH(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+
+      const [ethInUsdPrice, slpInWethPrice, usdcInWethPrice, eursInWethPrice] =
+        await Promise.all([
+          getEthPriceInUsdPromise,
+          slpPriceInWETHPromise,
+          getUSDCPriceInWETHPromise,
+          getEURSPriceInWETHPromise,
+          getMovePriceInWethPromise
+        ]);
+      commit('setEthPrice', ethInUsdPrice);
+      commit('setSLPPriceInWETH', slpInWethPrice);
+      commit('setUsdcPriceInWeth', usdcInWethPrice);
+      commit('setEursPriceInWeth', eursInWethPrice);
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
+    }
   }
 };
 

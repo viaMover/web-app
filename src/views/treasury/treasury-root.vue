@@ -10,6 +10,7 @@
         <div class="wrapper">
           <div class="list">
             <navigation-section
+              :is-loading="isStoreLoading"
               :section-name="$t('treasury.lblMySmartTreasury')"
             >
               <navigation-section-item-image
@@ -29,8 +30,11 @@
                 </template>
               </navigation-section-item-image>
             </navigation-section>
+
             <navigation-section
+              :is-loading="isStoreLoading"
               :section-name="$t('treasury.leftRail.lblManageSmartTreasury')"
+              :skeleton-components-count="6"
             >
               <navigation-section-item-image
                 :description="
@@ -141,7 +145,8 @@
     </template>
 
     <transition mode="out-in" name="fade">
-      <router-view />
+      <preload-product-secondary-page v-if="isStoreLoading" />
+      <router-view v-else />
     </transition>
 
     <template v-slot:modals>
@@ -158,6 +163,7 @@ import { isFeatureEnabled } from '@/settings';
 import { sameAddress } from '@/utils/address';
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import PreloadProductSecondaryPage from '@/views/preload/preload-product/preload-product-secondary-page.vue';
 import { getMoveAssetData } from '@/wallet/references/data';
 import { Token } from '@/wallet/types';
 
@@ -177,7 +183,8 @@ export default Vue.extend({
     SearchModal,
     NavigationSection,
     NavigationSectionItemImage,
-    CustomPicture
+    CustomPicture,
+    PreloadProductSecondaryPage
   },
   data() {
     return {
@@ -262,6 +269,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('treasury', { isStoreLoading: 'isTreasuryInfoLoading' }),
     ...mapState('account', { networkInfo: 'networkInfo', tokens: 'tokens' }),
     ...mapGetters('treasury', {
       hasActiveTreasury: 'hasActiveTreasury',

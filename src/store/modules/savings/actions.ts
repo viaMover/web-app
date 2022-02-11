@@ -57,30 +57,22 @@ const actions: ActionFuncs<
     }
   },
   async loadMinimalInfo({ dispatch }): Promise<void> {
-    const savingsFreshDataPromise = dispatch('fetchSavingsFreshData');
-    const restoreReceiptsPromise = dispatch('restoreReceipts');
-
-    const promisesResults = await Promise.allSettled([
-      savingsFreshDataPromise,
-      restoreReceiptsPromise
-    ]);
-
-    const promisesErrors = promisesResults
-      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
-      .map((p) => p.reason);
-
-    if (promisesErrors.length > 0) {
-      console.warn('failed to load savings minimal info', promisesErrors);
-      Sentry.captureException(promisesErrors);
+    try {
+      await dispatch('fetchSavingsFreshData');
+    } catch (error) {
+      console.warn('failed to load savings minimal info', error);
+      Sentry.captureException(error);
     }
   },
   async loadInfo({ dispatch }): Promise<void> {
     const loadMinimalInfoPromise = dispatch('loadMinimalInfo');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
+    const restoreReceiptsPromise = dispatch('restoreReceipts');
 
     const promisesResults = await Promise.allSettled([
       savingsInfoPromise,
-      loadMinimalInfoPromise
+      loadMinimalInfoPromise,
+      restoreReceiptsPromise
     ]);
 
     const promisesErrors = promisesResults

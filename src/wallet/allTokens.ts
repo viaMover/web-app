@@ -15,10 +15,7 @@ export const getAllTokens = (network: Network): Array<Token> => {
           address: asset.id,
           decimals: asset.decimals,
           symbol: asset.symbol,
-          name:
-            asset.name.length > MAX_ASSET_NAME
-              ? asset.name.substr(0, MAX_ASSET_NAME)
-              : asset.name,
+          name: asset.name.slice(0, MAX_ASSET_NAME),
           logo: asset.imageUrl ?? getTokenLogo(asset.id),
           color: asset.color,
           marketCap: asset.marketCap ?? 0,
@@ -43,6 +40,7 @@ const deduplicateByAddress = (tokens: Array<Token>): Array<Token> => {
     }
 
     knownAddresses.add(t.address);
-    return [...acc, t];
+    acc.push(t);
+    return acc;
   }, new Array<Token>());
 };

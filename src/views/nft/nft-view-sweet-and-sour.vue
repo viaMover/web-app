@@ -17,10 +17,12 @@
       <analytics-list>
         <analytics-list-item
           :description="totalAmount"
+          :is-loading="isStoreLoading"
           :title="$t('NFTs.lblTotalAmount')"
         />
         <analytics-list-item
           :description="totalClaimed"
+          :is-loading="isStoreLoading"
           :title="$t('NFTs.lblTotalClaimed')"
         />
       </analytics-list>
@@ -34,6 +36,7 @@
           <div class="group default">
             <action-button
               class="primary"
+              :disabled="isStoreLoading"
               propagate-original-event
               :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
@@ -113,7 +116,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      nft: 'sweetAndSour'
+      nft: 'sweetAndSour',
+      isStoreLoading: 'isLoading'
     }),
     ...mapState('account', {
       currentAddress: 'currentAddress'

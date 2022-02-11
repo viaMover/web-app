@@ -60,7 +60,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     const fetchVaultsDataPromise = dispatch('fetchVaultsData');
     const fetchDiceDataPromise = dispatch('fetchDiceData');
 
-    const promisesResults = await Promise.allSettled([
+    await Promise.allSettled([
       fetchUnexpectedMoveDataPromise,
       fetchSweetAndSourDataPromise,
       fetchOlympusDataPromise,
@@ -68,14 +68,6 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       fetchDiceDataPromise
     ]);
 
-    const promisesErrors = promisesResults
-      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
-      .map((p) => p.reason);
-
-    if (promisesErrors.length > 0) {
-      console.warn('failed to load nft info', promisesErrors);
-      Sentry.captureException(promisesErrors);
-    }
     commit('setIsLoading', false);
   },
   async fetchOlympusData({ rootState, commit }): Promise<void> {
@@ -93,7 +85,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       commit('setOlympusData', data);
     } catch (e) {
       logger.error("Can't get data about Olympus", e);
-      Sentry.captureException("Can't get data about Olympus");
+      Sentry.captureException(e);
     }
   },
   async fetchSweetAndSourData({ rootState, commit }): Promise<void> {
@@ -110,8 +102,8 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
 
       commit('setSweetAndSourData', data);
     } catch (e) {
-      logger.error("Can't get data about SweetAndSour", e);
-      Sentry.captureException("Can't get data about SweetAndSour");
+      logger.error("Can't get data about Sweet and Sour", e);
+      Sentry.captureException(e);
     }
   },
   async fetchVaultsData({ rootState, commit }): Promise<void> {
@@ -128,8 +120,8 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
 
       commit('setVaultsData', data);
     } catch (e) {
-      logger.error("Can't get data about Olympus", e);
-      Sentry.captureException("Can't get data about Olympus");
+      logger.error("Can't get data about Vaults", e);
+      Sentry.captureException(e);
     }
   },
   async fetchUnexpectedMoveData({ rootState, commit }): Promise<void> {
@@ -144,10 +136,10 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
         rootState.account.provider.web3
       );
 
-      commit('setOlympusData', data);
+      commit('setUnexpectedMoveData', data);
     } catch (e) {
-      logger.error("Can't get data about Olympus", e);
-      Sentry.captureException("Can't get data about Olympus");
+      logger.error("Can't get data about Unexpected Move", e);
+      Sentry.captureException(e);
     }
   },
   async fetchDiceData({ rootState, commit }): Promise<void> {

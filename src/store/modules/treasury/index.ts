@@ -10,7 +10,7 @@ export default {
   namespaced: true,
   strict: !isProduction(),
   state: {
-    isTreasuryInfoLoading: false,
+    isTreasuryInfoLoading: true,
     treasuryInfo: undefined,
     treasuryInfoError: undefined,
 

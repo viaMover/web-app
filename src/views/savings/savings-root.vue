@@ -9,7 +9,10 @@
       <nav class="left-rail navigation">
         <div class="wrapper">
           <div class="list">
-            <navigation-section :section-name="$t('savings.lblMySavings')">
+            <navigation-section
+              :is-loading="isStoreLoading"
+              :section-name="$t('savings.lblMySavings')"
+            >
               <navigation-section-item-image
                 :description="savingsBalance"
                 description-class="bold emphasize"
@@ -28,7 +31,11 @@
               </navigation-section-item-image>
             </navigation-section>
 
-            <navigation-section :section-name="$t('savings.lblManageSavings')">
+            <navigation-section
+              :is-loading="isStoreLoading"
+              :section-name="$t('savings.lblManageSavings')"
+              :skeleton-components-count="3"
+            >
               <navigation-section-item-image
                 :description="
                   $t('savings.deposit.txtDepositShortDescription', {
@@ -90,7 +97,8 @@
     </template>
 
     <transition mode="out-in" name="fade">
-      <router-view />
+      <preload-product-secondary-page v-if="isStoreLoading" />
+      <router-view v-else />
     </transition>
 
     <template v-slot:modals>
@@ -104,6 +112,7 @@ import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { formatPercents, formatToNative } from '@/utils/format';
+import PreloadProductSecondaryPage from '@/views/preload/preload-product/preload-product-secondary-page.vue';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
@@ -120,7 +129,8 @@ export default Vue.extend({
     SearchModal,
     NavigationSection,
     NavigationSectionItemImage,
-    CustomPicture
+    CustomPicture,
+    PreloadProductSecondaryPage
   },
   data() {
     return {
@@ -169,7 +179,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('savings', { apy: 'savingsAPY' }),
+    ...mapState('savings', {
+      apy: 'savingsAPY',
+      isStoreLoading: 'isSavingsInfoLoading'
+    }),
     ...mapGetters('savings', {
       hasActiveSavings: 'hasActiveSavings',
       savingsInfoBalanceNative: 'savingsInfoBalanceNative'

@@ -11,8 +11,7 @@ export default {
   namespaced: true,
   strict: !isProduction(),
   state: {
-    localAssets: allNibbleShopTokens,
-    assets: [],
+    assets: allNibbleShopTokens.filter((token) => token.active),
     isLoading: false,
     countries: [
       { name: 'Afghanistan', code: 'AF' },

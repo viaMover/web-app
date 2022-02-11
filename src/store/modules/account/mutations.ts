@@ -144,16 +144,14 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
     const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
 
     state.allTokensSearcher = new Fuse(state.allTokens, searchOptions, index);
-    state.tokenInfoMap = state.allTokens.reduce((acc, token) => {
-      if (token.color === undefined) {
-        return acc;
-      }
 
-      return {
-        ...acc,
-        [token.address.toLowerCase()]: token
-      };
-    }, {});
+    const aggregateObject: Record<string, Token> = {};
+    for (let i = 0; i < state.allTokens.length; i++) {
+      aggregateObject[state.allTokens[i].address.toLowerCase()] =
+        state.allTokens[i];
+    }
+
+    state.tokenInfoMap = aggregateObject;
   },
   setRefreshEror(state, error): void {
     state.refreshError = error;

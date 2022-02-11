@@ -123,23 +123,21 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
 
       try {
         const promisesResults = await Promise.allSettled(
-          state.localAssets
-            .filter((lt) => lt.active)
-            .map(async (localToken) => {
-              // Object is possibly 'undefined' errors here are
-              // suspended with eslint directives because of
-              // TypeScript's lack of callback closure context propagation
-              return getNibbleTokenData(
-                localToken.id,
-                localToken.address,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                rootState.account!.currentAddress!,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                rootState.account!.networkInfo!.network,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                rootState.account!.provider!.web3
-              );
-            })
+          state.assets.map(async (asset) => {
+            // Object is possibly 'undefined' errors here are
+            // suspended with eslint directives because of
+            // TypeScript's lack of callback closure context propagation
+            return getNibbleTokenData(
+              asset.id,
+              asset.address,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              rootState.account!.currentAddress!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              rootState.account!.networkInfo!.network,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              rootState.account!.provider!.web3
+            );
+          })
         );
 
         promisesResults.forEach((res) => {

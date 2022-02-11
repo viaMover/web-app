@@ -17,14 +17,17 @@
       <analytics-list>
         <analytics-list-item
           :description="totalAmount"
+          :is-loading="isStoreLoading"
           :title="$t('NFTs.lblTotalAmount')"
         />
         <analytics-list-item
           :description="totalClaimed"
+          :is-loading="isStoreLoading"
           :title="$t('NFTs.lblTotalClaimed')"
         />
         <analytics-list-item
           :description="totalExchanged"
+          :is-loading="isStoreLoading"
           :title="$t('NFTs.lblTotalExchanged')"
         />
       </analytics-list>
@@ -38,6 +41,7 @@
           <div class="group default">
             <action-button
               class="primary"
+              :disabled="isStoreLoading"
               propagate-original-event
               :text="$t(`NFTs.btn.${nft.id}.get`)"
               type="submit"
@@ -53,12 +57,14 @@
             <div class="items">
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🦍"
                 :text="$t(`NFTs.btn.${nft.id}.claimAndExchange`)"
                 @button-click="handleClaimAndExchange"
               />
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="🔄"
                 :text="$t(`NFTs.btn.${nft.id}.exchange`)"
                 @button-click="handleExchange"
@@ -141,7 +147,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      nft: 'unexpectedMove'
+      nft: 'unexpectedMove',
+      isStoreLoading: 'isLoading'
     }),
     ...mapState('account', {
       currentAddress: 'currentAddress'

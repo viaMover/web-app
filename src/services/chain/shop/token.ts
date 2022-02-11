@@ -4,7 +4,7 @@ import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { TokenDate } from '@/store/modules/shop/types';
+import { TokenData } from '@/store/modules/shop/types';
 import { floorDivide, greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { NFT_NIBBLE_SHOP_ABI } from '@/wallet/references/data';
@@ -18,7 +18,7 @@ export const getNibbleTokenData = async (
   accountAddress: string,
   network: Network,
   web3: Web3
-): Promise<TokenDate> => {
+): Promise<TokenData> => {
   const transactionParams = {
     from: accountAddress
   } as TransactionsParams;

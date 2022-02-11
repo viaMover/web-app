@@ -23,7 +23,7 @@ export type Asset = {
   };
 };
 
-export type TokenDate = {
+export type TokenData = {
   tokenId: string;
   tokenIntId: number;
   balance: number;
@@ -35,7 +35,7 @@ export type TokenDate = {
 
 export type SetAssetData = {
   assetId: string;
-  asset: TokenDate;
+  asset: TokenData;
 };
 
 export type Country = {
@@ -44,7 +44,6 @@ export type Country = {
 };
 
 export type ShopStoreState = {
-  localAssets: Array<Asset>;
   assets: Array<Asset>;
   isLoading: boolean;
   countries: Array<Country>;

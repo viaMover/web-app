@@ -15,6 +15,7 @@
       <analytics-list>
         <analytics-list-item
           :description="totalAvailable"
+          :is-loading="isStoreLoading"
           :title="$t('nibbleShop.lblTotalAvailable')"
         />
         <analytics-list-item
@@ -32,6 +33,7 @@
           <div class="group default">
             <action-button
               class="primary"
+              :disabled="isStoreLoading"
               :text="$t('nibbleShop.btn.get', { item: productShortName })"
               @button-click="handleClaim"
             />
@@ -46,6 +48,7 @@
             <div class="items">
               <emoji-text-button
                 class="item"
+                :disabled="isStoreLoading"
                 emoji="📦"
                 :text="$t('nibbleShop.btn.redeem')"
                 @button-click="handleRedeem"
@@ -119,7 +122,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('shop', { products: 'assets' }),
+    ...mapState('shop', { products: 'assets', isStoreLoading: 'isLoading' }),
     id(): string {
       return this.$route.params.id;
     },

@@ -65,7 +65,8 @@ export default Vue.extend({
         images: Array.isArray(this.fallbackSrcList)
           ? this.fallbackSrcList
           : [this.src],
-        onError: this.handleError
+        onError: this.handleError,
+        loading: require('@/assets/images/ios-spinner.svg')
       };
     },
     shadowStyles(): Properties {

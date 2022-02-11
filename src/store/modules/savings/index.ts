@@ -10,7 +10,7 @@ export default {
   namespaced: true,
   strict: !isProduction(),
   state: {
-    isSavingsInfoLoading: false,
+    isSavingsInfoLoading: true,
     savingsInfo: undefined,
     savingsInfoError: undefined,
 
