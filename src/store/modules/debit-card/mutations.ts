@@ -25,6 +25,7 @@ type Mutations = {
   setPhoneNumber: void;
   setOrderState: void;
   setKycLink: void;
+  setWxBTRFLYrealIndex: void;
 };
 
 const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {

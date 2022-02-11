@@ -50,6 +50,7 @@ type Actions = {
   validatePhoneNumber: Promise<void>;
   setOrderState: void;
   changePhoneNumber: Promise<void>;
+  loadWxBTRFLYrealIndex: Promise<void>;
 };
 
 const actions: ActionFuncs<
