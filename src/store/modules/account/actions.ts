@@ -450,15 +450,25 @@ const actions: ActionFuncs<
         throw e;
       }
 
-      const treasuryInfoPromise = dispatch('treasury/loadInfo', undefined, {
+      const treasuryInfoPromise = dispatch(
+        'treasury/loadMinimalInfo',
+        undefined,
+        {
+          root: true
+        }
+      );
+
+      dispatch('nft/loadNFTInfo', undefined, {
         root: true
-      });
-      const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
-        root: true
-      });
-      const savingsInfoPromise = dispatch('savings/loadInfo', undefined, {
-        root: true
-      });
+      }).then(() => dispatch('loadAvatar'));
+
+      const savingsInfoPromise = dispatch(
+        'savings/loadMinimalInfo',
+        undefined,
+        {
+          root: true
+        }
+      );
 
       let nibbleShopInfoPromise = Promise.resolve();
       if (isFeatureEnabled('isNibbleShopEnabled')) {
@@ -468,9 +478,6 @@ const actions: ActionFuncs<
           })
         );
       }
-      const loadAvatarPromise = nftInfoPromise.then(() =>
-        dispatch('loadAvatar')
-      );
 
       let gamesPromise = Promise.resolve();
       if (isFeatureEnabled('isVaultsRaceEnabled')) {
@@ -482,8 +489,6 @@ const actions: ActionFuncs<
       const promisesResults = await Promise.allSettled([
         savingsInfoPromise,
         treasuryInfoPromise,
-        nftInfoPromise,
-        loadAvatarPromise,
         nibbleShopInfoPromise,
         gamesPromise
       ]);

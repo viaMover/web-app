@@ -31,6 +31,11 @@ import { MutationType } from './mutations';
 
 type Actions = {
   loadNFTInfo: Promise<void>;
+  fetchOlympusData: Promise<void>;
+  fetchUnexpectedMoveData: Promise<void>;
+  fetchSweetAndSourData: Promise<void>;
+  fetchVaultsData: Promise<void>;
+  fetchDiceData: Promise<void>;
   checkOlympusClaimable: boolean;
   claimOlympus: Promise<void>;
   claimVaults: Promise<void>;
@@ -42,106 +47,125 @@ type Actions = {
 };
 
 const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
-  async loadNFTInfo({ rootState, commit }): Promise<void> {
+  async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
     commit('setIsLoading', true);
+
+    const fetchUnexpectedMoveDataPromise = dispatch('fetchUnexpectedMoveData');
+    const fetchSweetAndSourDataPromise = dispatch('fetchSweetAndSourData');
+    const fetchOlympusDataPromise = dispatch('fetchOlympusData');
+    const fetchVaultsDataPromise = dispatch('fetchVaultsData');
+    const fetchDiceDataPromise = dispatch('fetchDiceData');
+
+    const promisesResults = await Promise.allSettled([
+      fetchUnexpectedMoveDataPromise,
+      fetchSweetAndSourDataPromise,
+      fetchOlympusDataPromise,
+      fetchVaultsDataPromise,
+      fetchDiceDataPromise
+    ]);
+
+    const promisesErrors = promisesResults
+      .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+      .map((p) => p.reason);
+
+    if (promisesErrors.length > 0) {
+      console.warn('failed to load nft info', promisesErrors);
+      Sentry.captureException(promisesErrors);
+    }
+    commit('setIsLoading', false);
+  },
+  async fetchOlympusData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
     try {
-      if (!ensureAccountStateIsSafe(rootState.account)) {
-        return;
-      }
-
-      const unexpectedMoveDataPromise = getUnexpectedMoveData(
+      const data = await getOlympusData(
         rootState.account.currentAddress,
         rootState.account.networkInfo.network,
         rootState.account.provider.web3
       );
 
-      const sweetAndSourDataPromise = getSweetAndSourData(
+      commit('setOlympusData', data);
+    } catch (e) {
+      logger.error("Can't get data about Olympus", e);
+      Sentry.captureException("Can't get data about Olympus");
+    }
+  },
+  async fetchSweetAndSourData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    try {
+      const data = await getSweetAndSourData(
         rootState.account.currentAddress,
         rootState.account.networkInfo.network,
         rootState.account.provider.web3
       );
 
-      const olympusDataPromise = getOlympusData(
+      commit('setSweetAndSourData', data);
+    } catch (e) {
+      logger.error("Can't get data about SweetAndSour", e);
+      Sentry.captureException("Can't get data about SweetAndSour");
+    }
+  },
+  async fetchVaultsData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    try {
+      const data = await getVaultsData(
         rootState.account.currentAddress,
         rootState.account.networkInfo.network,
         rootState.account.provider.web3
       );
 
-      const vaultsDataPromise = getVaultsData(
+      commit('setVaultsData', data);
+    } catch (e) {
+      logger.error("Can't get data about Olympus", e);
+      Sentry.captureException("Can't get data about Olympus");
+    }
+  },
+  async fetchUnexpectedMoveData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    try {
+      const data = await getUnexpectedMoveData(
         rootState.account.currentAddress,
         rootState.account.networkInfo.network,
         rootState.account.provider.web3
       );
 
-      const diceDataPromise = getDiceData(
+      commit('setOlympusData', data);
+    } catch (e) {
+      logger.error("Can't get data about Olympus", e);
+      Sentry.captureException("Can't get data about Olympus");
+    }
+  },
+  async fetchDiceData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    try {
+      const data = await getDiceData(
         rootState.account.currentAddress,
         rootState.account.networkInfo.network,
         rootState.account.provider.web3
       );
 
-      try {
-        const [
-          unexpectedMoveRes,
-          sweetAndSourRes,
-          olympusRes,
-          diceRes,
-          vaultsRes
-        ] = await Promise.allSettled([
-          unexpectedMoveDataPromise,
-          sweetAndSourDataPromise,
-          olympusDataPromise,
-          diceDataPromise,
-          vaultsDataPromise
-        ]);
-
-        if (unexpectedMoveRes.status === 'fulfilled') {
-          commit('setUnexpectedMoveData', unexpectedMoveRes.value);
-        } else {
-          logger.error(
-            "Can't get data about Unexpected Move",
-            unexpectedMoveRes.reason
-          );
-          Sentry.captureException("Can't get data about Unexpected Move");
-        }
-
-        if (sweetAndSourRes.status === 'fulfilled') {
-          commit('setSweetAndSourData', sweetAndSourRes.value);
-        } else {
-          logger.error(
-            "Can't get data about Sweet And Sour",
-            sweetAndSourRes.reason
-          );
-          Sentry.captureException("Can't get data about Sweet And Sour");
-        }
-
-        if (olympusRes.status === 'fulfilled') {
-          commit('setOlympusData', olympusRes.value);
-        } else {
-          logger.error("Can't get data about Olympus", olympusRes.reason);
-          Sentry.captureException("Can't get data about Olympus");
-        }
-
-        if (diceRes.status === 'fulfilled') {
-          commit('setDiceData', diceRes.value);
-        } else {
-          logger.error("Can't get data about Dice", diceRes.reason);
-          Sentry.captureException("Can't get data about Dice");
-        }
-
-        if (vaultsRes.status === 'fulfilled') {
-          if (vaultsRes.value !== undefined) {
-            commit('setVaultsData', vaultsRes.value);
-          }
-        } else {
-          logger.error("Can't get data about Vaults", vaultsRes.reason);
-          Sentry.captureException("Can't get data about Vaults");
-        }
-      } catch (err) {
-        console.error("can't load nft data", err);
-        Sentry.captureException(err);
-      }
-    } finally {
-      commit('setIsLoading', false);
+      commit('setDiceData', data);
+    } catch (e) {
+      logger.error("Can't get data about Dice", e);
+      Sentry.captureException("Can't get data about Dice");
     }
   },
   checkOlympusClaimable({ state }): boolean {
