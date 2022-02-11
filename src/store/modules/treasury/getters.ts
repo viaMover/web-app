@@ -335,7 +335,7 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
     return multiply(getters.treasurySpentTotal, getters.usdcNativePrice);
   },
   moveNativePrice(state, _, rootState, rootGetters): string {
-    return rootGetters['account/usdcNativePrice'];
+    return rootGetters['account/moveNativePrice'];
   },
   slpNativePrice(state, _, rootState, rootGetters): string {
     return rootGetters['account/slpNativePrice'];
