@@ -284,9 +284,37 @@ const filterCompleteTokenData = (assets) => {
   return assets.filter((asset) => !asset.isIncomplete);
 };
 
-const save = (assets) => {
-  writeFileSync('./data/assetList.json', JSON.stringify(assets, null, 2));
+const preprocess = (assets) =>
+  assets.map((asset) => ({
+    id: asset.id,
+    decimals: asset.decimals,
+    symbol: asset.symbol,
+    name: asset.name,
+    ...(asset.imageUrl ? { imageUrl: asset.imageUrl } : undefined),
+    ...(asset.color ? { color: asset.color } : undefined),
+    ...(asset.marketCap ? { marketCap: asset.marketCap } : undefined)
+  }));
+
+const deduplicate = (tokens) => {
+  const knownAddresses = new Set();
+  return tokens.reduce((acc, t) => {
+    if (knownAddresses.has(t.id)) {
+      return acc;
+    }
+
+    knownAddresses.add(t.id);
+    return acc.concat(t);
+  }, []);
 };
+
+const sort = (assets) =>
+  assets.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+const save = (assets) =>
+  writeFileSync(
+    './data/assetList.json',
+    JSON.stringify(sort(deduplicate(preprocess(assets))))
+  );
 
 const generateNewList = async () => {
   await updateTrustwalletRepo();
