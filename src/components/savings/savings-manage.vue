@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -66,7 +66,6 @@ export default Vue.extend({
       colors: 'colors'
     }),
     ...mapState('savings', {
-      savingsInfo: 'savingsInfo',
       isSavingsInfoLoading: 'isSavingsInfoLoading',
       networkInfo: 'networkInfo'
     }),
@@ -74,6 +73,7 @@ export default Vue.extend({
       networkInfo: 'networkInfo'
     }),
     ...mapGetters('savings', {
+      savingsInfo: 'savingsInfo',
       savingsMonthStatsOptions: 'savingsMonthStatsOptions',
       savingsInfoBalanceNative: 'savingsInfoBalanceNative',
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
@@ -141,7 +141,11 @@ export default Vue.extend({
       return this.colors['product-savings'];
     }
   },
+  mounted() {
+    this.fetchSavingsInfo();
+  },
   methods: {
+    ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
     handleItemSelected(item: SavingsMonthBalanceItem): void {
       this.selectedItem = item;
     },

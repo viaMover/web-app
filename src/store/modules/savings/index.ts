@@ -12,7 +12,6 @@ export default {
   state: {
     isSavingsInfoLoading: true,
     savingsInfo: undefined,
-    savingsInfoError: undefined,
 
     receipts: new Map(),
 

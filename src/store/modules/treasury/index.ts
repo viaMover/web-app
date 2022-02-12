@@ -12,7 +12,6 @@ export default {
   state: {
     isTreasuryInfoLoading: true,
     treasuryInfo: undefined,
-    treasuryInfoError: undefined,
 
     receipts: new Map(),
 

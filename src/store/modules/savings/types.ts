@@ -1,10 +1,9 @@
 import { SavingsInfo, SavingsReceipt } from '@/services/mover';
-import { DataStore } from '@/store/types';
+import { DataStore, DataStoreWrapper } from '@/store/types';
 
 export type SavingsStoreState = {
   isSavingsInfoLoading: boolean;
-  savingsInfo: SavingsInfo | undefined;
-  savingsInfoError: string | undefined;
+  savingsInfo: DataStoreWrapper<SavingsInfo> | undefined;
 
   receipts: DataStore<SavingsReceipt>;
 

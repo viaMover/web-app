@@ -1,4 +1,8 @@
-import { TreasuryMonthBonusesItem, TreasuryReceipt } from '@/services/mover';
+import {
+  TreasuryInfo,
+  TreasuryMonthBonusesItem,
+  TreasuryReceipt
+} from '@/services/mover';
 import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
 import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
@@ -12,6 +16,7 @@ import {
 import { TreasuryStoreState } from './types';
 
 type Getters = {
+  treasuryInfo: TreasuryInfo | undefined;
   treasuryBonusNative: string;
   treasuryBoost: string;
   hasActiveTreasury: boolean;
@@ -42,6 +47,17 @@ type Getters = {
 };
 
 const getters: GettersFuncs<Getters, TreasuryStoreState> = {
+  treasuryInfo(state): TreasuryInfo | undefined {
+    if (state.treasuryInfo === undefined) {
+      return undefined;
+    }
+
+    if (state.treasuryInfo.expDate > Date.now()) {
+      return state.treasuryInfo.data;
+    }
+
+    return undefined;
+  },
   treasuryBonusNative(state, getters): string {
     if (state.treasuryBonus === undefined) {
       return '0';
@@ -77,7 +93,7 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
       state.powercardState ?? 'NotStaked'
     );
   },
-  hasActiveTreasury(state): boolean {
+  hasActiveTreasury(state, getters): boolean {
     const isTreasuryBalanceMoveNotEmpty =
       state.treasuryBalanceMove !== undefined &&
       greaterThan(state.treasuryBalanceMove, 0);
@@ -89,18 +105,18 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
       return true;
     }
 
-    if (state.treasuryInfo !== undefined && !state.isTreasuryInfoLoading) {
+    if (getters.treasuryInfo !== undefined && !state.isTreasuryInfoLoading) {
       const isCurrentStakedMoveNotEmpty =
-        state.treasuryInfo.currentStakedMove > 0;
+        getters.treasuryInfo.currentStakedMove > 0;
       const isCurrentStakedMoveLPNotEmpty =
-        state.treasuryInfo.currentStakedMoveLP > 0;
+        getters.treasuryInfo.currentStakedMoveLP > 0;
 
       if (isCurrentStakedMoveNotEmpty || isCurrentStakedMoveLPNotEmpty) {
         return true;
       }
 
       const hadAtLeastOneMonthWithNonZeroBalance =
-        state.treasuryInfo.last12MonthsBonuses.some(
+        getters.treasuryInfo.last12MonthsBonuses.some(
           (item) => item.bonusesEarned > 0
         );
 
@@ -111,13 +127,13 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
 
     return false;
   },
-  treasuryMonthStatsOptions(state): Array<TreasuryMonthBonusesItem> {
-    if (state.isTreasuryInfoLoading || state.treasuryInfo === undefined) {
+  treasuryMonthStatsOptions(state, getters): Array<TreasuryMonthBonusesItem> {
+    if (state.isTreasuryInfoLoading || getters.treasuryInfo === undefined) {
       return [];
     }
 
     let hasTrimmedLeft = false;
-    return state.treasuryInfo.last12MonthsBonuses
+    return getters.treasuryInfo.last12MonthsBonuses
       .reduce((acc, item) => {
         if (item.bonusesEarned === 0 && !hasTrimmedLeft) {
           return acc;
@@ -128,25 +144,25 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
       }, new Array<TreasuryMonthBonusesItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
-  treasuryEarnedThisMonth(state, _, rootSate): string {
+  treasuryEarnedThisMonth(state, getters, rootSate): string {
     if (
       state.isTreasuryInfoLoading ||
-      state.treasuryInfo === undefined ||
+      getters.treasuryInfo === undefined ||
       rootSate.account?.networkInfo === undefined ||
-      state.treasuryInfo.earnedThisMonth === 0
+      getters.treasuryInfo.earnedThisMonth === 0
     ) {
       return '0';
     }
 
     return fromWei(
-      state.treasuryInfo.earnedThisMonth,
+      getters.treasuryInfo.earnedThisMonth,
       getUSDCAssetData(rootSate.account.networkInfo.network).decimals
     );
   },
   treasuryEarnedThisMonthNative(state, getters): string {
     return multiply(getters.treasuryEarnedThisMonth, getters.usdcNativePrice);
   },
-  treasuryStakedMove(state, _, rootState): string {
+  treasuryStakedMove(state, getters, rootState): string {
     let balanceMove = '0';
 
     if (state.treasuryBalanceMove !== undefined) {
@@ -156,19 +172,19 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
     if (
       balanceMove == '0' &&
       !state.isTreasuryInfoLoading &&
-      state.treasuryInfo !== undefined &&
+      getters.treasuryInfo !== undefined &&
       rootState.account?.networkInfo !== undefined &&
-      state.treasuryInfo.currentStakedMove > 0
+      getters.treasuryInfo.currentStakedMove > 0
     ) {
       balanceMove = fromWei(
-        state.treasuryInfo.currentStakedMove,
+        getters.treasuryInfo.currentStakedMove,
         getMoveAssetData(rootState.account.networkInfo.network).decimals
       );
     }
 
     return balanceMove;
   },
-  treasuryStakedMoveLP(state, _, rootState): string {
+  treasuryStakedMoveLP(state, getters, rootState): string {
     let balanceMoveLP = '0';
 
     if (state.treasuryBalanceLP !== undefined) {
@@ -178,12 +194,12 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
     if (
       balanceMoveLP == '0' &&
       !state.isTreasuryInfoLoading &&
-      state.treasuryInfo !== undefined &&
+      getters.treasuryInfo !== undefined &&
       rootState.account?.networkInfo !== undefined &&
-      state.treasuryInfo.currentStakedMoveLP > 0
+      getters.treasuryInfo.currentStakedMoveLP > 0
     ) {
       balanceMoveLP = fromWei(
-        state.treasuryInfo.currentStakedMoveLP,
+        getters.treasuryInfo.currentStakedMoveLP,
         getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
       );
     }
@@ -215,25 +231,25 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
 
     if (
       !state.isTreasuryInfoLoading &&
-      state.treasuryInfo !== undefined &&
+      getters.treasuryInfo !== undefined &&
       rootState.account?.networkInfo !== undefined
     ) {
       if (
         balanceMove === '0' &&
-        state.treasuryInfo.currentTotalStakedMove > 0
+        getters.treasuryInfo.currentTotalStakedMove > 0
       ) {
         balanceMove = fromWei(
-          state.treasuryInfo.currentTotalStakedMove,
+          getters.treasuryInfo.currentTotalStakedMove,
           getMoveAssetData(rootState.account.networkInfo.network).decimals
         );
       }
 
       if (
         balanceMoveLP === '0' &&
-        state.treasuryInfo.currentTotalStakedMoveLP > 0
+        getters.treasuryInfo.currentTotalStakedMoveLP > 0
       ) {
         balanceMoveLP = fromWei(
-          state.treasuryInfo.currentTotalStakedMoveLP,
+          getters.treasuryInfo.currentTotalStakedMoveLP,
           getMoveWethLPAssetData(rootState.account.networkInfo.network).decimals
         );
       }
@@ -244,90 +260,90 @@ const getters: GettersFuncs<Getters, TreasuryStoreState> = {
 
     return add(balanceMoveNative, balanceMoveLPNative);
   },
-  treasuryEarnedTotal(state, _, rootState): string {
+  treasuryEarnedTotal(state, getters, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
-      state.treasuryInfo === undefined ||
+      getters.treasuryInfo === undefined ||
       rootState.account?.networkInfo === undefined ||
-      state.treasuryInfo.earnedTotal === 0
+      getters.treasuryInfo.earnedTotal === 0
     ) {
       return '0';
     }
 
     return fromWei(
-      state.treasuryInfo.earnedTotal,
+      getters.treasuryInfo.earnedTotal,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryEarnedTotalNative(state, getters): string {
     return multiply(getters.treasuryEarnedTotal, getters.usdcNativePrice);
   },
-  treasuryEarnedToday(state, _, rootState): string {
+  treasuryEarnedToday(state, getters, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
-      state.treasuryInfo === undefined ||
+      getters.treasuryInfo === undefined ||
       rootState.account?.networkInfo === undefined ||
-      state.treasuryInfo.earnedToday === 0
+      getters.treasuryInfo.earnedToday === 0
     ) {
       return '0';
     }
 
     return fromWei(
-      state.treasuryInfo.earnedToday,
+      getters.treasuryInfo.earnedToday,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasuryEarnedTodayNative(state, getters): string {
     return multiply(getters.treasuryEarnedToday, getters.usdcNativePrice);
   },
-  treasurySpentToday(state, _, rootState): string {
+  treasurySpentToday(state, getters, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
-      state.treasuryInfo === undefined ||
+      getters.treasuryInfo === undefined ||
       rootState.account?.networkInfo === undefined ||
-      state.treasuryInfo.spentToday === 0
+      getters.treasuryInfo.spentToday === 0
     ) {
       return '0';
     }
 
     return fromWei(
-      state.treasuryInfo.spentToday,
+      getters.treasuryInfo.spentToday,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasurySpentTodayNative(state, getters): string {
     return multiply(getters.treasurySpentToday, getters.usdcNativePrice);
   },
-  treasurySpentThisMonth(state, _, rootState): string {
+  treasurySpentThisMonth(state, getters, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
-      state.treasuryInfo === undefined ||
+      getters.treasuryInfo === undefined ||
       rootState.account?.networkInfo === undefined ||
-      state.treasuryInfo.spentThisMonth === 0
+      getters.treasuryInfo.spentThisMonth === 0
     ) {
       return '0';
     }
 
     return fromWei(
-      state.treasuryInfo.spentThisMonth,
+      getters.treasuryInfo.spentThisMonth,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   treasurySpentThisMonthNative(state, getters): string {
     return multiply(getters.treasurySpentThisMonth, getters.usdcNativePrice);
   },
-  treasurySpentTotal(state, _, rootState): string {
+  treasurySpentTotal(state, getters, rootState): string {
     if (
       state.isTreasuryInfoLoading ||
-      state.treasuryInfo === undefined ||
+      getters.treasuryInfo === undefined ||
       rootState.account?.networkInfo === undefined ||
-      state.treasuryInfo.spentTotal === 0
+      getters.treasuryInfo.spentTotal === 0
     ) {
       return '0';
     }
 
     return fromWei(
-      state.treasuryInfo.spentTotal,
+      getters.treasuryInfo.spentTotal,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },

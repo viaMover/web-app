@@ -15,20 +15,24 @@
     <analytics-list>
       <analytics-list-item
         :description="formattedDepositedAssets"
+        :is-loading="isLoading"
         :title="$t('savings.lblDepositedAssets')"
       />
       <analytics-list-item
         :description="currentVariableAPY"
+        :is-loading="isLoading"
         :title="$t('savings.lblCurrentVariableAPY')"
       />
       <analytics-list-item
         v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
         :description="monthAverageAPY"
+        :is-loading="isLoading"
         :title="$t('savings.lbl30DayAverageAPY')"
       />
       <analytics-list-item
         v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
         :description="totalAssetsUnderManagement"
+        :is-loading="isLoading"
         :title="$t('savings.lblTotalAssetsUnderManagement')"
       />
     </analytics-list>
@@ -36,28 +40,34 @@
     <analytics-list :title="$t('savings.lblSavingsStats')">
       <analytics-list-item
         :description="earnedToday"
+        :is-loading="isLoading"
         :title="$t('savings.lblEarnedToday')"
       />
       <analytics-list-item
         :description="earnedThisMonth"
+        :is-loading="isLoading"
         :title="$t('savings.lblEarnedThisMonth')"
       />
       <analytics-list-item
         :description="earnedTotal"
+        :is-loading="isLoading"
         :title="$t('savings.lblEarnedInTotal')"
       />
     </analytics-list>
     <analytics-list :title="$t('savings.lblSavingsEstimation')">
       <analytics-list-item
         :description="estimatedEarningsTomorrowNative"
+        :is-loading="isLoading"
         :title="$t('savings.lblEstimatedEarningsTomorrow')"
       />
       <analytics-list-item
         :description="estimatedEarningsNextMonthNative"
+        :is-loading="isLoading"
         :title="$t('savings.lblEstimatedEarningsNextMonth')"
       />
       <analytics-list-item
         :description="estimatedEarningsAnnuallyNative"
+        :is-loading="isLoading"
         :title="$t('savings.lblEstimatedEarningsAnnually')"
       />
     </analytics-list>
@@ -66,7 +76,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import {
@@ -91,6 +101,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('savings', {
+      isLoading: 'isSavingsInfoLoading',
       apy: 'savingsAPY',
       dpy: 'savingsDPY'
     }),
@@ -147,7 +158,11 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },
+  mounted() {
+    this.fetchSavingsInfo();
+  },
   methods: {
+    ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
     isFeatureEnabled,
     handleBack(): void {
       this.$router.back();

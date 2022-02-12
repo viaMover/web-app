@@ -28,6 +28,7 @@ import {
 } from './types';
 
 type Actions = {
+  restoreInfo: Promise<void>;
   restoreReceipts: Promise<void>;
   loadMinimalInfo: Promise<void>;
   loadInfo: Promise<void>;
@@ -37,7 +38,8 @@ type Actions = {
   fetchTreasuryReceipt: void;
 };
 
-export const RECEIPT_TIME_EXPIRE = 60 * 10 * 1000;
+export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
+export const INFO_TIME_EXPIRE = 5 * 60 * 1000; // 5 min
 
 const actions: ActionFuncs<
   Actions,
@@ -45,6 +47,12 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
+  async restoreInfo({ commit }): Promise<void> {
+    const info = await getFromPersistStoreWithExpire('treasury', 'info');
+    if (info !== undefined) {
+      commit('setTreasuryInfo', info);
+    }
+  },
   async restoreReceipts({ commit }): Promise<void> {
     const end = new Date();
     end.setMonth(end.getMonth() - 12);
@@ -85,14 +93,15 @@ const actions: ActionFuncs<
     }
   },
   async loadInfo({ dispatch }): Promise<void> {
+    await dispatch('restoreReceipts');
+    await dispatch('restoreInfo');
+
     const loadMinimalInfoPromise = dispatch('loadMinimalInfo');
     const treasuryInfoPromise = dispatch('fetchTreasuryInfo');
-    const restoreReceiptsPromise = dispatch('restoreReceipts');
 
     const promisesResults = await Promise.allSettled([
       loadMinimalInfoPromise,
-      treasuryInfoPromise,
-      restoreReceiptsPromise
+      treasuryInfoPromise
     ]);
 
     const promisesErrors = promisesResults
@@ -192,19 +201,22 @@ const actions: ActionFuncs<
     commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
     commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
   },
-  async fetchTreasuryInfo({ commit, rootState }): Promise<void> {
+  async fetchTreasuryInfo({ commit, rootState, getters }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
+    if (getters.treasuryInfo !== undefined) {
+      commit('setIsTreasuryInfoLoading', false);
+      return;
+    }
+
     commit('setIsTreasuryInfoLoading', true);
-    commit('setTreasuryInfoError', undefined);
     commit('setTreasuryInfo', undefined);
 
     const info = await getTreasuryInfo(rootState.account.currentAddress);
 
     if (isError(info)) {
-      commit('setTreasuryInfoError', info.error);
       commit('setIsTreasuryInfoLoading', false);
       Sentry.captureException(`can't get treasury info: ${info.error}`);
       return;
@@ -212,6 +224,13 @@ const actions: ActionFuncs<
 
     commit('setTreasuryInfo', info.result);
     commit('setIsTreasuryInfoLoading', false);
+
+    setToPersistStore(
+      'treasury',
+      'info',
+      info.result,
+      Date.now() + INFO_TIME_EXPIRE
+    );
   },
   fetchTreasuryReceipt(
     { commit, state, rootState, getters },

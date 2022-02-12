@@ -1,6 +1,9 @@
 import { PowercardState } from '@/services/chain';
 import { TreasuryInfo } from '@/services/mover';
-import { RECEIPT_TIME_EXPIRE } from '@/store/modules/treasury/actions';
+import {
+  INFO_TIME_EXPIRE,
+  RECEIPT_TIME_EXPIRE
+} from '@/store/modules/treasury/actions';
 import { MutationFuncs } from '@/store/types';
 
 import { SetTreasuryReceiptPayload, TreasuryStoreState } from './types';
@@ -13,7 +16,6 @@ type Mutations = {
   setTreasuryTotalStakedMove: void;
   setTreasuryTotalStakedMoveEthLP: void;
   setIsTreasuryInfoLoading: void;
-  setTreasuryInfoError: void;
   setTreasuryInfo: void;
   setTreasuryReceipt: void;
   setPowercardBalance: void;
@@ -44,11 +46,13 @@ const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
   setIsTreasuryInfoLoading(state, isLoading: boolean): void {
     state.isTreasuryInfoLoading = isLoading;
   },
-  setTreasuryInfoError(state, error: string | undefined): void {
-    state.treasuryInfoError = error;
-  },
   setTreasuryInfo(state, info: TreasuryInfo | undefined): void {
-    state.treasuryInfo = info;
+    if (info === undefined) {
+      state.treasuryInfo = info;
+      return;
+    }
+
+    state.treasuryInfo = { data: info, expDate: Date.now() + INFO_TIME_EXPIRE };
   },
   setTreasuryReceipt(state, payload: SetTreasuryReceiptPayload): void {
     const key = `${payload.year}/${payload.month}`;
