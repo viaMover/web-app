@@ -15,7 +15,6 @@ import { AccountStoreState } from './modules/account/types';
 import { EarningsStoreState } from './modules/earnings/types';
 
 export interface RootStoreState {
-  appVersion: string;
   i18n: IVueI18n | null;
   isThemeInitialized: boolean;
   theme: Theme;

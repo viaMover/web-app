@@ -25,7 +25,6 @@ Vue.use(Vuex);
 const store = new Vuex.Store<RootStoreState>({
   strict: false, // should never be true as recursion level is too deep
   state: {
-    appVersion: '0.0.1',
     i18n: null,
     isThemeInitialized: false,
     theme: Theme.Light,
