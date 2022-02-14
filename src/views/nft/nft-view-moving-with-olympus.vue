@@ -1,62 +1,89 @@
 <template>
-  <div>
-    <shop-wrapper has-close-button @close="handleClose">
-      <template v-slot:info>
-        <h1 class="info__title">{{ $t('NFTs.lblMovingWithOlympus') }}</h1>
-        <p class="info__description">
-          {{ $t('NFTs.txtNFTs.movingWithOlympus.pageDescriptionPartOne') }}
+  <content-wrapper-two-sided
+    class="shop nft-drops view moving-with-olympus"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ $t('NFTs.lblMovingWithOlympus') }}</h1>
+        <div class="description">
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.movingWithOlympus.pageDescriptionPartTwo') }}
-        </p>
-        <shop-list>
-          <shop-list-item
-            :title="$t('NFTs.lblAvailableFrom')"
-            :value="availableFromString"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblAvailableTo')"
-            :value="availableToString"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblTotalClaimed')"
-            :value="formatToDecimals(totalClaimed, 0)"
-          />
-        </shop-list>
-        <action-button
-          button-class="button button-active"
-          :text="$t('NFTs.btn.movingWithOlympus.get.txt')"
-          @button-click="handleClaim"
-        />
-        <div v-if="error !== undefined" class="error-message">
-          {{ error }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}
         </div>
-      </template>
-      <template v-slot:illustration>
-        <video
-          autoplay="autoplay"
-          class="moving-with-olympus"
-          data-keepplaying="data-keepplaying"
-          loop="loop"
-          muted="muted"
-          playsinline="playsinline"
-        >
-          <source
-            src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
-            type="video/mp4"
-          />
-        </video>
-      </template>
-    </shop-wrapper>
-    <simple-loader-modal
-      v-if="transactionStep !== undefined"
-      :loader-step="transactionStep"
-      @close="transactionStep = undefined"
-    />
-  </div>
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="availableFrom"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblAvailableFrom')"
+        />
+        <analytics-list-item
+          :description="availableTo"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblAvailableTo')"
+        />
+        <analytics-list-item
+          :description="totalClaimed"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblTotalClaimed')"
+        />
+      </analytics-list>
+
+      <form
+        class="form"
+        :class="{ error: !!error }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              :disabled="isStoreLoading"
+              propagate-original-event
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
+              type="submit"
+            />
+          </div>
+
+          <div v-if="error !== undefined" class="group error-message">
+            {{ error }}
+          </div>
+        </div>
+      </form>
+    </template>
+
+    <template v-slot:right>
+      <video
+        autoplay="autoplay"
+        class="moving-with-olympus"
+        data-keepplaying="data-keepplaying"
+        loop="loop"
+        muted="muted"
+        playsinline="playsinline"
+        poster="@/assets/images/ios-spinner-white.svg"
+      >
+        <source
+          src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="https://ipfs.io/ipfs/QmWVTix2PvDSx9yh4ybviaCHqnFyz77vK87YvrVV4vyjNv"
+          type="video/mp4"
+        />
+      </video>
+    </template>
+
+    <template v-slot:modals>
+      <simple-loader-modal
+        v-if="transactionStep !== undefined"
+        :loader-step="transactionStep"
+        @close="transactionStep = undefined"
+      />
+    </template>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -65,21 +92,22 @@ import { mapActions, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { ChangePayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
 
-import ActionButton from '@/components/buttons/action-button.vue';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import { ActionButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { ContentWrapperTwoSided } from '@/components/layout';
+import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewMovingWithOlympus',
   components: {
+    ContentWrapperTwoSided,
     ActionButton,
-    ShopList,
-    ShopListItem,
-    ShopWrapper,
+    AnalyticsList,
+    AnalyticsListItem,
     SimpleLoaderModal
   },
   data() {
@@ -90,15 +118,20 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      availableTo: 'OlympusEndTs',
-      totalClaimed: 'OlympusTotalClaimed',
-      availableFrom: 'OlympusStartTs'
+      nft: 'movingWithOlympus',
+      isStoreLoading: 'isLoading'
     }),
-    availableToString(): string {
-      return dayjs.unix(this.availableTo).utc().format('MMMM DD, HH:mm UTC');
+    availableTo(): string {
+      return dayjs.unix(this.nft.meta.endTs).utc().format('MMMM DD, HH:mm UTC');
     },
-    availableFromString(): string {
-      return dayjs.unix(this.availableFrom).utc().format('MMMM DD, HH:mm UTC');
+    availableFrom(): string {
+      return dayjs
+        .unix(this.nft.meta.startTs)
+        .utc()
+        .format('MMMM DD, HH:mm UTC');
+    },
+    totalClaimed(): string {
+      return formatToDecimals(this.nft.meta.totalClaimed, 0);
     }
   },
   mounted(): void {
@@ -106,7 +139,6 @@ export default Vue.extend({
     this.error = undefined;
   },
   methods: {
-    formatToDecimals,
     ...mapActions('nft', [
       'claimOlympus',
       'checkOlympusClaimable',
@@ -120,7 +152,7 @@ export default Vue.extend({
     },
     async handleClaim(): Promise<void> {
       if (!(await this.checkOlympusClaimable())) {
-        this.error = this.$t('NFTs.txtOhNo').toString();
+        this.error = this.$t('NFTs.txtOhNo') as string;
         return;
       }
 

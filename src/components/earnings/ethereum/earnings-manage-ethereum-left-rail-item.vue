@@ -1,13 +1,10 @@
 <template>
-  <left-rail-section
-    items-container-tag="div"
-    :section-name="$t('earnings.ethereum.lblManage')"
-  >
+  <navigation-section :section-name="$t('earnings.ethereum.lblManage')">
     <template v-if="isLoading">
-      <left-rail-section-nav-item-image-skeleton v-for="idx in 2" :key="idx" />
+      <navigation-section-item-image-skeleton v-for="idx in 2" :key="idx" />
     </template>
     <template v-else>
-      <left-rail-section-nav-item-image
+      <navigation-section-item-image
         :description="$t('earnings.ethereum.txtStake', { apy })"
         navigate-to="earnings-ethereum-stake"
         :title="$t('earnings.ethereum.lblStake')"
@@ -19,8 +16,8 @@
             :src="stakePicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
-      <left-rail-section-nav-item-image
+      </navigation-section-item-image>
+      <navigation-section-item-image
         :description="$t('earnings.ethereum.txtGlobalAnalytics')"
         navigate-to="earnings-ethereum-global-analytics"
         :title="$t('earnings.ethereum.lblGlobalAnalytics')"
@@ -32,9 +29,9 @@
             :src="globalAnalyticsPicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
+      </navigation-section-item-image>
     </template>
-  </left-rail-section>
+  </navigation-section>
 </template>
 
 <script lang="ts">
@@ -45,17 +42,17 @@ import { formatPercents } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
-  LeftRailSection,
-  LeftRailSectionNavItemImage,
-  LeftRailSectionNavItemImageSkeleton
-} from '@/components/layout';
+  NavigationSection,
+  NavigationSectionItemImage,
+  NavigationSectionItemImageSkeleton
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'EarningsManageEthereumLeftRailItem',
   components: {
-    LeftRailSection,
-    LeftRailSectionNavItemImage,
-    LeftRailSectionNavItemImageSkeleton,
+    NavigationSection,
+    NavigationSectionItemImage,
+    NavigationSectionItemImageSkeleton,
     CustomPicture
   },
   data() {

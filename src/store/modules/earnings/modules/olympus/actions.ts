@@ -1,16 +1,29 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 
 import { getOlympusData, getOlympusPriceInWETH } from '@/services/chain';
 import { getOlympusAPY } from '@/services/chain/earnings/olympys';
 import { getOlympusInfo, getOlympusReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { RootStoreState } from '@/store/types';
+import { ActionFuncs } from '@/store/types';
 
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import { EarningsOlympusStoreState, FetchOlympusReceiptPayload } from './types';
 
-export default {
+type Actions = {
+  loadMinimalInfo: Promise<void>;
+  loadInfo: Promise<void>;
+  fetchOlympusInfo: Promise<void>;
+  fetchOlympusPriceInWeth: Promise<void>;
+  fetchOlympusReceipt: Promise<void>;
+};
+
+const actions: ActionFuncs<
+  Actions,
+  EarningsOlympusStoreState,
+  MutationType,
+  GetterType
+> = {
   async loadMinimalInfo({ dispatch, commit }): Promise<void> {
     commit('setIsLoading', true);
     try {
@@ -131,4 +144,7 @@ export default {
     }
     commit('setOlympusReceipt', receipt);
   }
-} as ActionTree<EarningsOlympusStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

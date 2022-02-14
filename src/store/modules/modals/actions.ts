@@ -1,7 +1,7 @@
-import { ActionTree } from 'vuex';
+import { ActionFuncs } from '@/store/types';
 
-import { RootStoreState } from '@/store/types';
-
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import {
   ModalsStoreState,
   TModalKey,
@@ -16,7 +16,16 @@ type SetVisibilityArgs<K extends TModalKey> = {
   waitForResult?: boolean;
 };
 
-export default {
+type Actions = {
+  setIsDisplayed: Promise<TModalReturn<TModalKey>>;
+};
+
+const actions: ActionFuncs<
+  Actions,
+  ModalsStoreState,
+  MutationType,
+  GetterType
+> = {
   async setIsDisplayed(
     { state, commit, dispatch },
     { id, value, payload }: SetVisibilityArgs<TModalKey>
@@ -154,4 +163,7 @@ export default {
 
     return ret;
   }
-} as ActionTree<ModalsStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

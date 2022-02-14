@@ -1,45 +1,54 @@
 <template>
-  <secondary-page has-back-button :title="pageTitle" @back="handleBack">
-    <p class="description">{{ explanatoryText }}</p>
-
-    <governance-overview-section-skeleton v-if="isProposalLoading">
-      <governance-overview-section-item-skeleton />
-    </governance-overview-section-skeleton>
-    <governance-overview-section v-else>
-      <governance-overview-section-item
-        :description="$t('governance.lblMyVotingPower')"
-        :value="myVotingPower"
+  <secondary-page class="vote" has-back-button hide-info @back="handleBack">
+    <template v-slot:title>
+      <secondary-page-header
+        :description="explanatoryText"
+        :title="pageTitle"
       />
-      <governance-overview-section-item
+    </template>
+
+    <analytics-list>
+      <analytics-list-item
+        :description="myVotingPower"
+        :is-loading="proposal === undefined"
+        :title="$t('governance.lblMyVotingPower')"
+      />
+      <analytics-list-item
         v-if="ipfsLinkText"
-        :description="$t('governance.lblIpfsLink')"
+        :is-loading="proposal === undefined"
+        :title="$t('governance.lblIpfsLink')"
       >
-        <a class="ipfs-link" :href="ipfsLinkText" target="_blank">
+        <a
+          class="link underline muted medium"
+          :href="ipfsLinkText"
+          rel="external nofollow"
+          target="_blank"
+        >
           {{ $t('governance.txtIpfsLink') }}
         </a>
-      </governance-overview-section-item>
-    </governance-overview-section>
+      </analytics-list-item>
+    </analytics-list>
 
-    <button
-      class="black-link button-active"
-      :class="{ disabled: isLoading || isProposalLoading }"
-      :disabled="isLoading || isProposalLoading"
-      type="button"
-      @click="handleVote"
-    >
-      <div v-if="isLoading" class="loader-icon">
-        <img
-          :alt="$t('icon.txtPendingIconAlt')"
-          src="@/assets/images/ios-spinner-white.svg"
-        />
+    <div class="actions">
+      <div class="group default">
+        <action-button
+          class="primary"
+          :disabled="isLoading || isStoreLoading"
+          @button-click="handleVote"
+        >
+          <div v-if="isLoading" class="loader-icon">
+            <img
+              :alt="$t('icon.txtPendingIconAlt')"
+              src="@/assets/images/ios-spinner-white.svg"
+            />
+          </div>
+          <template v-else>
+            {{ voteButtonText }}
+          </template>
+        </action-button>
       </div>
-      <template v-else>
-        {{ voteButtonText }}
-      </template>
-    </button>
-    <p v-if="errorText" class="error">
-      {{ errorText }}
-    </p>
+      <div v-if="errorText" class="group error-message">{{ errorText }}</div>
+    </div>
   </secondary-page>
 </template>
 
@@ -58,22 +67,18 @@ import { GovernanceApiError } from '@/services/mover/governance';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { formatToDecimals } from '@/utils/format';
 
-import {
-  GovernanceOverviewSection,
-  GovernanceOverviewSectionItem,
-  GovernanceOverviewSectionItemSkeleton,
-  GovernanceOverviewSectionSkeleton
-} from '@/components/governance';
-import { SecondaryPage } from '@/components/layout';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import { ActionButton } from '@/components/buttons';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceVote',
   components: {
+    AnalyticsList,
+    AnalyticsListItem,
     SecondaryPage,
-    GovernanceOverviewSection,
-    GovernanceOverviewSectionSkeleton,
-    GovernanceOverviewSectionItem,
-    GovernanceOverviewSectionItemSkeleton
+    SecondaryPageHeader,
+    ActionButton
   },
   data() {
     return {
@@ -84,7 +89,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('governance', {
-      isProposalLoading: 'isLoading',
+      isStoreLoading: 'isLoading',
       proposals: 'items'
     }),
     ...mapGetters('governance', {
@@ -94,7 +99,7 @@ export default Vue.extend({
     }),
     pageTitle(): string {
       if (this.proposal === undefined) {
-        return this.$t('governance.lblProposal').toString();
+        return this.$t('governance.lblProposal') as string;
       }
 
       return this.proposal.title;

@@ -30,6 +30,10 @@ export const getSweetAndSourData = async (
     contractAddress
   );
 
+  const balance = await sweetAndSour.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
   const totalAmount = await sweetAndSour.methods
     ._claimLimit()
     .call(transactionParams);
@@ -39,6 +43,7 @@ export const getSweetAndSourData = async (
     .call(transactionParams);
 
   return {
+    balance: balance.toString(),
     totalAmount: totalAmount.toString(),
     totalClaimed: totalClaimed.toString()
   };

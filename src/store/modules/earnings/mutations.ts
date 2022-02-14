@@ -1,5 +1,12 @@
-import { MutationTree } from 'vuex';
+import { MutationFuncs } from '@/store/types';
 
 import { EarningsStoreState } from './types';
 
-export default {} as MutationTree<EarningsStoreState>;
+type Mutations = {
+  //
+};
+
+const mutations: MutationFuncs<Mutations, EarningsStoreState> = {};
+
+export type MutationType = typeof mutations;
+export default mutations;

@@ -28,7 +28,8 @@ export const BuildExplorer = async (
   updateTokens: (tokens: Array<TokenWithBalance>) => void,
   removeTokens: (tokens: Array<string>) => void,
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void,
-  setIsTransactionsListLoaded: (val: boolean) => void
+  setIsTransactionsListLoaded: (val: boolean) => void,
+  setIsTokensListLoaded: (val: boolean) => void
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
@@ -39,6 +40,7 @@ export const BuildExplorer = async (
     updateTransactions,
     setIsTransactionsListLoaded,
     setTokens,
+    setIsTokensListLoaded,
     setChartData
   );
 
@@ -51,8 +53,9 @@ export const BuildExplorer = async (
     Sentry.captureException(`can't init moralis explorer: ${errText}`);
   }
 
-  // For zerion we assume that transactions are loaded from start
+  // For zerion we assume that transactions and tokens are loaded from start
   setIsTransactionsListLoaded(true);
+  setIsTokensListLoaded(true);
 
   return InitZerionExplorer(
     accountAddress,

@@ -1,12 +1,19 @@
 <template>
-  <div class="secondary-page-wrapper">
-    <back-button v-if="hasBackButton" @close="handleBack" />
-    <div v-if="!hideTitle" class="heading page-secondary page-heading">
+  <div class="secondary-page">
+    <back-button
+      v-if="hasBackButton"
+      class="navigation page-back-button fixed"
+      @back="handleBack"
+    />
+    <div v-if="!hideTitle" class="secondary-page-header">
       <slot name="title">
-        <h2 class="title page-title" :class="[titleClass]">{{ title }}</h2>
+        <h2 class="title" :class="titleClass">{{ title }}</h2>
       </slot>
     </div>
-    <div class="page-body">
+    <div v-if="!hideInfo" class="secondary-page-info">
+      <slot name="info" />
+    </div>
+    <div class="secondary-page-body">
       <slot></slot>
     </div>
   </div>
@@ -29,13 +36,17 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
+    hideInfo: {
+      type: Boolean,
+      default: false
+    },
     hasBackButton: {
       type: Boolean,
       default: false
     },
     titleClass: {
       type: String,
-      default: ''
+      default: undefined
     }
   },
   methods: {

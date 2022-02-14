@@ -1,44 +1,38 @@
 <template>
-  <div :class="baseClass">
-    <back-button v-if="hasBackButton" @close="handleBack" />
-    <left-rail
-      v-if="hasLeftRail"
-      :container-class="leftRailClass"
-      :inner-wrapper-class="leftRailInnerWrapperClass"
-      :inner-wrapper-style="leftRailStyle"
-    >
-      <slot name="left-rail"></slot>
-    </left-rail>
-    <back-button
-      v-if="hasCloseButton"
-      class="page-close-button"
-      :mode="isBlackCloseButton ? 'CLOSE-BLACK' : 'CLOSE'"
-      @close="handleClose"
-    />
-
-    <page-container :container-class="pageContainerClassDerived">
-      <slot></slot>
-    </page-container>
-    <slot name="modals"></slot>
+  <div class="dashboard">
+    <slot name="left-rail" />
+    <div class="page-content" :class="pageContentClass">
+      <back-button
+        v-if="hasBackButton"
+        class="navigation page-back-button"
+        @back="handleBack"
+      />
+      <close-button
+        v-if="hasCloseButton"
+        class="navigation page-close-button"
+        is-black
+        @close="handleClose"
+      />
+      <main class="wrapper">
+        <slot></slot>
+      </main>
+    </div>
+    <div class="modals">
+      <slot name="modals"></slot>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
-import { Properties } from 'csstype';
-
-import { BackButton } from '@/components/buttons';
-
-import LeftRail from './left-rail/left-rail.vue';
-import PageContainer from './page-container.vue';
+import { BackButton, CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'ContentWrapper',
   components: {
-    PageContainer,
-    LeftRail,
-    BackButton
+    BackButton,
+    CloseButton
   },
   props: {
     hasLeftRail: {
@@ -53,45 +47,9 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
-    baseClass: {
-      type: String,
-      default: 'info__wrapper'
-    },
-    wrapperClass: {
-      type: String,
-      default: ''
-    },
-    leftRailInnerWrapperClass: {
-      type: String,
-      default: ''
-    },
-    pageContainerClass: {
-      type: String,
-      default: ''
-    },
-    isBlackCloseButton: {
-      type: Boolean,
-      default: false
-    }
-  },
-  computed: {
-    leftRailClass(): string {
-      return this.wrapperClass + '__sidebar';
-    },
-    pageContainerClassDerived(): string {
-      if (!this.pageContainerClass) {
-        return this.wrapperClass + '__menu';
-      }
-
-      return [this.wrapperClass + '__menu', this.pageContainerClass].join(' ');
-    },
-    leftRailStyle(): Properties {
-      if (this.hasBackButton) {
-        return {
-          paddingTop: '104px'
-        };
-      }
-      return {};
+    pageContentClass: {
+      type: String as PropType<string | undefined>,
+      default: undefined
     }
   },
   methods: {

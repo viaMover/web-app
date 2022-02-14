@@ -74,6 +74,7 @@ export class MoralisExplorer implements Explorer {
     private readonly updateTransactions: (txns: Array<Transaction>) => void,
     private readonly setIsTransactionsListLoaded: (val: boolean) => void,
     private readonly setTokens: (tokens: Array<TokenWithBalance>) => void,
+    private readonly setIsTokensListLoaded: (val: boolean) => void,
     private readonly setChartData: (
       chartData: Record<string, Array<[number, number]>>
     ) => void
@@ -119,22 +120,21 @@ export class MoralisExplorer implements Explorer {
           nativeTransactionsPromise
         ]);
 
-      const tokensWihNativePromise =
-        this.enrichTokensWithNative(tokensWithPrices);
-      const transactionsPromise = this.parseTransactions(
+      this.enrichTokensWithNative(tokensWithPrices).then((tokensWithNative) => {
+        this.setTokens(tokensWithNative);
+        // set tokens list loaded as early as possible
+        this.setIsTokensListLoaded(true);
+      });
+
+      const transactions = await this.parseTransactions(
         tokensWithPrices,
         erc20Transactions,
         nativeTransactions
       );
-
-      const [tokensWihNative, transactions] = await Promise.all([
-        tokensWihNativePromise,
-        transactionsPromise
-      ]);
-      this.setTokens(tokensWihNative);
       this.setTransactions(transactions);
       this.transactionsOffset = MoralisExplorer.TRANSACTIONS_PER_BATCH;
     } finally {
+      this.setIsTokensListLoaded(true);
       this.setIsTransactionsListLoaded(true);
     }
   }
@@ -271,7 +271,7 @@ export class MoralisExplorer implements Explorer {
         }
       ];
     } catch (err) {
-      Sentry.captureMessage(`Can't get enrich token list with native: ${err}`);
+      Sentry.captureMessage(`Can't get enrich token list with native:`, err);
       return tokens;
     }
   };
@@ -305,9 +305,9 @@ export class MoralisExplorer implements Explorer {
       return res
         .filter((t) => t.decimals !== null && t.name !== null)
         .map((t) => {
-          let assetName = '';
-          let assetSymbol = '';
-          let assetLogo = '';
+          let assetName: string;
+          let assetSymbol: string;
+          let assetLogo: string;
 
           if (sameAddress(t.token_address, moverData.address)) {
             assetName = moverData.name;
@@ -564,12 +564,7 @@ export class MoralisExplorer implements Explorer {
       }
     }
 
-    const allParsedTransactions = [
-      ...erc20ParsedTransactions,
-      ...nativeParsedTransactions
-    ];
-
-    return allParsedTransactions;
+    return [...erc20ParsedTransactions, ...nativeParsedTransactions];
   };
 
   private getErc20TokensMetadata = async (

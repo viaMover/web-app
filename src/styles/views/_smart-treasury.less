@@ -1,0 +1,31 @@
+.smart-treasury {
+  .secondary-page {
+    &.powercard {
+      .picture {
+        &.powercard {
+          display: block;
+          height: 200px;
+          margin-bottom: 40px;
+
+          img {
+            height: inherit;
+            width: $height;
+            object-fit: cover;
+          }
+        }
+      }
+
+      .action.description {
+        margin-bottom: 24px;
+        font-size: 14px;
+        line-height: 22px;
+        color: @text-muted;
+        @font-medium();
+      }
+
+      .product-info-wrapper {
+        margin-bottom: 40px;
+      }
+    }
+  }
+}

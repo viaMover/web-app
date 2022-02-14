@@ -1,5 +1,3 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 import { SHA3 } from 'sha3';
@@ -27,8 +25,10 @@ import {
   setEmailHashToPersist
 } from '@/settings';
 
-import { RootStoreState } from '../../types';
+import { ActionFuncs } from '../../types';
 import { allSkins, defaultSkin } from './consts';
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import {
   DebitCardStoreState,
   mapServiceCardInfo,
@@ -39,8 +39,27 @@ import {
   Skin
 } from './types';
 
-export default {
-  handleInfoResult({ commit }, info: BaseReturn) {
+type Actions = {
+  handleInfoResult: void;
+  loadInfo: Promise<void>;
+  loadCurrentSkin: Promise<void>;
+  loadAvailableSkins: Promise<void>;
+  changeSkin: Promise<void>;
+  setEmail: Promise<void>;
+  orderCard: Promise<void>;
+  validatePhoneNumber: Promise<void>;
+  setOrderState: void;
+  changePhoneNumber: Promise<void>;
+  loadWxBTRFLYrealIndex: Promise<void>;
+};
+
+const actions: ActionFuncs<
+  Actions,
+  DebitCardStoreState,
+  MutationType,
+  GetterType
+> = {
+  handleInfoResult({ commit }, info: BaseReturn): void {
     const mappedState = mapServiceState(info.status);
     commit('setCardState', mappedState.cardState);
     commit('setOrderState', mappedState.orderState);
@@ -629,4 +648,7 @@ export default {
       Sentry.captureException(error);
     }
   }
-} as ActionTree<DebitCardStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

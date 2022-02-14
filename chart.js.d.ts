@@ -20,7 +20,6 @@ export {
   Interaction,
   ActiveElement,
   ScriptableScaleContext,
-  Chart,
   BarElement,
   BarController,
   CategoryScale,

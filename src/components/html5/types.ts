@@ -4,7 +4,7 @@ export type PictureSourceDescriptor = {
 };
 
 export type PictureDescriptor = {
-  alt: string;
+  alt?: string;
   src: string;
   sources?: Array<PictureSourceDescriptor>;
   webpSources?: Array<PictureSourceDescriptor>;

@@ -1,11 +1,11 @@
 <template>
-  <router-view />
+  <transition mode="out-in" name="slide">
+    <router-view />
+  </transition>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
-import '@/styles/_nibble.less';
 
 export default Vue.extend({
   name: 'NibbleShopRoot'

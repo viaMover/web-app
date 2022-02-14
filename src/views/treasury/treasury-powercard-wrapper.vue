@@ -1,6 +1,8 @@
 <template>
-  <treasury-powercard-manage v-if="hasActivePowercard" />
-  <treasury-powercard-empty v-else />
+  <transition name="fade">
+    <treasury-powercard-manage v-if="hasActivePowercard" />
+    <treasury-powercard-empty v-else />
+  </transition>
 </template>
 
 <script lang="ts">
@@ -19,7 +21,7 @@ export default Vue.extend({
     TreasuryPowercardEmpty
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('treasury', {
       powercardBalance: 'powercardBalance',
       powercardState: 'powercardState'
     }),

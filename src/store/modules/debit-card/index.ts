@@ -1,10 +1,8 @@
-import { Module } from 'vuex';
+import { AugmentedModule } from '@/store/types';
 
-import { RootStoreState } from '@/store/types';
-
-import actions from './actions';
-import getters from './getters';
-import mutations from './mutations';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 import { DebitCardStoreState } from './types';
 
 export default {
@@ -30,4 +28,4 @@ export default {
   actions,
   getters,
   mutations
-} as Module<DebitCardStoreState, RootStoreState>;
+} as AugmentedModule<DebitCardStoreState, ActionType, GetterType, MutationType>;

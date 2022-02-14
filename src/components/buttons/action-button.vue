@@ -1,6 +1,7 @@
 <template>
   <button
-    :class="[classes]"
+    class="button"
+    :class="{ disabled: disabled }"
     :disabled="disabled"
     :style="customStyle"
     :type="type"
@@ -25,10 +26,6 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    buttonClass: {
-      type: String,
-      default: 'button'
-    },
     disabled: {
       type: Boolean,
       default: false
@@ -44,11 +41,6 @@ export default Vue.extend({
     propagateOriginalEvent: {
       type: Boolean,
       default: false
-    }
-  },
-  computed: {
-    classes(): string {
-      return `${this.buttonClass} ${this.disabled ? 'disabled' : ''}`;
     }
   },
   methods: {

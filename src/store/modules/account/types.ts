@@ -1,14 +1,10 @@
+import * as Sentry from '@sentry/vue';
+import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
+import { provider } from 'web3-core';
 
-import { PowercardState } from '@/services/chain';
 import { Explorer } from '@/services/explorer';
-import {
-  SavingsInfo,
-  SavingsReceipt,
-  TreasuryInfo,
-  TreasuryReceipt
-} from '@/services/mover';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -34,7 +30,7 @@ export type ProviderData = {
 
 export type Avatar = {
   id: string;
-  className: string;
+  color: string;
 } & (
   | { type: 'symbol'; symbol: string }
   | { type: 'image'; imageSrc: string; imageAlt: string }
@@ -54,6 +50,7 @@ export type AccountStoreState = {
   transactions: Array<Transaction>;
 
   tokens: Array<TokenWithBalance>;
+  isTokensListLoaded: boolean;
   tokensSearcher: Fuse<TokenWithBalance> | undefined;
   allTokens: Array<Token>;
   allTokensSearcher: Fuse<Token> | undefined;
@@ -83,37 +80,66 @@ export type AccountStoreState = {
   gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
+};
 
-  isSavingsInfoLoading: boolean;
-  savingsInfo: SavingsInfo | undefined;
-  savingsInfoError: string | undefined;
+export type SafeAccountStoreState = AccountStoreState & {
+  currentAddress: string;
+  networkInfo: NetworkInfo;
+  provider: ProviderData;
+};
 
-  isSavingsReceiptLoading: boolean;
-  savingsReceipt: SavingsReceipt | undefined;
-  savingsReceiptError: string | undefined;
+export const ensureAccountStateIsSafe = (
+  state: AccountStoreState | undefined
+): state is SafeAccountStoreState => {
+  const reasons = new Array<string>();
+  if (state === undefined) {
+    reasons.push('empty account state');
+  }
 
-  savingsBalance: string | undefined;
-  savingsAPY: string | undefined;
-  savingsDPY: string | undefined;
+  if (state?.currentAddress === undefined) {
+    reasons.push('failed to get currentAddress from state');
+  }
 
-  // Treasury
-  treasuryBalanceMove: string | undefined;
-  treasuryBalanceLP: string | undefined;
-  treasuryBonus: string | undefined;
-  treasuryAPY: string | undefined;
-  treasuryTotalStakedMove: string | undefined;
-  treasuryTotalStakedMoveEthLP: string | undefined;
+  if (state?.provider?.web3 === undefined) {
+    reasons.push('failed to get web3 provider from state');
+  }
 
-  powercardBalance: string | undefined;
-  powercardState: PowercardState | undefined;
-  powercardActiveTime: number;
-  powercardCooldownTime: number;
+  if (state?.networkInfo?.network === undefined) {
+    reasons.push('failed to get network from state');
+  }
 
-  isTreasuryInfoLoading: boolean;
-  treasuryInfo: TreasuryInfo | undefined;
-  treasuryInfoError: string | undefined;
+  if (reasons.length > 0) {
+    Sentry.addBreadcrumb({
+      type: 'error',
+      category: 'state.account.safe',
+      data: {
+        reasons
+      },
+      level: Sentry.Severity.Error,
+      message: 'account state check failed',
+      timestamp: dayjs().unix()
+    });
 
-  isTreasuryReceiptLoading: boolean;
-  treasuryReceipt: TreasuryReceipt | undefined;
-  treasuryReceiptError: string | undefined;
+    console.error('account state check failed:', reasons);
+    return false;
+  }
+
+  return true;
+};
+
+export type EmitChartRequestPayload = {
+  assetCode: string;
+  nativeCurrency: string;
+  chartsType: string;
+};
+
+export type RefreshWalletPayload = {
+  injected: boolean;
+  init: boolean;
+};
+
+export type InitWalletPayload = {
+  provider: provider;
+  injected: boolean;
+  providerBeforeCloseCb: () => void;
 };

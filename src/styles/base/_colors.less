@@ -1,0 +1,139 @@
+:root {
+  // by default we apply light theme colors
+  @light-theme-colors();
+
+  // and if user has dark color scheme preferred, then the
+  // default for them would be overridden unless exact theme is specified
+  @media screen and (prefers-color-scheme: dark) {
+    @dark-theme-colors();
+  }
+
+  &.light {
+    @light-theme-colors();
+  }
+
+  &.dark {
+    @dark-theme-colors();
+  }
+}
+
+@light-theme-colors: {
+  --color-background: rgb(250, 250, 252);
+  --color-background-left-rail: rgb(246, 246, 246);
+  --color-background-left-rail-darker: rgb(241, 241, 241);
+  --color-background-left-rail-darkest: rgb(229, 229, 229);
+  --color-border-background: rgba(60, 60, 67, 0.07);
+  --color-border-primary: rgb(0, 0, 0);
+  --color-border-success: rgb(48, 190, 22);
+  --color-border-error: rgb(215, 44, 51);
+  --color-text-primary: rgb(0, 0, 0);
+  --color-text-link: rgb(0, 0, 0);
+  --color-text-link-hover: rgb(24, 24, 24);
+  --color-text-primary-order-debit-card: #fff;
+  --color-text-muted-order-debit-card: rgba(255, 255, 255, 0.5);
+  --color-text-muted: rgba(60, 60, 67, 0.6);
+  --color-text-error: rgb(215, 44, 51);
+  --color-text-emphasized-positive: rgb(7, 193, 68);
+  --color-product-savings: rgb(251, 157, 83);
+  --color-product-treasury: rgb(245, 147, 174);
+  --color-product-governance: rgb(201, 201, 201);
+  --color-product-earnings: rgb(0, 0, 0);
+  --color-product-ethereum: rgba(116, 133, 179);
+  --color-button-primary-text: rgb(255, 255, 255);
+  --color-button-primary-background: rgb(0, 0, 0);
+  --color-button-secondary-text: rgb(0, 0, 0);
+  --color-button-secondary-background: rgb(241, 241, 241);
+  --color-button-transparent-text: rgb(0, 0, 0);
+  --color-button-navigation-background: rgb(255, 255, 255);
+  --color-button-navigation-text: rgb(0, 0, 0);
+  --color-button-transparent-background: transparent;
+  --color-button-order-debit-card: rgb(239, 255, 0);
+  --color-shadow: rgba(0, 0, 0, 0.12);
+  --color-mover-logo-shadow: rgba(16, 9, 32, 0.502);
+  --color-mover-logo-background: rgb(16, 9, 32);
+  --color-qr-code-background: rgb(252, 252, 252);
+  --color-skeleton-color: rgb(220, 220, 220);
+  --color-skeleton-highlight-color: rgb(245, 245, 245);
+  --color-card: rgb(255, 255, 255);
+  --color-card-order-debit-card: rgb(16, 10, 32);
+  --color-dimmer-background: rgba(0, 0, 0, 0.2);
+  --color-dimmer-background-darker: rgba(0, 0, 0, 0.8);
+  --color-modal-segment-background: rgb(252, 252, 252);
+  --color-button-darkest-background: rgb(0, 0, 0, 0);
+  --color-button-darkest-text: rgb(255, 255, 255);
+  --color-input-background: transparent;
+  --color-input-search-background: rgb(241, 241, 241);
+  --color-default-selector: rgb(39, 117, 202);
+  --default-border-input: none;
+  --default-outline-input: none;
+  --color-scrollbar-track: hsl(0, 0%, 90%);
+  --color-scrollbar-thumb: hsl(0, 0%, 75%);
+  --color-icon-background-default: rgb(241, 241, 241);
+  --color-button-group-background: rgb(0, 0, 0);
+  --color-button-group-text: rgb(255, 255, 255);
+  --color-button-group-active-background: rgb(255, 255, 255);
+  --color-button-group-active-text: rgb(0, 0, 0);
+  --color-button-group-border: rgb(216, 216, 216);
+}
+
+@dark-theme-colors: {
+  // nothing's here yet
+  // but we surely support theming :)
+}
+
+@background: var(--color-background);
+@background-left-rail: var(--color-background-left-rail);
+@background-left-rail-darker: var(--color-background-left-rail-darker);
+@background-left-rail-darkest: var(--color-background-left-rail-darkest);
+@border-background: var(--color-border-background);
+@border-primary: var(--color-border-primary);
+@border-success: var(--color-border-success);
+@border-error: var(--color-border-error);
+@text-primary: var(--color-text-primary);
+@text-muted: var(--color-text-muted);
+@text-error: var(--color-text-error);
+@text-link: var(--color-text-link);
+@text-link-hover: var(--color-text-link-hover);
+@text-primary-order-debit-card: var(--color-text-primary-order-debit-card);
+@text-muted-order-debit-card: var(--color-text-muted-order-debit-card);
+@text-emphasized-positive: var(--color-text-emphasized-positive);
+@product-savings: var(--color-product-savings);
+@product-treasury: var(--color-product-treasury);
+@product-governance: var(--color-product-governance);
+@product-earnings: var(--color-product-earnings);
+@product-ethereum: var(--color-product-ethereum);
+@button-primary-text: var(--color-button-primary-text);
+@button-primary-background: var(--color-button-primary-background);
+@button-secondary-text: var(--color-button-secondary-text);
+@button-secondary-background: var(--color-button-secondary-background);
+@button-transparent-text: var(--color-button-transparent-text);
+@button-transparent-background: var(--color-button-transparent-background);
+@button-navigation-background: var(--color-button-navigation-background);
+@button-navigation-text: var(--color-button-navigation-text);
+@button-order-debit-card: var(--color-button-order-debit-card);
+@button-darkest-background: var(--color-button-darkest-background);
+@button-darkest-text: var(--color-button-darkest-text);
+@shadow: var(--color-shadow);
+@mover-logo-shadow: var(--color-mover-logo-shadow);
+@mover-logo-background: var(--color-mover-logo-background);
+@qr-code-background: var(--color-qr-code-background);
+@skeleton-color: var(--color-skeleton-color);
+@skeleton-highlight-color: var(--color-skeleton-highlight-color);
+@card: var(--color-card);
+@card-order-debit-card: var(--color-card-order-debit-card);
+@dimmer-background: var(--color-dimmer-background);
+@dimmer-background-darker: var(--color-dimmer-background-darker);
+@modal-segment-background: var(--color-modal-segment-background);
+@input-background: var(--color-input-background);
+@input-search-background: var(--color-input-search-background);
+@default-border-input: var(--default-border-input);
+@default-outline-input: var(--default-outline-input);
+@default-selector: var(--color-default-selector);
+@scrollbar-track: var(--color-scrollbar-track);
+@scrollbar-thumb: var(--color-scrollbar-thumb);
+@icon-background-default: var(--color-icon-background-default);
+@button-group-background: var(--color-button-group-background);
+@button-group-text: var(--color-button-group-text);
+@button-group-active-background: var(--color-button-group-active-background);
+@button-group-active-text: var(--color-button-group-active-text);
+@button-group-border: var(--color-button-group-border);

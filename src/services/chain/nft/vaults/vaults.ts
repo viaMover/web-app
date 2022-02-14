@@ -28,11 +28,16 @@ export const getVaultsData = async (
     contractAddress
   );
 
+  const balance = await vaults.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
   const totalClaimed = await vaults.methods
     .totalClaimed()
     .call(transactionParams);
 
   return {
+    balance: balance.toString(),
     totalAmount: '9999',
     totalClaimed: totalClaimed.toString()
   };

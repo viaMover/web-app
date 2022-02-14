@@ -1,6 +1,8 @@
 <template>
-  <savings-manage v-if="hasActiveSavings" />
-  <savings-empty v-else />
+  <transition name="fade">
+    <savings-manage v-if="hasActiveSavings" />
+    <savings-empty v-else />
+  </transition>
 </template>
 
 <script lang="ts">
@@ -16,7 +18,7 @@ export default Vue.extend({
     SavingsManage
   },
   computed: {
-    ...mapGetters('account', {
+    ...mapGetters('savings', {
       hasActiveSavings: 'hasActiveSavings'
     })
   }

@@ -7,6 +7,10 @@ import { TransactionMoveTypeData, TransationsResponse } from './types';
 export const getMoverTransactionsTypes = async (
   txs: string[]
 ): Promise<Result<TransactionMoveTypeData[], string>> => {
+  if (txs.length < 1) {
+    return { isError: false, result: [] };
+  }
+
   try {
     const response = (
       await axios.post<TransationsResponse>(
