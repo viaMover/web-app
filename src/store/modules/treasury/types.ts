@@ -1,6 +1,6 @@
 import { PowercardState } from '@/services/chain';
 import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
-import { DataStore } from '@/store/types';
+import { DataStore, DataStoreWrapper } from '@/store/types';
 
 export type TreasuryStoreState = {
   treasuryBalanceMove: string | undefined;
@@ -11,8 +11,7 @@ export type TreasuryStoreState = {
   treasuryTotalStakedMoveEthLP: string | undefined;
 
   isTreasuryInfoLoading: boolean;
-  treasuryInfo: TreasuryInfo | undefined;
-  treasuryInfoError: string | undefined;
+  treasuryInfo: DataStoreWrapper<TreasuryInfo> | undefined;
 
   receipts: DataStore<TreasuryReceipt>;
 

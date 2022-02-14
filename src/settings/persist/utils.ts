@@ -28,10 +28,10 @@ export const getFromPersistStoreWithExpire = async <T>(
     }
 
     if (item.expDate > Date.now()) {
+      resolve(item.data);
+    } else {
       window.localStorage.removeItem(`${prefix}-[${key}]`);
       resolve(undefined);
-    } else {
-      resolve(item.data);
     }
   });
 };

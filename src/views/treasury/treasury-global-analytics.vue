@@ -15,44 +15,54 @@
     <analytics-list>
       <analytics-list-item
         :description="reservedAssetsValue"
+        :is-loading="isLoading"
         :title="$t('treasury.lblReservedAssetsValue')"
       />
       <analytics-list-item
         :description="currentBoost"
+        :is-loading="isLoading"
         :title="$t('treasury.lblCurrentBoost')"
       />
       <analytics-list-item
         :description="maximumBoost"
+        :is-loading="isLoading"
         :title="$t('treasury.lblMaximumBoost')"
       />
       <analytics-list-item
         :description="smartTreasurySize"
+        :is-loading="isLoading"
         :title="$t('treasury.lblSmartTreasurySize')"
       />
     </analytics-list>
     <analytics-list :title="$t('treasury.lblTreasuryStats')">
       <analytics-list-item
         :description="earnedToday"
+        :is-loading="isLoading"
         :title="$t('treasury.lblEarnedToday')"
       />
       <analytics-list-item
         :description="earnedThisMonth"
+        :is-loading="isLoading"
         :title="$t('treasury.lblEarnedThisMonth')"
       />
       <analytics-list-item
         :description="earnedInTotal"
+        :is-loading="isLoading"
         :title="$t('treasury.lblEarnedInTotal')"
       />
       <analytics-list-item
         :description="spentToday"
+        :is-loading="isLoading"
         :title="$t('treasury.lblSpentToday')"
       />
       <analytics-list-item
         :description="spentThisMonth"
+        :is-loading="isLoading"
         :title="$t('treasury.lblSpentThisMonth')"
       />
       <analytics-list-item
         :description="spentInTotal"
+        :is-loading="isLoading"
         :title="$t('treasury.lblSpentInTotal')"
       />
     </analytics-list>
@@ -60,6 +70,7 @@
       <analytics-list-item
         v-for="asset in assets"
         :key="asset.name"
+        :is-loading="isLoading"
         :title="asset.name"
       >
         {{ asset.amount }}
@@ -73,7 +84,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import {
   formatToDecimals,
@@ -117,9 +128,11 @@ export default Vue.extend({
       treasurySpentThisMonthNative: 'treasurySpentThisMonthNative',
       treasurySpentTotalNative: 'treasurySpentTotalNative',
       treasuryStakedMove: 'treasuryStakedMove',
-      treasuryStakedMoveLP: 'treasuryStakedMoveLP'
+      treasuryStakedMoveLP: 'treasuryStakedMoveLP',
+      treasuryInfo: 'treasuryInfo'
     }),
     ...mapState('treasury', {
+      isLoading: 'isTreasuryInfoLoading',
       powercardState: 'powercardState',
       networkInfo: 'networkInfo',
       treasuryTotalStakedMove: 'treasuryTotalStakedMove',
@@ -203,7 +216,11 @@ export default Vue.extend({
       return `$${formatToNative(this.treasuryTotalStakedBalanceNative)}`;
     }
   },
+  mounted() {
+    this.fetchTreasuryInfo();
+  },
   methods: {
+    ...mapActions('treasury', { fetchTreasuryInfo: 'fetchTreasuryInfo' }),
     handleBack(): void {
       this.$router.replace({
         name: 'treasury-manage'

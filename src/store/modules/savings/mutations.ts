@@ -1,5 +1,6 @@
 import { SavingsInfo } from '@/services/mover';
 import { RECEIPT_TIME_EXPIRE } from '@/store/modules/savings/actions';
+import { INFO_TIME_EXPIRE } from '@/store/modules/treasury/actions';
 import { MutationFuncs } from '@/store/types';
 
 import { SavingsStoreState, SetSavingsReceiptPayload } from './types';
@@ -9,7 +10,6 @@ type Mutations = {
   setSavingsDPY: void;
   setSavingsBalance: void;
   setIsSavingsInfoLoading: void;
-  setSavingsInfoError: void;
   setSavingsInfo: void;
   setSavingsReceipt: void;
 };
@@ -27,11 +27,13 @@ const mutations: MutationFuncs<Mutations, SavingsStoreState> = {
   setIsSavingsInfoLoading(state, isLoading: boolean): void {
     state.isSavingsInfoLoading = isLoading;
   },
-  setSavingsInfoError(state, error: string | undefined): void {
-    state.savingsInfoError = error;
-  },
   setSavingsInfo(state, info: SavingsInfo | undefined): void {
-    state.savingsInfo = info;
+    if (info === undefined) {
+      state.savingsInfo = info;
+      return;
+    }
+
+    state.savingsInfo = { data: info, expDate: Date.now() + INFO_TIME_EXPIRE };
   },
   setSavingsReceipt(state, payload: SetSavingsReceiptPayload): void {
     const key = `${payload.year}/${payload.month}`;

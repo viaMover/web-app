@@ -19,6 +19,7 @@ import {
 } from './types';
 
 type Actions = {
+  restoreInfo: Promise<void>;
   restoreReceipts: Promise<void>;
   loadMinimalInfo: Promise<void>;
   loadInfo: Promise<void>;
@@ -27,7 +28,8 @@ type Actions = {
   fetchSavingsReceipt: void;
 };
 
-export const RECEIPT_TIME_EXPIRE = 60 * 10 * 1000;
+export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
+export const INFO_TIME_EXPIRE = 5 * 60 * 1000; // 5 min
 
 const actions: ActionFuncs<
   Actions,
@@ -35,6 +37,12 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
+  async restoreInfo({ commit }): Promise<void> {
+    const info = await getFromPersistStoreWithExpire('savings', 'info');
+    if (info !== undefined) {
+      commit('setSavingsInfo', info);
+    }
+  },
   async restoreReceipts({ commit }): Promise<void> {
     const end = new Date();
     end.setMonth(end.getMonth() - 12);
@@ -65,14 +73,15 @@ const actions: ActionFuncs<
     }
   },
   async loadInfo({ dispatch }): Promise<void> {
+    await dispatch('restoreReceipts');
+    await dispatch('restoreInfo');
+
     const loadMinimalInfoPromise = dispatch('loadMinimalInfo');
     const savingsInfoPromise = dispatch('fetchSavingsInfo');
-    const restoreReceiptsPromise = dispatch('restoreReceipts');
 
     const promisesResults = await Promise.allSettled([
       savingsInfoPromise,
-      loadMinimalInfoPromise,
-      restoreReceiptsPromise
+      loadMinimalInfoPromise
     ]);
 
     const promisesErrors = promisesResults
@@ -118,19 +127,22 @@ const actions: ActionFuncs<
       commit('setSavingsBalance', '0');
     }
   },
-  async fetchSavingsInfo({ commit, rootState }): Promise<void> {
+  async fetchSavingsInfo({ commit, rootState, getters }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
+    if (getters.savingsInfo !== undefined) {
+      commit('setIsSavingsInfoLoading', false);
+      return;
+    }
+
     commit('setIsSavingsInfoLoading', true);
-    commit('setSavingsInfoError', undefined);
     commit('setSavingsInfo', undefined);
 
     const info = await getSavingsInfo(rootState.account.currentAddress);
 
     if (isError(info)) {
-      commit('setSavingsInfoError', info.error);
       commit('setIsSavingsInfoLoading', false);
       Sentry.captureException(`can't get savings info: ${info.error}`);
       return;
@@ -138,6 +150,13 @@ const actions: ActionFuncs<
 
     commit('setSavingsInfo', info.result);
     commit('setIsSavingsInfoLoading', false);
+
+    setToPersistStore(
+      'savings',
+      'info',
+      info.result,
+      Date.now() + INFO_TIME_EXPIRE
+    );
   },
   fetchSavingsReceipt(
     { commit, state, rootState, getters },

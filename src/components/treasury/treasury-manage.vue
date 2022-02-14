@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -69,15 +69,15 @@ export default Vue.extend({
       networkInfo: 'networkInfo'
     }),
     ...mapState('treasury', {
-      isTreasuryInfoLoading: 'isTreasuryInfoLoading',
-      treasuryInfo: 'treasuryInfo'
+      isTreasuryInfoLoading: 'isTreasuryInfoLoading'
     }),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative',
       treasuryEarnedThisMonthNative: 'treasuryEarnedThisMonthNative',
       treasuryMonthStatsOptions: 'treasuryMonthStatsOptions',
       usdcNativePrice: 'usdcNativePrice',
-      treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
+      treasuryStakedBalanceNative: 'treasuryStakedBalanceNative',
+      treasuryInfo: 'treasuryInfo'
     }),
     stakedBalance(): string {
       return `$${formatToNative(this.treasuryStakedBalanceNative)}`;
@@ -140,7 +140,11 @@ export default Vue.extend({
       return this.colors['product-treasury'];
     }
   },
+  mounted() {
+    this.fetchTreasuryInfo();
+  },
   methods: {
+    ...mapActions('treasury', { fetchTreasuryInfo: 'fetchTreasuryInfo' }),
     handleItemSelected(item: TreasuryMonthBonusesItem): void {
       this.selectedItem = item;
     },

@@ -48,7 +48,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 import { TreasuryReceipt } from '@/services/mover';
-import { SavingsGetReceiptPayload } from '@/store/modules/savings/types';
+import { TreasuryGetReceiptPayload } from '@/store/modules/treasury/types';
 import { add, fromWei, multiply } from '@/utils/bigmath';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import {
@@ -301,7 +301,7 @@ export default Vue.extend({
     this.fetchTreasuryReceipt({
       year,
       month
-    } as SavingsGetReceiptPayload);
+    } as TreasuryGetReceiptPayload);
 
     let receipt: TreasuryReceipt | undefined;
 

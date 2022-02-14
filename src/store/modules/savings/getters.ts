@@ -1,4 +1,8 @@
-import { SavingsMonthBalanceItem, SavingsReceipt } from '@/services/mover';
+import {
+  SavingsInfo,
+  SavingsMonthBalanceItem,
+  SavingsReceipt
+} from '@/services/mover';
 import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -6,6 +10,7 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 import { SavingsStoreState } from './types';
 
 type Getters = {
+  savingsInfo: SavingsInfo | undefined;
   savingsBalanceNative: string;
   savingsInfoBalanceUSDC: string;
   savingsInfoBalanceNative: string;
@@ -23,19 +28,30 @@ type Getters = {
 };
 
 const getters: GettersFuncs<Getters, SavingsStoreState> = {
+  savingsInfo(state): SavingsInfo | undefined {
+    if (state.savingsInfo === undefined) {
+      return undefined;
+    }
+
+    if (state.savingsInfo.expDate > Date.now()) {
+      return state.savingsInfo.data;
+    }
+
+    return undefined;
+  },
   savingsBalanceNative(state, getters): string {
     if (state.savingsBalance === undefined) {
       return '0';
     }
     return multiply(state.savingsBalance, getters.usdcNativePrice);
   },
-  savingsInfoBalanceUSDC(state, _, rootState): string {
+  savingsInfoBalanceUSDC(state, getters, rootState): string {
     if (state.savingsBalance !== undefined) {
       return state.savingsBalance;
     }
 
     if (
-      state.savingsInfo === undefined ||
+      getters.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
       rootState.account?.networkInfo === undefined
     ) {
@@ -43,7 +59,7 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     }
 
     return fromWei(
-      state.savingsInfo.currentBalance,
+      getters.savingsInfo.currentBalance,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
@@ -52,7 +68,7 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
   },
   savingsInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (
-      state.savingsInfo === undefined ||
+      getters.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
       rootState.account?.networkInfo === undefined
     ) {
@@ -60,15 +76,15 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     }
 
     const valueInUSDC = fromWei(
-      state.savingsInfo.earnedThisMonth,
+      getters.savingsInfo.earnedThisMonth,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
 
     return multiply(valueInUSDC, getters.usdcNativePrice);
   },
-  savingsInfoEarnedTotalNative(state, _, rootState): string {
+  savingsInfoEarnedTotalNative(state, getters, rootState): string {
     if (
-      state.savingsInfo === undefined ||
+      getters.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
       rootState.account?.networkInfo === undefined
     ) {
@@ -76,13 +92,13 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     }
 
     return fromWei(
-      state.savingsInfo.earnedTotal,
+      getters.savingsInfo.earnedTotal,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
   },
   savingsInfoTotalPoolBalanceNative(state, getters, rootState): string {
     if (
-      state.savingsInfo === undefined ||
+      getters.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
       rootState.account?.networkInfo === undefined
     ) {
@@ -90,14 +106,14 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     }
 
     const balanceUSDC = fromWei(
-      state.savingsInfo.currentPoolBalance,
+      getters.savingsInfo.currentPoolBalance,
       getUSDCAssetData(rootState.account.networkInfo.network).decimals
     );
     return multiply(balanceUSDC, getters.usdcNativePrice);
   },
   savingsEstimatedEarningsTomorrowNative(state, getters): string {
     if (
-      state.savingsInfo === undefined ||
+      getters.savingsInfo === undefined ||
       state.isSavingsInfoLoading ||
       state.savingsDPY === undefined
     ) {
@@ -120,24 +136,20 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     return multiply(getters.savingsInfoBalanceNative, multiplier);
   },
   savingsEstimatedEarningsAnnuallyNative(state, getters): string {
-    if (
-      state.savingsInfo === undefined ||
-      state.isSavingsInfoLoading ||
-      state.savingsAPY === undefined
-    ) {
+    if (state.savingsAPY === undefined) {
       return '0';
     }
 
     const multiplier = divide(state.savingsAPY, 100);
     return multiply(getters.savingsInfoBalanceNative, multiplier);
   },
-  savingsMonthStatsOptions(state): Array<SavingsMonthBalanceItem> {
-    if (state.isSavingsInfoLoading || state.savingsInfo === undefined) {
+  savingsMonthStatsOptions(state, getters): Array<SavingsMonthBalanceItem> {
+    if (state.isSavingsInfoLoading || getters.savingsInfo === undefined) {
       return [];
     }
 
     let hasTrimmedLeft = false;
-    return state.savingsInfo.last12MonthsBalances
+    return getters.savingsInfo.last12MonthsBalances
       .reduce((acc, item) => {
         if (item.balance === 0 && !hasTrimmedLeft) {
           return acc;
@@ -148,7 +160,7 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
       }, new Array<SavingsMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
-  hasActiveSavings(state): boolean {
+  hasActiveSavings(state, getters): boolean {
     if (
       state.savingsBalance !== undefined &&
       greaterThan(state.savingsBalance, 0)
@@ -156,16 +168,18 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
       return true;
     }
 
-    if (state.savingsInfo !== undefined && !state.isSavingsInfoLoading) {
-      const isCurrentBalanceNotEmpty = state.savingsInfo.currentBalance > 0;
-      const isEarnedTotalNotEmpty = state.savingsInfo.earnedTotal > 0;
+    if (getters.savingsInfo !== undefined && !state.isSavingsInfoLoading) {
+      const isCurrentBalanceNotEmpty = getters.savingsInfo.currentBalance > 0;
+      const isEarnedTotalNotEmpty = getters.savingsInfo.earnedTotal > 0;
 
       if (isCurrentBalanceNotEmpty || isEarnedTotalNotEmpty) {
         return true;
       }
 
       const hadAtLeastOneMonthWithNonZeroBalance =
-        state.savingsInfo.last12MonthsBalances.some((item) => item.balance > 0);
+        getters.savingsInfo.last12MonthsBalances.some(
+          (item) => item.balance > 0
+        );
       if (hadAtLeastOneMonthWithNonZeroBalance) {
         return true;
       }
@@ -173,12 +187,12 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
 
     return false;
   },
-  savingsAvg30DaysAPY(state): string {
-    if (state.savingsInfo === undefined || state.isSavingsInfoLoading) {
+  savingsAvg30DaysAPY(state, getters): string {
+    if (getters.savingsInfo === undefined || state.isSavingsInfoLoading) {
       return '0';
     }
 
-    return multiply(state.savingsInfo.avg30DaysAPY, 100);
+    return multiply(getters.savingsInfo.avg30DaysAPY, 100);
   },
   usdcNativePrice(state, getters, _, rootGetters): string {
     return rootGetters['account/usdcNativePrice'];
