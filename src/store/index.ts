@@ -7,10 +7,6 @@ import { Theme } from '@/settings/theme';
 import actions from './actions';
 import account from './modules/account';
 import debitCard from './modules/debit-card';
-import {
-  earningsModule as earnings,
-  registerNestedModules as earningsRegisterNestedModules
-} from './modules/earnings';
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
@@ -44,11 +40,6 @@ const store = new Vuex.Store<RootStoreState>({
 
 if (isFeatureEnabled('isNibbleShopEnabled')) {
   store.registerModule('shop', shop);
-}
-
-if (isFeatureEnabled('isEarningsEnabled')) {
-  store.registerModule('earnings', earnings);
-  earningsRegisterNestedModules(store);
 }
 
 if (isFeatureEnabled('isDebitCardEnabled')) {

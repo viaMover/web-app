@@ -32,12 +32,6 @@
       />
 
       <home-masthead-nav-bar-item
-        v-if="isFeatureEnabled('isEarningsEnabled')"
-        navigate-to-name="earnings-manage"
-        :text="$t('earnings.lblEarnings')"
-      />
-
-      <home-masthead-nav-bar-item
         v-if="isFeatureEnabled('isBondsEnabled')"
         navigate-to-name="bonds"
         :text="$t('bonds.lblBonds')"
