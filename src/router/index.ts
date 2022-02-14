@@ -48,24 +48,6 @@ const routes: Array<RouteConfig> = [
       skipPreloadScreen: true
     }
   ),
-  {
-    path: '/release-radar',
-    component: () =>
-      import(
-        /* webpackChunkName: "release-radar" */ '@/views/release-radar/release-radar-root.vue'
-      ),
-    children: [
-      {
-        path: '',
-        name: 'release-radar-view-all',
-        component: () =>
-          import(
-            /* webpackChunkName: "release-radar" */ '@/views/release-radar/release-radar-view-all.vue'
-          )
-      }
-    ],
-    beforeEnter: checkFeatureFlag('isReleaseRadarEnabled')
-  },
   wrapWithCustomPreloadView(
     {
       path: '/savings',

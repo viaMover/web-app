@@ -14,7 +14,6 @@ import {
 import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
-import radar from './modules/radar';
 import savings from './modules/savings';
 import shop from './modules/shop';
 import treasury from './modules/treasury';
@@ -46,10 +45,6 @@ const store = new Vuex.Store<RootStoreState>({
 
 if (isFeatureEnabled('isNibbleShopEnabled')) {
   store.registerModule('shop', shop);
-}
-
-if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  store.registerModule('radar', radar);
 }
 
 if (isFeatureEnabled('isEarningsEnabled')) {
