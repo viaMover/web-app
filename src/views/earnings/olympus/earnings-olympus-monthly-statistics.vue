@@ -1,22 +1,30 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <secondary-page-simple-title
-      class="monthly-statements-title"
-      :description="pageSubtitle"
-      :title="pageTitle"
-    />
-    <statement-list>
-      <statement-list-item
-        :description="$t('earnings.statement.lblBalance', { month: monthName })"
-        :value="balanceNative"
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
+  >
+    <template v-slot:title>
+      <secondary-page-header
+        class="monthly-statements-title"
+        :description="pageSubtitle"
+        :title="pageTitle"
       />
-      <statement-list-item
-        :description="
+    </template>
+
+    <analytics-list>
+      <analytics-list-item
+        :description="balanceNative"
+        :title="$t('earnings.statement.lblBalance', { month: monthName })"
+      />
+      <analytics-list-item
+        :description="totalEarned"
+        :title="
           $t('earnings.statement.lblTotalEarnedInMonth', { month: monthName })
         "
-        :value="totalEarned"
       />
-      <statement-list-item
+      <analytics-list-item
         :description="
           $t('earnings.statement.lblAverageDailyEarningsInMonth', {
             month: monthName
@@ -24,27 +32,23 @@
         "
         :value="averageDailyEarnings"
       />
-      <statement-list-item
-        :description="
-          $t('earnings.statement.lblDeposits', { month: monthName })
-        "
-        :value="depositsNative"
+      <analytics-list-item
+        :description="depositsNative"
+        :title="$t('earnings.statement.lblDeposits', { month: monthName })"
       />
-      <statement-list-item
-        :description="
-          $t('earnings.statement.lblWithdrawals', { month: monthName })
-        "
-        :value="withdrawalsNative"
+      <analytics-list-item
+        :description="withdrawalsNative"
+        :title="$t('earnings.statement.lblWithdrawals', { month: monthName })"
       />
-      <statement-list-item
-        :description="$t('earnings.statement.lblSavedFees')"
-        :value="savedFeesNative"
+      <analytics-list-item
+        :description="savedFeesNative"
+        :title="$t('earnings.statement.lblSavedFees')"
       />
-      <statement-list-item
-        :description="$t('earnings.statement.lblPayoutsToEarnings')"
-        :value="payoutsToTreasuryNative"
+      <analytics-list-item
+        :description="payoutsToTreasuryNative"
+        :title="$t('earnings.statement.lblPayoutsToEarnings')"
       />
-    </statement-list>
+    </analytics-list>
   </secondary-page>
 </template>
 
@@ -55,23 +59,19 @@ import { mapActions } from 'vuex';
 import dayjs from 'dayjs';
 
 import { isFeatureEnabled } from '@/settings';
-import { FetchEthereumReceiptPayload } from '@/store/modules/earnings/modules/ethereum/types';
 import { FetchOlympusReceiptPayload } from '@/store/modules/earnings/modules/olympus/types';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import { dateFromExplicitPair } from '@/utils/time';
 
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 export default Vue.extend({
   name: 'EarningsOlympusMonthlyStatistics',
   components: {
-    StatementListItem,
-    StatementList,
-    SecondaryPageSimpleTitle,
+    AnalyticsListItem,
+    AnalyticsList,
+    SecondaryPageHeader,
     SecondaryPage
   },
   computed: {

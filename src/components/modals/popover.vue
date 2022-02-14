@@ -1,21 +1,11 @@
 <template>
   <div>
-    <div
-      class="burger-menu__popup-bg"
-      :class="{ 'burger-menu__popup-bg-active': isVisible }"
-      @click.prevent="toggle"
-    />
-    <div
-      ref="popper"
-      class="burger-menu__popup"
-      :class="{ 'burger-menu__popup-active': isVisible }"
-    >
-      <div class="burger-menu__wrapper">
-        <div class="burger-menu__wrapper-info">
-          <ul>
-            <slot></slot>
-          </ul>
-        </div>
+    <div class="burger-bg" :class="{ active: isVisible }" @click="toggle" />
+    <div ref="popper" class="burger-content" :class="{ active: isVisible }">
+      <div class="burger-content-wrapper">
+        <ul>
+          <slot></slot>
+        </ul>
       </div>
     </div>
   </div>
@@ -63,9 +53,10 @@ export default Vue.extend({
       return;
     }
 
-    const thisElem = this.$refs.popper as HTMLElement;
+    const thisEl = this.$refs.popper as HTMLElement;
 
-    this.popperInstance = createPopper(parentEl, thisElem, {
+    this.popperInstance = createPopper(parentEl, thisEl, {
+      strategy: 'absolute',
       placement: this.placement as Placement,
       modifiers: [
         offset,

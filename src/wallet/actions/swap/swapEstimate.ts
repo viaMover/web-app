@@ -42,7 +42,7 @@ export const estimateSwapCompound = async (
       web3
     );
   } catch (err) {
-    console.error(`Can't estimate approve: ${err}`);
+    console.error(`Can't estimate approve:`, err);
     return {
       error: true,
       approveGasLimit: '0',
@@ -73,7 +73,7 @@ export const estimateSwapCompound = async (
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
-      console.error(`Can't estimate approve: ${err}`);
+      console.error(`Can't estimate approve:`, err);
       return {
         error: true,
         actionGasLimit: '0',

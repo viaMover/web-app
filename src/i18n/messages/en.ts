@@ -1,6 +1,7 @@
 import VueI18n from 'vue-i18n';
 
 import { isFeatureEnabled } from '@/settings';
+import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
   lblPageTitleDefault: 'Mover App',
@@ -15,7 +16,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblWallet: 'Wallet',
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
-  lblConnectWalletTransactionHistory: 'Looks like you are new to Mover',
+  lblNewToMover: 'Looks like you are new to Mover',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',
@@ -26,6 +27,9 @@ const messages: VueI18n.LocaleMessageObject = {
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
   btnDashboardMobile: 'Got it. Take me home',
   lblTokenAlt: '{symbol} token image',
+  lblHistory: 'History',
+  lblTotalBalance: 'Total balance',
+  lblCollectibles: 'Collectibles',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -91,7 +95,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblBeautifulCard: 'Beautiful Card',
     txtBeautifulCard:
       'The Beautiful Card is brought to you by Mover and our partner Trastra',
-    txtBeautifulCardBenifits: 'Your Beautiful Card has the following benefits',
+    txtBeautifulCardBenefits: 'Your Beautiful Card has the following benefits',
     lblFree: 'Free',
     txtFree: 'Crypto to EUR for free',
     lblNoLimit: 'No limit',
@@ -322,6 +326,7 @@ const messages: VueI18n.LocaleMessageObject = {
     txtSavingsOverviewDescription:
       'Savings is a non-custodial and permissionless product. ' +
       'Check the global statistics across the board.',
+    lblLoadMonthStatError: 'Failed to load Savings monthly statements',
     btnDeposit: {
       simple: 'Deposit in @:savings.lblSavingsPrefix',
       emoji: '💰 @:savings.btnDeposit.simple'
@@ -435,6 +440,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSpentInTotal: 'Spent in total',
     lblReservedAssets: 'Reserved assets',
     lblCurrentCostCoverage: 'up to 100%',
+    lblLoadMonthStatError: 'Failed to load Treasury monthly statements',
     leftRail: {
       lblManageSmartTreasury: 'Manage Smart Treasury',
       lblIncreaseBoost: 'Increase Boost',
@@ -844,7 +850,7 @@ const messages: VueI18n.LocaleMessageObject = {
     txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
     txtOhNoSomething: 'Oh no. Something went wrong',
     txtNFTs: {
-      dice: {
+      [NftAssetId.Dice]: {
         description:
           'Dice is a randomizer contract as NFT. You can roll from ' +
           'your wallet, and store results on chain',
@@ -854,7 +860,7 @@ const messages: VueI18n.LocaleMessageObject = {
           'allows you to roll a dice and store results on chain.',
         pageDescriptionPartTwo: 'For more details, please visit the {0}.'
       },
-      vaults: {
+      [NftAssetId.Vaults]: {
         description:
           'Vault is a randomized adventurer bank account generated and ' +
           'stored on chain.',
@@ -867,7 +873,7 @@ const messages: VueI18n.LocaleMessageObject = {
           'For more details on the criteria, please see the {0}',
         faq: 'FAQ'
       },
-      movingWithOlympus: {
+      [NftAssetId.MovingWithOlympus]: {
         description:
           'The Moving with Olympus NFT gives you an exclusive avatar.',
         pageDescriptionPartOne:
@@ -878,7 +884,7 @@ const messages: VueI18n.LocaleMessageObject = {
           'This NFT gives it’s owner a right to a ' +
           'unique avatar on Mover. Wear the badge of honor.'
       },
-      swapPassport: {
+      [NftAssetId.SwapPassport]: {
         description:
           'The Swap Passport NFT can be exchanged for one free swap via Mover.',
         pageDescription:
@@ -886,7 +892,7 @@ const messages: VueI18n.LocaleMessageObject = {
           'who was present during the Sushi AMA on July 14th 2021. This NFT ' +
           'can be exchanged for one free swap on Mover platform.'
       },
-      sweetAndSour: {
+      [NftAssetId.SweetAndSour]: {
         description: 'The Sweet & Sour NFT gives early access to Nibble Shop.',
         pageDescriptionPartOne:
           'This NFT is dropped for all unique addresses that have held HOLY ' +
@@ -895,7 +901,7 @@ const messages: VueI18n.LocaleMessageObject = {
         pageDescriptionPartTwo:
           'The Sweet & Sour NFT gives early access to Nibble Shop.'
       },
-      unexpectedMove: {
+      [NftAssetId.UnexpectedMove]: {
         description:
           'The Unexpected Move NFT can be exchanged for 1 MOVE token, ' +
           'but only once.',
@@ -907,70 +913,29 @@ const messages: VueI18n.LocaleMessageObject = {
       }
     },
     btn: {
-      unexpectedMove: {
-        get: {
-          txt: 'Get my Unexpected Move'
-        },
-        claimAndExchange: {
-          emoji: '🦍',
-          txt: 'Claim and Exchange for MOVE'
-        },
-        exchange: {
-          emoji: '🔄',
-          txt: 'Exchange for MOVE'
-        }
+      [NftAssetId.UnexpectedMove]: {
+        get: 'Get my Unexpected Move',
+        claimAndExchange: 'Claim and Exchange for MOVE',
+        exchange: 'Exchange for MOVE'
       },
-      sweetAndSour: {
-        get: {
-          txt: 'Get my Swet & Sour'
-        }
+      [NftAssetId.SweetAndSour]: {
+        get: 'Get my Sweet & Sour'
       },
-      movingWithOlympus: {
-        get: {
-          txt: 'Get my Moving with Olympus'
-        }
+      [NftAssetId.MovingWithOlympus]: {
+        get: 'Get my Moving with Olympus'
       },
-      vaults: {
-        get: {
-          txt: 'I fit the criteria, get my Vault'
-        },
-        noWorries: {
-          emoji: '🤓',
-          txt: 'No worries, still get the Vault'
-        }
+      [NftAssetId.Vaults]: {
+        get: 'I fit the criteria, get my Vault'
       },
-      dice: {
-        get: {
-          txt: 'Get the 20-sided dice'
-        },
-        fourSide: {
-          emoji: '🍀',
-          txt: '4-sided dice'
-        },
-        sixSide: {
-          emoji: '🎲',
-          txt: '6-sided dice'
-        },
-        doubleSixSide: {
-          emoji: '👯‍♀️',
-          txt: 'two 6-sided dice'
-        },
-        eightSide: {
-          emoji: '🎱',
-          txt: '8-sided dice'
-        },
-        tenSide: {
-          emoji: '🔟',
-          txt: '10-sided dice'
-        },
-        twelveSide: {
-          emoji: '🕛',
-          txt: '12-sided dice'
-        },
-        twentySide: {
-          emoji: '🧙‍♂️',
-          txt: '20-sided dice'
-        }
+      [NftAssetId.Dice]: {
+        get: 'Get the 20-sided dice',
+        fourSide: '4-sided dice',
+        sixSide: '6-sided dice',
+        doubleSixSide: 'two 6-sided dice',
+        eightSide: '8-sided dice',
+        tenSide: '10-sided dice',
+        twelveSide: '12-sided dice',
+        twentySide: '20-sided dice'
       }
     }
   },
@@ -1121,21 +1086,8 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
     lblPrice: 'Price',
     lblWhatElseCanDo: 'What else can you do',
     btn: {
-      get: {
-        txt: 'Purchase the {item}'
-      },
-      redeem: {
-        emoji: '📦',
-        txt: 'Reedem'
-      },
-      sell: {
-        emoji: '🚪',
-        txt: 'Sell'
-      },
-      buy: {
-        emoji: '🛍',
-        txt: 'Buy'
-      }
+      get: 'Purchase the {item}',
+      redeem: 'Reedem'
     },
     lblNoNFT: "That's sour! You don't have Sweet & Sour NFT",
     txtNoNFT:

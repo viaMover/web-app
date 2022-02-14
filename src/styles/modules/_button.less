@@ -1,0 +1,125 @@
+.button {
+  height: @button-height;
+  width: auto;
+  padding: 8px 16px;
+  color: @button-secondary-text;
+  background-color: @button-secondary-background;
+  cursor: pointer;
+  border-radius: 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  @font-bold();
+  @drop-shadow();
+
+  &.icon {
+    & > * + *,
+    & > img,
+    & > picture {
+      justify-content: space-between;
+    }
+
+    & > picture,
+    & > img,
+    & > .icon {
+      margin-right: 8px;
+    }
+  }
+
+  &.icon-only {
+    justify-content: center;
+
+    & > picture,
+    & > img,
+    & > .icon {
+      margin-right: unset;
+    }
+
+    &.inherit-size {
+      picture,
+      img {
+        width: inherit;
+        height: inherit;
+      }
+    }
+  }
+
+  &:active {
+    transform: scale(1.06);
+  }
+
+  &.round {
+    height: @button-height;
+    width: $height;
+    padding: 8px;
+  }
+
+  &.round,
+  &.skeleton {
+    * {
+      border-radius: 20px;
+    }
+  }
+
+  &.transparent {
+    color: @button-transparent-text;
+    background-color: @button-transparent-background;
+    box-shadow: none;
+    @font-medium();
+
+    &.fit {
+      height: auto;
+      width: auto;
+    }
+  }
+
+  &.no-padding {
+    padding: 0;
+  }
+
+  &.primary {
+    color: @button-primary-text;
+    background-color: @button-primary-background;
+  }
+
+  &.secondary {
+    color: @button-secondary-text;
+    background-color: @button-secondary-background;
+  }
+
+  &.navigation {
+    color: @button-navigation-text;
+    background-color: @button-navigation-background;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+
+    &:active {
+      transform: none;
+    }
+  }
+
+  &.smallest {
+    padding: 0;
+    width: 12px;
+    height: 12px;
+    @drop-shadow();
+
+    & > * {
+      width: 6px;
+    }
+  }
+}
+
+.button-like {
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:active {
+    transform: scale(1.06);
+  }
+}

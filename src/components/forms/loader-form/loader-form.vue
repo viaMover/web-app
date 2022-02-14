@@ -1,10 +1,10 @@
 <template>
-  <div class="transaction__wrapper">
-    <div class="transaction__wrapper-status">
+  <div class="transaction-wrapper">
+    <div class="status">
       <h1 class="title">{{ selectedStepData.title }}</h1>
-      <p class="description">{{ selectedStepData.subtitle }}</p>
+      <div class="description">{{ selectedStepData.subtitle }}</div>
     </div>
-    <div class="transaction__wrapper-gif">
+    <div class="gif">
       <video
         v-if="selectedStepData.id === 'Confirm'"
         autoplay="autoplay"

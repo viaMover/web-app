@@ -1,19 +1,105 @@
 <template>
   <content-wrapper
+    class="product savings"
     has-close-button
     has-left-rail
-    is-black-close-button
-    left-rail-inner-wrapper-class="page-sidebar-wrapper"
-    wrapper-class="savings"
     @close="handleClose"
   >
     <template v-slot:left-rail>
-      <keep-alive>
-        <savings-left-rail />
-      </keep-alive>
+      <nav class="left-rail navigation">
+        <div class="wrapper">
+          <div class="list">
+            <navigation-section
+              :is-loading="isStoreLoading"
+              :section-name="$t('savings.lblMySavings')"
+            >
+              <navigation-section-item-image
+                :description="savingsBalance"
+                description-class="bold emphasize"
+                navigate-to="savings-manage"
+                :title="$t('savings.lblSavings')"
+                title-class="muted medium"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="savings.alt"
+                    :sources="savings.sources"
+                    :src="savings.src"
+                    :webp-sources="savings.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
+            </navigation-section>
+
+            <navigation-section
+              :is-loading="isStoreLoading"
+              :section-name="$t('savings.lblManageSavings')"
+              :skeleton-components-count="3"
+            >
+              <navigation-section-item-image
+                :description="
+                  $t('savings.deposit.txtDepositShortDescription', {
+                    apy: formattedAPY
+                  })
+                "
+                description-class="disabled"
+                navigate-to="savings-deposit"
+                :title="$t('savings.btnDeposit.simple')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="savings.alt"
+                    :sources="savings.sources"
+                    :src="savings.src"
+                    :webp-sources="savings.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
+                v-if="hasActiveSavings"
+                :description="
+                  $t('savings.withdraw.txtWithdrawShortDescription')
+                "
+                description-class="disabled"
+                navigate-to="savings-withdraw"
+                :title="$t('savings.btnWithdraw.simple')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="withdraw.alt"
+                    :sources="withdraw.sources"
+                    :src="withdraw.src"
+                    :webp-sources="withdraw.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
+
+              <navigation-section-item-image
+                :description="$t('savings.txtGlobalAnalytics')"
+                description-class="disabled"
+                navigate-to="savings-global-analytics"
+                :title="$t('savings.lblGlobalAnalytics')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="global.alt"
+                    :sources="global.sources"
+                    :src="global.src"
+                    :webp-sources="global.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
+            </navigation-section>
+          </div>
+        </div>
+      </nav>
     </template>
 
-    <router-view />
+    <transition mode="out-in" name="fade">
+      <preload-product-secondary-page v-if="isStoreLoading" />
+      <router-view v-else />
+    </transition>
 
     <template v-slot:modals>
       <search-modal />
@@ -23,21 +109,96 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
+import { formatPercents, formatToNative } from '@/utils/format';
+import PreloadProductSecondaryPage from '@/views/preload/preload-product/preload-product-secondary-page.vue';
+
+import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal } from '@/components/modals';
-import { SavingsLeftRail } from '@/components/savings';
-
-import '@/styles/_savings.less';
+import {
+  NavigationSection,
+  NavigationSectionItemImage
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'SavingsRoot',
   components: {
-    SavingsLeftRail,
     ContentWrapper,
-    SearchModal
+    SearchModal,
+    NavigationSection,
+    NavigationSectionItemImage,
+    CustomPicture,
+    PreloadProductSecondaryPage
+  },
+  data() {
+    return {
+      savings: {
+        alt: 'Savings',
+        src: require('@/assets/images/Savings@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Savings@2x.webp')
+          }
+        ]
+      } as PictureDescriptor,
+      global: {
+        alt: 'Global',
+        src: require('@/assets/images/Global@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Global@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Global@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor,
+      withdraw: {
+        alt: 'Withdraw',
+        src: require('@/assets/images/Withdraw@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Withdraw@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Withdraw@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor
+    };
+  },
+  computed: {
+    ...mapState('savings', {
+      apy: 'savingsAPY',
+      isStoreLoading: 'isSavingsInfoLoading'
+    }),
+    ...mapGetters('savings', {
+      hasActiveSavings: 'hasActiveSavings',
+      savingsInfoBalanceNative: 'savingsInfoBalanceNative'
+    }),
+    formattedAPY(): string {
+      return formatPercents(this.apy);
+    },
+    savingsBalance(): string {
+      return `$${formatToNative(this.savingsInfoBalanceNative)}`;
+    }
+  },
+  async mounted() {
+    await this.loadInfo();
   },
   methods: {
+    ...mapActions('savings', { loadInfo: 'loadInfo' }),
     handleClose(): void {
       this.$router.replace({ name: 'home' });
     }

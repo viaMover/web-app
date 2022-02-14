@@ -9,7 +9,7 @@ import { Network } from '@/utils/networkTypes';
 import { NFT_DICE_ABI, NFT_DICE_ADDRESS } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
-import { Step } from '@/components/forms/form-loader/types';
+import { Step } from '@/components/forms/form-loader';
 
 import { DiceData, DiceType } from './types';
 
@@ -29,11 +29,16 @@ export const getDiceData = async (
     contractAddress
   );
 
+  const balance = await dice.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
   const totalClaimed = await dice.methods
     .totalClaimed()
     .call(transactionParams);
 
   return {
+    balance: balance.toString(),
     totalClaimed: totalClaimed.toString()
   };
 };

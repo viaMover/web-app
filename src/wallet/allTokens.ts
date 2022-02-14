@@ -15,10 +15,7 @@ export const getAllTokens = (network: Network): Array<Token> => {
           address: asset.id,
           decimals: asset.decimals,
           symbol: asset.symbol,
-          name:
-            asset.name.length > MAX_ASSET_NAME
-              ? asset.name.substr(0, MAX_ASSET_NAME)
-              : asset.name,
+          name: asset.name.slice(0, MAX_ASSET_NAME),
           logo: asset.imageUrl ?? getTokenLogo(asset.id),
           color: asset.color,
           marketCap: asset.marketCap ?? 0,
@@ -28,7 +25,22 @@ export const getAllTokens = (network: Network): Array<Token> => {
   } else {
     assets = getTestnetAssets(network);
   }
-  return assets.sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
+  return deduplicateByAddress(
+    assets.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    })
+  );
+};
+
+const deduplicateByAddress = (tokens: Array<Token>): Array<Token> => {
+  const knownAddresses = new Set();
+  return tokens.reduce((acc, t) => {
+    if (knownAddresses.has(t.address)) {
+      return acc;
+    }
+
+    knownAddresses.add(t.address);
+    acc.push(t);
+    return acc;
+  }, new Array<Token>());
 };

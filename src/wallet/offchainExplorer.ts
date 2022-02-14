@@ -75,7 +75,8 @@ export const initOffchainExplorer = (network: Network): void => {
             }
           } catch (err) {
             console.error(
-              `[offchainExplorer] Error response from 'CheckSubsidizedInQueueTx': ${err}`
+              `[offchainExplorer] Error response from 'CheckSubsidizedInQueueTx': `,
+              err
             );
           }
         }

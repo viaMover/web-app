@@ -1,39 +1,42 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
+  <secondary-page
+    class="powercard manage"
+    hide-info
+    hide-title
+    @back="handleBack"
+  >
     <template v-if="transactionStep === undefined">
-      <div>
-        <secondary-page-simple-title
-          class="page-title max-width"
-          :description="$t('treasury.powercard.txtThePowercardPageDescription')"
+      <secondary-page-header
+        class="max-width"
+        :description="$t('treasury.powercard.txtThePowercardPageDescription')"
+        :title="$t('treasury.powercard.lblThePowercard')"
+      />
+
+      <analytics-list>
+        <analytics-list-progress-item
+          :description="status"
+          :image="powercard"
+          :progress="powercardProgress"
           :title="$t('treasury.powercard.lblThePowercard')"
         />
-      </div>
-      <div class="margin-top-80">
-        <statement-list>
-          <statement-list-progress-item
-            :description="$t('treasury.powercard.lblThePowercard')"
-            :image="powercard"
-            :progress="powercardProgress"
-            :value="status"
-          />
-          <statement-list-item
-            :description="$t('treasury.powercard.lblPowercardStatus')"
-            :value="status"
-          />
-          <statement-list-item
-            :description="$t('treasury.powercard.lblRemainingTime')"
-            :value="remainingTime"
-          />
-        </statement-list>
-        <action-button
-          button-class="button button-active black-link margin-top-40"
-          :disabled="!unstakeAvailable"
-          :text="$t('treasury.powercard.btnRemoveThePowercard')"
-          @button-click="handleRemoveCard"
+        <analytics-list-item
+          :description="status"
+          :title="$t('treasury.powercard.lblPowercardStatus')"
         />
-        <div v-if="actionError !== undefined" class="action-error-message">
-          {{ actionError }}
-        </div>
+        <analytics-list-item
+          :description="remainingTime"
+          :title="$t('treasury.powercard.lblRemainingTime')"
+        />
+      </analytics-list>
+
+      <action-button
+        class="primary"
+        :disabled="!unstakeAvailable"
+        :text="$t('treasury.powercard.btnRemoveThePowercard')"
+        @button-click="handleRemoveCard"
+      />
+      <div v-if="actionError !== undefined" class="action-error-message">
+        {{ actionError }}
       </div>
     </template>
     <loader-form v-else :step="transactionStep" />
@@ -55,27 +58,27 @@ import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { unstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstake';
 import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstakeEstimate';
 
+import {
+  AnalyticsList,
+  AnalyticsListItem,
+  AnalyticsListProgressItem
+} from '@/components/analytics-list';
 import ActionButton from '@/components/buttons/action-button.vue';
 import { LoaderForm, LoaderStep } from '@/components/forms';
 import { PictureDescriptor } from '@/components/html5';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
-import {
-  StatementList,
-  StatementListItem,
-  StatementListProgressItem
-} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'TreasuryPowercardManage',
   components: {
-    StatementListProgressItem,
-    StatementListItem,
-    StatementList,
+    AnalyticsListProgressItem,
+    AnalyticsListItem,
+    AnalyticsList,
     ActionButton,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     SecondaryPage,
     LoaderForm
   },
@@ -99,14 +102,16 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('treasury', {
       powercardBalance: 'powercardBalance',
       powercardState: 'powercardState',
-      networkInfo: 'networkInfo',
-      provider: 'provider',
-      currentAddress: 'currentAddress',
       powercardActiveTime: 'powercardActiveTime',
       powercardCooldownTime: 'powercardCooldownTime'
+    }),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      provider: 'provider',
+      currentAddress: 'currentAddress'
     }),
     unstakeAvailable(): boolean {
       return this.powercardState === 'NotStakedCooldown';

@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="top-up"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >
@@ -30,18 +32,16 @@
       <template v-slot:swap-message>
         <div
           v-if="isSwapNeeded && formattedUSDCTotal && inputMode === 'TOKEN'"
-          class="form-swap"
+          class="section swap-message"
         >
-          <p>
-            {{ $t('forms.lblSwappingFor') }}
-            <custom-picture
-              :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
-              class="token"
-              :sources="usdcPicture.sources"
-              :src="usdcPicture.src"
-            />
-            <span>{{ formattedUSDCTotal }}</span>
-          </p>
+          {{ $t('forms.lblSwappingFor') }}
+          <custom-picture
+            :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
+            class="token-icon inline"
+            :sources="usdcPicture.sources"
+            :src="usdcPicture.src"
+          />
+          <span>{{ formattedUSDCTotal }}</span>
         </div>
       </template>
     </prepare-form>

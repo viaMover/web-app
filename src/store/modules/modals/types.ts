@@ -3,14 +3,8 @@ import { Token } from '@/wallet/types';
 import { Skin } from '../debit-card/types';
 
 export enum Modal {
-  SavingsDeposit = 'savings-deposit-modal',
-  SavingsWithdraw = 'savings-withdraw-modal',
   SearchToken = 'search-token-modal',
   Swap = 'swap-modal',
-  Transaction = 'transaction-modal',
-  TreasuryIncreaseBoost = 'treasury-increase-boost',
-  TreasuryDecreaseBoost = 'treasury-decrease-boost',
-  TreasuryClaimAndBurn = 'treasury-claim-and-burn',
   SearchSkin = 'search-skin-modal'
 }
 
@@ -20,14 +14,6 @@ export enum SwapType {
 }
 
 export interface TModalParams {
-  [Modal.SavingsDeposit]: {
-    payloadType: unknown | undefined;
-    returnType: undefined;
-  };
-  [Modal.SavingsWithdraw]: {
-    payloadType: undefined;
-    returnType: undefined;
-  };
   [Modal.SearchToken]: {
     payloadType: {
       useWalletTokens: boolean;
@@ -50,22 +36,6 @@ export interface TModalParams {
           swapType: SwapType;
         }
       | undefined;
-    returnType: undefined;
-  };
-  [Modal.Transaction]: {
-    payloadType: undefined;
-    returnType: undefined;
-  };
-  [Modal.TreasuryIncreaseBoost]: {
-    payloadType: undefined;
-    returnType: undefined;
-  };
-  [Modal.TreasuryDecreaseBoost]: {
-    payloadType: undefined;
-    returnType: undefined;
-  };
-  [Modal.TreasuryClaimAndBurn]: {
-    payloadType: undefined;
     returnType: undefined;
   };
 }

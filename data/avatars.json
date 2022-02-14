@@ -2,121 +2,121 @@
   {
     "id": "user1",
     "symbol": "\uD83E\uDD81",
-    "className": "user1",
-    "type": "symbol"
+    "type": "symbol",
+    "color": "#ffda38"
   },
   {
-    "id":  "user2",
+    "id": "user2",
     "symbol": "\uD83D\uDC3C",
-    "className": "user2",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#b5b0b6"
   },
   {
-    "id":  "user3",
+    "id": "user3",
     "symbol": "\uD83E\uDD84",
-    "className": "user3",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#ff96ca"
   },
   {
-    "id":  "user4",
+    "id": "user4",
     "symbol": "\uD83D\uDC37",
-    "className": "user4",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#ffb6ba"
   },
   {
-    "id":  "user5",
+    "id": "user5",
     "symbol": "\uD83D\uDC25",
-    "className": "user5",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#ffe67d"
   },
   {
-    "id":  "user6",
+    "id": "user6",
     "symbol": "\uD83D\uDC30",
-    "className": "user6",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#c8ccce"
   },
   {
-    "id":  "user7",
+    "id": "user7",
     "symbol": "\uD83D\uDC38",
-    "className": "user7",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#a8cf5a"
   },
   {
-    "id":  "user8",
+    "id": "user8",
     "symbol": "\uD83D\uDC3B",
-    "className": "user8",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#a2664f"
   },
   {
-    "id":  "user9",
+    "id": "user9",
     "symbol": "\uD83D\uDC3A",
-    "className": "user9",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#c8ccce"
   },
   {
-    "id":  "user10",
+    "id": "user10",
     "symbol": "\uD83E\uDD8A",
-    "className": "user10",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#e68444"
   },
   {
-    "id":  "user11",
+    "id": "user11",
     "symbol": "\uD83E\uDD65",
-    "className": "user11",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#c8ccce"
   },
   {
-    "id":  "user12",
+    "id": "user12",
     "symbol": "\uD83C\uDF49",
-    "className": "user12",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#ff8b84"
   },
   {
-    "id":  "user13",
+    "id": "user13",
     "symbol": "\uD83E\uDD5D",
-    "className": "user13",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#a8cf5a"
   },
   {
-    "id":  "user14",
+    "id": "user14",
     "symbol": "\uD83C\uDF55",
-    "className": "user14",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#ffaf1e"
   },
   {
-    "id":  "user15",
+    "id": "user15",
     "symbol": "\uD83D\uDC7B",
-    "className": "user15",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#b5b0b6"
   },
   {
-    "id":  "user16",
+    "id": "user16",
     "symbol": "\uD83C\uDF3B",
-    "className": "user16",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#ffdb3d"
   },
   {
-    "id":  "user17",
+    "id": "user17",
     "symbol": "\uD83D\uDC79",
-    "className": "user17",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#d65450"
   },
   {
-    "id":  "user18",
+    "id": "user18",
     "symbol": "\uD83D\uDC32",
-    "className": "user18",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#a8cf5a"
   },
   {
-    "id":  "user19",
+    "id": "user19",
     "symbol": "\uD83E\uDD16",
-    "className": "user19",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#69c2df"
   },
   {
-    "id":  "user20",
+    "id": "user20",
     "symbol": "\uD83C\uDF4F",
-    "className": "user20",
-    "type":  "symbol"
+    "type": "symbol",
+    "color": "#a8cf5a"
   }
 ]

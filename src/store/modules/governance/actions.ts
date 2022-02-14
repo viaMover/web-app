@@ -1,5 +1,3 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
@@ -28,9 +26,11 @@ import {
   VoteParams,
   VoteResponse
 } from '@/services/mover/governance';
-import { RootStoreState } from '@/store/types';
+import { ActionFuncs } from '@/store/types';
 import { fromWei } from '@/utils/bigmath';
 
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import {
   CreateProposalPayload,
   GovernanceStoreState,
@@ -40,7 +40,27 @@ import {
 } from './types';
 import { isValidCacheItem } from './utils';
 
-export default {
+type Actions = {
+  loadMinimalGovernanceInfo: Promise<ProposalInfo | undefined>;
+  loadGovernanceInfo: Promise<Array<ProposalWithVotes>>;
+  loadProposalInfo: Promise<ProposalInfo | undefined>;
+  createProposal: Promise<CreateProposalResponse>;
+  vote: Promise<VoteResponse>;
+  loadScoresSelf: Promise<Array<Scores>>;
+  loadScores: Promise<Scores>;
+  loadPowerInfo: Promise<void>;
+  loadCommunityVotingPower: Promise<string>;
+  loadVotingPowerSelfAtSnapshot: Promise<string>;
+  loadCurrentVotingPowerSelf: Promise<string>;
+  getBlockNumber: Promise<number>;
+};
+
+const actions: ActionFuncs<
+  Actions,
+  GovernanceStoreState,
+  MutationType,
+  GetterType
+> = {
   async loadMinimalGovernanceInfo(
     { commit, dispatch, state, getters },
     refetch = false
@@ -341,7 +361,7 @@ export default {
   async loadScoresSelf(
     { dispatch, rootState },
     { proposal, snapshot = 'latest' }: LoadScoresSelfPayload
-  ) {
+  ): Promise<Array<Scores>> {
     try {
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -738,4 +758,7 @@ export default {
       }
     }
   }
-} as ActionTree<GovernanceStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

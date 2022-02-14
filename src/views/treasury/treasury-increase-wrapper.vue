@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="increase"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >
@@ -148,19 +150,21 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', ['treasuryBoost']),
-    ...mapState('account', [
-      'networkInfo',
-      'tokens',
-      'treasuryBalanceMove',
-      'treasuryBalanceLP',
-      'currentAddress',
-      'provider',
-      'ethPrice',
-      'gasPrices',
-      'powercardState',
-      'nativeCurrency'
-    ]),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      tokens: 'tokens',
+      currentAddress: 'currentAddress',
+      provider: 'provider',
+      ethPrice: 'ethPrice',
+      gasPrices: 'gasPrices',
+      nativeCurrency: 'nativeCurrency'
+    }),
+    ...mapGetters('treasury', { treasuryBoost: 'treasuryBoost' }),
+    ...mapState('treasury', {
+      treasuryBalanceMove: 'treasuryBalanceMove',
+      treasuryBalanceLP: 'treasuryBalanceLP',
+      powercardState: 'powercardState'
+    }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },
@@ -419,7 +423,7 @@ export default Vue.extend({
       } catch (err) {
         this.isSubsidizedEnabled = false;
         this.isProcessing = false;
-        console.error(`can't estimate treasury deposit for subs: ${err}`);
+        console.error(`can't estimate treasury deposit for subs:`, err);
         Sentry.captureException("can't estimate treasury deposit for subs");
         return;
       }

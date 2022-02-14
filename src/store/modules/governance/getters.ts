@@ -1,11 +1,9 @@
-import { GetterTree } from 'vuex';
-
 import {
   Choice,
   getDefaultMinimumVotingThresholdMultiplier,
   ProposalInfo
 } from '@/services/mover/governance';
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
 import {
   divide,
@@ -20,7 +18,31 @@ import {
   ProposalState
 } from './types';
 
-export default {
+type Getters = {
+  proposalsIds: Array<string>;
+  proposalsOrderedByEndingDesc: Array<ProposalInfo>;
+  lastProposal: ProposalInfo | undefined;
+  timesVoted: number;
+  proposalsCreated: number;
+  totalNumberOfProposals: number;
+  openProposals: number;
+  succeededProposals: number;
+  defeatedProposals: number;
+  proposalCumulativeInfo: ProposalCumulativeInfo;
+  proposalVotedFor: (id: string) => number;
+  proposalVotedAgainst: (id: string) => number;
+  proposalCommunityVotingPower: (id: string) => string;
+  proposalVotingActivity: (id: string) => string;
+  proposalState: (id: string) => ProposalState;
+  minimumVotingThreshold: string;
+  isAlreadyVoted: (id: string) => boolean;
+  ipfsLink: (id: string) => string | undefined;
+  hasEnoughVotingPowerToVote: (id: string) => boolean;
+  hasEnoughVotingPowerToBecomeAProposer: boolean;
+  votingPowerSelfOnProposal: (id: string) => string;
+};
+
+const getters: GettersFuncs<Getters, GovernanceStoreState> = {
   proposalsIds(state): Array<string> {
     return state.items.map((proposalInfo) => proposalInfo.proposal.id);
   },
@@ -243,4 +265,7 @@ export default {
 
     return (id: string) => source[id]?.votingPowerSelf ?? '0';
   }
-} as GetterTree<GovernanceStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

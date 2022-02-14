@@ -1,12 +1,12 @@
 <template>
-  <div class="card-image">
+  <pu-skeleton class="card-image" :loading="isLoading" tag="div">
     <custom-picture
       :alt="skin.picture.alt"
       :sources="skin.picture.sources"
       :src="skin.picture.src"
       :webp-sources="skin.picture.webpSources"
     />
-  </div>
+  </pu-skeleton>
 </template>
 
 <script lang="ts">
@@ -25,6 +25,10 @@ export default Vue.extend({
     skin: {
       type: Object as PropType<Skin>,
       required: true
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   }
 });

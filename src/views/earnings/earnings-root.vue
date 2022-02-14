@@ -3,7 +3,6 @@
     base-class="info__wrapper"
     has-close-button
     has-left-rail
-    is-black-close-button
     page-container-class=""
     wrapper-class="earnings"
     @close="handleClose"
@@ -15,7 +14,9 @@
       </div>
     </template>
 
-    <router-view />
+    <transition mode="out-in" name="fade">
+      <router-view />
+    </transition>
 
     <template v-slot:modals>
       <search-modal key="search-modal" />
@@ -30,8 +31,6 @@ import { mapActions } from 'vuex';
 import { EarningsNavLeftRailItem } from '@/components/earnings';
 import { ContentWrapper } from '@/components/layout';
 import { SearchModal } from '@/components/modals';
-
-import '@/styles/_earnings.less';
 
 export default Vue.extend({
   name: 'EarningsRoot',

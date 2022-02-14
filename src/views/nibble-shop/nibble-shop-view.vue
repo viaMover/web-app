@@ -1,67 +1,90 @@
 <template>
-  <div>
-    <shop-wrapper has-close-button @close="handleClose">
-      <template v-slot:info>
-        <h1 class="info__title">{{ productTitle }}</h1>
-        <p class="info__description">
+  <content-wrapper-two-sided
+    class="shop nibble-shop"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ productTitle }}</h1>
+        <div class="description">
           {{ $t(`nibbleShop.txtAssets.${id}.description`) }}
-        </p>
-        <shop-list>
-          <shop-list-item
-            :title="$t('nibbleShop.lblTotalAvailable')"
-            :value="totalAvailable"
-          />
-          <shop-list-item
-            :title="$t('nibbleShop.lblPrice')"
-            :value="productPrice"
-          />
-        </shop-list>
-        <action-button
-          button-class="button button-active"
-          :text="$t('nibbleShop.btn.get.txt', { item: productShortName })"
-          @button-click="handleClaim"
-        />
-        <div v-if="getTokenError !== undefined" class="error-message">
-          {{ getTokenError }}
         </div>
-        <div class="info__more">
-          <p>{{ $t('nibbleShop.lblWhatElseCanDo') }}</p>
-          <ul>
-            <li>
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="totalAvailable"
+          :is-loading="isStoreLoading"
+          :title="$t('nibbleShop.lblTotalAvailable')"
+        />
+        <analytics-list-item
+          :description="productPrice"
+          :title="$t('nibbleShop.lblPrice')"
+        />
+      </analytics-list>
+
+      <form
+        class="form"
+        :class="{ error: !!actionError || !!getTokenError }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              :disabled="isStoreLoading"
+              :text="$t('nibbleShop.btn.get', { item: productShortName })"
+              @button-click="handleClaim"
+            />
+          </div>
+
+          <div v-if="getTokenError !== undefined" class="group error-message">
+            {{ getTokenError }}
+          </div>
+
+          <div class="group">
+            <h3 class="title">{{ $t('nibbleShop.lblWhatElseCanDo') }}</h3>
+            <div class="items">
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('nibbleShop.btn.redeem.emoji')"
-                :text="$t('nibbleShop.btn.redeem.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="📦"
+                :text="$t('nibbleShop.btn.redeem')"
                 @button-click="handleRedeem"
               />
-            </li>
-            <li>
-              <div v-if="actionError !== undefined" class="error-message">
-                {{ actionError }}
-              </div>
-            </li>
-          </ul>
+            </div>
+          </div>
+
+          <div v-if="actionError !== undefined" class="group error-message">
+            {{ actionError }}
+          </div>
         </div>
-      </template>
-      <template v-slot:illustration>
-        <video
-          autoplay="autoplay"
-          data-keepplaying="data-keepplaying"
-          loop="loop"
-          muted="muted"
-          playsinline="playsinline"
-          :style="videoStyle"
-        >
-          <source :src="product.page.videoSrc" type="video/webm" />
-        </video>
-      </template>
-    </shop-wrapper>
-    <simple-loader-modal
-      v-if="transactionStep !== undefined"
-      :loader-step="transactionStep"
-      @close="transactionStep = undefined"
-    />
-  </div>
+      </form>
+    </template>
+
+    <template v-slot:right>
+      <video
+        autoplay="autoplay"
+        data-keepplaying="data-keepplaying"
+        loop="loop"
+        muted="muted"
+        playsinline="playsinline"
+        poster="@/assets/images/ios-spinner.svg"
+        :style="videoStyle"
+      >
+        <source :src="product.page.videoSrc" type="video/webm" />
+      </video>
+    </template>
+
+    <template v-slot:modals>
+      <simple-loader-modal
+        v-if="transactionStep !== undefined"
+        :loader-step="transactionStep"
+        @close="transactionStep = undefined"
+      />
+    </template>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -71,23 +94,24 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import { Properties } from 'csstype';
 
-import { ClaimPayload } from '@/store/modules/shop/actions/claim';
+import { ClaimPayload } from '@/store/modules/shop/types';
 import { Asset } from '@/store/modules/shop/types';
 import { fromWei } from '@/utils/bigmath';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
+import { ContentWrapperTwoSided } from '@/components/layout';
 import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NibbleShopView',
   components: {
+    ContentWrapperTwoSided,
     EmojiTextButton,
     ActionButton,
-    ShopList,
-    ShopListItem,
-    ShopWrapper,
+    AnalyticsList,
+    AnalyticsListItem,
     SimpleLoaderModal
   },
   data() {
@@ -98,7 +122,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('shop', { products: 'assets' }),
+    ...mapState('shop', { products: 'assets', isStoreLoading: 'isLoading' }),
     id(): string {
       return this.$route.params.id;
     },

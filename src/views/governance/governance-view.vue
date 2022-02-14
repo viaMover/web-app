@@ -1,22 +1,20 @@
 <template>
-  <secondary-page
-    has-back-button
-    :title="proposal ? proposal.proposal.title : ''"
-    @back="handleBack"
-  >
-    <template v-if="isLoading" v-slot:title>
-      <pu-skeleton class="title page-title" tag="h2" />
+  <secondary-page class="view" has-back-button hide-info @back="handleBack">
+    <template v-slot:title>
+      <secondary-page-header :title="pageTitle" />
     </template>
 
-    <div class="content">
-      <template v-if="!isLoading">
+    <div class="text">
+      <div v-if="proposal === undefined" class="skeleton-text">
+        <pu-skeleton v-for="idx in 8" :key="idx" tag="p" />
+      </div>
+      <template v-else>
         <markdown
           v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
           :text="proposal ? proposal.proposal.body : ''"
         />
         <p v-else>{{ proposal ? proposal.proposal.body : '' }}</p>
       </template>
-      <pu-skeleton v-else :count="8" />
     </div>
   </secondary-page>
 </template>
@@ -28,12 +26,17 @@ import { mapState } from 'vuex';
 import { ProposalWithVotes } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
 
-import { Markdown, SecondaryPage } from '@/components/layout';
+import {
+  Markdown,
+  SecondaryPage,
+  SecondaryPageHeader
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceView',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     Markdown
   },
   computed: {
@@ -42,9 +45,19 @@ export default Vue.extend({
       isLoading: 'isLoading'
     }),
     proposal(): ProposalWithVotes | undefined {
-      return this.items.find(
-        (item: ProposalWithVotes) => item.proposal.id === this.$route.params.id
+      return (
+        this.items.find(
+          (item: ProposalWithVotes) =>
+            item.proposal.id === this.$route.params.id
+        ) ?? undefined
       );
+    },
+    pageTitle(): string {
+      if (this.proposal === undefined) {
+        return this.$t('governance.lblProposal').toString();
+      }
+
+      return this.proposal.proposal.title;
     }
   },
   methods: {

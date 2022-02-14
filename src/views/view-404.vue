@@ -1,12 +1,14 @@
 <template>
   <content-wrapper
-    base-class="not-found"
+    class="view-404"
     has-back-button
-    wrapper-class="not-found"
+    page-content-class="centered"
     @back="handleBack"
   >
-    <h1>404</h1>
-    <p>{{ $t('txtNotFound') }}</p>
+    <div class="container">
+      <h1 class="title">404</h1>
+      <p class="description">{{ $t('txtNotFound') }}</p>
+    </div>
   </content-wrapper>
 </template>
 
@@ -14,8 +16,6 @@
 import Vue from 'vue';
 
 import ContentWrapper from '@/components/layout/content-wrapper.vue';
-
-import '@/styles/_404.less';
 
 export default Vue.extend({
   name: 'View404',

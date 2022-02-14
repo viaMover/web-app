@@ -1,193 +1,195 @@
 <template>
-  <secondary-page hide-title>
-    <secondary-page-simple-title
-      class="page-title max-width"
-      :description="$t('debitCard.txtOrderCard')"
-      :title="$t('debitCard.lblOrderCard')"
-    />
+  <secondary-page class="manage order-card" hide-info>
+    <template v-slot:title>
+      <secondary-page-header
+        class="page-title max-width"
+        :description="$t('debitCard.txtOrderCard')"
+        :title="$t('debitCard.lblOrderCard')"
+      />
+    </template>
 
-    <div class="content">
-      <div class="floating right container">
-        <debit-card-image class="small" :skin="currentSkin" />
+    <template v-slot:info>
+      <debit-card-image class="small" :skin="currentSkin" />
+    </template>
+
+    <form
+      class="form order"
+      :class="{ error: $v.$anyError || errorText !== '' }"
+      @submit.prevent="handleOrderCard"
+    >
+      <div class="input-group" :class="{ error: $v.email.$error }">
+        <label>
+          {{ $t('debitCard.lblYourEmailAddress') }}
+          <input
+            v-model.trim="email"
+            autocomplete="email"
+            autofocus
+            :disabled="isLoading"
+            name="email"
+            :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
+            type="text"
+          />
+        </label>
+        <span v-if="!$v.email.required" class="error-message">
+          {{ $t('debitCard.errors.email.required') }}
+        </span>
+        <span v-if="!$v.email.isValidEmail" class="error-message">
+          {{ $t('debitCard.errors.email.invalid') }}
+        </span>
       </div>
 
-      <div class="container">
-        <form
-          class="form order"
-          :class="{ error: $v.$anyError || errorText !== '' }"
-          @submit.prevent="handleOrderCard"
-        >
-          <div class="input-group" :class="{ error: $v.email.$error }">
-            <label>
-              {{ $t('debitCard.lblYourEmailAddress') }}
-              <input
-                v-model.trim="email"
-                autocomplete="email"
-                autofocus
-                :disabled="isLoading"
-                name="email"
-                :placeholder="$t('debitCard.txtYourEmailAddressPlaceholder')"
-                type="text"
-              />
-            </label>
-            <span v-if="!$v.email.required" class="error-message">
-              {{ $t('debitCard.errors.email.required') }}
-            </span>
-            <span v-if="!$v.email.isValidEmail" class="error-message">
-              {{ $t('debitCard.errors.email.invalid') }}
-            </span>
-          </div>
+      <div class="input-group" :class="{ error: $v.phoneNumber.$error }">
+        <label>
+          {{ $t('debitCard.lblYourPhoneNumber') }}
+          <the-mask
+            v-model="phoneNumber"
+            autocomplete="tel"
+            :disabled="isLoading"
+            mask="+###############"
+            name="phone"
+            :placeholder="$t('debitCard.txtYourPhoneNumberPlaceholder')"
+            type="tel"
+          />
+        </label>
+        <span v-if="!$v.phoneNumber.required" class="error-message">
+          {{ $t('debitCard.errors.phoneNumber.required') }}
+        </span>
+        <span v-if="!$v.phoneNumber.minLength" class="error-message">
+          {{
+            $t('debitCard.errors.phoneNumber.minLength', {
+              minLength: $v.phoneNumber.$params.minLength.min
+            })
+          }}
+        </span>
+        <span v-if="!$v.phoneNumber.maxLength" class="error-message">
+          {{
+            $t('debitCard.errors.phoneNumber.maxLength', {
+              maxLength: $v.phoneNumber.$params.maxLength.max
+            })
+          }}
+        </span>
+      </div>
 
-          <div class="input-group" :class="{ error: $v.phoneNumber.$error }">
-            <label>
-              {{ $t('debitCard.lblYourPhoneNumber') }}
-              <the-mask
-                v-model="phoneNumber"
-                autocomplete="tel"
-                :disabled="isLoading"
-                mask="+###############"
-                name="phone"
-                :placeholder="$t('debitCard.txtYourPhoneNumberPlaceholder')"
-                type="tel"
-              />
-            </label>
-            <span v-if="!$v.phoneNumber.required" class="error-message">
-              {{ $t('debitCard.errors.phoneNumber.required') }}
-            </span>
-            <span v-if="!$v.phoneNumber.minLength" class="error-message">
-              {{
-                $t('debitCard.errors.phoneNumber.minLength', {
-                  minLength: $v.phoneNumber.$params.minLength.min
-                })
-              }}
-            </span>
-            <span v-if="!$v.phoneNumber.maxLength" class="error-message">
-              {{
-                $t('debitCard.errors.phoneNumber.maxLength', {
-                  maxLength: $v.phoneNumber.$params.maxLength.max
-                })
-              }}
-            </span>
-          </div>
+      <div class="input-group" :class="{ error: $v.givenName.$error }">
+        <label>
+          {{ $t('debitCard.lblYourGivenName') }}
+          <input
+            v-model.trim="givenName"
+            autocomplete="given-name"
+            :disabled="isLoading"
+            name="given-name"
+            :placeholder="$t('debitCard.txtYourGivenNamePlaceholder')"
+            type="text"
+          />
+        </label>
+        <span v-if="!$v.givenName.required" class="error-message">
+          {{ $t('debitCard.errors.givenName.required') }}
+        </span>
+        <span v-if="!$v.givenName.valid" class="error-message">
+          {{ $t('debitCard.errors.givenName.invalid') }}
+        </span>
+      </div>
 
-          <div class="input-group" :class="{ error: $v.givenName.$error }">
-            <label>
-              {{ $t('debitCard.lblYourGivenName') }}
-              <input
-                v-model.trim="givenName"
-                autocomplete="given-name"
-                :disabled="isLoading"
-                name="given-name"
-                :placeholder="$t('debitCard.txtYourGivenNamePlaceholder')"
-                type="text"
-              />
-            </label>
-            <span v-if="!$v.givenName.required" class="error-message">
-              {{ $t('debitCard.errors.givenName.required') }}
-            </span>
-            <span v-if="!$v.givenName.valid" class="error-message">
-              {{ $t('debitCard.errors.givenName.invalid') }}
-            </span>
-          </div>
+      <div class="input-group" :class="{ error: $v.familyName.$error }">
+        <label>
+          {{ $t('debitCard.lblYourFamilyName') }}
+          <input
+            v-model.trim="familyName"
+            autocomplete="family-name"
+            :disabled="isLoading"
+            name="family-name"
+            :placeholder="$t('debitCard.txtYourFamilyNamePlaceholder')"
+            type="text"
+          />
+        </label>
+        <span v-if="!$v.familyName.required" class="error-message">
+          {{ $t('debitCard.errors.familyName.required') }}
+        </span>
+        <span v-if="!$v.familyName.valid" class="error-message">
+          {{ $t('debitCard.errors.familyName.invalid') }}
+        </span>
+      </div>
 
-          <div class="input-group" :class="{ error: $v.familyName.$error }">
-            <label>
-              {{ $t('debitCard.lblYourFamilyName') }}
-              <input
-                v-model.trim="familyName"
-                autocomplete="family-name"
-                :disabled="isLoading"
-                name="family-name"
-                :placeholder="$t('debitCard.txtYourFamilyNamePlaceholder')"
-                type="text"
-              />
-            </label>
-            <span v-if="!$v.familyName.required" class="error-message">
-              {{ $t('debitCard.errors.familyName.required') }}
-            </span>
-            <span v-if="!$v.familyName.valid" class="error-message">
-              {{ $t('debitCard.errors.familyName.invalid') }}
-            </span>
-          </div>
+      <div class="input-group input-dropdown">
+        <label>
+          {{ $t('debitCard.lblYourTitle.label') }}
+          <select
+            v-model="title"
+            autocomplete="sex"
+            :class="{ placeholder: title === '' }"
+          >
+            <option disabled hidden value="">
+              {{ $t('debitCard.lblYourTitle.placeholder') }}
+            </option>
+            <option value="Mr">
+              {{ $t('debitCard.lblYourTitle.mr') }}
+            </option>
+            <option value="Miss">
+              {{ $t('debitCard.lblYourTitle.miss') }}
+            </option>
+            <option value="Mrs">
+              {{ $t('debitCard.lblYourTitle.mrs') }}
+            </option>
+            <option value="Dr">
+              {{ $t('debitCard.lblYourTitle.dr') }}
+            </option>
+          </select>
+        </label>
+        <span v-if="!$v.title.required" class="error-message">
+          {{ $t('debitCard.errors.title.required') }}
+        </span>
+      </div>
 
-          <div class="input-group input-dropdown">
-            <label>
-              {{ $t('debitCard.lblYourTitle.label') }}
-              <select
-                v-model="title"
-                autocomplete="sex"
-                :class="{ placeholder: title === '' }"
-              >
-                <option disabled hidden value="">
-                  {{ $t('debitCard.lblYourTitle.placeholder') }}
-                </option>
-                <option value="Mr">
-                  {{ $t('debitCard.lblYourTitle.mr') }}
-                </option>
-                <option value="Miss">
-                  {{ $t('debitCard.lblYourTitle.miss') }}
-                </option>
-                <option value="Mrs">
-                  {{ $t('debitCard.lblYourTitle.mrs') }}
-                </option>
-                <option value="Dr">
-                  {{ $t('debitCard.lblYourTitle.dr') }}
-                </option>
-              </select>
-            </label>
-            <span v-if="!$v.title.required" class="error-message">
-              {{ $t('debitCard.errors.title.required') }}
-            </span>
-          </div>
+      <div v-show="title === 'Dr'" class="input-group input-dropdown">
+        <label>
+          {{ $t('debitCard.lblYourGender.label') }}
+          <select
+            v-model="gender"
+            autocomplete="honorific-prefix"
+            :class="{ placeholder: gender === '' }"
+          >
+            <option disabled hidden value="">
+              {{ $t('debitCard.lblYourGender.placeholder') }}
+            </option>
+            <option value="M">
+              {{ $t('debitCard.lblYourGender.male') }}
+            </option>
+            <option value="F">
+              {{ $t('debitCard.lblYourGender.female') }}
+            </option>
+          </select>
+        </label>
+        <span v-if="!$v.gender.required" class="error-message">
+          {{ $t('debitCard.errors.gender.required') }}
+        </span>
+      </div>
 
-          <div v-show="title === 'Dr'" class="input-group input-dropdown">
-            <label>
-              {{ $t('debitCard.lblYourGender.label') }}
-              <select
-                v-model="gender"
-                autocomplete="honorific-prefix"
-                :class="{ placeholder: gender === '' }"
-              >
-                <option disabled hidden value="">
-                  {{ $t('debitCard.lblYourGender.placeholder') }}
-                </option>
-                <option value="M">
-                  {{ $t('debitCard.lblYourGender.male') }}
-                </option>
-                <option value="F">
-                  {{ $t('debitCard.lblYourGender.female') }}
-                </option>
-              </select>
-            </label>
-            <span v-if="!$v.gender.required" class="error-message">
-              {{ $t('debitCard.errors.gender.required') }}
-            </span>
-          </div>
+      <div class="input-group">
+        <label>
+          {{ $t('debitCard.lblYourDateOfBirth') }}
+          <input
+            v-model="dateOfBirth"
+            autocomplete="bday"
+            :disabled="isLoading"
+            :max="dateOfBirthMax"
+            :min="dateOfBirthMin"
+            name="date-of-birth"
+            type="date"
+          />
+        </label>
+        <span v-if="!$v.dateOfBirth.required" class="error-message">
+          {{ $t('debitCard.errors.dateOfBirth.required') }}
+        </span>
+        <span v-if="!$v.dateOfBirth.valid" class="error-message">
+          {{ $t('debitCard.errors.dateOfBirth.invalid') }}
+        </span>
+      </div>
 
-          <div class="input-group">
-            <label>
-              {{ $t('debitCard.lblYourDateOfBirth') }}
-              <input
-                v-model="dateOfBirth"
-                autocomplete="bday"
-                :disabled="isLoading"
-                :max="dateOfBirthMax"
-                :min="dateOfBirthMin"
-                name="date-of-birth"
-                type="date"
-              />
-            </label>
-            <span v-if="!$v.dateOfBirth.required" class="error-message">
-              {{ $t('debitCard.errors.dateOfBirth.required') }}
-            </span>
-            <span v-if="!$v.dateOfBirth.valid" class="error-message">
-              {{ $t('debitCard.errors.dateOfBirth.invalid') }}
-            </span>
-          </div>
-
+      <div class="actions">
+        <div class="group default">
           <action-button
             ref="button"
-            button-class="black-link button-active action-button"
+            class="primary"
             :disabled="isLoading"
             propagate-original-event
             type="submit"
@@ -202,12 +204,13 @@
               {{ $t('debitCard.btnOrderCard') }}
             </template>
           </action-button>
-          <span v-if="errorText !== ''" class="error-message">
-            {{ errorText }}
-          </span>
-        </form>
+        </div>
+
+        <span v-if="errorText !== ''" class="group error-message">
+          {{ errorText }}
+        </span>
       </div>
-    </div>
+    </form>
   </secondary-page>
 </template>
 
@@ -234,7 +237,7 @@ import { mapCountryCodeToEmoji } from '@/utils/emoji';
 import { validateName } from '@/utils/validators';
 
 import { ActionButton } from '@/components/buttons';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 import DebitCardImage from '../debit-card-image.vue';
 
@@ -244,7 +247,7 @@ export default Vue.extend({
     ActionButton,
     DebitCardImage,
     SecondaryPage,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     TheMask
   },
   data() {
