@@ -7,9 +7,7 @@
           :description-class="debitCardDescriptionClass"
           navigate-to="debit-card-manage"
           :title="$t('menu.lblBeautifulCard')"
-          :title-class="
-            !isFeatureEnabled('isDebitCardEnabled') ? 'muted' : undefined
-          "
+          title-class="medium muted"
         >
           <template v-slot:picture>
             <pu-skeleton v-if="isDebitCardInfoLoading" class="icon" tag="div" />
@@ -25,8 +23,10 @@
 
         <navigation-section-item-image
           :description="savingsBalance"
+          description-class="bold emphasize"
           navigate-to="savings-manage"
           :title="$t('savings.lblSavings')"
+          title-class="medium muted"
         >
           <template v-slot:picture>
             <custom-picture
@@ -40,8 +40,10 @@
 
         <navigation-section-item-image
           :description="treasuryBalance"
+          description-class="bold emphasize"
           navigate-to="treasury-manage"
           :title="$t('treasury.lblSmartTreasury')"
+          title-class="medium muted"
         >
           <template v-slot:picture>
             <custom-picture
@@ -56,8 +58,10 @@
         <navigation-section-item-image
           v-if="isFeatureEnabled('isEarningsEnabled')"
           :description="earningsBalance"
+          description-class="bold emphasize"
           navigate-to="earnings-manage"
           :title="$t('earnings.lblEarnings')"
+          title-class="medium muted"
         >
           <template v-slot:picture>
             <custom-picture
@@ -74,6 +78,7 @@
     <nav class="actions">
       <navigation-section hide-header>
         <navigation-section-item-emoji
+          class="no-hover"
           :emoji="$t('menu.lblSwapTokenEmoji')"
           :navigate-to="undefined"
           :text="$t('menu.lblSwapToken')"
@@ -81,6 +86,7 @@
         />
 
         <navigation-section-item-emoji
+          class="no-hover"
           :emoji="$t('menu.lblGetMoveEmoji')"
           :navigate-to="undefined"
           :text="$t('menu.lblGetMove')"
@@ -88,12 +94,14 @@
         />
 
         <navigation-section-item-emoji
+          class="no-hover"
           :emoji="$t('menu.lblDepositInSavingsEmoji')"
           navigate-to="savings-deposit"
           :text="$t('menu.lblDepositInSavings')"
         />
 
         <navigation-section-item-emoji
+          class="no-hover"
           :emoji="$t('menu.lblIncreaseBoostEmoji')"
           navigate-to="treasury-increase"
           :text="$t('menu.lblIncreaseBoost')"
@@ -227,14 +235,14 @@ export default Vue.extend({
     },
     debitCardDescriptionClass(): string {
       if (!isFeatureEnabled('isDebitCardEnabled')) {
-        return '';
+        return 'bold emphasize';
       }
 
       if (['frozen', 'expired'].includes(this.debitCardState)) {
         return 'error';
       }
 
-      return '';
+      return 'bold emphasize';
     },
     debitCardSkin(): PictureDescriptor {
       if (!isFeatureEnabled('isDebitCardEnabled')) {
