@@ -6,7 +6,6 @@
       loop="loop"
       muted="muted"
       playsinline="playsinline"
-      poster="@/assets/images/ios-spinner.svg"
       :src="src"
     />
     <h3 class="title">{{ name }}</h3>

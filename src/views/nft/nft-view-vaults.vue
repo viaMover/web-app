@@ -66,7 +66,6 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
-        poster="@/assets/images/ios-spinner-white.svg"
         src="@/assets/videos/vaults.webm"
       />
     </template>
