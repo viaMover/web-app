@@ -5,14 +5,11 @@ import { add, divide, fromWei, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   ERC20_ABI,
+  lookupAddress,
+  lookupConstant,
   MASTER_CHEF_ABI,
-  MASTER_CHEF_ADDRESS,
-  MASTER_CHEF_POOL_INDEX,
-  MOVE_ADDRESS,
   SMART_TREASURY_ABI,
-  SMART_TREASURY_ADDRESS,
-  SUSHI_UNI_PAIR_V2_ABI,
-  SUSHISWAP_MOVE_WETH_POOL_ADDRESS
+  SUSHI_UNI_PAIR_V2_ABI
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -28,20 +25,23 @@ export const getVotingPower = async (
 
   const moveTokenContract = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],
-    MOVE_ADDRESS(network)
+    lookupAddress(network, 'MOVE_ADDRESS')
   );
   const smartTreasuryContract = new web3.eth.Contract(
     SMART_TREASURY_ABI as AbiItem[],
-    SMART_TREASURY_ADDRESS(network)
+    lookupAddress(network, 'SMART_TREASURY_ADDRESS')
   );
-  const sushiPoolAddress = SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network);
+  const sushiPoolAddress = lookupAddress(
+    network,
+    'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'
+  );
   const sushiPoolContract = new web3.eth.Contract(
     SUSHI_UNI_PAIR_V2_ABI as AbiItem[],
     sushiPoolAddress
   );
   const masterChefContract = new web3.eth.Contract(
     MASTER_CHEF_ABI as AbiItem[],
-    MASTER_CHEF_ADDRESS(network)
+    lookupAddress(network, 'MASTER_CHEF_ADDRESS')
   );
 
   // account balance of MOVE
@@ -91,7 +91,11 @@ export const getVotingPower = async (
   const sushiPoolBalance = fromWei(sushiPoolBalanceInWei, 18);
 
   // master chef pool balance of MOVE SLP
-  const masterChefPoolIndex = MASTER_CHEF_POOL_INDEX(network);
+  const masterChefPoolIndex = lookupConstant(network, 'MASTER_CHEF_POOL_INDEX');
+  if (masterChefPoolIndex === undefined) {
+    throw new Error('Governance is disabled in this network');
+  }
+
   const masterChefUserInfoMovePool = await masterChefContract.methods
     .userInfo(masterChefPoolIndex, accountAddress)
     .call(transactionParams, snapshot);
@@ -129,11 +133,11 @@ export const getCommunityVotingPower = async (
 
   const moveTokenContract = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],
-    MOVE_ADDRESS(network)
+    lookupAddress(network, 'MOVE_ADDRESS')
   );
   const sushiPoolContract = new web3.eth.Contract(
     SUSHI_UNI_PAIR_V2_ABI as AbiItem[],
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network)
+    lookupAddress(network, 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS')
   );
 
   const moveTotalSupplyInWei = await moveTokenContract.methods
