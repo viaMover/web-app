@@ -7,10 +7,7 @@ import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { EstimateResponse } from '@/wallet/actions/types';
-import {
-  WX_BTRFLY_ABI,
-  WX_BTRFLY_TOKEN_ADDRESS
-} from '@/wallet/references/data';
+import { lookupAddress, WX_BTRFLY_ABI } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export const estimateWXBTRFLYUnwrap = async (
@@ -20,7 +17,7 @@ export const estimateWXBTRFLYUnwrap = async (
   web3: Web3,
   accountAddress: string
 ): Promise<EstimateResponse> => {
-  const contractAddress = WX_BTRFLY_TOKEN_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS');
   const contractABI = WX_BTRFLY_ABI;
 
   try {

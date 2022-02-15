@@ -8,8 +8,8 @@ import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData,
-  SMART_TREASURY_ABI,
-  SMART_TREASURY_ADDRESS
+  lookupAddress,
+  SMART_TREASURY_ABI
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -31,7 +31,7 @@ export const getTreasuryBalance = async (
     };
   }
 
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(
@@ -108,7 +108,7 @@ export const getTreasuryBonus = async (
     return '0';
   }
 
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(
@@ -168,7 +168,7 @@ export const getTreasuryAPY = async (
   const movePriceInUSDC = divide(moveNativePrice, usdcNativePrice);
   console.log('smart treasury: movePriceInUSDC: ', movePriceInUSDC);
 
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(
@@ -217,7 +217,7 @@ export const getMaxBurn = async (
     return '0';
   }
 
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(
@@ -264,7 +264,7 @@ export const getExitingAmount = async (
     return '0';
   }
 
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(
@@ -308,7 +308,7 @@ export const getTotalStakedMove = async (
   network: Network,
   web3: Web3
 ): Promise<string> => {
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(
@@ -338,7 +338,7 @@ export const getTotalStakedMoveEthLP = async (
   network: Network,
   web3: Web3
 ): Promise<string> => {
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   const smartTreasury = new web3.eth.Contract(

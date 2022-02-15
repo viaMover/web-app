@@ -3,10 +3,7 @@ import { AbiItem } from 'web3-utils';
 
 import { fromWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import {
-  BALANCE_CHECKER_ABI,
-  BALANCE_CHECKER_ADDRESS
-} from '@/wallet/references/data';
+import { BALANCE_CHECKER_ABI, lookupAddress } from '@/wallet/references/data';
 import { Token, TokenWithBalance, TransactionsParams } from '@/wallet/types';
 
 const ETH_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -21,7 +18,7 @@ export const getWalletTokens = async (
     t.address === 'eth' ? ETH_ADDRESS : t.address
   );
 
-  const contractAddress = BALANCE_CHECKER_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'BALANCE_CHECKER_ADDRESS');
   const contractABI = BALANCE_CHECKER_ABI;
 
   const balanceCheckerContract = new web3.eth.Contract(

@@ -4,10 +4,9 @@ import { AbiItem } from 'web3-utils';
 import { greaterThanOrEqual, isEqual, lessThanOrEqual } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
+  lookupAddress,
+  lookupConstant,
   NFT_RARI_ABI,
-  POWERCARD_ADDRESS,
-  POWERCARD_RARI_ID,
-  POWERCARD_STAKER,
   POWERCARD_STAKER_ABI
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
@@ -27,7 +26,7 @@ export const powercardBalance = async (
     return '0';
   }
 
-  const contractAddress = POWERCARD_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD');
   const contractABI = NFT_RARI_ABI;
 
   const rari = new web3.eth.Contract(contractABI as AbiItem[], contractAddress);
@@ -38,7 +37,7 @@ export const powercardBalance = async (
     } as TransactionsParams;
 
     const powercardBalanceResponse = await rari.methods
-      .balanceOf(accountAddress, POWERCARD_RARI_ID)
+      .balanceOf(accountAddress, lookupConstant(network, 'POWERCARD_RARI_ID'))
       .call(transactionParams);
 
     const powercardBalance = powercardBalanceResponse.toString();
@@ -60,7 +59,7 @@ export const getPowercardState = async (
     return 'NotStaked';
   }
 
-  const contractAddress = POWERCARD_STAKER(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD_STAKER');
   const contractABI = POWERCARD_STAKER_ABI;
 
   const powercardStaker = new web3.eth.Contract(
@@ -107,7 +106,7 @@ export const getPowercardTimings = async (
     return { activeTime: '0', cooldownTime: '0' };
   }
 
-  const contractAddress = POWERCARD_STAKER(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD_STAKER');
   const contractABI = POWERCARD_STAKER_ABI;
 
   const powercardStaker = new web3.eth.Contract(

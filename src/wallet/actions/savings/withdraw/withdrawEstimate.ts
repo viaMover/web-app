@@ -4,11 +4,7 @@ import { AbiItem } from 'web3-utils';
 import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import {
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS
-} from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 export type CompoundEstimateResponse = {
@@ -52,10 +48,10 @@ export const estimateWithdraw = async (
 ): Promise<EstimateResponse> => {
   console.log('Estimating savings withdraw...');
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
-  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const poolAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
 
   try {
     const holyHand = new web3.eth.Contract(
