@@ -1,6 +1,7 @@
 <template>
   <secondary-page
     class="powercard manage"
+    has-back-button
     hide-info
     hide-title
     @back="handleBack"
