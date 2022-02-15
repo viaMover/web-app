@@ -6,7 +6,7 @@ import { AbiItem } from 'web3-utils';
 
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { NFT_OLYMPUS_ABI, NFT_OLYMPUS_ADDRESS } from '@/wallet/references/data';
+import { lookupAddress, NFT_OLYMPUS_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 import { Step } from '@/components/forms/form-loader/types';
@@ -22,7 +22,7 @@ export const getOlympusData = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const contractAddress = NFT_OLYMPUS_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_OLYMPUS');
 
   const olympus = new web3.eth.Contract(
     NFT_OLYMPUS_ABI as AbiItem[],
@@ -56,7 +56,7 @@ export const claimOlympus = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_OLYMPUS_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_OLYMPUS');
 
   const olympus = new web3.eth.Contract(
     NFT_OLYMPUS_ABI as AbiItem[],

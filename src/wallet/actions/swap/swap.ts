@@ -12,7 +12,7 @@ import {
 import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { swapSubsidized } from './swapSubsidized';
@@ -31,7 +31,7 @@ export const swapCompound = async (
   useSubsidized: boolean,
   changeStepToProcess: () => Promise<void>
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   try {
     await executeTransactionWithApprove(
@@ -91,7 +91,7 @@ export const swap = async (
 ): Promise<void> => {
   console.log('Executing swap...');
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {

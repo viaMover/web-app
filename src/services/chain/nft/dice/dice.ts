@@ -6,7 +6,7 @@ import { AbiItem } from 'web3-utils';
 
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { NFT_DICE_ABI, NFT_DICE_ADDRESS } from '@/wallet/references/data';
+import { lookupAddress, NFT_DICE_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 import { Step } from '@/components/forms/form-loader';
@@ -22,7 +22,7 @@ export const getDiceData = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const contractAddress = NFT_DICE_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_DICE');
 
   const dice = new web3.eth.Contract(
     NFT_DICE_ABI as AbiItem[],
@@ -51,7 +51,7 @@ export const claimDice = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_DICE_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_DICE');
 
   const dice = new web3.eth.Contract(
     NFT_DICE_ABI as AbiItem[],

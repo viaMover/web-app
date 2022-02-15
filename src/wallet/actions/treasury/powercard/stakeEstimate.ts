@@ -6,10 +6,7 @@ import { floorDivide } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { EstimateResponse } from '@/wallet/actions/types';
-import {
-  POWERCARD_STAKER,
-  POWERCARD_STAKER_ABI
-} from '@/wallet/references/data';
+import { lookupAddress, POWERCARD_STAKER_ABI } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -21,7 +18,7 @@ export const estimateStakePowercardCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = POWERCARD_STAKER(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD_STAKER');
 
   let isApproved = false;
   try {

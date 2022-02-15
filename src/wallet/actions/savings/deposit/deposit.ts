@@ -13,11 +13,7 @@ import {
 import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
-import {
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS
-} from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { depositSubsidized } from './depositSubsidized';
@@ -36,7 +32,7 @@ export const depositCompound = async (
   approveGasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   try {
     await executeTransactionWithApprove(
@@ -103,10 +99,10 @@ export const deposit = async (
     throw 'We need transafer data for not USDC token';
   }
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
-  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const poolAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
 
   try {
     const holyHand = new web3.eth.Contract(
