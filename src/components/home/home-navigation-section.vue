@@ -101,6 +101,15 @@
     <nav class="actions">
       <navigation-section hide-header>
         <navigation-section-item-emoji
+          v-if="isFeatureEnabled('isHomeSwapModalEnabled')"
+          class="no-hover"
+          emoji="🔄"
+          :navigate-to="undefined"
+          :text="$t('menu.lblSwapToken')"
+          @click="handleOpenSwapModal(undefined)"
+        />
+
+        <navigation-section-item-emoji
           class="no-hover"
           emoji="📦"
           navigate-to="more"
@@ -330,16 +339,6 @@ export default Vue.extend({
       })),
     ...(isFeatureEnabled('isDebitCardEnabled') &&
       mapActions('debitCard', { loadDebitCardInfo: 'loadInfo' })),
-    async openDepositInSavings(): Promise<void> {
-      await this.$router.push({
-        name: 'savings-deposit'
-      });
-    },
-    async openDepositInTreasury(): Promise<void> {
-      await this.$router.push({
-        name: 'treasury-increase'
-      });
-    },
     handleOpenSwapModal(payload: unknown): void {
       this.setIsModalDisplayed({
         id: ModalType.Swap,

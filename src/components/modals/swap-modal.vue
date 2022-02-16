@@ -222,11 +222,10 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', [
-      'treasuryBonusNative',
-      'getTokenColor',
-      'moveNativePrice'
-    ]),
+    ...mapGetters('account', ['getTokenColor', 'moveNativePrice']),
+    ...mapGetters('treasury', {
+      treasuryBonusNative: 'treasuryBonusNative'
+    }),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },

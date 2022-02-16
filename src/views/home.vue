@@ -14,8 +14,13 @@
     <home-navigation-section />
 
     <template v-slot:modals>
-      <swap-modal key="swap-modal" />
-      <search-modal key="search-modal" />
+      <template>
+        <swap-modal
+          v-if="isFeatureEnabled('isHomeSwapModalEnabled')"
+          key="swap-modal"
+        />
+        <search-modal key="search-modal" />
+      </template>
     </template>
   </content-wrapper>
 </template>

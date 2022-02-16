@@ -54,6 +54,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblReviewTransaction: 'Review transaction'
   },
   menu: {
+    lblSwapToken: 'Swap Tokens',
     lblDepositInSavings: 'Deposit in Savings',
     lblIncreaseBoost: 'Increase boost',
     lblBeautifulCard: 'Beautiful Card',

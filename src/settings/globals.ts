@@ -20,6 +20,7 @@ export interface Globals {
   isTreasuryClaimAndBurnMOVEEnabled: boolean;
   isSavingsPlusEnabled: boolean;
   isMultiChainMastheadEnabled: boolean;
+  isHomeSwapModalEnabled: boolean;
 }
 
 export const isProduction = (): boolean => {
@@ -51,7 +52,8 @@ const values: Globals = {
   isTreasuryClaimAndBurnMOBOEnabled: true,
   isTreasuryClaimAndBurnMOVEEnabled: false,
   isSavingsPlusEnabled: false,
-  isMultiChainMastheadEnabled: false
+  isMultiChainMastheadEnabled: false,
+  isHomeSwapModalEnabled: false
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
