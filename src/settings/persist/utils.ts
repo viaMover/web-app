@@ -23,7 +23,7 @@ const getLocalStorageKeys = (): Array<string> => {
   return Object.keys(window.localStorage);
 };
 
-export const removeAccountBoundPersistItemsFromStore = (
+export const removeAccountBoundPersistItemsFromLocalStorage = (
   currentAddress: string
 ): void => {
   const keysWithPostfix = getLocalStorageKeys().filter((key) =>
@@ -53,7 +53,7 @@ const isMoverEntryType = (
   }
 };
 
-export const removeExpiredItemsFromStorage = (): void => {
+export const removeExpiredItemsFromLocalStorage = (): void => {
   getLocalStorageKeys().forEach((key) => {
     try {
       const persistedValue = window.localStorage.getItem(key);
