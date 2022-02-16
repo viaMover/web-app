@@ -23,7 +23,7 @@ import {
 } from '@/settings';
 import {
   removeAccountBoundPersistItemsFromLocalStorage,
-  removeExpiredItemsFromLocalStorage
+  removeExpiredPersistItemsFromLocalStorage
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
 import { Network } from '@/utils/networkTypes';
@@ -330,7 +330,7 @@ const actions: ActionFuncs<
       Sentry.setTag('crypto_person_address', state.currentAddress);
 
       if (payload.init) {
-        removeExpiredItemsFromLocalStorage();
+        removeExpiredPersistItemsFromLocalStorage();
 
         bootIntercomSession(state.currentAddress, {
           network: state.networkInfo.network

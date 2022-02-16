@@ -53,7 +53,7 @@ const isMoverEntryType = (
   }
 };
 
-export const removeExpiredItemsFromLocalStorage = (): void => {
+export const removeExpiredPersistItemsFromLocalStorage = (): void => {
   getLocalStorageKeys().forEach((key) => {
     try {
       const persistedValue = window.localStorage.getItem(key);
