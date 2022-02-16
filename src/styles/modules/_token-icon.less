@@ -1,4 +1,8 @@
 .token-icon {
+  @drop-token-shadow: {
+    box-shadow: 0 0 16px @token-image-shadow;
+  }
+
   flex: 0 0 38px;
   margin-right: 16px;
   border-radius: 50%;
@@ -9,7 +13,7 @@
     border-radius: 50%;
     width: inherit;
     height: $width;
-    @drop-shadow-filter();
+    @drop-token-shadow();
   }
 
   @media screen and (max-width: 1279px) {
@@ -59,7 +63,7 @@
     align-items: center;
     justify-content: center;
     padding: 2px;
-    @drop-shadow();
+    @drop-token-shadow();
 
     &.smallest {
       span {
@@ -80,6 +84,6 @@
   }
 
   &.skeleton {
-    @drop-shadow();
+    @drop-token-shadow();
   }
 }
