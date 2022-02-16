@@ -25,6 +25,7 @@ type Getters = {
   isWalletReady: boolean;
   entireBalance: string;
   ethPrice: string;
+  baseTokenPrice: string;
   moveNativePrice: string;
   usdcNativePrice: string;
   slpNativePrice: string;
