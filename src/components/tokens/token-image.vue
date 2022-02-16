@@ -73,7 +73,7 @@ export default Vue.extend({
     },
     shadowStyles(): Properties {
       return {
-        boxShadow: `0 0 16px ${this.color}`
+        boxShadow: `0 0 16px 0 ${this.color}`
       };
     }
   },
