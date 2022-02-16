@@ -14,7 +14,7 @@ import {
   CompoundEstimateResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import { HOLY_HAND_ABI, HOLY_HAND_ADDRESS } from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -30,7 +30,7 @@ export const estimateSwapCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   let isApproveNeeded = true;
   try {
@@ -109,7 +109,7 @@ export const estimateSwap = async (
 ): Promise<EstimateResponse> => {
   console.log('Estimating swap...');
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {

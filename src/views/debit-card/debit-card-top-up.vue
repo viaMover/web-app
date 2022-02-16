@@ -97,8 +97,8 @@ import {
   getBTRFLYAssetData,
   getEURSAssetData,
   getUSDCAssetData,
-  validTopUpAssets,
-  WX_BTRFLY_TOKEN_ADDRESS
+  lookupAddress,
+  validTopUpAssets
 } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -446,7 +446,10 @@ export default Vue.extend({
             if (
               sameAddress(
                 referenceToken.address,
-                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+                lookupAddress(
+                  this.networkInfo.network,
+                  'WX_BTRFLY_TOKEN_ADDRESS'
+                )
               )
             ) {
               const newInputInTokens = multiply(
@@ -570,7 +573,10 @@ export default Vue.extend({
             if (
               sameAddress(
                 referenceToken.address,
-                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+                lookupAddress(
+                  this.networkInfo.network,
+                  'WX_BTRFLY_TOKEN_ADDRESS'
+                )
               )
             ) {
               const newInputInTokens = multiply(
@@ -606,7 +612,10 @@ export default Vue.extend({
             if (
               sameAddress(
                 referenceToken.address,
-                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+                lookupAddress(
+                  this.networkInfo.network,
+                  'WX_BTRFLY_TOKEN_ADDRESS'
+                )
               )
             ) {
               const newInputInTokens = multiply(

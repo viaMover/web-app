@@ -1,6 +1,5 @@
 import { Network } from '@/utils/networkTypes';
-import { SmallTokenInfoWithIcon, Token } from '@/wallet/types';
-import { SmallTokenInfo } from '@/wallet/types';
+import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
 import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
@@ -24,7 +23,57 @@ import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 
-const ADDRESSES = {
+type AddressMapKey =
+  | 'MOVE_ADDRESS'
+  | 'MOBO_ADDRESS'
+  | 'HOLY_HAND_ADDRESS'
+  | 'HOLY_PASSAGE_ADDRESS'
+  | 'HOLY_SAVINGS_POOL_ADDRESS'
+  | 'HOLY_VISOR_ADDRESS'
+  | 'SMART_TREASURY_ADDRESS'
+  | 'SUSHI_TOKEN_ADDRESS'
+  | 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'
+  | 'UNSIWAP_USDC_WETH_POOL_ADDRESS'
+  | 'USDC_TOKEN_ADDRESS'
+  | 'WETH_TOKEN_ADDRESS'
+  | 'BALANCE_CHECKER_ADDRESS'
+  | 'NFT_UNEXPECTED_MOVE'
+  | 'NFT_SWEET_AND_SOUR'
+  | 'NFT_OLYMPUS'
+  | 'NFT_VAULTS'
+  | 'NFT_DICE'
+  | 'POWERCARD'
+  | 'POWERCARD_STAKER'
+  | 'MASTER_CHEF_ADDRESS'
+  | 'EURS_TOKEN_ADDRESS'
+  | 'UNISWAP_EURS_WETH_POOL_ADDRESS'
+  | 'OHM_ADDRESS'
+  | 'OHM_V2_ADDRESS'
+  | 'ETH_V2_STAKER_POOL'
+  | 'OHM_STAKER_POOL'
+  | 'WBTC_TOKEN_ADDRESS'
+  | 'RENBTC_TOKEN_ADDRESS'
+  | 'UST_TOKEN_ADDRESS'
+  | 'MIM_TOKEN_ADDRESS'
+  | 'FRAX_TOKEN_ADDRESS'
+  | 'RAI_TOKEN_ADDRESS'
+  | 'FEI_TOKEN_ADDRESS'
+  | 'USDT_TOKEN_ADDRESS'
+  | 'SHIB_TOKEN_ADDRESS'
+  | 'AXS_TOKEN_ADDRESS'
+  | 'SLP_TOKEN_ADDRESS'
+  | 'DOP_TOKEN_ADDRESS'
+  | 'LEASH_TOKEN_ADDRESS'
+  | 'BONE_TOKEN_ADDRESS'
+  | 'BTRFLY_TOKEN_ADDRESS'
+  | 'WX_BTRFLY_TOKEN_ADDRESS'
+  | 'GOHM_TOKEN_ADDRESS'
+  | 'TOKE_TOKEN_ADDRESS';
+
+type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
+type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
+
+const addresses = {
   [Network.mainnet]: {
     MOVE_ADDRESS: '0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C',
     MOBO_ADDRESS: '0x94f748bfd1483750a7df01acd993213ab64c960f',
@@ -49,14 +98,11 @@ const ADDRESSES = {
     POWERCARD: '0xd07dc4262bcdbf85190c01c996b4c06a461d2430',
     POWERCARD_STAKER: '0xa8AFB8272434f76f9cD0Fd483F15C69AAF9a2E68',
     MASTER_CHEF_ADDRESS: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
-    MASTER_CHEF_POOL_INDEX: 257,
     EURS_TOKEN_ADDRESS: '0xdb25f211ab05b1c97d595516f45794528a807ad8',
     UNISWAP_EURS_WETH_POOL_ADDRESS:
       '0x7cc34ea5d7103d01b76e0dccf1ddad9f376801e9',
     OHM_ADDRESS: '0x383518188c0c6d7730d91b2c03a03c837814a899',
     OHM_V2_ADDRESS: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
     WBTC_TOKEN_ADDRESS: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
     RENBTC_TOKEN_ADDRESS: '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',
     UST_TOKEN_ADDRESS: '0xa47c8bf37f92aBed4A126BDA807A7b7498661acD',
@@ -73,545 +119,104 @@ const ADDRESSES = {
     BONE_TOKEN_ADDRESS: '0x9813037ee2218799597d83d4a5b6f3b6778218d9',
     BTRFLY_TOKEN_ADDRESS: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a',
     WX_BTRFLY_TOKEN_ADDRESS: '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9',
-    GOHM_TOKEN_ADDRESS: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f'
+    GOHM_TOKEN_ADDRESS: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+    TOKE_TOKEN_ADDRESS: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
-    MOBO_ADDRESS: '0x1',
-    HOLY_HAND_ADDRESS: '0x1',
     HOLY_PASSAGE_ADDRESS: '0xf413F5b36C3c9C121d2b66858382F0368678CAc1',
     HOLY_SAVINGS_POOL_ADDRESS: '0x39e0Efd667c5760ec98F105eEAd8F8a77d608108',
     HOLY_VISOR_ADDRESS: '0x5c2508fd52DA2AB53361BD24B374bE35ed8cdCF0',
-    SMART_TREASURY_ADDRESS: '0x1',
-    SUSHI_TOKEN_ADDRESS: '0x1',
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
-    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
     USDC_TOKEN_ADDRESS: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     WETH_TOKEN_ADDRESS: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9',
-    NFT_UNEXPECTED_MOVE: '0x1',
-    NFT_SWEET_AND_SOUR: '0x1',
-    NFT_OLYMPUS: '0x1',
-    NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1',
-    MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0,
-    OHM_ADDRESS: '0x1',
-    OHM_V2_ADDRESS: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
-    EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
-    WBTC_TOKEN_ADDRESS: '0x1',
-    RENBTC_TOKEN_ADDRESS: '0x1',
-    UST_TOKEN_ADDRESS: '0x1',
-    MIM_TOKEN_ADDRESS: '0x1',
-    FRAX_TOKEN_ADDRESS: '0x1',
-    RAI_TOKEN_ADDRESS: '0x1',
-    FEI_TOKEN_ADDRESS: '0x1',
-    USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1',
-    AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1',
-    DOP_TOKEN_ADDRESS: '0x1',
-    LEASH_TOKEN_ADDRESS: '0x1',
-    BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1',
-    WX_BTRFLY_TOKEN_ADDRESS: '0x1',
-    GOHM_TOKEN_ADDRESS: '0x01'
+    BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9'
   },
   [Network.rinkeby]: {
-    MOVE_ADDRESS: '0x1',
-    MOBO_ADDRESS: '0x1',
-    HOLY_HAND_ADDRESS: '0x1',
-    HOLY_PASSAGE_ADDRESS: '0x1',
-    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
-    HOLY_VISOR_ADDRESS: '0x1',
-    SMART_TREASURY_ADDRESS: '0x1',
-    SUSHI_TOKEN_ADDRESS: '0x1',
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
-    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
     USDC_TOKEN_ADDRESS: '0xb6c8e5f00117136571d260bfb1baff62ddfd9960',
-    WETH_TOKEN_ADDRESS: '0x1',
     BALANCE_CHECKER_ADDRESS: '0xc55386617db7b4021d87750daaed485eb3ab0154',
-    NFT_UNEXPECTED_MOVE: '0x1',
-    NFT_SWEET_AND_SOUR: '0x1',
-    NFT_OLYMPUS: '0x1',
-    NFT_VAULTS: '0x1',
-    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
-    MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0,
-    OHM_ADDRESS: '0x1',
-    OHM_V2_ADDRESS: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
-    EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
-    WBTC_TOKEN_ADDRESS: '0x1',
-    RENBTC_TOKEN_ADDRESS: '0x1',
-    UST_TOKEN_ADDRESS: '0x1',
-    MIM_TOKEN_ADDRESS: '0x1',
-    FRAX_TOKEN_ADDRESS: '0x1',
-    RAI_TOKEN_ADDRESS: '0x1',
-    FEI_TOKEN_ADDRESS: '0x1',
-    USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1',
-    AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1',
-    DOP_TOKEN_ADDRESS: '0x1',
-    LEASH_TOKEN_ADDRESS: '0x1',
-    BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1',
-    WX_BTRFLY_TOKEN_ADDRESS: '0x1',
-    GOHM_TOKEN_ADDRESS: '0x01'
+    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
-    MOBO_ADDRESS: '0x1',
     HOLY_HAND_ADDRESS: '0xA5D1f7a25377187E6c7d0A464D1e51D3Aa697B41',
-    HOLY_PASSAGE_ADDRESS: '0x1',
     HOLY_SAVINGS_POOL_ADDRESS: '0x8967A200c69136B7c8C768dC9AB58F2e295aD771',
-    HOLY_VISOR_ADDRESS: '0x1',
     SMART_TREASURY_ADDRESS: '0xdD17122a055588242c0bF2e6ED84145F4A1e2e40',
-    SUSHI_TOKEN_ADDRESS: '0x1',
     SUSHISWAP_MOVE_WETH_POOL_ADDRESS:
       '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
-    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
     USDC_TOKEN_ADDRESS: '0x75b0622cec14130172eae9cf166b92e5c112faff',
-    WETH_TOKEN_ADDRESS: '0x1',
     BALANCE_CHECKER_ADDRESS: '0xf3352813b612a2d198e437691557069316b84ebe',
     NFT_UNEXPECTED_MOVE: '0x05425c5e19456c6b2773C3595fCf56cC469902AF',
     NFT_SWEET_AND_SOUR: '0x164c1cc343b6a45eDb37F0dD7558FdCddF173c82',
-    NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf',
-    NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1',
-    MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0,
-    OHM_ADDRESS: '0x1',
-    OHM_V2_ADDRESS: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
-    EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
-    WBTC_TOKEN_ADDRESS: '0x1',
-    RENBTC_TOKEN_ADDRESS: '0x1',
-    UST_TOKEN_ADDRESS: '0x1',
-    MIM_TOKEN_ADDRESS: '0x1',
-    FRAX_TOKEN_ADDRESS: '0x1',
-    RAI_TOKEN_ADDRESS: '0x1',
-    FEI_TOKEN_ADDRESS: '0x1',
-    USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1',
-    AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1',
-    DOP_TOKEN_ADDRESS: '0x1',
-    LEASH_TOKEN_ADDRESS: '0x1',
-    BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1',
-    WX_BTRFLY_TOKEN_ADDRESS: '0x1',
-    GOHM_TOKEN_ADDRESS: '0x01'
+    NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf'
   },
   [Network.matic]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
-    MOBO_ADDRESS: '0x1',
-    HOLY_HAND_ADDRESS: '0x1',
-    HOLY_PASSAGE_ADDRESS: '0x1',
-    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
-    HOLY_VISOR_ADDRESS: '0x1',
-    SMART_TREASURY_ADDRESS: '0x1',
-    SUSHI_TOKEN_ADDRESS: '0x1',
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
-    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
     USDC_TOKEN_ADDRESS: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     WETH_TOKEN_ADDRESS: '0xAe740d42E4ff0C5086b2b5b5d149eB2F9e1A754F',
-    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
-    NFT_UNEXPECTED_MOVE: '0x1',
-    NFT_SWEET_AND_SOUR: '0x1',
-    NFT_OLYMPUS: '0x1',
-    NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1',
-    MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0,
-    OHM_ADDRESS: '0x1',
-    OHM_V2_ADDRESS: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
-    EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
-    WBTC_TOKEN_ADDRESS: '0x1',
-    RENBTC_TOKEN_ADDRESS: '0x1',
-    UST_TOKEN_ADDRESS: '0x1',
-    MIM_TOKEN_ADDRESS: '0x1',
-    FRAX_TOKEN_ADDRESS: '0x1',
-    RAI_TOKEN_ADDRESS: '0x1',
-    FEI_TOKEN_ADDRESS: '0x1',
-    USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1',
-    AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1',
-    DOP_TOKEN_ADDRESS: '0x1',
-    LEASH_TOKEN_ADDRESS: '0x1',
-    BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1',
-    WX_BTRFLY_TOKEN_ADDRESS: '0x1',
-    GOHM_TOKEN_ADDRESS: '0x01'
+    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
   },
   [Network.binance]: {
-    MOVE_ADDRESS: '0x1',
-    MOBO_ADDRESS: '0x1',
-    HOLY_HAND_ADDRESS: '0x1',
-    HOLY_PASSAGE_ADDRESS: '0x1',
-    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
-    HOLY_VISOR_ADDRESS: '0x1',
-    SMART_TREASURY_ADDRESS: '0x1',
-    SUSHI_TOKEN_ADDRESS: '0x1',
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
-    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
     WETH_TOKEN_ADDRESS: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
-    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
-    NFT_UNEXPECTED_MOVE: '0x1',
-    NFT_SWEET_AND_SOUR: '0x1',
-    NFT_OLYMPUS: '0x1',
-    NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1',
-    MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0,
-    OHM_ADDRESS: '0x1',
-    OHM_V2_ADDRESS: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
-    EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
-    WBTC_TOKEN_ADDRESS: '0x1',
-    RENBTC_TOKEN_ADDRESS: '0x1',
-    UST_TOKEN_ADDRESS: '0x1',
-    MIM_TOKEN_ADDRESS: '0x1',
-    FRAX_TOKEN_ADDRESS: '0x1',
-    RAI_TOKEN_ADDRESS: '0x1',
-    FEI_TOKEN_ADDRESS: '0x1',
-    USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1',
-    AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1',
-    DOP_TOKEN_ADDRESS: '0x1',
-    LEASH_TOKEN_ADDRESS: '0x1',
-    BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1',
-    WX_BTRFLY_TOKEN_ADDRESS: '0x1',
-    GOHM_TOKEN_ADDRESS: '0x01'
+    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
   },
   [Network.binanceTest]: {
-    MOVE_ADDRESS: '0x1',
-    MOBO_ADDRESS: '0x1',
-    HOLY_HAND_ADDRESS: '0x1',
-    HOLY_PASSAGE_ADDRESS: '0x1',
-    HOLY_SAVINGS_POOL_ADDRESS: '0x1',
-    HOLY_VISOR_ADDRESS: '0x1',
-    SMART_TREASURY_ADDRESS: '0x1',
-    SUSHI_TOKEN_ADDRESS: '0x1',
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS: '0x1',
-    UNSIWAP_USDC_WETH_POOL_ADDRESS: '0x1',
     USDC_TOKEN_ADDRESS: '0x64544969ed7ebf5f083679233325356ebe738930',
     WETH_TOKEN_ADDRESS: '0xf670e09e0221a4100fbc83f4f49eda6e7bc923b0',
-    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
-    NFT_UNEXPECTED_MOVE: '0x1',
-    NFT_SWEET_AND_SOUR: '0x1',
-    NFT_OLYMPUS: '0x1',
-    NFT_VAULTS: '0x1',
-    NFT_DICE: '0x1',
-    MASTER_CHEF_ADDRESS: '0x1',
-    MASTER_CHEF_POOL_INDEX: 0,
-    OHM_ADDRESS: '0x1',
-    OHM_V2_ADDRESS: '0x1',
-    POWERCARD: '0x1',
-    POWERCARD_STAKER: '0x1',
-    ETH_V2_STAKER_POOL: '0x1',
-    OHM_STAKER_POOL: '0x1',
-    EURS_TOKEN_ADDRESS: '0x1',
-    UNISWAP_EURS_WETH_POOL_ADDRESS: '0x1',
-    WBTC_TOKEN_ADDRESS: '0x1',
-    RENBTC_TOKEN_ADDRESS: '0x1',
-    UST_TOKEN_ADDRESS: '0x1',
-    MIM_TOKEN_ADDRESS: '0x1',
-    FRAX_TOKEN_ADDRESS: '0x1',
-    RAI_TOKEN_ADDRESS: '0x1',
-    FEI_TOKEN_ADDRESS: '0x1',
-    USDT_TOKEN_ADDRESS: '0x1',
-    SHIB_TOKEN_ADDRESS: '0x1',
-    AXS_TOKEN_ADDRESS: '0x1',
-    SLP_TOKEN_ADDRESS: '0x1',
-    DOP_TOKEN_ADDRESS: '0x1',
-    LEASH_TOKEN_ADDRESS: '0x1',
-    BONE_TOKEN_ADDRESS: '0x1',
-    BTRFLY_TOKEN_ADDRESS: '0x1',
-    WX_BTRFLY_TOKEN_ADDRESS: '0x1',
-    GOHM_TOKEN_ADDRESS: '0x01'
+    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
   }
+} as AddressMap;
+const defaultAddress = '0x1';
+export const lookupAddress = <K extends AddressMapKey, N extends Network>(
+  network: N,
+  key: K
+): string => {
+  return addresses[network]?.[key] ?? defaultAddress;
 };
 
-const POWERCARD_RARI_ID = 107150;
+type ConstantsMapNetworkEntry = Readonly<{
+  MASTER_CHEF_POOL_INDEX: number;
+  POWERCARD_RARI_ID: number;
+}>;
+type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
-const SWAP_SOURCES_ICON = {
-  '0x': '',
-  //Uniswap: '',
+const constants = {
+  [Network.mainnet]: {
+    MASTER_CHEF_POOL_INDEX: 257,
+    POWERCARD_RARI_ID: 107150
+  }
+} as ConstantsMap;
+export const lookupConstant = <
+  N extends Network,
+  K extends keyof ConstantsMap[N]
+>(
+  network: N,
+  key: K
+): ConstantsMap[N][K] | undefined => {
+  return constants[network]?.[key];
+};
+
+const swapSourceIcons = {
   Uniswap_V2: '🦄',
-  //Eth2Dai: '',
-  'Kyber Network': '',
   Curve: '🧮',
   Balancer: '⚖',
   Balancer_V2: '⚖',
   Bancor: '🕳',
-  mStable: '',
   Mooniswap: '🌑',
-  Swerve: '',
   SnowSwap: '❄',
   SushiSwap: '🍣',
   'Shell Protocol': '🐚',
-  //MultiHop: '',
   DODO: '🐣',
-  //DODO_V2: '🐣',
   CREAM: '🍦',
-  //LiquidityProvider: '',
   CryptoCom: '🪙',
-  Linkswap: '',
-  //Lido: '',
-  MakerPsm: '',
-  KyberDMM: '',
-  Smoothy: '',
-  Component: '',
-  Saddle: '',
-  xSigma: '',
   Uniswap_V3: '🦄',
-  //Curve_V2: '🧮',
   ShibaSwap: '🐕',
   OasisDEX: '🏝'
 } as Record<string, string>;
-
-const USDC_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].USDC_TOKEN_ADDRESS
-    ? ADDRESSES[network].USDC_TOKEN_ADDRESS
-    : '0x1';
-};
-
-const WETH_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].WETH_TOKEN_ADDRESS
-    ? ADDRESSES[network].WETH_TOKEN_ADDRESS
-    : '0x1';
-};
-
-const EURS_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].EURS_TOKEN_ADDRESS ?? '0x1';
-};
-
-const MOVE_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].MOVE_ADDRESS
-    ? ADDRESSES[network].MOVE_ADDRESS
-    : '0x1';
-};
-
-const MOBO_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].MOBO_ADDRESS
-    ? ADDRESSES[network].MOBO_ADDRESS
-    : '0x1';
-};
-
-const SUSHI_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].SUSHI_TOKEN_ADDRESS
-    ? ADDRESSES[network].SUSHI_TOKEN_ADDRESS
-    : '0x1';
-};
-
-const HOLY_PASSAGE_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].HOLY_PASSAGE_ADDRESS
-    ? ADDRESSES[network].HOLY_PASSAGE_ADDRESS
-    : '0x1';
-};
-
-const HOLY_SAVINGS_POOL_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].HOLY_SAVINGS_POOL_ADDRESS
-    ? ADDRESSES[network].HOLY_SAVINGS_POOL_ADDRESS
-    : '0x1';
-};
-
-const HOLY_HAND_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].HOLY_HAND_ADDRESS
-    ? ADDRESSES[network].HOLY_HAND_ADDRESS
-    : '0x1';
-};
-
-const HOLY_VISOR_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].HOLY_VISOR_ADDRESS
-    ? ADDRESSES[network].HOLY_VISOR_ADDRESS
-    : '0x1';
-};
-
-const SMART_TREASURY_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].SMART_TREASURY_ADDRESS
-    ? ADDRESSES[network].SMART_TREASURY_ADDRESS
-    : '0x1';
-};
-
-const UNISWAP_USDC_WETH_POOL_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].UNSIWAP_USDC_WETH_POOL_ADDRESS
-    ? ADDRESSES[network].UNSIWAP_USDC_WETH_POOL_ADDRESS
-    : '0x1';
-};
-
-const UNISWAP_EURS_WETH_POOL_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].UNISWAP_EURS_WETH_POOL_ADDRESS ?? '0x1';
-};
-
-const SUSHISWAP_MOVE_WETH_POOL_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].SUSHISWAP_MOVE_WETH_POOL_ADDRESS
-    ? ADDRESSES[network].SUSHISWAP_MOVE_WETH_POOL_ADDRESS
-    : '0x1';
-};
-
-const MASTER_CHEF_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].MASTER_CHEF_ADDRESS ?? '0x1';
-};
-
-const MASTER_CHEF_POOL_INDEX = (network: Network): number => {
-  return ADDRESSES[network].MASTER_CHEF_POOL_INDEX ?? 0;
-};
-
-const BALANCE_CHECKER_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].BALANCE_CHECKER_ADDRESS ?? '0x1';
-};
-
-const NFT_UNEXPECTED_MOVE_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].NFT_UNEXPECTED_MOVE ?? '0x1';
-};
-
-const NFT_SWEET_AND_SOUR_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].NFT_SWEET_AND_SOUR ?? '0x1';
-};
-
-const NFT_OLYMPUS_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].NFT_OLYMPUS ?? '0x1';
-};
-
-const NFT_VAULTS_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].NFT_VAULTS ?? '0x1';
-};
-
-const NFT_DICE_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].NFT_DICE ?? '0x1';
-};
-
-const OHM_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].OHM_ADDRESS ?? '0x1';
-};
-
-const OHM_V2_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].OHM_V2_ADDRESS ?? '0x1';
-};
-
-const ETH_V2_STAKER_POOL_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].ETH_V2_STAKER_POOL ?? '0x1';
-};
-
-const OHM_STAKER_POOL_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].OHM_STAKER_POOL ?? '0x1';
-};
-
-const POWERCARD_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].POWERCARD ?? '0x1';
-};
-
-const POWERCARD_STAKER = (network: Network): string => {
-  return ADDRESSES[network].POWERCARD_STAKER ?? '0x1';
-};
-
-const WBTC_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].WBTC_TOKEN_ADDRESS ?? '0x1';
-};
-
-const RENBTC_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].RENBTC_TOKEN_ADDRESS ?? '0x1';
-};
-
-const UST_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].UST_TOKEN_ADDRESS ?? '0x1';
-};
-
-const MIM_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].MIM_TOKEN_ADDRESS ?? '0x1';
-};
-
-const FRAX_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].FRAX_TOKEN_ADDRESS ?? '0x1';
-};
-
-const RAI_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].RAI_TOKEN_ADDRESS ?? '0x1';
-};
-
-const FEI_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].FEI_TOKEN_ADDRESS ?? '0x1';
-};
-
-const USDT_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].USDT_TOKEN_ADDRESS ?? '0x1';
-};
-
-const SHIB_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].SHIB_TOKEN_ADDRESS ?? '0x1';
-};
-
-const AXS_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].AXS_TOKEN_ADDRESS ?? '0x1';
-};
-
-const SLP_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].SLP_TOKEN_ADDRESS ?? '0x1';
-};
-
-const DOP_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].DOP_TOKEN_ADDRESS ?? '0x1';
-};
-
-const BONE_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].BONE_TOKEN_ADDRESS ?? '0x1';
-};
-
-const LEASH_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].LEASH_TOKEN_ADDRESS ?? '0x1';
-};
-
-const BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].BTRFLY_TOKEN_ADDRESS ?? '0x1';
-};
-const WX_BTRFLY_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].WX_BTRFLY_TOKEN_ADDRESS ?? '0x1';
-};
-
-const GOHM_TOKEN_ADDRESS = (network: Network): string => {
-  return ADDRESSES[network].GOHM_TOKEN_ADDRESS ?? '0x1';
-};
-
-const MAX_HOLY_DEPOSIT_AMOUNT_USDC = '10000';
-
-const isTokenValidForTreasuryDeposit = (
-  address: string,
-  network: Network
-): boolean => {
-  return (
-    address.toUpperCase() === MOVE_ADDRESS(network).toUpperCase() ||
-    address.toUpperCase() ===
-      SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network).toUpperCase()
-  );
+const formatSwapSources = (swapSource: string): string => {
+  return swapSourceIcons[swapSource]
+    ? `${swapSource} ${swapSourceIcons[swapSource]}`
+    : swapSource;
 };
 
 const getEthAssetData = (): SmallTokenInfoWithIcon & {
@@ -633,7 +238,7 @@ const getMoveAssetData = (
   name: string;
 } => {
   return {
-    address: MOVE_ADDRESS(network),
+    address: lookupAddress(network, 'MOVE_ADDRESS'),
     decimals: 18,
     symbol: 'MOVE',
     name: 'Mover',
@@ -648,7 +253,7 @@ const getMoboAssetData = (
   name: string;
 } => {
   return {
-    address: MOBO_ADDRESS(network),
+    address: lookupAddress(network, 'MOBO_ADDRESS'),
     decimals: 6,
     symbol: 'MOBO',
     name: 'Mover Bonus Token',
@@ -658,7 +263,7 @@ const getMoboAssetData = (
 
 const getBTRFLYAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
-    address: BTRFLY_TOKEN_ADDRESS(network),
+    address: lookupAddress(network, 'BTRFLY_TOKEN_ADDRESS'),
     decimals: 9,
     symbol: 'BTRFLY',
     iconURL:
@@ -668,7 +273,7 @@ const getBTRFLYAssetData = (network: Network): SmallTokenInfoWithIcon => {
 
 const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
   return {
-    address: SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network),
+    address: lookupAddress(network, 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'),
     decimals: 18,
     symbol: 'SLP'
   };
@@ -676,11 +281,31 @@ const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
 
 const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
-    address: OHM_ADDRESS(network),
+    address: lookupAddress(network, 'OHM_ADDRESS'),
     symbol: 'OHM',
     decimals: 9,
     iconURL:
       'https://assets.coingecko.com/coins/images/14483/large/token_OHM_%281%29.png?1628311611'
+  };
+};
+
+const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: lookupAddress(network, 'USDC_TOKEN_ADDRESS'),
+    decimals: 6,
+    symbol: 'USDC',
+    iconURL:
+      'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
+  };
+};
+
+const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: lookupAddress(network, 'EURS_TOKEN_ADDRESS'),
+    decimals: 2,
+    symbol: 'EURS',
+    iconURL:
+      'https://token-icons.s3.amazonaws.com/0xdb25f211ab05b1c97d595516f45794528a807ad8.png'
   };
 };
 
@@ -713,56 +338,43 @@ const getAssetsForTreasury = (
   ];
 };
 
-const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
-  return {
-    address: USDC_TOKEN_ADDRESS(network),
-    decimals: 6,
-    symbol: 'USDC',
-    iconURL:
-      'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
-  };
-};
-
-const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
-  return {
-    address: EURS_TOKEN_ADDRESS(network),
-    decimals: 2,
-    symbol: 'EURS',
-    iconURL:
-      'https://token-icons.s3.amazonaws.com/0xdb25f211ab05b1c97d595516f45794528a807ad8.png'
-  };
-};
-
-const formatSwapSources = (swapSource: string): string => {
-  return SWAP_SOURCES_ICON[swapSource]
-    ? `${swapSource} ${SWAP_SOURCES_ICON[swapSource]}`
-    : swapSource;
+const isTokenValidForTreasuryDeposit = (
+  address: string,
+  network: Network
+): boolean => {
+  return (
+    address.toUpperCase() ===
+      lookupAddress(network, 'MOVE_ADDRESS').toUpperCase() ||
+    address.toUpperCase() ===
+      lookupAddress(network, 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS').toUpperCase()
+  );
 };
 
 const validTopUpAssets = (network: Network): Array<string> => {
   return [
     'eth',
-    WETH_TOKEN_ADDRESS(network),
-    WBTC_TOKEN_ADDRESS(network),
-    RENBTC_TOKEN_ADDRESS(network),
-    UST_TOKEN_ADDRESS(network),
-    MIM_TOKEN_ADDRESS(network),
-    FRAX_TOKEN_ADDRESS(network),
-    RAI_TOKEN_ADDRESS(network),
-    OHM_ADDRESS(network),
-    OHM_V2_ADDRESS(network),
-    FEI_TOKEN_ADDRESS(network),
-    USDT_TOKEN_ADDRESS(network),
-    USDC_TOKEN_ADDRESS(network),
-    SHIB_TOKEN_ADDRESS(network),
-    AXS_TOKEN_ADDRESS(network),
-    SLP_TOKEN_ADDRESS(network),
-    DOP_TOKEN_ADDRESS(network),
-    BONE_TOKEN_ADDRESS(network),
-    LEASH_TOKEN_ADDRESS(network),
-    BTRFLY_TOKEN_ADDRESS(network),
-    WX_BTRFLY_TOKEN_ADDRESS(network),
-    GOHM_TOKEN_ADDRESS(network)
+    lookupAddress(network, 'WETH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'WBTC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'RENBTC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'UST_TOKEN_ADDRESS'),
+    lookupAddress(network, 'MIM_TOKEN_ADDRESS'),
+    lookupAddress(network, 'FRAX_TOKEN_ADDRESS'),
+    lookupAddress(network, 'RAI_TOKEN_ADDRESS'),
+    lookupAddress(network, 'OHM_ADDRESS'),
+    lookupAddress(network, 'OHM_V2_ADDRESS'),
+    lookupAddress(network, 'FEI_TOKEN_ADDRESS'),
+    lookupAddress(network, 'USDT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'USDC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'SHIB_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AXS_TOKEN_ADDRESS'),
+    lookupAddress(network, 'SLP_TOKEN_ADDRESS'),
+    lookupAddress(network, 'DOP_TOKEN_ADDRESS'),
+    lookupAddress(network, 'BONE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LEASH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'BTRFLY_TOKEN_ADDRESS'),
+    lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GOHM_TOKEN_ADDRESS'),
+    lookupAddress(network, 'TOKE_TOKEN_ADDRESS')
   ];
 };
 
@@ -778,32 +390,13 @@ export {
   isTokenValidForTreasuryDeposit,
   formatSwapSources,
   getEURSAssetData,
-  SUSHI_ADDRESS,
-  MOBO_ADDRESS,
-  HOLY_PASSAGE_ADDRESS,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
-  HOLY_HAND_ADDRESS,
   HOLY_VISOR_ABI,
   HOLY_HAND_ABI,
-  HOLY_SAVINGS_POOL_ADDRESS,
-  HOLY_VISOR_ADDRESS,
-  MAX_HOLY_DEPOSIT_AMOUNT_USDC,
   SMART_TREASURY_ABI,
-  SMART_TREASURY_ADDRESS,
-  USDC_TOKEN_ADDRESS,
-  SUSHISWAP_MOVE_WETH_POOL_ADDRESS,
-  UNISWAP_USDC_WETH_POOL_ADDRESS,
-  MOVE_ADDRESS,
-  WETH_TOKEN_ADDRESS,
-  BALANCE_CHECKER_ADDRESS,
   BALANCE_CHECKER_ABI,
   ERC20_ABI,
-  NFT_UNEXPECTED_MOVE_ADDRESS,
-  NFT_SWEET_AND_SOUR_ADDRESS,
-  NFT_OLYMPUS_ADDRESS,
-  NFT_VAULTS_ADDRESS,
-  NFT_DICE_ADDRESS,
   NFT_UNEXPECTED_MOVE_ABI,
   NFT_SWEET_AND_SOUR_ABI,
   NFT_OLYMPUS_ABI,
@@ -812,39 +405,11 @@ export {
   NFT_NIBBLE_SHOP_ABI,
   SUSHI_UNI_PAIR_V2_ABI,
   NFT_RARI_ABI,
-  POWERCARD_RARI_ID,
-  POWERCARD_ADDRESS,
-  POWERCARD_STAKER,
   POWERCARD_STAKER_ABI,
-  MASTER_CHEF_ADDRESS,
-  MASTER_CHEF_POOL_INDEX,
   MASTER_CHEF_ABI,
-  EURS_TOKEN_ADDRESS,
-  UNISWAP_EURS_WETH_POOL_ADDRESS,
   ERC721_ABI,
   EARNINGS_ETHEREUM_ABI,
   EARNINGS_OLYMPUS_ABI,
   WX_BTRFLY_ABI,
-  ETH_V2_STAKER_POOL_ADDRESS,
-  OHM_STAKER_POOL_ADDRESS,
-  OHM_ADDRESS,
-  WBTC_TOKEN_ADDRESS,
-  RENBTC_TOKEN_ADDRESS,
-  UST_TOKEN_ADDRESS,
-  MIM_TOKEN_ADDRESS,
-  FRAX_TOKEN_ADDRESS,
-  RAI_TOKEN_ADDRESS,
-  OHM_V2_ADDRESS,
-  FEI_TOKEN_ADDRESS,
-  USDT_TOKEN_ADDRESS,
-  SHIB_TOKEN_ADDRESS,
-  AXS_TOKEN_ADDRESS,
-  SLP_TOKEN_ADDRESS,
-  DOP_TOKEN_ADDRESS,
-  BONE_TOKEN_ADDRESS,
-  LEASH_TOKEN_ADDRESS,
-  BTRFLY_TOKEN_ADDRESS,
-  WX_BTRFLY_TOKEN_ADDRESS,
-  GOHM_TOKEN_ADDRESS,
   validTopUpAssets
 };

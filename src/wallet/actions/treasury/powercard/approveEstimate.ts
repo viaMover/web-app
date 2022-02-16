@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
-import { NFT_RARI_ABI, POWERCARD_ADDRESS } from '@/wallet/references/data';
+import { lookupAddress, NFT_RARI_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 export const estimatePowercardApprove = async (
@@ -11,7 +11,7 @@ export const estimatePowercardApprove = async (
   network: Network,
   web3: Web3
 ): Promise<string> => {
-  const powercardRariAddress = POWERCARD_ADDRESS(network);
+  const powercardRariAddress = lookupAddress(network, 'POWERCARD');
   const powercardRariABI = NFT_RARI_ABI;
 
   const rari = new web3.eth.Contract(

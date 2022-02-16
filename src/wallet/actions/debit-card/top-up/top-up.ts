@@ -19,8 +19,7 @@ import {
   getBTRFLYAssetData,
   getUSDCAssetData,
   HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  WX_BTRFLY_TOKEN_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -43,7 +42,7 @@ export const topUpCompound = async (
   unwrapGasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   let topupInputAsset = inputAsset;
   let topupInputAmount = inputAmount;
@@ -52,7 +51,12 @@ export const topUpCompound = async (
   let topupActionGasLimit = actionGasLimit;
   let topupApproveGasLimit = approveGasLimit;
 
-  if (sameAddress(inputAsset.address, WX_BTRFLY_TOKEN_ADDRESS(network))) {
+  if (
+    sameAddress(
+      inputAsset.address,
+      lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS')
+    )
+  ) {
     try {
       Sentry.addBreadcrumb({
         type: 'info',
@@ -198,7 +202,7 @@ export const topUp = async (
     throw 'TransferData is missing';
   }
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   const holyHand = new web3.eth.Contract(

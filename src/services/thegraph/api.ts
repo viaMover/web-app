@@ -1,5 +1,6 @@
-import { sameAddress } from './../../utils/address';
-import { multiply } from './../../utils/bigmath';
+import { sameAddress } from '@/utils/address';
+import { multiply } from '@/utils/bigmath';
+
 import { sushiswapClient } from './client';
 import { SUSHISWAP_PRICES_QUERY } from './queries';
 
