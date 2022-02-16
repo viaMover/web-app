@@ -9,7 +9,9 @@
     </template>
 
     <template v-slot:info>
-      <debit-card-image class="small" :skin="currentSkin" />
+      <div class="secondary-page-info">
+        <debit-card-image class="small" :skin="currentSkin" />
+      </div>
     </template>
 
     <form
