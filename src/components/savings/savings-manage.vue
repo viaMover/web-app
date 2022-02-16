@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage" hide-info>
+  <secondary-page class="manage">
     <template v-slot:title>
       <secondary-page-header
         :description="$t('savings.lblSavingsBalance')"

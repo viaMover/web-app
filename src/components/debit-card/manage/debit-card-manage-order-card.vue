@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage order-card" hide-info>
+  <secondary-page class="manage order-card">
     <template v-slot:title>
       <secondary-page-header
         class="page-title max-width"

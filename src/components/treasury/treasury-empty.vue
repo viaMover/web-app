@@ -1,7 +1,8 @@
 <template>
-  <secondary-page class="manage empty" hide-info>
+  <secondary-page class="manage empty">
     <template v-slot:title>
       <secondary-page-header
+        class="alternate"
         :description="$t('treasury.txtTreasuryEmptyDescription')"
         :title="treasuryBalance"
       />

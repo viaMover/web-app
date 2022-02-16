@@ -1,11 +1,5 @@
 <template>
-  <secondary-page
-    class="powercard empty"
-    has-back-button
-    hide-info
-    hide-title
-    @back="handleBack"
-  >
+  <secondary-page class="powercard empty" has-back-button @back="handleBack">
     <template v-if="txStep === undefined">
       <secondary-page-header
         class="max-width"
