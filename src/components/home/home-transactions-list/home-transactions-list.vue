@@ -14,7 +14,20 @@
           :transactions="txGroup.transactions"
         />
       </transition-group>
-      <infinite-loading v-if="hasInfiniteLoader" @infinite="infiniteHandler" />
+      <infinite-loading v-if="hasInfiniteLoader" @infinite="infiniteHandler">
+        <template v-slot:spinner>
+          <img
+            :alt="$t('icon.txtPendingIconAlt')"
+            src="@/assets/images/ios-spinner.svg"
+          />
+        </template>
+        <template v-slot:no-more>
+          {{ $t('lblNoMoreTransactions') }}
+        </template>
+        <template v-slot:no-results>
+          {{ $t('lblNoMoreTransactions') }}
+        </template>
+      </infinite-loading>
     </div>
   </transition>
 </template>
