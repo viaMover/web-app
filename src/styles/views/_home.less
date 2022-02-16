@@ -42,6 +42,51 @@
       }
     }
 
+    &.multichain {
+      justify-content: flex-end;
+
+      .account,
+      .network {
+        flex: 0 0 auto;
+        margin-right: 24px;
+      }
+
+      .selector {
+        margin-bottom: 4px;
+        background-color: transparent;
+        display: flex;
+        align-items: center;
+      }
+
+      .item,
+      .selector .title {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: 14px;
+        line-height: 22px;
+        color: @text-muted;
+        margin-right: 8px;
+        @font-medium();
+      }
+
+      .item {
+        font-size: 16px;
+        line-height: 24px;
+
+        &.active {
+          color: @text-primary;
+        }
+      }
+
+      .image {
+        display: block;
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
+      }
+    }
+
     .title {
       flex: 0 0 auto;
       margin-right: 24px;

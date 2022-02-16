@@ -7,6 +7,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblPageTitleDefault: 'Mover App',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
+  lblYourWallet: 'Your wallet',
   headingBalance: 'Your wallet balance',
   lblConnectWallet: 'Please connect your wallet',
   txtNotFound:

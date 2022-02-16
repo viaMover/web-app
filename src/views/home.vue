@@ -4,7 +4,10 @@
       <home-left-rail />
     </template>
 
-    <home-masthead />
+    <home-masthead-multichain
+      v-if="isFeatureEnabled('isMultiChainMastheadEnabled')"
+    />
+    <home-masthead v-else />
 
     <div class="cards">
       <home-cards-debit-card v-if="isFeatureEnabled('isDebitCardEnabled')" />
@@ -35,6 +38,7 @@ import {
   HomeCardsSavingsDeposit,
   HomeLeftRail,
   HomeMasthead,
+  HomeMastheadMultichain,
   HomeNavigationSection
 } from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
@@ -46,6 +50,7 @@ export default Vue.extend({
     ContentWrapper,
     HomeLeftRail,
     HomeMasthead,
+    HomeMastheadMultichain,
     HomeNavigationSection,
     HomeCardsDebitCard,
     HomeCardsSavingsDeposit,
