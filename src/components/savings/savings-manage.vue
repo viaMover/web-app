@@ -9,7 +9,7 @@
 
     <div class="chart-wrapper">
       <bar-chart
-        :accent-color="chartColor"
+        :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
         :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
         @item-selected="handleItemSelected"
@@ -62,9 +62,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState({
-      colors: 'colors'
-    }),
+    ...mapState({ colors: 'colors' }),
     ...mapState('savings', {
       isSavingsInfoLoading: 'isSavingsInfoLoading',
       networkInfo: 'networkInfo'
@@ -137,7 +135,7 @@ export default Vue.extend({
         )
       );
     },
-    chartColor(): string {
+    chartAccentColor(): string {
       return this.colors['product-savings'];
     }
   },

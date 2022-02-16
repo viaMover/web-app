@@ -9,6 +9,7 @@
 
     <div class="chart-wrapper">
       <bar-chart
+        :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
@@ -55,6 +56,7 @@ export default Vue.extend({
     BarChart
   },
   computed: {
+    ...mapState({ colors: 'colors' }),
     ...mapState('savings', { apy: 'savingsAPY' }),
     savingsBalance(): string {
       const apyNative = multiply(divide(this.apy, '100'), '10000');
@@ -72,6 +74,9 @@ export default Vue.extend({
         year: 2000 + n,
         month: 1 + n
       }));
+    },
+    chartAccentColor(): string {
+      return this.colors['product-savings'];
     }
   },
   methods: {

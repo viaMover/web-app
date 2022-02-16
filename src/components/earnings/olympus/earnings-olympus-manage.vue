@@ -9,6 +9,7 @@
 
     <div class="chart-wrapper">
       <bar-chart
+        :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
         :is-loading="isOlympusInfoLoading || olympusInfo === undefined"
         @item-selected="handleItemSelected"
@@ -65,6 +66,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({ colors: 'colors' }),
     ...mapState('account', {
       networkInfo: 'networkInfo'
     }),
@@ -142,6 +144,9 @@ export default Vue.extend({
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
+    },
+    chartAccentColor(): string {
+      return this.colors['product-earnings'];
     }
   },
   methods: {
