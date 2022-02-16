@@ -54,21 +54,12 @@ const messages: VueI18n.LocaleMessageObject = {
     lblReviewTransaction: 'Review transaction'
   },
   menu: {
-    lblSwapTokenEmoji: '🔄',
-    lblSwapToken: 'Swap Tokens',
-    lblGetMoveEmoji: '💸',
-    lblGetMove: 'Get MOVE',
-    lblProvideLiquidityMoveEmoji: '💧',
-    lblProvideLiquidityMove: 'Provide liquidity for MOVE',
-    lblDepositInSavingsEmoji: '💰',
     lblDepositInSavings: 'Deposit in Savings',
-    lblIncreaseBoostEmoji: '📈',
     lblIncreaseBoost: 'Increase boost',
-    lblPurchaseBondsEmoji: '🏦',
-    lblPurchaseBonds: 'Purchase Bonds',
     lblBeautifulCard: 'Beautiful Card',
     lblComingSoon: 'Coming soon',
-    lblBonds: 'Bonds'
+    lblCardTopUp: 'Card top up',
+    lblDepositInSavingsPlus: 'Deposit in Savings Plus'
   },
   swaps: {
     lblSwaps: 'Swaps',
@@ -1254,6 +1245,12 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtNavIconAlt: 'Olympus',
       lblOHMTokenAlt: 'Olympus token image'
     }
+  };
+}
+
+if (isFeatureEnabled('isSavingsPlusEnabled')) {
+  messages.savingsPlus = {
+    lblSavingsPlus: 'Savings Plus'
   };
 }
 
