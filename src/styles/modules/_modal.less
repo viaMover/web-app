@@ -15,15 +15,13 @@
     }
 
   .body {
-      position: absolute;
-      float: left;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+      position: fixed;
+      top: 104px;
+      left: calc(50% - 264px);
       width: 528px;
       min-height: 30vh;
       height: auto;
-      max-height: 90vh;
+      max-height: 80vh;
       padding: 0;
       background-color: @background;
       border-radius: 16px;
@@ -47,7 +45,6 @@
         max-height: 85vh;
         overflow-y: auto;
         scrollbar-width: none;
-        padding-bottom: 16px;
 
         &::-webkit-scrollbar {
           width: 0;
@@ -124,6 +121,8 @@
           margin-top: 78px;
 
           h2 {
+            font-size: 24px;
+            line-height: 40px;
             @font-bold();
           }
 
