@@ -5,6 +5,7 @@ import { TransferData } from '@/services/0x/api';
 import store from '@/store/index';
 import { multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
+import { currentTimestamp } from '@/utils/time';
 import { SmallToken, TransactionTypes } from '@/wallet/types';
 
 import {
@@ -13,7 +14,6 @@ import {
   sendSubsidizedRequest,
   SubsidizedRequestError
 } from '../subsidized';
-import { currentTimestamp } from './../../../utils/time';
 import { waitOffchainTransactionReceipt } from './../../offchainExplorer';
 import { Transaction } from './../../types';
 
@@ -94,7 +94,7 @@ export const swapSubsidized = async (
     if (err instanceof SubsidizedRequestError) {
       console.error(`Subsidized request error: ${err.message}`);
     }
-    console.error(`Common error: ${err}`);
+    console.error(`Common error:`, err);
     throw err;
   }
 };

@@ -1,18 +1,17 @@
 <template>
-  <ul class="item__list-item">
-    <router-link class="button-active" :to="routeTo">
-      <video
-        :alt="$t('nibbleShop.txtProductAlt', { name })"
-        autoplay="autoplay"
-        data-keepplaying="data-keepplaying"
-        loop="loop"
-        muted="muted"
-        playsinline="playsinline"
-        :src="src"
-      />
-      <h3>{{ name }}</h3>
-    </router-link>
-  </ul>
+  <router-link class="button-like item" :to="routeTo">
+    <video
+      :alt="$t('nibbleShop.txtProductAlt', { name })"
+      autoplay="autoplay"
+      data-keepplaying="data-keepplaying"
+      loop="loop"
+      muted="muted"
+      playsinline="playsinline"
+      poster="@/assets/images/ios-spinner.svg"
+      :src="src"
+    />
+    <h3 class="title">{{ name }}</h3>
+  </router-link>
 </template>
 
 <script lang="ts">

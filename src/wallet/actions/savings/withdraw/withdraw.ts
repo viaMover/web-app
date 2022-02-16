@@ -6,11 +6,7 @@ import { AbiItem } from 'web3-utils';
 import { getPureEthAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import {
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS
-} from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { withdrawSubsidized } from './withdrawSubsidized';
@@ -49,7 +45,7 @@ export const withdrawCompound = async (
       );
     }
   } catch (err) {
-    console.error(`Can't savings withdraw: ${err}`);
+    console.error(`Can't savings withdraw:`, err);
     throw err;
   }
 };
@@ -66,10 +62,10 @@ export const withdraw = async (
 ): Promise<void> => {
   console.log('Executing savings withdraw...');
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
-  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const poolAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
 
   try {
     const holyHand = new web3.eth.Contract(

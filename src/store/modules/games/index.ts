@@ -1,11 +1,10 @@
-import { Module } from 'vuex';
-
 import { isProduction } from '@/settings/globals';
-import actions from '@/store/modules/games/actions';
-import getters from '@/store/modules/games/getters';
-import mutations from '@/store/modules/games/mutations';
 import { GamesStoreState } from '@/store/modules/games/types';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule } from '@/store/types';
+
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 
 export default {
   namespaced: true,
@@ -18,4 +17,4 @@ export default {
   actions,
   mutations,
   getters
-} as Module<GamesStoreState, RootStoreState>;
+} as AugmentedModule<GamesStoreState, ActionType, GetterType, MutationType>;

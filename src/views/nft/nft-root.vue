@@ -1,11 +1,11 @@
 <template>
-  <router-view />
+  <transition mode="out-in" name="slide">
+    <router-view />
+  </transition>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
-import '@/styles/_nft.less';
 
 export default Vue.extend({
   name: 'NftRoot'

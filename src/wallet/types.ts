@@ -1,4 +1,4 @@
-import { TransactionMoveType } from './../services/mover/transactions/types';
+import { TransactionMoveType } from '@/services/mover/transactions/types';
 export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
 
 export type SmallTokenInfo = {
@@ -36,6 +36,15 @@ export const isTokenWithBalance = (
   t: Token | TokenWithBalance
 ): t is TokenWithBalance => {
   return (t as TokenWithBalance).balance !== undefined;
+};
+
+export type DisplayableToken = {
+  address: string;
+  symbol: string;
+  name: string;
+  balanceNativeFormatted: string;
+  balanceFormatted: string;
+  logo: string;
 };
 
 export enum TransactionTypes {

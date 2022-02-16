@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="top-up"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >
@@ -30,18 +32,16 @@
       <template v-slot:swap-message>
         <div
           v-if="isSwapNeeded && formattedUSDCTotal && inputMode === 'TOKEN'"
-          class="form-swap"
+          class="section swap-message"
         >
-          <p>
-            {{ $t('forms.lblSwappingFor') }}
-            <custom-picture
-              :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
-              class="token"
-              :sources="usdcPicture.sources"
-              :src="usdcPicture.src"
-            />
-            <span>{{ formattedUSDCTotal }}</span>
-          </p>
+          {{ $t('forms.lblSwappingFor') }}
+          <custom-picture
+            :alt="$t('lblTokenAlt', { symbol: 'USDc' })"
+            class="token-icon inline"
+            :sources="usdcPicture.sources"
+            :src="usdcPicture.src"
+          />
+          <span>{{ formattedUSDCTotal }}</span>
         </div>
       </template>
     </prepare-form>
@@ -97,8 +97,8 @@ import {
   getBTRFLYAssetData,
   getEURSAssetData,
   getUSDCAssetData,
-  validTopUpAssets,
-  WX_BTRFLY_TOKEN_ADDRESS
+  lookupAddress,
+  validTopUpAssets
 } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -446,7 +446,10 @@ export default Vue.extend({
             if (
               sameAddress(
                 referenceToken.address,
-                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+                lookupAddress(
+                  this.networkInfo.network,
+                  'WX_BTRFLY_TOKEN_ADDRESS'
+                )
               )
             ) {
               const newInputInTokens = multiply(
@@ -570,7 +573,10 @@ export default Vue.extend({
             if (
               sameAddress(
                 referenceToken.address,
-                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+                lookupAddress(
+                  this.networkInfo.network,
+                  'WX_BTRFLY_TOKEN_ADDRESS'
+                )
               )
             ) {
               const newInputInTokens = multiply(
@@ -606,7 +612,10 @@ export default Vue.extend({
             if (
               sameAddress(
                 referenceToken.address,
-                WX_BTRFLY_TOKEN_ADDRESS(this.networkInfo.network)
+                lookupAddress(
+                  this.networkInfo.network,
+                  'WX_BTRFLY_TOKEN_ADDRESS'
+                )
               )
             ) {
               const newInputInTokens = multiply(

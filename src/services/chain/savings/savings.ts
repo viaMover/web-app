@@ -7,7 +7,7 @@ import { Network } from '@/utils/networkTypes';
 import {
   getUSDCAssetData,
   HOLY_POOL_ABI,
-  HOLY_SAVINGS_POOL_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -22,7 +22,7 @@ export const getSavingsAPY = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const holyPoolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const holyPoolAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
 
   const HolyHand = new web3.eth.Contract(
     HOLY_POOL_ABI as AbiItem[],
@@ -54,7 +54,7 @@ export const getSavingsBalance = async (
     return '0';
   }
 
-  const contractAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
   const contractABI = HOLY_POOL_ABI;
 
   const savings = new web3.eth.Contract(

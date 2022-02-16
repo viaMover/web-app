@@ -6,10 +6,7 @@ import { floorDivide } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { EstimateResponse } from '@/wallet/actions/types';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
-import {
-  POWERCARD_STAKER,
-  POWERCARD_STAKER_ABI
-} from '@/wallet/references/data';
+import { lookupAddress, POWERCARD_STAKER_ABI } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -21,13 +18,13 @@ export const estimateUnstakePowercardCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = POWERCARD_STAKER(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD_STAKER');
 
   let isApproved = false;
   try {
     isApproved = await isPowercardApproved(contractAddress, network, web3);
   } catch (err) {
-    console.error(`Can't estimate powercard approve: ${err}`);
+    console.error(`Can't estimate powercard approve:`, err);
     return {
       error: true,
       approveGasLimit: '0',
@@ -51,7 +48,7 @@ export const estimateUnstakePowercardCompound = async (
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
-      console.error(`Can't estimate powercard approve: ${err}`);
+      console.error(`Can't estimate powercard approve:`, err);
       return {
         error: true,
         actionGasLimit: '0',

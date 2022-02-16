@@ -1,32 +1,50 @@
 <template>
-  <content-wrapper
-    page-container-class="general-no-wallet-desktop"
-    wrapper-class="general-no-wallet-desktop"
-  >
-    <a class="logo" href="https://viamover.com">
-      <img alt="logo" src="@/assets/images/logo.svg" />
+  <content-wrapper class="connect-wallet" page-content-class="centered">
+    <a class="logo" href="https://viamover.com" rel="external">
+      <picture>
+        <img alt="logo" src="@/assets/images/logo.svg" />
+      </picture>
     </a>
-    <div class="general-no-wallet-desktop__wrapper">
-      <div class="general-no-wallet-desktop__wrapper-info">
-        <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
-        <i18n class="description" path="connect.txtMoverDescription" tag="p">
-          <a href="https://viamover.com/terms_of_use" target="_blank">
-            {{ $t('connect.lblTermsAndConditions') }}
-          </a>
-        </i18n>
-        <button
-          class="button-active black-link"
-          type="button"
-          @click.prevent="otherProvider"
-        >
-          {{ $t('connect.btnConnectOtherWallet') }}
-        </button>
-        <p class="text">{{ $t('connect.lblChooseProvider') }}</p>
-      </div>
-      <div class="general-no-wallet-desktop__wrapper-qr">
-        <div class="qr-code">
-          <img alt="QR code" :src="wcCode" />
+
+    <section class="container">
+      <div class="left">
+        <div class="info">
+          <h1 class="title">{{ $t('lblConnectWallet') }}</h1>
+          <i18n class="description" path="connect.txtMoverDescription" tag="p">
+            <a
+              class="link medium"
+              href="https://viamover.com/terms_of_use"
+              rel="external help"
+              target="_blank"
+            >
+              {{ $t('connect.lblTermsAndConditions') }}
+            </a>
+          </i18n>
         </div>
+
+        <div class="button-container">
+          <button
+            class="button primary"
+            type="button"
+            @click.prevent="otherProvider"
+          >
+            {{ $t('connect.btnConnectOtherWallet') }}
+          </button>
+
+          <p class="description">{{ $t('connect.lblChooseProvider') }}</p>
+        </div>
+      </div>
+      <div class="right">
+        <pu-skeleton
+          class="qr-code"
+          :loading="wcCode === '' && wcCodeWebp === ''"
+          tag="div"
+        >
+          <picture>
+            <source :srcset="wcCodeWebp" type="image/webp" />
+            <img alt="QR code" :src="wcCode" />
+          </picture>
+        </pu-skeleton>
         <i18n
           class="description"
           path="connect.txtQrDescriptionPartOne"
@@ -36,7 +54,7 @@
           {{ $t('connect.txtQrDescriptionPartTwo') }}
         </i18n>
       </div>
-    </div>
+    </section>
   </content-wrapper>
 </template>
 
@@ -48,12 +66,10 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import QRCode from 'qrcode';
 
 import { APIKeys } from '@/settings';
-import { InitWalletPayload } from '@/store/modules/account/actions/wallet';
+import { InitWalletPayload } from '@/store/modules/account/types';
 import { InitCallbacks } from '@/web3/callbacks';
 
 import { ContentWrapper } from '@/components/layout';
-
-import '@/styles/_general.less';
 
 export default Vue.extend({
   name: 'ConnectWallet',
@@ -62,7 +78,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      wcCode: ''
+      wcCode: '',
+      wcCodeWebp: ''
     };
   },
   computed: {
@@ -86,8 +103,16 @@ export default Vue.extend({
       infuraId: APIKeys.INFURA_PROJECT_ID,
       qrcodeModal: {
         open: async (uri: string) => {
-          const qrCodeUri = await QRCode.toDataURL(uri);
-          this.wcCode = qrCodeUri;
+          this.wcCode = await QRCode.toDataURL(uri, {
+            margin: 0,
+            width: 216 * 2,
+            type: 'image/png'
+          });
+          this.wcCodeWebp = `${await QRCode.toDataURL(uri, {
+            margin: 0,
+            width: 216 * 2,
+            type: 'image/webp'
+          })} 1x`;
         },
         close: () => {
           // do nothing.

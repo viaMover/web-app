@@ -1,13 +1,10 @@
 <template>
-  <left-rail-section
-    items-container-tag="div"
-    :section-name="$t('earnings.olympus.lblManage')"
-  >
+  <navigation-section :section-name="$t('earnings.olympus.lblManage')">
     <template v-if="isLoading">
-      <left-rail-section-nav-item-image-skeleton v-for="idx in 2" :key="idx" />
+      <navigation-section-item-image-skeleton v-for="idx in 2" :key="idx" />
     </template>
     <template v-else>
-      <left-rail-section-nav-item-image
+      <navigation-section-item-image
         :description="$t('earnings.olympus.txtStake', { apy })"
         navigate-to="earnings-olympus-stake"
         :title="$t('earnings.olympus.lblStake')"
@@ -19,8 +16,8 @@
             :src="stakePicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
-      <left-rail-section-nav-item-image
+      </navigation-section-item-image>
+      <navigation-section-item-image
         v-if="hasActiveEarnings"
         :description="$t('earnings.olympus.txtWithdraw')"
         navigate-to="earnings-olympus-withdraw"
@@ -33,8 +30,8 @@
             :src="withdrawPicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
-      <left-rail-section-nav-item-image
+      </navigation-section-item-image>
+      <navigation-section-item-image
         :description="$t('earnings.olympus.txtGlobalAnalytics')"
         navigate-to="earnings-olympus-global-analytics"
         :title="$t('earnings.olympus.lblGlobalAnalytics')"
@@ -46,9 +43,9 @@
             :src="globalAnalyticsPicture.src"
           />
         </template>
-      </left-rail-section-nav-item-image>
+      </navigation-section-item-image>
     </template>
-  </left-rail-section>
+  </navigation-section>
 </template>
 
 <script lang="ts">
@@ -59,17 +56,17 @@ import { formatPercents } from '@/utils/format';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import {
-  LeftRailSection,
-  LeftRailSectionNavItemImage,
-  LeftRailSectionNavItemImageSkeleton
-} from '@/components/layout';
+  NavigationSection,
+  NavigationSectionItemImage,
+  NavigationSectionItemImageSkeleton
+} from '@/components/navigation';
 
 export default Vue.extend({
   name: 'EarningsManageOlympusLeftRailItem',
   components: {
-    LeftRailSection,
-    LeftRailSectionNavItemImage,
-    LeftRailSectionNavItemImageSkeleton,
+    NavigationSection,
+    NavigationSectionItemImage,
+    NavigationSectionItemImageSkeleton,
     CustomPicture
   },
   data() {

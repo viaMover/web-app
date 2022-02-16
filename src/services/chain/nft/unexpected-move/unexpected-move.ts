@@ -7,8 +7,8 @@ import { AbiItem } from 'web3-utils';
 import { floorDivide, multiply, sub } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
-  NFT_UNEXPECTED_MOVE_ABI,
-  NFT_UNEXPECTED_MOVE_ADDRESS
+  lookupAddress,
+  NFT_UNEXPECTED_MOVE_ABI
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -25,7 +25,7 @@ export const getUnexpectedMoveData = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_UNEXPECTED_MOVE');
 
   const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
@@ -64,7 +64,7 @@ export const claimUnexpectedMove = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_UNEXPECTED_MOVE');
 
   const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
@@ -137,7 +137,7 @@ export const claimAndExchangeUnexpectedMove = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_UNEXPECTED_MOVE');
 
   const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
@@ -211,7 +211,7 @@ export const exchangeUnexpectedMove = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_UNEXPECTED_MOVE_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_UNEXPECTED_MOVE');
 
   const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],

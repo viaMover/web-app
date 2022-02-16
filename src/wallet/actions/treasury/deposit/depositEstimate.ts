@@ -15,7 +15,7 @@ import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
@@ -27,7 +27,7 @@ export const estimateDepositCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   let isApproveNeeded = true;
   try {
@@ -39,7 +39,7 @@ export const estimateDepositCompound = async (
       web3
     );
   } catch (err) {
-    console.error(`Can't estimate approve: ${err}`);
+    console.error(`Can't estimate approve:`, err);
     return {
       error: true,
       approveGasLimit: '0',
@@ -63,7 +63,7 @@ export const estimateDepositCompound = async (
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
-      console.error(`Can't estimate approve: ${err}`);
+      console.error(`Can't estimate approve:`, err);
       return {
         error: true,
         actionGasLimit: '0',
@@ -98,7 +98,7 @@ export const estimateDeposit = async (
   const move = getMoveAssetData(network);
   const slp = getMoveWethLPAssetData(network);
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {

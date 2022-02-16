@@ -10,7 +10,7 @@ import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprov
 import {
   getMoveAssetData,
   HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -25,7 +25,7 @@ export const claimAndBurnCompound = async (
   changeStepToProcess: () => Promise<void>,
   gasPriceInGwei?: string
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   try {
     await executeTransactionWithApprove(
@@ -51,7 +51,7 @@ export const claimAndBurnCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't treasury claim and burn: ${err}`);
+    console.error(`Can't treasury claim and burn:`, err);
     throw err;
   }
 };
@@ -72,7 +72,7 @@ export const claimAndBurn = async (
     throw 'Only MOVE can be burned';
   }
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {

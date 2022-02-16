@@ -12,10 +12,7 @@ import {
   SubsidizedRequestError
 } from '@/wallet/actions/subsidized';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
-import {
-  HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS
-} from '@/wallet/references/data';
+import { lookupAddress } from '@/wallet/references/data';
 import { SmallToken, TransactionTypes } from '@/wallet/types';
 import { Transaction } from '@/wallet/types';
 
@@ -33,7 +30,7 @@ export const depositSubsidized = async (
 
   const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const poolAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
 
   const actionString = createSavingsDepositActionString(
     accountAddress,
@@ -52,7 +49,7 @@ export const depositSubsidized = async (
       changeStepToProcess
     );
 
-    const holyHandAddress = HOLY_HAND_ADDRESS(network);
+    const holyHandAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
     const tx: Transaction = {
       blockNumber: '0',

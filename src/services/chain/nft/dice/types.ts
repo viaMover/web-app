@@ -1,4 +1,5 @@
 export type DiceData = {
+  balance: string;
   totalClaimed: string;
 };
 

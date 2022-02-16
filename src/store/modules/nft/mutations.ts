@@ -1,42 +1,54 @@
-import { MutationTree } from 'vuex';
-
 import {
+  DiceData,
   OlympusData,
   SweetAndSourData,
-  UnexpectedMoveData
+  UnexpectedMoveData,
+  VaultsData
 } from '@/services/chain';
-import { DiceData, VaultsData } from '@/services/chain';
+import { MutationFuncs } from '@/store/types';
 
-import { NftAsset, NFTStoreState } from './types';
+import { NFTStoreState } from './types';
 
-export default {
+type Mutations = {
+  setIsLoading: void;
+  setUnexpectedMoveData: void;
+  setSweetAndSourData: void;
+  setVaultsData: void;
+  setDiceData: void;
+  setOlympusData: void;
+};
+
+const mutations: MutationFuncs<Mutations, NFTStoreState> = {
   setIsLoading(state, isLoading): void {
     state.isLoading = isLoading;
   },
-  setNFTs(state, data: Array<NftAsset>): void {
-    state.nfts = data;
-  },
   setUnexpectedMoveData(state, data: UnexpectedMoveData): void {
-    state.UnexpectedMoveTotalAmount = data.totalAmount;
-    state.UnexpectedMoveTotalClaimed = data.totalClaimed;
-    state.UnexpectedMoveTotalExchanged = data.totalExchanged;
-    state.UnexpectedMoveBalance = data.balance;
+    state.unexpectedMove.meta.totalAmount = data.totalAmount;
+    state.unexpectedMove.meta.totalClaimed = data.totalClaimed;
+    state.unexpectedMove.meta.totalExchanged = data.totalExchanged;
+    state.unexpectedMove.balance = data.balance;
   },
   setSweetAndSourData(state, data: SweetAndSourData): void {
-    state.SweetAndSourTotalAmount = data.totalAmount;
-    state.SweetAndSourTotalClaimed = data.totalClaimed;
+    state.sweetAndSour.meta.totalAmount = data.totalAmount;
+    state.sweetAndSour.meta.totalClaimed = data.totalClaimed;
+    state.unexpectedMove.balance = data.balance;
   },
   setVaultsData(state, data: VaultsData): void {
-    state.VaultsTotalAmount = data.totalAmount;
-    state.VaultsTotalClaimed = data.totalClaimed;
+    state.vaults.meta.totalAmount = data.totalAmount;
+    state.vaults.meta.totalClaimed = data.totalClaimed;
+    state.vaults.balance = data.balance;
   },
   setDiceData(state, data: DiceData): void {
-    state.DiceTotalClaimed = data.totalClaimed;
+    state.dice.meta.totalClaimed = data.totalClaimed;
+    state.dice.balance = data.balance;
   },
   setOlympusData(state, data: OlympusData): void {
-    state.OlympusTotalClaimed = data.totalClaimed;
-    state.OlympusStartTs = data.claimStart;
-    state.OlympusEndTs = data.claimEnd;
-    state.OlympusBalance = data.balance;
+    state.movingWithOlympus.meta.totalClaimed = data.totalClaimed;
+    state.movingWithOlympus.meta.startTs = data.claimStart;
+    state.movingWithOlympus.meta.endTs = data.claimEnd;
+    state.movingWithOlympus.balance = data.balance;
   }
-} as MutationTree<NFTStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;

@@ -1,168 +1,178 @@
 <template>
-  <div>
-    <shop-wrapper has-close-button @close="handleClose">
-      <template v-slot:info>
-        <h1 class="info__title">{{ $t('NFTs.lblDiceProject') }}</h1>
-        <p class="info__description">
-          {{ $t('NFTs.txtNFTs.dice.pageDescriptionPartOne') }}
+  <content-wrapper-two-sided
+    class="shop nft-drops view dice"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ $t('NFTs.lblDiceProject') }}</h1>
+        <div class="description">
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          <i18n path="NFTs.txtNFTs.dice.pageDescriptionPartTwo">
-            <a href="https://diceproject.org" target="_blank">
-              <b>{{ $t('NFTs.lblDiceProject') }}</b>
+          <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`">
+            <a
+              class="link"
+              href="https://diceproject.org"
+              rel="external help"
+              target="_blank"
+            >
+              {{ $t('NFTs.lblDiceProject') }}
             </a>
           </i18n>
-        </p>
-        <shop-list>
-          <shop-list-item
-            :title="$t('NFTs.lblTotalClaimed')"
-            :value="totalClaimed"
-          />
-        </shop-list>
-        <action-button
-          button-class="button button-active"
-          :text="$t('NFTs.btn.dice.get.txt')"
-          @button-click="handleClaim(20)"
+        </div>
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="totalClaimed"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblTotalClaimed')"
         />
-        <div class="info__more">
-          <p>{{ $t('NFTs.lblOtherDiceOptions') }}</p>
-          <ul>
-            <li>
+      </analytics-list>
+
+      <form
+        class="form"
+        :class="{ error: actionError !== undefined }"
+        @submit.prevent="handleClaim(20)"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              :disabled="isStoreLoading"
+              propagate-original-event
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
+              type="submit"
+            />
+          </div>
+
+          <div class="group">
+            <h2 class="title">{{ $t('NFTs.lblOtherDiceOptions') }}</h2>
+            <div class="items">
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
-                :text="$t('NFTs.btn.dice.fourSide.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🍀"
+                :text="$t(`NFTs.btn.${nft.id}.fourSide`)"
                 @button-click="handleClaim(4)"
               />
-            </li>
-            <li>
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
-                :text="$t('NFTs.btn.dice.sixSide.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🎲"
+                :text="$t(`NFTs.btn.${nft.id}.sixSide`)"
                 @button-click="handleClaim(6)"
               />
-            </li>
-            <li>
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
-                :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="👯‍♀️"
+                :text="$t(`NFTs.btn.${nft.id}.doubleSixSide`)"
                 @button-click="handleClaim(66)"
               />
-            </li>
-            <li>
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
-                :text="$t('NFTs.btn.dice.eightSide.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🎱"
+                :text="$t(`NFTs.btn.${nft.id}.eightSide`)"
                 @button-click="handleClaim(8)"
               />
-            </li>
-            <li>
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
-                :text="$t('NFTs.btn.dice.tenSide.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🔟"
+                :text="$t(`NFTs.btn.${nft.id}.tenSide`)"
                 @button-click="handleClaim(10)"
               />
-            </li>
-            <li>
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
-                :text="$t('NFTs.btn.dice.twelveSide.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🕛"
+                :text="$t(`NFTs.btn.${nft.id}.twelveSide`)"
                 @button-click="handleClaim(12)"
               />
-            </li>
-            <li>
-              <div v-if="actionError !== undefined" class="error-message">
-                {{ actionError }}
-              </div>
-            </li>
-          </ul>
+            </div>
+          </div>
+
+          <div v-if="actionError !== undefined" class="group error-message">
+            {{ actionError }}
+          </div>
         </div>
-      </template>
-      <template v-slot:illustration>
-        <iframe
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen=""
-          height="100%"
-          sandbox="allow-scripts"
-          :src="diceSrc"
-          width="100%"
-        />
-      </template>
-      <template v-slot:context-menu>
-        <context-button
-          button-class="burger-button"
-          class="shop__context-menu"
-          :popover-parent-id="popoverParentId"
-        >
-          <context-button-item @click="selectDice(4)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.fourSide.emoji')"
-              :text="$t('NFTs.btn.dice.fourSide.txt')"
-            />
-          </context-button-item>
-          <context-button-item @click="selectDice(6)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.sixSide.emoji')"
-              :text="$t('NFTs.btn.dice.sixSide.txt')"
-            />
-          </context-button-item>
-          <context-button-item @click="selectDice(66)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.doubleSixSide.emoji')"
-              :text="$t('NFTs.btn.dice.doubleSixSide.txt')"
-            />
-          </context-button-item>
-          <context-button-item @click="selectDice(8)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.eightSide.emoji')"
-              :text="$t('NFTs.btn.dice.eightSide.txt')"
-            />
-          </context-button-item>
-          <context-button-item @click="selectDice(10)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.tenSide.emoji')"
-              :text="$t('NFTs.btn.dice.tenSide.txt')"
-            />
-          </context-button-item>
-          <context-button-item @click="selectDice(12)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.twelveSide.emoji')"
-              :text="$t('NFTs.btn.dice.twelveSide.txt')"
-            />
-          </context-button-item>
-          <context-button-item @click="selectDice(20)">
-            <emoji-text-button
-              button-class="button-active"
-              disabled
-              :emoji="$t('NFTs.btn.dice.twentySide.emoji')"
-              :text="$t('NFTs.btn.dice.twentySide.txt')"
-            />
-          </context-button-item>
-        </context-button>
-      </template>
-    </shop-wrapper>
-    <simple-loader-modal
-      v-if="transactionStep !== undefined"
-      :loader-step="transactionStep"
-      @close="transactionStep = undefined"
-    />
-  </div>
+      </form>
+    </template>
+
+    <template v-slot:right>
+      <iframe
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen=""
+        height="100%"
+        sandbox="allow-scripts"
+        :src="diceSrc"
+        width="100%"
+      />
+    </template>
+
+    <template v-slot:context-button>
+      <context-button
+        button-class="button round navigation"
+        class="page-burger-button fixed"
+        :popover-parent-id="popoverParentId"
+      >
+        <context-button-item @click="selectDice(4)">
+          <emoji-text-button
+            emoji="🍀"
+            :text="$t(`NFTs.btn.${nft.id}.fourSide`)"
+          />
+        </context-button-item>
+        <context-button-item @click="selectDice(6)">
+          <emoji-text-button
+            emoji="🎲"
+            :text="$t(`NFTs.btn.${nft.id}.sixSide`)"
+          />
+        </context-button-item>
+        <context-button-item @click="selectDice(66)">
+          <emoji-text-button
+            button-class="button-active"
+            emoji="👯‍♀️"
+            :text="$t(`NFTs.btn.${nft.id}.doubleSixSide`)"
+          />
+        </context-button-item>
+        <context-button-item @click="selectDice(8)">
+          <emoji-text-button
+            emoji="🎱"
+            :text="$t(`NFTs.btn.${nft.id}.eightSide`)"
+          />
+        </context-button-item>
+        <context-button-item @click="selectDice(10)">
+          <emoji-text-button
+            emoji="🔟"
+            :text="$t(`NFTs.btn.${nft.id}.tenSide`)"
+          />
+        </context-button-item>
+        <context-button-item @click="selectDice(12)">
+          <emoji-text-button
+            emoji="🕛"
+            :text="$t(`NFTs.btn.${nft.id}.twelveSide`)"
+          />
+        </context-button-item>
+        <context-button-item @click="selectDice(20)">
+          <emoji-text-button
+            emoji="🧙‍♂️"
+            :text="$t(`NFTs.btn.${nft.id}.twentySide`)"
+          />
+        </context-button-item>
+      </context-button>
+    </template>
+
+    <template v-slot:modals>
+      <simple-loader-modal
+        v-if="transactionStep !== undefined"
+        :loader-step="transactionStep"
+        @close="transactionStep = undefined"
+      />
+    </template>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -170,8 +180,9 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { DiceType } from '@/services/chain';
-import { DicePayload } from '@/store/modules/nft/actions/claim';
+import { DicePayload } from '@/store/modules/nft/types';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
   ActionButton,
   ContextButton,
@@ -179,19 +190,19 @@ import {
   EmojiTextButton
 } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
-import SimpleLoaderModal from '@/components/modals/simple-loader-modal.vue';
+import { ContentWrapperTwoSided } from '@/components/layout';
+import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewDice',
   components: {
+    AnalyticsListItem,
+    AnalyticsList,
+    ContentWrapperTwoSided,
     ContextButtonItem,
     ContextButton,
     EmojiTextButton,
     ActionButton,
-    ShopList,
-    ShopListItem,
-    ShopWrapper,
     SimpleLoaderModal
   },
   data() {
@@ -234,12 +245,16 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      totalClaimed: 'DiceTotalClaimed'
+      nft: 'dice',
+      isStoreLoading: 'isLoading'
     }),
     diceSrc(): string {
       return (
         this.dices.find((item) => item.side === this.selectedDice)?.src ?? ''
       );
+    },
+    totalClaimed(): string {
+      return this.nft.meta.totalClaimed;
     }
   },
   mounted(): void {
@@ -247,7 +262,10 @@ export default Vue.extend({
     this.actionError = undefined;
   },
   methods: {
-    ...mapActions('nft', ['claimDice', 'refreshNftStats']),
+    ...mapActions('nft', {
+      claimDice: 'claimDice',
+      refreshNftStats: 'refreshNftStats'
+    }),
     handleClose(): void {
       this.$router.back();
     },
@@ -268,7 +286,7 @@ export default Vue.extend({
         this.transactionStep = 'Success';
       } catch (err) {
         this.transactionStep = 'Reverted';
-        this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
+        this.actionError = this.$t('NFTsOhNoSomething').toString();
       }
     }
   }

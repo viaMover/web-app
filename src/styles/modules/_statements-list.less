@@ -1,0 +1,19 @@
+.statements-list {
+    .header {
+      margin-bottom: 20px;
+      font-size: 24px;
+      line-height: 40px;
+      @font-bold();
+    }
+
+    @import (multiple) './private/_statements-item.less';
+
+    .item {
+      padding-bottom: 15px;
+      border-bottom: 1px solid @border-background;
+
+      &:last-child {
+        border-bottom: initial;
+      }
+    }
+}

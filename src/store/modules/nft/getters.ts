@@ -1,15 +1,43 @@
-import { GetterTree } from 'vuex';
-
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 import { greaterThan } from '@/utils/bigmath';
 
-import { NFTStoreState } from './types';
+import { BaseNftAsset, NFTStoreState } from './types';
 
-export default {
+type Getters = {
+  canExchangeUnexpectedMove: boolean;
+  hasOlympus: boolean;
+  nfts: Array<BaseNftAsset>;
+  accountNfts: Array<BaseNftAsset>;
+};
+
+const getters: GettersFuncs<Getters, NFTStoreState> = {
   canExchangeUnexpectedMove(state): boolean {
-    return greaterThan(state.UnexpectedMoveBalance, '0');
+    return greaterThan(state.unexpectedMove.balance, '0');
   },
   hasOlympus(state): boolean {
-    return greaterThan(state.OlympusBalance, '0');
+    return greaterThan(state.movingWithOlympus.balance, '0');
+  },
+  nfts(state): Array<BaseNftAsset> {
+    const res: Array<BaseNftAsset> = [
+      state.dice,
+      state.movingWithOlympus,
+      state.sweetAndSour,
+      state.unexpectedMove,
+      state.vaults
+    ];
+
+    if (state.swapPassport !== undefined) {
+      res.push(state.swapPassport);
+    }
+
+    return res;
+  },
+  accountNfts(state, getters): Array<BaseNftAsset> {
+    return getters.nfts.filter((asset: BaseNftAsset) =>
+      greaterThan(asset.balance, 0)
+    );
   }
-} as GetterTree<NFTStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

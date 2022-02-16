@@ -2,8 +2,8 @@
   <div class="chart-wrapper">
     <div class="stats-text">
       <line-chart
-        :chart-data-source="savingsReceipt ? savingsReceipt.hourlyBalances : []"
-        :is-loading="isSavingsReceiptLoading"
+        :chart-data-source="receipt ? receipt.hourlyBalances : []"
+        :is-loading="isLoading"
       />
     </div>
   </div>
@@ -11,9 +11,12 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import dayjs from 'dayjs';
+
+import { SavingsReceipt } from '@/services/mover';
+import { SavingsGetReceiptPayload } from '@/store/modules/savings/types';
 
 import { LineChart } from '@/components/charts';
 
@@ -30,19 +33,45 @@ export default Vue.extend({
   },
   data() {
     return {
-      selectedDay: null as number | null,
-      earnedThisMonth: 2984.49,
-      earnedRelativeMonthlyChange: 30.37,
-      earnedRelativeMonthlyChanges: [
-        {
-          timeStamp: 1621408016,
-          value: 0.35
-        }
-      ]
+      isLoading: true,
+      isError: false,
+      receipt: undefined as SavingsReceipt | undefined
     };
   },
   computed: {
-    ...mapState('account', ['isSavingsReceiptLoading', 'savingsReceipt'])
+    ...mapGetters('savings', {
+      savingsReceipt: 'savingsReceipt'
+    })
+  },
+  async mounted() {
+    this.isLoading = true;
+
+    const year = this.pageDate.get('year');
+    const month = this.pageDate.get('month') + 1;
+
+    this.fetchSavingsReceipt({
+      year,
+      month
+    } as SavingsGetReceiptPayload);
+
+    let receipt: SavingsReceipt | undefined;
+
+    try {
+      receipt = await this.savingsReceipt(year, month);
+      if (receipt === undefined) {
+        throw new Error('receipt is undef');
+      }
+    } catch (e) {
+      this.isLoading = false;
+      this.isError = true;
+      return;
+    }
+
+    this.receipt = receipt;
+    this.isLoading = false;
+  },
+  methods: {
+    ...mapActions('savings', { fetchSavingsReceipt: 'fetchSavingsReceipt' })
   }
 });
 </script>

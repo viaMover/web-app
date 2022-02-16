@@ -7,7 +7,7 @@ import { AbiItem } from 'web3-utils';
 import { VaultsData } from '@/services/chain';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { NFT_VAULTS_ABI, NFT_VAULTS_ADDRESS } from '@/wallet/references/data';
+import { lookupAddress, NFT_VAULTS_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 import { Step } from '@/components/forms/form-loader';
@@ -21,18 +21,23 @@ export const getVaultsData = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const contractAddress = NFT_VAULTS_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_VAULTS');
 
   const vaults = new web3.eth.Contract(
     NFT_VAULTS_ABI as AbiItem[],
     contractAddress
   );
 
+  const balance = await vaults.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
   const totalClaimed = await vaults.methods
     .totalClaimed()
     .call(transactionParams);
 
   return {
+    balance: balance.toString(),
     totalAmount: '9999',
     totalClaimed: totalClaimed.toString()
   };
@@ -45,7 +50,7 @@ export const claimVaults = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_VAULTS_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_VAULTS');
 
   const vaults = new web3.eth.Contract(
     NFT_VAULTS_ABI as AbiItem[],

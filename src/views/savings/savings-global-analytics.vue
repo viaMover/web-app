@@ -1,66 +1,82 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <div>
-      <secondary-page-simple-title
-        class="page-title"
+  <secondary-page
+    class="analytics"
+    has-back-button
+    hide-info
+    @back="handleBack"
+  >
+    <template v-slot:title>
+      <secondary-page-header
         :description="$t('savings.txtSavingsOverviewDescription')"
         :title="$t('savings.lblSavingsOverview')"
       />
-      <statement-list>
-        <statement-list-item
-          :description="$t('savings.lblDepositedAssets')"
-          :value="formattedDepositedAssets"
-        />
-        <statement-list-item
-          :description="$t('savings.lblCurrentVariableAPY')"
-          :value="currentVariableAPY"
-        />
-        <statement-list-item
-          v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
-          :description="$t('savings.lbl30DayAverageAPY')"
-          :value="monthAverageAPY"
-        />
-        <statement-list-item
-          v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
-          :description="$t('savings.lblTotalAssetsUnderManagement')"
-          :value="totalAssetsUnderManagement"
-        />
-      </statement-list>
-      <statement-list :title="$t('savings.lblSavingsStats')">
-        <statement-list-item
-          :description="$t('savings.lblEarnedToday')"
-          :value="earnedToday"
-        />
-        <statement-list-item
-          :description="$t('savings.lblEarnedThisMonth')"
-          :value="earnedThisMonth"
-        />
-        <statement-list-item
-          :description="$t('savings.lblEarnedInTotal')"
-          :value="earnedTotal"
-        />
-      </statement-list>
-      <statement-list :title="$t('savings.lblSavingsEstimation')">
-        <statement-list-item
-          :description="$t('savings.lblEstimatedEarningsTomorrow')"
-          :value="estimatedEarningsTomorrowNative"
-        />
-        <statement-list-item
-          :description="$t('savings.lblEstimatedEarningsNextMonth')"
-          :value="estimatedEarningsNextMonthNative"
-        />
-        <statement-list-item
-          :description="$t('savings.lblEstimatedEarningsAnnually')"
-          :value="estimatedEarningsAnnuallyNative"
-        />
-      </statement-list>
-    </div>
+    </template>
+
+    <analytics-list>
+      <analytics-list-item
+        :description="formattedDepositedAssets"
+        :is-loading="isLoading"
+        :title="$t('savings.lblDepositedAssets')"
+      />
+      <analytics-list-item
+        :description="currentVariableAPY"
+        :is-loading="isLoading"
+        :title="$t('savings.lblCurrentVariableAPY')"
+      />
+      <analytics-list-item
+        v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
+        :description="monthAverageAPY"
+        :is-loading="isLoading"
+        :title="$t('savings.lbl30DayAverageAPY')"
+      />
+      <analytics-list-item
+        v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
+        :description="totalAssetsUnderManagement"
+        :is-loading="isLoading"
+        :title="$t('savings.lblTotalAssetsUnderManagement')"
+      />
+    </analytics-list>
+
+    <analytics-list :title="$t('savings.lblSavingsStats')">
+      <analytics-list-item
+        :description="earnedToday"
+        :is-loading="isLoading"
+        :title="$t('savings.lblEarnedToday')"
+      />
+      <analytics-list-item
+        :description="earnedThisMonth"
+        :is-loading="isLoading"
+        :title="$t('savings.lblEarnedThisMonth')"
+      />
+      <analytics-list-item
+        :description="earnedTotal"
+        :is-loading="isLoading"
+        :title="$t('savings.lblEarnedInTotal')"
+      />
+    </analytics-list>
+    <analytics-list :title="$t('savings.lblSavingsEstimation')">
+      <analytics-list-item
+        :description="estimatedEarningsTomorrowNative"
+        :is-loading="isLoading"
+        :title="$t('savings.lblEstimatedEarningsTomorrow')"
+      />
+      <analytics-list-item
+        :description="estimatedEarningsNextMonthNative"
+        :is-loading="isLoading"
+        :title="$t('savings.lblEstimatedEarningsNextMonth')"
+      />
+      <analytics-list-item
+        :description="estimatedEarningsAnnuallyNative"
+        :is-loading="isLoading"
+        :title="$t('savings.lblEstimatedEarningsAnnually')"
+      />
+    </analytics-list>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import {
@@ -69,29 +85,27 @@ import {
   getSignIfNeeded
 } from '@/utils/format';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
 
 export default Vue.extend({
   name: 'SavingsGlobalAnalytics',
   components: {
     SecondaryPage,
-    SecondaryPageSimpleTitle,
-    StatementListItem,
-    StatementList
+    SecondaryPageHeader,
+    AnalyticsList,
+    AnalyticsListItem
   },
   computed: {
-    ...mapState('account', {
+    ...mapState('savings', {
+      isLoading: 'isSavingsInfoLoading',
       apy: 'savingsAPY',
       dpy: 'savingsDPY'
     }),
-    ...mapGetters('account', {
+    ...mapGetters('savings', {
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
       savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative',
       savingsEstimatedEarningsTomorrowNative:
@@ -144,7 +158,11 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },
+  mounted() {
+    this.fetchSavingsInfo();
+  },
   methods: {
+    ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
     isFeatureEnabled,
     handleBack(): void {
       this.$router.back();

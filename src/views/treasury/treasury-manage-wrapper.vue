@@ -1,6 +1,8 @@
 <template>
-  <treasury-manage v-if="hasActiveTreasury" />
-  <treasury-empty v-else />
+  <transition name="fade">
+    <treasury-manage v-if="hasActiveTreasury" />
+    <treasury-empty v-else />
+  </transition>
 </template>
 
 <script lang="ts">
@@ -16,7 +18,7 @@ export default Vue.extend({
     TreasuryManage
   },
   computed: {
-    ...mapGetters('account', { hasActiveTreasury: 'hasActiveTreasury' })
+    ...mapGetters('treasury', { hasActiveTreasury: 'hasActiveTreasury' })
   }
 });
 </script>

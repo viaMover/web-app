@@ -1,15 +1,23 @@
-import { GetterTree } from 'vuex';
-
-import gt from 'lodash-es/gt';
-
 import { OlympusMonthBalanceItem } from '@/services/mover';
-import { RootStoreState } from '@/store/types';
-import { divide, fromWei, multiply } from '@/utils/bigmath';
+import { GettersFuncs } from '@/store/types';
+import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { EarningsOlympusStoreState } from './types';
 
-export default {
+type Getters = {
+  balanceNative: string;
+  apyNative: string;
+  hasActiveEarnings: boolean;
+  olympusInfoEarnedThisMonthNative: string;
+  olympusEarnedThisMonth: string;
+  olympusEarnedThisMonthNative: string;
+  olympusMonthStatsOptions: Array<OlympusMonthBalanceItem>;
+  ohmNativePrice: string;
+  usdcNativePrice: string;
+};
+
+const getters: GettersFuncs<Getters, EarningsOlympusStoreState> = {
   balanceNative(state): string {
     if (!state.olympusBalance) {
       return '0';
@@ -24,10 +32,9 @@ export default {
     return multiply(divide(state.olympusAPY, '100'), '10000');
   },
   hasActiveEarnings(state): boolean {
-    if (state.olympusBalance !== undefined && gt(state.olympusBalance, 0)) {
-      return true;
-    }
-    return false;
+    return (
+      state.olympusBalance !== undefined && greaterThan(state.olympusBalance, 0)
+    );
   },
   olympusInfoEarnedThisMonthNative(state, getters, rootState): string {
     if (
@@ -91,5 +98,11 @@ export default {
       return '0';
     }
     return multiply(state.olympusPriceInWeth, rootState.account.ethPrice);
+  },
+  usdcNativePrice(state, getters, _, rootGetters): string {
+    return rootGetters['account/usdcNativePrice'];
   }
-} as GetterTree<EarningsOlympusStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

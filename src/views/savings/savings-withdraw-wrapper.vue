@@ -1,6 +1,8 @@
 <template>
   <secondary-page
+    class="withdraw"
     :has-back-button="hasBackButton"
+    hide-info
     hide-title
     @back="handleBack"
   >
@@ -138,18 +140,23 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'currentAddress',
-      'savingsBalance',
-      'usdcPriceInWeth',
-      'savingsAPY',
-      'provider',
-      'ethPrice',
-      'gasPrices',
-      'nativeCurrency'
-    ]),
-    ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      currentAddress: 'currentAddress',
+      usdcPriceInWeth: 'usdcPriceInWeth',
+      provider: 'provider',
+      ethPrice: 'ethPrice',
+      gasPrices: 'gasPrices',
+      nativeCurrency: 'nativeCurrency'
+    }),
+    ...mapState('savings', {
+      savingsAPY: 'savingsAPY',
+      savingsBalance: 'savingsBalance'
+    }),
+    ...mapGetters('treasury', {
+      treasuryBonusNative: 'treasuryBonusNative',
+      usdcNativePrice: 'usdcNativePrice'
+    }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },

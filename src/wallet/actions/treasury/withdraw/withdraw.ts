@@ -9,8 +9,8 @@ import { Network } from '@/utils/networkTypes';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
-  SMART_TREASURY_ABI,
-  SMART_TREASURY_ADDRESS
+  lookupAddress,
+  SMART_TREASURY_ABI
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -36,7 +36,7 @@ export const withdrawCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't treasury withdraw: ${err}`);
+    console.error(`Can't treasury withdraw:`, err);
     throw err;
   }
 };
@@ -56,7 +56,7 @@ export const withdraw = async (
   const move = getMoveAssetData(network);
   const slp = getMoveWethLPAssetData(network);
 
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   try {

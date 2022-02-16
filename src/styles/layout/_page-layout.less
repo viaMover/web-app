@@ -1,0 +1,181 @@
+html {
+  background-color: @background;
+}
+
+.page {
+  .dashboard {
+    display: flex;
+    min-height: 100vh;
+    flex-flow: row nowrap;
+
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
+
+    .left-rail {
+      background-color: @background-left-rail;
+      border-right: 1px solid @border-background;
+      flex-grow: 0;
+      flex-shrink: 0;
+      width: @left-rail-base-width;
+
+      @media screen and (max-width: 1279px) {
+        &.wallet,
+        &.history {
+          display: none;
+        }
+
+        width: @left-rail-small-width;
+      }
+
+      .wrapper {
+        max-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        margin: 0 auto;
+        padding: 80px 40px;
+        min-height: 100vh;
+        scrollbar-width: thin;
+
+        @media screen and (max-width: 1279px) {
+          padding: 80px 0;
+        }
+      }
+    }
+
+    .page-content {
+      background-color: @background;
+      position: relative;
+      flex: 1 1 100%;
+      height: 100vh;
+      scrollbar-width: thin;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      &.two-sided {
+        .page-back-button.fixed {
+          position: fixed;
+          top: @button-page-inset;
+          left: @button-page-inset;
+
+          @media screen and (max-width: 1279px) {
+            left: @button-page-inset;
+          }
+        }
+
+        .wrapper {
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-flow: row nowrap;
+          height: 100%;
+        }
+
+        .side {
+          &.left,
+          &.right {
+            width: 50%;
+          }
+
+          &.left {
+            padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+            overflow-y: auto;
+          }
+
+          &.right {
+            padding: 0;
+          }
+
+          @media screen and (max-width: 1279px) {
+            &.left {
+              width: 100%;
+            }
+
+            &.right {
+              display: none;
+            }
+          }
+        }
+      }
+
+      &.centered {
+        .wrapper {
+          margin: 0 auto;
+        }
+      }
+
+      .wrapper {
+        clear: none;
+        padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+        max-width: 780px;
+        margin-left: 128px;
+
+        @media screen and (max-width: 1279px) {
+          padding: @page-inset-top @page-inset-right-small @page-inset-bottom @page-inset-left-small;
+          margin: 0 auto;
+        }
+      }
+
+      .page-close-button {
+        position: sticky;
+        float: right;
+        top: @button-page-inset;
+        right: @button-page-inset;
+        z-index: 10;
+
+        &.fixed {
+          position: fixed;
+        }
+      }
+
+      .page-back-button {
+        position: sticky;
+        float: left;
+        top: @button-page-inset;
+        left: @button-page-inset;
+        z-index: 10;
+
+        &.fixed {
+          position: fixed;
+          top: @button-page-inset;
+          left: @left-rail-base-width + @button-page-inset;
+
+          @media screen and (max-width: 1279px) {
+            left: @left-rail-small-width + @button-page-inset;
+          }
+        }
+      }
+    }
+
+    &-mobile {
+      display: none;
+      margin: 0 auto;
+
+      @media screen and (max-width: 767px) {
+        display: flex;
+      }
+
+      .page-content {
+        .wrapper {
+          width: 100%;
+          padding: @button-page-inset;
+        }
+      }
+    }
+  }
+}
+
+.page-burger-button {
+  position: sticky;
+  float: right;
+  top: @button-page-inset + 1.5 * @button-height;
+  right: @button-page-inset;
+  z-index: 10;
+  border-radius: @button-height / 2;
+
+  &.fixed {
+    position: fixed;
+  }
+}

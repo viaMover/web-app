@@ -1,4 +1,4 @@
-import { MutationTree } from 'vuex';
+import { MutationFuncs } from '@/store/types';
 
 import {
   CardInfo,
@@ -9,7 +9,26 @@ import {
   SkinMinimal
 } from './types';
 
-export default {
+type Mutations = {
+  setIsLoading: void;
+  setIsInitialized: void;
+  setError: void;
+  setCardState: void;
+  setCardEventHistory: void;
+  setCardInfo: void;
+  setCurrentSkin: void;
+  setAvailableSkins: void;
+  setLoadingPromise: void;
+  setEmail: void;
+  setEmailHash: void;
+  setEmailSignature: void;
+  setPhoneNumber: void;
+  setOrderState: void;
+  setKycLink: void;
+  setWxBTRFLYrealIndex: void;
+};
+
+const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
@@ -61,4 +80,7 @@ export default {
   setWxBTRFLYrealIndex(state, realIndex: string): void {
     state.wxBTRFLYrealIndex = realIndex;
   }
-} as MutationTree<DebitCardStoreState>;
+};
+
+export type MutationType = typeof mutations;
+export default mutations;
