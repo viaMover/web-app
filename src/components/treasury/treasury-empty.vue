@@ -1,13 +1,15 @@
 <template>
-  <secondary-page class="manage empty" hide-info>
+  <secondary-page class="manage empty">
     <template v-slot:title>
       <secondary-page-header
+        class="alternate"
         :description="$t('treasury.txtTreasuryEmptyDescription')"
         :title="treasuryBalance"
       />
     </template>
     <div class="chart-wrapper">
       <bar-chart
+        :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
@@ -38,6 +40,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { TreasuryMonthBonusesItem } from '@/services/mover';
 import { formatToNative } from '@/utils/format';
@@ -58,6 +61,7 @@ export default Vue.extend({
     ActionButton
   },
   computed: {
+    ...mapState({ colors: 'colors' }),
     treasuryBalance(): string {
       return `~ $${formatToNative(10184)}`;
     },
@@ -75,6 +79,9 @@ export default Vue.extend({
         year: 2000 + n,
         month: 1 + n
       }));
+    },
+    chartAccentColor(): string {
+      return this.colors['product-treasury'];
     }
   },
   methods: {

@@ -2,6 +2,7 @@
   <secondary-page class="manage pending">
     <template v-slot:title>
       <secondary-page-header
+        class="alternate"
         :description="$t('debitCard.txtBeautifulCard')"
         :title="$t('debitCard.lblBeautifulCard')"
       />

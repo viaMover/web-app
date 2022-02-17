@@ -70,7 +70,6 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
-        poster="@/assets/images/ios-spinner.svg"
         :style="videoStyle"
       >
         <source :src="product.page.videoSrc" type="video/webm" />

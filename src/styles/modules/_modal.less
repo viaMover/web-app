@@ -15,15 +15,13 @@
     }
 
   .body {
-      position: absolute;
-      float: left;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+      position: fixed;
+      top: 104px;
+      left: calc(50% - 264px);
       width: 528px;
       min-height: 30vh;
       height: auto;
-      max-height: 90vh;
+      max-height: 80vh;
       padding: 0;
       background-color: @background;
       border-radius: 16px;
@@ -47,7 +45,6 @@
         max-height: 85vh;
         overflow-y: auto;
         scrollbar-width: none;
-        padding-bottom: 16px;
 
         &::-webkit-scrollbar {
           width: 0;
@@ -124,6 +121,8 @@
           margin-top: 78px;
 
           h2 {
+            font-size: 24px;
+            line-height: 40px;
             @font-bold();
           }
 
@@ -795,40 +794,13 @@
             &-info {
               display: flex;
               align-items: center;
+              justify-content: flex-start;
 
               .icon {
-                display: flex;
-                -webkit-flex-basis: 18%;
-                -ms-flex-preferred-size: 18%;
-                flex-basis: 18%;
-
-                img,
-                .img-stub {
-                  border-radius: 50%;
-                  display: block;
-                  width: 38px;
-                  height: 38px;
-                }
-
-                .img-stub {
-                  background-color: @background;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  @drop-shadow();
-
-                  span {
-                    font-size: 9px;
-                    color: @text-primary;
-                    text-align: center;
-                    line-height: 16px;
-                    @font-bold();
-                  }
-                }
+                margin-right: 16px;
               }
 
               .info {
-                margin-left: 16px;
                 margin-top: 3px;
 
                 p {
@@ -850,10 +822,12 @@
               margin-left: auto;
 
               button {
+                display: block;
                 border-radius: 50%;
                 cursor: pointer;
 
                 picture {
+                  display: block;
                   width: 30px;
                   height: 30px;
 
@@ -923,7 +897,6 @@
       border-radius: 25px;
       border: none;
       @font-bold();
-      @drop-shadow();
 
       &::-webkit-input-placeholder,
       &::-moz-placeholder,

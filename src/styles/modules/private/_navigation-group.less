@@ -21,25 +21,27 @@
       justify-content: space-between;
       align-items: center;
       border-radius: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
 
       &:last-child {
         margin-bottom: 0;
       }
 
-      &.active {
-        background-color: @background-left-rail-darkest;
+      &:not(.no-hover) {
+        &.active {
+          background-color: @background-left-rail-darkest;
 
-        &.skeleton {
-          background-color: initial;
+          &.skeleton {
+            background-color: initial;
+          }
         }
-      }
 
-      &:not(.active):hover {
-        background-color: @background-left-rail-darker;
+        &:not(.active):hover {
+          background-color: @background-left-rail-darker;
 
-        &.skeleton {
-          background-color: initial;
+          &.skeleton {
+            background-color: initial;
+          }
         }
       }
 
@@ -63,6 +65,8 @@
         }
 
         .icon {
+          font-size: 16px;
+          line-height: 24px;
           width: 24px;
           height: 24px;
           display: flex;
@@ -95,9 +99,11 @@
 
         .icon,
         picture {
+          display: block;
           flex-grow: 0;
           flex-shrink: 0;
           align-self: flex-start;
+          margin-top: 4px;
           margin-right: 16px;
           height: 40px;
           max-width: 56px;

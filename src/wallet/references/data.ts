@@ -67,7 +67,8 @@ type AddressMapKey =
   | 'BONE_TOKEN_ADDRESS'
   | 'BTRFLY_TOKEN_ADDRESS'
   | 'WX_BTRFLY_TOKEN_ADDRESS'
-  | 'GOHM_TOKEN_ADDRESS';
+  | 'GOHM_TOKEN_ADDRESS'
+  | 'TOKE_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -118,7 +119,8 @@ const addresses = {
     BONE_TOKEN_ADDRESS: '0x9813037ee2218799597d83d4a5b6f3b6778218d9',
     BTRFLY_TOKEN_ADDRESS: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a',
     WX_BTRFLY_TOKEN_ADDRESS: '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9',
-    GOHM_TOKEN_ADDRESS: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f'
+    GOHM_TOKEN_ADDRESS: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+    TOKE_TOKEN_ADDRESS: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -379,7 +381,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'LEASH_TOKEN_ADDRESS'),
     lookupAddress(network, 'BTRFLY_TOKEN_ADDRESS'),
     lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS'),
-    lookupAddress(network, 'GOHM_TOKEN_ADDRESS')
+    lookupAddress(network, 'GOHM_TOKEN_ADDRESS'),
+    lookupAddress(network, 'TOKE_TOKEN_ADDRESS')
   ];
 };
 

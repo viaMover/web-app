@@ -57,7 +57,9 @@ export default Vue.extend({
       return this.src !== '' && !this.loadingFailed;
     },
     color(): string | undefined {
-      return this.getTokenColor(this.address) ?? 'var(--color-shadow)';
+      return (
+        this.getTokenColor(this.address) ?? 'var(--color-token-image-shadow)'
+      );
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {
@@ -70,14 +72,8 @@ export default Vue.extend({
       };
     },
     shadowStyles(): Properties {
-      if (this.displayOriginalImage) {
-        return {
-          filter: `drop-shadow(0 4px 16px ${this.color})`
-        };
-      }
-
       return {
-        boxShadow: `drop-shadow(0 4px 16px 0 ${this.color})`
+        boxShadow: `0 0 16px 0 ${this.color}`
       };
     }
   },

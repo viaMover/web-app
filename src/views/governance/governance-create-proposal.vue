@@ -1,10 +1,5 @@
 <template>
-  <secondary-page
-    class="create-a-proposal"
-    has-back-button
-    hide-info
-    @back="handleBack"
-  >
+  <secondary-page class="create-a-proposal" has-back-button @back="handleBack">
     <template v-slot:title>
       <secondary-page-header
         :description="$t('governance.txtCreateAProposal')"

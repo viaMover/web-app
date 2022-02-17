@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="view view-all" hide-info hide-title>
+  <secondary-page class="view view-all">
     <secondary-page-header
       class="vaults-race_secondary_page-title"
       :description="$t('vaultsRace.lblWeeklyChallengeDescription')"

@@ -47,13 +47,25 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
-  async restoreInfo({ commit }): Promise<void> {
-    const info = await getFromPersistStoreWithExpire('treasury', 'info');
+  async restoreInfo({ commit, rootState }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    const info = await getFromPersistStoreWithExpire(
+      rootState.account.currentAddress,
+      'treasury',
+      'info'
+    );
     if (info !== undefined) {
       commit('setTreasuryInfo', info);
     }
   },
-  async restoreReceipts({ commit }): Promise<void> {
+  async restoreReceipts({ commit, rootState }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
     const end = new Date();
     end.setMonth(end.getMonth() - 12);
     for (
@@ -62,6 +74,7 @@ const actions: ActionFuncs<
       i.setMonth(i.getMonth() - 1)
     ) {
       const receipt = await getFromPersistStoreWithExpire(
+        rootState.account.currentAddress,
         'treasuryReceipts',
         `${i.getFullYear()}/${i.getMonth() + 1}`
       );
@@ -225,7 +238,12 @@ const actions: ActionFuncs<
     commit('setTreasuryInfo', info.result);
     commit('setIsTreasuryInfoLoading', false);
 
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
     setToPersistStore(
+      rootState.account.currentAddress,
       'treasury',
       'info',
       info.result,
@@ -262,10 +280,16 @@ const actions: ActionFuncs<
       receipt: receiptPromise
     } as SetTreasuryReceiptPayload);
 
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
     (async () => {
       for (const [key, value] of state.receipts.entries()) {
         if (value !== undefined) {
           await setToPersistStore(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            rootState.account!.currentAddress!,
             'treasuryReceipts',
             key,
             await value.data,
