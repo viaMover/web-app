@@ -63,7 +63,6 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
-        poster="@/assets/images/ios-spinner-white.svg"
       >
         <source
           src="https://storage.googleapis.com/movermedia/OL_MOV_FIN.mp4"

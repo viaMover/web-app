@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="view" has-back-button hide-info @back="handleBack">
+  <secondary-page class="view" has-back-button @back="handleBack">
     <template v-slot:title>
       <secondary-page-header :title="pageTitle" />
     </template>

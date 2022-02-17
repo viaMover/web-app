@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage empty" hide-info>
+  <secondary-page class="manage empty">
     <template v-slot:title>
       <secondary-page-header
         class="balance"
@@ -10,6 +10,7 @@
 
     <div class="chart-wrapper">
       <bar-chart
+        :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
@@ -56,6 +57,7 @@ export default Vue.extend({
     BarChart
   },
   computed: {
+    ...mapState({ colors: 'colors' }),
     ...mapState('earnings/ethereum', { apy: 'ethereumAPY' }),
     ...mapGetters('earnings/ethereum', { apyNative: 'apyNative' }),
     savingsBalance(): string {
@@ -73,6 +75,9 @@ export default Vue.extend({
         year: 2000 + n,
         month: 1 + n
       }));
+    },
+    chartAccentColor(): string {
+      return this.colors['product-earnings'];
     }
   },
   methods: {

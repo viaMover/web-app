@@ -7,6 +7,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblPageTitleDefault: 'Mover App',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
+  lblYourWallet: 'Your wallet',
   headingBalance: 'Your wallet balance',
   lblConnectWallet: 'Please connect your wallet',
   txtNotFound:
@@ -30,6 +31,8 @@ const messages: VueI18n.LocaleMessageObject = {
   lblHistory: 'History',
   lblTotalBalance: 'Total balance',
   lblCollectibles: 'Collectibles',
+  lblNoMoreTransactions: 'No more transactions',
+  lblNoMoreTokens: 'No more tokens',
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
@@ -52,21 +55,13 @@ const messages: VueI18n.LocaleMessageObject = {
     lblReviewTransaction: 'Review transaction'
   },
   menu: {
-    lblSwapTokenEmoji: '🔄',
     lblSwapToken: 'Swap Tokens',
-    lblGetMoveEmoji: '💸',
-    lblGetMove: 'Get MOVE',
-    lblProvideLiquidityMoveEmoji: '💧',
-    lblProvideLiquidityMove: 'Provide liquidity for MOVE',
-    lblDepositInSavingsEmoji: '💰',
     lblDepositInSavings: 'Deposit in Savings',
-    lblIncreaseBoostEmoji: '📈',
     lblIncreaseBoost: 'Increase boost',
-    lblPurchaseBondsEmoji: '🏦',
-    lblPurchaseBonds: 'Purchase Bonds',
     lblBeautifulCard: 'Beautiful Card',
     lblComingSoon: 'Coming soon',
-    lblBonds: 'Bonds'
+    lblCardTopUp: 'Card top up',
+    lblDepositInSavingsPlus: 'Deposit in Savings Plus'
   },
   swaps: {
     lblSwaps: 'Swaps',
@@ -1252,6 +1247,12 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtNavIconAlt: 'Olympus',
       lblOHMTokenAlt: 'Olympus token image'
     }
+  };
+}
+
+if (isFeatureEnabled('isSavingsPlusEnabled')) {
+  messages.savingsPlus = {
+    lblSavingsPlus: 'Savings Plus'
   };
 }
 

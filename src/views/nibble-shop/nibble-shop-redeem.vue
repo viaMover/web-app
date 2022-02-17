@@ -21,7 +21,7 @@
       </nav>
     </template>
 
-    <secondary-page class="redeem" has-back-button hide-info @back="handleBack">
+    <secondary-page class="redeem" has-back-button @back="handleBack">
       <template v-slot:title>
         <secondary-page-header
           :description="$t('nibbleShop.txtRedeemDescription')"

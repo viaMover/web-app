@@ -21,6 +21,10 @@ import {
   setAvatarToPersist,
   setIsOlympusAvatarKnownToPersist
 } from '@/settings';
+import {
+  removeAccountBoundPersistItemsFromLocalStorage,
+  removeExpiredPersistItemsFromLocalStorage
+} from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
 import { Network } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
@@ -326,6 +330,8 @@ const actions: ActionFuncs<
       Sentry.setTag('crypto_person_address', state.currentAddress);
 
       if (payload.init) {
+        removeExpiredPersistItemsFromLocalStorage();
+
         bootIntercomSession(state.currentAddress, {
           network: state.networkInfo.network
         });
@@ -481,6 +487,10 @@ const actions: ActionFuncs<
     });
   },
   async disconnectWallet({ commit, state }): Promise<void> {
+    if (state.currentAddress) {
+      removeAccountBoundPersistItemsFromLocalStorage(state.currentAddress);
+    }
+
     if (state.provider) {
       state.provider.providerBeforeClose();
       if (

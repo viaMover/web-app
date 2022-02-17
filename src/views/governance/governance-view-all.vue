@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="view view-all" hide-info>
+  <secondary-page class="view view-all">
     <template v-slot:title>
       <secondary-page-header
         :description="$t('governance.txtGetInvolved')"

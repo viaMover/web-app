@@ -66,7 +66,7 @@ import HomeMastheadNavBar from './home-masthead-nav-bar.vue';
 import HomeMastheadNavBarItem from './home-masthead-nav-bar-item.vue';
 
 export default Vue.extend({
-  name: 'Masthead',
+  name: 'HomeMasthead',
   components: {
     HomeMastheadAvatar,
     HomeMastheadNavBar,
