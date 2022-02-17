@@ -14,7 +14,7 @@ import {
 import {
   getMoveAssetData,
   HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
@@ -26,7 +26,7 @@ export const estimateClaimAndBurnCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   let isApproveNeeded = true;
   try {
@@ -97,7 +97,7 @@ export const estimateClaimAndBurn = async (
     throw 'Only MOVE can be burned';
   }
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {

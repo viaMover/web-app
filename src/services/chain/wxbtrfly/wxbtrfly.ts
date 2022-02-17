@@ -3,10 +3,7 @@ import { AbiItem } from 'web3-utils';
 
 import { convertToString } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import {
-  WX_BTRFLY_ABI,
-  WX_BTRFLY_TOKEN_ADDRESS
-} from '@/wallet/references/data';
+import { lookupAddress, WX_BTRFLY_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 export const getRealIndex = async (
@@ -18,12 +15,12 @@ export const getRealIndex = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const сontract = new web3.eth.Contract(
+  const contract = new web3.eth.Contract(
     WX_BTRFLY_ABI as AbiItem[],
-    WX_BTRFLY_TOKEN_ADDRESS(network)
+    lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS')
   );
 
-  const realIndex = await сontract.methods.realIndex().call(transactionParams);
+  const realIndex = await contract.methods.realIndex().call(transactionParams);
 
   return convertToString(realIndex);
 };

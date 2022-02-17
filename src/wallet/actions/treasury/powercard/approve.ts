@@ -4,11 +4,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
-import {
-  NFT_RARI_ABI,
-  POWERCARD_ADDRESS,
-  POWERCARD_STAKER
-} from '@/wallet/references/data';
+import { lookupAddress, NFT_RARI_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 export const approvePowercard = async (
@@ -33,7 +29,7 @@ export const approvePowercard = async (
       maxPriorityFeePerGas: null
     } as TransactionsParams;
 
-    const powercardRariAddress = POWERCARD_ADDRESS(network);
+    const powercardRariAddress = lookupAddress(network, 'POWERCARD');
     const powercardRariABI = NFT_RARI_ABI;
 
     const rari = new web3.eth.Contract(
@@ -76,10 +72,10 @@ export const isPowercardApproved = async (
   network: Network,
   web3: Web3
 ): Promise<boolean> => {
-  const contractAddress = POWERCARD_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD');
   const contractABI = NFT_RARI_ABI;
 
-  const powercardStakerAddress = POWERCARD_STAKER(network);
+  const powercardStakerAddress = lookupAddress(network, 'POWERCARD_STAKER');
 
   const rari = new web3.eth.Contract(contractABI as AbiItem[], contractAddress);
 

@@ -1,6 +1,6 @@
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
-import { MOBO_ADDRESS, SUSHI_ADDRESS } from '@/wallet/references/data';
+import { lookupAddress } from '@/wallet/references/data';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 
 export const getTransactionHumanType = (
@@ -21,8 +21,11 @@ export const getTransactionHumanType = (
       if (
         (t.type === TransactionTypes.transferERC20 ||
           t.type === TransactionTypes.swapERC20) &&
-        (sameAddress(t.asset.address, MOBO_ADDRESS(network)) ||
-          sameAddress(t.asset.address, SUSHI_ADDRESS(network)))
+        (sameAddress(t.asset.address, lookupAddress(network, 'MOBO_ADDRESS')) ||
+          sameAddress(
+            t.asset.address,
+            lookupAddress(network, 'SUSHI_TOKEN_ADDRESS')
+          ))
       ) {
         return 'Receive';
       }
@@ -31,8 +34,11 @@ export const getTransactionHumanType = (
       if (
         (t.type === TransactionTypes.transferERC20 ||
           t.type === TransactionTypes.swapERC20) &&
-        (sameAddress(t.asset.address, MOBO_ADDRESS(network)) ||
-          sameAddress(t.asset.address, SUSHI_ADDRESS(network)))
+        (sameAddress(t.asset.address, lookupAddress(network, 'MOBO_ADDRESS')) ||
+          sameAddress(
+            t.asset.address,
+            lookupAddress(network, 'SUSHI_TOKEN_ADDRESS')
+          ))
       ) {
         return 'Receive';
       }

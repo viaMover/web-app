@@ -8,10 +8,7 @@ import {
   CompoundEstimateResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import {
-  SMART_TREASURY_ABI,
-  SMART_TREASURY_ADDRESS
-} from '@/wallet/references/data';
+import { lookupAddress, SMART_TREASURY_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 export const estimateClaimAndBurnMOBOCompound = async (
@@ -36,7 +33,7 @@ export const estimateClaimAndBurnMOBO = async (
   web3: Web3,
   accountAddress: string
 ): Promise<EstimateResponse> => {
-  const contractAddress = SMART_TREASURY_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   const contractABI = SMART_TREASURY_ABI;
 
   try {

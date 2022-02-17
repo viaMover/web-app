@@ -3,10 +3,7 @@ import * as Sentry from '@sentry/vue';
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
 import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
-import {
-  HOLY_HAND_ADDRESS,
-  SMART_TREASURY_ADDRESS
-} from '@/wallet/references/data';
+import { lookupAddress } from '@/wallet/references/data';
 import { FeeData, TransactionStatus, TransactionUnknown } from '@/wallet/types';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 
@@ -52,7 +49,7 @@ export const isMoverTransation = (
     return true;
   }
 
-  const HolyHandAddress = HOLY_HAND_ADDRESS(network);
+  const HolyHandAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   if (
     sameAddress(HolyHandAddress, zt.address_from) ||
     sameAddress(HolyHandAddress, zt.address_to)
@@ -60,7 +57,7 @@ export const isMoverTransation = (
     return true;
   }
 
-  const TreasuryAddress = SMART_TREASURY_ADDRESS(network);
+  const TreasuryAddress = lookupAddress(network, 'SMART_TREASURY_ADDRESS');
   if (
     sameAddress(TreasuryAddress, zt.address_from) ||
     sameAddress(TreasuryAddress, zt.address_to)

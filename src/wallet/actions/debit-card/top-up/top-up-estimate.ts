@@ -19,11 +19,7 @@ import {
   CompoundEstimateWithUnwrapResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import {
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  WX_BTRFLY_TOKEN_ADDRESS
-} from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -38,9 +34,14 @@ export const estimateTopUpCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateWithUnwrapResponse> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
-  if (sameAddress(inputAsset.address, WX_BTRFLY_TOKEN_ADDRESS(network))) {
+  if (
+    sameAddress(
+      inputAsset.address,
+      lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS')
+    )
+  ) {
     Sentry.addBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUpCompound',
@@ -180,7 +181,7 @@ export const estimateTopUp = async (
     throw 'TransferData is missing';
   }
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {
