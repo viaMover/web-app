@@ -33,7 +33,11 @@ export const getSavingsInfo = async (
     }
 
     const payloadProcessed: SavingsInfo = {
-      ...response.payload,
+      avg30DaysAPY: response.payload.avg30DaysAPY,
+      currentBalance: response.payload.currentBalance,
+      currentPoolBalance: response.payload.currentPoolBalance,
+      earnedThisMonth: response.payload.earnedThisMonth,
+      earnedTotal: response.payload.earnedTotal,
       last12MonthsBalances: response.payload.last12MonthsBalances.map(
         (item) => ({
           ...item,
@@ -80,7 +84,7 @@ export const getSavingsReceipt = async (
       totalDeposits: response.payload.totalDeposits,
       totalWithdrawals: response.payload.totalWithdrawals,
       hourlyBalances: isFeatureEnabled('isSavingsMonthlyChartEnabled')
-        ? response.payload.hourlyBalances!.map((item) => ({
+        ? response.payload.hourlyBalances?.map((item) => ({
             ...item,
             type: 'savings_hourly_balance_item'
           }))

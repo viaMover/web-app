@@ -33,7 +33,16 @@ export const getTreasuryInfo = async (
     }
 
     const payloadProcessed: TreasuryInfo = {
-      ...response.payload,
+      currentStakedMove: response.payload.currentStakedMove,
+      currentStakedMoveLP: response.payload.currentStakedMoveLP,
+      currentTotalStakedMove: response.payload.currentTotalStakedMove,
+      currentTotalStakedMoveLP: response.payload.currentTotalStakedMoveLP,
+      earnedThisMonth: response.payload.earnedThisMonth,
+      earnedToday: response.payload.earnedToday,
+      earnedTotal: response.payload.earnedTotal,
+      spentThisMonth: response.payload.spentThisMonth,
+      spentToday: response.payload.spentToday,
+      spentTotal: response.payload.spentTotal,
       last12MonthsBonuses: response.payload.last12MonthsBonuses.map((item) => ({
         ...item,
         type: 'treasury_month_bonuses_item'
@@ -81,7 +90,7 @@ export const getTreasuryReceipt = async (
       totalWithdrawalsMove: response.payload.totalWithdrawalsMove,
       totalWithdrawalsMoveLP: response.payload.totalWithdrawalsMoveLP,
       hourlyBalances: isFeatureEnabled('isTreasuryMonthlyChartEnabled')
-        ? response.payload.hourlyBalances!.map((item) => ({
+        ? response.payload.hourlyBalances?.map((item) => ({
             ...item,
             type: 'treasury_hourly_balance_item'
           }))

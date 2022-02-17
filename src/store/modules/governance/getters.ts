@@ -69,7 +69,6 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
     };
   },
   proposalsIds(state): Array<string> {
-    // return Array.from(state.proposals.keys());
     return Array.from(state.proposals.values())
       .filter((item) => item.expDate > Date.now()) //remove expired
       .map((item) => item.data.proposal.id);
