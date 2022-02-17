@@ -77,8 +77,12 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
-  async restorePersist({ commit }): Promise<void> {
+  async restorePersist({ commit, rootState }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
     let info = await getFromPersistStoreWithExpire(
+      rootState.account.currentAddress,
       'governance-power',
       'community'
     );
@@ -86,7 +90,11 @@ const actions: ActionFuncs<
       commit('setCommunityVotingPower', info);
     }
 
-    info = await getFromPersistStoreWithExpire('governance-space', 'info');
+    info = await getFromPersistStoreWithExpire(
+      rootState.account.currentAddress,
+      'governance-space',
+      'info'
+    );
     if (info !== undefined) {
       commit('setSpaceInfo', info);
     }
@@ -151,7 +159,7 @@ const actions: ActionFuncs<
     }
   },
   async loadProposalInfo(
-    { commit, dispatch, getters },
+    { commit, rootState, dispatch, getters },
     id: string
   ): Promise<ProposalInfo | undefined> {
     const loadFreshData = async (): Promise<ProposalInfo | undefined> => {
@@ -194,8 +202,12 @@ const actions: ActionFuncs<
 
       commit('upsertItems', newItem);
 
-      if (newItem.proposal.state === 'closed') {
+      if (
+        ensureAccountStateIsSafe(rootState.account) &&
+        newItem.proposal.state === 'closed'
+      ) {
         setToPersistStore(
+          rootState.account.currentAddress,
           'governance-proposal',
           id,
           newItem,
@@ -212,10 +224,16 @@ const actions: ActionFuncs<
         return prop;
       }
 
-      prop = await getFromPersistStoreWithExpire('governance-proposal', id);
-      if (prop !== undefined) {
-        commit('upsertItems', prop);
-        return prop;
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        prop = await getFromPersistStoreWithExpire(
+          rootState.account.currentAddress,
+          'governance-proposal',
+          id
+        );
+        if (prop !== undefined) {
+          commit('upsertItems', prop);
+          return prop;
+        }
       }
 
       return await loadFreshData();
@@ -274,12 +292,8 @@ const actions: ActionFuncs<
     payload: VoteParams
   ): Promise<VoteResponse> {
     try {
-      if (rootState.account?.provider?.web3 === undefined) {
-        throw new Error('failed to get web3 provider');
-      }
-
-      if (rootState.account?.currentAddress === undefined) {
-        throw new Error('failed to get current address');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account not ready');
       }
 
       const storedProposal = getters.proposal(payload.proposalId);
@@ -338,6 +352,7 @@ const actions: ActionFuncs<
 
       if (newItem.proposal.state === 'closed') {
         setToPersistStore(
+          rootState.account.currentAddress,
           'governance-proposal',
           payload.proposalId,
           newItem,
@@ -437,7 +452,13 @@ const actions: ActionFuncs<
       throw error;
     }
   },
-  async loadPowerInfo({ state, commit, dispatch, getters }): Promise<void> {
+  async loadPowerInfo({
+    state,
+    commit,
+    dispatch,
+    getters,
+    rootState
+  }): Promise<void> {
     try {
       // resolve with existing spaceInfo or fetch the new one
       const spaceInfoPromise = getters.spaceInfo
@@ -460,18 +481,22 @@ const actions: ActionFuncs<
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
       commit('setCommunityVotingPower', communityVotingPower);
 
-      setToPersistStore(
-        'governance-power',
-        'community',
-        communityVotingPower,
-        Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
-      );
-      setToPersistStore(
-        'governance-space',
-        'info',
-        spaceInfo,
-        Date.now() + SPACE_INFO_EXPIRE_TIME
-      );
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'governance-power',
+          'community',
+          communityVotingPower,
+          Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
+        );
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'governance-space',
+          'info',
+          spaceInfo,
+          Date.now() + SPACE_INFO_EXPIRE_TIME
+        );
+      }
     } catch (error) {
       console.error('failed to load power info', error);
       Sentry.captureException(error);
@@ -568,6 +593,7 @@ const actions: ActionFuncs<
           commit('setSpaceInfo', spaceInfo);
 
           setToPersistStore(
+            rootState.account.currentAddress,
             'governance-space',
             'info',
             spaceInfo,
