@@ -41,8 +41,7 @@ export type SavingsHourlyBalancesItem = {
 export type SavingsReceipt = {
   endOfMonthBalance: number;
   earnedThisMonth: number;
-  hourlyBalances: Array<SavingsHourlyBalancesItem>;
-  monthActionHistory: Array<SavingsActionHistoryItem>;
+  hourlyBalances?: Array<SavingsHourlyBalancesItem>;
   totalDeposits: number;
   totalWithdrawals: number;
   avgDailyEarnings: number;

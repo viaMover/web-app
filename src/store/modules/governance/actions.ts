@@ -112,7 +112,9 @@ const actions: ActionFuncs<
         await dispatch('loadPowerInfo');
       }
 
-      await dispatch('loadProposalInfo', await getLastProposalId());
+      if (getters.lastProposal === undefined) {
+        await dispatch('loadProposalInfo', await getLastProposalId());
+      }
 
       commit('setIsLoadingMinimal', false);
     } catch (error) {
@@ -466,29 +468,33 @@ const actions: ActionFuncs<
         : getSpace(state.spaceId);
 
       // current community voting power
-      const votingPowerPromise = dispatch('loadCommunityVotingPower');
+      if (getters.communityVotingPower === '0') {
+        const communityVotingPower = await dispatch('loadCommunityVotingPower');
+        commit('setCommunityVotingPower', communityVotingPower);
+
+        if (ensureAccountStateIsSafe(rootState.account)) {
+          setToPersistStore(
+            rootState.account.currentAddress,
+            'governance-power',
+            'community',
+            communityVotingPower,
+            Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
+          );
+        }
+      }
 
       // current self voting power
       const votingPowerSelfPromise = dispatch('loadCurrentVotingPowerSelf');
 
-      const [spaceInfo, communityVotingPower] = await Promise.all([
+      const [spaceInfo] = await Promise.all([
         spaceInfoPromise,
-        votingPowerPromise,
         votingPowerSelfPromise
       ]);
 
       commit('setSpaceInfo', spaceInfo);
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
-      commit('setCommunityVotingPower', communityVotingPower);
 
       if (ensureAccountStateIsSafe(rootState.account)) {
-        setToPersistStore(
-          rootState.account.currentAddress,
-          'governance-power',
-          'community',
-          communityVotingPower,
-          Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
-        );
         setToPersistStore(
           rootState.account.currentAddress,
           'governance-space',
@@ -659,7 +665,7 @@ const actions: ActionFuncs<
     getters
   }): Promise<string> {
     const power = getters.votingPowerSelf;
-    if (power != undefined) {
+    if (power !== '0') {
       return power;
     }
 

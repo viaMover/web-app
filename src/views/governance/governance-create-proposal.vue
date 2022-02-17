@@ -172,10 +172,10 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('governance', {
-      daysToRun: 'proposalDurationDays',
-      isStoreLoading: 'isLoading'
+      daysToRun: 'proposalDurationDays'
     }),
     ...mapGetters('governance', {
+      isStoreLoading: 'isLoading',
       minimumVotingThreshold: 'minimumVotingThreshold'
     }),
     minimumVotingThresholdText(): string {

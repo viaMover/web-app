@@ -83,10 +83,12 @@ export default Vue.extend({
     AnalyticsListItem
   },
   computed: {
-    ...mapState('governance', {
+    ...mapGetters('governance', {
       isLoading: 'isLoading',
       votingPowerSelf: 'votingPowerSelf',
-      communityVotingPowerRaw: 'communityVotingPower',
+      communityVotingPowerRaw: 'communityVotingPower'
+    }),
+    ...mapState('governance', {
       powerNeededToBecomeAProposer: 'powerNeededToBecomeAProposer'
     }),
     ...mapGetters('governance', {

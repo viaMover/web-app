@@ -31,10 +31,11 @@ const mutations: MutationFuncs<Mutations, GovernanceStoreState> = {
     state.isLoadingMinimal = isLoadingMinimal;
   },
   clearItems(state): void {
-    state.proposals.clear();
+    state.proposals = new Map();
   },
   upsertItems(state, newItem: ProposalInfo): void {
-    state.proposals.set(newItem.proposal.id, {
+    const proposals = state.proposals;
+    proposals.set(newItem.proposal.id, {
       data: newItem,
       expDate:
         Date.now() +
@@ -42,6 +43,8 @@ const mutations: MutationFuncs<Mutations, GovernanceStoreState> = {
           ? CLOSED_PROPOSAL_TIME_EXPIRE
           : ACTIVE_PROPOSAL_TIME_EXPIRE)
     });
+
+    state.proposals = new Map(proposals);
   },
   setSpaceInfo(state, info: Space): void {
     state.spaceInfo = {

@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import GovernanceProposalsItem from './governance-proposals-item.vue';
 import GovernanceProposalsItemSkeleton from './governance-proposals-item-skeleton.vue';
@@ -27,10 +27,8 @@ export default Vue.extend({
     GovernanceProposalsItemSkeleton
   },
   computed: {
-    ...mapState('governance', {
-      isLoading: 'isLoading'
-    }),
     ...mapGetters('governance', {
+      isLoading: 'isLoading',
       proposals: 'proposalsOrderedByEndingDesc'
     })
   }
