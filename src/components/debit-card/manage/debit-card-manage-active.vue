@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage active" hide-info>
+  <secondary-page class="manage active">
     <template v-slot:title>
       <secondary-page-header
         :description="$t('debitCard.txtVisaDebitCard')"

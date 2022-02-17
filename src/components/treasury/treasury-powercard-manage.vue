@@ -1,10 +1,5 @@
 <template>
-  <secondary-page
-    class="powercard manage"
-    hide-info
-    hide-title
-    @back="handleBack"
-  >
+  <secondary-page class="powercard manage" has-back-button @back="handleBack">
     <template v-if="transactionStep === undefined">
       <secondary-page-header
         class="max-width"

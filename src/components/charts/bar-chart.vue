@@ -42,7 +42,7 @@ export default Vue.extend({
   props: {
     defaultColor: {
       type: String,
-      default: 'rgba(60,60,67,0.3)'
+      default: 'rgba(60, 60, 67, 0.3)'
     },
     accentColor: {
       type: String,
@@ -50,7 +50,7 @@ export default Vue.extend({
     },
     tickColor: {
       type: String,
-      default: 'rgba(60,60,67,0.60)'
+      default: 'rgba(60, 60, 67, 0.60)'
     },
     chartDataSource: {
       type: Array as PropType<
@@ -152,7 +152,7 @@ export default Vue.extend({
       const el = this.$refs.chartCanvas as HTMLCanvasElement;
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const that = this;
-      this.chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
+      const chartInstance = new Chart<'bar', Array<ChartDataItem>, string>(el, {
         type: 'bar',
         data: this.chartData,
         options: {
@@ -170,7 +170,7 @@ export default Vue.extend({
                 : 'default';
           },
           maintainAspectRatio: false,
-          responsive: true,
+          responsive: false,
           normalized: true,
           plugins: {
             legend: {
@@ -186,8 +186,8 @@ export default Vue.extend({
           datasets: {
             bar: {
               minBarLength: 10,
-              barThickness: 'flex',
-              maxBarThickness: 56
+              barThickness: 52,
+              maxBarThickness: 52
             }
           },
           elements: {
@@ -255,6 +255,10 @@ export default Vue.extend({
           }
         } as ChartOptions<'bar'>
       });
+
+      chartInstance.resize(this.chartData.datasets[0].data.length * 54, 176);
+
+      this.chartInstance = chartInstance;
     }
   }
 });

@@ -4,7 +4,10 @@
       <home-left-rail />
     </template>
 
-    <home-masthead />
+    <home-masthead-multichain
+      v-if="isFeatureEnabled('isMultiChainMastheadEnabled')"
+    />
+    <home-masthead v-else />
 
     <div class="cards">
       <home-cards-debit-card v-if="isFeatureEnabled('isDebitCardEnabled')" />
@@ -14,8 +17,13 @@
     <home-navigation-section />
 
     <template v-slot:modals>
-      <swap-modal key="swap-modal" />
-      <search-modal key="search-modal" />
+      <template>
+        <swap-modal
+          v-if="isFeatureEnabled('isHomeSwapModalEnabled')"
+          key="swap-modal"
+        />
+        <search-modal key="search-modal" />
+      </template>
     </template>
   </content-wrapper>
 </template>
@@ -30,6 +38,7 @@ import {
   HomeCardsSavingsDeposit,
   HomeLeftRail,
   HomeMasthead,
+  HomeMastheadMultichain,
   HomeNavigationSection
 } from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
@@ -41,6 +50,7 @@ export default Vue.extend({
     ContentWrapper,
     HomeLeftRail,
     HomeMasthead,
+    HomeMastheadMultichain,
     HomeNavigationSection,
     HomeCardsDebitCard,
     HomeCardsSavingsDeposit,

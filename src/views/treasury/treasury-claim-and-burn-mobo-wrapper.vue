@@ -1,9 +1,5 @@
 <template>
-  <secondary-page
-    :has-back-button="hasBackButton"
-    hide-title
-    @back="handleBack"
-  >
+  <secondary-page :has-back-button="hasBackButton" @back="handleBack">
     <prepare-form
       v-if="step === 'prepare'"
       allow-zero-amount

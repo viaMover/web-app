@@ -2,8 +2,6 @@
   <secondary-page
     class="deposit"
     :has-back-button="hasBackButton"
-    hide-info
-    hide-title
     @back="handleBack"
   >
     <prepare-form

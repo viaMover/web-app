@@ -1,10 +1,5 @@
 <template>
-  <secondary-page
-    class="analytics"
-    has-back-button
-    hide-info
-    @back="handleBack"
-  >
+  <secondary-page class="analytics" has-back-button @back="handleBack">
     <template v-slot:title>
       <secondary-page-header
         :description="$t('treasury.txtTreasuryOverviewDescription')"

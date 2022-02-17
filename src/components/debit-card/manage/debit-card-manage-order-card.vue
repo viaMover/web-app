@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage order-card" hide-info>
+  <secondary-page class="manage order-card">
     <template v-slot:title>
       <secondary-page-header
         class="page-title max-width"
@@ -9,7 +9,9 @@
     </template>
 
     <template v-slot:info>
-      <debit-card-image class="small" :skin="currentSkin" />
+      <div class="secondary-page-info">
+        <debit-card-image class="small" :skin="currentSkin" />
+      </div>
     </template>
 
     <form

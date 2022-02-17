@@ -1,5 +1,5 @@
 <template>
-  <secondary-page class="manage validate-phone" hide-info>
+  <secondary-page class="manage validate-phone">
     <template v-slot:title>
       <secondary-page-header
         class="page-title max-width"

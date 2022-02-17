@@ -1,7 +1,8 @@
 <template>
-  <secondary-page class="manage set-email" hide-info>
+  <secondary-page class="manage set-email">
     <template v-slot:title>
       <secondary-page-header
+        class="alternate"
         :description="$t('debitCard.txtBeautifulCard')"
         :title="$t('debitCard.lblBeautifulCard')"
       />
