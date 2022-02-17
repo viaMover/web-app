@@ -173,7 +173,7 @@ export default Vue.extend({
 
       try {
         const voteResult: VoteResponse = await this.vote({
-          proposal: this.proposal.id,
+          proposalId: this.proposal.id,
           choice: this.isVoteFor ? Choice.For : Choice.Against
         } as VoteParams);
 

@@ -19,7 +19,7 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    await this.loadGovernanceInfo();
+    await this.loadInfo();
     if (this.proposalsIds.includes(this.pageProposalId)) {
       return;
     }
@@ -28,7 +28,7 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('governance', {
-      loadGovernanceInfo: 'loadGovernanceInfo'
+      loadInfo: 'loadInfo'
     })
   }
 });

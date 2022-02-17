@@ -1,7 +1,8 @@
 import {
   Choice,
   getDefaultMinimumVotingThresholdMultiplier,
-  ProposalInfo
+  ProposalInfo,
+  Space
 } from '@/services/mover/governance';
 import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
@@ -19,7 +20,10 @@ import {
 } from './types';
 
 type Getters = {
+  isLoading: boolean;
+  proposal: (id: string) => ProposalInfo | undefined;
   proposalsIds: Array<string>;
+  proposals: Array<ProposalInfo>;
   proposalsOrderedByEndingDesc: Array<ProposalInfo>;
   lastProposal: ProposalInfo | undefined;
   timesVoted: number;
@@ -40,14 +44,43 @@ type Getters = {
   hasEnoughVotingPowerToVote: (id: string) => boolean;
   hasEnoughVotingPowerToBecomeAProposer: boolean;
   votingPowerSelfOnProposal: (id: string) => string;
+  votingPowerSelf: string;
+  blockNumberCached: number | undefined;
+  communityVotingPower: string;
+  spaceInfo: Space | undefined;
 };
 
 const getters: GettersFuncs<Getters, GovernanceStoreState> = {
-  proposalsIds(state): Array<string> {
-    return state.items.map((proposalInfo) => proposalInfo.proposal.id);
+  isLoading(state): boolean {
+    return state.isLoading || state.isLoadingMinimal;
   },
-  proposalsOrderedByEndingDesc(state): Array<ProposalInfo> {
-    return state.items.slice().sort((a, b) => b.proposal.end - a.proposal.end);
+  proposal(state): (id: string) => ProposalInfo | undefined {
+    return (id) => {
+      const prop = state.proposals.get(id);
+      if (prop === undefined) {
+        return undefined;
+      }
+
+      if (prop.expDate > Date.now()) {
+        return prop.data;
+      }
+
+      return undefined;
+    };
+  },
+  proposalsIds(state): Array<string> {
+    // return Array.from(state.proposals.keys());
+    return Array.from(state.proposals.values())
+      .filter((item) => item.expDate > Date.now()) //remove expired
+      .map((item) => item.data.proposal.id);
+  },
+  proposals(state): Array<ProposalInfo> {
+    return Array.from(state.proposals.values())
+      .filter((item) => item.expDate > Date.now()) //remove expired
+      .map((item) => item.data);
+  },
+  proposalsOrderedByEndingDesc(state, getters): Array<ProposalInfo> {
+    return getters.proposals.sort((a, b) => b.proposal.end - a.proposal.end);
   },
   lastProposal(state, getters): ProposalInfo | undefined {
     return getters.proposalsOrderedByEndingDesc[0] ?? undefined;
@@ -57,7 +90,7 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
       return 0;
     }
 
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       if (
         proposal.votes.some((vote) =>
           sameAddress(vote.voter, rootState.account?.currentAddress)
@@ -74,7 +107,7 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
       return 0;
     }
 
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       if (
         sameAddress(proposal.proposal.author, rootState.account?.currentAddress)
       ) {
@@ -84,11 +117,11 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
       return count;
     }, 0);
   },
-  totalNumberOfProposals(state): number {
-    return state.items.length;
+  totalNumberOfProposals(state, getters): number {
+    return getters.proposals.length;
   },
-  openProposals(state): number {
-    return state.items.reduce((count, proposal) => {
+  openProposals(state, getters): number {
+    return getters.proposals.reduce((count, proposal) => {
       if (proposal.proposal.state === 'active') {
         return count + 1;
       }
@@ -98,7 +131,7 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
   },
   succeededProposals(state, getters): number {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
       if (proposal.proposal.state === 'closed' && proposalStats.isSucceeded) {
@@ -110,7 +143,7 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
   },
   defeatedProposals(state, getters): number {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
       if (proposal.proposal.state === 'closed' && !proposalStats.isSucceeded) {
@@ -121,7 +154,7 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
     }, 0);
   },
   proposalCumulativeInfo(state, getters, rootState): ProposalCumulativeInfo {
-    return state.items.reduce((acc, item) => {
+    return getters.proposals.reduce((acc, item) => {
       let votesCountFor = 0;
       let votesCountAgainst = 0;
 
@@ -223,9 +256,9 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
       return 'quorumNotReached';
     };
   },
-  minimumVotingThreshold(state): string {
+  minimumVotingThreshold(state, getters): string {
     return multiply(
-      state.communityVotingPower,
+      getters.communityVotingPower,
       state.minimumVotingThresholdMultiplier
     );
   },
@@ -244,8 +277,8 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
         return undefined;
       }
 
-      return state.items
-        .find((proposalInfo) => proposalInfo.proposal.id === id)
+      return getters
+        .proposal(id)
         ?.votes.find((vote) => vote.voter === accountAddress)?.ipfs;
     };
   },
@@ -254,9 +287,9 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
 
     return (id: string) => source[id]?.hasEnoughVotingPowerToVote ?? false;
   },
-  hasEnoughVotingPowerToBecomeAProposer(state): boolean {
+  hasEnoughVotingPowerToBecomeAProposer(state, getters): boolean {
     return greaterThanOrEqual(
-      state.votingPowerSelf,
+      getters.votingPowerSelf,
       state.powerNeededToBecomeAProposer
     );
   },
@@ -264,6 +297,34 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
 
     return (id: string) => source[id]?.votingPowerSelf ?? '0';
+  },
+  votingPowerSelf(state): string {
+    if (state.votingPowerSelf.expDate > Date.now()) {
+      return state.votingPowerSelf.data;
+    }
+
+    return '0';
+  },
+  blockNumberCached(state): number | undefined {
+    if (state.blockNumberCached.expDate > Date.now()) {
+      return state.blockNumberCached.data;
+    }
+
+    return undefined;
+  },
+  communityVotingPower(state): string {
+    if (state.communityVotingPower.expDate > Date.now()) {
+      return state.communityVotingPower.data;
+    }
+
+    return '0';
+  },
+  spaceInfo(state): Space | undefined {
+    if (state.spaceInfo.expDate > Date.now()) {
+      return state.spaceInfo.data;
+    }
+
+    return undefined;
   }
 };
 

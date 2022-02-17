@@ -1,81 +1,73 @@
-import dayjs from 'dayjs';
-
 import { ProposalInfo, Space } from '@/services/mover/governance';
+import {
+  ACTIVE_PROPOSAL_TIME_EXPIRE,
+  BLOCK_NUMBER_EXPIRE_TIME,
+  CLOSED_PROPOSAL_TIME_EXPIRE,
+  COMMUNITY_VOTING_POWER_EXPIRE_TIME,
+  SPACE_INFO_EXPIRE_TIME,
+  VOTING_POWER_SELF_EXPIRE_TIME
+} from '@/store/modules/governance/actions';
 import { MutationFuncs } from '@/store/types';
 
 import { GovernanceStoreState } from './types';
 
 type Mutations = {
   setIsLoading: void;
-  setIsLoadingLastProposal: void;
-  setError: void;
-  setLoadingPromise: void;
+  setIsLoadingMinimal: void;
   clearItems: void;
   upsertItems: void;
   setSpaceInfo: void;
   setPowerNeededToBecomeAProposer: void;
   setCommunityVotingPower: void;
   setVotingPowerSelf: void;
-  setBlockNumberCached: void;
+  setBlockNumber: void;
 };
 
 const mutations: MutationFuncs<Mutations, GovernanceStoreState> = {
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
   },
-  setIsLoadingLastProposal(state, isLoadingLastProposal: boolean): void {
-    state.isLoadingLastProposal = isLoadingLastProposal;
-  },
-  setError(state, error: string | Error | undefined): void {
-    state.error = error;
-  },
-  setLoadingPromise(
-    state,
-    promise: Promise<Array<ProposalInfo>> | undefined
-  ): void {
-    state.loadingPromise = promise;
+  setIsLoadingMinimal(state, isLoadingMinimal: boolean): void {
+    state.isLoadingMinimal = isLoadingMinimal;
   },
   clearItems(state): void {
-    state.items = [];
-    state.cacheInfoMap = {};
+    state.proposals.clear();
   },
   upsertItems(state, newItem: ProposalInfo): void {
-    const existingItemIdx = state.items.findIndex(
-      (item) => item.proposal.id === newItem.proposal.id
-    );
-    if (existingItemIdx < 0) {
-      state.items = [...state.items, newItem];
-      state.cacheInfoMap[newItem.proposal.id] = {
-        updatedAt: dayjs().unix()
-      };
-      return;
-    }
-
-    const newState = state.items.slice();
-    newState.splice(existingItemIdx, 1, newItem);
-    state.cacheInfoMap[newItem.proposal.id] = { updatedAt: dayjs().unix() };
-
-    state.items = newState;
+    state.proposals.set(newItem.proposal.id, {
+      data: newItem,
+      expDate:
+        Date.now() +
+        (newItem.proposal.state === 'closed'
+          ? CLOSED_PROPOSAL_TIME_EXPIRE
+          : ACTIVE_PROPOSAL_TIME_EXPIRE)
+    });
   },
   setSpaceInfo(state, info: Space): void {
-    state.spaceInfo = info;
+    state.spaceInfo = {
+      data: info,
+      expDate: Date.now() + SPACE_INFO_EXPIRE_TIME
+    };
   },
   setPowerNeededToBecomeAProposer(state, value: number): void {
     state.powerNeededToBecomeAProposer = value;
   },
   setCommunityVotingPower(state, value: string): void {
-    state.communityVotingPower = value;
-  },
-  setVotingPowerSelf(state, value: string): void {
-    state.votingPowerSelf = value;
-    state.cacheGenericInfoMap['votingPowerSelf'] = {
-      updatedAt: dayjs().unix()
+    state.communityVotingPower = {
+      data: value,
+      expDate: Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
     };
   },
-  setBlockNumberCached(state, value: number): void {
-    state.blockNumberCached = value;
-    state.cacheGenericInfoMap['blockNumber'] = {
-      updatedAt: dayjs().unix()
+  setVotingPowerSelf(state, value: string): void {
+    state.votingPowerSelf = {
+      data: value,
+      expDate: Date.now() + VOTING_POWER_SELF_EXPIRE_TIME
+    };
+  },
+  setBlockNumber(state, value: number): void {
+    state.blockNumberCached = {
+      data: value,
+      expDate: Date.now() + BLOCK_NUMBER_EXPIRE_TIME
     };
   }
 };

@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 
 import {
-  defaultCachePeriodSeconds,
   defaultProposalDurationDays,
   getDefaultMinimumVotingThresholdMultiplier,
   getDefaultPowerNeededToBecomeAProposer,
@@ -21,23 +20,20 @@ export default {
   namespaced: true,
   strict: !isProduction(),
   state: {
+    isLoadingMinimal: false,
     isLoading: false,
-    error: undefined,
-    loadingPromise: undefined,
-    spaceInfo: undefined,
-    items: [],
-    cacheInfoMap: {},
-    cacheGenericInfoMap: {},
+
+    spaceInfo: { data: undefined, expDate: Date.now() },
+    proposals: new Map(),
+
+    communityVotingPower: { data: '0', expDate: Date.now() },
+    votingPowerSelf: { data: '0', expDate: Date.now() },
     proposalDurationDays: defaultProposalDurationDays,
     powerNeededToBecomeAProposer: getDefaultPowerNeededToBecomeAProposer(now),
     minimumVotingThresholdMultiplier:
       getDefaultMinimumVotingThresholdMultiplier(now),
-    communityVotingPower: '0',
-    votingPowerSelf: '0',
     spaceId: moverSpaceId,
-    cachePeriodSeconds: defaultCachePeriodSeconds,
-    isLoadingLastProposal: false,
-    blockNumberCached: undefined
+    blockNumberCached: { data: undefined, expDate: Date.now() }
   },
   actions,
   getters,

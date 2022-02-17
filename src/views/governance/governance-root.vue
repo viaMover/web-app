@@ -34,11 +34,11 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    await this.loadGovernanceInfo();
+    await this.loadInfo();
   },
   methods: {
     ...mapActions('governance', {
-      loadGovernanceInfo: 'loadGovernanceInfo',
+      loadInfo: 'loadInfo',
       loadVotingPowerSelf: 'loadCurrentVotingPowerSelf'
     }),
     handleClose(): void {
