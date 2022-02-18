@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -77,11 +77,9 @@ export default Vue.extend({
     AnalyticsListItem
   },
   computed: {
-    ...mapState('governance', {
-      isLoading: 'isLoading',
-      items: 'items'
-    }),
     ...mapGetters('governance', {
+      isLoading: 'isLoading',
+      proposal: 'proposal',
       proposalCommunityVotingPower: 'proposalCommunityVotingPower',
       proposalVotedFor: 'proposalVotedFor',
       proposalVotedAgainst: 'proposalVotedAgainst',
@@ -92,12 +90,7 @@ export default Vue.extend({
       return this.$route.params.id;
     },
     proposalInfo(): ProposalInfo | undefined {
-      return (
-        this.items.find(
-          (proposalInfo: ProposalInfo) =>
-            proposalInfo.proposal.id === this.proposalId
-        ) ?? undefined
-      );
+      return this.proposal(this.proposalId);
     },
     pageTitle(): string {
       if (this.proposalInfo === undefined) {
@@ -147,7 +140,7 @@ export default Vue.extend({
       return this.$t('governance.lblOutcome.quorumNotReached').toString();
     },
     displayAsIsLoading(): boolean {
-      return this.proposalInfo === undefined;
+      return this.proposalInfo === undefined || this.isLoading;
     }
   },
   watch: {
@@ -157,14 +150,14 @@ export default Vue.extend({
           return;
         }
 
-        await this.loadProposal({ id: newVal });
+        await this.loadProposalInfo(newVal);
       },
       immediate: true
     }
   },
   methods: {
     ...mapActions('governance', {
-      loadProposal: 'loadProposalInfo'
+      loadProposalInfo: 'loadProposalInfo'
     }),
     handleBack(): void {
       this.$router.replace({

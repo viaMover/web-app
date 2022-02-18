@@ -131,10 +131,7 @@ import {
   GovernanceApiError
 } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
-import {
-  CreateProposalPayload,
-  LoadProposalInfoPayload
-} from '@/store/modules/governance/types';
+import { CreateProposalPayload } from '@/store/modules/governance/types';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { formatToDecimals } from '@/utils/format';
 
@@ -170,10 +167,10 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('governance', {
-      daysToRun: 'proposalDurationDays',
-      isStoreLoading: 'isLoading'
+      daysToRun: 'proposalDurationDays'
     }),
     ...mapGetters('governance', {
+      isStoreLoading: 'isLoading',
       minimumVotingThreshold: 'minimumVotingThreshold'
     }),
     minimumVotingThresholdText(): string {
@@ -215,10 +212,7 @@ export default Vue.extend({
         this.$v.proposalTemplate.$reset();
         this.proposalTemplate = { title: '', description: '' };
 
-        await this.loadProposalInfo({
-          id: createdProposal.id,
-          refetch: true
-        } as LoadProposalInfoPayload);
+        await this.loadProposalInfo(createdProposal.id);
         await this.$router.replace({
           name: 'governance-view',
           params: {

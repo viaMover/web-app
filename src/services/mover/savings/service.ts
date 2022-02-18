@@ -6,6 +6,7 @@ import {
   SavingsReceipt,
   SavingsReceiptResponse
 } from '@/services/mover/savings/types';
+import { isFeatureEnabled } from '@/settings';
 
 import { Result } from '../../responses';
 import { baseUrl } from '../consts';
@@ -32,7 +33,11 @@ export const getSavingsInfo = async (
     }
 
     const payloadProcessed: SavingsInfo = {
-      ...response.payload,
+      avg30DaysAPY: response.payload.avg30DaysAPY,
+      currentBalance: response.payload.currentBalance,
+      currentPoolBalance: response.payload.currentPoolBalance,
+      earnedThisMonth: response.payload.earnedThisMonth,
+      earnedTotal: response.payload.earnedTotal,
       last12MonthsBalances: response.payload.last12MonthsBalances.map(
         (item) => ({
           ...item,
@@ -71,11 +76,19 @@ export const getSavingsReceipt = async (
     }
 
     const payloadProcessed: SavingsReceipt = {
-      ...response.payload,
-      hourlyBalances: response.payload.hourlyBalances.map((item) => ({
-        ...item,
-        type: 'savings_hourly_balance_item'
-      }))
+      avgDailyEarnings: response.payload.avgDailyEarnings,
+      earnedThisMonth: response.payload.earnedThisMonth,
+      endOfMonthBalance: response.payload.endOfMonthBalance,
+      paidToTreasury: response.payload.paidToTreasury,
+      savedFees: response.payload.savedFees,
+      totalDeposits: response.payload.totalDeposits,
+      totalWithdrawals: response.payload.totalWithdrawals,
+      hourlyBalances: isFeatureEnabled('isSavingsMonthlyChartEnabled')
+        ? response.payload.hourlyBalances?.map((item) => ({
+            ...item,
+            type: 'savings_hourly_balance_item'
+          }))
+        : undefined
     };
 
     return { isError: false, result: payloadProcessed };

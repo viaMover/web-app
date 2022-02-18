@@ -1,27 +1,21 @@
 import { Proposal, ProposalInfo, Space } from '@/services/mover/governance';
+import { DataStoreWrapper } from '@/store/types';
 
 export type GovernanceStoreState = {
+  isLoadingMinimal: boolean;
   isLoading: boolean;
-  error: string | Error | undefined;
-  loadingPromise: Promise<Array<ProposalInfo>> | undefined;
-  spaceInfo: Space | undefined;
-  items: Array<ProposalInfo>;
-  cacheInfoMap: Record<string, CacheInfo>;
-  cacheGenericInfoMap: Record<string, CacheInfo>;
-  communityVotingPower: string;
-  votingPowerSelf: string;
+
+  spaceInfo: DataStoreWrapper<Space | undefined>;
+  proposals: Map<string, DataStoreWrapper<ProposalInfo>>;
+
+  communityVotingPower: DataStoreWrapper<string>;
+  votingPowerSelf: DataStoreWrapper<string>;
   proposalDurationDays: number;
   powerNeededToBecomeAProposer: number;
   minimumVotingThresholdMultiplier: number;
   spaceId: string;
-  cachePeriodSeconds: number;
-  isLoadingLastProposal: boolean;
-  blockNumberCached: number | undefined;
+  blockNumberCached: DataStoreWrapper<number | undefined>;
 };
-
-export interface CacheInfo {
-  updatedAt: number;
-}
 
 export type ProposalCumulativeInfo = Record<
   string,
@@ -38,11 +32,6 @@ export type ProposalCumulativeInfo = Record<
     votingPowerSelf: string;
   }
 >;
-
-export type LoadProposalInfoPayload = {
-  id: string;
-  refetch: boolean;
-};
 
 export type LoadScoresSelfPayload = {
   proposal: Proposal;
