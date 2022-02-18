@@ -23,7 +23,6 @@ export type SavingsInfo = {
   earnedTotal: number;
   earnedThisMonth: number;
   last12MonthsBalances: Array<SavingsMonthBalanceItem>;
-  actionHistory: Array<SavingsActionHistoryItem>;
   avg30DaysAPY: number;
 };
 export type SavingsInfoResponse = MoverResponse<SavingsInfo>;
@@ -41,8 +40,7 @@ export type SavingsHourlyBalancesItem = {
 export type SavingsReceipt = {
   endOfMonthBalance: number;
   earnedThisMonth: number;
-  hourlyBalances: Array<SavingsHourlyBalancesItem>;
-  monthActionHistory: Array<SavingsActionHistoryItem>;
+  hourlyBalances?: Array<SavingsHourlyBalancesItem>;
   totalDeposits: number;
   totalWithdrawals: number;
   avgDailyEarnings: number;

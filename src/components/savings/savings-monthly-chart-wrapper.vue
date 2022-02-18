@@ -2,7 +2,9 @@
   <div class="chart-wrapper">
     <div class="stats-text">
       <line-chart
-        :chart-data-source="receipt ? receipt.hourlyBalances : []"
+        :chart-data-source="
+          receipt && receipt.hourlyBalances ? receipt.hourlyBalances : []
+        "
         :is-loading="isLoading"
       />
     </div>

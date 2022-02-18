@@ -66,13 +66,11 @@ export default class Client {
     spaceId: string,
     voteParams: VoteParams
   ): Promise<VoteResponse> => {
-    return this.broadcast<VoteResponse>(
-      web3,
-      accountAddress,
-      spaceId,
-      'vote',
-      voteParams
-    );
+    return this.broadcast<VoteResponse>(web3, accountAddress, spaceId, 'vote', {
+      proposal: voteParams.proposalId,
+      metadata: voteParams.metadata,
+      choice: voteParams.choice
+    });
   };
 
   public createProposal = async (

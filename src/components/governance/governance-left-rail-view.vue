@@ -4,7 +4,7 @@
       <div class="list">
         <navigation-section
           hide-header
-          :is-loading="isLoading"
+          :is-loading="proposalInfo === undefined"
           skeleton-component="navigation-section-item-emoji-skeleton"
           :skeleton-components-count="3"
         >
@@ -34,7 +34,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import { ProposalInfo } from '@/services/mover/governance';
 
@@ -50,20 +50,15 @@ export default Vue.extend({
     NavigationSectionItemEmoji
   },
   computed: {
-    ...mapState('governance', {
-      items: 'items',
-      isLoading: 'isLoading'
-    }),
     ...mapGetters('governance', {
-      proposalsIds: 'proposalsIds'
+      proposalsIds: 'proposalsIds',
+      proposal: 'proposal'
     }),
     pageProposalId(): string {
       return this.$route.params.id;
     },
     proposalInfo(): ProposalInfo | undefined {
-      return this.items.find(
-        (proposal: ProposalInfo) => proposal.proposal.id === this.pageProposalId
-      );
+      return this.proposal(this.pageProposalId);
     },
     voteForPage(): RawLocation {
       if (this.proposalInfo === undefined) {

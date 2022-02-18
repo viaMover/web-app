@@ -72,7 +72,7 @@ export type ProposalInfo = ProposalWithVotes & {
 };
 
 export interface VoteParams {
-  proposal: string;
+  proposalId: string;
   choice: number;
   metadata?: Record<string, unknown>;
 }

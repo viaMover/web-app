@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import { formatToDecimals } from '@/utils/format';
 
@@ -127,7 +127,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('governance', {
+    ...mapGetters('governance', {
       isLoading: 'isLoading',
       votingPowerSelf: 'votingPowerSelf'
     }),
