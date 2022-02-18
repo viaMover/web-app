@@ -173,7 +173,7 @@ const actions: ActionFuncs<
       'savings',
       'info',
       info.result,
-      Date.now() + INFO_TIME_EXPIRE
+      INFO_TIME_EXPIRE
     );
   },
   fetchSavingsReceipt(
@@ -219,7 +219,7 @@ const actions: ActionFuncs<
             'savingsReceipts',
             key,
             await value.data,
-            Date.now() + RECEIPT_TIME_EXPIRE
+            RECEIPT_TIME_EXPIRE
           );
         }
       }

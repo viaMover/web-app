@@ -213,7 +213,7 @@ const actions: ActionFuncs<
           'governance-proposal',
           id,
           newItem,
-          Date.now() + CLOSED_PROPOSAL_TIME_EXPIRE
+          CLOSED_PROPOSAL_TIME_EXPIRE
         );
       }
 
@@ -358,7 +358,7 @@ const actions: ActionFuncs<
           'governance-proposal',
           payload.proposalId,
           newItem,
-          Date.now() + CLOSED_PROPOSAL_TIME_EXPIRE
+          CLOSED_PROPOSAL_TIME_EXPIRE
         );
       }
 
@@ -478,7 +478,7 @@ const actions: ActionFuncs<
             'governance-power',
             'community',
             communityVotingPower,
-            Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
+            COMMUNITY_VOTING_POWER_EXPIRE_TIME
           );
         }
       }
@@ -500,7 +500,7 @@ const actions: ActionFuncs<
           'governance-space',
           'info',
           spaceInfo,
-          Date.now() + SPACE_INFO_EXPIRE_TIME
+          SPACE_INFO_EXPIRE_TIME
         );
       }
     } catch (error) {
@@ -603,7 +603,7 @@ const actions: ActionFuncs<
             'governance-space',
             'info',
             spaceInfo,
-            Date.now() + SPACE_INFO_EXPIRE_TIME
+            SPACE_INFO_EXPIRE_TIME
           );
         }
 

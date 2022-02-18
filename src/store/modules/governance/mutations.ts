@@ -7,6 +7,7 @@ import {
   SPACE_INFO_EXPIRE_TIME,
   VOTING_POWER_SELF_EXPIRE_TIME
 } from '@/store/modules/governance/actions';
+import { wrapCacheItem } from '@/store/modules/utils';
 import { MutationFuncs } from '@/store/types';
 
 import { GovernanceStoreState } from './types';
@@ -35,43 +36,35 @@ const mutations: MutationFuncs<Mutations, GovernanceStoreState> = {
   },
   upsertItems(state, newItem: ProposalInfo): void {
     const proposals = state.proposals;
-    proposals.set(newItem.proposal.id, {
-      data: newItem,
-      expDate:
-        Date.now() +
-        (newItem.proposal.state === 'closed'
+    proposals.set(
+      newItem.proposal.id,
+      wrapCacheItem(
+        newItem,
+        newItem.proposal.state === 'closed'
           ? CLOSED_PROPOSAL_TIME_EXPIRE
-          : ACTIVE_PROPOSAL_TIME_EXPIRE)
-    });
+          : ACTIVE_PROPOSAL_TIME_EXPIRE
+      )
+    );
 
     state.proposals = new Map(proposals);
   },
   setSpaceInfo(state, info: Space): void {
-    state.spaceInfo = {
-      data: info,
-      expDate: Date.now() + SPACE_INFO_EXPIRE_TIME
-    };
+    state.spaceInfo = wrapCacheItem(info, SPACE_INFO_EXPIRE_TIME);
   },
   setPowerNeededToBecomeAProposer(state, value: number): void {
     state.powerNeededToBecomeAProposer = value;
   },
   setCommunityVotingPower(state, value: string): void {
-    state.communityVotingPower = {
-      data: value,
-      expDate: Date.now() + COMMUNITY_VOTING_POWER_EXPIRE_TIME
-    };
+    state.communityVotingPower = wrapCacheItem(
+      value,
+      COMMUNITY_VOTING_POWER_EXPIRE_TIME
+    );
   },
   setVotingPowerSelf(state, value: string): void {
-    state.votingPowerSelf = {
-      data: value,
-      expDate: Date.now() + VOTING_POWER_SELF_EXPIRE_TIME
-    };
+    state.votingPowerSelf = wrapCacheItem(value, VOTING_POWER_SELF_EXPIRE_TIME);
   },
   setBlockNumber(state, value: number): void {
-    state.blockNumberCached = {
-      data: value,
-      expDate: Date.now() + BLOCK_NUMBER_EXPIRE_TIME
-    };
+    state.blockNumberCached = wrapCacheItem(value, BLOCK_NUMBER_EXPIRE_TIME);
   }
 };
 

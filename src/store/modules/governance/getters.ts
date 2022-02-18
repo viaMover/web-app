@@ -4,6 +4,7 @@ import {
   ProposalInfo,
   Space
 } from '@/services/mover/governance';
+import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -298,32 +299,26 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
     return (id: string) => source[id]?.votingPowerSelf ?? '0';
   },
   votingPowerSelf(state): string {
-    if (state.votingPowerSelf.expDate > Date.now()) {
-      return state.votingPowerSelf.data;
+    const data = unwrapCacheItem(state.votingPowerSelf);
+    if (data !== undefined) {
+      return data;
     }
 
     return '0';
   },
   blockNumberCached(state): number | undefined {
-    if (state.blockNumberCached.expDate > Date.now()) {
-      return state.blockNumberCached.data;
-    }
-
-    return undefined;
+    return unwrapCacheItem(state.blockNumberCached);
   },
   communityVotingPower(state): string {
-    if (state.communityVotingPower.expDate > Date.now()) {
-      return state.communityVotingPower.data;
+    const data = unwrapCacheItem(state.communityVotingPower);
+    if (data !== undefined) {
+      return data;
     }
 
     return '0';
   },
   spaceInfo(state): Space | undefined {
-    if (state.spaceInfo.expDate > Date.now()) {
-      return state.spaceInfo.data;
-    }
-
-    return undefined;
+    return unwrapCacheItem(state.spaceInfo);
   }
 };
 
