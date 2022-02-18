@@ -1,0 +1,18 @@
+.error-message {
+  font-size: 16px;
+  line-height: 24px;
+  color: @text-error;
+  @font-medium();
+
+  * + & {
+    margin-top: 24px;
+  }
+
+  &.small-font {
+    font-size: 13px;
+
+    * + & {
+      margin-top: 6px;
+    }
+  }
+}

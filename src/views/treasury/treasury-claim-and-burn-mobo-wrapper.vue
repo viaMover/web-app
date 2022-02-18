@@ -1,9 +1,5 @@
 <template>
-  <secondary-page
-    :has-back-button="hasBackButton"
-    hide-title
-    @back="handleBack"
-  >
+  <secondary-page :has-back-button="hasBackButton" @back="handleBack">
     <prepare-form
       v-if="step === 'prepare'"
       allow-zero-amount
@@ -29,7 +25,7 @@
       @toggle-input-mode="handleToggleInputMode"
     >
       <template v-slot:input>
-        <span class="input-span">{{ value }}</span>
+        <input disabled type="text" :value="value" />
       </template>
     </prepare-form>
     <review-form
@@ -143,18 +139,20 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'currentAddress',
-      'provider',
-      'tokens',
-      'nativeCurrency',
-      'treasuryBonus'
-    ]),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      tokens: 'tokens',
+      currentAddress: 'currentAddress',
+      provider: 'provider',
+      nativeCurrency: 'nativeCurrency',
+      treasuryBonus: 'treasuryBonus'
+    }),
     ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice',
-      treasuryBonusNative: 'treasuryBonusNative',
       getTokenColor: 'getTokenColor'
+    }),
+    ...mapGetters('treasury', {
+      treasuryBonusNative: 'treasuryBonusNative'
     }),
     inputAsset(): TokenWithBalance {
       return {

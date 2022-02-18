@@ -1,11 +1,11 @@
-import { GetterTree } from 'vuex';
-
 import {
   Choice,
   getDefaultMinimumVotingThresholdMultiplier,
-  ProposalInfo
+  ProposalInfo,
+  Space
 } from '@/services/mover/governance';
-import { RootStoreState } from '@/store/types';
+import { unwrapCacheItem } from '@/store/modules/utils';
+import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
 import {
   divide,
@@ -20,12 +20,67 @@ import {
   ProposalState
 } from './types';
 
-export default {
-  proposalsIds(state): Array<string> {
-    return state.items.map((proposalInfo) => proposalInfo.proposal.id);
+type Getters = {
+  isLoading: boolean;
+  proposal: (id: string) => ProposalInfo | undefined;
+  proposalsIds: Array<string>;
+  proposals: Array<ProposalInfo>;
+  proposalsOrderedByEndingDesc: Array<ProposalInfo>;
+  lastProposal: ProposalInfo | undefined;
+  timesVoted: number;
+  proposalsCreated: number;
+  totalNumberOfProposals: number;
+  openProposals: number;
+  succeededProposals: number;
+  defeatedProposals: number;
+  proposalCumulativeInfo: ProposalCumulativeInfo;
+  proposalVotedFor: (id: string) => number;
+  proposalVotedAgainst: (id: string) => number;
+  proposalCommunityVotingPower: (id: string) => string;
+  proposalVotingActivity: (id: string) => string;
+  proposalState: (id: string) => ProposalState;
+  minimumVotingThreshold: string;
+  isAlreadyVoted: (id: string) => boolean;
+  ipfsLink: (id: string) => string | undefined;
+  hasEnoughVotingPowerToVote: (id: string) => boolean;
+  hasEnoughVotingPowerToBecomeAProposer: boolean;
+  votingPowerSelfOnProposal: (id: string) => string;
+  votingPowerSelf: string;
+  blockNumberCached: number | undefined;
+  communityVotingPower: string;
+  spaceInfo: Space | undefined;
+};
+
+const getters: GettersFuncs<Getters, GovernanceStoreState> = {
+  isLoading(state): boolean {
+    return state.isLoading || state.isLoadingMinimal;
   },
-  proposalsOrderedByEndingDesc(state): Array<ProposalInfo> {
-    return state.items.slice().sort((a, b) => b.proposal.end - a.proposal.end);
+  proposal(state): (id: string) => ProposalInfo | undefined {
+    return (id) => {
+      const prop = state.proposals.get(id);
+      if (prop === undefined) {
+        return undefined;
+      }
+
+      if (prop.expDate > Date.now()) {
+        return prop.data;
+      }
+
+      return undefined;
+    };
+  },
+  proposalsIds(state): Array<string> {
+    return Array.from(state.proposals.values())
+      .filter((item) => item.expDate > Date.now()) //remove expired
+      .map((item) => item.data.proposal.id);
+  },
+  proposals(state): Array<ProposalInfo> {
+    return Array.from(state.proposals.values())
+      .filter((item) => item.expDate > Date.now()) //remove expired
+      .map((item) => item.data);
+  },
+  proposalsOrderedByEndingDesc(state, getters): Array<ProposalInfo> {
+    return getters.proposals.sort((a, b) => b.proposal.end - a.proposal.end);
   },
   lastProposal(state, getters): ProposalInfo | undefined {
     return getters.proposalsOrderedByEndingDesc[0] ?? undefined;
@@ -35,7 +90,7 @@ export default {
       return 0;
     }
 
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       if (
         proposal.votes.some((vote) =>
           sameAddress(vote.voter, rootState.account?.currentAddress)
@@ -52,7 +107,7 @@ export default {
       return 0;
     }
 
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       if (
         sameAddress(proposal.proposal.author, rootState.account?.currentAddress)
       ) {
@@ -62,11 +117,11 @@ export default {
       return count;
     }, 0);
   },
-  totalNumberOfProposals(state): number {
-    return state.items.length;
+  totalNumberOfProposals(state, getters): number {
+    return getters.proposals.length;
   },
-  openProposals(state): number {
-    return state.items.reduce((count, proposal) => {
+  openProposals(state, getters): number {
+    return getters.proposals.reduce((count, proposal) => {
       if (proposal.proposal.state === 'active') {
         return count + 1;
       }
@@ -76,7 +131,7 @@ export default {
   },
   succeededProposals(state, getters): number {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
       if (proposal.proposal.state === 'closed' && proposalStats.isSucceeded) {
@@ -88,7 +143,7 @@ export default {
   },
   defeatedProposals(state, getters): number {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
-    return state.items.reduce((count, proposal) => {
+    return getters.proposals.reduce((count, proposal) => {
       const proposalStats = source[proposal.proposal.id];
 
       if (proposal.proposal.state === 'closed' && !proposalStats.isSucceeded) {
@@ -99,7 +154,7 @@ export default {
     }, 0);
   },
   proposalCumulativeInfo(state, getters, rootState): ProposalCumulativeInfo {
-    return state.items.reduce((acc, item) => {
+    return getters.proposals.reduce((acc, item) => {
       let votesCountFor = 0;
       let votesCountAgainst = 0;
 
@@ -201,9 +256,9 @@ export default {
       return 'quorumNotReached';
     };
   },
-  minimumVotingThreshold(state): string {
+  minimumVotingThreshold(state, getters): string {
     return multiply(
-      state.communityVotingPower,
+      getters.communityVotingPower,
       state.minimumVotingThresholdMultiplier
     );
   },
@@ -222,8 +277,8 @@ export default {
         return undefined;
       }
 
-      return state.items
-        .find((proposalInfo) => proposalInfo.proposal.id === id)
+      return getters
+        .proposal(id)
         ?.votes.find((vote) => vote.voter === accountAddress)?.ipfs;
     };
   },
@@ -232,9 +287,9 @@ export default {
 
     return (id: string) => source[id]?.hasEnoughVotingPowerToVote ?? false;
   },
-  hasEnoughVotingPowerToBecomeAProposer(state): boolean {
+  hasEnoughVotingPowerToBecomeAProposer(state, getters): boolean {
     return greaterThanOrEqual(
-      state.votingPowerSelf,
+      getters.votingPowerSelf,
       state.powerNeededToBecomeAProposer
     );
   },
@@ -242,5 +297,30 @@ export default {
     const source: ProposalCumulativeInfo = getters.proposalCumulativeInfo;
 
     return (id: string) => source[id]?.votingPowerSelf ?? '0';
+  },
+  votingPowerSelf(state): string {
+    const data = unwrapCacheItem(state.votingPowerSelf);
+    if (data !== undefined) {
+      return data;
+    }
+
+    return '0';
+  },
+  blockNumberCached(state): number | undefined {
+    return unwrapCacheItem(state.blockNumberCached);
+  },
+  communityVotingPower(state): string {
+    const data = unwrapCacheItem(state.communityVotingPower);
+    if (data !== undefined) {
+      return data;
+    }
+
+    return '0';
+  },
+  spaceInfo(state): Space | undefined {
+    return unwrapCacheItem(state.spaceInfo);
   }
-} as GetterTree<GovernanceStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

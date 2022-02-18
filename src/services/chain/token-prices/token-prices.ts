@@ -5,16 +5,9 @@ import { add, divide, fromWei, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   ERC20_ABI,
-  EURS_TOKEN_ADDRESS,
   getEURSAssetData,
   getUSDCAssetData,
-  MOVE_ADDRESS,
-  OHM_ADDRESS,
-  SUSHISWAP_MOVE_WETH_POOL_ADDRESS,
-  UNISWAP_EURS_WETH_POOL_ADDRESS,
-  UNISWAP_USDC_WETH_POOL_ADDRESS,
-  USDC_TOKEN_ADDRESS,
-  WETH_TOKEN_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -31,11 +24,13 @@ export const getMOVEPriceInWETH = async (
     return '0';
   }
 
-  const contractAddressMOVE = MOVE_ADDRESS(network);
-  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+  const contractAddressMOVE = lookupAddress(network, 'MOVE_ADDRESS');
+  const contractAddressWETH = lookupAddress(network, 'WETH_TOKEN_ADDRESS');
 
-  const contractSushiswapMOVEWETHPoolAddress =
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network);
+  const contractSushiswapMOVEWETHPoolAddress = lookupAddress(
+    network,
+    'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'
+  );
 
   const contractMOVE = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],
@@ -94,11 +89,13 @@ export const getOlympusPriceInWETH = async (
     return '0';
   }
 
-  const contractAddressOHM = OHM_ADDRESS(network);
-  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+  const contractAddressOHM = lookupAddress(network, 'OHM_ADDRESS');
+  const contractAddressWETH = lookupAddress(network, 'WETH_TOKEN_ADDRESS');
 
-  const contractSushiswapOHMWETHPoolAddress =
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network);
+  const contractSushiswapOHMWETHPoolAddress = lookupAddress(
+    network,
+    'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'
+  );
 
   const contractOHM = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],
@@ -157,11 +154,13 @@ export const getUSDCPriceInWETH = async (
     return '0';
   }
 
-  const contractAddressUSDC = USDC_TOKEN_ADDRESS(network);
-  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+  const contractAddressUSDC = lookupAddress(network, 'USDC_TOKEN_ADDRESS');
+  const contractAddressWETH = lookupAddress(network, 'WETH_TOKEN_ADDRESS');
 
-  const contractUniswapUSDCWETHPoolAddress =
-    UNISWAP_USDC_WETH_POOL_ADDRESS(network);
+  const contractUniswapUSDCWETHPoolAddress = lookupAddress(
+    network,
+    'UNSIWAP_USDC_WETH_POOL_ADDRESS'
+  );
 
   const contractUSDC = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],
@@ -225,11 +224,13 @@ export const getEURSPriceInWETH = async (
     return '0';
   }
 
-  const contractAddressEURS = EURS_TOKEN_ADDRESS(network);
-  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+  const contractAddressEURS = lookupAddress(network, 'EURS_TOKEN_ADDRESS');
+  const contractAddressWETH = lookupAddress(network, 'WETH_TOKEN_ADDRESS');
 
-  const contractUniswapEURSWETHPoolAddress =
-    UNISWAP_EURS_WETH_POOL_ADDRESS(network);
+  const contractUniswapEURSWETHPoolAddress = lookupAddress(
+    network,
+    'UNISWAP_EURS_WETH_POOL_ADDRESS'
+  );
 
   const contractEURS = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],
@@ -294,11 +295,13 @@ export const getSLPPriceInWETH = async (
     return '0';
   }
 
-  const contractAddressMOVE = MOVE_ADDRESS(network);
-  const contractAddressWETH = WETH_TOKEN_ADDRESS(network);
+  const contractAddressMOVE = lookupAddress(network, 'MOVE_ADDRESS');
+  const contractAddressWETH = lookupAddress(network, 'WETH_TOKEN_ADDRESS');
 
-  const contractSushiswapMOVEWETHPoolAddress =
-    SUSHISWAP_MOVE_WETH_POOL_ADDRESS(network);
+  const contractSushiswapMOVEWETHPoolAddress = lookupAddress(
+    network,
+    'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'
+  );
 
   const contractMOVE = new web3.eth.Contract(
     ERC20_ABI as AbiItem[],

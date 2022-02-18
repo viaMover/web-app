@@ -12,7 +12,7 @@
       </h3>
       <span v-else>&nbsp;</span>
     </template>
-    <form-loader v-if="loaderStep != undefined" :step="loaderStep" />
+    <form-loader v-if="loaderStep !== undefined" :step="loaderStep" />
     <form v-else>
       <div class="modal-wrapper-info-items">
         <asset-field
@@ -44,12 +44,16 @@
         />
       </div>
       <div class="modal-wrapper-info-buttons">
-        <button class="flip button-active" type="button" @click="flipAssets">
+        <button
+          class="button transparent fit icon no-padding flip"
+          type="button"
+          @click="flipAssets"
+        >
           <flip-picture />
           <span>Flip</span>
         </button>
         <button
-          class="tx-details button-active"
+          class="button transparent fit icon no-padding tx-details"
           :class="{ disabled: !isInfoAvailable }"
           type="button"
           @click="expandInfo"
@@ -57,43 +61,45 @@
           <details-picture />
           <span>Swap Details</span>
         </button>
-        <div v-if="showInfo" class="tx-details__content">
-          <div class="tx-details__content-item">
-            <p class="description">Minimum received</p>
-            <div class="value">
-              <span>{{ minimalReceived }}</span>
+        <transition appear name="fade">
+          <div v-if="showInfo" class="tx-details__content">
+            <div class="tx-details__content-item">
+              <p class="description">Minimum received</p>
+              <div class="value">
+                <span>{{ minimalReceived }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Rate</p>
+              <div class="value">
+                <span>{{ rateString }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Smart Treasury cover</p>
+              <div class="value">
+                <span>{{ treasuryCover }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Swapping via</p>
+              <div class="value">
+                <span>{{ swappingVia }}</span>
+              </div>
+            </div>
+            <div class="tx-details__content-item">
+              <p class="description">Slippage</p>
+              <slippage-selector
+                :slippage="slippage"
+                @selected-slippage-changed="handleSelectedSlippageChanged"
+              />
             </div>
           </div>
-          <div class="tx-details__content-item">
-            <p class="description">Rate</p>
-            <div class="value">
-              <span>{{ rateString }}</span>
-            </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Smart Treasury cover</p>
-            <div class="value">
-              <span>{{ treasuryCover }}</span>
-            </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Swapping via</p>
-            <div class="value">
-              <span>{{ swappingVia }}</span>
-            </div>
-          </div>
-          <div class="tx-details__content-item">
-            <p class="description">Slippage</p>
-            <slippage-selector
-              :slippage="slippage"
-              @selected-slippage-changed="handleSelectedSlippageChanged"
-            />
-          </div>
-        </div>
+        </transition>
       </div>
       <div class="modal-wrapper-info-button">
         <action-button
-          :button-class="buttonClass"
+          class="primary"
           :custom-style="actionButtonStyle"
           :disabled="!actionAvaialble"
           :text="actionButtonText"
@@ -216,11 +222,10 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', [
-      'treasuryBonusNative',
-      'getTokenColor',
-      'moveNativePrice'
-    ]),
+    ...mapGetters('account', ['getTokenColor', 'moveNativePrice']),
+    ...mapGetters('treasury', {
+      treasuryBonusNative: 'treasuryBonusNative'
+    }),
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },
@@ -349,13 +354,6 @@ export default Vue.extend({
         return greaterThan(remaining, 0) ? remaining : '0';
       }
       return this.input.asset.balance;
-    },
-    buttonClass(): string {
-      if (this.actionAvaialble) {
-        return 'button active button-active';
-      } else {
-        return 'button inactive button-active';
-      }
     },
     excludedOutputTokens(): Array<Token> {
       if (this.input.asset === undefined) {
@@ -614,12 +612,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data:`, err);
         return;
       } finally {
         this.loading = false;
@@ -678,12 +676,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data:`, err);
           this.transferError = 'Swap error';
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data:`, err);
         return;
       } finally {
         this.loading = false;
@@ -742,12 +740,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data:`, err);
         return;
       } finally {
         this.loading = false;
@@ -806,7 +804,7 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
@@ -879,12 +877,12 @@ export default Vue.extend({
         if (err instanceof ZeroXSwapError) {
           this.transferError = mapError(err.publicMessage);
         } else {
-          console.error(`can't calc data: ${err}`);
+          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
           Sentry.captureException(err);
         }
         this.transferData = undefined;
-        console.error(`can't calc data: ${err}`);
+        console.error(`can't calc data:`, err);
         return;
       } finally {
         this.loading = false;

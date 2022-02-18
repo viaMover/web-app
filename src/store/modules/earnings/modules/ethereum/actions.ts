@@ -1,5 +1,3 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 
 import {
@@ -8,30 +6,37 @@ import {
 } from '@/services/chain/earnings/ethereum';
 import { getEthereumInfo, getEthereumReceipt } from '@/services/mover';
 import { isError } from '@/services/responses';
-import { RootStoreState } from '@/store/types';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
+import { ActionFuncs } from '@/store/types';
 
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import {
   EarningsEthereumStoreState,
   FetchEthereumReceiptPayload
 } from './types';
 
-export default {
+type Actions = {
+  loadMinimalInfo: Promise<void>;
+  loadInfo: Promise<void>;
+  fetchEthereumInfo: Promise<void>;
+  fetchEthereumReceipt: Promise<void>;
+};
+
+const actions: ActionFuncs<
+  Actions,
+  EarningsEthereumStoreState,
+  MutationType,
+  GetterType
+> = {
   async loadMinimalInfo({ dispatch }): Promise<void> {
     await dispatch('fetchEthereumInfo');
   },
   async loadInfo({ commit, rootState, dispatch }): Promise<void> {
     commit('setIsLoading', true);
     try {
-      if (rootState.account?.currentAddress === undefined) {
-        throw new Error('failed to get current address');
-      }
-
-      if (rootState.account?.networkInfo === undefined) {
-        throw new Error('failed to get network info');
-      }
-
-      if (rootState.account?.provider === undefined) {
-        throw new Error('failed to get provider');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account state is not ready');
       }
 
       const ethereumAPY = await getEthereumAPY(
@@ -57,8 +62,8 @@ export default {
     }
   },
   async fetchEthereumInfo({ commit, rootState }): Promise<void> {
-    if (rootState.account?.currentAddress === undefined) {
-      throw new Error('failed to get current address');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
 
     commit('setIsEthereumInfoLoading', true);
@@ -80,9 +85,10 @@ export default {
     { commit, rootState, state },
     { year, month }: FetchEthereumReceiptPayload
   ): Promise<void> {
-    if (rootState.account?.currentAddress === undefined) {
-      throw new Error('failed to get current address');
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
     }
+
     commit('setIsEthereumReceiptLoading', true);
     const key = `${year}/${month}`;
 
@@ -104,4 +110,7 @@ export default {
     }
     commit('setEthereumReceipt', receipt);
   }
-} as ActionTree<EarningsEthereumStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

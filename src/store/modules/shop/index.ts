@@ -1,22 +1,17 @@
-import { Module } from 'vuex';
-
 import { allNibbleShopTokens } from '@/services/chain';
 import { isProduction } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule } from '@/store/types';
 
-import actionsClaim from './actions/claim';
-import actionsInit from './actions/init';
-import actionsRedeem from './actions/redeem';
-import getters from './getters';
-import mutations from './mutations';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 import { ShopStoreState } from './types';
 
 export default {
   namespaced: true,
   strict: !isProduction(),
   state: {
-    localAssets: allNibbleShopTokens,
-    assets: [],
+    assets: allNibbleShopTokens.filter((token) => token.active),
     isLoading: false,
     countries: [
       { name: 'Afghanistan', code: 'AF' },
@@ -264,11 +259,7 @@ export default {
       { name: 'Zimbabwe', code: 'ZW' }
     ]
   },
-  actions: {
-    ...actionsInit,
-    ...actionsClaim,
-    ...actionsRedeem
-  },
+  actions,
   getters,
   mutations
-} as Module<ShopStoreState, RootStoreState>;
+} as AugmentedModule<ShopStoreState, ActionType, GetterType, MutationType>;

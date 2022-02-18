@@ -24,7 +24,8 @@ const alsoIncludedAddresses = [
   '0x9813037ee2218799597d83d4a5b6f3b6778218d9', // BONE
   '0x27c70cd1946795b66be9d954418546998b546634', // LEASH
   '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a', // BTRFLY
-  '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9' //wxBTRFLY
+  '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9', //wxBTRFLY
+  '0x2e9d63788249371f1dfc918a52f8d799f4a38c94' // TOKE
 ];
 
 const isDirEmpty = (dir) => {
@@ -285,14 +286,42 @@ const filterCompleteTokenData = (assets) => {
   return assets.filter((asset) => !asset.isIncomplete);
 };
 
-const save = (assets) => {
-  writeFileSync('./data/assetList.json', JSON.stringify(assets, null, 2));
+const preprocess = (assets) =>
+  assets.map((asset) => ({
+    id: asset.id,
+    decimals: asset.decimals,
+    symbol: asset.symbol,
+    name: asset.name,
+    ...(asset.imageUrl ? { imageUrl: asset.imageUrl } : undefined),
+    ...(asset.color ? { color: asset.color } : undefined),
+    ...(asset.marketCap ? { marketCap: asset.marketCap } : undefined)
+  }));
+
+const deduplicate = (tokens) => {
+  const knownAddresses = new Set();
+  return tokens.reduce((acc, t) => {
+    if (knownAddresses.has(t.id)) {
+      return acc;
+    }
+
+    knownAddresses.add(t.id);
+    return acc.concat(t);
+  }, []);
 };
+
+const sort = (assets) =>
+  assets.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+const save = (assets) =>
+  writeFileSync(
+    './data/assetList.json',
+    JSON.stringify(sort(deduplicate(preprocess(assets))))
+  );
 
 const generateNewList = async () => {
   await updateTrustwalletRepo();
   let assets = await iterateOverAssets();
-  assets = [...assets, ...alsoIncludedAddresses];
+  assets = Array.from(new Set([...assets, ...alsoIncludedAddresses]));
   assets = await enrichWithTWdata(assets);
   assets = await enrichWithCoingeckoData(assets);
   assets = await filterCompleteTokenData(assets);

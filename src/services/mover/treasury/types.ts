@@ -29,7 +29,6 @@ export type TreasuryInfo = {
   spentThisMonth: number;
   spentToday: number;
   last12MonthsBonuses: Array<TreasuryMonthBonusesItem>;
-  actionHistory: Array<TreasuryActionHistoryItem>;
 };
 export type TreasuryInfoResponse = MoverResponse<TreasuryInfo>;
 
@@ -47,8 +46,7 @@ export type TreasuryReceipt = {
   endOfMonthBalanceMove: number;
   endOfMonthBalanceMoveLP: number;
   earnedThisMonth: number;
-  hourlyBalances: Array<TreasuryHourlyBalancesItem>;
-  monthActionHistory: Array<TreasuryActionHistoryItem>;
+  hourlyBalances?: Array<TreasuryHourlyBalancesItem>;
   totalDepositsMove: number;
   totalWithdrawalsMove: number;
   totalDepositsMoveLP: number;

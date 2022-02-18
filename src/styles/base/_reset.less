@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  box-shadow: none;
+  color: @text-primary;
+  font-size: 14px;
+  line-height: 16px;
+  user-select: none;
+  scrollbar-width: thin;
+  scrollbar-color: @scrollbar-thumb @scrollbar-track;
+  @font-regular();
+}
+
+html {
+  overflow: hidden;
+}
+
+textarea {
+  &::-webkit-input-placeholder,
+  &::-moz-placeholder,
+  &:-moz-placeholder,
+  &:-ms-input-placeholder,
+  &::placeholder {
+    color: @text-muted;
+    @font-medium();
+  }
+}
+
+input {
+  font-size: 24px;
+  line-height: 40px;
+  color: @text-primary;
+  @font-bold();
+  user-select: text;
+  -webkit-user-select: text;
+
+  &::-webkit-input-placeholder,
+  &::-moz-placeholder,
+  &:-moz-placeholder,
+  &::placeholder {
+    color: @text-muted;
+    opacity: 1 !important;
+    @font-bold();
+  }
+
+  &:-ms-input-placeholder,
+  &::-ms-input-placeholder {
+    color: @text-muted;
+    @font-bold();
+  }
+
+  &[type="search"] {
+    &::-webkit-search-decoration,
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-results-button,
+    &::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+    }
+
+    &::-ms-clear,
+    &::-ms-reveal {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+input,
+textarea,
+select {
+  background-color: @input-background;
+  border: @default-border-input;
+  outline: @default-outline-input;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: @text-link;
+  transition: 0.1s;
+
+  &.link {
+    &.underline {
+      text-decoration: underline;
+    }
+
+    &.muted {
+      color: @text-muted;
+    }
+
+    &.bold {
+      @font-bold();
+    }
+
+    &.medium {
+      @font-medium();
+    }
+  }
+
+  &:hover {
+    color: @text-link-hover;
+  }
+
+  &:focus {
+    color: @text-primary;
+  }
+}
+
+h1,
+h2,
+h3 {
+  @font-bold();
+}
+
+h4,
+h5,
+h6 {
+  @font-medium();
+}
+
+button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+span.pu-skeleton {
+  line-height: normal;
+}
+
+::-webkit-scrollbar {
+  width: calc(4px + .25em);
+}
+
+::-webkit-scrollbar-track {
+  background: @scrollbar-track;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: @scrollbar-thumb;
+  border-radius: 20px;
+}

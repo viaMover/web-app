@@ -6,9 +6,9 @@
     <div class="modal-wrapper-info-items-item-left">
       <token-image
         :address="asset ? asset.address : ''"
+        class="small"
         :src="iconSrc"
         :symbol="asset ? asset.symbol : ''"
-        wrapper-class="icon"
       />
       <price-input-field
         :amount="amount"
@@ -48,7 +48,7 @@
 
       <button
         v-if="showSelectMaxAmountButton"
-        class="use button-active"
+        class="use button transparent fit icon no-padding"
         type="button"
         @click="handleSelectMaxAmount"
       >

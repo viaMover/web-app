@@ -17,11 +17,7 @@ import {
   CompoundEstimateResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import {
-  HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS,
-  HOLY_SAVINGS_POOL_ADDRESS
-} from '@/wallet/references/data';
+import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -34,7 +30,7 @@ export const estimateDepositCompound = async (
   web3: Web3,
   accountAddress: string
 ): Promise<CompoundEstimateResponse> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   let isApproveNeeded = true;
   try {
@@ -46,7 +42,7 @@ export const estimateDepositCompound = async (
       web3
     );
   } catch (err) {
-    console.error(`Can't estimate approve: ${err}`);
+    console.error(`Can't estimate approve:`, err);
     return {
       error: true,
       approveGasLimit: '0',
@@ -77,7 +73,7 @@ export const estimateDepositCompound = async (
         approveGasLimit: approveGasLimit
       };
     } catch (err) {
-      console.error(`Can't estimate approve: ${err}`);
+      console.error(`Can't estimate approve:`, err);
       return {
         error: true,
         actionGasLimit: '0',
@@ -120,10 +116,10 @@ export const estimateDeposit = async (
     throw 'We need transafer data for not USDC token';
   }
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
-  const poolAddress = HOLY_SAVINGS_POOL_ADDRESS(network);
+  const poolAddress = lookupAddress(network, 'HOLY_SAVINGS_POOL_ADDRESS');
 
   try {
     const holyHand = new web3.eth.Contract(

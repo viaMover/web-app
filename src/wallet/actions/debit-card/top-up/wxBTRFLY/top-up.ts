@@ -6,10 +6,7 @@ import { AbiItem } from 'web3-utils';
 
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import {
-  WX_BTRFLY_ABI,
-  WX_BTRFLY_TOKEN_ADDRESS
-} from '@/wallet/references/data';
+import { lookupAddress, WX_BTRFLY_ABI } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { LoaderStep } from '@/components/forms';
@@ -24,7 +21,7 @@ export const unwrap = async (
   gasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void | never> => {
-  const contractAddress = WX_BTRFLY_TOKEN_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS');
   const contractABI = WX_BTRFLY_ABI;
 
   const contract = new web3.eth.Contract(

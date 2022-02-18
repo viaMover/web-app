@@ -1,20 +1,29 @@
 <template>
-  <content-wrapper has-left-rail wrapper-class="general-desktop">
+  <content-wrapper class="home" has-left-rail>
     <template v-slot:left-rail>
-      <transaction-list />
+      <home-left-rail />
     </template>
 
-    <header-balance />
-    <debit-card-section v-if="isFeatureEnabled('isDebitCardEnabled')" />
-    <deposit-card-section v-else />
-    <menu-section />
+    <home-masthead-multichain
+      v-if="isFeatureEnabled('isMultiChainMastheadEnabled')"
+    />
+    <home-masthead v-else />
+
+    <div class="cards">
+      <home-cards-debit-card v-if="isFeatureEnabled('isDebitCardEnabled')" />
+      <home-cards-savings-deposit v-else />
+    </div>
+
+    <home-navigation-section />
 
     <template v-slot:modals>
-      <swap-modal key="swap-modal" />
-      <savings-deposit-modal key="savings-deposit-modal" />
-      <savings-withdraw-modal key="savings-withdraw-modal" />
-      <treasury-increase-boost-modal key="treasury-increase-boost-modal" />
-      <search-modal key="search-modal" />
+      <template>
+        <swap-modal
+          v-if="isFeatureEnabled('isHomeSwapModalEnabled')"
+          key="swap-modal"
+        />
+        <search-modal key="search-modal" />
+      </template>
     </template>
   </content-wrapper>
 </template>
@@ -24,38 +33,29 @@ import Vue from 'vue';
 
 import { isFeatureEnabled } from '@/settings';
 
+import {
+  HomeCardsDebitCard,
+  HomeCardsSavingsDeposit,
+  HomeLeftRail,
+  HomeMasthead,
+  HomeMastheadMultichain,
+  HomeNavigationSection
+} from '@/components/home';
 import { ContentWrapper } from '@/components/layout';
-import {
-  SavingsDepositModal,
-  SavingsWithdrawModal,
-  SearchModal,
-  SwapModal,
-  TreasuryIncreaseBoostModal
-} from '@/components/modals';
-import {
-  DebitCardSection,
-  DepositCardSection,
-  HeaderBalance,
-  MenuSection
-} from '@/components/sections';
-import { TransactionList } from '@/components/transaction-list';
-
-import '@/styles/_general.less';
+import { SearchModal, SwapModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'Home',
   components: {
-    DebitCardSection,
-    DepositCardSection,
-    MenuSection,
     ContentWrapper,
-    TransactionList,
-    HeaderBalance,
+    HomeLeftRail,
+    HomeMasthead,
+    HomeMastheadMultichain,
+    HomeNavigationSection,
+    HomeCardsDebitCard,
+    HomeCardsSavingsDeposit,
     SwapModal,
-    SearchModal,
-    SavingsDepositModal,
-    SavingsWithdrawModal,
-    TreasuryIncreaseBoostModal
+    SearchModal
   },
   methods: {
     isFeatureEnabled

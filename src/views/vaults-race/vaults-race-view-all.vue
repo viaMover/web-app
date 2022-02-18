@@ -1,6 +1,6 @@
 <template>
-  <secondary-page hide-title>
-    <secondary-page-simple-title
+  <secondary-page class="view view-all">
+    <secondary-page-header
       class="vaults-race_secondary_page-title"
       :description="$t('vaultsRace.lblWeeklyChallengeDescription')"
       :title="$t('vaultsRace.lblWeeklyChallenge')"
@@ -21,7 +21,7 @@ import { VaultRaceAccount } from '@/store/modules/games/types';
 
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
 import { AccountList } from '@/components/vaults-race/account-list';
 
@@ -29,8 +29,8 @@ export default Vue.extend({
   name: 'VaultsRaceViewAll',
   components: {
     AccountList,
-    SecondaryPageSimpleTitle,
-    SecondaryPage
+    SecondaryPage,
+    SecondaryPageHeader
   },
   data() {
     return {

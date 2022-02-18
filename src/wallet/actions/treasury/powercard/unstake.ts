@@ -5,10 +5,7 @@ import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApproveExt } from '@/wallet/actions/actionWithApprove';
-import {
-  POWERCARD_STAKER,
-  POWERCARD_STAKER_ABI
-} from '@/wallet/references/data';
+import { lookupAddress, POWERCARD_STAKER_ABI } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
 import { approvePowercard, isPowercardApproved } from './approve';
@@ -27,7 +24,7 @@ export const unstakePowercardCompound = async (
     );
   }
 
-  const contractAddress = POWERCARD_STAKER(network);
+  const contractAddress = lookupAddress(network, 'POWERCARD_STAKER');
 
   try {
     await executeTransactionWithApproveExt(
@@ -55,7 +52,7 @@ export const unstakePowercardCompound = async (
       }
     );
   } catch (err) {
-    console.error(`Can't unstake powercard: ${err}`);
+    console.error(`Can't unstake powercard:`, err);
     throw err;
   }
 };

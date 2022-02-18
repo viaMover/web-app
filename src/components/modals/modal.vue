@@ -1,53 +1,36 @@
 <template>
-  <!--  <transition appear name="fade">-->
-  <div
-    v-if="isDisplayed"
-    v-show="isVisible"
-    class="modal"
-    :name="modalId"
-    role="dialog"
-  >
+  <div v-if="isDisplayed" v-show="isVisible" class="modal">
     <div
       v-show="isDimmerVisible"
-      class="modal__dimmer"
+      class="dimmer"
       :class="dimmerHtmlClass"
       :style="dimmerStyles"
       @click="handleDimmerClick"
     />
-    <back-button
+    <close-button
       v-if="showCloseButton"
-      class="modal__close-button"
-      mode="CLOSE-BLACK"
+      class="close-button"
+      is-black
       :style="buttonStyles"
       @close="handleClose"
     />
-    <div
-      class="modal__body"
+    <section
+      class="body"
       :class="{ 'no-bottom-padding': disableBodyBottomPadding }"
+      :name="modalId"
+      role="dialog"
       :style="bodyStyles"
     >
-      <div
-        v-if="isHeaderDisplayed"
-        class="modal__body-header"
-        :class="headerClass"
-      >
+      <div v-if="isHeaderDisplayed" class="header" :class="headerClass">
         <slot name="header">
-          <h3 class="modal__body-header--default">{{ headerText }}</h3>
+          <h3>{{ headerText }}</h3>
         </slot>
       </div>
-      <div class="modal__body-content" :class="contentHtmlClass">
+      <div class="content" :class="contentHtmlClass">
         <slot></slot>
       </div>
-      <div
-        v-if="isFooterDisplayed"
-        class="modal__body-footer"
-        :class="footerHtmlClass"
-      >
-        <slot name="footer">{{ footerText }}</slot>
-      </div>
-    </div>
+    </section>
   </div>
-  <!--  </transition>-->
 </template>
 
 <script lang="ts">
@@ -58,12 +41,12 @@ import { Properties as CssProperties } from 'csstype';
 
 import { TModalKey } from '@/store/modules/modals/types';
 
-import { BackButton } from '@/components/buttons';
+import { CloseButton } from '@/components/buttons';
 
 export default Vue.extend({
   name: 'Modal',
   components: {
-    BackButton
+    CloseButton
   },
   props: {
     modalId: {
@@ -139,9 +122,6 @@ export default Vue.extend({
     isHeaderDisplayed(): boolean {
       return this.hasHeader || this.headerText !== '';
     },
-    isFooterDisplayed(): boolean {
-      return this.hasFooter || this.footerText !== '';
-    },
     isVisible(): boolean {
       return this.state[this.modalId].isVisible;
     },
@@ -210,74 +190,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style scoped lang="less">
-.modal {
-  &__dimmer {
-    background: rgba(0, 0, 0, 0.8);
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-  }
-
-  &__close-button {
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    background: #fcfcfc;
-    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    border-radius: 20px;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
-    position: fixed;
-  }
-
-  &__body {
-    position: fixed;
-    top: 104px;
-    left: calc(50% - 264px);
-    width: 528px;
-    min-height: 30vh;
-    height: auto;
-    max-height: 80vh;
-    padding: 0px;
-    background-color: #fafafc;
-    -webkit-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    border-radius: 16px;
-
-    &.no-bottom-padding {
-      padding-bottom: 0;
-    }
-
-    &-header {
-      margin: 24px 24px 0 24px;
-
-      &--default {
-        font-family: Regular, sans-serif;
-        font-size: 16px;
-        line-height: 24px;
-        font-weight: 400;
-        text-align: center;
-      }
-    }
-
-    &-footer {
-      margin-top: 24px;
-    }
-  }
-}
-</style>

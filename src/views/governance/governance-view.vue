@@ -1,50 +1,58 @@
 <template>
-  <secondary-page
-    has-back-button
-    :title="proposal ? proposal.proposal.title : ''"
-    @back="handleBack"
-  >
-    <template v-if="isLoading" v-slot:title>
-      <pu-skeleton class="title page-title" tag="h2" />
+  <secondary-page class="view" has-back-button @back="handleBack">
+    <template v-slot:title>
+      <secondary-page-header :title="pageTitle" />
     </template>
 
-    <div class="content">
-      <template v-if="!isLoading">
+    <div class="text">
+      <div v-if="proposal === undefined" class="skeleton-text">
+        <pu-skeleton v-for="idx in 8" :key="idx" tag="p" />
+      </div>
+      <template v-else>
         <markdown
           v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
-          :text="proposal ? proposal.proposal.body : ''"
+          :text="proposalInfo ? proposalInfo.proposal.body : ''"
         />
-        <p v-else>{{ proposal ? proposal.proposal.body : '' }}</p>
+        <p v-else>{{ proposalInfo ? proposalInfo.proposal.body : '' }}</p>
       </template>
-      <pu-skeleton v-else :count="8" />
     </div>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import { ProposalWithVotes } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
 
-import { Markdown, SecondaryPage } from '@/components/layout';
+import {
+  Markdown,
+  SecondaryPage,
+  SecondaryPageHeader
+} from '@/components/layout';
 
 export default Vue.extend({
   name: 'GovernanceView',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     Markdown
   },
   computed: {
-    ...mapState('governance', {
-      items: 'items',
+    ...mapGetters('governance', {
+      proposal: 'proposal',
       isLoading: 'isLoading'
     }),
-    proposal(): ProposalWithVotes | undefined {
-      return this.items.find(
-        (item: ProposalWithVotes) => item.proposal.id === this.$route.params.id
-      );
+    proposalInfo(): ProposalWithVotes | undefined {
+      return this.proposal(this.$route.params.id);
+    },
+    pageTitle(): string {
+      if (this.proposalInfo === undefined) {
+        return this.$t('governance.lblProposal').toString();
+      }
+
+      return this.proposalInfo.proposal.title;
     }
   },
   methods: {

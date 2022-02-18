@@ -1,34 +1,36 @@
 <template>
-  <secondary-page hide-title>
-    <div class="empty-state-graph-wrapper">
-      <secondary-page-simple-title
+  <secondary-page class="manage empty">
+    <template v-slot:title>
+      <secondary-page-header
         class="balance"
         :description="$t('earnings.txtYouCouldApproximately')"
         :title="savingsBalance"
       />
+    </template>
+
+    <div class="chart-wrapper">
       <bar-chart
+        :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
         disable-selecting
         :is-loading="false"
       />
-      <p class="margin-top">
+      <div class="bottom-text">
         {{ $t('earnings.txtIfYouStake', { token: 'Ethereum' }) }}
-      </p>
-      <div class="body margin-top-20">
-        <product-info-wrapper>
-          <product-info-item
-            :description="$t('earnings.txtAPYOnAll', { token: 'Ethereum' })"
-            is-black-description
-            :title="currentVariableAPY"
-          />
-        </product-info-wrapper>
-        <action-button
-          button-class="button button-active bold"
-          :text="$t('earnings.btnStart')"
-          @button-click="handleStakeClick"
-        />
       </div>
     </div>
+
+    <product-info-wrapper>
+      <product-info-item
+        :description="$t('earnings.txtAPYOnAll', { token: 'Ethereum' })"
+        :title="currentVariableAPY"
+      />
+    </product-info-wrapper>
+    <action-button
+      class="primary"
+      :text="$t('earnings.btnStart')"
+      @button-click="handleStakeClick"
+    />
   </secondary-page>
 </template>
 
@@ -41,20 +43,21 @@ import { formatPercents, formatToNative } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import { ProductInfoItem, ProductInfoWrapper } from '@/components/product-info';
 
 export default Vue.extend({
   name: 'EarningsEthereumManageEmpty',
   components: {
-    ProductInfoItem,
-    ProductInfoWrapper,
-    SecondaryPageSimpleTitle,
-    ActionButton,
     SecondaryPage,
+    SecondaryPageHeader,
+    ProductInfoWrapper,
+    ProductInfoItem,
+    ActionButton,
     BarChart
   },
   computed: {
+    ...mapState({ colors: 'colors' }),
     ...mapState('earnings/ethereum', { apy: 'ethereumAPY' }),
     ...mapGetters('earnings/ethereum', { apyNative: 'apyNative' }),
     savingsBalance(): string {
@@ -72,6 +75,9 @@ export default Vue.extend({
         year: 2000 + n,
         month: 1 + n
       }));
+    },
+    chartAccentColor(): string {
+      return this.colors['product-earnings'];
     }
   },
   methods: {

@@ -1,20 +1,17 @@
-import { Module } from 'vuex';
-
 import dayjs from 'dayjs';
 
 import {
-  defaultCachePeriodSeconds,
   defaultProposalDurationDays,
   getDefaultMinimumVotingThresholdMultiplier,
   getDefaultPowerNeededToBecomeAProposer,
   moverSpaceId
 } from '@/services/mover/governance';
 import { isProduction } from '@/settings';
-import { RootStoreState } from '@/store/types';
+import { AugmentedModule } from '@/store/types';
 
-import actions from './actions';
-import getters from './getters';
-import mutations from './mutations';
+import actions, { ActionType } from './actions';
+import getters, { GetterType } from './getters';
+import mutations, { MutationType } from './mutations';
 import { GovernanceStoreState } from './types';
 
 const now = dayjs().unix();
@@ -23,25 +20,27 @@ export default {
   namespaced: true,
   strict: !isProduction(),
   state: {
+    isLoadingMinimal: false,
     isLoading: false,
-    error: undefined,
-    loadingPromise: undefined,
-    spaceInfo: undefined,
-    items: [],
-    cacheInfoMap: {},
-    cacheGenericInfoMap: {},
+
+    spaceInfo: { data: undefined, expDate: Date.now() },
+    proposals: new Map(),
+
+    communityVotingPower: { data: '0', expDate: Date.now() },
+    votingPowerSelf: { data: '0', expDate: Date.now() },
     proposalDurationDays: defaultProposalDurationDays,
     powerNeededToBecomeAProposer: getDefaultPowerNeededToBecomeAProposer(now),
     minimumVotingThresholdMultiplier:
       getDefaultMinimumVotingThresholdMultiplier(now),
-    communityVotingPower: '0',
-    votingPowerSelf: '0',
     spaceId: moverSpaceId,
-    cachePeriodSeconds: defaultCachePeriodSeconds,
-    isLoadingLastProposal: false,
-    blockNumberCached: undefined
+    blockNumberCached: { data: undefined, expDate: Date.now() }
   },
   actions,
   getters,
   mutations
-} as Module<GovernanceStoreState, RootStoreState>;
+} as AugmentedModule<
+  GovernanceStoreState,
+  ActionType,
+  GetterType,
+  MutationType
+>;

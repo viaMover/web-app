@@ -1,9 +1,11 @@
 <template>
-  <div class="button burger-menu" :class="wrapperClass">
-    <action-button
-      :button-class="actionButtonClass"
+  <div>
+    <button
+      class="button-like"
+      :class="buttonClass"
       :data-popover-parent-id="popoverParentId"
-      @button-click="togglePopover"
+      type="button"
+      @click="togglePopover"
     >
       <slot name="button">
         <img
@@ -11,7 +13,7 @@
           src="@/assets/images/context-button.svg"
         />
       </slot>
-    </action-button>
+    </button>
     <popover :parent-id="popoverParentId" :popover-id="popoverId">
       <slot></slot>
     </popover>
@@ -21,39 +23,25 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import ActionButton from '@/components/buttons/action-button.vue';
 import { Popover } from '@/components/modals';
 import { toggleSingleItem } from '@/components/toggle/toggle-root';
 
-import '@/styles/_burger.less';
-
 export default Vue.extend({
   name: 'ContextButton',
-  components: { ActionButton, Popover },
+  components: { Popover },
   props: {
     popoverParentId: {
       type: String,
       required: true
     },
-    wrapperClass: {
-      type: String,
-      default: ''
-    },
     buttonClass: {
       type: String,
-      default: ''
+      default: undefined
     }
   },
   computed: {
     popoverId(): string {
       return this.popoverParentId + '__popover';
-    },
-    actionButtonClass(): string {
-      if (this.buttonClass === '') {
-        return 'button-active';
-      }
-
-      return `${this.buttonClass} button-active`;
     }
   },
   methods: {
@@ -65,5 +53,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style scoped></style>

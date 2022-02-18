@@ -1,26 +1,29 @@
 <template>
-  <secondary-page hide-title>
-    <div>
-      <secondary-page-simple-title
+  <secondary-page class="manage">
+    <template v-slot:title>
+      <secondary-page-header
         class="manage-balance-wrapper"
         :description="$t('earnings.lblEarningsBalance')"
-        :title="olympusBalance"
+        :title="ethereumBalance"
       />
-      <div class="manage-graph-wrapper">
-        <bar-chart
-          :chart-data-source="chartDataSource"
-          :is-loading="isEthereumInfoLoading || ethereumInfo === undefined"
-          @item-selected="handleItemSelected"
-        />
-        <p>
-          {{ selectedItemPrefix }}
-          <b>{{ selectedItemValue }}</b>
-        </p>
-      </div>
+    </template>
+
+    <div class="manage-graph-wrapper">
+      <bar-chart
+        :accent-color="chartAccentColor"
+        :chart-data-source="chartDataSource"
+        :is-loading="isEthereumInfoLoading || ethereumInfo === undefined"
+        @item-selected="handleItemSelected"
+      />
+      <p>
+        {{ selectedItemPrefix }}
+        <b>{{ selectedItemValue }}</b>
+      </p>
     </div>
-    <statement-nav-list
+
+    <statements-nav-list
       :button-text="$t('earnings.btnView')"
-      :icon="$t('earnings.icon')"
+      icon="🌻"
       :in-progress-text="$t('earnings.lblInProgress')"
       :items="ethereumMonthStatsOptions"
       navigate-to-name="earnings-ethereum-month-stats"
@@ -47,14 +50,14 @@ import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
-import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
+import { StatementsNavList } from '@/components/statements-nav-list';
 
 export default Vue.extend({
   name: 'EarningsEthereumManage',
   components: {
-    StatementNavList,
-    SecondaryPageSimpleTitle,
+    StatementsNavList,
+    SecondaryPageHeader,
     SecondaryPage,
     BarChart
   },
@@ -64,6 +67,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({ colors: 'colors' }),
     ...mapState('account', {
       networkInfo: 'networkInfo'
     }),
@@ -141,6 +145,9 @@ export default Vue.extend({
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
+    },
+    chartAccentColor(): string {
+      return this.colors['product-earnings'];
     }
   },
   methods: {

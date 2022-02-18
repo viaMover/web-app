@@ -1,0 +1,83 @@
+.page-content.connect-wallet {
+  .wrapper {
+    width: 500px;
+  }
+}
+
+.connect-wallet {
+  .logo {
+    display: block;
+    margin-bottom: 40px;
+  }
+
+  .container {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+
+    .left {
+      flex: auto;
+      margin-right: 80px;
+
+      .info {
+        margin-bottom: 40px;
+
+        .title {
+          font-size: 40px;
+          line-height: 56px;
+          color: @text-primary;
+          margin-bottom: 24px;
+          @font-bold();
+        }
+
+        .description {
+          font-size: 14px;
+          line-height: 22px;
+          color: @text-muted;
+          @font-medium();
+        }
+      }
+
+      .button-container {
+        .button {
+          margin-bottom: 24px;
+        }
+
+        .description {
+          font-size: 12px;
+          line-height: 16px;
+          color: @text-muted;
+          @font-regular();
+        }
+      }
+    }
+
+    .right {
+      flex: 0 0 240px;
+
+      .qr-code {
+        width: 240px;
+        height: $width;
+        background-color: @qr-code-background;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 40px;
+        @drop-shadow();
+
+        img,
+        .pu-skeleton {
+          width: 100%;
+          height: $width;
+        }
+      }
+
+      .description {
+        font-size: 12px;
+        line-height: 16px;
+        color: @text-muted;
+        @font-regular();
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+.product-tiles {
+  width: 100%;
+  display: flex;
+  gap: 40px 80px;
+  flex-flow: row wrap;
+
+  .item {
+    display: block;
+    width: 100%;
+    max-width: calc(50% - 40px);
+
+    picture {
+      display: block;
+      width: 100%;
+      margin-bottom: 16px;
+
+      img {
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        @drop-shadow-filter();
+      }
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      @drop-shadow();
+    }
+
+    .title,
+    .description {
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .title {
+      margin-bottom: 8px;
+      @font-bold();
+    }
+
+    .description {
+      color: @text-muted;
+      @font-medium();
+    }
+  }
+}

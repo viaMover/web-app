@@ -1,5 +1,3 @@
-import { ActionTree } from 'vuex';
-
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
@@ -22,125 +20,149 @@ import {
   getVotingPower,
   GovernanceApiError,
   ProposalInfo,
-  ProposalWithVotes,
   Scores,
   vote,
   VoteParams,
   VoteResponse
 } from '@/services/mover/governance';
-import { RootStoreState } from '@/store/types';
+import {
+  getFromPersistStoreWithExpire,
+  setToPersistStore
+} from '@/settings/persist/utils';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
+import { ActionFuncs } from '@/store/types';
 import { fromWei } from '@/utils/bigmath';
 
+import { GetterType } from './getters';
+import { MutationType } from './mutations';
 import {
   CreateProposalPayload,
   GovernanceStoreState,
-  LoadProposalInfoPayload,
   LoadScoresPayload,
   LoadScoresSelfPayload
 } from './types';
-import { isValidCacheItem } from './utils';
 
-export default {
-  async loadMinimalGovernanceInfo(
-    { commit, dispatch, state, getters },
-    refetch = false
-  ): Promise<ProposalInfo | undefined> {
+// 60 sec
+export const ACTIVE_PROPOSAL_TIME_EXPIRE = 60 * 1000;
+// 1 week
+export const CLOSED_PROPOSAL_TIME_EXPIRE = 7 * 24 * 60 * 60 * 1000;
+// 60 sec
+export const VOTING_POWER_SELF_EXPIRE_TIME = 60 * 1000;
+// 5 min
+export const COMMUNITY_VOTING_POWER_EXPIRE_TIME = 5 * 60 * 1000;
+// 5 sec
+export const BLOCK_NUMBER_EXPIRE_TIME = 5 * 1000;
+//1 week
+export const SPACE_INFO_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000;
+
+type Actions = {
+  restorePersist: Promise<void>;
+  loadMinimalInfo: Promise<void>;
+  loadInfo: Promise<void>;
+  loadProposalInfo: Promise<ProposalInfo | undefined>;
+  createProposal: Promise<CreateProposalResponse>;
+  vote: Promise<VoteResponse>;
+  loadScoresSelf: Promise<Array<Scores>>;
+  loadScores: Promise<Scores>;
+  loadPowerInfo: Promise<void>;
+  loadCommunityVotingPower: Promise<string>;
+  loadVotingPowerSelfAtSnapshot: Promise<string>;
+  loadCurrentVotingPowerSelf: Promise<string>;
+  getBlockNumber: Promise<number>;
+};
+
+const actions: ActionFuncs<
+  Actions,
+  GovernanceStoreState,
+  MutationType,
+  GetterType
+> = {
+  async restorePersist({ commit, rootState }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+    let info = await getFromPersistStoreWithExpire(
+      rootState.account.currentAddress,
+      'governance-power',
+      'community'
+    );
+    if (info !== undefined) {
+      commit('setCommunityVotingPower', info);
+    }
+
+    info = await getFromPersistStoreWithExpire(
+      rootState.account.currentAddress,
+      'governance-space',
+      'info'
+    );
+    if (info !== undefined) {
+      commit('setSpaceInfo', info);
+    }
+  },
+  async loadMinimalInfo({ commit, dispatch, getters }): Promise<void> {
     try {
-      commit('setIsLoadingLastProposal', true);
+      commit('setIsLoadingMinimal', true);
 
-      try {
-        if (!refetch && (state.isLoading || state.loadingPromise)) {
-          await state.loadingPromise;
-
-          commit('setIsLoadingLastProposal', false);
-          return getters.lastProposal;
-        }
-      } catch (moduleLoadingError) {
-        return dispatch('loadLastProposalMinimal', true);
+      if (getters.lastProposal !== undefined) {
+        commit('setIsLoadingMinimal', false);
+        return;
       }
 
-      let spaceInfoPromise = Promise.resolve(state.spaceInfo);
-      if (state.spaceInfo === undefined) {
-        spaceInfoPromise = dispatch('loadPowerInfo');
+      if (getters.spaceInfo === undefined) {
+        await dispatch('loadPowerInfo');
       }
 
-      const resultPromise = dispatch('loadProposalInfo', {
-        id: await getLastProposalId(),
-        refetch
-      });
+      if (getters.lastProposal === undefined) {
+        await dispatch('loadProposalInfo', await getLastProposalId());
+      }
 
-      const [result] = await Promise.all([resultPromise, spaceInfoPromise]);
-
-      commit('setIsLoadingLastProposal', false);
-      return result;
+      commit('setIsLoadingMinimal', false);
     } catch (error) {
       console.error('failed to get minimal info', error);
       Sentry.captureException(error);
-      commit('setIsLoadingLastProposal', false);
-      return undefined;
+      commit('setIsLoadingMinimal', false);
     }
   },
-  async loadGovernanceInfo(
-    { state, commit, dispatch },
-    refetch = false
-  ): Promise<Array<ProposalWithVotes>> {
-    const load = async () => {
-      try {
-        if (state.loadingPromise !== undefined && !refetch) {
-          return state.loadingPromise;
-        }
+  async loadInfo({ state, commit, dispatch }): Promise<void> {
+    try {
+      commit('setIsLoading', true);
 
-        commit('setIsLoading', true);
-        // initial load, refetch or previous fetch failure
-        if (refetch || state.items.length < 1) {
-          commit('clearItems');
-        }
+      await dispatch('restorePersist');
 
-        // initial load, refetch or previous fetch failure
-        if (refetch || state.spaceInfo === undefined) {
-          commit('setSpaceInfo', undefined);
-        }
+      const proposalsListPromise = getProposalIdsList(state.spaceId);
+      const powerInfoPromise = dispatch('loadPowerInfo');
 
-        commit('setError', undefined);
-        commit('setLoadingPromise', undefined);
+      const [proposalIds] = await Promise.all([
+        proposalsListPromise,
+        powerInfoPromise
+      ]);
 
-        const proposalsListPromise = getProposalIdsList(state.spaceId);
-        const powerInfoPromise = dispatch('loadPowerInfo');
+      const promisesResults = await Promise.allSettled(
+        proposalIds.map(
+          async (id: string): Promise<ProposalInfo | undefined> =>
+            dispatch('loadProposalInfo', id)
+        )
+      );
 
-        const [proposalIds] = await Promise.all([
-          proposalsListPromise,
-          powerInfoPromise
-        ]);
-        const results = await Promise.all(
-          proposalIds.map(
-            async (id: string): Promise<ProposalInfo | undefined> =>
-              dispatch('loadProposalInfo', { id, refetch })
-          )
-        );
+      const promisesErrors = promisesResults
+        .filter((p): p is PromiseRejectedResult => p.status === 'rejected')
+        .map((p) => p.reason);
 
-        const result = results.filter(
-          (res) => res !== undefined
-        ) as Array<ProposalInfo>;
-
-        commit('setIsLoading', false);
-        return result;
-      } catch (error) {
-        console.error('failed to get info', error);
-        Sentry.captureException(error);
-        commit('setError', error);
-        commit('setIsLoading', false);
-        return [];
+      if (promisesErrors.length > 0) {
+        console.warn('failed to load Proposal info', promisesErrors);
+        Sentry.captureException(promisesErrors);
       }
-    };
 
-    const info = load();
-    commit('setLoadingPromise', info);
-
-    return info;
+      commit('setIsLoading', false);
+    } catch (error) {
+      console.error('failed to get info', error);
+      Sentry.captureException(error);
+      commit('setIsLoading', false);
+    }
   },
   async loadProposalInfo(
-    { state, commit, dispatch },
-    { id, refetch = false }: LoadProposalInfoPayload
+    { commit, rootState, dispatch, getters },
+    id: string
   ): Promise<ProposalInfo | undefined> {
     const loadFreshData = async (): Promise<ProposalInfo | undefined> => {
       const proposalWithVotes = await getProposal(id);
@@ -182,36 +204,41 @@ export default {
 
       commit('upsertItems', newItem);
 
+      if (
+        ensureAccountStateIsSafe(rootState.account) &&
+        newItem.proposal.state === 'closed'
+      ) {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'governance-proposal',
+          id,
+          newItem,
+          CLOSED_PROPOSAL_TIME_EXPIRE
+        );
+      }
+
       return newItem;
     };
 
     try {
-      if (refetch) {
-        return await loadFreshData();
+      let prop = getters.proposal(id);
+      if (prop !== undefined) {
+        return prop;
       }
 
-      const existingItemIdx = state.items.findIndex(
-        (item) => item.proposal.id === id
-      );
-
-      if (existingItemIdx < 0) {
-        return await loadFreshData();
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        prop = await getFromPersistStoreWithExpire(
+          rootState.account.currentAddress,
+          'governance-proposal',
+          id
+        );
+        if (prop !== undefined) {
+          commit('upsertItems', prop);
+          return prop;
+        }
       }
 
-      if (!isValidCacheItem(state.cacheInfoMap, id, state.cachePeriodSeconds)) {
-        return await loadFreshData();
-      }
-
-      const now = dayjs().unix();
-      if (
-        state.items[existingItemIdx].proposal.state !== 'closed' &&
-        now > state.items[existingItemIdx].proposal.end
-      ) {
-        // should be already closed but still is valid cached item
-        return await loadFreshData();
-      }
-
-      return state.items[existingItemIdx];
+      return await loadFreshData();
     } catch (error) {
       console.error('failed to get single proposal', error);
 
@@ -267,17 +294,11 @@ export default {
     payload: VoteParams
   ): Promise<VoteResponse> {
     try {
-      if (rootState.account?.provider?.web3 === undefined) {
-        throw new Error('failed to get web3 provider');
+      if (!ensureAccountStateIsSafe(rootState.account)) {
+        throw new Error('account not ready');
       }
 
-      if (rootState.account?.currentAddress === undefined) {
-        throw new Error('failed to get current address');
-      }
-
-      const storedProposal = state.items.find(
-        (info) => info.proposal.id === payload.proposal
-      );
+      const storedProposal = getters.proposal(payload.proposalId);
       if (storedProposal === undefined) {
         // although should not happen, TypeScript doesn't know
         // anything about that so throw an error like 'never' :)
@@ -294,11 +315,11 @@ export default {
         throw new GovernanceApiError('voting is closed');
       }
 
-      if (getters.isAlreadyVoted(payload.proposal)) {
+      if (getters.isAlreadyVoted(payload.proposalId)) {
         throw new GovernanceApiError('already voted');
       }
 
-      if (!getters.hasEnoughVotingPowerToVote(payload.proposal)) {
+      if (!getters.hasEnoughVotingPowerToVote(payload.proposalId)) {
         throw new GovernanceApiError('not enough power to vote');
       }
 
@@ -311,7 +332,7 @@ export default {
 
       // manually add vote record in case of
       // subsequent refetch request fails
-      commit('upsertItems', {
+      const newItem = {
         ...storedProposal,
         votes: storedProposal.votes.concat({
           choice: payload.choice,
@@ -328,7 +349,18 @@ export default {
               state.votingPowerSelf
           }))
         }
-      } as ProposalInfo);
+      } as ProposalInfo;
+      commit('upsertItems', newItem);
+
+      if (newItem.proposal.state === 'closed') {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'governance-proposal',
+          payload.proposalId,
+          newItem,
+          CLOSED_PROPOSAL_TIME_EXPIRE
+        );
+      }
 
       return result;
     } catch (error) {
@@ -341,7 +373,7 @@ export default {
   async loadScoresSelf(
     { dispatch, rootState },
     { proposal, snapshot = 'latest' }: LoadScoresSelfPayload
-  ) {
+  ): Promise<Array<Scores>> {
     try {
       if (rootState.account?.currentAddress === undefined) {
         throw new Error('failed to get current address');
@@ -422,28 +454,55 @@ export default {
       throw error;
     }
   },
-  async loadPowerInfo({ state, commit, dispatch }): Promise<void> {
+  async loadPowerInfo({
+    state,
+    commit,
+    dispatch,
+    getters,
+    rootState
+  }): Promise<void> {
     try {
       // resolve with existing spaceInfo or fetch the new one
-      const spaceInfoPromise = state.spaceInfo
-        ? Promise.resolve(state.spaceInfo)
+      const spaceInfoPromise = getters.spaceInfo
+        ? Promise.resolve(getters.spaceInfo)
         : getSpace(state.spaceId);
 
       // current community voting power
-      const votingPowerPromise = dispatch('loadCommunityVotingPower');
+      if (getters.communityVotingPower === '0') {
+        const communityVotingPower = await dispatch('loadCommunityVotingPower');
+        commit('setCommunityVotingPower', communityVotingPower);
+
+        if (ensureAccountStateIsSafe(rootState.account)) {
+          setToPersistStore(
+            rootState.account.currentAddress,
+            'governance-power',
+            'community',
+            communityVotingPower,
+            COMMUNITY_VOTING_POWER_EXPIRE_TIME
+          );
+        }
+      }
 
       // current self voting power
       const votingPowerSelfPromise = dispatch('loadCurrentVotingPowerSelf');
 
-      const [spaceInfo, communityVotingPower] = await Promise.all([
+      const [spaceInfo] = await Promise.all([
         spaceInfoPromise,
-        votingPowerPromise,
         votingPowerSelfPromise
       ]);
 
       commit('setSpaceInfo', spaceInfo);
       commit('setPowerNeededToBecomeAProposer', spaceInfo.filters.minScore);
-      commit('setCommunityVotingPower', communityVotingPower);
+
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'governance-space',
+          'info',
+          spaceInfo,
+          SPACE_INFO_EXPIRE_TIME
+        );
+      }
     } catch (error) {
       console.error('failed to load power info', error);
       Sentry.captureException(error);
@@ -477,16 +536,8 @@ export default {
       });
 
       try {
-        if (rootState.account?.currentAddress === undefined) {
-          throw new Error('failed to get current address');
-        }
-
-        if (rootState.account?.networkInfo === undefined) {
-          throw new Error('failed to get network info');
-        }
-
-        if (rootState.account?.provider?.web3 === undefined) {
-          throw new Error('failed to get web3 provider');
+        if (!ensureAccountStateIsSafe(rootState.account)) {
+          throw new Error('account is not ready');
         }
 
         return await getCommunityVotingPowerFromChain(
@@ -503,7 +554,7 @@ export default {
     }
   },
   async loadVotingPowerSelfAtSnapshot(
-    { dispatch, state, rootState },
+    { dispatch, state, rootState, getters, commit },
     snapshot?: number
   ): Promise<string> {
     // no need for an extra cache as consumers know how to treat
@@ -525,9 +576,7 @@ export default {
         throw new Error(votingPowerSelfInWei.error);
       }
 
-      const votingPower = fromWei(votingPowerSelfInWei.result.votingPower, 18);
-
-      return votingPower;
+      return fromWei(votingPowerSelfInWei.result.votingPower, 18);
     } catch (error) {
       console.warn(
         'failed to load self voting power, trying a votehub fallback',
@@ -543,10 +592,19 @@ export default {
           throw new Error('failed to get current address');
         }
 
-        let spaceInfo = state.spaceInfo;
+        let spaceInfo = getters.spaceInfo;
         if (spaceInfo === undefined) {
           // if spaceInfo is not ready yet
           spaceInfo = await getSpace(state.spaceId);
+          commit('setSpaceInfo', spaceInfo);
+
+          setToPersistStore(
+            rootState.account.currentAddress,
+            'governance-space',
+            'info',
+            spaceInfo,
+            SPACE_INFO_EXPIRE_TIME
+          );
         }
 
         const scoreSnapshot: number | string =
@@ -560,7 +618,7 @@ export default {
           scoreSnapshot
         );
 
-        const votingPowerSelf = scores
+        return scores
           .reduce((acc, score) => {
             return (
               acc +
@@ -569,8 +627,6 @@ export default {
             );
           }, 0)
           .toString();
-
-        return votingPowerSelf;
       } catch (fallbackErrorVoteApi) {
         console.warn(
           'failed to load self voting power from votehub api, trying a fallback',
@@ -582,26 +638,16 @@ export default {
         });
 
         try {
-          if (rootState.account?.currentAddress === undefined) {
-            throw new Error('failed to get current address');
+          if (!ensureAccountStateIsSafe(rootState.account)) {
+            throw new Error('account is not ready');
           }
 
-          if (rootState.account?.networkInfo?.network === undefined) {
-            throw new Error('failed to get network info');
-          }
-
-          if (rootState.account?.provider?.web3 === undefined) {
-            throw new Error('failed to get web3 provider');
-          }
-
-          const votingPowerSelf = await getVotingPowerSelfFromChain(
+          return await getVotingPowerSelfFromChain(
             rootState.account.currentAddress,
             rootState.account.networkInfo.network,
             rootState.account.provider.web3,
             snapshot
           );
-
-          return votingPowerSelf;
         } catch (fallbackErrorOnChain) {
           console.error(
             'failed to load self voting power',
@@ -613,19 +659,14 @@ export default {
       }
     }
   },
-  async loadCurrentVotingPowerSelf(
-    { commit, dispatch, state },
-    refetch = false
-  ): Promise<string> {
-    if (
-      !refetch &&
-      isValidCacheItem(
-        state.cacheGenericInfoMap,
-        'votingPowerSelf',
-        state.cachePeriodSeconds
-      )
-    ) {
-      return state.votingPowerSelf;
+  async loadCurrentVotingPowerSelf({
+    commit,
+    dispatch,
+    getters
+  }): Promise<string> {
+    const power = getters.votingPowerSelf;
+    if (power !== '0') {
+      return power;
     }
 
     const votingPowerSelf = await dispatch(
@@ -636,15 +677,13 @@ export default {
 
     return votingPowerSelf;
   },
-  async getBlockNumber({ state, commit, rootState }): Promise<number> {
-    try {
-      if (
-        isValidCacheItem(state.cacheGenericInfoMap, 'blockNumber', 5) &&
-        state.blockNumberCached !== undefined
-      ) {
-        return state.blockNumberCached;
-      }
+  async getBlockNumber({ commit, rootState, getters }): Promise<number> {
+    const blockNumber = getters.blockNumberCached;
+    if (blockNumber !== undefined) {
+      return blockNumber;
+    }
 
+    try {
       if (rootState.account?.provider?.web3 === undefined) {
         throw new Error('failed to get web3 provider');
       }
@@ -660,7 +699,7 @@ export default {
         throw new Error('failed to get a valid answer from web3');
       }
 
-      commit('setBlockNumberCached', res);
+      commit('setBlockNumber', res);
 
       return res;
     } catch (error) {
@@ -687,7 +726,7 @@ export default {
           throw new Error(result.error);
         }
 
-        commit('setBlockNumberCached', result.result);
+        commit('setBlockNumber', result.result);
 
         return result.result;
       } catch (fallbackErrorEtherscan) {
@@ -712,11 +751,11 @@ export default {
             throw new Error(result.error);
           }
 
-          commit('setBlockNumberCached', result.result);
+          commit('setBlockNumber', result.result);
 
           return result.result;
         } catch (fallbackErrorInfura) {
-          if (state.blockNumberCached === undefined) {
+          if (getters.blockNumberCached === undefined) {
             console.error(
               'failed to get blockNumber',
               fallbackErrorInfura,
@@ -730,12 +769,15 @@ export default {
             'failed to get blockNumber',
             fallbackErrorInfura,
             'using cached blockNumber as a last fallback',
-            state.blockNumberCached
+            getters.blockNumberCached
           );
           Sentry.captureException(fallbackErrorInfura);
-          return state.blockNumberCached;
+          return getters.blockNumberCached;
         }
       }
     }
   }
-} as ActionTree<GovernanceStoreState, RootStoreState>;
+};
+
+export type ActionType = typeof actions;
+export default actions;

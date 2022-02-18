@@ -11,7 +11,7 @@ import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   HOLY_HAND_ABI,
-  HOLY_HAND_ADDRESS
+  lookupAddress
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -26,7 +26,7 @@ export const depositCompound = async (
   changeStepToProcess: () => Promise<void>,
   gasPriceInGwei?: string
 ): Promise<void> => {
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
   try {
     await executeTransactionWithApprove(
@@ -52,7 +52,7 @@ export const depositCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    console.error(`Can't treasury deposit: ${err}`);
+    console.error(`Can't treasury deposit:`, err);
     throw err;
   }
 };
@@ -72,7 +72,7 @@ export const deposit = async (
   const move = getMoveAssetData(network);
   const slp = getMoveWethLPAssetData(network);
 
-  const contractAddress = HOLY_HAND_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
   const contractABI = HOLY_HAND_ABI;
 
   try {

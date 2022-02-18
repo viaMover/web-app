@@ -1,72 +1,85 @@
 <template>
-  <secondary-page has-back-button hide-title @back="handleBack">
-    <secondary-page-simple-title
-      class="page-title"
-      :description="$t('treasury.txtTreasuryOverviewDescription')"
-      :title="$t('treasury.lblTreasuryOverview')"
-    />
-    <statement-list>
-      <statement-list-item
-        :description="$t('treasury.lblReservedAssetsValue')"
-        :value="reservedAssetsValue"
+  <secondary-page class="analytics" has-back-button @back="handleBack">
+    <template v-slot:title>
+      <secondary-page-header
+        :description="$t('treasury.txtTreasuryOverviewDescription')"
+        :title="$t('treasury.lblTreasuryOverview')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblCurrentBoost')"
-        :value="currentBoost"
+    </template>
+
+    <analytics-list>
+      <analytics-list-item
+        :description="reservedAssetsValue"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblReservedAssetsValue')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblMaximumBoost')"
-        :value="maximumBoost"
+      <analytics-list-item
+        :description="currentBoost"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblCurrentBoost')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblSmartTreasurySize')"
-        :value="smartTreasurySize"
+      <analytics-list-item
+        :description="maximumBoost"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblMaximumBoost')"
       />
-    </statement-list>
-    <statement-list :title="$t('treasury.lblTreasuryStats')">
-      <statement-list-item
-        :description="$t('treasury.lblEarnedToday')"
-        :value="earnedToday"
+      <analytics-list-item
+        :description="smartTreasurySize"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblSmartTreasurySize')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblEarnedThisMonth')"
-        :value="earnedThisMonth"
+    </analytics-list>
+    <analytics-list :title="$t('treasury.lblTreasuryStats')">
+      <analytics-list-item
+        :description="earnedToday"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblEarnedToday')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblEarnedInTotal')"
-        :value="earnedInTotal"
+      <analytics-list-item
+        :description="earnedThisMonth"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblEarnedThisMonth')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblSpentToday')"
-        :value="spentToday"
+      <analytics-list-item
+        :description="earnedInTotal"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblEarnedInTotal')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblSpentThisMonth')"
-        :value="spentThisMonth"
+      <analytics-list-item
+        :description="spentToday"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblSpentToday')"
       />
-      <statement-list-item
-        :description="$t('treasury.lblSpentInTotal')"
-        :value="spentInTotal"
+      <analytics-list-item
+        :description="spentThisMonth"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblSpentThisMonth')"
       />
-    </statement-list>
-    <statement-list :title="$t('treasury.lblReservedAssets')">
-      <statement-list-item
+      <analytics-list-item
+        :description="spentInTotal"
+        :is-loading="isLoading"
+        :title="$t('treasury.lblSpentInTotal')"
+      />
+    </analytics-list>
+    <analytics-list :title="$t('treasury.lblReservedAssets')">
+      <analytics-list-item
         v-for="asset in assets"
         :key="asset.name"
-        :description="asset.name"
+        :is-loading="isLoading"
+        :title="asset.name"
       >
         {{ asset.amount }}
         <template v-if="asset.displaySymbol">
           {{ asset.symbol }}
         </template>
-      </statement-list-item>
-    </statement-list>
+      </analytics-list-item>
+    </analytics-list>
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import {
   formatToDecimals,
@@ -78,23 +91,20 @@ import {
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
   SecondaryPage,
-  SecondaryPageSimpleTitle
+  SecondaryPageHeader
 } from '@/components/layout/secondary-page';
-import {
-  StatementList,
-  StatementListItem
-} from '@/components/statements/statement-list';
 import { ReservedAsset } from '@/components/treasury/treasury-reserved-assets/types';
 
 export default Vue.extend({
   name: 'TreasuryGlobalAnalytics',
   components: {
     SecondaryPage,
-    SecondaryPageSimpleTitle,
-    StatementListItem,
-    StatementList
+    SecondaryPageHeader,
+    AnalyticsListItem,
+    AnalyticsList
   },
   data() {
     return {
@@ -102,7 +112,7 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('account', {
+    ...mapGetters('treasury', {
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative',
       treasuryBoost: 'treasuryBoost',
       treasuryTotalStakedBalanceNative: 'treasuryTotalStakedBalanceNative',
@@ -113,14 +123,19 @@ export default Vue.extend({
       treasurySpentThisMonthNative: 'treasurySpentThisMonthNative',
       treasurySpentTotalNative: 'treasurySpentTotalNative',
       treasuryStakedMove: 'treasuryStakedMove',
-      treasuryStakedMoveLP: 'treasuryStakedMoveLP'
+      treasuryStakedMoveLP: 'treasuryStakedMoveLP',
+      treasuryInfo: 'treasuryInfo'
     }),
-    ...mapState('account', [
-      'powercardState',
-      'networkInfo',
-      'treasuryTotalStakedMove',
-      'treasuryTotalStakedMoveEthLP'
-    ]),
+    ...mapState('treasury', {
+      isLoading: 'isTreasuryInfoLoading',
+      powercardState: 'powercardState',
+      networkInfo: 'networkInfo',
+      treasuryTotalStakedMove: 'treasuryTotalStakedMove',
+      treasuryTotalStakedMoveEthLP: 'treasuryTotalStakedMoveEthLP'
+    }),
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
     formattedMoveAmount(): string {
       const moveAmountNative = this.treasuryStakedMove;
       return formatToDecimals(moveAmountNative, 4);
@@ -196,7 +211,11 @@ export default Vue.extend({
       return `$${formatToNative(this.treasuryTotalStakedBalanceNative)}`;
     }
   },
+  mounted() {
+    this.fetchTreasuryInfo();
+  },
   methods: {
+    ...mapActions('treasury', { fetchTreasuryInfo: 'fetchTreasuryInfo' }),
     handleBack(): void {
       this.$router.replace({
         name: 'treasury-manage'

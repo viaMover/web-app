@@ -1,5 +1,5 @@
 <template>
-  <div v-if="displayOriginalImage" class="icon">
+  <div v-if="displayOriginalImage" class="icon token-icon">
     <img
       v-fallback="imageFallbackOpts"
       :alt="$t('debitCard.txtSymbolImageAlt', { name: symbol })"

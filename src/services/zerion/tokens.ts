@@ -1,11 +1,11 @@
 import store from '@/store/index';
 import { sameAddress } from '@/utils/address';
+import { fromWei } from '@/utils/bigmath';
+import { MAX_ASSET_NAME } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
 import { getMoveAssetData } from '@/wallet/references/data';
 import { TokenWithBalance } from '@/wallet/types';
 
-import { fromWei } from './../../utils/bigmath';
-import { MAX_ASSET_NAME } from './../../utils/consts';
 import { ZerionAssetsReceived } from './responses';
 
 export const mapZerionTokens = (

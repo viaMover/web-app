@@ -1,18 +1,14 @@
 <template>
-  <div class="chart-group-wrapper" :class="wrapperClass">
-    <PuSkeletonTheme v-if="isLoading" color="#dcdcdc">
-      <pu-skeleton
-        class="pu-skeleton"
-        height="166px"
-        :loading="true"
-        tag="div"
-        width="100%"
-      />
-    </PuSkeletonTheme>
+  <div>
+    <pu-skeleton
+      v-if="isLoading"
+      class="pu-skeleton"
+      height="166px"
+      tag="div"
+      width="100%"
+    />
     <div v-show="!isLoading" class="chart">
-      <div class="chart--body">
-        <canvas ref="chartCanvas"></canvas>
-      </div>
+      <canvas ref="chartCanvas"></canvas>
     </div>
   </div>
 </template>
@@ -46,7 +42,7 @@ export default Vue.extend({
   props: {
     defaultColor: {
       type: String,
-      default: 'rgba(60,60,67,0.3)'
+      default: 'rgba(60, 60, 67, 0.3)'
     },
     accentColor: {
       type: String,
@@ -54,7 +50,7 @@ export default Vue.extend({
     },
     tickColor: {
       type: String,
-      default: 'rgba(60,60,67,0.60)'
+      default: 'rgba(60, 60, 67, 0.60)'
     },
     chartDataSource: {
       type: Array as PropType<
@@ -190,8 +186,8 @@ export default Vue.extend({
           datasets: {
             bar: {
               minBarLength: 10,
-              barThickness: 56,
-              maxBarThickness: 56
+              barThickness: 52,
+              maxBarThickness: 52
             }
           },
           elements: {
@@ -259,7 +255,8 @@ export default Vue.extend({
           }
         } as ChartOptions<'bar'>
       });
-      chartInstance.resize(this.chartData.datasets[0].data.length * 60, 176);
+
+      chartInstance.resize(this.chartData.datasets[0].data.length * 54, 176);
 
       this.chartInstance = chartInstance;
     }

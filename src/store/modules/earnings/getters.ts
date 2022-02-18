@@ -1,11 +1,16 @@
-import { GetterTree } from 'vuex';
-
-import { RootStoreState } from '@/store/types';
+import { GettersFuncs } from '@/store/types';
 
 import { EarningsStoreState } from './types';
 
-export default {
+type Getters = {
+  earningsBalanceNative: string;
+};
+
+const getters: GettersFuncs<Getters, EarningsStoreState> = {
   earningsBalanceNative(): string {
     return '0';
   }
-} as GetterTree<EarningsStoreState, RootStoreState>;
+};
+
+export type GetterType = typeof getters;
+export default getters;

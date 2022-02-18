@@ -1,7 +1,7 @@
 <template>
   <secondary-page
+    class="stake"
     :has-back-button="showBackButton"
-    hide-title
     @back="handleBack"
   >
     <prepare-form

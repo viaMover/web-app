@@ -5,8 +5,8 @@ import { AbiItem } from 'web3-utils';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
-  NFT_SWEET_AND_SOUR_ABI,
-  NFT_SWEET_AND_SOUR_ADDRESS
+  lookupAddress,
+  NFT_SWEET_AND_SOUR_ABI
 } from '@/wallet/references/data';
 import { TransactionsParams } from '@/wallet/types';
 
@@ -23,12 +23,16 @@ export const getSweetAndSourData = async (
     from: accountAddress
   } as TransactionsParams;
 
-  const contractAddress = NFT_SWEET_AND_SOUR_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_SWEET_AND_SOUR');
 
   const sweetAndSour = new web3.eth.Contract(
     NFT_SWEET_AND_SOUR_ABI as AbiItem[],
     contractAddress
   );
+
+  const balance = await sweetAndSour.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
 
   const totalAmount = await sweetAndSour.methods
     ._claimLimit()
@@ -39,6 +43,7 @@ export const getSweetAndSourData = async (
     .call(transactionParams);
 
   return {
+    balance: balance.toString(),
     totalAmount: totalAmount.toString(),
     totalClaimed: totalClaimed.toString()
   };
@@ -52,7 +57,7 @@ export const claimSweetAndSour = async (
   gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
-  const contractAddress = NFT_SWEET_AND_SOUR_ADDRESS(network);
+  const contractAddress = lookupAddress(network, 'NFT_SWEET_AND_SOUR');
 
   const sweetAndSour = new web3.eth.Contract(
     NFT_SWEET_AND_SOUR_ABI as AbiItem[],

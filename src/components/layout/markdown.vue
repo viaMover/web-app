@@ -8,8 +8,6 @@ import Vue from 'vue';
 import { Remarkable } from 'remarkable';
 import { linkify } from 'remarkable/linkify';
 
-import '@/styles/_markdown.less';
-
 export default Vue.extend({
   name: 'Markdown',
   props: {
@@ -31,6 +29,9 @@ export default Vue.extend({
 
       return this.remarkableInstance.render(this.text);
     }
+  },
+  beforeDestroy() {
+    this.remarkableInstance = undefined;
   },
   mounted() {
     this.remarkableInstance = new Remarkable({

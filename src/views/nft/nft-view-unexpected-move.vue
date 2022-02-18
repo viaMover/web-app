@@ -1,92 +1,116 @@
 <template>
-  <div>
-    <shop-wrapper has-close-button @close="handleClose">
-      <template v-slot:info>
-        <h1 class="info__title">{{ $t('NFTs.lblUnexpectedMove') }}</h1>
-        <p class="info__description">
-          {{ $t('NFTs.txtNFTs.unexpectedMove.pageDescriptionPartOne') }}
+  <content-wrapper-two-sided
+    class="shop nft-drops view unexpected-move"
+    has-close-button
+    @close="handleClose"
+  >
+    <template v-slot:left>
+      <div class="page-header">
+        <h1 class="title">{{ $t('NFTs.lblUnexpectedMove') }}</h1>
+        <div class="description">
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
-          {{ $t('NFTs.txtNFTs.unexpectedMove.pageDescriptionPartTwo') }}
-        </p>
-        <shop-list>
-          <shop-list-item
-            :title="$t('NFTs.lblTotalAmount')"
-            :value="formatToDecimals(totalAmount, 0)"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblTotalClaimed')"
-            :value="formatToDecimals(totalClaimed, 0)"
-          />
-          <shop-list-item
-            :title="$t('NFTs.lblTotalExchanged')"
-            :value="formatToDecimals(totalExchanged, 0)"
-          />
-        </shop-list>
-        <action-button
-          button-class="button button-active"
-          :text="$t('NFTs.btn.unexpectedMove.get.txt')"
-          @button-click="handleClaim"
-        />
-        <div v-if="getNftError !== undefined" class="error-message">
-          {{ getNftError }}
+          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}
         </div>
-        <div class="info__more">
-          <p>{{ $t('NFTs.lblWhatElseCanDo') }}</p>
-          <ul>
-            <li>
+      </div>
+
+      <analytics-list>
+        <analytics-list-item
+          :description="totalAmount"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblTotalAmount')"
+        />
+        <analytics-list-item
+          :description="totalClaimed"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblTotalClaimed')"
+        />
+        <analytics-list-item
+          :description="totalExchanged"
+          :is-loading="isStoreLoading"
+          :title="$t('NFTs.lblTotalExchanged')"
+        />
+      </analytics-list>
+
+      <form
+        class="form"
+        :class="{ error: !!actionError || !!getNftError }"
+        @submit.prevent="handleClaim"
+      >
+        <div class="actions">
+          <div class="group default">
+            <action-button
+              class="primary"
+              :disabled="isStoreLoading"
+              propagate-original-event
+              :text="$t(`NFTs.btn.${nft.id}.get`)"
+              type="submit"
+            />
+          </div>
+
+          <div v-if="getNftError !== undefined" class="group error-message">
+            {{ getNftError }}
+          </div>
+
+          <div class="group">
+            <h3 class="title">{{ $t('NFTs.lblWhatElseCanDo') }}</h3>
+            <div class="items">
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.unexpectedMove.claimAndExchange.emoji')"
-                :text="$t('NFTs.btn.unexpectedMove.claimAndExchange.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🦍"
+                :text="$t(`NFTs.btn.${nft.id}.claimAndExchange`)"
                 @button-click="handleClaimAndExchange"
               />
-            </li>
-            <li>
               <emoji-text-button
-                button-class="button-active"
-                :emoji="$t('NFTs.btn.unexpectedMove.exchange.emoji')"
-                :text="$t('NFTs.btn.unexpectedMove.exchange.txt')"
+                class="item"
+                :disabled="isStoreLoading"
+                emoji="🔄"
+                :text="$t(`NFTs.btn.${nft.id}.exchange`)"
                 @button-click="handleExchange"
               />
-            </li>
-            <li>
-              <div v-if="actionError !== undefined" class="error-message">
-                {{ actionError }}
-              </div>
-            </li>
-          </ul>
+            </div>
+          </div>
+
+          <div v-if="actionError !== undefined" class="group error-message">
+            {{ actionError }}
+          </div>
         </div>
-      </template>
-      <template v-slot:illustration>
-        <video
-          autoplay="autoplay"
-          class="unexpected-move"
-          data-keepplaying="data-keepplaying"
-          loop="loop"
-          muted="muted"
-          playsinline="playsinline"
-        >
-          <source
-            src="https://storage.googleapis.com/movermedia/UnexpectedMove.webm"
-            type="video/webm"
-          />
-          <source
-            src="https://storage.googleapis.com/movermedia/UnexpectedMove.mp4"
-            type="video/mp4"
-          />
-          <source
-            src="https://ipfs.io/ipfs/QmS7nM63XtExqL8okruaLs1GifveNfhfcwdXvruiLM5qdJ"
-            type="video/mp4"
-          />
-        </video>
-      </template>
-    </shop-wrapper>
-    <simple-loader-modal
-      v-if="transactionStep !== undefined"
-      :loader-step="transactionStep"
-      @close="transactionStep = undefined"
-    />
-  </div>
+      </form>
+    </template>
+
+    <template v-slot:right>
+      <video
+        autoplay="autoplay"
+        class="unexpected-move"
+        data-keepplaying="data-keepplaying"
+        loop="loop"
+        muted="muted"
+        playsinline="playsinline"
+      >
+        <source
+          src="https://storage.googleapis.com/movermedia/UnexpectedMove.webm"
+          type="video/webm"
+        />
+        <source
+          src="https://storage.googleapis.com/movermedia/UnexpectedMove.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="https://ipfs.io/ipfs/QmS7nM63XtExqL8okruaLs1GifveNfhfcwdXvruiLM5qdJ"
+          type="video/mp4"
+        />
+      </video>
+    </template>
+
+    <template v-slot:modals>
+      <simple-loader-modal
+        v-if="transactionStep !== undefined"
+        :loader-step="transactionStep"
+        @close="transactionStep = undefined"
+      />
+    </template>
+  </content-wrapper-two-sided>
 </template>
 
 <script lang="ts">
@@ -94,22 +118,23 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { getUnexpectedMoveClaimSignature } from '@/services/chain';
-import { ChangePayload, ClaimPayload } from '@/store/modules/nft/actions/claim';
+import { ChangePayload, ClaimPayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
 
+import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
 import { Step } from '@/components/forms/form-loader';
-import { ShopList, ShopListItem, ShopWrapper } from '@/components/layout';
+import { ContentWrapperTwoSided } from '@/components/layout';
 import { SimpleLoaderModal } from '@/components/modals';
 
 export default Vue.extend({
   name: 'NftViewUnexpectedMove',
   components: {
+    ContentWrapperTwoSided,
     EmojiTextButton,
     ActionButton,
-    ShopList,
-    ShopListItem,
-    ShopWrapper,
+    AnalyticsList,
+    AnalyticsListItem,
     SimpleLoaderModal
   },
   data() {
@@ -121,13 +146,21 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('nft', {
-      totalAmount: 'UnexpectedMoveTotalAmount',
-      totalClaimed: 'UnexpectedMoveTotalClaimed',
-      totalExchanged: 'UnexpectedMoveTotalExchanged'
+      nft: 'unexpectedMove',
+      isStoreLoading: 'isLoading'
     }),
     ...mapState('account', {
       currentAddress: 'currentAddress'
-    })
+    }),
+    totalAmount(): string {
+      return formatToDecimals(this.nft.meta.totalAmount, 0);
+    },
+    totalClaimed(): string {
+      return formatToDecimals(this.nft.meta.totalClaimed, 0);
+    },
+    totalExchanged(): string {
+      return formatToDecimals(this.nft.meta.totalExchanged, 0);
+    }
   },
   mounted(): void {
     this.transactionStep = undefined;
@@ -135,7 +168,6 @@ export default Vue.extend({
     this.actionError = undefined;
   },
   methods: {
-    formatToDecimals,
     ...mapActions('nft', [
       'claimUnexpectedMove',
       'refreshNftStats',

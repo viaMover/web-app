@@ -1,38 +1,39 @@
 <template>
-  <secondary-page hide-title>
-    <div>
-      <secondary-page-simple-title
-        class="manage-balance-wrapper"
+  <secondary-page class="manage">
+    <template v-slot:title>
+      <secondary-page-header
         :description="$t('savings.lblSavingsBalance')"
         :title="savingsBalance"
       />
-      <div class="manage-graph-wrapper">
-        <bar-chart
-          :chart-data-source="chartDataSource"
-          :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
-          @item-selected="handleItemSelected"
-        />
-        <p>
-          {{ selectedItemPrefix }}
-          <b>{{ selectedItemValue }}</b>
-        </p>
+    </template>
+
+    <div class="chart-wrapper">
+      <bar-chart
+        :accent-color="chartAccentColor"
+        :chart-data-source="chartDataSource"
+        :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
+        @item-selected="handleItemSelected"
+      />
+      <div class="bottom-text">
+        {{ selectedItemPrefix }}
+        <span class="emphasize">{{ selectedItemValue }}</span>
       </div>
     </div>
-    <statement-nav-list
+
+    <statements-nav-list
       :button-text="$t('savings.btnView.simple')"
       :icon="$t('savings.icon')"
       :in-progress-text="$t('savings.lblInProgress')"
       :items="savingsMonthStatsOptions"
       navigate-to-name="savings-month-stats"
       :title="$t('savings.lblSavingsStatements')"
-      wrapper-class="manage-statements-list"
     />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -43,16 +44,16 @@ import { dateFromExplicitPair } from '@/utils/time';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { BarChart } from '@/components/charts';
-import { SecondaryPage, SecondaryPageSimpleTitle } from '@/components/layout';
-import { StatementNavList } from '@/components/statements/statement-nav-list';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
+import { StatementsNavList } from '@/components/statements-nav-list';
 
 export default Vue.extend({
   name: 'SavingsManage',
   components: {
     BarChart,
-    SecondaryPageSimpleTitle,
+    SecondaryPageHeader,
     SecondaryPage,
-    StatementNavList
+    StatementsNavList
   },
   data() {
     return {
@@ -61,12 +62,16 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', {
-      savingsInfo: 'savingsInfo',
+    ...mapState({ colors: 'colors' }),
+    ...mapState('savings', {
       isSavingsInfoLoading: 'isSavingsInfoLoading',
       networkInfo: 'networkInfo'
     }),
-    ...mapGetters('account', {
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
+    ...mapGetters('savings', {
+      savingsInfo: 'savingsInfo',
       savingsMonthStatsOptions: 'savingsMonthStatsOptions',
       savingsInfoBalanceNative: 'savingsInfoBalanceNative',
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
@@ -129,9 +134,16 @@ export default Vue.extend({
           this.usdcNativePrice
         )
       );
+    },
+    chartAccentColor(): string {
+      return this.colors['product-savings'];
     }
   },
+  mounted() {
+    this.fetchSavingsInfo();
+  },
   methods: {
+    ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
     handleItemSelected(item: SavingsMonthBalanceItem): void {
       this.selectedItem = item;
     },

@@ -1,0 +1,41 @@
+.button-group {
+  background-color: @button-group-background;
+  border: 1px solid @button-group-border;
+  display: flex;
+  align-items: center;
+  flex-flow: row nowrap;
+  gap: 2px;
+  border-radius: 8px;
+  padding: 2px;
+  width: 100%;
+
+  &.skeleton {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .button {
+    background: transparent;
+    flex: 1 1 auto;
+    min-width: 25%;
+    padding: 2px 16px;
+    border-radius: 8px;
+    color: @button-group-text;
+    font-size: 14px;
+    line-height: 22px;
+    height: unset;
+    @font-medium();
+
+    &.active {
+      background-color: @button-group-active-background;
+      color: @button-group-active-text;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+
+    input {
+      display: none;
+    }
+  }
+}

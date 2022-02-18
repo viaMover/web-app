@@ -10,7 +10,7 @@ export const getOlympusAvatar = (i18n: IVueI18n | null): Avatar => ({
     (i18n?.t('icon.txtMovingWithOlympusAvatarAlt') as string) ??
     'Moving with Olympus',
   imageSrc: require('@/assets/images/olympus_unique_avatar.png'),
-  className: 'user-olympus'
+  color: '#ecebeb'
 });
 
 export const isOlympusAvatar = (avatar?: Avatar): boolean => {

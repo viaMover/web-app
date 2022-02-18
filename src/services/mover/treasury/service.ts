@@ -6,6 +6,7 @@ import {
   TreasuryReceipt,
   TreasuryReceiptResponse
 } from '@/services/mover/treasury/types';
+import { isFeatureEnabled } from '@/settings';
 
 import { Result } from '../../responses';
 import { baseUrl } from '../consts';
@@ -32,7 +33,16 @@ export const getTreasuryInfo = async (
     }
 
     const payloadProcessed: TreasuryInfo = {
-      ...response.payload,
+      currentStakedMove: response.payload.currentStakedMove,
+      currentStakedMoveLP: response.payload.currentStakedMoveLP,
+      currentTotalStakedMove: response.payload.currentTotalStakedMove,
+      currentTotalStakedMoveLP: response.payload.currentTotalStakedMoveLP,
+      earnedThisMonth: response.payload.earnedThisMonth,
+      earnedToday: response.payload.earnedToday,
+      earnedTotal: response.payload.earnedTotal,
+      spentThisMonth: response.payload.spentThisMonth,
+      spentToday: response.payload.spentToday,
+      spentTotal: response.payload.spentTotal,
       last12MonthsBonuses: response.payload.last12MonthsBonuses.map((item) => ({
         ...item,
         type: 'treasury_month_bonuses_item'
@@ -69,11 +79,22 @@ export const getTreasuryReceipt = async (
     }
 
     const payloadProcessed: TreasuryReceipt = {
-      ...response.payload,
-      hourlyBalances: response.payload.hourlyBalances.map((item) => ({
-        ...item,
-        type: 'treasury_hourly_balance_item'
-      }))
+      avgDailyEarnings: response.payload.avgDailyEarnings,
+      avgDailySpendings: response.payload.avgDailySpendings,
+      earnedThisMonth: response.payload.earnedThisMonth,
+      endOfMonthBalanceMove: response.payload.endOfMonthBalanceMove,
+      endOfMonthBalanceMoveLP: response.payload.endOfMonthBalanceMoveLP,
+      spentThisMonth: response.payload.spentThisMonth,
+      totalDepositsMove: response.payload.totalDepositsMove,
+      totalDepositsMoveLP: response.payload.totalDepositsMoveLP,
+      totalWithdrawalsMove: response.payload.totalWithdrawalsMove,
+      totalWithdrawalsMoveLP: response.payload.totalWithdrawalsMoveLP,
+      hourlyBalances: isFeatureEnabled('isTreasuryMonthlyChartEnabled')
+        ? response.payload.hourlyBalances?.map((item) => ({
+            ...item,
+            type: 'treasury_hourly_balance_item'
+          }))
+        : undefined
     };
 
     return { isError: false, result: payloadProcessed };

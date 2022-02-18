@@ -1,32 +1,34 @@
 <template>
-  <secondary-page :title="$t('debitCard.lblBeautifulCard')">
-    <p class="description black">{{ $t('debitCard.txtBeautifulCard') }}</p>
+  <secondary-page class="manage pending">
+    <template v-slot:title>
+      <secondary-page-header
+        class="alternate"
+        :description="$t('debitCard.txtBeautifulCard')"
+        :title="$t('debitCard.lblBeautifulCard')"
+      />
+    </template>
 
-    <div class="content">
-      <div class="container history">
-        <debit-card-history-group
-          v-for="group in actionHistory"
-          :key="group.timestamp"
-          :date="formatDate(group.timestamp)"
-          :items="group.events"
-        />
-      </div>
+    <debit-card-history-group
+      v-for="group in actionHistory"
+      :key="group.timestamp"
+      :date="formatDate(group.timestamp)"
+      :items="group.events"
+    />
 
-      <div
-        v-if="showKycLinkContainer"
-        ref="linkContainer"
-        class="container margin-top-40 kyc-link"
-      >
-        <i18n class="description" path="debitCard.kycLink.description" tag="p">
-          <a
-            class="link"
-            :href="kycLink"
-            target="_blank"
-            v-text="$t('debitCard.kycLink.link')"
-          />
-        </i18n>
-      </div>
-    </div>
+    <i18n
+      v-if="showKycLinkContainer"
+      class="kyc-link"
+      path="debitCard.kycLink.description"
+      tag="div"
+    >
+      <a
+        class="link underline medium"
+        :href="kycLink"
+        rel="external nofollow"
+        target="_blank"
+        v-text="$t('debitCard.kycLink.link')"
+      />
+    </i18n>
   </secondary-page>
 </template>
 
@@ -38,7 +40,7 @@ import dayjs from 'dayjs';
 
 import { EventHistoryItemMinimal } from '@/store/modules/debit-card/types';
 
-import { SecondaryPage } from '@/components/layout';
+import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 
 import DebitCardHistoryGroup from '../debit-card-history/debit-card-history-group.vue';
 
@@ -46,6 +48,7 @@ export default Vue.extend({
   name: 'DebitCardManagePending',
   components: {
     SecondaryPage,
+    SecondaryPageHeader,
     DebitCardHistoryGroup
   },
   computed: {
@@ -66,11 +69,7 @@ export default Vue.extend({
         .sort((a, b) => a.timestamp - b.timestamp)[
         this.eventHistory.length - 1
       ];
-      if (lastEvent.type === 'kyc_process_started') {
-        return true;
-      }
-
-      return false;
+      return lastEvent.type === 'kyc_process_started';
     }
   },
   methods: {

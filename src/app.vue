@@ -1,53 +1,36 @@
 <template>
-  <main id="app">
-    <pu-skeleton-theme color="#dcdcdc">
-      <web3-modal-vue
-        ref="web3modal"
-        cache-provider
-        :provider-options="providerOptions"
-        :theme="theme"
-      />
-      <div class="dashboard">
-        <transition-group appear name="fade">
-          <preload v-if="showPreload" key="preload" />
-          <router-view v-cloak v-if="!showPreload" key="viewport" />
-        </transition-group>
-      </div>
-      <div class="dashboard-mobile">
-        <a
-          class="logo button-active"
-          href="https://viamover.com/"
-          target="_blank"
-        >
-          <img alt="logo" src="@/assets/images/logo.svg" />
-        </a>
-        <div class="g-wrapper">
-          <div class="dashboard-mobile__wrapper">
-            <div class="dashboard-mobile__wrapper-gif">
-              <video
-                autoplay="autoplay"
-                data-keepplaying="data-keepplaying"
-                loop="loop"
-                muted="muted"
-                playsinline="playsinline"
-                src="@/assets/videos/welcome.webm"
-              ></video>
-            </div>
-            <h1>{{ $t('lblDashboardMobile') }}</h1>
-            <p>{{ $t('txtDashboardMobile') }}</p>
-            <a class="black-link button-active" href="https://viamover.com/">
-              {{ $t('btnDashboardMobile') }}
-            </a>
-          </div>
-        </div>
+  <div id="app">
+    <pu-skeleton-theme
+      :color="skeletonColor"
+      :highlight="skeletonHighlightColor"
+    >
+      <div class="page">
+        <web3-modal-vue
+          ref="web3modal"
+          cache-provider
+          :provider-options="providerOptions"
+          :theme="theme"
+        />
+        <transition mode="out-in" name="fade">
+          <template v-if="showPreload">
+            <router-view
+              v-if="$route.meta.hasOwnPreload"
+              key="preload-custom"
+              name="preload"
+            />
+            <preload-default v-else key="preload-default" />
+          </template>
+          <router-view v-else key="viewport" />
+        </transition>
+        <mobile />
       </div>
     </pu-skeleton-theme>
-  </main>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 import MewConnect from '@myetherwallet/mewconnect-web-client';
 import Portis from '@portis/web3';
@@ -55,26 +38,22 @@ import Web3ModalVue from 'web3modal-vue';
 
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import Preload from '@/views/preload.vue';
-
-import '@/styles/_common.less';
-import '@/styles/_modal.less';
-import '@/styles/_execute_modal.less';
-import '@/styles/_search_modal.less';
+import Mobile from '@/views/mobile.vue';
+import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { APIKeys } from './settings';
-import { InitWalletPayload } from './store/modules/account/actions/wallet';
+import { InitWalletPayload } from './store/modules/account/types';
 import { InitCallbacks } from './web3/callbacks';
 
 export default Vue.extend({
   name: 'App',
   components: {
-    Preload,
+    PreloadDefault,
+    Mobile,
     Web3ModalVue
   },
   data() {
     return {
-      theme: 'light',
       providerOptions: {
         mewconnect: {
           package: MewConnect,
@@ -92,6 +71,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({
+      colors: 'colors',
+      theme: 'theme'
+    }),
     ...mapGetters('account', {
       isWalletReady: 'isWalletReady',
       entireBalanceNative: 'entireBalance'
@@ -108,6 +91,15 @@ export default Vue.extend({
       } else {
         return this.$t('lblPageTitleDefault') as string;
       }
+    },
+    skeletonColor(): string {
+      return this.colors['skeleton-color'] ?? 'var(--color-skeleton-color)';
+    },
+    skeletonHighlightColor(): string {
+      return (
+        this.colors['skeleton-highlight-color'] ??
+        'var(--color-skeleton-highlight-color)'
+      );
     }
   },
   watch: {
@@ -119,7 +111,7 @@ export default Vue.extend({
       this.setPageTitle(newVal);
     }
   },
-  mounted() {
+  async mounted() {
     this.setI18n(this.$i18n);
     this.setPageTitle(this.pageTitle);
     this.setIsDetecting(true);
@@ -137,10 +129,12 @@ export default Vue.extend({
       }
       this.setIsDetecting(false);
     });
+    await this.initTheme();
   },
   methods: {
     ...mapActions({
-      setI18n: 'setI18n'
+      setI18n: 'setI18n',
+      initTheme: 'initTheme'
     }),
     ...mapMutations('account', {
       setWeb3Modal: 'setWeb3Modal',

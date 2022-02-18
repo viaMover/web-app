@@ -1,10 +1,8 @@
 <template>
-  <form class="review__wrapper">
-    <secondary-page-simple-title
-      class="page-title max-width"
-      :title="headerTitle"
-    />
-    <div class="arrow">
+  <form class="form review">
+    <secondary-page-header class="max-width" :title="headerTitle" />
+
+    <div class="section arrow">
       <div class="item">
         <slot name="first-token-image">
           <token-image
@@ -33,7 +31,8 @@
         </slot>
       </div>
     </div>
-    <div class="items">
+
+    <div class="section review-statements">
       <div class="item">
         <h2>{{ inputAmountTitle }} {{ token.symbol }}</h2>
         <span>{{ formattedAmount }}</span>
@@ -42,33 +41,23 @@
         <h2>{{ inputAmountNativeTitle }}</h2>
         <span>{{ nativeAmount }}</span>
       </div>
-    </div>
-    <div v-if="isSubsidizedEnabled">
-      <div class="switch">
-        <p>{{ $t('forms.lblUseSmartTreasury') }}</p>
-        <div class="switch__container">
-          <input
-            id="switch-shadow"
-            v-model="isSmartTreasury"
-            hidden="hidden"
-            type="checkbox"
-          />
-          <label class="switch-button" for="switch-shadow"></label>
-        </div>
-      </div>
-      <div class="items">
+      <template v-if="isSubsidizedEnabled">
+        <custom-switch v-model="isSmartTreasury">{{
+          $t('forms.lblUseSmartTreasury')
+        }}</custom-switch>
+
         <div class="item">
           <h2>{{ $t('forms.lblEstimatedGasCost') }}</h2>
           <span>{{ formattedEstimatedGasCost }}</span>
         </div>
-      </div>
+      </template>
     </div>
-    <action-button
-      button-class="button-active black-link"
-      @button-click="handleCreateTx"
-    >
-      {{ buttonText }}
-    </action-button>
+
+    <div class="actions">
+      <action-button class="primary" @button-click="handleCreateTx">
+        {{ buttonText }}
+      </action-button>
+    </div>
   </form>
 </template>
 
@@ -79,9 +68,10 @@ import { mapState } from 'vuex';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { TokenWithBalance } from '@/wallet/types';
 
-import ActionButton from '@/components/buttons/action-button.vue';
+import { ActionButton } from '@/components/buttons';
+import { CustomSwitch } from '@/components/controls';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
-import { SecondaryPageSimpleTitle } from '@/components/layout/secondary-page';
+import { SecondaryPageHeader } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
@@ -89,8 +79,9 @@ export default Vue.extend({
   components: {
     ActionButton,
     TokenImage,
-    SecondaryPageSimpleTitle,
-    CustomPicture
+    SecondaryPageHeader,
+    CustomPicture,
+    CustomSwitch
   },
   props: {
     token: {

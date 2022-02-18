@@ -1,43 +1,40 @@
 <template>
   <transition appear name="fade">
-    <div v-if="opened">
-      <div class="card__info">
-        <div class="card__info-description">
-          <h2>{{ title }}</h2>
-          <p>{{ description }}</p>
-          <div class="card__buttons">
-            <action-button
-              class="black-link button-active"
-              @button-click="handleButtonClick"
-            >
-              {{ buttonText }}
-            </action-button>
-            <action-button
-              button-class="close-button button-active"
-              @button-click="handleCloseButton"
-            >
-              <img
-                v-if="isBlackCloseBtn"
-                :alt="$t('icon.txtCloseIconAlt')"
-                src="@/assets/images/back_cross.svg"
-              />
-              <img
-                v-else
-                :alt="$t('icon.txtCloseIconAlt')"
-                src="@/assets/images/cross.svg"
-              />
-            </action-button>
-          </div>
+    <div v-if="opened" class="card">
+      <div class="info">
+        <div class="text">
+          <h2 class="title">{{ title }}</h2>
+          <p class="description">{{ description }}</p>
         </div>
-        <div class="card__info-icon">
-          <custom-picture
-            :alt="image.alt"
-            :sources="image.sources"
-            :src="image.src"
-            :webp-sources="image.webpSources"
-          />
+        <div class="buttons">
+          <action-button
+            class="button primary cta"
+            @button-click="handleButtonClick"
+          >
+            {{ buttonText }}
+          </action-button>
+          <action-button class="round" @button-click="handleCloseButton">
+            <img
+              v-if="isBlackCloseBtn"
+              :alt="$t('icon.txtCloseIconAlt')"
+              src="@/assets/images/back_cross.svg"
+            />
+            <img
+              v-else
+              :alt="$t('icon.txtCloseIconAlt')"
+              src="@/assets/images/cross.svg"
+            />
+          </action-button>
         </div>
       </div>
+
+      <custom-picture
+        :alt="image.alt"
+        class="image"
+        :sources="image.sources"
+        :src="image.src"
+        :webp-sources="image.webpSources"
+      />
     </div>
   </transition>
 </template>

@@ -1,22 +1,22 @@
 <template>
-  <div class="governance__menu-wrapper-item">
-    <div class="item__info">
-      <div class="item__info-icon"><span>🗳</span></div>
+  <div class="item">
+    <div class="info">
+      <div class="icon"><span>🗳</span></div>
       <progress-loader
         class="progress-loader"
         :is-animated="itemProgress !== 100"
         :stroke-color="strokeColor"
         :value="itemProgress"
       />
-      <div class="item__info-label">
-        <p>{{ item.title }}</p>
-        <span>{{ statusText }}</span>
+      <div class="text">
+        <h3 class="title">{{ item.title }}</h3>
+        <div class="description">{{ statusText }}</div>
       </div>
     </div>
-    <div class="item__link">
+    <div class="action">
       <router-link
-        class="button-active"
-        :class="{ 'black-link': item.state !== 'closed' }"
+        class="button"
+        :class="{ primary: item.state !== 'closed' }"
         :to="{ name: 'governance-view', params: { id: item.id } }"
       >
         {{ buttonText }}
