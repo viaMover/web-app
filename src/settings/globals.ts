@@ -53,7 +53,7 @@ const values: Globals = {
   isTreasuryClaimAndBurnMOVEEnabled: false,
   isSavingsPlusEnabled: false,
   isMultiChainMastheadEnabled: false,
-  isHomeSwapModalEnabled: false
+  isHomeSwapModalEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
