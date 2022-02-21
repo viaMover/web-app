@@ -1,26 +1,34 @@
+import { isBoolean } from '@/utils/guards';
+import { Network } from '@/utils/networkTypes';
+
+type GlobalSettings = Array<Network> | boolean;
 export interface Globals {
-  isSavingsOverviewSomeFieldsEnabled: boolean;
-  isSwapPassportEnabled: boolean;
-  isReleaseRadarEnabled: boolean;
-  isDebitCardEnabled: boolean;
-  isGovernanceMarkdownEnabled: boolean;
-  isBondsEnabled: boolean;
-  isNibbleShopEnabled: boolean;
-  isIntercomEnabled: boolean;
-  isSavingsMonthlyChartEnabled: boolean;
-  isTreasuryMonthlyChartEnabled: boolean;
-  isEarningsMonthlyChartEnabled: boolean;
-  isEarningsEnabled: boolean;
-  isEarningsEthereumEnabled: boolean;
-  isEarningsOlympusEnabled: boolean;
-  isDebitCardTopUpEnabled: boolean;
-  isDebitCardChangeSkinEnabled: boolean;
-  isVaultsRaceEnabled: boolean;
-  isTreasuryClaimAndBurnMOBOEnabled: boolean;
-  isTreasuryClaimAndBurnMOVEEnabled: boolean;
-  isSavingsPlusEnabled: boolean;
-  isMultiChainMastheadEnabled: boolean;
-  isHomeSwapModalEnabled: boolean;
+  isSavingsOverviewSomeFieldsEnabled: GlobalSettings;
+  isSwapPassportEnabled: GlobalSettings;
+  isReleaseRadarEnabled: GlobalSettings;
+  isDebitCardEnabled: GlobalSettings;
+  isGovernanceMarkdownEnabled: GlobalSettings;
+  isBondsEnabled: GlobalSettings;
+  isNibbleShopEnabled: GlobalSettings;
+  isIntercomEnabled: GlobalSettings;
+  isSavingsMonthlyChartEnabled: GlobalSettings;
+  isTreasuryMonthlyChartEnabled: GlobalSettings;
+  isEarningsMonthlyChartEnabled: GlobalSettings;
+  isTreasuryEnabled: GlobalSettings;
+  isSavingsEnabled: GlobalSettings;
+  isExplorerEnabled: GlobalSettings;
+  isOffchainExplorerEnabled: GlobalSettings;
+  isEarningsEnabled: GlobalSettings;
+  isEarningsEthereumEnabled: GlobalSettings;
+  isEarningsOlympusEnabled: GlobalSettings;
+  isDebitCardTopUpEnabled: GlobalSettings;
+  isDebitCardChangeSkinEnabled: GlobalSettings;
+  isVaultsRaceEnabled: GlobalSettings;
+  isTreasuryClaimAndBurnMOBOEnabled: GlobalSettings;
+  isTreasuryClaimAndBurnMOVEEnabled: GlobalSettings;
+  isSavingsPlusEnabled: GlobalSettings;
+  isMultiChainMastheadEnabled: GlobalSettings;
+  isHomeSwapModalEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -35,26 +43,50 @@ const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: true,
+  isDebitCardEnabled: [Network.mainnet],
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
-  isNibbleShopEnabled: true,
+  isNibbleShopEnabled: [Network.mainnet],
   isIntercomEnabled: !isDevelop(),
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
-  isDebitCardTopUpEnabled: true,
+  isDebitCardTopUpEnabled: [Network.mainnet],
   isDebitCardChangeSkinEnabled: false,
   isEarningsMonthlyChartEnabled: false,
+  isTreasuryEnabled: [Network.mainnet],
+  isSavingsEnabled: [Network.mainnet],
+  isExplorerEnabled: [
+    Network.mainnet,
+    Network.binance,
+    Network.binanceTest,
+    Network.kovan,
+    Network.ropsten,
+    Network.rinkeby,
+    Network.avalanche,
+    Network.fantom
+  ],
+  isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,
   isEarningsEthereumEnabled: false,
   isEarningsOlympusEnabled: false,
   isVaultsRaceEnabled: false,
-  isTreasuryClaimAndBurnMOBOEnabled: true,
+  isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
   isSavingsPlusEnabled: false,
-  isMultiChainMastheadEnabled: false,
+  isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true
 };
 
-export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
-  !!values[key];
+export const isFeatureEnabled = <T extends keyof Globals>(
+  key: T,
+  network?: Network
+): boolean => {
+  const setting = values[key];
+  if (isBoolean(setting)) {
+    return setting;
+  }
+  if (network === undefined) {
+    return true;
+  }
+  return network ? setting.includes(network) : false;
+};

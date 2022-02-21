@@ -246,6 +246,7 @@ export default Vue.extend({
         isDebitCardInfoLoading: 'isLoading',
         debitCardState: 'cardState'
       })),
+    ...mapState('account', { networkInfo: 'networkInfo' }),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     },
@@ -316,13 +317,13 @@ export default Vue.extend({
   },
   async mounted() {
     if (
-      isFeatureEnabled('isDebitCardEnabled') &&
+      isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network) &&
       this.loadDebitCardInfo !== undefined
     ) {
       await this.loadDebitCardInfo();
     }
     if (
-      isFeatureEnabled('isEarningsEnabled') &&
+      isFeatureEnabled('isEarningsEnabled', this.networkInfo?.network) &&
       this.loadEarningsMinimalInfo !== undefined
     ) {
       await this.loadEarningsMinimalInfo();
