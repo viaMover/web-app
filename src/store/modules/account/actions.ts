@@ -564,7 +564,8 @@ const actions: ActionFuncs<
             ]
           });
         } catch (err: any) {
-          console.error("Can't add ethereum network to the provider");
+          console.error("Can't add ethereum network to the provider", err);
+          Sentry.captureException(err);
         }
       }
     }
