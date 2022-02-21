@@ -247,7 +247,7 @@ const actions: ActionFuncs<
       'treasury',
       'info',
       info.result,
-      Date.now() + INFO_TIME_EXPIRE
+      INFO_TIME_EXPIRE
     );
   },
   fetchTreasuryReceipt(
@@ -293,7 +293,7 @@ const actions: ActionFuncs<
             'treasuryReceipts',
             key,
             await value.data,
-            Date.now() + RECEIPT_TIME_EXPIRE
+            RECEIPT_TIME_EXPIRE
           );
         }
       }

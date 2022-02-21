@@ -1,3 +1,4 @@
+import { unwrapCacheItem, wrapCacheItem } from '@/store/modules/utils';
 import { DataStoreWrapper } from '@/store/types';
 
 const isStorageAvailable = (
@@ -104,8 +105,9 @@ export const getFromPersistStoreWithExpire = async <T>(
       return;
     }
 
-    if (item.expDate > Date.now()) {
-      resolve(item.data);
+    const val = unwrapCacheItem(item);
+    if (val !== undefined) {
+      resolve(val);
     } else {
       window.localStorage.removeItem(
         buildPersistKey(currentAddress, prefix, key)
@@ -144,17 +146,13 @@ export const setToPersistStore = async <T>(
   prefix: string,
   key: string,
   val: T,
-  expireDate: number
+  expTime: number
 ): Promise<void> => {
   return new Promise((resolve) => {
-    const wrappedValue: DataStoreWrapper<T> = {
-      data: val,
-      expDate: expireDate
-    };
     try {
       window.localStorage.setItem(
         buildPersistKey(currentAddress, prefix, key),
-        JSON.stringify(wrappedValue)
+        JSON.stringify(wrapCacheItem(val, expTime))
       );
     } finally {
       resolve();

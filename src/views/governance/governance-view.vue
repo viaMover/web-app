@@ -11,9 +11,9 @@
       <template v-else>
         <markdown
           v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
-          :text="proposal ? proposal.proposal.body : ''"
+          :text="proposalInfo ? proposalInfo.proposal.body : ''"
         />
-        <p v-else>{{ proposal ? proposal.proposal.body : '' }}</p>
+        <p v-else>{{ proposalInfo ? proposalInfo.proposal.body : '' }}</p>
       </template>
     </div>
   </secondary-page>
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import { ProposalWithVotes } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
@@ -40,24 +40,19 @@ export default Vue.extend({
     Markdown
   },
   computed: {
-    ...mapState('governance', {
-      items: 'items',
+    ...mapGetters('governance', {
+      proposal: 'proposal',
       isLoading: 'isLoading'
     }),
-    proposal(): ProposalWithVotes | undefined {
-      return (
-        this.items.find(
-          (item: ProposalWithVotes) =>
-            item.proposal.id === this.$route.params.id
-        ) ?? undefined
-      );
+    proposalInfo(): ProposalWithVotes | undefined {
+      return this.proposal(this.$route.params.id);
     },
     pageTitle(): string {
-      if (this.proposal === undefined) {
+      if (this.proposalInfo === undefined) {
         return this.$t('governance.lblProposal').toString();
       }
 
-      return this.proposal.proposal.title;
+      return this.proposalInfo.proposal.title;
     }
   },
   methods: {

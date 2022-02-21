@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import { Proposal } from '@/services/mover/governance';
 
@@ -41,18 +41,14 @@ export default Vue.extend({
     GovernanceProposalsItemSkeleton
   },
   computed: {
-    ...mapState('governance', {
-      isGovernanceModuleLoading: 'isLoading',
-      isLoadingLastProposal: 'isLoadingLastProposal'
+    ...mapGetters('governance', {
+      isLoading: 'isLoading'
     }),
     ...mapGetters('governance', {
       lastProposalRaw: 'lastProposal'
     }),
     lastProposal(): Proposal | undefined {
       return this.lastProposalRaw?.proposal;
-    },
-    isLoading(): boolean {
-      return this.isGovernanceModuleLoading || this.isLoadingLastProposal;
     },
     statusText(): string {
       if (this.lastProposal === undefined) {
@@ -68,11 +64,11 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    await this.loadMinimalGovernanceInfo();
+    await this.loadMinimalInfo();
   },
   methods: {
     ...mapActions('governance', {
-      loadMinimalGovernanceInfo: 'loadMinimalGovernanceInfo'
+      loadMinimalInfo: 'loadMinimalInfo'
     })
   }
 });
