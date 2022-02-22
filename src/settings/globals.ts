@@ -13,7 +13,6 @@ export interface Globals {
   isIntercomEnabled: GlobalSettings;
   isSavingsMonthlyChartEnabled: GlobalSettings;
   isTreasuryMonthlyChartEnabled: GlobalSettings;
-  isEarningsMonthlyChartEnabled: GlobalSettings;
   isTreasuryEnabled: GlobalSettings;
   isSavingsEnabled: GlobalSettings;
   isSwapEnabled: GlobalSettings;
@@ -53,7 +52,6 @@ const values: Globals = {
   isTreasuryMonthlyChartEnabled: false,
   isDebitCardTopUpEnabled: [Network.mainnet],
   isDebitCardChangeSkinEnabled: false,
-  isEarningsMonthlyChartEnabled: false,
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
   isSwapEnabled: [Network.mainnet],
