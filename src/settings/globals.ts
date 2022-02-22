@@ -16,6 +16,7 @@ export interface Globals {
   isEarningsMonthlyChartEnabled: GlobalSettings;
   isTreasuryEnabled: GlobalSettings;
   isSavingsEnabled: GlobalSettings;
+  isSwapEnabled: GlobalSettings;
   isExplorerEnabled: GlobalSettings;
   isOffchainExplorerEnabled: GlobalSettings;
   isEarningsEnabled: GlobalSettings;
@@ -55,6 +56,7 @@ const values: Globals = {
   isEarningsMonthlyChartEnabled: false,
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
+  isSwapEnabled: [Network.mainnet],
   isExplorerEnabled: [
     Network.mainnet,
     Network.binance,
@@ -81,7 +83,7 @@ export const isFeatureEnabled = <T extends keyof Globals>(
   key: T,
   network?: Network
 ): boolean => {
-  const setting = values[key];
+  const setting = values[key] as GlobalSettings;
   if (isBoolean(setting)) {
     return setting;
   }

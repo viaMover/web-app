@@ -23,6 +23,7 @@
         </navigation-section-item-image>
 
         <navigation-section-item-image
+          v-if="isSavingsEnabled"
           class="no-hover"
           :description="savingsBalance"
           description-class="bold emphasize"
@@ -41,6 +42,7 @@
         </navigation-section-item-image>
 
         <navigation-section-item-image
+          v-if="isTreasuryEnabled"
           class="no-hover"
           :description="treasuryBalance"
           description-class="bold emphasize"
@@ -59,7 +61,7 @@
         </navigation-section-item-image>
 
         <navigation-section-item-image
-          v-if="isFeatureEnabled('isEarningsEnabled')"
+          v-if="isEarningsEnabled"
           class="no-hover"
           :description="earningsBalance"
           description-class="bold emphasize"
@@ -78,7 +80,7 @@
         </navigation-section-item-image>
 
         <navigation-section-item-image
-          v-if="isFeatureEnabled('isSavingsPlusEnabled')"
+          v-if="isSavingsPlusEnabled"
           class="no-hover"
           :description="savingsPlusBalance"
           description-class="bold emphasize"
@@ -101,7 +103,7 @@
     <nav class="actions">
       <navigation-section hide-header>
         <navigation-section-item-emoji
-          v-if="isFeatureEnabled('isHomeSwapModalEnabled')"
+          v-if="isHomeSwapModalEnabled && isSwapEnabled"
           class="no-hover"
           emoji="🔄"
           :navigate-to="undefined"
@@ -117,6 +119,7 @@
         />
 
         <navigation-section-item-emoji
+          v-if="isSavingsEnabled"
           class="no-hover"
           emoji="💰"
           navigate-to="savings-deposit"
@@ -124,6 +127,7 @@
         />
 
         <navigation-section-item-emoji
+          v-if="isTreasuryEnabled"
           class="no-hover"
           emoji="📈"
           navigate-to="treasury-increase"
@@ -139,7 +143,7 @@
         />
 
         <navigation-section-item-emoji
-          v-if="isFeatureEnabled('isSavingsPlusEnabled')"
+          v-if="isEarningsEnabled"
           class="no-hover"
           emoji="➕"
           navigate-to="savings-plus-deposit"
@@ -295,6 +299,30 @@ export default Vue.extend({
         isFeatureEnabled('isDebitCardEnabled')
       );
     },
+    isEarningsEnabled(): boolean {
+      return isFeatureEnabled('isEarningsEnabled', this.networkInfo?.network);
+    },
+    isSavingsEnabled(): boolean {
+      return isFeatureEnabled('isSavingsEnabled', this.networkInfo?.network);
+    },
+    isTreasuryEnabled(): boolean {
+      return isFeatureEnabled('isTreasuryEnabled', this.networkInfo?.network);
+    },
+    isSwapEnabled(): boolean {
+      return isFeatureEnabled('isSwapEnabled', this.networkInfo?.network);
+    },
+    isHomeSwapModalEnabled(): boolean {
+      return isFeatureEnabled(
+        'isHomeSwapModalEnabled',
+        this.networkInfo?.network
+      );
+    },
+    isSavingsPlusEnabled(): boolean {
+      return isFeatureEnabled(
+        'isSavingsPlusEnabled',
+        this.networkInfo?.network
+      );
+    },
     debitCardTopUpLocation(): Location {
       if (!this.isDebitCardTopUpEnabled) {
         return { name: 'not-found-route' };
@@ -330,7 +358,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    isFeatureEnabled,
     ...mapActions('modals', {
       setIsModalDisplayed: 'setIsDisplayed'
     }),
