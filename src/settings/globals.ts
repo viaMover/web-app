@@ -63,7 +63,8 @@ const values: Globals = {
     Network.ropsten,
     Network.rinkeby,
     Network.avalanche,
-    Network.fantom
+    Network.fantom,
+    Network.polygon
   ],
   isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,

@@ -30,7 +30,7 @@ export default {
     isWalletLoading: true,
     balance: undefined,
     networkInfo: undefined,
-    availableNetworks: [Network.mainnet, Network.fantom],
+    availableNetworks: [Network.mainnet, Network.fantom, Network.polygon],
 
     gasPrices: undefined,
     gasUpdating: false,

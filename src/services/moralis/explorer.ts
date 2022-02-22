@@ -225,6 +225,8 @@ export class MoralisExplorer implements Explorer {
         return NetworkAlias.Avalanche;
       case Network.fantom:
         return NetworkAlias.Fantom;
+      case Network.polygon:
+        return NetworkAlias.Polygon;
       default:
         throw new Error(`Moralis doesn't have alias for ${this.network}`);
     }
@@ -275,7 +277,7 @@ export class MoralisExplorer implements Explorer {
         }
       ];
     } catch (err) {
-      Sentry.captureMessage(`Can't get enrich token list with native:`, err);
+      Sentry.captureMessage(`Can't get enrich token list with native: ${err}`);
       return tokens;
     }
   };

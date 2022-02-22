@@ -27,6 +27,7 @@ import {
   removeExpiredPersistItemsFromLocalStorage
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
+import { errorToString } from '@/utils/errors';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
@@ -564,7 +565,9 @@ const actions: ActionFuncs<
             ]
           });
         } catch (err: any) {
-          console.error("Can't add ethereum network to the provider", err);
+          console.error(
+            `Can't add ethereum network to the provider: ${errorToString(err)}`
+          );
           Sentry.captureException(err);
         }
       }

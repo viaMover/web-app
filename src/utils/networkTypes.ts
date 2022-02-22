@@ -8,7 +8,7 @@ export enum Network {
   kovan = 'kovan',
   rinkeby = 'rinkeby',
   mainnet = 'mainnet',
-  matic = 'matic',
+  polygon = 'polygon',
   ropsten = 'ropsten',
   avalanche = 'avalanche',
   arbitrum = 'arbitrum',
@@ -94,19 +94,19 @@ export const networks = new Array<NetworkInfo>(
   },
   {
     chainId: 137,
-    name: 'Matic',
-    network: Network.matic,
-    explorer: 'explorer-mainnet.maticvigil.com',
+    name: 'Polygon',
+    network: Network.polygon,
+    explorer: 'https://polygonscan.com/',
     subsidizedUrl: undefined,
     baseAsset: {
       address: 'eth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'MATIC',
+      name: 'Matic',
       iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/info/logo.png'
     },
-    rpcUrl: `https://rpc-mainnet.matic.network`
+    rpcUrl: `https://polygon-rpc.com/`
   },
   {
     chainId: 56,

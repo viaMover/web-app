@@ -52,7 +52,7 @@ const assets = {
   binance: [],
   binanceTest: [],
   mainnet: [],
-  matic: [],
+  polygon: [],
   ropsten: [],
   avalanche: [],
   arbitrum: [],
