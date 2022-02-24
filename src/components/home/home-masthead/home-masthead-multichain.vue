@@ -24,7 +24,11 @@
       >
         <template v-slot:button>
           <div class="title">
-            <img class="image" :src="currentNetworkInfo.baseAsset.iconURL" />
+            <img
+              :alt="currentNetworkInfo.baseAsset.name"
+              class="image"
+              :src="currentNetworkInfo.baseAsset.iconURL"
+            />
             {{ currentNetworkInfo.name }}
           </div>
           <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
@@ -37,7 +41,11 @@
           :class="{ active: currentNetworkInfo.chainId === network.chainId }"
           @click="switchNetwork(network)"
         >
-          <img class="image" :src="network.baseAsset.iconURL" />
+          <img
+            :alt="currentNetworkInfo.baseAsset.name"
+            class="image"
+            :src="network.baseAsset.iconURL"
+          />
           {{ network.name }}
         </context-button-item>
       </context-button>

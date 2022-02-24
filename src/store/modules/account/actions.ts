@@ -570,6 +570,12 @@ const actions: ActionFuncs<
           );
           Sentry.captureException(err);
         }
+      } else {
+        console.log(
+          `Can't switch ethereum network to the provider: ${errorToString(
+            error
+          )}`
+        );
       }
     }
   },

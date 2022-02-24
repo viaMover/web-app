@@ -1,4 +1,3 @@
-import { isBoolean } from '@/utils/guards';
 import { Network } from '@/utils/networkTypes';
 
 type GlobalSettings = Array<Network> | boolean;
@@ -82,12 +81,12 @@ export const isFeatureEnabled = <T extends keyof Globals>(
   key: T,
   network?: Network
 ): boolean => {
-  const setting = values[key] as GlobalSettings;
-  if (isBoolean(setting)) {
-    return setting;
+  const settings = values[key] as GlobalSettings;
+  if (typeof settings === 'boolean') {
+    return settings;
   }
   if (network === undefined) {
     return true;
   }
-  return network ? setting.includes(network) : false;
+  return settings.includes(network);
 };
