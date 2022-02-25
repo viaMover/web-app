@@ -24,6 +24,15 @@ export const getOlympusData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_OLYMPUS');
 
+  if (contractAddress === '0x1') {
+    return {
+      totalClaimed: '0',
+      balance: '0',
+      claimStart: '0',
+      claimEnd: '0'
+    };
+  }
+
   const olympus = new web3.eth.Contract(
     NFT_OLYMPUS_ABI as AbiItem[],
     contractAddress

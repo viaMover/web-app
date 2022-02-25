@@ -25,6 +25,14 @@ export const getSweetAndSourData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_SWEET_AND_SOUR');
 
+  if (contractAddress === '0x1') {
+    return {
+      totalClaimed: '0',
+      balance: '0',
+      totalAmount: '0'
+    };
+  }
+
   const sweetAndSour = new web3.eth.Contract(
     NFT_SWEET_AND_SOUR_ABI as AbiItem[],
     contractAddress
