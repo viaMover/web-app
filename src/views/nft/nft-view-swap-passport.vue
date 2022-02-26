@@ -24,6 +24,7 @@ import Vue from 'vue';
 import { mapState } from 'vuex';
 
 import { NftAssetId } from '@/store/modules/nft/types';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { ContentWrapperTwoSided } from '@/components/layout';
 
@@ -32,6 +33,7 @@ export default Vue.extend({
   components: {
     ContentWrapperTwoSided
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       NftAssetId

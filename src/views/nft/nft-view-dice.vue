@@ -181,6 +181,7 @@ import { mapActions, mapState } from 'vuex';
 
 import { DiceType } from '@/services/chain';
 import { DicePayload } from '@/store/modules/nft/types';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
@@ -205,6 +206,7 @@ export default Vue.extend({
     ActionButton,
     SimpleLoaderModal
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       popoverParentId: 'dice-project-action-buttons',
