@@ -18,6 +18,8 @@ export interface Globals {
   isExplorerEnabled: GlobalSettings;
   isOffchainExplorerEnabled: GlobalSettings;
   isEarningsEnabled: GlobalSettings;
+  isGovernanceEnabled: GlobalSettings;
+  isNftDropsEnabled: GlobalSettings;
   isEarningsEthereumEnabled: GlobalSettings;
   isEarningsOlympusEnabled: GlobalSettings;
   isDebitCardTopUpEnabled: GlobalSettings;
@@ -67,6 +69,8 @@ const values: Globals = {
   ],
   isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,
+  isGovernanceEnabled: [Network.mainnet],
+  isNftDropsEnabled: [Network.mainnet],
   isEarningsEthereumEnabled: false,
   isEarningsOlympusEnabled: false,
   isVaultsRaceEnabled: false,

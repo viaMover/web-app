@@ -112,6 +112,7 @@
         />
 
         <navigation-section-item-emoji
+          v-if="isMoreSectionEnabled"
           class="no-hover"
           emoji="📦"
           navigate-to="more"
@@ -321,6 +322,13 @@ export default Vue.extend({
       return isFeatureEnabled(
         'isSavingsPlusEnabled',
         this.networkInfo?.network
+      );
+    },
+    isMoreSectionEnabled(): boolean {
+      return (
+        isFeatureEnabled('isNibbleShopEnabled', this.networkInfo?.network) ||
+        isFeatureEnabled('isGovernanceEnabled', this.networkInfo?.network) ||
+        isFeatureEnabled('isNftDropsEnabled', this.networkInfo?.network)
       );
     },
     debitCardTopUpLocation(): Location {
