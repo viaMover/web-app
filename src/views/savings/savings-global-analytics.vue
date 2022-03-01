@@ -160,9 +160,6 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },
-  mounted() {
-    this.fetchSavingsInfo();
-  },
   methods: {
     ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
     handleBack(): void {
