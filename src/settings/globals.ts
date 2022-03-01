@@ -1,6 +1,6 @@
 import { Network } from '@/utils/networkTypes';
 
-type GlobalSettings = Array<Network> | boolean;
+export type GlobalSettings = Array<Network> | boolean;
 export interface Globals {
   isSavingsOverviewSomeFieldsEnabled: GlobalSettings;
   isSwapPassportEnabled: GlobalSettings;
@@ -44,7 +44,7 @@ const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: [Network.mainnet],
+  isDebitCardEnabled: [Network.mainnet, Network.fantom, Network.polygon],
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isNibbleShopEnabled: [Network.mainnet],

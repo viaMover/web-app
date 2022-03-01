@@ -60,6 +60,7 @@ export const wrapWithCustomPreloadView = (
 interface MetaEntry {
   hasOwnPreload?: boolean;
   skipPreloadScreen?: boolean;
+  customCondition?: () => boolean;
 }
 
 const isSingleView = (record: RouteConfig): record is RouteConfigSingleView => {
