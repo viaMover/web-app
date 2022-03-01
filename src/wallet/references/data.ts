@@ -1,3 +1,4 @@
+import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
@@ -14,6 +15,7 @@ import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
 import NFT_NIBBLE_SHOP_ABI from './abi/nft-nibble-shop.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
+import NFT_ORDER_OF_LIBERTY_ABI from './abi/nft-order-of-liberty.json';
 import NFT_RARI_ABI from './abi/nft-rari.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
@@ -68,7 +70,8 @@ type AddressMapKey =
   | 'BTRFLY_TOKEN_ADDRESS'
   | 'WX_BTRFLY_TOKEN_ADDRESS'
   | 'GOHM_TOKEN_ADDRESS'
-  | 'TOKE_TOKEN_ADDRESS';
+  | 'TOKE_TOKEN_ADDRESS'
+  | 'NFT_ORDER_OF_LIBERTY';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -177,13 +180,21 @@ export const lookupAddress = <K extends AddressMapKey, N extends Network>(
 type ConstantsMapNetworkEntry = Readonly<{
   MASTER_CHEF_POOL_INDEX: number;
   POWERCARD_RARI_ID: number;
+  ORDER_OF_LIBERTY_DEFAULT_PRICE: string;
+  ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
 const constants = {
   [Network.mainnet]: {
     MASTER_CHEF_POOL_INDEX: 257,
-    POWERCARD_RARI_ID: 107150
+    POWERCARD_RARI_ID: 107150,
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei('0.01', 18),
+    ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
+      toWei('0.1', 18),
+      toWei('1', 18),
+      toWei('10', 18)
+    ]
   }
 } as ConstantsMap;
 export const lookupConstant = <
@@ -411,5 +422,6 @@ export {
   EARNINGS_ETHEREUM_ABI,
   EARNINGS_OLYMPUS_ABI,
   WX_BTRFLY_ABI,
+  NFT_ORDER_OF_LIBERTY_ABI,
   validTopUpAssets
 };

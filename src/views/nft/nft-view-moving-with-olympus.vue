@@ -138,11 +138,11 @@ export default Vue.extend({
     this.error = undefined;
   },
   methods: {
-    ...mapActions('nft', [
-      'claimOlympus',
-      'checkOlympusClaimable',
-      'refreshNftStats'
-    ]),
+    ...mapActions('nft', {
+      claimOlympus: 'claimOlympus',
+      checkOlympusClaimable: 'checkOlympusClaimable',
+      refreshNftStats: 'fetchOlympusData'
+    }),
     ...mapActions('account', {
       loadAvatar: 'loadAvatar'
     }),

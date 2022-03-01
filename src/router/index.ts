@@ -316,6 +316,15 @@ const routes: Array<RouteConfig> = [
           )
       },
       {
+        path: 'view/order-of-liberty',
+        name: 'the-order-of-liberty',
+        alias: '/order-of-liberty',
+        component: () =>
+          import(
+            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-order-of-liberty.vue'
+          )
+      },
+      {
         path: 'view/vaults',
         name: 'vaults',
         component: () =>

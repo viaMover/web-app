@@ -19,6 +19,7 @@ const getters: GettersFuncs<Getters, NFTStoreState> = {
   },
   nfts(state): Array<BaseNftAsset> {
     const res: Array<BaseNftAsset> = [
+      state.orderOfLiberty,
       state.dice,
       state.movingWithOlympus,
       state.sweetAndSour,

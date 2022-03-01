@@ -5,11 +5,13 @@ import {
   claimAndExchangeUnexpectedMove,
   claimDice,
   claimOlympus,
+  claimOrderOfLiberty,
   claimSweetAndSour,
   claimUnexpectedMove,
   exchangeUnexpectedMove,
   getDiceData,
   getOlympusData,
+  getOrderOfLibertyData,
   getSweetAndSourData,
   getUnexpectedMoveData,
   getVaultsData
@@ -20,7 +22,8 @@ import {
   ChangePayload,
   ClaimPayload,
   DicePayload,
-  NFTStoreState
+  NFTStoreState,
+  OrderOfLibertyPayload
 } from '@/store/modules/nft/types';
 import { ActionFuncs } from '@/store/types';
 import { greaterThan, lessThan } from '@/utils/bigmath';
@@ -44,6 +47,8 @@ type Actions = {
   claimUnexpectedMove: Promise<void>;
   claimAndExchangeUnexpectedMove: Promise<void>;
   exchangeUnexpectedMove: Promise<void>;
+  fetchOrderOfLibertyData: Promise<void>;
+  claimOrderOfLiberty: Promise<void>;
 };
 
 const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
@@ -54,6 +59,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
 
     commit('setIsLoading', true);
 
+    const fetchOrderOfLibertyDataPromise = dispatch('fetchOrderOfLibertyData');
     const fetchUnexpectedMoveDataPromise = dispatch('fetchUnexpectedMoveData');
     const fetchSweetAndSourDataPromise = dispatch('fetchSweetAndSourData');
     const fetchOlympusDataPromise = dispatch('fetchOlympusData');
@@ -61,6 +67,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     const fetchDiceDataPromise = dispatch('fetchDiceData');
 
     await Promise.allSettled([
+      fetchOrderOfLibertyDataPromise,
       fetchUnexpectedMoveDataPromise,
       fetchSweetAndSourDataPromise,
       fetchOlympusDataPromise,
@@ -288,6 +295,47 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
+      fastGasPrice.price,
+      payload.changeStep
+    );
+  },
+  async fetchOrderOfLibertyData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    try {
+      const data = await getOrderOfLibertyData(
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
+      );
+
+      commit('setOrderOfLibertyData', data);
+    } catch (e) {
+      logger.error("Can't get data about The Order of Liberty NFT", e);
+      Sentry.captureException(e);
+    }
+  },
+  async claimOrderOfLiberty(
+    { rootState },
+    payload: OrderOfLibertyPayload
+  ): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
+    }
+
+    const fastGasPrice = rootState.account.gasPrices?.FastGas;
+
+    if (fastGasPrice === undefined) {
+      throw new Error('There is no gas price, please, try again');
+    }
+
+    await claimOrderOfLiberty(
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
+      payload.selectedPrice,
       fastGasPrice.price,
       payload.changeStep
     );

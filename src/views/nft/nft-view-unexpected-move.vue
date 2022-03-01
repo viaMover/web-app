@@ -168,12 +168,12 @@ export default Vue.extend({
     this.actionError = undefined;
   },
   methods: {
-    ...mapActions('nft', [
-      'claimUnexpectedMove',
-      'refreshNftStats',
-      'claimAndExchangeUnexpectedMove',
-      'exchangeUnexpectedMove'
-    ]),
+    ...mapActions('nft', {
+      claimUnexpectedMove: 'claimUnexpectedMove',
+      refreshNftStats: 'fetchUnexpectedMoveData',
+      claimAndExchangeUnexpectedMove: 'claimAndExchangeUnexpectedMove',
+      exchangeUnexpectedMove: 'exchangeUnexpectedMove'
+    }),
     handleClose(): void {
       this.$router.back();
     },
