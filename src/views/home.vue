@@ -10,18 +10,16 @@
     <home-masthead v-else />
 
     <div class="cards">
-      <home-cards-debit-card v-if="isFeatureEnabled('isDebitCardEnabled')" />
-      <home-cards-savings-deposit v-else />
+      <home-cards-order-of-liberty v-if="isOrderOfLibertyNFTEnabled" />
+      <home-cards-debit-card v-else-if="isDebitCardEnabled" />
+      <home-cards-savings-deposit v-else-if="isSavingsEnabled" />
     </div>
 
     <home-navigation-section />
 
     <template v-slot:modals>
-      <template>
-        <swap-modal
-          v-if="isFeatureEnabled('isHomeSwapModalEnabled')"
-          key="swap-modal"
-        />
+      <template v-if="isSwapModalEnabled">
+        <swap-modal key="swap-modal" />
         <search-modal key="search-modal" />
       </template>
     </template>
@@ -30,11 +28,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 
 import {
   HomeCardsDebitCard,
+  HomeCardsOrderOfLiberty,
   HomeCardsSavingsDeposit,
   HomeLeftRail,
   HomeMasthead,
@@ -54,8 +54,32 @@ export default Vue.extend({
     HomeNavigationSection,
     HomeCardsDebitCard,
     HomeCardsSavingsDeposit,
+    HomeCardsOrderOfLiberty,
     SwapModal,
     SearchModal
+  },
+  computed: {
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
+    isDebitCardEnabled(): boolean {
+      return isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network);
+    },
+    isSwapModalEnabled(): boolean {
+      return (
+        isFeatureEnabled('isSwapEnabled', this.networkInfo?.network) &&
+        isFeatureEnabled('isHomeSwapModalEnabled', this.networkInfo?.network)
+      );
+    },
+    isOrderOfLibertyNFTEnabled(): boolean {
+      return isFeatureEnabled(
+        'isOrderOfLibertyNFTEnabled',
+        this.networkInfo?.network
+      );
+    },
+    isSavingsEnabled(): boolean {
+      return isFeatureEnabled('isSavingsEnabled', this.networkInfo?.network);
+    }
   },
   methods: {
     isFeatureEnabled

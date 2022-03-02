@@ -104,20 +104,20 @@
     <nav class="actions">
       <navigation-section hide-header>
         <navigation-section-item-emoji
+          v-if="isMoreSectionEnabled"
+          class="no-hover"
+          emoji="📦"
+          navigate-to="more"
+          :text="$t('lblMore')"
+        />
+
+        <navigation-section-item-emoji
           v-if="isHomeSwapModalEnabled && isSwapEnabled"
           class="no-hover"
           emoji="🔄"
           :navigate-to="undefined"
           :text="$t('menu.lblSwapToken')"
           @click="handleOpenSwapModal(undefined)"
-        />
-
-        <navigation-section-item-emoji
-          v-if="isMoreSectionEnabled"
-          class="no-hover"
-          emoji="📦"
-          navigate-to="more"
-          :text="$t('lblMore')"
         />
 
         <navigation-section-item-emoji
