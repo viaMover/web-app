@@ -86,6 +86,7 @@ import { mapActions, mapState } from 'vuex';
 
 import { ChangePayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton } from '@/components/buttons';
@@ -102,6 +103,7 @@ export default Vue.extend({
     ActionButton,
     SimpleLoaderModal
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       transactionStep: undefined as Step | undefined,
@@ -129,7 +131,10 @@ export default Vue.extend({
   },
   methods: {
     formatToDecimals,
-    ...mapActions('nft', ['claimVaults', 'refreshNftStats']),
+    ...mapActions('nft', {
+      claimVaults: 'claimVaults',
+      refreshNftStats: 'fetchVaultsData'
+    }),
     handleClose(): void {
       this.$router.back();
     },

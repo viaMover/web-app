@@ -50,6 +50,12 @@ export { getDiceData, claimDice } from './nft/dice/dice';
 export type { DiceData, DiceType } from './nft/dice/types';
 
 export {
+  getOrderOfLibertyData,
+  claimOrderOfLiberty
+} from './nft/order-of-liberty/service';
+export { OrderOfLibertyData } from './nft/order-of-liberty/types';
+
+export {
   getVotingPower,
   getCommunityVotingPower
 } from './governance/governance';

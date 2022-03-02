@@ -96,6 +96,7 @@ import { Properties } from 'csstype';
 import { ClaimPayload } from '@/store/modules/shop/types';
 import { Asset } from '@/store/modules/shop/types';
 import { fromWei } from '@/utils/bigmath';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
@@ -113,6 +114,7 @@ export default Vue.extend({
     AnalyticsListItem,
     SimpleLoaderModal
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       transactionStep: undefined as Step | undefined,

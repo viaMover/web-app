@@ -1,14 +1,16 @@
 import Vue from 'vue';
 import VueRouter, { NavigationFailureType, RouteConfig } from 'vue-router';
+import { Store } from 'vuex';
 
 import { loadLanguageAsync } from '@/i18n';
 import {
   wrapWithCustomPreloadView,
   wrapWithMeta
 } from '@/router/descending-meta-wrapper';
-import { checkFeatureFlag } from '@/router/feature-flag-guard';
+import { checkFeatureFlags } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
+import { RootStoreState } from '@/store/types';
 import ConnectWallet from '@/views/connect-wallet.vue';
 import Home from '@/views/home.vue';
 import More from '@/views/more.vue';
@@ -16,6 +18,7 @@ import PreloadMore from '@/views/preload/preload-more.vue';
 import View404 from '@/views/view-404.vue';
 
 import { formStepsGuard } from './form-steps-guard';
+import { requireCustomCondition } from './guard';
 
 Vue.use(VueRouter);
 
@@ -31,7 +34,30 @@ const routes: Array<RouteConfig> = [
       name: 'more',
       component: More
     },
-    PreloadMore
+    PreloadMore,
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return (
+          isFeatureEnabled(
+            'isNibbleShopEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isGovernanceEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isNftDropsEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isOrderOfLibertyNFTEnabled',
+            store.state?.account?.networkInfo?.network
+          )
+        );
+      }
+    }
   ),
   wrapWithMeta(
     {
@@ -96,7 +122,16 @@ const routes: Array<RouteConfig> = [
     () =>
       import(
         /* webpackChunkName: "savings" */ '@/views/preload/preload-product/preload-product.vue'
-      )
+      ),
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isSavingsEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
   ),
   wrapWithCustomPreloadView(
     {
@@ -145,7 +180,7 @@ const routes: Array<RouteConfig> = [
             import(
               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-mobo-wrapper.vue'
             ),
-          beforeEnter: checkFeatureFlag('isTreasuryClaimAndBurnMOBOEnabled')
+          beforeEnter: checkFeatureFlags(['isTreasuryClaimAndBurnMOBOEnabled'])
         },
         {
           path: 'powercard',
@@ -176,195 +211,251 @@ const routes: Array<RouteConfig> = [
     () =>
       import(
         /* webpackChunkName: "treasury" */ '@/views/preload/preload-product/preload-product.vue'
-      )
-  ),
-  {
-    path: '/governance',
-    component: () =>
-      import(
-        /* webpackChunkName: "governance" */ '@/views/governance/governance-root.vue'
       ),
-    children: [
-      {
-        path: 'create',
-        name: 'governance-create',
-        components: {
-          default: () =>
-            import(
-              /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
-            ),
-          leftRail: () =>
-            import(
-              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
-            )
-        }
-      },
-      {
-        path: 'view/:id',
-        components: {
-          default: () =>
-            import(
-              /* webpackChunkName: "governance" */ '@/views/governance/governance-view-root.vue'
-            ),
-          leftRail: () =>
-            import(
-              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail-view.vue'
-            )
-        },
-        children: [
-          {
-            path: '',
-            name: 'governance-view',
-            component: () =>
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isTreasuryEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
+  ),
+  wrapWithMeta(
+    {
+      path: '/governance',
+      component: () =>
+        import(
+          /* webpackChunkName: "governance" */ '@/views/governance/governance-root.vue'
+        ),
+      children: [
+        {
+          path: 'create',
+          name: 'governance-create',
+          components: {
+            default: () =>
               import(
-                /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
-              )
-          },
-          {
-            path: 'analytics',
-            name: 'governance-analytics',
-            component: () =>
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
+              ),
+            leftRail: () =>
               import(
-                /* webpackChunkName: "governance" */ '@/views/governance/governance-analytics.vue'
-              )
-          },
-          {
-            path: 'vote/:decision',
-            name: 'governance-vote',
-            component: () =>
-              import(
-                /* webpackChunkName: "governance" */ '@/views/governance/governance-vote.vue'
+                /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
               )
           }
-        ]
-      },
-      {
-        path: 'global-analytics',
-        name: 'governance-global-analytics',
-        components: {
-          default: () =>
+        },
+        {
+          path: 'view/:id',
+          components: {
+            default: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-view-root.vue'
+              ),
+            leftRail: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail-view.vue'
+              )
+          },
+          children: [
+            {
+              path: '',
+              name: 'governance-view',
+              component: () =>
+                import(
+                  /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
+                )
+            },
+            {
+              path: 'analytics',
+              name: 'governance-analytics',
+              component: () =>
+                import(
+                  /* webpackChunkName: "governance" */ '@/views/governance/governance-analytics.vue'
+                )
+            },
+            {
+              path: 'vote/:decision',
+              name: 'governance-vote',
+              component: () =>
+                import(
+                  /* webpackChunkName: "governance" */ '@/views/governance/governance-vote.vue'
+                )
+            }
+          ]
+        },
+        {
+          path: 'global-analytics',
+          name: 'governance-global-analytics',
+          components: {
+            default: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
+              ),
+            leftRail: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+              )
+          }
+        },
+        {
+          path: '',
+          name: 'governance-view-all',
+          components: {
+            default: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
+              ),
+            leftRail: () =>
+              import(
+                /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+              )
+          }
+        }
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isGovernanceEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
+  ),
+  wrapWithMeta(
+    {
+      path: '/nibble-shop',
+      component: () =>
+        import(
+          /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-root.vue'
+        ),
+      children: [
+        {
+          path: 'view/:id',
+          name: 'nibble-shop-view',
+          component: () =>
             import(
-              /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
-            ),
-          leftRail: () =>
+              /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view.vue'
+            )
+        },
+        {
+          path: '',
+          name: 'nibble-shop-view-all',
+          component: () =>
             import(
-              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+              /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
+            )
+        },
+        {
+          path: 'redeem/:id',
+          name: 'nibble-shop-redeem',
+          component: () =>
+            import(
+              /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
             )
         }
-      },
-      {
-        path: '',
-        name: 'governance-view-all',
-        components: {
-          default: () =>
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isNibbleShopEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
+  ),
+  wrapWithMeta(
+    {
+      path: '/nft-drops',
+      component: () =>
+        import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-root.vue'),
+      children: [
+        {
+          path: '',
+          name: 'nft-view-all',
+          component: () =>
             import(
-              /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
-            ),
-          leftRail: () =>
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
+            )
+        },
+        {
+          path: 'view/order-of-liberty',
+          name: 'the-order-of-liberty',
+          alias: '/order-of-liberty',
+          component: () =>
             import(
-              /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-order-of-liberty.vue'
+            )
+        },
+        {
+          path: 'view/vaults',
+          name: 'vaults',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-vaults.vue'
+            )
+        },
+        {
+          path: 'view/swap-passport',
+          name: 'swap-passport',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-swap-passport.vue'
+            )
+        },
+        {
+          path: 'view/sweet-and-sour',
+          name: 'sweet-&-sour',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-sweet-and-sour.vue'
+            )
+        },
+        {
+          path: 'view/unexpected-move',
+          name: 'unexpected-move',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-unexpected-move.vue'
+            )
+        },
+        {
+          path: 'view/moving-with-olympus',
+          name: 'moving-with-olympus',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
+            )
+        },
+        {
+          path: 'view/dice-project',
+          name: 'dice-project',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
             )
         }
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return (
+          isFeatureEnabled(
+            'isNftDropsEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isOrderOfLibertyNFTEnabled',
+            store.state?.account?.networkInfo?.network
+          )
+        );
       }
-    ]
-  },
-  {
-    path: '/nibble-shop',
-    component: () =>
-      import(
-        /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-root.vue'
-      ),
-    children: [
-      {
-        path: 'view/:id',
-        name: 'nibble-shop-view',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view.vue'
-          )
-      },
-      {
-        path: '',
-        name: 'nibble-shop-view-all',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
-          )
-      },
-      {
-        path: 'redeem/:id',
-        name: 'nibble-shop-redeem',
-        component: () =>
-          import(
-            /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
-          )
-      }
-    ],
-    beforeEnter: checkFeatureFlag('isNibbleShopEnabled')
-  },
-  {
-    path: '/nft-drops',
-    component: () =>
-      import(/* webpackChunkName: "nft-drops" */ '@/views/nft/nft-root.vue'),
-    children: [
-      {
-        path: '',
-        name: 'nft-view-all',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
-          )
-      },
-      {
-        path: 'view/vaults',
-        name: 'vaults',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-vaults.vue'
-          )
-      },
-      {
-        path: 'view/swap-passport',
-        name: 'swap-passport',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-swap-passport.vue'
-          )
-      },
-      {
-        path: 'view/sweet-and-sour',
-        name: 'sweet-&-sour',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-sweet-and-sour.vue'
-          )
-      },
-      {
-        path: 'view/unexpected-move',
-        name: 'unexpected-move',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-unexpected-move.vue'
-          )
-      },
-      {
-        path: 'view/moving-with-olympus',
-        name: 'moving-with-olympus',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
-          )
-      },
-      {
-        path: 'view/dice-project',
-        name: 'dice-project',
-        component: () =>
-          import(
-            /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
-          )
-      }
-    ]
-  },
+    }
+  ),
   wrapWithMeta(
     {
       path: '/404',
@@ -374,6 +465,57 @@ const routes: Array<RouteConfig> = [
     {
       skipPreloadScreen: true
     }
+  ),
+  wrapWithMeta(
+    {
+      path: '/debit-card',
+      component: () =>
+        import(
+          /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
+        ),
+      children: [
+        {
+          path: 'top-up/step/:step',
+          name: 'debit-card-top-up',
+          component: () =>
+            import(
+              /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
+            ),
+          props: (to) => ({
+            step: to.params.step
+          }),
+          beforeEnter: (to, from, next) => {
+            formStepsGuard('debit-card-top-up')(to, from, next);
+          }
+        },
+        {
+          path: 'change-skin',
+          name: 'debit-card-change-skin',
+          component: () =>
+            import(
+              /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-change-skin.vue'
+            ),
+          beforeEnter: checkFeatureFlags(['isDebitCardChangeSkinEnabled'])
+        },
+        {
+          path: '',
+          name: 'debit-card-manage',
+          component: () =>
+            import(
+              /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-manage.vue'
+            )
+        }
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isDebitCardEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
   )
 ];
 
@@ -382,54 +524,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-
-if (isFeatureEnabled('isDebitCardEnabled')) {
-  router.addRoute({
-    path: '/debit-card',
-    component: () =>
-      import(
-        /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
-      ),
-    children: [
-      {
-        path: 'top-up/step/:step',
-        name: 'debit-card-top-up',
-        component: () =>
-          import(
-            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
-          ),
-        props: (to) => ({
-          step: to.params.step
-        }),
-        beforeEnter: (to, from, next) => {
-          if (!isFeatureEnabled('isDebitCardTopUpEnabled')) {
-            next({ name: 'not-found-route' });
-            return;
-          }
-
-          formStepsGuard('debit-card-top-up')(to, from, next);
-        }
-      },
-      {
-        path: 'change-skin',
-        name: 'debit-card-change-skin',
-        component: () =>
-          import(
-            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-change-skin.vue'
-          ),
-        beforeEnter: checkFeatureFlag('isDebitCardChangeSkinEnabled')
-      },
-      {
-        path: '',
-        name: 'debit-card-manage',
-        component: () =>
-          import(
-            /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-manage.vue'
-          )
-      }
-    ]
-  });
-}
 
 router.addRoute({
   path: '*',
@@ -467,6 +561,8 @@ router.beforeEach((to, from, next) => {
 });
 
 router.beforeResolve(requireWalletAuth(['connect-wallet', 'not-found-route']));
+
+router.beforeResolve(requireCustomCondition(router));
 
 router.onError((error) => {
   if (

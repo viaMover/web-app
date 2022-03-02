@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import {
   formatToDecimals,
@@ -211,11 +211,7 @@ export default Vue.extend({
       return `$${formatToNative(this.treasuryTotalStakedBalanceNative)}`;
     }
   },
-  mounted() {
-    this.fetchTreasuryInfo();
-  },
   methods: {
-    ...mapActions('treasury', { fetchTreasuryInfo: 'fetchTreasuryInfo' }),
     handleBack(): void {
       this.$router.replace({
         name: 'treasury-manage'

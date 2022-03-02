@@ -1,26 +1,36 @@
+import { Network } from '@/utils/networkTypes';
+
+export type GlobalSettings = Array<Network> | boolean;
 export interface Globals {
-  isSavingsOverviewSomeFieldsEnabled: boolean;
-  isSwapPassportEnabled: boolean;
-  isReleaseRadarEnabled: boolean;
-  isDebitCardEnabled: boolean;
-  isGovernanceMarkdownEnabled: boolean;
-  isBondsEnabled: boolean;
-  isNibbleShopEnabled: boolean;
-  isIntercomEnabled: boolean;
-  isSavingsMonthlyChartEnabled: boolean;
-  isTreasuryMonthlyChartEnabled: boolean;
-  isEarningsMonthlyChartEnabled: boolean;
-  isEarningsEnabled: boolean;
-  isEarningsEthereumEnabled: boolean;
-  isEarningsOlympusEnabled: boolean;
-  isDebitCardTopUpEnabled: boolean;
-  isDebitCardChangeSkinEnabled: boolean;
-  isVaultsRaceEnabled: boolean;
-  isTreasuryClaimAndBurnMOBOEnabled: boolean;
-  isTreasuryClaimAndBurnMOVEEnabled: boolean;
-  isSavingsPlusEnabled: boolean;
-  isMultiChainMastheadEnabled: boolean;
-  isHomeSwapModalEnabled: boolean;
+  isSavingsOverviewSomeFieldsEnabled: GlobalSettings;
+  isSwapPassportEnabled: GlobalSettings;
+  isReleaseRadarEnabled: GlobalSettings;
+  isDebitCardEnabled: GlobalSettings;
+  isGovernanceMarkdownEnabled: GlobalSettings;
+  isBondsEnabled: GlobalSettings;
+  isNibbleShopEnabled: GlobalSettings;
+  isIntercomEnabled: GlobalSettings;
+  isSavingsMonthlyChartEnabled: GlobalSettings;
+  isTreasuryMonthlyChartEnabled: GlobalSettings;
+  isTreasuryEnabled: GlobalSettings;
+  isSavingsEnabled: GlobalSettings;
+  isSwapEnabled: GlobalSettings;
+  isExplorerEnabled: GlobalSettings;
+  isOffchainExplorerEnabled: GlobalSettings;
+  isEarningsEnabled: GlobalSettings;
+  isGovernanceEnabled: GlobalSettings;
+  isNftDropsEnabled: GlobalSettings;
+  isEarningsEthereumEnabled: GlobalSettings;
+  isEarningsOlympusEnabled: GlobalSettings;
+  isDebitCardTopUpEnabled: GlobalSettings;
+  isDebitCardChangeSkinEnabled: GlobalSettings;
+  isVaultsRaceEnabled: GlobalSettings;
+  isTreasuryClaimAndBurnMOBOEnabled: GlobalSettings;
+  isTreasuryClaimAndBurnMOVEEnabled: GlobalSettings;
+  isSavingsPlusEnabled: GlobalSettings;
+  isMultiChainMastheadEnabled: GlobalSettings;
+  isHomeSwapModalEnabled: GlobalSettings;
+  isOrderOfLibertyNFTEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -35,26 +45,54 @@ const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: true,
+  isDebitCardEnabled: [Network.mainnet],
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
-  isNibbleShopEnabled: true,
+  isNibbleShopEnabled: [Network.mainnet],
   isIntercomEnabled: !isDevelop(),
   isSavingsMonthlyChartEnabled: false,
   isTreasuryMonthlyChartEnabled: false,
-  isDebitCardTopUpEnabled: true,
+  isDebitCardTopUpEnabled: [Network.mainnet],
   isDebitCardChangeSkinEnabled: false,
-  isEarningsMonthlyChartEnabled: false,
+  isTreasuryEnabled: [Network.mainnet],
+  isSavingsEnabled: [Network.mainnet],
+  isSwapEnabled: [Network.mainnet],
+  isExplorerEnabled: [
+    Network.mainnet,
+    Network.binance,
+    Network.binanceTest,
+    Network.kovan,
+    Network.ropsten,
+    Network.rinkeby,
+    Network.avalanche,
+    Network.fantom,
+    Network.polygon
+  ],
+  isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,
+  isGovernanceEnabled: [Network.mainnet],
+  isNftDropsEnabled: [Network.mainnet],
   isEarningsEthereumEnabled: false,
   isEarningsOlympusEnabled: false,
   isVaultsRaceEnabled: false,
-  isTreasuryClaimAndBurnMOBOEnabled: true,
+  isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
   isSavingsPlusEnabled: false,
-  isMultiChainMastheadEnabled: false,
-  isHomeSwapModalEnabled: true
+  isMultiChainMastheadEnabled: true,
+  isHomeSwapModalEnabled: true,
+  isOrderOfLibertyNFTEnabled: [Network.mainnet, Network.polygon, Network.fantom]
 };
 
-export const isFeatureEnabled = <T extends keyof Globals>(key: T): boolean =>
-  !!values[key];
+export const isFeatureEnabled = <T extends keyof Globals>(
+  key: T,
+  network?: Network
+): boolean => {
+  const settings = values[key] as GlobalSettings;
+  if (typeof settings === 'boolean') {
+    return settings;
+  }
+  if (network === undefined) {
+    return true;
+  }
+  return settings.includes(network);
+};

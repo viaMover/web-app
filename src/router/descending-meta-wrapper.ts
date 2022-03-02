@@ -4,6 +4,9 @@ import {
   RouteConfigMultipleViews,
   RouteConfigSingleView
 } from 'vue-router/types/router';
+import { Store } from 'vuex';
+
+import { RootStoreState } from '@/store/types';
 
 export const wrapWithMeta = (
   record: RouteConfig,
@@ -60,6 +63,7 @@ export const wrapWithCustomPreloadView = (
 interface MetaEntry {
   hasOwnPreload?: boolean;
   skipPreloadScreen?: boolean;
+  customCondition?: (store?: Store<RootStoreState>) => boolean;
 }
 
 const isSingleView = (record: RouteConfig): record is RouteConfigSingleView => {

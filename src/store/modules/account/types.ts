@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
-import { NetworkInfo } from '@/utils/networkTypes';
+import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
@@ -45,6 +45,8 @@ export type AccountStoreState = {
   balance: undefined | string;
   networkInfo: undefined | NetworkInfo;
   currentAddress: undefined | string;
+
+  availableNetworks: Array<Network>;
 
   isTransactionsListLoaded: boolean;
   transactions: Array<Transaction>;

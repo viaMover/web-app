@@ -24,6 +24,15 @@ export const getOlympusData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_OLYMPUS');
 
+  if (contractAddress === '0x1') {
+    return {
+      totalClaimed: '0',
+      balance: '0',
+      claimStart: '0',
+      claimEnd: '0'
+    };
+  }
+
   const olympus = new web3.eth.Contract(
     NFT_OLYMPUS_ABI as AbiItem[],
     contractAddress
@@ -53,7 +62,6 @@ export const claimOlympus = async (
   accountAddress: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_OLYMPUS');
@@ -105,11 +113,9 @@ export const claimOlympus = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: gasPriceInGwei
-      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
-      : undefined,
-    maxFeePerGas: gasPriceInGwei ? undefined : null,
-    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null,
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null,
     value: feeAmount
   };
 

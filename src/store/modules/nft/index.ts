@@ -12,6 +12,50 @@ export default {
   state: {
     isLoading: false,
 
+    orderOfLiberty: {
+      id: NftAssetId.OrderOfLiberty,
+      balance: '0',
+      name: 'The Order of Liberty',
+      meta: {
+        totalSupply: '0',
+        defaultPrice: '0',
+        availablePrices: []
+      },
+      picture: {
+        src: require('@/assets/images/order-of-liberty/preview@1x.png'),
+        sources: [
+          {
+            variant: '2x',
+            src: require('@/assets/images/order-of-liberty/preview@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/order-of-liberty/preview@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/order-of-liberty/preview@2x.webp')
+          }
+        ]
+      },
+      bigPicture: {
+        src: require('@/assets/images/order-of-liberty/preview-big@1x.png'),
+        sources: [
+          {
+            variant: '2x',
+            src: require('@/assets/images/order-of-liberty/preview-big@2x.png')
+          }
+        ],
+        webpSources: [
+          {
+            src: require('@/assets/images/order-of-liberty/preview-big@1x.webp')
+          },
+          {
+            variant: '2x',
+            src: require('@/assets/images/order-of-liberty/preview-big@2x.webp')
+          }
+        ]
+      }
+    },
     movingWithOlympus: {
       id: NftAssetId.MovingWithOlympus,
       balance: '0',

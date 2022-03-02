@@ -24,8 +24,12 @@
       >
         <template v-slot:button>
           <div class="title">
-            <img class="image" src="@/assets/images/ETH.png" />
-            {{ currentNetworkInfo.network }}
+            <img
+              :alt="currentNetworkInfo.baseAsset.name"
+              class="image"
+              :src="currentNetworkInfo.baseAsset.iconURL"
+            />
+            {{ currentNetworkInfo.name }}
           </div>
           <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
         </template>
@@ -35,9 +39,14 @@
           :key="network.chainId"
           class="item"
           :class="{ active: currentNetworkInfo.chainId === network.chainId }"
+          @click="switchNetwork(network)"
         >
-          <img class="image" src="@/assets/images/ETH.png" />
-          {{ network.network }}
+          <img
+            :alt="currentNetworkInfo.baseAsset.name"
+            class="image"
+            :src="network.baseAsset.iconURL"
+          />
+          {{ network.name }}
         </context-button-item>
       </context-button>
     </section>
@@ -48,7 +57,7 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { NetworkInfo } from '@/utils/networkTypes';
+import { getNetwork, Network, NetworkInfo } from '@/utils/networkTypes';
 
 import { ContextButton, ContextButtonItem } from '@/components/buttons';
 import { ArrowDownIcon } from '@/components/controls';
@@ -69,7 +78,8 @@ export default Vue.extend({
   computed: {
     ...mapState('account', {
       networkInfo: 'networkInfo',
-      currentAddress: 'currentAddress'
+      currentAddress: 'currentAddress',
+      availableNetworks: 'availableNetworks'
     }),
     currentAddressText(): string {
       if (this.currentAddress) {
@@ -90,19 +100,20 @@ export default Vue.extend({
       return this.networkInfo;
     },
     allNetworks(): Array<NetworkInfo> {
-      return new Array(4).fill(this.networkInfo).map((el, idx) => ({
-        ...el,
-        chainId: idx === 0 ? el.chainId : idx + 250
-      }));
+      return this.availableNetworks.map((el: Network) => getNetwork(el));
     }
   },
   methods: {
     ...mapActions('account', {
-      clearWalletState: 'disconnectWallet'
+      clearWalletState: 'disconnectWallet',
+      switchEthereumChain: 'switchEthereumChain'
     }),
     async disconnectWallet(): Promise<void> {
       await this.clearWalletState();
       window.location.reload();
+    },
+    async switchNetwork(network: Network): Promise<void> {
+      await this.switchEthereumChain(network);
     }
   }
 });
