@@ -1,12 +1,17 @@
-import { NavigationGuardNext, RawLocation, Route } from 'vue-router';
+import { NavigationGuardNext, Route } from 'vue-router';
 
-export const checkCondition =
-  (condition: () => boolean, redirectLocation?: RawLocation) =>
-  (to: Route, from: Route, next: NavigationGuardNext): void => {
+export const requireCustomCondition = async (
+  to: Route,
+  from: Route,
+  next: NavigationGuardNext
+): Promise<void> => {
+  const condition = to.meta?.customCondition;
+  if (condition !== undefined) {
     if (!condition()) {
-      next(redirectLocation ?? { name: 'not-found-route' });
+      next({ name: 'not-found-route' });
       return;
     }
+  }
 
-    next();
-  };
+  next();
+};
