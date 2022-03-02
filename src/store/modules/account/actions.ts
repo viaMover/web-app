@@ -110,7 +110,7 @@ const actions: ActionFuncs<
         const resp = await getGasPrices(state.networkInfo?.network);
         commit('setGasPrices', resp);
       } catch (err) {
-        commit('setRefreshEror', err);
+        commit('setRefreshError', err);
         console.log(`Can't get gas prices, err:`, err);
         Sentry.captureException(err);
       } finally {
