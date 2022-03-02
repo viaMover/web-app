@@ -36,7 +36,7 @@ type Mutations = {
   updateWalletTokens: void;
   removeWalletTokens: void;
   setAllTokens: void;
-  setRefreshEror: void;
+  setRefreshError: void;
   setIsDetecting: void;
   setProvider: void;
   setAccountData: void;
@@ -153,7 +153,7 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
 
     state.tokenInfoMap = aggregateObject;
   },
-  setRefreshEror(state, error): void {
+  setRefreshError(state, error): void {
     state.refreshError = error;
   },
   setIsDetecting(state, isDetecting: boolean): void {

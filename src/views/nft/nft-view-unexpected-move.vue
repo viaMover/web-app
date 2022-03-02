@@ -120,6 +120,7 @@ import { mapActions, mapState } from 'vuex';
 import { getUnexpectedMoveClaimSignature } from '@/services/chain';
 import { ChangePayload, ClaimPayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
@@ -137,6 +138,7 @@ export default Vue.extend({
     AnalyticsListItem,
     SimpleLoaderModal
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       transactionStep: undefined as Step | undefined,

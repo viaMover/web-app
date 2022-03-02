@@ -93,6 +93,7 @@ import dayjs from 'dayjs';
 
 import { ChangePayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton } from '@/components/buttons';
@@ -109,6 +110,7 @@ export default Vue.extend({
     AnalyticsListItem,
     SimpleLoaderModal
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       transactionStep: undefined as Step | undefined,

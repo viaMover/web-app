@@ -91,6 +91,7 @@ import { mapActions, mapState } from 'vuex';
 import { getSweetAndSourClaimSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton } from '@/components/buttons';
@@ -107,6 +108,7 @@ export default Vue.extend({
     ActionButton,
     SimpleLoaderModal
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       transactionStep: undefined as Step | undefined,
