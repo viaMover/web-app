@@ -1,6 +1,7 @@
 import {
   DiceData,
   OlympusData,
+  OrderOfLibertyData,
   SweetAndSourData,
   UnexpectedMoveData,
   VaultsData
@@ -16,6 +17,7 @@ type Mutations = {
   setVaultsData: void;
   setDiceData: void;
   setOlympusData: void;
+  setOrderOfLibertyData: void;
 };
 
 const mutations: MutationFuncs<Mutations, NFTStoreState> = {
@@ -47,6 +49,12 @@ const mutations: MutationFuncs<Mutations, NFTStoreState> = {
     state.movingWithOlympus.meta.startTs = data.claimStart;
     state.movingWithOlympus.meta.endTs = data.claimEnd;
     state.movingWithOlympus.balance = data.balance;
+  },
+  setOrderOfLibertyData(state, data: OrderOfLibertyData): void {
+    state.orderOfLiberty.balance = data.balance;
+    state.orderOfLiberty.meta.totalSupply = data.totalSupply;
+    state.orderOfLiberty.meta.defaultPrice = data.defaultPrice;
+    state.orderOfLiberty.meta.availablePrices = data.availablePrices;
   }
 };
 

@@ -6,6 +6,7 @@ import { PictureDescriptor } from '@/components/html5';
 export type NFTStoreState = {
   isLoading: boolean;
 
+  orderOfLiberty: NftAsset<NftAssetId.OrderOfLiberty>;
   movingWithOlympus: NftAsset<NftAssetId.MovingWithOlympus>;
   unexpectedMove: NftAsset<NftAssetId.UnexpectedMove>;
   sweetAndSour: NftAsset<NftAssetId.SweetAndSour>;
@@ -20,7 +21,8 @@ export enum NftAssetId {
   SweetAndSour = 'sweet-and-sour',
   Vaults = 'vaults',
   Dice = 'dice',
-  SwapPassport = 'swap-passport'
+  SwapPassport = 'swap-passport',
+  OrderOfLiberty = 'order-of-liberty'
 }
 
 export interface NftAssetsMeta {
@@ -46,6 +48,11 @@ export interface NftAssetsMeta {
     totalClaimed: string;
   };
   [NftAssetId.SwapPassport]: void;
+  [NftAssetId.OrderOfLiberty]: {
+    totalSupply: string;
+    availablePrices: Array<string>;
+    defaultPrice: string;
+  };
 }
 
 export type TNftAssetKey = keyof NftAssetsMeta;
@@ -71,4 +78,8 @@ export type ClaimPayload = {
 
 export type DicePayload = {
   diceType: DiceType;
+} & ChangePayload;
+
+export type OrderOfLibertyPayload = {
+  selectedPrice: string;
 } & ChangePayload;

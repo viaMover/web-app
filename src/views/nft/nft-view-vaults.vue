@@ -131,7 +131,10 @@ export default Vue.extend({
   },
   methods: {
     formatToDecimals,
-    ...mapActions('nft', ['claimVaults', 'refreshNftStats']),
+    ...mapActions('nft', {
+      claimVaults: 'claimVaults',
+      refreshNftStats: 'fetchVaultsData'
+    }),
     handleClose(): void {
       this.$router.back();
     },

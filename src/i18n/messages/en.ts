@@ -829,11 +829,13 @@ const messages: VueI18n.LocaleMessageObject = {
     lblUnexpectedMove: 'Unexpected Move',
     lblMovingWithOlympus: 'Moving with Olympus',
     lblSweetAndSour: 'Sweet & Sour',
+    lblOrderOfLiberty: 'Help Ukraine',
     lblNFTDrops: 'NFT Drops',
     lblNFTOverview: '{name} Overview',
     lblTotalNumberOfNFTs: 'Total number of NFTs',
     lblTotalAmount: 'Total amount',
     lblTotalClaimed: 'Total claimed',
+    lblTotalMinted: 'Total minted',
     lblTotalExchanged: 'Total exchanged',
     lblAvailableFrom: 'Available from',
     lblAvailableTo: 'Available to',
@@ -844,7 +846,31 @@ const messages: VueI18n.LocaleMessageObject = {
     txtAssetAlt: '{name} NFT asset image',
     txtOhNo: 'Oh no. Seems like you can’t claim this NFT.',
     txtOhNoSomething: 'Oh no. Something went wrong',
+    lblPrice: 'Price',
     txtNFTs: {
+      [NftAssetId.OrderOfLiberty]: {
+        description:
+          'The Order of Liberty honours your noble merit ' +
+          'of supporting the most vulnerable Ukrainians during the terrible times of war.',
+        pageDescriptionPartOne:
+          'Ukraine is not just a place on the map. It is people; it is families. ' +
+          'Ukraine is a place we know; it is the food we love. ' +
+          'Ukraine is beautiful talents and wonderful nature. ' +
+          'Everything we love is now being destroyed. It is collective humanitarian fundraising. ' +
+          'It is organized and built by Ukrainians and people all over the world. ' +
+          'The artist is {0}. The creative team is {1}.',
+        pageDescriptionPartTwo:
+          '100% of proceeds will go to help the most vulnerable Ukrainians with food, water, shelter, ' +
+          'and essential supplies. After that, together with our amazing partners, we will help Ukrainian ' +
+          'boys and girls with jobs. Because crypto has no borders, we must help. ' +
+          'If you want to donate non-crypto, we have partnered with a {0}.',
+        pageDescriptionDisclaimer:
+          'Disclaimer: This is strictly a humanitarian aid help mission. ' +
+          'Nothing shall be used for any political and/or commercial goals by Mover or any 3rd parties.',
+        txtUkrainian: 'Ukrainian',
+        txtRegisteredCharity: 'registered UK charity',
+        lblOtherOptions: 'Other options?'
+      },
       [NftAssetId.Dice]: {
         description:
           'Dice is a randomizer contract as NFT. You can roll from ' +
@@ -908,6 +934,9 @@ const messages: VueI18n.LocaleMessageObject = {
       }
     },
     btn: {
+      [NftAssetId.OrderOfLiberty]: {
+        help: 'Help Ukraine'
+      },
       [NftAssetId.UnexpectedMove]: {
         get: 'Get my Unexpected Move',
         claimAndExchange: 'Claim and Exchange for MOVE',
