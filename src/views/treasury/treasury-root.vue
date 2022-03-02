@@ -291,11 +291,17 @@ export default Vue.extend({
     showClaimAndBurnMove(): boolean {
       return (
         this.hasMoveOnBalance &&
-        isFeatureEnabled('isTreasuryClaimAndBurnMOVEEnabled')
+        isFeatureEnabled(
+          'isTreasuryClaimAndBurnMOVEEnabled',
+          this.networkInfo.network
+        )
       );
     },
     showClaimAndBurnMOBO(): boolean {
-      return isFeatureEnabled('isTreasuryClaimAndBurnMOBOEnabled');
+      return isFeatureEnabled(
+        'isTreasuryClaimAndBurnMOBOEnabled',
+        this.networkInfo.network
+      );
     }
   },
   async mounted() {

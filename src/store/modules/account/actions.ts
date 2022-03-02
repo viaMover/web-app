@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/vue';
 import sample from 'lodash-es/sample';
 import Web3 from 'web3';
+import { AbstractProvider } from 'web3-core';
 
 import {
   bootIntercomSession,
@@ -26,9 +27,10 @@ import {
   removeExpiredPersistItemsFromLocalStorage
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
-import { Network } from '@/utils/networkTypes';
+import { errorToString } from '@/utils/errors';
+import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
-import { getEthereumPrice } from '@/wallet/ethPrice';
+import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import { getGasPrices } from '@/wallet/gas';
 import {
   clearOffchainExplorer,
@@ -72,6 +74,7 @@ type Actions = {
   waitWallet: Promise<boolean>;
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
+  switchEthereumChain: Promise<void>;
 };
 
 const actions: ActionFuncs<
@@ -336,14 +339,23 @@ const actions: ActionFuncs<
           network: state.networkInfo.network
         });
 
-        commit('setAllTokens', getAllTokens(state.networkInfo.network));
+        console.info('getting all tokens...');
+        const allTokens = getAllTokens(state.networkInfo.network);
+        commit('setAllTokens', allTokens);
       }
 
       console.info('Updating wallet tokens from Etherscan...');
-      if (state.networkInfo.network === Network.mainnet) {
+      if (isFeatureEnabled('isExplorerEnabled', state.networkInfo.network)) {
         if (payload.init) {
-          console.log('Starting Offchain Explorer...');
-          initOffchainExplorer(state.networkInfo.network);
+          if (
+            isFeatureEnabled(
+              'isOffchainExplorerEnabled',
+              state.networkInfo.network
+            )
+          ) {
+            console.log('Starting Offchain Explorer...');
+            initOffchainExplorer(state.networkInfo.network);
+          }
           console.log('Starting Chain explorer...');
 
           const explorerInitPromise = BuildExplorer(
@@ -404,25 +416,29 @@ const actions: ActionFuncs<
         commit('setIsTransactionsListLoaded', true);
       }
 
-      dispatch('treasury/loadMinimalInfo', undefined, {
-        root: true
-      });
+      if (isFeatureEnabled('isTreasuryEnabled', state.networkInfo.network)) {
+        dispatch('treasury/loadMinimalInfo', undefined, {
+          root: true
+        });
+      }
 
       dispatch('nft/loadNFTInfo', undefined, {
         root: true
       }).then(() => dispatch('loadAvatar'));
 
-      dispatch('savings/loadMinimalInfo', undefined, {
-        root: true
-      });
+      if (isFeatureEnabled('isSavingsEnabled', state.networkInfo.network)) {
+        dispatch('savings/loadMinimalInfo', undefined, {
+          root: true
+        });
+      }
 
-      if (isFeatureEnabled('isNibbleShopEnabled')) {
+      if (isFeatureEnabled('isNibbleShopEnabled', state.networkInfo.network)) {
         dispatch('shop/refreshAssetsInfoList', undefined, {
           root: true
         });
       }
 
-      if (isFeatureEnabled('isVaultsRaceEnabled')) {
+      if (isFeatureEnabled('isVaultsRaceEnabled', state.networkInfo.network)) {
         dispatch('games/init', undefined, {
           root: true
         });
@@ -433,7 +449,7 @@ const actions: ActionFuncs<
       state.isWalletLoading = false;
     }
   },
-  async updateWalletAfterTxn({ dispatch }): Promise<void> {
+  async updateWalletAfterTxn({ state, dispatch }): Promise<void> {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
@@ -446,7 +462,8 @@ const actions: ActionFuncs<
       { root: true }
     );
     const debitCardAvailableSkinsPromise = isFeatureEnabled(
-      'isDebitCardEnabled'
+      'isDebitCardEnabled',
+      state?.networkInfo?.network
     )
       ? dispatch('debitCard/loadAvailableSkins', undefined, {
           root: true
@@ -511,13 +528,64 @@ const actions: ActionFuncs<
     commit('clearWalletData');
     disconnectIntercomSession();
   },
+  async switchEthereumChain(
+    { state },
+    networkInfo: NetworkInfo
+  ): Promise<void> {
+    if (!ensureAccountStateIsSafe(state)) {
+      return;
+    }
+
+    try {
+      await (
+        state.provider.web3.currentProvider as AbstractProvider
+      )?.request?.({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${networkInfo.chainId.toString(16)}` }]
+      });
+    } catch (error: any) {
+      if (error.code === 4902) {
+        try {
+          await (
+            state.provider.web3.currentProvider as AbstractProvider
+          )?.request?.({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: `0x${networkInfo.chainId.toString(16)}`,
+                chainName: networkInfo.name,
+                rpcUrls: [networkInfo.rpcUrl],
+                nativeCurrency: {
+                  name: networkInfo.baseAsset.name,
+                  symbol: networkInfo.baseAsset.symbol,
+                  decimals: networkInfo.baseAsset.decimals
+                },
+                blockExplorerUrls: [networkInfo.explorer]
+              }
+            ]
+          });
+        } catch (err: any) {
+          console.error(
+            `Can't add ethereum network to the provider: ${errorToString(err)}`
+          );
+          Sentry.captureException(err);
+        }
+      } else {
+        console.log(
+          `Can't switch ethereum network to the provider: ${errorToString(
+            error
+          )}`
+        );
+      }
+    }
+  },
   async getBasicPrices({ state, commit }): Promise<void> {
     if (!ensureAccountStateIsSafe(state)) {
       throw new Error('account state is not ready');
     }
 
     try {
-      const getEthPriceInUsdPromise = getEthereumPrice(
+      const getEthPriceInUsdPromise = getBaseTokenPrice(
         state.networkInfo.network
       );
 

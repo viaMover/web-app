@@ -11,7 +11,7 @@ import { sameAddress } from '@/utils/address';
 import { fromWei } from '@/utils/bigmath';
 import { MAX_ASSET_NAME } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
-import { getEthAssetData, getMoveAssetData } from '@/wallet/references/data';
+import { getBaseAssetData, getMoveAssetData } from '@/wallet/references/data';
 import {
   Token,
   TokenWithBalance,
@@ -221,6 +221,12 @@ export class MoralisExplorer implements Explorer {
         return NetworkAlias.Rinkeby;
       case Network.ropsten:
         return NetworkAlias.Ropsten;
+      case Network.avalanche:
+        return NetworkAlias.Avalanche;
+      case Network.fantom:
+        return NetworkAlias.Fantom;
+      case Network.polygon:
+        return NetworkAlias.Polygon;
       default:
         throw new Error(`Moralis doesn't have alias for ${this.network}`);
     }
@@ -253,25 +259,25 @@ export class MoralisExplorer implements Explorer {
   ): Promise<TokenWithBalance[]> => {
     try {
       const nativeBalance = await this.getNativeBalance();
-      const ethData = getEthAssetData();
+      const baseAssetData = getBaseAssetData(this.network);
       return [
         ...tokens,
         {
-          address: ethData.address,
+          address: baseAssetData.address,
           balance: nativeBalance,
-          priceUSD: store.getters['account/ethPrice'],
+          priceUSD: store.getters['account/baseTokenPrice'],
           marketCap: store.getters['account/getTokenMarketCap'](
-            ethData.address
+            baseAssetData.address
           ),
-          decimals: ethData.decimals,
-          logo: ethData.iconURL,
-          name: ethData.name,
-          symbol: ethData.symbol,
-          color: store.getters['account/getTokenColor'](ethData.address)
+          decimals: baseAssetData.decimals,
+          logo: baseAssetData.iconURL,
+          name: baseAssetData.name,
+          symbol: baseAssetData.symbol,
+          color: store.getters['account/getTokenColor'](baseAssetData.address)
         }
       ];
     } catch (err) {
-      Sentry.captureMessage(`Can't get enrich token list with native:`, err);
+      Sentry.captureMessage(`Can't get enrich token list with native: ${err}`);
       return tokens;
     }
   };
@@ -354,7 +360,7 @@ export class MoralisExplorer implements Explorer {
     erc20Transactions: Array<Erc20Transaction>,
     nativeTransactions: Array<NativeTransaction>
   ): Promise<Transaction[]> => {
-    const ethData = getEthAssetData();
+    const baseAssetData = getBaseAssetData(this.network);
 
     const allTransactionsHashes = [
       ...erc20Transactions.map((t) => t.transaction_hash),
@@ -388,7 +394,7 @@ export class MoralisExplorer implements Explorer {
     const nativeParsedTransactions = nativeTransactions.reduce<Transaction[]>(
       (acc, txn) => {
         if (txn.input === '0x') {
-          // assume this is an eth transfer transaction
+          // assume this is an pure transfer transaction
           const direction = sameAddress(txn.to_address, this.accountAddress)
             ? sameAddress(txn.from_address, this.accountAddress)
               ? 'self'
@@ -397,12 +403,12 @@ export class MoralisExplorer implements Explorer {
 
           acc.push({
             asset: {
-              address: ethData.address,
-              decimals: ethData.decimals,
-              symbol: ethData.symbol,
+              address: baseAssetData.address,
+              decimals: baseAssetData.decimals,
+              symbol: baseAssetData.symbol,
               change: txn.value,
-              iconURL: ethData.iconURL,
-              price: store.getters['account/ethPrice'],
+              iconURL: baseAssetData.iconURL,
+              price: store.getters['account/baseTokenPrice'],
               direction: direction
             },
             blockNumber: txn.block_number,

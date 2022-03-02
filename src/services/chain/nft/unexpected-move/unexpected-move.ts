@@ -27,6 +27,15 @@ export const getUnexpectedMoveData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_UNEXPECTED_MOVE');
 
+  if (contractAddress === '0x1') {
+    return {
+      totalClaimed: '0',
+      balance: '0',
+      totalAmount: '0',
+      totalExchanged: '0'
+    };
+  }
+
   const unexpectedMove = new web3.eth.Contract(
     NFT_UNEXPECTED_MOVE_ABI as AbiItem[],
     contractAddress

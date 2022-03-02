@@ -25,6 +25,7 @@ type Getters = {
   isWalletReady: boolean;
   entireBalance: string;
   ethPrice: string;
+  baseTokenPrice: string;
   moveNativePrice: string;
   usdcNativePrice: string;
   slpNativePrice: string;
@@ -114,6 +115,9 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     return balance;
   },
   ethPrice(state): string {
+    return state.ethPrice ?? '0';
+  },
+  baseTokenPrice(state): string {
     return state.ethPrice ?? '0';
   },
   moveNativePrice(state): string {

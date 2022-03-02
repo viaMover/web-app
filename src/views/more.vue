@@ -6,14 +6,15 @@
     @back="handleClose"
     @close="handleClose"
   >
-    <more-section-governance />
-    <more-section-nibble-shop v-if="isFeatureEnabled('isNibbleShopEnabled')" />
-    <more-section-nft-drops />
+    <more-section-governance v-if="isGovernanceEnabled" />
+    <more-section-nibble-shop v-if="isNibbleShopEnabled" />
+    <more-section-nft-drops v-if="isNftDropsEnabled" />
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 
@@ -32,8 +33,19 @@ export default Vue.extend({
     MoreSectionNibbleShop,
     MoreSectionNftDrops
   },
+  computed: {
+    ...mapState('account', { networkInfo: 'networkInfo' }),
+    isGovernanceEnabled(): boolean {
+      return isFeatureEnabled('isGovernanceEnabled', this.networkInfo?.network);
+    },
+    isNibbleShopEnabled(): boolean {
+      return isFeatureEnabled('isNibbleShopEnabled', this.networkInfo?.network);
+    },
+    isNftDropsEnabled(): boolean {
+      return isFeatureEnabled('isNftDropsEnabled', this.networkInfo?.network);
+    }
+  },
   methods: {
-    isFeatureEnabled,
     handleClose(): void {
       this.$router.back();
     }

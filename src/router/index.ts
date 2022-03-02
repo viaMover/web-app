@@ -6,7 +6,7 @@ import {
   wrapWithCustomPreloadView,
   wrapWithMeta
 } from '@/router/descending-meta-wrapper';
-import { checkFeatureFlag } from '@/router/feature-flag-guard';
+import { checkFeatureFlags } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
 import ConnectWallet from '@/views/connect-wallet.vue';
@@ -16,6 +16,7 @@ import PreloadMore from '@/views/preload/preload-more.vue';
 import View404 from '@/views/view-404.vue';
 
 import { formStepsGuard } from './form-steps-guard';
+import { checkCondition } from './guard';
 
 Vue.use(VueRouter);
 
@@ -29,7 +30,41 @@ const routes: Array<RouteConfig> = [
     {
       path: '/more',
       name: 'more',
-      component: More
+      component: More,
+      beforeEnter: checkCondition((): boolean => {
+        const store = router.app.$store;
+        console.log('dfdfd');
+        console.log(
+          'dfdfd',
+          store.state?.account?.networkInfo?.network,
+          isFeatureEnabled(
+            'isNibbleShopEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+            isFeatureEnabled(
+              'isGovernanceEnabled',
+              store.state?.account?.networkInfo?.network
+            ) ||
+            isFeatureEnabled(
+              'isNftDropsEnabled',
+              store.state?.account?.networkInfo?.network
+            )
+        );
+        return (
+          isFeatureEnabled(
+            'isNibbleShopEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isGovernanceEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isNftDropsEnabled',
+            store.state?.account?.networkInfo?.network
+          )
+        );
+      })
     },
     PreloadMore
   ),
@@ -145,7 +180,7 @@ const routes: Array<RouteConfig> = [
             import(
               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-mobo-wrapper.vue'
             ),
-          beforeEnter: checkFeatureFlag('isTreasuryClaimAndBurnMOBOEnabled')
+          beforeEnter: checkFeatureFlags(['isTreasuryClaimAndBurnMOBOEnabled'])
         },
         {
           path: 'powercard',
@@ -300,7 +335,7 @@ const routes: Array<RouteConfig> = [
           )
       }
     ],
-    beforeEnter: checkFeatureFlag('isNibbleShopEnabled')
+    beforeEnter: checkFeatureFlags(['isNibbleShopEnabled'])
   },
   {
     path: '/nft-drops',
@@ -426,7 +461,7 @@ if (isFeatureEnabled('isDebitCardEnabled')) {
           import(
             /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-change-skin.vue'
           ),
-        beforeEnter: checkFeatureFlag('isDebitCardChangeSkinEnabled')
+        beforeEnter: checkFeatureFlags(['isDebitCardChangeSkinEnabled'])
       },
       {
         path: '',

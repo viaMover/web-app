@@ -5,7 +5,7 @@
     </template>
 
     <savings-monthly-chart-wrapper
-      v-if="isFeatureEnabled('isSavingsMonthlyChartEnabled')"
+      v-if="isSavingsMonthlyChartEnabled"
       :page-date="pageDate"
     />
 
@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -36,6 +37,7 @@ export default Vue.extend({
     SavingsMonthlyStatement
   },
   computed: {
+    ...mapState('account', { networkInfo: 'networkInfo' }),
     pageDate(): dayjs.Dayjs {
       try {
         return dateFromExplicitPair(
@@ -57,7 +59,12 @@ export default Vue.extend({
     }
   },
   methods: {
-    isFeatureEnabled,
+    isSavingsMonthlyChartEnabled(): boolean {
+      return isFeatureEnabled(
+        'isSavingsMonthlyChartEnabled',
+        this.networkInfo?.network
+      );
+    },
     handleBack(): void {
       this.$router.back();
     }
