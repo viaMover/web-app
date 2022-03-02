@@ -21,7 +21,8 @@ export enum NetworkAlias {
 export enum TokenAlias {
   Ethereum = 'ethereum',
   Avalanche = 'avalanche-2',
-  Fantom = 'fantom'
+  Fantom = 'fantom',
+  Polygon = 'matic-network'
 }
 
 export type CoingeckoToken = {
@@ -47,6 +48,8 @@ export const getBaseTokenAlias = (network: Network): TokenAlias => {
       return TokenAlias.Avalanche;
     case Network.fantom:
       return TokenAlias.Fantom;
+    case Network.polygon:
+      return TokenAlias.Polygon;
     default:
       return TokenAlias.Ethereum;
   }
@@ -77,7 +80,7 @@ export const getNetworkBaseTokenPrice = async (
 
   return {
     isError: false,
-    result: String(resp.result?.['ethereum']?.['usd'] ?? '0')
+    result: String(resp.result?.[getBaseTokenAlias(network)]?.['usd'] ?? '0')
   };
 };
 
