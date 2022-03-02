@@ -25,6 +25,14 @@ export const getSweetAndSourData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_SWEET_AND_SOUR');
 
+  if (contractAddress === '0x1') {
+    return {
+      totalClaimed: '0',
+      balance: '0',
+      totalAmount: '0'
+    };
+  }
+
   const sweetAndSour = new web3.eth.Contract(
     NFT_SWEET_AND_SOUR_ABI as AbiItem[],
     contractAddress
@@ -54,7 +62,6 @@ export const claimSweetAndSour = async (
   signature: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_SWEET_AND_SOUR');
@@ -97,11 +104,9 @@ export const claimSweetAndSour = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: gasPriceInGwei
-      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
-      : undefined,
-    maxFeePerGas: gasPriceInGwei ? undefined : null,
-    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null
   };
 
   await new Promise<void>((resolve, reject) => {

@@ -10,7 +10,7 @@
       </div>
       <template v-else>
         <markdown
-          v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
+          v-if="isGovernanceMarkdownEnabled"
           :text="proposalInfo ? proposalInfo.proposal.body : ''"
         />
         <p v-else>{{ proposalInfo ? proposalInfo.proposal.body : '' }}</p>
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { ProposalWithVotes } from '@/services/mover/governance';
 import { isFeatureEnabled } from '@/settings';
@@ -44,6 +44,13 @@ export default Vue.extend({
       proposal: 'proposal',
       isLoading: 'isLoading'
     }),
+    ...mapState('account', { networkInfo: 'networkInfo' }),
+    isGovernanceMarkdownEnabled(): boolean {
+      return isFeatureEnabled(
+        'isGovernanceMarkdownEnabled',
+        this.networkInfo?.network
+      );
+    },
     proposalInfo(): ProposalWithVotes | undefined {
       return this.proposal(this.$route.params.id);
     },
@@ -56,7 +63,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    isFeatureEnabled,
     handleBack(): void {
       this.$router.replace({
         name: 'governance-view-all'

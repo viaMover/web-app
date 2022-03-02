@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -138,11 +138,7 @@ export default Vue.extend({
       return this.colors['product-treasury'];
     }
   },
-  mounted() {
-    this.fetchTreasuryInfo();
-  },
   methods: {
-    ...mapActions('treasury', { fetchTreasuryInfo: 'fetchTreasuryInfo' }),
     handleItemSelected(item: TreasuryMonthBonusesItem): void {
       this.selectedItem = item;
     },

@@ -57,7 +57,7 @@
         <label>
           {{ $t('governance.lblProposalDescription') }}
           <span
-            v-if="isFeatureEnabled('isGovernanceMarkdownEnabled')"
+            v-if="isGovernanceMarkdownEnabled"
             class="toggle-preview"
             :title="$t('governance.txtTogglePreview')"
             @click.prevent.stop="togglePreview"
@@ -173,6 +173,13 @@ export default Vue.extend({
       isStoreLoading: 'isLoading',
       minimumVotingThreshold: 'minimumVotingThreshold'
     }),
+    ...mapState('account', { networkInfo: 'networkInfo' }),
+    isGovernanceMarkdownEnabled(): boolean {
+      return isFeatureEnabled(
+        'isGovernanceMarkdownEnabled',
+        this.networkInfo?.network
+      );
+    },
     minimumVotingThresholdText(): string {
       return formatToDecimals(this.minimumVotingThreshold, 0);
     },
@@ -185,7 +192,6 @@ export default Vue.extend({
       createProposal: 'createProposal',
       loadProposalInfo: 'loadProposalInfo'
     }),
-    isFeatureEnabled,
     handleBack(): void {
       this.$router.replace({ name: 'governance-view-all' });
     },

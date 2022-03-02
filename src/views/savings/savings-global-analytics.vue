@@ -19,13 +19,13 @@
         :title="$t('savings.lblCurrentVariableAPY')"
       />
       <analytics-list-item
-        v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
+        v-if="isSavingsOverviewSomeFieldsEnabled"
         :description="monthAverageAPY"
         :is-loading="isLoading"
         :title="$t('savings.lbl30DayAverageAPY')"
       />
       <analytics-list-item
-        v-if="isFeatureEnabled('isSavingsOverviewSomeFieldsEnabled')"
+        v-if="isSavingsOverviewSomeFieldsEnabled"
         :description="totalAssetsUnderManagement"
         :is-loading="isLoading"
         :title="$t('savings.lblTotalAssetsUnderManagement')"
@@ -95,6 +95,7 @@ export default Vue.extend({
     AnalyticsListItem
   },
   computed: {
+    ...mapState('account', { networkInfo: 'networkInfo' }),
     ...mapState('savings', {
       isLoading: 'isSavingsInfoLoading',
       apy: 'savingsAPY',
@@ -114,6 +115,12 @@ export default Vue.extend({
       savingsEstimatedEarningsAnnuallyNative:
         'savingsEstimatedEarningsAnnuallyNative'
     }),
+    isSavingsOverviewSomeFieldsEnabled(): boolean {
+      return isFeatureEnabled(
+        'isSavingsOverviewSomeFieldsEnabled',
+        this.networkInfo?.network
+      );
+    },
     formattedDepositedAssets(): string {
       return `${formatToNative(this.savingsInfoBalanceUSDC)} USDC`;
     },
@@ -153,12 +160,8 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },
-  mounted() {
-    this.fetchSavingsInfo();
-  },
   methods: {
     ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
-    isFeatureEnabled,
     handleBack(): void {
       this.$router.back();
     }

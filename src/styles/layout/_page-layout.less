@@ -3,6 +3,54 @@ html {
 }
 
 .page {
+
+  .top-message-wrapper {
+    z-index: 100;
+    position: fixed;
+    top: -500px;
+    left: calc(50% - 264px);
+    width: 528px;
+    height: auto;
+    overflow-y: hidden;
+    padding: 18px;
+    background: @background;
+    border-radius: 16px;
+    @drop-shadow();
+
+    -webkit-transition: top 1.5s;
+    transition: top 1.5s;
+
+    &.slide-top-in {
+      top: 54px;
+    }
+
+    .top-message-container {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-direction: row;
+      flex-direction: row;
+
+      .close {
+        cursor: pointer;
+      }
+
+      .text {
+        flex: 1 1 auto;
+        @font-medium();
+      }
+    }
+
+    &.info > .top-message-container > .text {
+      color: @text-primary;
+    }
+
+    &.error > .top-message-container > .text{
+      color: @text-error;
+    }
+  }
+
   .dashboard {
     display: flex;
     min-height: 100vh;
