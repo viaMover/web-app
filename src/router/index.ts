@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { NavigationFailureType, RouteConfig } from 'vue-router';
+import { Store } from 'vuex';
 
 import { loadLanguageAsync } from '@/i18n';
 import {
@@ -34,8 +35,8 @@ const routes: Array<RouteConfig> = [
     },
     PreloadMore,
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return (
           isFeatureEnabled(
             'isNibbleShopEnabled',
@@ -122,8 +123,8 @@ const routes: Array<RouteConfig> = [
         /* webpackChunkName: "savings" */ '@/views/preload/preload-product/preload-product.vue'
       ),
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return isFeatureEnabled(
           'isSavingsEnabled',
           store.state?.account?.networkInfo?.network
@@ -211,8 +212,8 @@ const routes: Array<RouteConfig> = [
         /* webpackChunkName: "treasury" */ '@/views/preload/preload-product/preload-product.vue'
       ),
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return isFeatureEnabled(
           'isTreasuryEnabled',
           store.state?.account?.networkInfo?.network
@@ -312,8 +313,8 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return isFeatureEnabled(
           'isGovernanceEnabled',
           store.state?.account?.networkInfo?.network
@@ -356,8 +357,8 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return isFeatureEnabled(
           'isNibbleShopEnabled',
           store.state?.account?.networkInfo?.network
@@ -439,8 +440,8 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return (
           isFeatureEnabled(
             'isNftDropsEnabled',
@@ -483,11 +484,6 @@ const routes: Array<RouteConfig> = [
             step: to.params.step
           }),
           beforeEnter: (to, from, next) => {
-            if (!isFeatureEnabled('isDebitCardTopUpEnabled')) {
-              next({ name: 'not-found-route' });
-              return;
-            }
-
             formStepsGuard('debit-card-top-up')(to, from, next);
           }
         },
@@ -511,8 +507,8 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (): boolean => {
-        const store = router.app.$store;
+      customCondition: (store?: Store<any>): boolean => {
+        if (store === undefined) return false;
         return isFeatureEnabled(
           'isDebitCardEnabled',
           store.state?.account?.networkInfo?.network
@@ -565,7 +561,7 @@ router.beforeEach((to, from, next) => {
 
 router.beforeResolve(requireWalletAuth(['connect-wallet', 'not-found-route']));
 
-router.beforeResolve(requireCustomCondition);
+router.beforeResolve(requireCustomCondition(router));
 
 router.onError((error) => {
   if (

@@ -196,13 +196,10 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
     await claimOlympus(
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -211,13 +208,10 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
     await claimVaults(
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -226,14 +220,11 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
     await claimDice(
       payload.diceType,
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -242,14 +233,11 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
     await claimSweetAndSour(
       rootState.account.currentAddress,
       payload.signature,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -261,14 +249,11 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
     await claimUnexpectedMove(
       rootState.account.currentAddress,
       payload.signature,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice?.price ?? '0',
       payload.changeStep
     );
   },
@@ -280,18 +265,11 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
-    if (fastGasPrice === undefined) {
-      throw new Error('There is no gas price, please, try again');
-    }
-
     await claimAndExchangeUnexpectedMove(
       rootState.account.currentAddress,
       payload.signature,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice.price,
       payload.changeStep
     );
   },
@@ -303,17 +281,10 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
-    if (fastGasPrice === undefined) {
-      throw new Error('There is no gas price, please, try again');
-    }
-
     await exchangeUnexpectedMove(
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
-      fastGasPrice.price,
       payload.changeStep
     );
   },

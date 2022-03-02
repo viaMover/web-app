@@ -55,7 +55,6 @@ export const claimVaults = async (
   accountAddress: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_VAULTS');
@@ -98,9 +97,9 @@ export const claimVaults = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null
   };
 
   await new Promise<void>((resolve, reject) => {
