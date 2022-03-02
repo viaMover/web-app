@@ -62,6 +62,10 @@ const routes: Array<RouteConfig> = [
           isFeatureEnabled(
             'isNftDropsEnabled',
             store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isOrderOfLibertyNFTEnabled',
+            store.state?.account?.networkInfo?.network
           )
         );
       })

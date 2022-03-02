@@ -181,6 +181,23 @@ export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   return addresses[network]?.[key] ?? defaultAddress;
 };
 
+const getBaseAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & {
+  name: string;
+} => {
+  return (
+    getNetwork(network)?.baseAsset ?? {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    }
+  );
+};
+
 type ConstantsMapNetworkEntry = Readonly<{
   MASTER_CHEF_POOL_INDEX: number;
   POWERCARD_RARI_ID: number;
@@ -193,11 +210,36 @@ const constants = {
   [Network.mainnet]: {
     MASTER_CHEF_POOL_INDEX: 257,
     POWERCARD_RARI_ID: 107150,
-    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei('0.01', 18),
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
+      '0.01',
+      getBaseAssetData(Network.mainnet).decimals
+    ),
     ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
-      toWei('0.1', 18),
-      toWei('1', 18),
-      toWei('10', 18)
+      toWei('0.1', getBaseAssetData(Network.mainnet).decimals),
+      toWei('1', getBaseAssetData(Network.mainnet).decimals),
+      toWei('10', getBaseAssetData(Network.mainnet).decimals)
+    ]
+  },
+  [Network.fantom]: {
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
+      '10',
+      getBaseAssetData(Network.fantom).decimals
+    ),
+    ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
+      toWei('100', getBaseAssetData(Network.fantom).decimals),
+      toWei('1000', getBaseAssetData(Network.fantom).decimals),
+      toWei('10000', getBaseAssetData(Network.fantom).decimals)
+    ]
+  },
+  [Network.polygon]: {
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
+      '10',
+      getBaseAssetData(Network.polygon).decimals
+    ),
+    ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
+      toWei('100', getBaseAssetData(Network.polygon).decimals),
+      toWei('1000', getBaseAssetData(Network.polygon).decimals),
+      toWei('10000', getBaseAssetData(Network.polygon).decimals)
     ]
   }
 } as ConstantsMap;
@@ -232,23 +274,6 @@ const formatSwapSources = (swapSource: string): string => {
   return swapSourceIcons[swapSource]
     ? `${swapSource} ${swapSourceIcons[swapSource]}`
     : swapSource;
-};
-
-const getBaseAssetData = (
-  network: Network
-): SmallTokenInfoWithIcon & {
-  name: string;
-} => {
-  return (
-    getNetwork(network)?.baseAsset ?? {
-      address: 'eth',
-      decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
-      iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
-    }
-  );
 };
 
 const getMoveAssetData = (

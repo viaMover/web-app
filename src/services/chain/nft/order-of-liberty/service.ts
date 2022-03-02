@@ -22,7 +22,14 @@ export const getOrderOfLibertyData = async (
   web3: Web3
 ): Promise<OrderOfLibertyData> => {
   const contractAddress = lookupAddress(network, 'NFT_ORDER_OF_LIBERTY');
-  // fixme: handle missing address errors?
+  if (contractAddress === '0x1') {
+    return {
+      balance: '0',
+      totalSupply: '0',
+      availablePrices: [],
+      defaultPrice: '0'
+    };
+  }
 
   const contract = new web3.eth.Contract(
     NFT_ORDER_OF_LIBERTY_ABI as AbiItem[],
@@ -55,7 +62,9 @@ export const claimOrderOfLiberty = async (
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_ORDER_OF_LIBERTY');
-  // fixme: handle missing address errors?
+  if (contractAddress === '0x1') {
+    return;
+  }
 
   const contract = new web3.eth.Contract(
     NFT_ORDER_OF_LIBERTY_ABI as AbiItem[],

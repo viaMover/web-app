@@ -17,6 +17,7 @@ import {
   getVaultsData
 } from '@/services/chain';
 import { claimVaults } from '@/services/chain/nft/vaults/vaults';
+import { isFeatureEnabled } from '@/settings';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import {
   ChangePayload,
@@ -54,6 +55,23 @@ type Actions = {
 const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    if (
+      !isFeatureEnabled(
+        'isNftDropsEnabled',
+        rootState.account.networkInfo.network
+      ) &&
+      isFeatureEnabled(
+        'isOrderOfLibertyNFTEnabled',
+        rootState.account.networkInfo.network
+      )
+    ) {
+      commit('setIsLoading', true);
+      await dispatch('fetchOrderOfLibertyData');
+      commit('setIsLoading', false);
+
       return;
     }
 

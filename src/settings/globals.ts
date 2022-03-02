@@ -30,6 +30,7 @@ export interface Globals {
   isSavingsPlusEnabled: GlobalSettings;
   isMultiChainMastheadEnabled: GlobalSettings;
   isHomeSwapModalEnabled: GlobalSettings;
+  isOrderOfLibertyNFTEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -78,7 +79,8 @@ const values: Globals = {
   isTreasuryClaimAndBurnMOVEEnabled: false,
   isSavingsPlusEnabled: false,
   isMultiChainMastheadEnabled: true,
-  isHomeSwapModalEnabled: true
+  isHomeSwapModalEnabled: true,
+  isOrderOfLibertyNFTEnabled: [Network.mainnet, Network.polygon, Network.fantom]
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

@@ -34,7 +34,6 @@
               {{ $t(`NFTs.txtNFTs.${nft.id}.txtRegisteredCharity`) }}
             </a>
           </i18n>
-          {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}
           <br /><br />
           {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionDisclaimer`) }}
         </div>
@@ -126,6 +125,9 @@ import { OrderOfLibertyPayload } from '@/store/modules/nft/types';
 import { fromWei } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
+import { Network } from '@/utils/networkTypes';
+import { getBaseAssetData } from '@/wallet/references/data';
+import { SmallTokenInfo } from '@/wallet/types';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton, EmojiTextButton } from '@/components/buttons';
@@ -158,6 +160,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
     ...mapState('nft', {
       nft: 'orderOfLiberty',
       isStoreLoading: 'isLoading'
@@ -170,6 +175,13 @@ export default Vue.extend({
     },
     availablePrices(): Array<string> {
       return this.nft.meta.availablePrices;
+    },
+    baseAsset(): SmallTokenInfo {
+      if (this.networkInfo === undefined) {
+        return getBaseAssetData(Network.mainnet);
+      }
+
+      return getBaseAssetData(this.networkInfo.network);
     }
   },
   created(): void {
@@ -205,7 +217,9 @@ export default Vue.extend({
       }
     },
     formatPrice(price: string): string {
-      return `${formatToNative(fromWei(price, 18))} ETH`; // fixme: Add base asset formatting
+      return `${formatToNative(fromWei(price, this.baseAsset.decimals))} ${
+        this.baseAsset.symbol
+      }`;
     }
   }
 });
