@@ -20,7 +20,7 @@ import { Card } from '@/components/controls';
 import { PictureDescriptor } from '@/components/html5';
 
 export default Vue.extend({
-  name: 'HomeCardsDebitCard',
+  name: 'HomeCardsOrderOfLiberty',
   components: {
     Card
   },
