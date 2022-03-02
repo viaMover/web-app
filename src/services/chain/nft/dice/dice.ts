@@ -55,7 +55,6 @@ export const claimDice = async (
   accountAddress: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_DICE');
@@ -96,11 +95,9 @@ export const claimDice = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: gasLimit ? web3.utils.toBN(gasLimit).toNumber() : undefined,
-    gasPrice: gasPriceInGwei
-      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
-      : undefined,
-    maxFeePerGas: gasPriceInGwei ? undefined : null,
-    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null
   };
 
   await new Promise<void>((resolve, reject) => {

@@ -465,11 +465,6 @@ const routes: Array<RouteConfig> = [
             step: to.params.step
           }),
           beforeEnter: (to, from, next) => {
-            if (!isFeatureEnabled('isDebitCardTopUpEnabled')) {
-              next({ name: 'not-found-route' });
-              return;
-            }
-
             formStepsGuard('debit-card-top-up')(to, from, next);
           }
         },
