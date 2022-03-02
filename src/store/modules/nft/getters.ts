@@ -45,7 +45,7 @@ const getters: GettersFuncs<Getters, NFTStoreState> = {
         rootState.account?.networkInfo?.network
       )
     ) {
-      res.push(state.orderOfLiberty);
+      res = [state.orderOfLiberty, ...res];
     }
 
     return res;
