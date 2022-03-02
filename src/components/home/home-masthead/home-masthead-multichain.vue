@@ -97,7 +97,7 @@ export default Vue.extend({
       return this.$t('btnConnectWallet') as string;
     },
     currentNetworkInfo(): NetworkInfo {
-      return this.networkInfo;
+      return this.networkInfo ?? getNetwork(Network.mainnet);
     },
     allNetworks(): Array<NetworkInfo> {
       return this.availableNetworks.map((el: Network) => getNetwork(el));
@@ -112,7 +112,7 @@ export default Vue.extend({
       await this.clearWalletState();
       window.location.reload();
     },
-    async switchNetwork(network: Network): Promise<void> {
+    async switchNetwork(network: NetworkInfo): Promise<void> {
       await this.switchEthereumChain(network);
     }
   }

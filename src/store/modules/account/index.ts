@@ -59,7 +59,8 @@ export default {
     refreshError: undefined,
 
     isDebitCardSectionVisible: true,
-    isDepositCardSectionVisible: true
+    isDepositCardSectionVisible: true,
+    isOrderOfLibertySectionVisible: true
   },
   actions,
   getters,

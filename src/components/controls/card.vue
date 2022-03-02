@@ -29,7 +29,7 @@
       </div>
 
       <custom-picture
-        :alt="image.alt"
+        :alt="image.alt ? image.alt : title"
         class="image"
         :sources="image.sources"
         :src="image.src"

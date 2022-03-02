@@ -853,20 +853,27 @@ const messages: VueI18n.LocaleMessageObject = {
           'The Order of Liberty honours your noble merit ' +
           'of supporting the most vulnerable Ukrainians during the terrible times of war.',
         pageDescriptionPartOne:
-          'Ukraine is not just a place on the map. It is people; it is families. ' +
-          'Ukraine is a place we know; it is the food we love. ' +
-          'Ukraine is beautiful talents and wonderful nature. ' +
-          'Everything we love is now being destroyed. It is collective humanitarian fundraising. ' +
-          'It is organized and built by Ukrainians and people all over the world. ' +
-          'The artist is {0}. The creative team is {1}.',
+          'Ukraine can’t remain just a white spot on the map. It’s a beautiful country, full of brave people, ' +
+          'promising talents, loving families. It’s our Homeland. ' +
+          'The place we were born and grew up in. The place we admire wholeheartedly.',
         pageDescriptionPartTwo:
+          'But, as you read this, Ukraine is being destroyed.',
+        pageDescriptionPartThree:
+          'To help the country and the nation recover, ' +
+          'we’ve arranged a collective humanitarian fundraising. ' +
+          'It is organised and built by Ukrainians and compassionate people all over the world. ' +
+          'The artists, {0}, {1}, and {2}, are Ukrainians. The creative team is also {3}.',
+        pageDescriptionPartFour:
           '100% of proceeds will go to help the most vulnerable Ukrainians with food, water, shelter, ' +
-          'and essential supplies. After that, together with our amazing partners, we will help Ukrainian ' +
-          'boys and girls with jobs. Because crypto has no borders, we must help. ' +
-          'If you want to donate non-crypto, we have partnered with a {0}.',
+          'and essential supplies. Crypto has no borders. We must help. ' +
+          'If you want to donate non-crypto, here is an alternative {0} focusing on humanitarian help' +
+          'as well.',
         pageDescriptionDisclaimer:
           'Disclaimer: This is strictly a humanitarian aid help mission. ' +
           'Nothing shall be used for any political and/or commercial goals by Mover or any 3rd parties.',
+        txtArtistRoman: 'Roman',
+        txtArtistAlina: 'Alina',
+        txtArtistOksana: 'Oksana',
         txtUkrainian: 'Ukrainian',
         txtRegisteredCharity: 'registered UK charity',
         lblOtherOptions: 'Other options?'
@@ -974,6 +981,12 @@ const messages: VueI18n.LocaleMessageObject = {
     self: 'Self',
     approve: 'Approve',
     unknown: 'Unknown'
+  },
+  orderOfLiberty: {
+    btnOrderOfLiberty: 'Help Ukraine',
+    txtOrderOfLiberty:
+      'Humanitarian-only aid dedicated to the most vulnerable groups that need help now.',
+    lblOrderOfLibertyHeading: 'Help Ukraine'
   }
 };
 

@@ -23,6 +23,7 @@ type Mutations = {
   removeWalletTransaction: void;
   toggleIsDebitCardSectionVisible: void;
   toggleIsDepositCardSectionVisible: void;
+  toggleIsOrderOfLibertySectionVisible: void;
   setEthPrice: void;
   setMovePriceInWeth: void;
   setUsdcPriceInWeth: void;
@@ -225,6 +226,10 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setIsTokensListLoaded(state, isLoaded: boolean): void {
     state.isTokensListLoaded = isLoaded;
+  },
+  toggleIsOrderOfLibertySectionVisible(state): void {
+    state.isOrderOfLibertySectionVisible =
+      !state.isOrderOfLibertySectionVisible;
   }
 };
 

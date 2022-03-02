@@ -82,6 +82,7 @@ export type AccountStoreState = {
   gasUpdaterCallers: Array<string>;
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
+  isOrderOfLibertySectionVisible: boolean;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {
