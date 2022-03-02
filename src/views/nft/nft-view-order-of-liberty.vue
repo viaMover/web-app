@@ -15,7 +15,7 @@
           <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartThree`">
             <a
               class="link bold emphasize"
-              href="https://www.instagram.com/graphicdddays"
+              href="https://www.behance.net/art-e-men"
               rel="external nofollow"
               target="_blank"
             >
@@ -31,7 +31,7 @@
             </a>
             <a
               class="link bold emphasize"
-              href="https://www.behance.net/art-e-men"
+              href="https://artk.ai/"
               rel="external nofollow"
               target="_blank"
             >
@@ -39,7 +39,7 @@
             </a>
             <a
               class="link bold emphasize"
-              href="https://artk.ai"
+              href="https://xravers.com/"
               rel="external nofollow"
               target="_blank"
             >
