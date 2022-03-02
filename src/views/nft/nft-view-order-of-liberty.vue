@@ -8,28 +8,51 @@
       <div class="page-header">
         <h1 class="title">{{ $t('NFTs.lblOrderOfLiberty') }}</h1>
         <div class="description">
-          <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`">
+          <span>{{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}</span>
+          <br /><br />
+          <span>{{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`) }}</span>
+          <br /><br />
+          <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartThree`">
             <a
               class="link bold emphasize"
-              href="https://www.instagram.com/graphicdddays/"
+              href="https://www.instagram.com/graphicdddays"
               rel="external nofollow"
+              target="_blank"
             >
-              {{ $t(`NFTs.txtNFTs.${nft.id}.txtUkrainian`) }}
+              {{ $t(`NFTs.txtNFTs.${nft.id}.txtArtistRoman`) }}
             </a>
             <a
               class="link bold emphasize"
-              href="https://www.xravers.com/"
+              href="https://alinafedorchenko.com"
               rel="external nofollow"
+              target="_blank"
+            >
+              {{ $t(`NFTs.txtNFTs.${nft.id}.txtArtistAlina`) }}
+            </a>
+            <a
+              class="link bold emphasize"
+              href="https://www.behance.net/art-e-men"
+              rel="external nofollow"
+              target="_blank"
+            >
+              {{ $t(`NFTs.txtNFTs.${nft.id}.txtArtistOksana`) }}
+            </a>
+            <a
+              class="link bold emphasize"
+              href="https://artk.ai"
+              rel="external nofollow"
+              target="_blank"
             >
               {{ $t(`NFTs.txtNFTs.${nft.id}.txtUkrainian`) }}
             </a>
           </i18n>
           <br /><br />
-          <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartTwo`">
+          <i18n :path="`NFTs.txtNFTs.${nft.id}.pageDescriptionPartFour`">
             <a
               class="link bold emphasize"
               href="https://www.embracemefoundation.com/"
               rel="external nofollow help"
+              target="_blank"
             >
               {{ $t(`NFTs.txtNFTs.${nft.id}.txtRegisteredCharity`) }}
             </a>

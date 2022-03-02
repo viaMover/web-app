@@ -3,6 +3,7 @@ import sample from 'lodash-es/sample';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import {
   bootIntercomSession,
   disconnectIntercomSession
@@ -39,7 +40,6 @@ import {
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 
-import { sendGlobalTopMessageEvent } from './../../../global-event-bus';
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
@@ -65,6 +65,7 @@ type Actions = {
   addTransaction: void;
   toggleIsDebitCardSectionVisible: void;
   toggleIsDepositCardSectionVisible: void;
+  toggleIsOrderOfLibertySectionVisible: void;
   setCurrentWallet: Promise<void>;
   setIsDetecting: void;
   loadAvatar: Promise<void>;
@@ -257,7 +258,7 @@ const actions: ActionFuncs<
     await setAvatarToPersist(state.currentAddress, newAvatar);
   },
   async initWallet(
-    { commit, dispatch },
+    { commit, dispatch, rootState },
     payload: InitWalletPayload
   ): Promise<void> {
     try {
@@ -279,6 +280,11 @@ const actions: ActionFuncs<
     } catch (err) {
       console.log("can't init the wallet");
       console.log(err);
+      sendGlobalTopMessageEvent(
+        (rootState.i18n?.t('errors.default') as string) ??
+          'Oh no. Something went wrong',
+        'error'
+      );
     }
   },
   async refreshWallet(
@@ -530,7 +536,7 @@ const actions: ActionFuncs<
     disconnectIntercomSession();
   },
   async switchEthereumChain(
-    { state },
+    { state, rootState },
     networkInfo: NetworkInfo
   ): Promise<void> {
     if (!ensureAccountStateIsSafe(state)) {
@@ -566,14 +572,22 @@ const actions: ActionFuncs<
             ]
           });
         } catch (err: any) {
-          sendGlobalTopMessageEvent('Oh no. Something went wrong', 'error');
+          sendGlobalTopMessageEvent(
+            (rootState.i18n?.t('errors.default') as string) ??
+              'Oh no. Something went wrong',
+            'error'
+          );
           console.error(
             `Can't add ethereum network to the provider: ${errorToString(err)}`
           );
           Sentry.captureException(err);
         }
       } else {
-        sendGlobalTopMessageEvent('Oh no. Something went wrong', 'error');
+        sendGlobalTopMessageEvent(
+          (rootState.i18n?.t('errors.default') as string) ??
+            'Oh no. Something went wrong',
+          'error'
+        );
         console.log(
           `Can't switch ethereum network to the provider: ${errorToString(
             error
@@ -639,6 +653,9 @@ const actions: ActionFuncs<
       Sentry.captureException(e);
       throw e;
     }
+  },
+  toggleIsOrderOfLibertySectionVisible({ commit }): void {
+    commit('toggleIsOrderOfLibertySectionVisible');
   }
 };
 
