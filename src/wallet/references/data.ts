@@ -1,3 +1,4 @@
+import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
@@ -14,6 +15,7 @@ import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
 import NFT_NIBBLE_SHOP_ABI from './abi/nft-nibble-shop.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
+import NFT_ORDER_OF_LIBERTY_ABI from './abi/nft-order-of-liberty.json';
 import NFT_RARI_ABI from './abi/nft-rari.json';
 import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
@@ -68,7 +70,8 @@ type AddressMapKey =
   | 'BTRFLY_TOKEN_ADDRESS'
   | 'WX_BTRFLY_TOKEN_ADDRESS'
   | 'GOHM_TOKEN_ADDRESS'
-  | 'TOKE_TOKEN_ADDRESS';
+  | 'TOKE_TOKEN_ADDRESS'
+  | 'NFT_ORDER_OF_LIBERTY';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -120,7 +123,8 @@ const addresses = {
     BTRFLY_TOKEN_ADDRESS: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a',
     WX_BTRFLY_TOKEN_ADDRESS: '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9',
     GOHM_TOKEN_ADDRESS: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
-    TOKE_TOKEN_ADDRESS: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94'
+    TOKE_TOKEN_ADDRESS: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94',
+    NFT_ORDER_OF_LIBERTY: '0xebFB3B9f34307De7a72eDdA8696c1E14e0f41d8b'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -153,7 +157,8 @@ const addresses = {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
     USDC_TOKEN_ADDRESS: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     WETH_TOKEN_ADDRESS: '0xAe740d42E4ff0C5086b2b5b5d149eB2F9e1A754F',
-    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
+    BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
+    NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -165,7 +170,9 @@ const addresses = {
     WETH_TOKEN_ADDRESS: '0xf670e09e0221a4100fbc83f4f49eda6e7bc923b0',
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
   },
-  [Network.fantom]: {},
+  [Network.fantom]: {
+    NFT_ORDER_OF_LIBERTY: '0x568F6DC40B2520522dC4745D881c990e57672d94'
+  },
   [Network.arbitrum]: {},
   [Network.avalanche]: {}
 } as AddressMap;
@@ -178,16 +185,66 @@ export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   return addresses[network]?.[key] ?? defaultAddress;
 };
 
+const getBaseAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & {
+  name: string;
+} => {
+  return (
+    getNetwork(network)?.baseAsset ?? {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    }
+  );
+};
+
 type ConstantsMapNetworkEntry = Readonly<{
   MASTER_CHEF_POOL_INDEX: number;
   POWERCARD_RARI_ID: number;
+  ORDER_OF_LIBERTY_DEFAULT_PRICE: string;
+  ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
 const constants = {
   [Network.mainnet]: {
     MASTER_CHEF_POOL_INDEX: 257,
-    POWERCARD_RARI_ID: 107150
+    POWERCARD_RARI_ID: 107150,
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
+      '0.01',
+      getBaseAssetData(Network.mainnet).decimals
+    ),
+    ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
+      toWei('0.1', getBaseAssetData(Network.mainnet).decimals),
+      toWei('1', getBaseAssetData(Network.mainnet).decimals),
+      toWei('10', getBaseAssetData(Network.mainnet).decimals)
+    ]
+  },
+  [Network.fantom]: {
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
+      '10',
+      getBaseAssetData(Network.fantom).decimals
+    ),
+    ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
+      toWei('100', getBaseAssetData(Network.fantom).decimals),
+      toWei('1000', getBaseAssetData(Network.fantom).decimals),
+      toWei('10000', getBaseAssetData(Network.fantom).decimals)
+    ]
+  },
+  [Network.polygon]: {
+    ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
+      '10',
+      getBaseAssetData(Network.polygon).decimals
+    ),
+    ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
+      toWei('100', getBaseAssetData(Network.polygon).decimals),
+      toWei('1000', getBaseAssetData(Network.polygon).decimals),
+      toWei('10000', getBaseAssetData(Network.polygon).decimals)
+    ]
   }
 } as ConstantsMap;
 export const lookupConstant = <
@@ -221,23 +278,6 @@ const formatSwapSources = (swapSource: string): string => {
   return swapSourceIcons[swapSource]
     ? `${swapSource} ${swapSourceIcons[swapSource]}`
     : swapSource;
-};
-
-const getBaseAssetData = (
-  network: Network
-): SmallTokenInfoWithIcon & {
-  name: string;
-} => {
-  return (
-    getNetwork(network)?.baseAsset ?? {
-      address: 'eth',
-      decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
-      iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
-    }
-  );
 };
 
 const getMoveAssetData = (
@@ -419,5 +459,6 @@ export {
   EARNINGS_ETHEREUM_ABI,
   EARNINGS_OLYMPUS_ABI,
   WX_BTRFLY_ABI,
+  NFT_ORDER_OF_LIBERTY_ABI,
   validTopUpAssets
 };

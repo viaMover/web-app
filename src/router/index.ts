@@ -10,6 +10,7 @@ import {
 import { checkFeatureFlags } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
+import { RootStoreState } from '@/store/types';
 import ConnectWallet from '@/views/connect-wallet.vue';
 import Home from '@/views/home.vue';
 import More from '@/views/more.vue';
@@ -35,7 +36,7 @@ const routes: Array<RouteConfig> = [
     },
     PreloadMore,
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return (
           isFeatureEnabled(
@@ -48,6 +49,10 @@ const routes: Array<RouteConfig> = [
           ) ||
           isFeatureEnabled(
             'isNftDropsEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isOrderOfLibertyNFTEnabled',
             store.state?.account?.networkInfo?.network
           )
         );
@@ -119,7 +124,7 @@ const routes: Array<RouteConfig> = [
         /* webpackChunkName: "savings" */ '@/views/preload/preload-product/preload-product.vue'
       ),
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return isFeatureEnabled(
           'isSavingsEnabled',
@@ -208,7 +213,7 @@ const routes: Array<RouteConfig> = [
         /* webpackChunkName: "treasury" */ '@/views/preload/preload-product/preload-product.vue'
       ),
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return isFeatureEnabled(
           'isTreasuryEnabled',
@@ -309,7 +314,7 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return isFeatureEnabled(
           'isGovernanceEnabled',
@@ -353,7 +358,7 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return isFeatureEnabled(
           'isNibbleShopEnabled',
@@ -374,6 +379,15 @@ const routes: Array<RouteConfig> = [
           component: () =>
             import(
               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
+            )
+        },
+        {
+          path: 'view/order-of-liberty',
+          name: 'the-order-of-liberty',
+          alias: '/order-of-liberty',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-order-of-liberty.vue'
             )
         },
         {
@@ -427,11 +441,17 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
-        return isFeatureEnabled(
-          'isNftDropsEnabled',
-          store.state?.account?.networkInfo?.network
+        return (
+          isFeatureEnabled(
+            'isNftDropsEnabled',
+            store.state?.account?.networkInfo?.network
+          ) ||
+          isFeatureEnabled(
+            'isOrderOfLibertyNFTEnabled',
+            store.state?.account?.networkInfo?.network
+          )
         );
       }
     }
@@ -488,7 +508,7 @@ const routes: Array<RouteConfig> = [
       ]
     },
     {
-      customCondition: (store?: Store<any>): boolean => {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return isFeatureEnabled(
           'isDebitCardEnabled',

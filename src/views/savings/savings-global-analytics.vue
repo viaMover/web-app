@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 import {
@@ -161,7 +161,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('savings', { fetchSavingsInfo: 'fetchSavingsInfo' }),
+    isFeatureEnabled,
     handleBack(): void {
       this.$router.back();
     }

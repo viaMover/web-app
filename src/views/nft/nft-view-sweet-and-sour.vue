@@ -135,7 +135,10 @@ export default Vue.extend({
     this.error = undefined;
   },
   methods: {
-    ...mapActions('nft', ['claimSweetAndSour', 'refreshNftStats']),
+    ...mapActions('nft', {
+      claimSweetAndSour: 'claimSweetAndSour',
+      refreshNftStats: 'fetchSweetAndSourData'
+    }),
     handleClose(): void {
       this.$router.back();
     },
