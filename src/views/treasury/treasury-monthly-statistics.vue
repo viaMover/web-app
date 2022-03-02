@@ -4,15 +4,14 @@
       <secondary-page-header :description="pageSubtitle" :title="pageTitle" />
     </template>
 
-    <treasury-monthly-chart-wrapper
-      v-if="isFeatureEnabled('isTreasuryMonthlyChartEnabled')"
-    />
+    <treasury-monthly-chart-wrapper v-if="isTreasuryMonthlyChartEnabled" />
     <treasury-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
@@ -34,6 +33,7 @@ export default Vue.extend({
     TreasuryMonthlyStatement
   },
   computed: {
+    ...mapState('account', { networkInfo: 'networkInfo' }),
     pageDate(): dayjs.Dayjs {
       try {
         return dateFromExplicitPair(
@@ -55,7 +55,12 @@ export default Vue.extend({
     }
   },
   methods: {
-    isFeatureEnabled,
+    isTreasuryMonthlyChartEnabled(): boolean {
+      return isFeatureEnabled(
+        'isTreasuryMonthlyChartEnabled',
+        this.networkInfo?.network
+      );
+    },
     handleBack(): void {
       this.$router.back();
     }

@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { Network } from '@/utils/networkTypes';
+
 import { Result } from '../responses';
 
 export enum NetworkAlias {
@@ -13,6 +15,12 @@ export enum NetworkAlias {
   Bsc = 'bsc',
   BscTestnet = 'bsc testnet',
   Avalanche = 'avalanche',
+  Fantom = 'fantom'
+}
+
+export enum TokenAlias {
+  Ethereum = 'ethereum',
+  Avalanche = 'avalanche-2',
   Fantom = 'fantom'
 }
 
@@ -33,6 +41,17 @@ type CoingeckoAllTokensResponse = {
 
 const URL = 'https://tokens.coingecko.com/uniswap/all.json';
 
+export const getBaseTokenAlias = (network: Network): TokenAlias => {
+  switch (network) {
+    case Network.avalanche:
+      return TokenAlias.Avalanche;
+    case Network.fantom:
+      return TokenAlias.Fantom;
+    default:
+      return TokenAlias.Ethereum;
+  }
+};
+
 export const GetAllTokens = async (): Promise<
   Result<Array<CoingeckoToken>, string>
 > => {
@@ -48,8 +67,10 @@ export const GetAllTokens = async (): Promise<
   }
 };
 
-export const getEthPrice = async (): Promise<Result<string, string>> => {
-  const resp = await getPrice('ethereum', 'usd');
+export const getNetworkBaseTokenPrice = async (
+  network: Network
+): Promise<Result<string, string>> => {
+  const resp = await getPrice(getBaseTokenAlias(network), 'usd');
   if (resp.isError) {
     return resp;
   }

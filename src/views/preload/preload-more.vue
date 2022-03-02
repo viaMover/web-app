@@ -2,14 +2,13 @@
   <content-wrapper class="more" page-content-class="centered">
     <more-section-skeleton-item-container />
     <more-section-skeleton-slider v-for="idx in 2" :key="idx" />
-    <more-section-skeleton-item-container
-      v-if="isFeatureEnabled('isVaultsRaceEnabled')"
-    />
+    <more-section-skeleton-item-container v-if="isVaultsRaceEnabled" />
   </content-wrapper>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 
@@ -26,8 +25,11 @@ export default Vue.extend({
     MoreSectionSkeletonSlider,
     MoreSectionSkeletonItemContainer
   },
-  methods: {
-    isFeatureEnabled
+  computed: {
+    ...mapState('account', { networkInfo: 'networkInfo' }),
+    isVaultsRaceEnabled(): boolean {
+      return isFeatureEnabled('isVaultsRaceEnabled', this.networkInfo?.network);
+    }
   }
 });
 </script>

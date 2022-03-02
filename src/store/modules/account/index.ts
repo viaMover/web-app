@@ -1,6 +1,7 @@
 import { isProduction } from '@/settings';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { AugmentedModule } from '@/store/types';
+import { Network } from '@/utils/networkTypes';
 
 import actions, { ActionType } from './actions';
 import getters, { GetterType } from './getters';
@@ -29,6 +30,7 @@ export default {
     isWalletLoading: true,
     balance: undefined,
     networkInfo: undefined,
+    availableNetworks: [Network.mainnet, Network.fantom, Network.polygon],
 
     gasPrices: undefined,
     gasUpdating: false,

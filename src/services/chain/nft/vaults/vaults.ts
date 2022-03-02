@@ -23,6 +23,14 @@ export const getVaultsData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_VAULTS');
 
+  if (contractAddress === '0x1') {
+    return {
+      totalClaimed: '0',
+      balance: '0',
+      totalAmount: '0'
+    };
+  }
+
   const vaults = new web3.eth.Contract(
     NFT_VAULTS_ABI as AbiItem[],
     contractAddress
@@ -47,7 +55,6 @@ export const claimVaults = async (
   accountAddress: string,
   network: Network,
   web3: Web3,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_VAULTS');
@@ -90,9 +97,9 @@ export const claimVaults = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: web3.utils
-      .toWei(web3.utils.toBN(gasPriceInGwei), 'gwei')
-      .toString()
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null
   };
 
   await new Promise<void>((resolve, reject) => {

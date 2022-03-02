@@ -11,6 +11,7 @@
           :provider-options="providerOptions"
           :theme="theme"
         />
+        <top-message-modal />
         <transition mode="out-in" name="fade">
           <template v-if="showPreload">
             <router-view
@@ -41,6 +42,7 @@ import { formatToNative } from '@/utils/format';
 import Mobile from '@/views/mobile.vue';
 import PreloadDefault from '@/views/preload/preload-default.vue';
 
+import { TopMessageModal } from './components/modals';
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/types';
 import { InitCallbacks } from './web3/callbacks';
@@ -50,7 +52,8 @@ export default Vue.extend({
   components: {
     PreloadDefault,
     Mobile,
-    Web3ModalVue
+    Web3ModalVue,
+    TopMessageModal
   },
   data() {
     return {

@@ -1,4 +1,4 @@
-import { Network } from '@/utils/networkTypes';
+import { getNetwork, Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
@@ -149,7 +149,7 @@ const addresses = {
     NFT_SWEET_AND_SOUR: '0x164c1cc343b6a45eDb37F0dD7558FdCddF173c82',
     NFT_OLYMPUS: '0x125601b455fDdceD0d008ED007bF5eAe361c9EFf'
   },
-  [Network.matic]: {
+  [Network.polygon]: {
     MOVE_ADDRESS: '0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC',
     USDC_TOKEN_ADDRESS: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     WETH_TOKEN_ADDRESS: '0xAe740d42E4ff0C5086b2b5b5d149eB2F9e1A754F',
@@ -164,8 +164,12 @@ const addresses = {
     USDC_TOKEN_ADDRESS: '0x64544969ed7ebf5f083679233325356ebe738930',
     WETH_TOKEN_ADDRESS: '0xf670e09e0221a4100fbc83f4f49eda6e7bc923b0',
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
-  }
+  },
+  [Network.fantom]: {},
+  [Network.arbitrum]: {},
+  [Network.avalanche]: {}
 } as AddressMap;
+
 const defaultAddress = '0x1';
 export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   network: N,
@@ -219,17 +223,21 @@ const formatSwapSources = (swapSource: string): string => {
     : swapSource;
 };
 
-const getEthAssetData = (): SmallTokenInfoWithIcon & {
+const getBaseAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & {
   name: string;
 } => {
-  return {
-    address: 'eth',
-    decimals: 18,
-    symbol: 'ETH',
-    name: 'Ethereum',
-    iconURL:
-      'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
-  };
+  return (
+    getNetwork(network)?.baseAsset ?? {
+      address: 'eth',
+      decimals: 18,
+      symbol: 'ETH',
+      name: 'Ethereum',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+    }
+  );
 };
 
 const getMoveAssetData = (
@@ -384,7 +392,7 @@ export {
   getMoveWethLPAssetData,
   getUSDCAssetData,
   getAssetsForTreasury,
-  getEthAssetData,
+  getBaseAssetData,
   getOhmAssetData,
   getBTRFLYAssetData,
   isTokenValidForTreasuryDeposit,

@@ -288,7 +288,7 @@ export default Vue.extend({
         this.transactionStep = 'Success';
       } catch (err) {
         this.transactionStep = 'Reverted';
-        this.actionError = this.$t('NFTsOhNoSomething').toString();
+        this.actionError = this.$t('NFTs.txtOhNoSomething').toString();
       }
     }
   }
