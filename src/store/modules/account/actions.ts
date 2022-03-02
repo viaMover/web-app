@@ -28,7 +28,7 @@ import {
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
 import { errorToString } from '@/utils/errors';
-import { Network, NetworkInfo } from '@/utils/networkTypes';
+import { NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import { getGasPrices } from '@/wallet/gas';
@@ -39,6 +39,7 @@ import {
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 
+import { sendGlobalTopMessageEvent } from './../../../global-event-bus';
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
@@ -565,12 +566,14 @@ const actions: ActionFuncs<
             ]
           });
         } catch (err: any) {
+          sendGlobalTopMessageEvent('Oh no. Something went wrong', 'error');
           console.error(
             `Can't add ethereum network to the provider: ${errorToString(err)}`
           );
           Sentry.captureException(err);
         }
       } else {
+        sendGlobalTopMessageEvent('Oh no. Something went wrong', 'error');
         console.log(
           `Can't switch ethereum network to the provider: ${errorToString(
             error
