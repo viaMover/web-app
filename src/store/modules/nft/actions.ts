@@ -314,18 +314,11 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       throw new Error('account state is not ready');
     }
 
-    const fastGasPrice = rootState.account.gasPrices?.FastGas;
-
-    if (fastGasPrice === undefined) {
-      throw new Error('There is no gas price, please, try again');
-    }
-
     await claimOrderOfLiberty(
       rootState.account.currentAddress,
       rootState.account.networkInfo.network,
       rootState.account.provider.web3,
       payload.selectedPrice,
-      fastGasPrice.price,
       payload.changeStep
     );
   }

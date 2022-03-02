@@ -58,7 +58,6 @@ export const claimOrderOfLiberty = async (
   network: Network,
   web3: Web3,
   selectedPrice: string,
-  gasPriceInGwei: string,
   changeStep: (step: Step) => void
 ): Promise<void> => {
   const contractAddress = lookupAddress(network, 'NFT_ORDER_OF_LIBERTY');
@@ -91,11 +90,9 @@ export const claimOrderOfLiberty = async (
   const transactionParams: TransactionsParams = {
     from: accountAddress,
     gas: web3.utils.toBN(gasLimit).toNumber(),
-    gasPrice: gasPriceInGwei
-      ? web3.utils.toWei(web3.utils.toBN(gasPriceInGwei), 'gwei').toString()
-      : undefined,
-    maxFeePerGas: gasPriceInGwei ? undefined : null,
-    maxPriorityFeePerGas: gasPriceInGwei ? undefined : null,
+    gasPrice: undefined,
+    maxFeePerGas: null,
+    maxPriorityFeePerGas: null,
     value: selectedPrice
   };
 
