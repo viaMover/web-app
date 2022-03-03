@@ -36,7 +36,7 @@ export default Vue.extend({
           }
         ],
         webpSources: [
-          { src: '@/assets/images/order-of-liberty/home@1x.webp' },
+          { src: require('@/assets/images/order-of-liberty/home@1x.webp') },
           {
             src: require('@/assets/images/order-of-liberty/home@2x.webp'),
             variant: '2x'
