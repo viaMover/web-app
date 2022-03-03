@@ -32,6 +32,7 @@ export interface Globals {
   isHomeSwapModalEnabled: GlobalSettings;
   isOrderOfLibertyNFTEnabled: GlobalSettings;
   isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
+  isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -86,7 +87,8 @@ const values: Globals = {
     Network.polygon,
     Network.fantom
   ],
-  isMoverAPISavingsServiceFieldsReducerEnabled: true
+  isMoverAPISavingsServiceFieldsReducerEnabled: true,
+  isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(
