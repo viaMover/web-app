@@ -27,6 +27,7 @@
     "apollo-client": "^2.6.10",
     "apollo-link-http": "^1.5.17",
     "axios": "^0.21.1",
+    "axios-retry": "^3.2.4",
     "chart.js": "3.4.1",
     "chartjs-adapter-dayjs": "^1.0.0",
     "chartjs-plugin-crosshair": "1.2.0",
