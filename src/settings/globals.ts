@@ -31,6 +31,7 @@ export interface Globals {
   isMultiChainMastheadEnabled: GlobalSettings;
   isHomeSwapModalEnabled: GlobalSettings;
   isOrderOfLibertyNFTEnabled: GlobalSettings;
+  isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -80,7 +81,12 @@ const values: Globals = {
   isSavingsPlusEnabled: false,
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
-  isOrderOfLibertyNFTEnabled: [Network.mainnet, Network.polygon, Network.fantom]
+  isOrderOfLibertyNFTEnabled: [
+    Network.mainnet,
+    Network.polygon,
+    Network.fantom
+  ],
+  isMoverAPISavingsServiceFieldsReducerEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(
