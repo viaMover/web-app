@@ -6,13 +6,17 @@ import axios, {
   AxiosResponse
 } from 'axios';
 
-import { ErrorResponse as MoverApiErrorResponse } from '@/services/mover/responses';
-
-import MoverError from '../../errors/MoverError';
+import { MoverError } from '../../MoverError';
 import MultiChainAPIService from '../multiChainAPIService';
-import MoverAPIError from './errors/moverAPIError';
+import { MoverAPIError } from './moverAPIError';
+import {
+  isErrorResponse,
+  MoverAPIErrorResponse,
+  MoverAPIResponse,
+  MoverAPISuccessfulResponse
+} from './types';
 
-export default abstract class MoverAPIService extends MultiChainAPIService {
+export abstract class MoverAPIService extends MultiChainAPIService {
   protected formatError(error: unknown): never {
     if (error instanceof MoverAPIError) {
       Sentry.addBreadcrumb({
@@ -30,7 +34,7 @@ export default abstract class MoverAPIService extends MultiChainAPIService {
     }
 
     if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError<MoverApiErrorResponse<unknown>>;
+      const axiosError = error as AxiosError<MoverAPIErrorResponse<unknown>>;
       Sentry.addBreadcrumb(this.formatAxiosErrorSentryBreadcrumb(axiosError));
 
       if (axiosError.response !== undefined) {
@@ -114,33 +118,41 @@ export default abstract class MoverAPIService extends MultiChainAPIService {
       return config;
     });
 
-    instance.interceptors.response.use((response):
-      | AxiosResponse<unknown>
-      | Promise<AxiosResponse<unknown>> => {
-      // if response.data.status === 'error' then API returned malformed
-      // response and/or the response should be treated as an error
-      if (response.data.status === 'error') {
-        Sentry.addBreadcrumb({
-          type: 'error',
-          message: 'API responded with code 200 but data.status is "error"',
-          category: this.sentryCategoryPrefix,
-          data: {
-            status: response.status,
-            data: response.data
-          }
-        });
+    instance.interceptors.response.use(
+      <T, E>(
+        response: AxiosResponse<MoverAPIResponse<T, E>>
+      ):
+        | AxiosResponse<MoverAPISuccessfulResponse<T>>
+        | Promise<AxiosResponse<MoverAPISuccessfulResponse<T>>> => {
+        // if response.data.status === 'error' then API returned malformed
+        // response and/or the response should be treated as an error
+        if (isErrorResponse(response.data)) {
+          Sentry.addBreadcrumb({
+            type: 'error',
+            message: 'API responded with code 200 but data.status is "error"',
+            category: this.sentryCategoryPrefix,
+            data: {
+              status: response.status,
+              data: response.data
+            }
+          });
 
-        const error = new MoverAPIError(
-          response.data.error,
-          response.data.errorCode,
-          response.data.payload
-        );
-        this.formatError(error);
-      }
+          const error = new MoverAPIError(
+            response.data.error,
+            response.data.errorCode,
+            response.data.payload
+          );
+          this.formatError(error);
+        }
 
-      // otherwise, don't process the response
-      return response;
-    }, this.formatError);
+        // otherwise, don't process the response
+        // anyway, we have to cast response (originally MoverAPIResponse<T, E>) to
+        // the MoverAPISuccessfulResponse<T> given that response.data.status is not of
+        // error type
+        return response as AxiosResponse<MoverAPISuccessfulResponse<T>>;
+      },
+      this.formatError
+    );
 
     return instance;
   }

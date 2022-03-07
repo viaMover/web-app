@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
+import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { divide, fromWei, isFinite, isNaN, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
@@ -12,12 +13,15 @@ import {
 } from '@/wallet/references/data';
 import { SmallTokenInfo } from '@/wallet/types';
 
-import NetworkFeatureNotSupportedError from '../../errors/NetworkFeatureNotSupportedError';
-import OnChainService from '../OnChainService';
+import { NetworkFeatureNotSupportedError } from '../../../errors/NetworkFeatureNotSupportedError';
+import { MoverOnChainService } from '../MoverOnChainService';
 import { TreasuryBalancesReturn } from './types';
 import { SmartTreasuryContract } from './types';
 
-export default class TreasuryOnChainService extends OnChainService {
+export class SmartTreasuryOnChainService
+  extends MoverOnChainService
+  implements ISmartTreasuryBonusBalanceExecutor
+{
   protected readonly sentryCategoryPrefix = 'smart-treasury.on-chain.service';
   protected readonly smartTreasuryContract: SmartTreasuryContract | undefined;
   protected readonly usdcAssetData: SmallTokenInfo;
@@ -25,7 +29,8 @@ export default class TreasuryOnChainService extends OnChainService {
   protected readonly moveEthLPAssetData: SmallTokenInfo;
 
   constructor(currentAddress: string, network: Network, web3Client: Web3) {
-    super(currentAddress, network, web3Client);
+    super(currentAddress, network, web3Client, true);
+    this.setSmartTreasuryBonusBalanceExecutor(this);
 
     this.smartTreasuryContract = this.createContract(
       'SMART_TREASURY_ADDRESS',

@@ -24,31 +24,3 @@ export type CustomContractType<M> = Omit<
 > & {
   methods: M;
 };
-
-export type CompoundEstimateResponse = {
-  error: boolean;
-  approveGasLimit: string;
-  actionGasLimit: string;
-};
-
-export type CompoundEstimateWithUnwrapResponse = {
-  error: boolean;
-  approveGasLimit: string;
-  actionGasLimit: string;
-  unwrapGasLimit: string;
-};
-
-export type EstimateResponse = {
-  error: boolean;
-  gasLimit: string;
-};
-
-export type HolyHandContract = CustomContractType<{
-  depositToPool(
-    poolAddress: string,
-    tokenFrom: string,
-    amount: string,
-    expectedMinimumReceived: string,
-    bytes: Array<number>
-  ): ContractMethod;
-}>;

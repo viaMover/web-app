@@ -1,6 +1,6 @@
 import { Network } from '@/utils/networkTypes';
 
-import APIService from './ApiService';
+import { APIService } from './APIService';
 
 export default abstract class MultiChainAPIService extends APIService {
   protected readonly network: Network;

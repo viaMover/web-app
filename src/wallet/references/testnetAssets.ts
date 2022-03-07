@@ -69,7 +69,9 @@ const assets = {
       isVerified: true,
       marketCap: 999999999999999999
     }
-  ]
+  ],
+  celo: [],
+  optimism: []
 };
 
 export const getTestnetAssets = (network: Network): Array<Token> => {

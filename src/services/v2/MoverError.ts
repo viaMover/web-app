@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { CustomError } from 'ts-custom-error';
 
-export default class MoverError extends CustomError {
+export class MoverError<T = void> extends CustomError {
   public name = 'MoverError';
-  protected payload?: Record<string, unknown>;
+  protected payload?: T;
   protected wrappedError: Error | undefined;
 
-  constructor(message: string, payload?: Record<string, unknown>) {
+  constructor(message: string, payload?: T) {
     super(message);
     this.payload = payload;
   }
@@ -39,12 +39,12 @@ export default class MoverError extends CustomError {
     return this.wrappedError;
   }
 
-  public setPayload(payload: Record<string, unknown>): this {
+  public setPayload(payload: T): this {
     this.payload = payload;
     return this;
   }
 
-  public getPayload(): Record<string, unknown> | undefined {
+  public getPayload(): T | undefined {
     return this.payload;
   }
 }

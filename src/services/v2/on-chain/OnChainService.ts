@@ -11,23 +11,19 @@ import {
   ERC20ContractMethods
 } from '@/services/v2/on-chain/types';
 import { getPureEthAddress, isEth } from '@/utils/address';
-import { fromWei, greaterThan, multiply } from '@/utils/bigmath';
+import { fromWei, greaterThan } from '@/utils/bigmath';
 import { MAXUINT256 } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
-import {
-  AddressMapKey,
-  ERC20_ABI,
-  lookupAddress
-} from '@/wallet/references/data';
+import { ERC20_ABI } from '@/wallet/references/data';
 import { SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 
-import NetworkFeatureNotSupportedError from '../errors/NetworkFeatureNotSupportedError';
-import OnChainServiceError from './errors/OnChainServiceError';
+import { NetworkFeatureNotSupportedError } from '../NetworkFeatureNotSupportedError';
+import { OnChainServiceError } from './OnChainServiceError';
 
 /**
  * An abstract class representing basic needs of every on-chain service
  */
-export default abstract class OnChainService {
+export abstract class OnChainService {
   // account address
   protected readonly currentAddress: string;
 
@@ -55,45 +51,6 @@ export default abstract class OnChainService {
     this.currentAddress = currentAddress;
     this.network = network;
     this.web3Client = web3Client;
-  }
-
-  /**
-   * Creates Mover `CustomContractType` by lookup key, wraps errors internally
-   * @param contractAddressMapKey Mover address map key
-   * @param jsonInterface An ABI of Smart Contract
-   * @param options Smart Contract options
-   * @protected
-   */
-  protected createContract<M = void>(
-    contractAddressMapKey: AddressMapKey,
-    jsonInterface: AbiItem[] | AbiItem,
-    options?: ContractOptions
-  ): CustomContractType<M> | undefined {
-    const contract = this.createArbitraryContract<M>(
-      lookupAddress(this.network, contractAddressMapKey),
-      jsonInterface,
-      options
-    );
-
-    if (contract !== undefined) {
-      return contract;
-    }
-
-    Sentry.addBreadcrumb({
-      type: 'error',
-      category: this.sentryCategoryPrefix,
-      message: 'Contract is not available in current network',
-      data: {
-        network: this.network,
-        name: contractAddressMapKey
-      }
-    });
-    console.error(
-      'Contract is not available in current network',
-      contractAddressMapKey,
-      this.network
-    );
-    return undefined;
   }
 
   /**
@@ -197,8 +154,6 @@ export default abstract class OnChainService {
         }
       });
 
-      console.error('Failed to get allowance for token', token.address, error);
-
       throw new OnChainServiceError(
         `failed to get allowance for token: ${token.address}: ${
           error.message ?? error
@@ -248,8 +203,6 @@ export default abstract class OnChainService {
           error: error
         }
       });
-
-      console.error(`Failed to estimate approve for ${tokenAddress}`, error);
 
       throw new OnChainServiceError(
         `failed to estimate approve for ${tokenAddress}: ${error}}`
@@ -400,20 +353,6 @@ export default abstract class OnChainService {
     }
 
     return await action();
-  }
-
-  protected calcTransactionFastNativePrice(
-    fastGasPriceGWEI: string,
-    txGasLimit: string,
-    ethPrice: string
-  ): string {
-    const fastGasPriceWEI = this.web3Client.utils.toWei(
-      fastGasPriceGWEI,
-      'gwei'
-    );
-    const fastTransactionPriceWEI = multiply(txGasLimit, fastGasPriceWEI);
-    const fastTransactionPriceEth = fromWei(fastTransactionPriceWEI, '18');
-    return multiply(fastTransactionPriceEth, ethPrice);
   }
 
   protected substituteAssetAddressIfNeeded(address: string): string {

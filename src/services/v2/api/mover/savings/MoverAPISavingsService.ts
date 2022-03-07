@@ -3,8 +3,8 @@ import axios, { AxiosInstance } from 'axios';
 import { isFeatureEnabled } from '@/settings';
 import { Network } from '@/utils/networkTypes';
 
-import MoverAPIService from '../MoverAPIService';
-import { SuccessfulResponse } from '../types';
+import { MoverAPIService } from '../MoverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
 import {
   SavingsActionHistoryItem,
   SavingsHourlyBalancesItem,
@@ -15,7 +15,7 @@ import {
   SavingsReceiptAPIResponse
 } from './types';
 
-export default class MoverAPISavingsService extends MoverAPIService {
+export class MoverAPISavingsService extends MoverAPIService {
   protected readonly baseURL: string;
   protected readonly sentryCategoryPrefix = 'savings.api.service';
   protected static readonly isFieldsReducerEnabled = isFeatureEnabled(
@@ -33,7 +33,7 @@ export default class MoverAPISavingsService extends MoverAPIService {
 
   public async getInfo(): Promise<SavingsInfo | never> {
     const data = (
-      await this.client.get<SuccessfulResponse<SavingsInfoAPIResponse>>(
+      await this.client.get<MoverAPISuccessfulResponse<SavingsInfoAPIResponse>>(
         `/info/${this.currentAddress}`
       )
     ).data.payload;
@@ -46,9 +46,9 @@ export default class MoverAPISavingsService extends MoverAPIService {
     month: number
   ): Promise<SavingsReceipt | never> {
     const data = (
-      await this.client.get<SuccessfulResponse<SavingsReceiptAPIResponse>>(
-        `/receipt/${this.currentAddress}/${year}/${month}`
-      )
+      await this.client.get<
+        MoverAPISuccessfulResponse<SavingsReceiptAPIResponse>
+      >(`/receipt/${this.currentAddress}/${year}/${month}`)
     ).data.payload;
 
     return MoverAPISavingsService.mapReceipt(data);

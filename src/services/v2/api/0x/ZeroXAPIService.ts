@@ -6,8 +6,8 @@ import { TransferData } from '@/services/0x/api';
 import { greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 
-import MoverError from '../../errors/MoverError';
-import NetworkFeatureNotSupportedError from '../../errors/NetworkFeatureNotSupportedError';
+import { MoverError } from '../../MoverError';
+import { NetworkFeatureNotSupportedError } from '../../NetworkFeatureNotSupportedError';
 import MultiChainAPIService from '../multiChainAPIService';
 import {
   GeneralErrorCode,
@@ -115,6 +115,9 @@ export class ZeroXAPIService extends MultiChainAPIService {
       await this.client.get<SwapQuoteResponse>('/swap/v1/quote', { params })
     ).data;
   }
+
+  public formatSwapSources = (swapSource: string): string =>
+    ZeroXAPIService.formatSwapSources(swapSource);
 
   public static formatSwapSources = (swapSource: string): string => {
     return ZeroXAPIService.swapSourceIcons[swapSource]

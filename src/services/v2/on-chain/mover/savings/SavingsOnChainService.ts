@@ -1,21 +1,19 @@
 import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
+import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
+import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
+import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
+import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
 import store from '@/store';
 import { convertStringToHexWithPrefix, sameAddress } from '@/utils/address';
 import { floorDivide, fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
-import {
-  ACTION,
-  createSavingsDepositActionString,
-  sendSubsidizedRequest,
-  SubsidizedRequestError
-} from '@/wallet/actions/subsidized';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
   getUSDCAssetData,
@@ -32,13 +30,12 @@ import {
   TransactionTypes
 } from '@/wallet/types';
 
-import NetworkFeatureNotSupportedError from '../../errors/NetworkFeatureNotSupportedError';
-import OnChainServiceError from '../errors/OnChainServiceError';
-import OnChainService from '../OnChainService';
+import { OnChainServiceError } from '../../OnChainServiceError';
+import { MoverOnChainService } from '../MoverOnChainService';
 import { CompoundEstimateResponse, HolyHandContract } from '../types';
 import { GetSavingsAPYReturn, HolySavingsPoolContract } from './types';
 
-export default class SavingsOnChainService extends OnChainService {
+export class SavingsOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'savings.on-chain.service';
   protected readonly savingsPoolContract: HolySavingsPoolContract | undefined;
   protected readonly holyHandContract: HolyHandContract | undefined;
@@ -184,11 +181,6 @@ export default class SavingsOnChainService extends OnChainService {
         }
       });
 
-      console.error(
-        'Failed to estimate deposit: failed "needsApprove" check',
-        error
-      );
-
       return {
         error: true,
         approveGasLimit: '0',
@@ -327,7 +319,24 @@ export default class SavingsOnChainService extends OnChainService {
         };
       }
 
-      throw new Error('empty gas limit');
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate deposit: empty gas limit',
+        data: {
+          inputAsset,
+          outputAsset,
+          inputAmount,
+          transferData,
+          gasLimitObj
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
     } catch (error) {
       Sentry.addBreadcrumb({
         type: 'error',
@@ -341,8 +350,6 @@ export default class SavingsOnChainService extends OnChainService {
           transferData
         }
       });
-
-      console.error('Failed to estimate deposit', error);
 
       return {
         error: true,
@@ -373,7 +380,7 @@ export default class SavingsOnChainService extends OnChainService {
       transferData === undefined
     ) {
       throw new OnChainServiceError(
-        'failed to execute deposit: missing transferData'
+        'Failed to execute deposit: missing transferData'
       );
     }
 
@@ -475,7 +482,7 @@ export default class SavingsOnChainService extends OnChainService {
         }
       });
 
-      throw new Error(`failed to execute deposit: ${error.message ?? error}`);
+      throw new OnChainServiceError(`Failed to execute deposit`).wrap(error);
     }
   }
 
@@ -486,24 +493,28 @@ export default class SavingsOnChainService extends OnChainService {
     transferData: TransferData | undefined,
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
+    if (this.subsidizedOnChainService === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Subsidized Deposit',
+        this.network
+      );
+    }
+
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    const actionString = createSavingsDepositActionString(
-      this.currentAddress,
-      lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-      inputAsset.address,
-      inputAmountInWEI
-    );
-
     try {
-      const subsidizedResponse = await sendSubsidizedRequest(
-        ACTION.SAVINGS_DEPOSIT,
-        actionString,
-        this.currentAddress,
-        this.network,
-        this.web3Client,
-        changeStepToProcess
+      const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
+        lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+        inputAsset.address,
+        inputAmountInWEI
       );
+
+      const transactionResult =
+        await this.subsidizedAPIService.executeTransaction(
+          preparedAction.actionString,
+          preparedAction.signature,
+          changeStepToProcess
+        );
 
       const tx: Transaction = {
         blockNumber: '0',
@@ -511,13 +522,13 @@ export default class SavingsOnChainService extends OnChainService {
           ethPrice: store.getters['account/ethPrice'],
           feeInWEI: '0'
         },
-        hash: subsidizedResponse.txID ?? '',
+        hash: transactionResult.txID ?? '',
         isOffchain: true,
         nonce: '0',
         status: 'pending',
         timestamp: currentTimestamp(),
         type: TransactionTypes.transferERC20,
-        uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+        uniqHash: transactionResult.txID ? `${transactionResult.txID}-0` : '',
         asset: {
           address: inputAsset.address,
           change: toWei(inputAmount, inputAsset.decimals),
@@ -529,33 +540,28 @@ export default class SavingsOnChainService extends OnChainService {
         },
         from: this.currentAddress,
         to: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
-        subsidizedQueueId: subsidizedResponse.queueID,
+        subsidizedQueueId: transactionResult.queueID,
         moverType: 'subsidized_deposit'
       };
       await store.dispatch('account/addTransaction', tx); // fixme remove direct store side-effect
 
       return await waitOffchainTransactionReceipt(
-        subsidizedResponse.queueID,
-        subsidizedResponse.txID,
+        transactionResult.queueID,
+        transactionResult.txID,
         this.web3Client
       );
     } catch (error) {
-      if (error instanceof SubsidizedRequestError) {
+      if (error instanceof MoverAPISubsidizedRequestError) {
         Sentry.addBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to execute subsidized transaction',
           data: {
             error: error.message,
-            description: error.publicMessage
+            description: error.shortMessage,
+            payload: error.payload
           }
         });
-
-        console.error(
-          'Failed to execute subsidized transaction',
-          error.message,
-          error.publicMessage
-        );
       } else {
         Sentry.addBreadcrumb({
           type: 'error',
@@ -565,10 +571,33 @@ export default class SavingsOnChainService extends OnChainService {
             error: error
           }
         });
-
-        console.error('Failed to execute subsidized transaction', error);
       }
+
+      console.error('Failed to execute subsidized transaction', error);
       throw error;
     }
+  }
+
+  protected async prepareSavingsSubsidizedDepositAction(
+    poolAddress: string,
+    tokenAddress: string,
+    amount: string
+  ): Promise<PreparedAction> {
+    return this.prepareSubsidizedAction(
+      `ON BEHALF ${
+        this.currentAddress
+      } TIMESTAMP ${dayjs().unix()} EXECUTE DEPOSIT TOKEN ${tokenAddress} TO_DESTINATION ${poolAddress} AMOUNT ${amount}`
+    );
+  }
+
+  protected async prepareSavingsSubsidizedWithdrawAction(
+    poolAddress: string,
+    amount: string
+  ): Promise<PreparedAction> {
+    return this.prepareSubsidizedAction(
+      `ON BEHALF ${
+        this.currentAddress
+      } TIMESTAMP ${dayjs().unix()} EXECUTE WITHDRAW FROM ${poolAddress} AMOUNT_TOKEN ${amount}`
+    );
   }
 }

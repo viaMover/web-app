@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
 
-export default abstract class ApiService {
+export abstract class APIService {
   protected abstract readonly client: AxiosInstance;
   protected readonly currentAddress: string;
   protected abstract baseURL: string;

@@ -3,8 +3,8 @@ import axios, { AxiosInstance } from 'axios';
 import { isFeatureEnabled } from '@/settings';
 import { Network } from '@/utils/networkTypes';
 
-import MoverAPIService from '../moverAPIService';
-import { SuccessfulResponse } from '../types';
+import { MoverAPIService } from '../moverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
 import {
   TreasuryActionHistoryItem,
   TreasuryHourlyBalancesItem,
@@ -15,7 +15,7 @@ import {
   TreasuryReceiptAPIResponse
 } from './types';
 
-export default class MoverAPISmartTreasuryService extends MoverAPIService {
+export class MoverAPISmartTreasuryService extends MoverAPIService {
   protected baseURL: string;
   protected readonly sentryCategoryPrefix = 'smart-treasury.api.service';
   protected static readonly isFieldsReducerEnabled = isFeatureEnabled(
@@ -37,9 +37,9 @@ export default class MoverAPISmartTreasuryService extends MoverAPIService {
 
   public async getInfo(): Promise<TreasuryInfo | never> {
     const data = (
-      await this.client.get<SuccessfulResponse<TreasuryInfoAPIResponse>>(
-        `/info/${this.currentAddress}`
-      )
+      await this.client.get<
+        MoverAPISuccessfulResponse<TreasuryInfoAPIResponse>
+      >(`/info/${this.currentAddress}`)
     ).data.payload;
 
     return MoverAPISmartTreasuryService.mapInfoData(data);
@@ -50,9 +50,9 @@ export default class MoverAPISmartTreasuryService extends MoverAPIService {
     month: number
   ): Promise<TreasuryReceipt | never> {
     const data = (
-      await this.client.get<SuccessfulResponse<TreasuryReceiptAPIResponse>>(
-        `/receipt/${this.currentAddress}/${year}/${month}`
-      )
+      await this.client.get<
+        MoverAPISuccessfulResponse<TreasuryReceiptAPIResponse>
+      >(`/receipt/${this.currentAddress}/${year}/${month}`)
     ).data.payload;
 
     return MoverAPISmartTreasuryService.mapReceiptData(data);

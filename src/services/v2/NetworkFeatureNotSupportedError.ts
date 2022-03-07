@@ -1,8 +1,8 @@
 import { Network } from '@/utils/networkTypes';
 
-import MoverError from './MoverError';
+import { MoverError } from './MoverError';
 
-export default class NetworkFeatureNotSupportedError extends MoverError {
+export class NetworkFeatureNotSupportedError extends MoverError {
   public name = 'NetworkFeatureNotSupportedError';
 
   constructor(

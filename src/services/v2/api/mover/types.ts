@@ -1,18 +1,21 @@
-export type SuccessfulResponse<T> = {
+export type MoverAPISuccessfulResponse<P> = {
   status: 'ok';
-  payload: T;
+  payload: P;
 };
 
-export type ErrorResponse<E> = {
+export type MoverAPIErrorResponse<P = void> = {
   status: 'error';
-
-  // short service explanation
   errorCode: string;
-
-  // user-friendly error message which can be displayed
   error: string;
-
-  payload: E;
+  payload: P;
 };
 
-export type MoverResponse<T, E> = SuccessfulResponse<T> | ErrorResponse<E>;
+export type MoverAPIResponse<T, E = void> =
+  | MoverAPISuccessfulResponse<T>
+  | MoverAPIErrorResponse<E>;
+
+export const isErrorResponse = <P, E>(
+  response: MoverAPIResponse<P, E>
+): response is MoverAPIErrorResponse<E> => {
+  return response.status === 'error';
+};

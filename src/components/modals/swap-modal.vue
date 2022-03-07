@@ -153,7 +153,7 @@ import { formatToDecimals, formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
 import { swapCompound } from '@/wallet/actions/swap/swap';
 import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
-import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
+import { getMoveAssetData } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { GasData, SmallToken, Token, TokenWithBalance } from '@/wallet/types';
 
@@ -217,7 +217,8 @@ export default Vue.extend({
       'gasPrices',
       'tokens',
       'ethPrice',
-      'allTokens'
+      'allTokens',
+      'swapService'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -254,7 +255,7 @@ export default Vue.extend({
       if (this.transferData === undefined) {
         return '';
       }
-      return formatSwapSources(this.transferData.swappingVia);
+      return this.swapService.formatSwapSources(this.transferData.swappingVia);
     },
     rateString(): string {
       if (
