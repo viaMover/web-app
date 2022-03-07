@@ -1,5 +1,7 @@
 import { PowercardState } from '@/services/chain';
 import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
+import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury/MoverAPISmartTreasuryService';
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { DataStore, DataStoreWrapper } from '@/store/types';
 
 export type TreasuryStoreState = {
@@ -19,6 +21,9 @@ export type TreasuryStoreState = {
   powercardState: PowercardState | undefined;
   powercardActiveTime: number;
   powercardCooldownTime: number;
+
+  onChainService: SmartTreasuryOnChainService;
+  apiService: MoverAPISmartTreasuryService;
 };
 
 export type TreasuryGetReceiptPayload = {

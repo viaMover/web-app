@@ -13,7 +13,7 @@ import {
 } from '@/wallet/references/data';
 import { SmallTokenInfo } from '@/wallet/types';
 
-import { NetworkFeatureNotSupportedError } from '../../../errors/NetworkFeatureNotSupportedError';
+import { NetworkFeatureNotSupportedError } from '../../../NetworkFeatureNotSupportedError';
 import { MoverOnChainService } from '../MoverOnChainService';
 import { TreasuryBalancesReturn } from './types';
 import { SmartTreasuryContract } from './types';

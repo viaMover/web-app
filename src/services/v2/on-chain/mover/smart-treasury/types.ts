@@ -1,4 +1,4 @@
-import { ContractMethod, CustomContractType } from '../types';
+import { ContractMethod, CustomContractType } from '../../types';
 
 export type SmartTreasuryContract = CustomContractType<{
   userInfoMove(address: string): ContractMethod<{

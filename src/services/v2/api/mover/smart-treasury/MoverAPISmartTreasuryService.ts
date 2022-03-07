@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from 'axios';
 import { isFeatureEnabled } from '@/settings';
 import { Network } from '@/utils/networkTypes';
 
-import { MoverAPIService } from '../moverAPIService';
+import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
 import {
   TreasuryActionHistoryItem,

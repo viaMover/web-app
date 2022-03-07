@@ -1,4 +1,4 @@
-import { APIKeys } from '@/settings';
+import { APIKeys } from '@/settings/keys';
 import { SmallTokenInfoWithIcon } from '@/wallet/types';
 
 export enum Network {
