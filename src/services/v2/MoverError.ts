@@ -2,41 +2,34 @@ import axios from 'axios';
 import { CustomError } from 'ts-custom-error';
 
 export class MoverError<T = void> extends CustomError {
-  public name = 'MoverError';
   protected payload?: T;
-  protected wrappedError: Error | undefined;
 
   constructor(message: string, payload?: T) {
     super(message);
     this.payload = payload;
   }
 
-  public toString(): string {
-    const baseString = `${this.name}: ${this.message}`;
-    if (this.wrappedError === undefined) {
+  public formatMessage(wrappedError?: Error): string {
+    const baseString = this.message;
+    if (wrappedError === undefined) {
       return baseString;
     }
 
     let wrappedErrorString;
-    if (this.wrappedError instanceof MoverError) {
-      wrappedErrorString = this.wrappedError.toString();
-    } else if (axios.isAxiosError(this.wrappedError)) {
-      wrappedErrorString = JSON.stringify(this.wrappedError.toJSON());
+    if (wrappedError instanceof MoverError) {
+      wrappedErrorString = wrappedError.formatMessage();
+    } else if (axios.isAxiosError(wrappedError)) {
+      wrappedErrorString = JSON.stringify(wrappedError.toJSON());
     } else {
-      wrappedErrorString =
-        this.wrappedError?.message ?? this.wrappedError.toString();
+      wrappedErrorString = wrappedError?.message ?? wrappedError.toString();
     }
 
     return `${baseString}: ${wrappedErrorString}`;
   }
 
   public wrap(error: Error): this {
-    this.wrappedError = error;
+    this.message = this.formatMessage(error);
     return this;
-  }
-
-  public unwrap(): Error | undefined {
-    return this.wrappedError;
   }
 
   public setPayload(payload: T): this {

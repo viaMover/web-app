@@ -1,7 +1,12 @@
-import { PowercardState } from '@/services/chain';
-import { TreasuryInfo, TreasuryReceipt } from '@/services/mover';
-import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury/MoverAPISmartTreasuryService';
-import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
+import {
+  MoverAPISmartTreasuryService,
+  TreasuryInfo,
+  TreasuryReceipt
+} from '@/services/v2/api/mover/smart-treasury';
+import {
+  PowercardState,
+  SmartTreasuryOnChainService
+} from '@/services/v2/on-chain/mover/smart-treasury';
 import { DataStore, DataStoreWrapper } from '@/store/types';
 
 export type TreasuryStoreState = {
@@ -22,8 +27,8 @@ export type TreasuryStoreState = {
   powercardActiveTime: number;
   powercardCooldownTime: number;
 
-  onChainService: SmartTreasuryOnChainService;
-  apiService: MoverAPISmartTreasuryService;
+  onChainService: SmartTreasuryOnChainService | undefined;
+  apiService: MoverAPISmartTreasuryService | undefined;
 };
 
 export type TreasuryGetReceiptPayload = {
@@ -35,4 +40,20 @@ export type SetTreasuryReceiptPayload = {
   year: number;
   month: number;
   receipt: Promise<TreasuryReceipt> | undefined;
+};
+
+export const ensureOnChainServiceExists = (
+  state: TreasuryStoreState
+): state is TreasuryStoreState & {
+  onChainService: SmartTreasuryOnChainService;
+} => {
+  return state.onChainService !== undefined;
+};
+
+export const ensureAPIServiceExists = (
+  state: TreasuryStoreState
+): state is TreasuryStoreState & {
+  apiService: MoverAPISmartTreasuryService;
+} => {
+  return state.apiService !== undefined;
 };

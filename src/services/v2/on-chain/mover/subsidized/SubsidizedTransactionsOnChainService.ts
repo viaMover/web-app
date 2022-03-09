@@ -1,7 +1,6 @@
 import Web3 from 'web3';
 
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
-import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
 import { OnChainService } from '@/services/v2/on-chain/OnChainService';
 import {
@@ -14,7 +13,9 @@ import { Network } from '@/utils/networkTypes';
 
 export class SubsidizedTransactionsOnChainService extends OnChainService {
   protected readonly sentryCategoryPrefix = 'subsidized.on-chain.service';
-  protected readonly smartTreasuryBonusBalanceExecutor: ISmartTreasuryBonusBalanceExecutor;
+  protected smartTreasuryBonusBalanceExecutor:
+    | ISmartTreasuryBonusBalanceExecutor
+    | undefined;
 
   constructor(
     currentAddress: string,
@@ -24,9 +25,22 @@ export class SubsidizedTransactionsOnChainService extends OnChainService {
   ) {
     super(currentAddress, network, web3Client);
 
-    this.smartTreasuryBonusBalanceExecutor =
-      smartTreasuryBonusBalanceExecutor ??
-      new SmartTreasuryOnChainService(currentAddress, network, web3Client);
+    if (smartTreasuryBonusBalanceExecutor !== undefined) {
+      this.setSmartTreasuryBonusBalanceExecutor(
+        smartTreasuryBonusBalanceExecutor
+      );
+    }
+  }
+
+  public setSmartTreasuryBonusBalanceExecutor(
+    executor?: ISmartTreasuryBonusBalanceExecutor
+  ): this {
+    if (executor === undefined) {
+      return this;
+    }
+
+    this.smartTreasuryBonusBalanceExecutor = executor;
+    return this;
   }
 
   public async isAllowed(
@@ -34,6 +48,12 @@ export class SubsidizedTransactionsOnChainService extends OnChainService {
     txGasLimit: string,
     ethPrice: string
   ): Promise<boolean> {
+    if (this.smartTreasuryBonusBalanceExecutor === undefined) {
+      throw new Error(
+        'Smart Treasury Bonus Balance executor was not initialized'
+      );
+    }
+
     const treasuryBonus =
       await this.smartTreasuryBonusBalanceExecutor.getBonusBalance();
 

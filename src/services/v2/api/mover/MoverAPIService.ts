@@ -6,8 +6,9 @@ import axios, {
   AxiosResponse
 } from 'axios';
 
-import { MoverError } from '../../MoverError';
-import MultiChainAPIService from '../MultiChainAPIService';
+import { MoverError } from '@/services/v2';
+import { MultiChainAPIService } from '@/services/v2/api';
+
 import { MoverAPIError } from './MoverAPIError';
 import {
   isErrorResponse,

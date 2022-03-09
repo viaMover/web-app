@@ -26,9 +26,31 @@ export type TreasuryBalancesReturn = {
   LPBalance: string;
 };
 
-export type PowercardState = 'Staked' | 'NotStaked' | 'NotStakedCooldown';
+export enum PowercardState {
+  Staked = 'Staked',
+  NotStaked = 'NotStaked',
+  Cooldown = 'NotStakedCooldown'
+}
 
 export type PowerCardTimings = {
   activeTime: string;
   cooldownTime: string;
 };
+
+export type PowercardContract = CustomContractType<{
+  isApprovedForAll(_owner: string, _operator: string): ContractMethod<boolean>;
+  setApprovalForAll(_operator: string, _approved: boolean): ContractMethod;
+  balanceOf(_account: string, _id: number): ContractMethod<string>;
+}>;
+
+export type PowercardStakerContract = CustomContractType<{
+  getPowercardIndex(_owner: string): ContractMethod<string>;
+  getRemainingTimings(_staker: string): ContractMethod<{
+    active: string;
+    cooldown: string;
+    0: string;
+    1: string;
+  }>;
+  stakePowercard(): ContractMethod;
+  unstakePowercard(): ContractMethod;
+}>;

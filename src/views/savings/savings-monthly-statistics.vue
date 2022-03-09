@@ -56,15 +56,15 @@ export default Vue.extend({
       const right = this.pageDate.endOf('month').format('MMM DD, YYYY');
 
       return `${left} - ${right}`;
-    }
-  },
-  methods: {
+    },
     isSavingsMonthlyChartEnabled(): boolean {
       return isFeatureEnabled(
         'isSavingsMonthlyChartEnabled',
         this.networkInfo?.network
       );
-    },
+    }
+  },
+  methods: {
     handleBack(): void {
       this.$router.back();
     }

@@ -3,12 +3,11 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry from 'axios-retry';
 
 import { TransferData } from '@/services/0x/api';
+import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
+import { MultiChainAPIService } from '@/services/v2/api';
 import { greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 
-import { MoverError } from '../../MoverError';
-import { NetworkFeatureNotSupportedError } from '../../NetworkFeatureNotSupportedError';
-import MultiChainAPIService from '../multiChainAPIService';
 import {
   GeneralErrorCode,
   ResponseHTTPErrorCode,

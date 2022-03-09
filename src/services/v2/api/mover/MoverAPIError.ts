@@ -1,8 +1,6 @@
 import { MoverError } from '@/services/v2/MoverError';
 
 export class MoverAPIError<T = void> extends MoverError<T> {
-  public name = 'MoverAPIError';
-
   constructor(
     readonly message: string,
     readonly shortMessage?: string,

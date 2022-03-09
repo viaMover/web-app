@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js';
 
 import { Explorer } from '@/services/explorer';
+import { ZeroXAPIService } from '@/services/v2/api/0x';
 import {
   AccountData,
   AccountStoreState,
@@ -52,6 +53,7 @@ type Mutations = {
   setAvatar: void;
   setWeb3Modal: void;
   setIsTokensListLoaded: void;
+  setSwapService: void;
 };
 
 const mutations: MutationFuncs<Mutations, AccountStoreState> = {
@@ -230,6 +232,9 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   toggleIsOrderOfLibertySectionVisible(state): void {
     state.isOrderOfLibertySectionVisible =
       !state.isOrderOfLibertySectionVisible;
+  },
+  setSwapService(state, service: ZeroXAPIService): void {
+    state.swapService = service;
   }
 };
 

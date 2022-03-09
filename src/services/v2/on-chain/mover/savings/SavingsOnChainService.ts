@@ -8,6 +8,7 @@ import { AbiItem } from 'web3-utils';
 import { TransferData } from '@/services/0x/api';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
+import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
 import store from '@/store';
 import { convertStringToHexWithPrefix, sameAddress } from '@/utils/address';
@@ -30,7 +31,6 @@ import {
   TransactionTypes
 } from '@/wallet/types';
 
-import { OnChainServiceError } from '../../OnChainServiceError';
 import { MoverOnChainService } from '../MoverOnChainService';
 import { CompoundEstimateResponse, HolyHandContract } from '../types';
 import { GetSavingsAPYReturn, HolySavingsPoolContract } from './types';
@@ -263,11 +263,6 @@ export class SavingsOnChainService extends MoverOnChainService {
         value = this.web3Client.utils.toHex(transferData.value);
       }
 
-      const transactionParams = {
-        from: this.currentAddress,
-        value: value
-      } as TransactionsParams;
-
       const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
       let bytesData = [];
@@ -304,7 +299,10 @@ export class SavingsOnChainService extends MoverOnChainService {
           expectedMinimumReceived,
           bytesData
         )
-        .estimateGas(transactionParams);
+        .estimateGas({
+          from: this.currentAddress,
+          value: value
+        });
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();

@@ -4,20 +4,20 @@ import Web3 from 'web3';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { MoverAPISubsidizedService } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedService';
+import { MoverAPISubsidizedService } from '@/services/v2/api/mover/subsidized';
 import { Network } from '@/utils/networkTypes';
 import { AddressMapKey, lookupAddress } from '@/wallet/references/data';
 
 import { OnChainService } from '../OnChainService';
 import { CustomContractType } from '../types';
 import { ISmartTreasuryBonusBalanceExecutor } from './ISmartTreasuryBonusBalanceExecutor';
-import { SubsidizedTransactionsOnChainService } from './subsidized/SubsidizedTransactionsOnChainService';
-import { PreparedAction } from './subsidized/types';
+import {
+  PreparedAction,
+  SubsidizedTransactionsOnChainService
+} from './subsidized';
 
 export abstract class MoverOnChainService extends OnChainService {
-  protected subsidizedOnChainService:
-    | SubsidizedTransactionsOnChainService
-    | undefined;
+  protected subsidizedOnChainService: SubsidizedTransactionsOnChainService;
   protected readonly subsidizedAPIService: MoverAPISubsidizedService;
 
   /**
@@ -25,14 +25,12 @@ export abstract class MoverOnChainService extends OnChainService {
    * @param currentAddress account address
    * @param network current network
    * @param web3Client `Web3` client
-   * @param deferSubsidizedOnChainServiceInit -- expect `ISmartTreasuryBonusBalanceExecutor` to be set externally rather than created from constructor
    * @protected
    */
   protected constructor(
     currentAddress: string,
     network: Network,
-    web3Client: Web3,
-    deferSubsidizedOnChainServiceInit = false
+    web3Client: Web3
   ) {
     super(currentAddress, network, web3Client);
 
@@ -40,14 +38,11 @@ export abstract class MoverOnChainService extends OnChainService {
       currentAddress,
       network
     );
-
-    if (!deferSubsidizedOnChainServiceInit) {
-      this.subsidizedOnChainService = new SubsidizedTransactionsOnChainService(
-        currentAddress,
-        network,
-        web3Client
-      );
-    }
+    this.subsidizedOnChainService = new SubsidizedTransactionsOnChainService(
+      this.currentAddress,
+      this.network,
+      this.web3Client
+    );
   }
 
   public async isSubsidizedTransactionAllowed(
@@ -55,13 +50,19 @@ export abstract class MoverOnChainService extends OnChainService {
     txGasLimit: string,
     ethPrice: string
   ): Promise<boolean> {
-    if (this.subsidizedOnChainService === undefined) {
-      throw new Error(
-        'SubsidizedTransactionsOnChainService was not initialized'
-      );
-    }
-
     return this.subsidizedOnChainService.isAllowed(
+      fastGasPriceGWEI,
+      txGasLimit,
+      ethPrice
+    );
+  }
+
+  public calculateTransactionNativePrice(
+    fastGasPriceGWEI: string,
+    txGasLimit: string,
+    ethPrice: string
+  ): string {
+    return this.subsidizedOnChainService.calcFastNativePrice(
       fastGasPriceGWEI,
       txGasLimit,
       ethPrice
@@ -71,12 +72,6 @@ export abstract class MoverOnChainService extends OnChainService {
   protected async prepareSubsidizedAction(
     actionString: string
   ): Promise<PreparedAction> {
-    if (this.subsidizedOnChainService === undefined) {
-      throw new Error(
-        'SubsidizedTransactionsOnChainService was not initialized'
-      );
-    }
-
     return this.subsidizedOnChainService.prepareSubsidizedAction(actionString);
   }
 
@@ -107,21 +102,16 @@ export abstract class MoverOnChainService extends OnChainService {
 
   /**
    * Sets bonus balance executor that allows to query Smart Treasury bonus balance.
-   * IMPORTANT NOTE: Should be used for `SmartTreasuryOnChainService` derivatives only
    * @see ISmartTreasuryBonusBalanceExecutor
    * @param executor
    * @protected
    */
-  protected setSmartTreasuryBonusBalanceExecutor(
-    executor: ISmartTreasuryBonusBalanceExecutor
+  public setSmartTreasuryBonusBalanceExecutor(
+    executor?: ISmartTreasuryBonusBalanceExecutor
   ): this {
-    this.subsidizedOnChainService = new SubsidizedTransactionsOnChainService(
-      this.currentAddress,
-      this.network,
-      this.web3Client,
+    this.subsidizedOnChainService.setSmartTreasuryBonusBalanceExecutor(
       executor
     );
-
     return this;
   }
 

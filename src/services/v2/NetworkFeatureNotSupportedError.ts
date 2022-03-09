@@ -3,8 +3,6 @@ import { Network } from '@/utils/networkTypes';
 import { MoverError } from './MoverError';
 
 export class NetworkFeatureNotSupportedError extends MoverError {
-  public name = 'NetworkFeatureNotSupportedError';
-
   constructor(
     protected readonly featureName: string,
     protected readonly network: Network

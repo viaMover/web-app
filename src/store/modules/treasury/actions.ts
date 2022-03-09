@@ -1,17 +1,10 @@
 import * as Sentry from '@sentry/vue';
 
+import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
 import {
-  getPowercardState,
-  getTotalStakedMove,
-  getTotalStakedMoveEthLP,
-  getTreasuryAPY,
-  getTreasuryBalance,
-  getTreasuryBonus,
-  powercardBalance
-} from '@/services/chain';
-import { getPowercardTimings } from '@/services/chain/treasury/powercard';
-import { getTreasuryInfo, getTreasuryReceipt } from '@/services/mover';
-import { isError } from '@/services/responses';
+  PowerCardTimings,
+  SmartTreasuryOnChainService
+} from '@/services/v2/on-chain/mover/smart-treasury';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
@@ -22,6 +15,8 @@ import { ActionFuncs } from '@/store/types';
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
+  ensureAPIServiceExists,
+  ensureOnChainServiceExists,
   SetTreasuryReceiptPayload,
   TreasuryGetReceiptPayload,
   TreasuryStoreState
@@ -36,6 +31,8 @@ type Actions = {
   fetchTreasuryFreshData: Promise<void>;
   fetchTreasuryInfo: Promise<void>;
   fetchTreasuryReceipt: void;
+  setOnChainService: void;
+  setAPIService: void;
 };
 
 export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
@@ -101,7 +98,10 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
-      console.warn('failed to load treasury minimal info', promisesErrors);
+      console.warn(
+        'Failed to load Smart Treasury minimal info',
+        promisesErrors
+      );
       Sentry.captureException(promisesErrors);
     }
   },
@@ -122,76 +122,49 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
-      console.warn('failed to load treasury info', promisesErrors);
+      console.warn('Failed to load Smart Treasury info', promisesErrors);
       Sentry.captureException(promisesErrors);
     }
   },
-  async fetchPowercardData({ commit, rootState }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
+  async fetchPowercardData({ commit, state }): Promise<void> {
+    if (!ensureOnChainServiceExists(state)) {
       return;
     }
 
-    const powercardBalanceData = await powercardBalance(
-      rootState.account.currentAddress,
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
+    const powercardBalancePromise = state.onChainService.getPowercardBalance();
+    const powercardStatePromise = state.onChainService.getPowercardState();
+    const powercardTimingsPromise = powercardStatePromise.then(
+      (powercardState) => {
+        if (powercardState !== 'Staked') {
+          return {
+            activeTime: '0',
+            cooldownTime: '0'
+          } as PowerCardTimings;
+        }
+
+        return state.onChainService.getPowercardTimings();
+      }
     );
 
-    commit('setPowercardBalance', powercardBalanceData);
+    const [powercardBalance, powercardState, powercardTimings] =
+      await Promise.all([
+        powercardBalancePromise,
+        powercardStatePromise,
+        powercardTimingsPromise
+      ]);
 
-    const getPowercardStateData = await getPowercardState(
-      rootState.account.currentAddress,
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
-    );
-
-    commit('setPowercardState', getPowercardStateData);
-
-    if (getPowercardStateData === 'Staked') {
-      const getPowercardTimingsData = await getPowercardTimings(
-        rootState.account.currentAddress,
-        rootState.account.networkInfo.network,
-        rootState.account.provider.web3
-      );
-
-      commit('setPowercardActiveTime', getPowercardTimingsData.activeTime);
-      commit('setPowercardCooldownTime', getPowercardTimingsData.cooldownTime);
+    commit('setPowercardBalance', powercardBalance);
+    commit('setPowercardState', powercardState);
+    if (powercardTimings !== undefined) {
+      commit('setPowercardActiveTime', powercardTimings.activeTime);
+      commit('setPowercardCooldownTime', powercardTimings.cooldownTime);
     }
   },
-  async fetchTreasuryFreshData({ commit, getters, rootState }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
+  async fetchTreasuryFreshData({ commit, state, getters }): Promise<void> {
+    if (!ensureOnChainServiceExists(state)) {
+      console.warn('On-chain service does not exist in store');
       return;
     }
-
-    const getTreasuryBalancesPromise = getTreasuryBalance(
-      rootState.account.currentAddress,
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
-    );
-
-    const getTreasuryBonusPromise = getTreasuryBonus(
-      rootState.account.currentAddress,
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
-    );
-
-    const getTreasuryAPYPromise = getTreasuryAPY(
-      getters.usdcNativePrice,
-      getters.moveNativePrice,
-      rootState.account.currentAddress,
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
-    );
-
-    const getTotalStakedMovePromise = getTotalStakedMove(
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
-    );
-
-    const getTotalStakedMoveEthLPPromise = getTotalStakedMoveEthLP(
-      rootState.account.networkInfo.network,
-      rootState.account.provider.web3
-    );
 
     const [
       treasuryBalances,
@@ -200,11 +173,14 @@ const actions: ActionFuncs<
       treasuryTotalStakedMove,
       treasuryTotalStakedMoveEthLP
     ] = await Promise.all([
-      getTreasuryBalancesPromise,
-      getTreasuryBonusPromise,
-      getTreasuryAPYPromise,
-      getTotalStakedMovePromise,
-      getTotalStakedMoveEthLPPromise
+      state.onChainService.getBalance(),
+      state.onChainService.getBonusBalance(),
+      state.onChainService.getAPY(
+        getters.usdcNativePrice,
+        getters.moveNativePrice
+      ),
+      state.onChainService.getTotalStakedMove(),
+      state.onChainService.getTotalStakedMoveEthLP()
     ]);
 
     commit('setTreasuryBalanceMove', treasuryBalances.MoveBalance);
@@ -214,47 +190,52 @@ const actions: ActionFuncs<
     commit('setTreasuryTotalStakedMove', treasuryTotalStakedMove);
     commit('setTreasuryTotalStakedMoveEthLP', treasuryTotalStakedMoveEthLP);
   },
-  async fetchTreasuryInfo({ commit, rootState, getters }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
-    }
+  async fetchTreasuryInfo({
+    commit,
+    state,
+    rootState,
+    getters
+  }): Promise<void> {
+    try {
+      if (!ensureAPIServiceExists(state)) {
+        console.warn('API service does not exist in store');
+        return;
+      }
 
-    if (getters.treasuryInfo !== undefined) {
+      if (getters.treasuryInfo !== undefined) {
+        commit('setIsTreasuryInfoLoading', false);
+        return;
+      }
+
+      commit('setIsTreasuryInfoLoading', true);
+      commit('setTreasuryInfo', undefined);
+
+      const info = await state.apiService.getInfo();
+
+      commit('setTreasuryInfo', info);
+
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'treasury',
+          'info',
+          info,
+          INFO_TIME_EXPIRE
+        );
+      }
+    } catch (error) {
+      console.error('Failed to fetch Smart Treasury info', error);
+      Sentry.captureException(error);
+    } finally {
       commit('setIsTreasuryInfoLoading', false);
-      return;
     }
-
-    commit('setIsTreasuryInfoLoading', true);
-    commit('setTreasuryInfo', undefined);
-
-    const info = await getTreasuryInfo(rootState.account.currentAddress);
-
-    if (isError(info)) {
-      commit('setIsTreasuryInfoLoading', false);
-      Sentry.captureException(`can't get treasury info: ${info.error}`);
-      return;
-    }
-
-    commit('setTreasuryInfo', info.result);
-    commit('setIsTreasuryInfoLoading', false);
-
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
-    }
-
-    setToPersistStore(
-      rootState.account.currentAddress,
-      'treasury',
-      'info',
-      info.result,
-      INFO_TIME_EXPIRE
-    );
   },
   fetchTreasuryReceipt(
     { commit, state, rootState, getters },
     { year, month }: TreasuryGetReceiptPayload
   ): void {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
+    if (!ensureAPIServiceExists(state)) {
+      console.warn('API service does not exist in store');
       return;
     }
 
@@ -262,17 +243,7 @@ const actions: ActionFuncs<
       return;
     }
 
-    const receiptPromise = getTreasuryReceipt(
-      rootState.account.currentAddress,
-      year,
-      month
-    ).then((item) => {
-      if (isError(item)) {
-        throw new Error(item.error);
-      }
-
-      return item.result;
-    });
+    const receiptPromise = state.apiService.getReceipt(year, month);
 
     commit('setTreasuryReceipt', {
       year: year,
@@ -287,17 +258,34 @@ const actions: ActionFuncs<
     (async () => {
       for (const [key, value] of state.receipts.entries()) {
         if (value !== undefined) {
-          await setToPersistStore(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            rootState.account!.currentAddress!,
-            'treasuryReceipts',
-            key,
-            await value.data,
-            RECEIPT_TIME_EXPIRE
-          );
+          try {
+            await setToPersistStore(
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              rootState.account!.currentAddress!,
+              'treasuryReceipts',
+              key,
+              await value.data,
+              RECEIPT_TIME_EXPIRE
+            );
+          } catch (error) {
+            Sentry.addBreadcrumb({
+              type: 'error',
+              category: 'smart-treasury.store',
+              message: 'An error occurred during setToPersistStore()',
+              data: {
+                error
+              }
+            });
+          }
         }
       }
     })();
+  },
+  setOnChainService({ commit }, service: SmartTreasuryOnChainService): void {
+    commit('setOnChainService', service);
+  },
+  setAPIService({ commit }, service: MoverAPISmartTreasuryService): void {
+    commit('setAPIService', service);
   }
 };
 

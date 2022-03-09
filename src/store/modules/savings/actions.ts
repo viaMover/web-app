@@ -1,8 +1,7 @@
 import * as Sentry from '@sentry/vue';
 
-import { getSavingsAPY, getSavingsBalance } from '@/services/chain';
-import { getSavingsInfo, getSavingsReceipt } from '@/services/mover';
-import { isError } from '@/services/responses';
+import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
+import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
@@ -13,6 +12,8 @@ import { ActionFuncs } from '@/store/types';
 
 import { MutationType } from './mutations';
 import {
+  ensureAPIServiceExists,
+  ensureOnChainServiceExists,
   SavingsGetReceiptPayload,
   SavingsStoreState,
   SetSavingsReceiptPayload
@@ -26,6 +27,8 @@ type Actions = {
   fetchSavingsFreshData: Promise<void>;
   fetchSavingsInfo: Promise<void>;
   fetchSavingsReceipt: void;
+  setOnChainService: void;
+  setAPIService: void;
 };
 
 export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
@@ -81,7 +84,7 @@ const actions: ActionFuncs<
     try {
       await dispatch('fetchSavingsFreshData');
     } catch (error) {
-      console.warn('failed to load savings minimal info', error);
+      console.warn('Failed to load Savings minimal info', error);
       Sentry.captureException(error);
     }
   },
@@ -102,85 +105,73 @@ const actions: ActionFuncs<
       .map((p) => p.reason);
 
     if (promisesErrors.length > 0) {
-      console.warn('failed to load savings info', promisesErrors);
+      console.warn('Failed to load savings info', promisesErrors);
       Sentry.captureException(promisesErrors);
     }
   },
-  async fetchSavingsFreshData({ commit, rootState }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
-    }
-
+  async fetchSavingsFreshData({ commit, state }): Promise<void> {
     try {
-      const getSavingsApyPromise = getSavingsAPY(
-        rootState.account.currentAddress,
-        rootState.account.networkInfo.network,
-        rootState.account.provider.web3
-      );
-
-      const getSavingsBalancePromise = getSavingsBalance(
-        rootState.account.currentAddress,
-        rootState.account.networkInfo.network,
-        rootState.account.provider.web3
-      );
+      if (!ensureOnChainServiceExists(state)) {
+        console.warn('On-chain service does not exist in store');
+        return;
+      }
 
       const [savingsAPY, savingsBalance] = await Promise.all([
-        getSavingsApyPromise,
-        getSavingsBalancePromise
+        state.onChainService.getSavingsAPY(),
+        state.onChainService.getSavingsBalance()
       ]);
 
       commit('setSavingsAPY', savingsAPY.apy);
       commit('setSavingsDPY', savingsAPY.dpy);
       commit('setSavingsBalance', savingsBalance);
-    } catch (err) {
-      console.error(`can't get savings fresh data:`, err);
-      Sentry.captureException(err);
+    } catch (error) {
       commit('setSavingsAPY', '0');
       commit('setSavingsDPY', '0');
       commit('setSavingsBalance', '0');
+      console.error('Failed to fetch Savings fresh data', error);
+      Sentry.captureException(error);
     }
   },
-  async fetchSavingsInfo({ commit, rootState, getters }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
-    }
+  async fetchSavingsInfo({ commit, rootState, state, getters }): Promise<void> {
+    try {
+      if (!ensureAPIServiceExists(state)) {
+        console.warn('API service does not exist in store');
+        return;
+      }
 
-    if (getters.savingsInfo !== undefined) {
+      if (getters.savingsInfo !== undefined) {
+        return;
+      }
+
+      commit('setIsSavingsInfoLoading', true);
+      commit('setSavingsInfo', undefined);
+
+      const info = await state.apiService.getInfo();
+
+      commit('setSavingsInfo', info);
+
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'savings',
+          'info',
+          info,
+          INFO_TIME_EXPIRE
+        );
+      }
+    } catch (error) {
+      console.error('Failed to fetch Savings info', error);
+      Sentry.captureException(error);
+    } finally {
       commit('setIsSavingsInfoLoading', false);
-      return;
     }
-
-    commit('setIsSavingsInfoLoading', true);
-    commit('setSavingsInfo', undefined);
-
-    const info = await getSavingsInfo(rootState.account.currentAddress);
-
-    if (isError(info)) {
-      commit('setIsSavingsInfoLoading', false);
-      Sentry.captureException(`can't get savings info: ${info.error}`);
-      return;
-    }
-
-    commit('setSavingsInfo', info.result);
-    commit('setIsSavingsInfoLoading', false);
-
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
-    }
-
-    setToPersistStore(
-      rootState.account.currentAddress,
-      'savings',
-      'info',
-      info.result,
-      INFO_TIME_EXPIRE
-    );
   },
   fetchSavingsReceipt(
     { commit, state, rootState, getters },
     { year, month }: SavingsGetReceiptPayload
   ): void {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
+    if (!ensureAPIServiceExists(state)) {
+      console.warn('API service does not exist in store');
       return;
     }
 
@@ -188,17 +179,7 @@ const actions: ActionFuncs<
       return;
     }
 
-    const receiptPromise = getSavingsReceipt(
-      rootState.account.currentAddress,
-      year,
-      month
-    ).then((item) => {
-      if (item.isError) {
-        throw new Error(item.error);
-      }
-
-      return item.result;
-    });
+    const receiptPromise = state.apiService.getReceipt(year, month);
 
     commit('setSavingsReceipt', {
       year: year,
@@ -213,17 +194,34 @@ const actions: ActionFuncs<
     (async () => {
       for (const [key, value] of state.receipts.entries()) {
         if (value !== undefined) {
-          await setToPersistStore(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            rootState.account!.currentAddress!,
-            'savingsReceipts',
-            key,
-            await value.data,
-            RECEIPT_TIME_EXPIRE
-          );
+          try {
+            await setToPersistStore(
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              rootState.account!.currentAddress!,
+              'savingsReceipts',
+              key,
+              await value.data,
+              RECEIPT_TIME_EXPIRE
+            );
+          } catch (error) {
+            Sentry.addBreadcrumb({
+              type: 'error',
+              category: 'savings.store',
+              message: 'An error occurred during setToPersistStore()',
+              data: {
+                error
+              }
+            });
+          }
         }
       }
     })();
+  },
+  setOnChainService({ commit }, service: SavingsOnChainService): void {
+    commit('setOnChainService', service);
+  },
+  setAPIService({ commit }, service: MoverAPISavingsService): void {
+    commit('setAPIService', service);
   }
 };
 

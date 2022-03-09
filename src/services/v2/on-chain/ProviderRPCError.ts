@@ -13,7 +13,7 @@ export const isProviderRpcError = (
   return !(candidate.message === undefined || candidate.code === undefined);
 };
 
-export default interface ProviderRpcError extends CustomError {
+export interface ProviderRpcError extends CustomError {
   code: number;
   data?: unknown;
 }
