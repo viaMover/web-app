@@ -105,7 +105,7 @@ export const topUpCompound = async (
         topupInputAsset.address,
         topupInputAmountInWei,
         true,
-        '0.01',
+        '10',
         network
       );
 

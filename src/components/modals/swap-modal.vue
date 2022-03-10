@@ -197,7 +197,7 @@ export default Vue.extend({
         amount: '',
         nativeAmount: ''
       },
-      slippage: '1',
+      slippage: '10',
       selectedGasPrice: '0',
       useSubsidized: false,
       subsidizedAvaialbe: false,
