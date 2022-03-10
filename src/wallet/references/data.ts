@@ -217,11 +217,10 @@ const constants = {
     MASTER_CHEF_POOL_INDEX: 257,
     POWERCARD_RARI_ID: 107150,
     ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
-      '0.01',
+      '0.1',
       getBaseAssetData(Network.mainnet).decimals
     ),
     ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
-      toWei('0.1', getBaseAssetData(Network.mainnet).decimals),
       toWei('1', getBaseAssetData(Network.mainnet).decimals),
       toWei('10', getBaseAssetData(Network.mainnet).decimals)
     ],
@@ -238,8 +237,7 @@ const constants = {
     ),
     ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
       toWei('100', getBaseAssetData(Network.fantom).decimals),
-      toWei('1000', getBaseAssetData(Network.fantom).decimals),
-      toWei('10000', getBaseAssetData(Network.fantom).decimals)
+      toWei('1000', getBaseAssetData(Network.fantom).decimals)
     ]
   },
   [Network.polygon]: {
@@ -249,8 +247,7 @@ const constants = {
     ),
     ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
       toWei('100', getBaseAssetData(Network.polygon).decimals),
-      toWei('1000', getBaseAssetData(Network.polygon).decimals),
-      toWei('10000', getBaseAssetData(Network.polygon).decimals)
+      toWei('1000', getBaseAssetData(Network.polygon).decimals)
     ]
   }
 } as ConstantsMap;
