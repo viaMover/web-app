@@ -472,7 +472,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '0.01',
+              '10',
               this.networkInfo.network
             );
 
@@ -591,7 +591,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '0.01',
+              '10',
               this.networkInfo.network
             );
           } else {
@@ -631,7 +631,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '0.01',
+              '10',
               this.networkInfo.network
             );
             this.inputAmount = fromWei(
