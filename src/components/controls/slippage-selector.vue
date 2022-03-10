@@ -9,16 +9,16 @@ import Vue from 'vue';
 
 import { formatPercents } from '@/utils/format';
 
-export type Slippage = '1' | '0.5' | '0.1';
+export type Slippage = '10' | '5' | '1';
 
-const avaialbelSlippages = Array<Slippage>('1', '0.5', '0.1');
+const avaialbelSlippages = Array<Slippage>('10', '5', '1');
 
 export default Vue.extend({
   name: 'SlippageSelector',
   props: {
     slippage: {
       type: String,
-      default: '1'
+      default: '10'
     }
   },
   data() {
@@ -39,7 +39,6 @@ export default Vue.extend({
   },
   methods: {
     toggleSlippage(): void {
-      console.log('CLICKED');
       this.selectedSlippageIndex =
         (this.selectedSlippageIndex + 1) % this.availabelSlippages.length;
       this.$nextTick(() => {

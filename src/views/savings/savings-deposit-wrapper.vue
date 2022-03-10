@@ -453,7 +453,7 @@ export default Vue.extend({
               this.inputAsset.address,
               inputInWei,
               true,
-              '0.01'
+              '10'
             );
             this.transferError = undefined;
           } else {
@@ -471,7 +471,7 @@ export default Vue.extend({
               this.inputAsset.address,
               inputInWei,
               true,
-              '0.01',
+              '10',
               this.networkInfo.network
             );
             this.transferError = undefined;
