@@ -52,15 +52,15 @@ export default Vue.extend({
       const right = this.pageDate.endOf('month').format('MMM DD, YYYY');
 
       return `${left} - ${right}`;
-    }
-  },
-  methods: {
+    },
     isTreasuryMonthlyChartEnabled(): boolean {
       return isFeatureEnabled(
         'isTreasuryMonthlyChartEnabled',
         this.networkInfo?.network
       );
-    },
+    }
+  },
+  methods: {
     handleBack(): void {
       this.$router.back();
     }

@@ -33,6 +33,9 @@ const messages: VueI18n.LocaleMessageObject = {
   lblCollectibles: 'Collectibles',
   lblNoMoreTransactions: 'No more transactions',
   lblNoMoreTokens: 'No more tokens',
+  errors: {
+    default: 'Oh no. Something went wrong'
+  },
   connect: {
     txtMoverDescription:
       'Mover is a non-custodial service. It means that you need to connect your wallet first, to continue. By connecting your wallet, you agree with the {0}',
