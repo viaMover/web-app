@@ -152,7 +152,7 @@ export abstract class MoverAPIService extends MultiChainAPIService {
         // error type
         return response as AxiosResponse<MoverAPISuccessfulResponse<T>>;
       },
-      this.formatError
+      this.formatError.bind(this)
     );
 
     return instance;

@@ -70,13 +70,8 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
-import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { MoverError } from '@/services/v2';
+import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
@@ -466,13 +461,14 @@ export default Vue.extend({
               ),
               this.inputAsset.decimals
             );
-            this.transferData = await getTransferData(
+            this.transferData = await (
+              this.swapService as ZeroXAPIService
+            ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
-              '10',
-              this.networkInfo.network
+              '10'
             );
             this.transferError = undefined;
             this.inputAmount = fromWei(
@@ -481,14 +477,16 @@ export default Vue.extend({
             );
           }
         }
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
+          Sentry.captureException(error);
         }
-        console.error(`transfer error:`, err);
+        console.error(`transfer error:`, error);
         this.transferData = undefined;
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';

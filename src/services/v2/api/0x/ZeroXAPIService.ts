@@ -1,3 +1,5 @@
+import VueI18n from 'vue-i18n';
+
 import * as Sentry from '@sentry/vue';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry from 'axios-retry';
@@ -55,14 +57,16 @@ export class ZeroXAPIService extends MultiChainAPIService {
   constructor(currentAddress: string, network: Network) {
     super(currentAddress, network);
     this.baseURL = this.lookupBaseURL(network);
-    this.client = axios.create({
-      baseURL: this.baseURL,
-      paramsSerializer: this.getParamsSerializer,
-      headers: {
-        Accept: 'application/json'
-      },
-      validateStatus: (status) => status === 200
-    });
+    this.client = this.applyAxiosInterceptors(
+      axios.create({
+        baseURL: this.baseURL,
+        paramsSerializer: this.getParamsSerializer,
+        headers: {
+          Accept: 'application/json'
+        },
+        validateStatus: (status) => status === 200
+      })
+    );
   }
 
   /**
@@ -123,6 +127,21 @@ export class ZeroXAPIService extends MultiChainAPIService {
       ? `${swapSource} ${ZeroXAPIService.swapSourceIcons[swapSource]}`
       : swapSource;
   };
+
+  public mapErrorMessage = (message: string, i18n?: VueI18n): string =>
+    ZeroXAPIService.mapErrorMessage(message, i18n);
+
+  public static mapErrorMessage(message: string, i18n?: VueI18n): string {
+    if (i18n === undefined) {
+      return message;
+    }
+
+    if (i18n.te(`swaps.errors.${message}`)) {
+      return i18n.t(`swaps.errors.${message}`) as string;
+    }
+
+    return message;
+  }
 
   protected mapSwapQuote(data: SwapQuoteResponse): TransferData {
     const via = data.sources.find((s) => greaterThan(s.proportion, 0)) ?? {
@@ -230,7 +249,7 @@ export class ZeroXAPIService extends MultiChainAPIService {
         error.response?.status === ResponseHTTPErrorCode.TooManyRequests
     });
 
-    instance.interceptors.response.use(undefined, this.formatError);
+    instance.interceptors.response.use(undefined, this.formatError.bind(this));
 
     return instance;
   }
