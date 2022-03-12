@@ -68,12 +68,11 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { convertNativeAmountFromAmount, notZero } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { claimAndBurnMOBO } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMobo';
-import { estimateClaimAndBurnMOBOCompound } from '@/wallet/actions/treasury/claimAndBurnMobo/claimAndBurnMoboEstimate';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getMoboAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
@@ -154,6 +153,9 @@ export default Vue.extend({
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
     }),
+    ...mapState('treasury', {
+      smartTreasuryOnChainService: 'onChainService'
+    }),
     inputAsset(): TokenWithBalance {
       return {
         address: this.moboTokenInfo.address,
@@ -230,16 +232,14 @@ export default Vue.extend({
       }
     },
     async estimateAction(): Promise<CompoundEstimateResponse> {
-      const resp = await estimateClaimAndBurnMOBOCompound(
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
+      const estimation = await (
+        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+      ).estimateClaimAndBurnMOBO();
+      if (estimation.error) {
         this.transferError = this.$t('estimationError') as string;
-        throw new Error("Can't estimate action");
+        throw new Error('Failed to estimate action');
       }
-      return resp;
+      return estimation;
     },
     handleToggleInputMode(): void {
       if (this.inputMode === 'NATIVE') {
@@ -269,7 +269,7 @@ export default Vue.extend({
       this.isProcessing = false;
       this.step = 'review';
     },
-    async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
+    async handleTxStart(): Promise<void> {
       if (this.inputAmount === '') {
         console.error('inputAmount is empty during `handleTxStart`');
         Sentry.addBreadcrumb({
@@ -292,12 +292,10 @@ export default Vue.extend({
         return;
       }
 
-      console.log('is smart treasury:', args.isSmartTreasury);
       Sentry.addBreadcrumb({
         type: 'debug',
         category: 'treasury.claim-and-burn-mobo.handleTxStart',
         data: {
-          isSmartTreasury: args.isSmartTreasury,
           inputAsset: this.inputAsset,
           inputAmount: this.inputAmount,
           network: this.networkInfo.network,
@@ -309,21 +307,17 @@ export default Vue.extend({
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await claimAndBurnMOBO(
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
-          this.actionGasLimit,
-          async () => {
-            this.transactionStep = 'Process';
-          }
-        );
+        await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).claimAndBurnMOBO(this.actionGasLimit, async () => {
+          this.transactionStep = 'Process';
+        });
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.log('Treasury claim and burn MOBO txn reverted', err);
-        Sentry.captureException(err);
+        console.log('Failed to claim & burn MOBO', error);
+        Sentry.captureException(error);
       }
     }
   }

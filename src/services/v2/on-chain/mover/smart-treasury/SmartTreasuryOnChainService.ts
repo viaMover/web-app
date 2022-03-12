@@ -12,6 +12,7 @@ import {
 } from '@/services/v2/on-chain/mover/types';
 import { sameAddress } from '@/utils/address';
 import {
+  add,
   divide,
   fromWei,
   greaterThanOrEqual,
@@ -19,6 +20,7 @@ import {
   isFinite,
   isNaN,
   lessThanOrEqual,
+  multiply,
   toWei
 } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -1166,6 +1168,62 @@ export class SmartTreasuryOnChainService
         actionGasLimit: '0'
       };
     }
+  }
+
+  public calculateTreasuryBoost(
+    treasuryBalanceMove: string,
+    treasuryBalanceLP: string,
+    walletBalanceMove: string,
+    walletBalanceLP: string,
+    powercardState: PowercardState
+  ): string {
+    return SmartTreasuryOnChainService.calculateTreasuryBoost(
+      treasuryBalanceMove,
+      treasuryBalanceLP,
+      walletBalanceMove,
+      walletBalanceLP,
+      powercardState
+    );
+  }
+
+  public static calculateTreasuryBoost(
+    treasuryBalanceMove: string,
+    treasuryBalanceLP: string,
+    walletBalanceMove: string,
+    walletBalanceLP: string,
+    powercardState: PowercardState
+  ): string {
+    const tokenWeight = '1';
+    const lpWeight = '2.5';
+
+    let boostMove = multiply(
+      divide(treasuryBalanceMove, add(walletBalanceMove, treasuryBalanceMove)),
+      tokenWeight
+    );
+
+    if (isNaN(boostMove) || !isFinite(boostMove)) {
+      boostMove = '0';
+    }
+
+    let boostLP = multiply(
+      divide(treasuryBalanceLP, add(walletBalanceLP, treasuryBalanceLP)),
+      lpWeight
+    );
+
+    if (isNaN(boostLP) || !isFinite(boostLP)) {
+      boostLP = '0';
+    }
+
+    let boost = add(boostMove, boostLP);
+    if (isNaN(+boost)) {
+      boost = '0';
+    }
+
+    if (powercardState === PowercardState.Staked) {
+      return multiply(boost, 2);
+    }
+
+    return boost;
   }
 
   protected async deposit(

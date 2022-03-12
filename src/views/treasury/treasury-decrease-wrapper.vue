@@ -42,7 +42,6 @@
       :image="treasury"
       :input-amount-native-title="$t('treasury.decreaseBoost.lblAndTotalOf')"
       :input-amount-title="$t('treasury.decreaseBoost.lblAmountWeRemoveIn')"
-      :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
@@ -58,7 +57,8 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 
-import { calcTreasuryBoost } from '@/store/modules/account/utils/treasury';
+import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -71,9 +71,6 @@ import {
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { withdrawCompound } from '@/wallet/actions/treasury/withdraw/withdraw';
-import { estimateWithdrawCompound } from '@/wallet/actions/treasury/withdraw/withdrawEstimate';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import {
   getAssetsForTreasury,
   getMoveAssetData,
@@ -141,7 +138,6 @@ export default Vue.extend({
       inputAsset: undefined as TokenWithBalance | undefined,
 
       //to tx
-      isSubsidizedEnabled: false,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined
     };
@@ -165,7 +161,8 @@ export default Vue.extend({
     ...mapState('treasury', {
       treasuryBalanceMove: 'treasuryBalanceMove',
       treasuryBalanceLP: 'treasuryBalanceLP',
-      powercardState: 'powercardState'
+      powercardState: 'powercardState',
+      smartTreasuryOnChainService: 'onChainService'
     }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
@@ -251,7 +248,9 @@ export default Vue.extend({
         treasuryBalanceLP = sub(treasuryBalanceLP, inputedAmount);
       }
 
-      const futureBoost = calcTreasuryBoost(
+      const futureBoost = (
+        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+      ).calculateTreasuryBoost(
         treasuryBalanceMove,
         treasuryBalanceLP,
         walletBalanceMove,
@@ -318,13 +317,9 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateWithdrawCompound(
-        inputAsset,
-        inputAmount,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
+      const resp = await (
+        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+      ).estimateWithdrawCompound(inputAsset, inputAmount);
       if (resp.error) {
         throw new Error("Can't estimate action");
       }
@@ -344,22 +339,10 @@ export default Vue.extend({
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
-
-        console.info(
-          'Treasury decrease boost action gaslimit:',
-          this.actionGasLimit
-        );
-        console.info(
-          'Treasury decrease boost approve gaslimit:',
-          this.approveGasLimit
-        );
-      } catch (err) {
-        this.isSubsidizedEnabled = false;
+      } catch (error) {
         this.isProcessing = false;
-        console.error(`can't estimate treasury decrease boost for subs:`, err);
-        Sentry.captureException(
-          "can't estimate treasury decrease boost for subs"
-        );
+        console.warn('Failed to estimate withdraw', error);
+        Sentry.captureException(error);
         return;
       }
 
@@ -435,7 +418,7 @@ export default Vue.extend({
         );
       }
     },
-    async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
+    async handleTxStart(): Promise<void> {
       if (this.inputAsset === undefined) {
         console.error('inputAsset is empty during `handleTxStart`');
         Sentry.captureException("can't start treasury deposit TX");
@@ -459,17 +442,15 @@ export default Vue.extend({
         Sentry.captureException("can't start treasury deposit TX");
         return;
       }
-      console.log('is smart treasury:', args.isSmartTreasury);
 
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await withdrawCompound(
+        await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).withdrawCompound(
           this.inputAsset,
           this.inputAmount,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           this.actionGasLimit,
           async () => {
             this.transactionStep = 'Process';
@@ -477,10 +458,10 @@ export default Vue.extend({
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.log('Treasury deposit txn reverted');
-        Sentry.captureException(err);
+        console.error('Failed to withdraw', error);
+        Sentry.captureException(error);
       }
     }
   }

@@ -394,7 +394,7 @@ export default Vue.extend({
       transferData: TransferData | undefined
     ): Promise<CompoundEstimateResponse> {
       try {
-        return await (
+        const estimation = await (
           this.savingsOnChainService as SavingsOnChainService
         ).estimateDepositCompound(
           inputAsset,
@@ -402,6 +402,12 @@ export default Vue.extend({
           inputAmount,
           transferData
         );
+
+        if (estimation.error) {
+          throw new Error('Failed to estimate action');
+        }
+
+        return estimation;
       } catch (error) {
         this.transferError = this.$t('estimationError') as string;
         throw error;

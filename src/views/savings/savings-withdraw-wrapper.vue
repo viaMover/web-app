@@ -200,9 +200,15 @@ export default Vue.extend({
       amount: string,
       asset: SmallToken
     ): Promise<CompoundEstimateResponse> {
-      return (
+      const estimation = await (
         this.savingsOnChainService as SavingsOnChainService
       ).estimateWithdrawCompound(asset, amount);
+
+      if (estimation.error) {
+        throw new Error('Failed to estimate withdraw');
+      }
+
+      return estimation;
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
