@@ -82,10 +82,12 @@ export abstract class OnChainService {
    * Wraps `executor` with try/catch that logs a failed action to the
    * Sentry (creates a breadcrumb of `error` type) then throws original `Error`
    * @param executor A function to be executed/wrapped with `Sentry` logger
+   * @param breadcrumbPayload -- an additional payload to be included to the Sentry Breadcrumb
    * @protected
    */
   protected async wrapWithSentryLogger<T extends AnyFn>(
-    executor: T
+    executor: T,
+    breadcrumbPayload?: Record<string, unknown>
   ): Promise<ReturnType<T>> {
     try {
       // as each and every function is going to fail under
@@ -97,6 +99,7 @@ export abstract class OnChainService {
         category: this.sentryCategoryPrefix,
         message: 'On-chain call failed',
         data: {
+          ...breadcrumbPayload,
           error: error
         }
       });
@@ -155,9 +158,7 @@ export abstract class OnChainService {
       });
 
       throw new OnChainServiceError(
-        `failed to get allowance for token: ${token.address}: ${
-          error.message ?? error
-        }`,
+        `Failed to get allowance for token: ${token.address}`,
         {
           token,
           contractAddress
@@ -205,7 +206,7 @@ export abstract class OnChainService {
       });
 
       throw new OnChainServiceError(
-        `failed to estimate approve for ${tokenAddress}: ${error}}`
+        `Failed to estimate approve for ${tokenAddress}`
       ).wrap(error);
     }
   }
@@ -238,7 +239,7 @@ export abstract class OnChainService {
           resolve,
           reject,
           changeStepToProcess,
-          { tokenAddress, spenderAddress }
+          { tokenAddress, spenderAddress, gasLimit }
         );
       } catch (error) {
         Sentry.addBreadcrumb({
@@ -250,11 +251,9 @@ export abstract class OnChainService {
           }
         });
 
-        console.error(`Failed to execute approve for ${tokenAddress}`, error);
-
         reject(
           new OnChainServiceError(
-            `failed to execute approve for ${tokenAddress}: ${error}}`
+            `Failed to execute approve for ${tokenAddress}`
           ).wrap(error)
         );
       }
@@ -303,7 +302,19 @@ export abstract class OnChainService {
         console.debug('Received a transaction receipt', receipt);
         resolve(receipt);
       })
-      .once('error', reject);
+      .once('error', (error) => {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'On-chain call failed',
+          data: {
+            ...breadcrumbPayload,
+            error: error
+          }
+        });
+
+        reject(error);
+      });
   }
 
   protected async executeTransactionWithApprove(
