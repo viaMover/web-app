@@ -11,7 +11,7 @@ import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNot
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
 import { sameAddress } from '@/utils/address';
-import { floorDivide, fromWei, multiply, toWei } from '@/utils/bigmath';
+import { fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
@@ -269,15 +269,10 @@ export class SavingsOnChainService extends MoverOnChainService {
         );
 
       if (gasLimitObj) {
-        const gasLimit = gasLimitObj.toString();
-        const gasLimitWithBuffer = floorDivide(
-          multiply(gasLimit, '120'),
-          '100'
-        );
         return {
           error: false,
           actionGasLimit: '0',
-          approveGasLimit: gasLimitWithBuffer
+          approveGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
 
@@ -401,14 +396,10 @@ export class SavingsOnChainService extends MoverOnChainService {
         });
 
       if (gasLimitObj) {
-        const gasLimitWithBuffer = floorDivide(
-          multiply(gasLimitObj.toString(), '120'),
-          '100'
-        );
         return {
           error: false,
           approveGasLimit: '0',
-          actionGasLimit: gasLimitWithBuffer
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       } else {
         Sentry.addBreadcrumb({

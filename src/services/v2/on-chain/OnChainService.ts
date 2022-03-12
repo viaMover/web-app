@@ -12,7 +12,7 @@ import {
   ERC20ContractMethods
 } from '@/services/v2/on-chain/types';
 import { getPureEthAddress, isEth } from '@/utils/address';
-import { fromWei, greaterThan } from '@/utils/bigmath';
+import { floorDivide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { MAXUINT256 } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
 import { ERC20_ABI } from '@/wallet/references/data';
@@ -374,5 +374,13 @@ export abstract class OnChainService {
       maxFeePerGas: null,
       maxPriorityFeePerGas: null
     };
+  }
+
+  protected addGasBuffer(gas: string, buffer = '120'): string {
+    return OnChainService.addGasBuffer(gas, buffer);
+  }
+
+  protected static addGasBuffer(gas: string, buffer = '120'): string {
+    return floorDivide(multiply(gas, buffer), '100');
   }
 }
