@@ -26,6 +26,11 @@ export type HolyHandContract = CustomContractType<{
     _bytes: Array<number>
   ): ContractMethod;
   withdrawFromPool(_poolAddress: string, _amount: string): ContractMethod;
+  depositToTreasury(
+    _tokenMoveAmount: string,
+    _tokenMoveEthAmount: string
+  ): ContractMethod;
+  claimAndBurn(_amount: string): ContractMethod;
 }>;
 
 export type AddTransactionToStoreHandler = (tx: Transaction) => Promise<void>;

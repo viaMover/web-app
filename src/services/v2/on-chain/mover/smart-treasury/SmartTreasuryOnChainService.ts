@@ -1,9 +1,16 @@
+import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
+import {
+  CompoundEstimateResponse,
+  HolyHandContract
+} from '@/services/v2/on-chain/mover/types';
+import { sameAddress } from '@/utils/address';
 import {
   divide,
   fromWei,
@@ -20,12 +27,15 @@ import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData,
+  HOLY_HAND_ABI,
+  lookupAddress,
   lookupConstant,
   NFT_RARI_ABI,
   POWERCARD_STAKER_ABI,
   SMART_TREASURY_ABI
 } from '@/wallet/references/data';
-import { SmallTokenInfo } from '@/wallet/types';
+import ethDefaults from '@/wallet/references/defaults';
+import { SmallToken, SmallTokenInfo } from '@/wallet/types';
 
 import { MoverOnChainService } from '../MoverOnChainService';
 import {
@@ -42,6 +52,7 @@ export class SmartTreasuryOnChainService
   implements ISmartTreasuryBonusBalanceExecutor
 {
   protected readonly sentryCategoryPrefix = 'smart-treasury.on-chain.service';
+  protected readonly holyHandContract: HolyHandContract | undefined;
   protected readonly smartTreasuryContract: SmartTreasuryContract | undefined;
   protected readonly powercardContract: PowercardContract | undefined;
   protected readonly powercardStakerContract:
@@ -50,13 +61,17 @@ export class SmartTreasuryOnChainService
   protected readonly usdcAssetData: SmallTokenInfo;
   protected readonly moveAssetData: SmallTokenInfo;
   protected readonly moveEthLPAssetData: SmallTokenInfo;
-  protected static readonly PowercardMaxActiveTimeSeconds = 2592000;
-  protected static readonly PowercardMaxCooldownTimeSeconds = 5184000;
+  public static readonly PowercardMaxActiveTimeSeconds = 2592000;
+  public static readonly PowercardMaxCooldownTimeSeconds = 5184000;
 
   constructor(currentAddress: string, network: Network, web3Client: Web3) {
     super(currentAddress, network, web3Client);
     this.setSmartTreasuryBonusBalanceExecutor(this);
 
+    this.holyHandContract = this.createContract(
+      'HOLY_HAND_ADDRESS',
+      HOLY_HAND_ABI as AbiItem[]
+    );
     this.smartTreasuryContract = this.createContract(
       'SMART_TREASURY_ADDRESS',
       SMART_TREASURY_ABI as AbiItem[]
@@ -326,5 +341,1108 @@ export class SmartTreasuryOnChainService
         cooldownTime: cooldownTimeResponse.toString()
       };
     });
+  }
+
+  public async depositCompound(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string,
+    actionGasLimit: string,
+    approveGasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt | never> {
+    try {
+      return await this.executeTransactionWithApprove(
+        inputAsset,
+        lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+        inputAmount,
+        async () =>
+          this.deposit(
+            inputAsset,
+            inputAmount,
+            actionGasLimit,
+            changeStepToProcess
+          ),
+        changeStepToProcess,
+        approveGasLimit
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to deposit',
+        data: {
+          inputAsset,
+          inputAmount,
+          actionGasLimit,
+          approveGasLimit,
+          error
+        }
+      });
+      throw new OnChainServiceError('Failed to execute deposit').wrap(error);
+    }
+  }
+
+  public async estimateDepositCompound(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string
+  ): Promise<CompoundEstimateResponse> {
+    let isApproveNeeded = true;
+    try {
+      isApproveNeeded = await this.needsApprove(
+        inputAsset,
+        inputAmount,
+        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate deposit: failed "needsApprove" check',
+        data: {
+          error,
+          inputAsset,
+          inputAmount
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+
+    if (isApproveNeeded) {
+      Sentry.addBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Needs approve'
+      });
+
+      try {
+        const approveGasLimit = await this.estimateApprove(
+          inputAsset.address,
+          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+        );
+
+        return {
+          error: false,
+          actionGasLimit: ethDefaults.basic_holy_treasury_deposit,
+          approveGasLimit: approveGasLimit
+        };
+      } catch (error) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to estimate deposit: failed "approve" estimation',
+          data: {
+            error,
+            inputAsset,
+            inputAmount
+          }
+        });
+
+        return {
+          error: true,
+          actionGasLimit: '0',
+          approveGasLimit: '0'
+        };
+      }
+    }
+
+    if (this.holyHandContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Smart Treasury deposit',
+        this.network
+      );
+    }
+
+    if (
+      !(
+        sameAddress(inputAsset.address, this.moveAssetData.address) ||
+        sameAddress(inputAsset.address, this.moveEthLPAssetData.address)
+      )
+    ) {
+      throw new OnChainServiceError(
+        'Wrong token used for Smart Treasury Deposit',
+        inputAsset
+      );
+    }
+
+    const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
+
+    const moveAmount = sameAddress(
+      inputAsset.address,
+      this.moveAssetData.address
+    )
+      ? inputAmountInWEI
+      : '0';
+    const moveEthAmount = sameAddress(
+      inputAsset.address,
+      this.moveEthLPAssetData.address
+    )
+      ? inputAmountInWEI
+      : '0';
+
+    try {
+      const gasLimitObj = await this.holyHandContract.methods
+        .depositToTreasury(moveAmount, moveEthAmount)
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
+
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate deposit: empty gas limit',
+        data: {
+          inputAsset,
+          inputAmount,
+          moveAmount,
+          moveEthAmount
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate deposit',
+        data: {
+          error,
+          inputAsset,
+          inputAmount,
+          moveAmount,
+          moveEthAmount
+        }
+      });
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+  }
+
+  public async withdrawCompound(
+    outputAsset: SmallTokenInfo,
+    outputAmount: string,
+    actionGasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      return await this.withdraw(
+        outputAsset,
+        outputAmount,
+        actionGasLimit,
+        changeStepToProcess
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to withdraw',
+        data: {
+          outputAsset,
+          outputAmount,
+          actionGasLimit,
+          error
+        }
+      });
+
+      throw error;
+    }
+  }
+
+  public async estimateWithdrawCompound(
+    outputAsset: SmallTokenInfo,
+    inputAmount: string
+  ): Promise<CompoundEstimateResponse> {
+    if (
+      !(
+        sameAddress(outputAsset.address, this.moveAssetData.address) ||
+        sameAddress(outputAsset.address, this.moveEthLPAssetData.address)
+      )
+    ) {
+      throw new OnChainServiceError(
+        'Wrong token used for Smart Treasury Withdraw',
+        outputAsset
+      );
+    }
+
+    if (this.smartTreasuryContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Smart Treasury withdraw',
+        this.network
+      );
+    }
+
+    const outputAmountInWEI = toWei(inputAmount, outputAsset.decimals);
+
+    const moveAmount = sameAddress(
+      outputAsset.address,
+      this.moveAssetData.address
+    )
+      ? outputAmountInWEI
+      : '0';
+    const moveEthAmount = sameAddress(
+      outputAsset.address,
+      this.moveEthLPAssetData.address
+    )
+      ? outputAmountInWEI
+      : '0';
+
+    try {
+      const gasLimitObj = await this.smartTreasuryContract.methods
+        .withdraw(moveAmount, moveEthAmount)
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
+
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate withdraw: empty gas limit',
+        data: {
+          outputAsset,
+          inputAmount,
+          moveAmount,
+          moveEthAmount
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate withdraw',
+        data: {
+          error,
+          inputAmount,
+          moveAmount,
+          moveEthAmount
+        }
+      });
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+  }
+
+  public async claimAndBurnCompound(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string,
+    actionGasLimit: string,
+    approveGasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      return await this.executeTransactionWithApprove(
+        inputAsset,
+        lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+        inputAmount,
+        async () =>
+          this.claimAndBurn(
+            inputAsset,
+            inputAmount,
+            actionGasLimit,
+            changeStepToProcess
+          ),
+        changeStepToProcess,
+        approveGasLimit
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to claim & burn',
+        data: {
+          inputAsset,
+          inputAmount,
+          actionGasLimit,
+          approveGasLimit,
+          error
+        }
+      });
+
+      throw error;
+    }
+  }
+
+  public async estimateClaimAndBurnCompound(
+    inputAsset: SmallToken,
+    inputAmount: string
+  ): Promise<CompoundEstimateResponse> {
+    let isApproveNeeded = true;
+    try {
+      isApproveNeeded = await this.needsApprove(
+        inputAsset,
+        inputAmount,
+        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate claim & burn: failed "needsApprove" check',
+        data: {
+          error,
+          inputAsset,
+          inputAmount
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+
+    if (isApproveNeeded) {
+      Sentry.addBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Needs approve'
+      });
+
+      try {
+        const approveGasLimit = await this.estimateApprove(
+          inputAsset.address,
+          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+        );
+
+        return {
+          error: false,
+          actionGasLimit: ethDefaults.basic_holy_treasury_burn,
+          approveGasLimit: approveGasLimit
+        };
+      } catch (error) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message:
+            'Failed to estimate claim & burn: failed "approve" estimation',
+          data: {
+            error,
+            inputAsset,
+            inputAmount
+          }
+        });
+
+        return {
+          error: true,
+          actionGasLimit: '0',
+          approveGasLimit: '0'
+        };
+      }
+    }
+
+    if (!sameAddress(inputAsset.address, this.moveAssetData.address)) {
+      throw new OnChainServiceError(
+        `Wrong token passed to claimAndBurn: only ${this.moveAssetData.symbol} is allowed`
+      );
+    }
+
+    if (this.holyHandContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Treasury claim & burn',
+        this.network
+      );
+    }
+
+    try {
+      const gasLimitObj = await this.holyHandContract.methods
+        .claimAndBurn(toWei(inputAmount, inputAsset.decimals))
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
+
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate claim & burn: empty gas limit',
+        data: {
+          inputAsset,
+          inputAmount
+        }
+      });
+
+      return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate claim & burn',
+        data: {
+          error,
+          inputAsset,
+          inputAmount
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+  }
+
+  public async claimAndBurnMOBO(
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      return await new Promise<TransactionReceipt>((resolve, reject) => {
+        if (this.smartTreasuryContract === undefined) {
+          throw new NetworkFeatureNotSupportedError(
+            'Treasury claim & burn MOBO',
+            this.network
+          );
+        }
+
+        this.wrapWithSendMethodCallbacks(
+          this.smartTreasuryContract.methods
+            .claimUSDCforBonus()
+            .send(this.getDefaultTransactionsParams(gasLimit)),
+          resolve,
+          reject,
+          changeStepToProcess,
+          {
+            gasLimit
+          }
+        );
+      });
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to claim & burn',
+        data: {
+          gasLimit,
+          error
+        }
+      });
+
+      throw error;
+    }
+  }
+
+  public async estimateClaimAndBurnMOBO(): Promise<CompoundEstimateResponse> {
+    if (this.smartTreasuryContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Treasury claim & burn MOBO',
+        this.network
+      );
+    }
+
+    try {
+      const gasLimitObj = await this.smartTreasuryContract.methods
+        .claimUSDCforBonus()
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
+
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate claim & burn MOBO: empty gas limit'
+      });
+
+      return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
+    } catch (error) {
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+  }
+
+  public async stakePowercardCompound(
+    actionGasLimit: string,
+    approveGasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      return await this.executeTransactionWithApproveExt(
+        async () => this.stakePowercard(actionGasLimit, changeStepToProcess),
+        async () => this.isPowercardApproved(),
+        async () =>
+          this.approvePowercard(
+            approveGasLimit,
+            lookupAddress(this.network, 'POWERCARD_STAKER'),
+            changeStepToProcess
+          )
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to stake powercard',
+        data: {
+          actionGasLimit,
+          approveGasLimit,
+          error
+        }
+      });
+      throw new OnChainServiceError('Failed to stake powercard').wrap(error);
+    }
+  }
+
+  public async estimateStakePowercardCompound(): Promise<CompoundEstimateResponse> {
+    let isApproved = false;
+    try {
+      isApproved = await this.isPowercardApproved();
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate stake: failed "isPowercardApproved" check',
+        data: {
+          error
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+
+    if (!isApproved) {
+      Sentry.addBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Needs approve'
+      });
+
+      try {
+        const approveGasLimit = await this.estimatePowercardApprove(
+          lookupAddress(this.network, 'POWERCARD_STAKER')
+        );
+
+        return {
+          error: false,
+          actionGasLimit: ethDefaults.basic_approval,
+          approveGasLimit: approveGasLimit
+        };
+      } catch (error) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to estimate stake: failed "approve" estimation',
+          data: {
+            error
+          }
+        });
+
+        return {
+          error: true,
+          actionGasLimit: '0',
+          approveGasLimit: '0'
+        };
+      }
+    }
+
+    try {
+      if (this.powercardStakerContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Powercard stake',
+          this.network
+        );
+      }
+
+      const gasLimitObj = await this.powercardStakerContract.methods
+        .stakePowercard()
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
+
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate stake: empty gas limit'
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate stake',
+        data: {
+          error
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+  }
+
+  public async unstakePowercardCompound(
+    actionGasLimit: string,
+    approveGasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      return this.executeTransactionWithApproveExt(
+        async () => this.unstakePowercard(actionGasLimit, changeStepToProcess),
+        async () => this.isPowercardApproved(),
+        async () =>
+          this.approvePowercard(
+            approveGasLimit,
+            lookupAddress(this.network, 'POWERCARD_STAKER'),
+            changeStepToProcess
+          )
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to unstake powercard',
+        data: {
+          error,
+          actionGasLimit
+        }
+      });
+      throw error;
+    }
+  }
+
+  public async estimateUnstakePowercardCompound(): Promise<CompoundEstimateResponse> {
+    let isApproved = false;
+    try {
+      isApproved = await this.isPowercardApproved();
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message:
+          'Failed to estimate unstake: failed "isPowercardApproved" check',
+        data: {
+          error
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+
+    if (!isApproved) {
+      Sentry.addBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Needs approve'
+      });
+
+      try {
+        const approveGasLimit = await this.estimatePowercardApprove(
+          lookupAddress(this.network, 'POWERCARD_STAKER')
+        );
+
+        return {
+          error: false,
+          actionGasLimit: ethDefaults.basic_approval,
+          approveGasLimit: approveGasLimit
+        };
+      } catch (error) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to estimate unstake: failed "approve" estimation',
+          data: {
+            error
+          }
+        });
+
+        return {
+          error: true,
+          actionGasLimit: '0',
+          approveGasLimit: '0'
+        };
+      }
+    }
+
+    try {
+      if (this.powercardStakerContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Powercard unstake',
+          this.network
+        );
+      }
+
+      const gasLimitObj = await this.powercardStakerContract.methods
+        .unstakePowercard()
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
+
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate unstake: empty gas limit'
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate unstake',
+        data: {
+          error
+        }
+      });
+
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0'
+      };
+    }
+  }
+
+  protected async deposit(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string,
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
+
+    if (
+      !(
+        sameAddress(inputAsset.address, this.moveAssetData.address) ||
+        sameAddress(inputAsset.address, this.moveEthLPAssetData.address)
+      )
+    ) {
+      throw new OnChainServiceError(
+        'Wrong token used for Smart Treasury Deposit',
+        inputAsset
+      );
+    }
+
+    const moveAmount = sameAddress(
+      inputAsset.address,
+      this.moveAssetData.address
+    )
+      ? inputAmountInWEI
+      : '0';
+    const moveEthAmount = sameAddress(
+      inputAsset.address,
+      this.moveEthLPAssetData.address
+    )
+      ? inputAmountInWEI
+      : '0';
+
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.holyHandContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Treasury deposit',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.holyHandContract.methods
+          .depositToTreasury(moveAmount, moveEthAmount)
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        {
+          moveAmount,
+          moveEthAmount,
+          gasLimit
+        }
+      );
+    });
+  }
+
+  protected async withdraw(
+    outputAsset: SmallTokenInfo,
+    outputAmount: string,
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    if (
+      !(
+        sameAddress(outputAsset.address, this.moveAssetData.address) ||
+        sameAddress(outputAsset.address, this.moveEthLPAssetData.address)
+      )
+    ) {
+      throw new OnChainServiceError(
+        'Wrong token used for Smart Treasury Withdraw',
+        outputAsset
+      );
+    }
+
+    const outputAmountInWEI = toWei(outputAmount, outputAsset.decimals);
+
+    const moveAmount = sameAddress(
+      outputAsset.address,
+      this.moveAssetData.address
+    )
+      ? outputAmountInWEI
+      : '0';
+    const moveEthAmount = sameAddress(
+      outputAsset.address,
+      this.moveEthLPAssetData.address
+    )
+      ? outputAmountInWEI
+      : '0';
+
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.smartTreasuryContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Treasury withdraw',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.smartTreasuryContract.methods
+          .withdraw(moveAmount, moveEthAmount)
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        {
+          moveAmount,
+          moveEthAmount,
+          gasLimit
+        }
+      );
+    });
+  }
+
+  protected async claimAndBurn(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string,
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    if (!sameAddress(inputAsset.address, this.moveAssetData.address)) {
+      throw new OnChainServiceError(
+        `Wrong token passed to claimAndBurn: only ${this.moveAssetData.symbol} is allowed`
+      );
+    }
+
+    const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
+
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.holyHandContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Treasury claim & burn',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.holyHandContract.methods
+          .claimAndBurn(inputAmountInWEI)
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        {
+          inputAmountInWEI,
+          gasLimit
+        }
+      );
+    });
+  }
+
+  protected async stakePowercard(
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.powercardStakerContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Powercard stake',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.powercardStakerContract.methods
+          .stakePowercard()
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        { gasLimit }
+      );
+    });
+  }
+
+  protected async unstakePowercard(
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.powercardStakerContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Powercard unstake',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.powercardStakerContract.methods
+          .unstakePowercard()
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        { gasLimit }
+      );
+    });
+  }
+
+  protected async isPowercardApproved(): Promise<boolean> {
+    return this.wrapWithSentryLogger(async () => {
+      if (this.powercardContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Powercard approval check',
+          this.network
+        );
+      }
+
+      return await this.powercardContract.methods
+        .isApprovedForAll(
+          this.currentAddress,
+          lookupAddress(this.network, 'POWERCARD_STAKER')
+        )
+        .call({ from: this.currentAddress });
+    });
+  }
+
+  protected async approvePowercard(
+    gasLimit: string,
+    contractAddress: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    return await new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.powercardContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Powercard approval',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.powercardContract.methods
+          .setApprovalForAll(contractAddress, true)
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        { gasLimit, contractAddress }
+      );
+    });
+  }
+
+  protected async estimatePowercardApprove(
+    contractAddress: string
+  ): Promise<string> {
+    if (this.powercardContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Powercard approval estimation',
+        this.network
+      );
+    }
+
+    try {
+      const gasLimit = await this.powercardContract.methods
+        .setApprovalForAll(contractAddress, true)
+        .estimateGas({ from: this.currentAddress });
+
+      if (gasLimit) {
+        return gasLimit.toString();
+      }
+
+      throw new Error(`empty gas limit`);
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate approve for powercard',
+        data: {
+          error: error
+        }
+      });
+
+      throw new OnChainServiceError(
+        `Failed to estimate approve for powercard`
+      ).wrap(error);
+    }
   }
 }

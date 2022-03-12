@@ -19,6 +19,11 @@ export type SmartTreasuryContract = CustomContractType<{
   getBurnValue(_account: string, _amount: string): ContractMethod<string>;
   totalStakedMove(): ContractMethod<string>;
   totalStakedMoveEthLP(): ContractMethod<string>;
+  withdraw(
+    _tokenMoveAmount: string,
+    _tokenMoveEthAmount: string
+  ): ContractMethod;
+  claimUSDCforBonus(): ContractMethod;
 }>;
 
 export type TreasuryBalancesReturn = {
