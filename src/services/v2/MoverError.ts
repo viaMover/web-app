@@ -3,10 +3,14 @@ import { CustomError } from 'ts-custom-error';
 
 export class MoverError<T = void> extends CustomError {
   protected payload?: T;
+  protected wrappedErrors: Array<Error>;
+  protected originalMessage: string;
 
   constructor(message: string, payload?: T) {
     super(message);
+    this.originalMessage = message;
     this.payload = payload;
+    this.wrappedErrors = new Array<Error>();
   }
 
   public formatMessage(wrappedError?: Error): string {
@@ -29,6 +33,7 @@ export class MoverError<T = void> extends CustomError {
 
   public wrap(error: Error): this {
     this.message = this.formatMessage(error);
+    this.wrappedErrors.push(error);
     return this;
   }
 
@@ -39,5 +44,13 @@ export class MoverError<T = void> extends CustomError {
 
   public getPayload(): T | undefined {
     return this.payload;
+  }
+
+  public getWrappedErrors(): Array<Error> {
+    return this.wrappedErrors;
+  }
+
+  public getOriginalMessage(): string {
+    return this.originalMessage;
   }
 }

@@ -484,9 +484,10 @@ export default Vue.extend({
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(error);
         }
-        console.error(`transfer error:`, error);
+
+        Sentry.captureException(error);
+        console.error(`Transfer error`, error);
         this.transferData = undefined;
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';

@@ -1,10 +1,14 @@
 import * as Sentry from '@sentry/vue';
+import { BigNumber } from 'bignumber.js';
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { TransferData } from '@/services/v2/api/0x';
 import { MoverAPISubsidizedService } from '@/services/v2/api/mover/subsidized';
+import { convertStringToHexWithPrefix } from '@/utils/address';
+import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { AddressMapKey, lookupAddress } from '@/wallet/references/data';
 
@@ -67,6 +71,64 @@ export abstract class MoverOnChainService extends OnChainService {
       txGasLimit,
       ethPrice
     );
+  }
+
+  protected mapTransferDataToBytes(data?: TransferData): number[] {
+    return MoverOnChainService.mapTransferDataToBytes(this.web3Client, data);
+  }
+
+  protected static mapTransferDataToBytes(
+    web3Client: Web3,
+    data?: TransferData
+  ): number[] {
+    if (data === undefined) {
+      return [];
+    }
+
+    return Array.prototype.concat(
+      web3Client.utils.hexToBytes(data.to),
+      web3Client.utils.hexToBytes(data.allowanceTarget),
+      web3Client.utils.hexToBytes(
+        web3Client.utils.padLeft(convertStringToHexWithPrefix(data.value), 64)
+      ),
+      web3Client.utils.hexToBytes(data.data)
+    );
+  }
+
+  protected mapTransferDataToExpectedMinimumAmount(
+    data?: TransferData,
+    multiplier = '0.85'
+  ): string {
+    return MoverOnChainService.mapTransferDataToExpectedMinimumAmount(
+      data,
+      multiplier
+    );
+  }
+
+  protected static mapTransferDataToExpectedMinimumAmount(
+    data?: TransferData,
+    multiplier = '0.85'
+  ): string {
+    if (data === undefined || data.buyAmount === undefined) {
+      return '0';
+    }
+
+    return new BigNumber(multiply(data.buyAmount, multiplier)).toFixed(0);
+  }
+
+  protected mapTransferDataToValue(data?: TransferData): string {
+    return MoverOnChainService.mapTransferDataToValue(this.web3Client, data);
+  }
+
+  protected static mapTransferDataToValue(
+    web3Client: Web3,
+    data?: TransferData
+  ): string {
+    if (data === undefined || data.value === undefined) {
+      return '0';
+    }
+
+    return web3Client.utils.toHex(data.value);
   }
 
   protected async prepareSubsidizedAction(

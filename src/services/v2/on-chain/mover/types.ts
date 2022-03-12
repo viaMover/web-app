@@ -17,10 +17,11 @@ export type CompoundEstimateWithUnwrapResponse = CompoundEstimateResponse & {
 
 export type HolyHandContract = CustomContractType<{
   depositToPool(
-    poolAddress: string,
-    tokenFrom: string,
-    amount: string,
-    expectedMinimumReceived: string,
-    bytes: Array<number>
+    _poolAddress: string,
+    _tokenFrom: string,
+    _amount: string,
+    _expectedMinimumReceived: string,
+    _bytes: Array<number>
   ): ContractMethod;
+  withdrawFromPool(_poolAddress: string, _amount: string): ContractMethod;
 }>;

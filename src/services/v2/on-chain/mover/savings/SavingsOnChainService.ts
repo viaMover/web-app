@@ -11,7 +11,7 @@ import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNot
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
 import store from '@/store';
-import { convertStringToHexWithPrefix, sameAddress } from '@/utils/address';
+import { sameAddress } from '@/utils/address';
 import { floorDivide, fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
@@ -27,12 +27,15 @@ import {
   SmallToken,
   SmallTokenInfo,
   Transaction,
-  TransactionsParams,
   TransactionTypes
 } from '@/wallet/types';
 
 import { MoverOnChainService } from '../MoverOnChainService';
-import { CompoundEstimateResponse, HolyHandContract } from '../types';
+import {
+  CompoundEstimateResponse,
+  EstimateResponse,
+  HolyHandContract
+} from '../types';
 import { GetSavingsAPYReturn, HolySavingsPoolContract } from './types';
 
 export class SavingsOnChainService extends MoverOnChainService {
@@ -100,8 +103,7 @@ export class SavingsOnChainService extends MoverOnChainService {
     useSubsidized: boolean,
     changeStepToProcess: () => Promise<void>,
     actionGasLimit: string,
-    approveGasLimit: string,
-    gasPriceInGwei?: string
+    approveGasLimit: string
   ): Promise<TransactionReceipt> {
     try {
       return await this.executeTransactionWithApprove(
@@ -112,9 +114,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           if (useSubsidized) {
             return await this.depositSubsidized(
               inputAsset,
-              outputAsset,
               inputAmount,
-              transferData,
               changeStepToProcess
             );
           }
@@ -125,13 +125,11 @@ export class SavingsOnChainService extends MoverOnChainService {
             inputAmount,
             transferData,
             changeStepToProcess,
-            actionGasLimit,
-            gasPriceInGwei
+            actionGasLimit
           );
         },
         changeStepToProcess,
-        approveGasLimit,
-        gasPriceInGwei
+        approveGasLimit
       );
     } catch (error) {
       Sentry.addBreadcrumb({
@@ -146,7 +144,6 @@ export class SavingsOnChainService extends MoverOnChainService {
           useSubsidized,
           actionGasLimit,
           approveGasLimit,
-          gasPriceInGwei,
           error
         }
       });
@@ -195,17 +192,10 @@ export class SavingsOnChainService extends MoverOnChainService {
         message: 'Needs approve'
       });
 
-      console.info('Deposit: "approve" is needed');
-
       try {
         const approveGasLimit = await this.estimateApprove(
           inputAsset.address,
           lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-        );
-
-        console.info(
-          'Deposit: fallback action gas limit is used',
-          ethDefaults.basic_holy_savings_deposit
         );
 
         return {
@@ -227,11 +217,6 @@ export class SavingsOnChainService extends MoverOnChainService {
           }
         });
 
-        console.error(
-          'Failed to estimate deposit: failed "approve" estimation',
-          error
-        );
-
         return {
           error: true,
           actionGasLimit: '0',
@@ -245,7 +230,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       transferData === undefined
     ) {
       throw new OnChainServiceError(
-        'failed to estimate deposit: missing transferData'
+        'Failed to estimate deposit: missing transferData'
       );
     }
 
@@ -257,52 +242,19 @@ export class SavingsOnChainService extends MoverOnChainService {
     }
 
     try {
-      let value = undefined;
-
-      if (transferData) {
-        value = this.web3Client.utils.toHex(transferData.value);
-      }
-
-      const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
-
-      let bytesData = [];
-      let expectedMinimumReceived = '0';
-
-      if (transferData) {
-        expectedMinimumReceived = new BigNumber(
-          multiply(transferData.buyAmount, '0.85')
-        ).toFixed(0);
-
-        const valueBytes = this.web3Client.utils.hexToBytes(
-          this.web3Client.utils.padLeft(
-            convertStringToHexWithPrefix(transferData.value),
-            64
-          )
-        );
-
-        bytesData = Array.prototype.concat(
-          this.web3Client.utils.hexToBytes(transferData.to),
-          this.web3Client.utils.hexToBytes(transferData.allowanceTarget),
-          valueBytes,
-          this.web3Client.utils.hexToBytes(transferData.data)
-        );
-
-        // TODO: add to the Sentry breadcrumbs
-        // this.web3Client.utils.bytesToHex(bytesData);
-      }
-
       const gasLimitObj = await this.holyHandContract.methods
         .depositToPool(
           lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
           this.substituteAssetAddressIfNeeded(inputAsset.address),
-          inputAmountInWEI,
-          expectedMinimumReceived,
-          bytesData
+          toWei(inputAmount, inputAsset.decimals),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData)
         )
-        .estimateGas({
-          from: this.currentAddress,
-          value: value
-        });
+        .estimateGas(
+          this.getDefaultTransactionsParams(
+            this.mapTransferDataToValue(transferData)
+          )
+        );
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -357,22 +309,112 @@ export class SavingsOnChainService extends MoverOnChainService {
     }
   }
 
+  public async withdrawCompound(
+    outputAsset: SmallToken,
+    outputAmount: string,
+    actionGasLimit: string,
+    useSubsidized: boolean,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      if (useSubsidized) {
+        return await this.withdrawSubsidized(
+          outputAsset,
+          outputAmount,
+          changeStepToProcess
+        );
+      }
+
+      return await this.withdraw(
+        outputAsset,
+        outputAmount,
+        actionGasLimit,
+        changeStepToProcess
+      );
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to withdraw',
+        data: {
+          outputAsset,
+          outputAmount,
+          actionGasLimit,
+          useSubsidized,
+          error
+        }
+      });
+      throw error;
+    }
+  }
+
+  public async estimateWithdraw(
+    outputAsset: SmallToken,
+    inputAmount: string
+  ): Promise<EstimateResponse> {
+    if (this.holyHandContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Savings withdraw',
+        this.network
+      );
+    }
+
+    try {
+      const gasLimitObj = await this.holyHandContract.methods
+        .withdrawFromPool(
+          lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+          toWei(inputAmount, outputAsset.decimals)
+        )
+        .estimateGas({
+          from: this.currentAddress
+        });
+
+      if (gasLimitObj) {
+        const gasLimitWithBuffer = floorDivide(
+          multiply(gasLimitObj.toString(), '120'),
+          '100'
+        );
+        return { error: false, gasLimit: gasLimitWithBuffer };
+      } else {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to estimate withdraw: empty gas limit',
+          data: {
+            outputAsset,
+            inputAmount
+          }
+        });
+
+        return { error: true, gasLimit: '0' };
+      }
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate withdraw',
+        data: {
+          error,
+          outputAsset,
+          inputAmount
+        }
+      });
+
+      return {
+        error: true,
+        gasLimit: '0'
+      };
+    }
+  }
+
   protected async deposit(
     inputAsset: SmallToken,
     outputAsset: SmallToken,
     inputAmount: string,
     transferData: TransferData | undefined,
     changeStepToProcess: () => Promise<void>,
-    gasLimit: string,
-    gasPriceInGwei?: string
-  ): Promise<TransactionReceipt | never> {
-    if (this.holyHandContract === undefined) {
-      throw new NetworkFeatureNotSupportedError(
-        'Savings deposit',
-        this.network
-      );
-    }
-
+    gasLimit: string
+  ): Promise<TransactionReceipt> {
     if (
       !sameAddress(inputAsset.address, outputAsset.address) &&
       transferData === undefined
@@ -383,54 +425,6 @@ export class SavingsOnChainService extends MoverOnChainService {
     }
 
     try {
-      let value;
-
-      if (transferData) {
-        value = this.web3Client.utils.toHex(transferData.value);
-      }
-
-      const transactionParams = {
-        from: this.currentAddress,
-        value: value,
-        gas: this.web3Client.utils.toBN(gasLimit).toNumber(),
-        gasPrice: gasPriceInGwei
-          ? this.web3Client.utils
-              .toWei(this.web3Client.utils.toBN(gasPriceInGwei), 'gwei')
-              .toString()
-          : undefined,
-        maxFeePerGas: gasPriceInGwei ? undefined : null,
-        maxPriorityFeePerGas: gasPriceInGwei ? undefined : null
-      } as TransactionsParams;
-
-      const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
-
-      let bytesData: number[] = [];
-      let expectedMinimumReceived = '0';
-
-      if (transferData) {
-        expectedMinimumReceived = new BigNumber(
-          multiply(transferData.buyAmount, '0.85')
-        ).toFixed(0);
-
-        const valueBytes = this.web3Client.utils.hexToBytes(
-          this.web3Client.utils.padLeft(
-            convertStringToHexWithPrefix(transferData.value),
-            64
-          )
-        );
-
-        bytesData = Array.prototype.concat(
-          this.web3Client.utils.hexToBytes(transferData.to),
-          this.web3Client.utils.hexToBytes(transferData.allowanceTarget),
-          valueBytes,
-          this.web3Client.utils.hexToBytes(transferData.data)
-        );
-      }
-
-      const inputCurrencyAddress = this.substituteAssetAddressIfNeeded(
-        inputAsset.address
-      );
-
       return await new Promise<TransactionReceipt>((resolve, reject) => {
         if (this.holyHandContract === undefined) {
           throw new NetworkFeatureNotSupportedError(
@@ -443,12 +437,17 @@ export class SavingsOnChainService extends MoverOnChainService {
           this.holyHandContract.methods
             .depositToPool(
               lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-              inputCurrencyAddress,
-              inputAmountInWEI,
-              expectedMinimumReceived,
-              bytesData
+              this.substituteAssetAddressIfNeeded(inputAsset.address),
+              toWei(inputAmount, inputAsset.decimals),
+              this.mapTransferDataToExpectedMinimumAmount(transferData),
+              this.mapTransferDataToBytes(transferData)
             )
-            .send(transactionParams),
+            .send(
+              this.getDefaultTransactionsParams(
+                gasLimit,
+                this.mapTransferDataToValue(transferData)
+              )
+            ),
           resolve,
           reject,
           changeStepToProcess,
@@ -456,11 +455,7 @@ export class SavingsOnChainService extends MoverOnChainService {
             poolAddress: lookupAddress(
               this.network,
               'HOLY_SAVINGS_POOL_ADDRESS'
-            ),
-            inputCurrencyAddress,
-            inputAmountInWEI,
-            expectedMinimumReceived,
-            bytesData: this.web3Client.utils.bytesToHex(bytesData)
+            )
           }
         );
       });
@@ -475,20 +470,17 @@ export class SavingsOnChainService extends MoverOnChainService {
           outputAsset,
           inputAmount,
           transferData,
-          gasLimit,
-          gasPriceInGwei
+          gasLimit
         }
       });
 
-      throw new OnChainServiceError(`Failed to execute deposit`).wrap(error);
+      throw new OnChainServiceError('Failed to execute deposit').wrap(error);
     }
   }
 
   protected async depositSubsidized(
     inputAsset: SmallTokenInfo,
-    outputAsset: SmallTokenInfo,
     inputAmount: string,
-    transferData: TransferData | undefined,
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
     if (this.subsidizedOnChainService === undefined) {
@@ -571,10 +563,156 @@ export class SavingsOnChainService extends MoverOnChainService {
         });
       }
 
-      console.error('Failed to execute subsidized transaction', error);
+      throw new OnChainServiceError(
+        'Failed to execute subsidized deposit'
+      ).wrap(error);
+    }
+  }
+
+  protected async withdraw(
+    outputAsset: SmallToken,
+    outputAmount: string,
+    gasLimit: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt | never> {
+    try {
+      return await new Promise<TransactionReceipt>((resolve, reject) => {
+        if (this.holyHandContract === undefined) {
+          throw new NetworkFeatureNotSupportedError(
+            'Savings withdraw',
+            this.network
+          );
+        }
+
+        this.wrapWithSendMethodCallbacks(
+          this.holyHandContract.methods
+            .withdrawFromPool(
+              lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+              toWei(outputAmount, outputAsset.decimals)
+            )
+            .send(this.getDefaultTransactionsParams(gasLimit)),
+          resolve,
+          reject,
+          changeStepToProcess,
+          {
+            poolAddress: lookupAddress(
+              this.network,
+              'HOLY_SAVINGS_POOL_ADDRESS'
+            )
+          }
+        );
+      });
+    } catch (error) {
+      Sentry.addBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to withdraw',
+        data: {
+          error,
+          outputAsset,
+          outputAmount,
+          gasLimit
+        }
+      });
+
+      throw new OnChainServiceError(`Failed to execute withdraw`).wrap(error);
+    }
+  }
+
+  protected async withdrawSubsidized(
+    outputAsset: SmallToken,
+    outputAmount: string,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    try {
+      const preparedAction = await this.prepareSavingsSubsidizedWithdrawAction(
+        lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+        toWei(outputAmount, outputAsset.decimals)
+      );
+
+      const subsidizedResponse =
+        await this.subsidizedAPIService.executeTransaction(
+          preparedAction.actionString,
+          preparedAction.signature,
+          changeStepToProcess
+        );
+
+      const tx: Transaction = {
+        blockNumber: '0',
+        fee: {
+          ethPrice: store.getters['account/ethPrice'],
+          feeInWEI: '0'
+        },
+        hash: subsidizedResponse.txID ?? '',
+        isOffchain: true,
+        nonce: '0',
+        status: 'pending',
+        timestamp: currentTimestamp(),
+        type: TransactionTypes.transferERC20,
+        uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+        asset: {
+          address: outputAsset.address,
+          change: toWei(outputAmount, outputAsset.decimals),
+          decimals: outputAsset.decimals,
+          direction: 'in',
+          iconURL: '',
+          price: '0',
+          symbol: outputAsset.symbol
+        },
+        from: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+        to: this.currentAddress,
+        subsidizedQueueId: subsidizedResponse.queueID,
+        moverType: 'subsidized_withdraw'
+      };
+      await store.dispatch('account/addTransaction', tx);
+
+      return await waitOffchainTransactionReceipt(
+        subsidizedResponse.queueID,
+        subsidizedResponse.txID,
+        this.web3Client
+      );
+    } catch (error) {
+      if (error instanceof MoverAPISubsidizedRequestError) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to execute subsidized transaction',
+          data: {
+            error: error.message,
+            description: error.shortMessage,
+            payload: error.payload
+          }
+        });
+      } else {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to execute subsidized transaction',
+          data: {
+            error: error
+          }
+        });
+      }
+
+      console.error('Failed to execute subsidized withdraw', error);
       throw error;
     }
   }
+
+  estimateWithdrawCompound = async (
+    outputAsset: SmallToken,
+    inputAmount: string
+  ): Promise<CompoundEstimateResponse> => {
+    const withdrawEstimate = await this.estimateWithdraw(
+      outputAsset,
+      inputAmount
+    );
+    return {
+      error: withdrawEstimate.error,
+      approveGasLimit: '0',
+      actionGasLimit: withdrawEstimate.gasLimit
+    };
+  };
 
   protected async prepareSavingsSubsidizedDepositAction(
     poolAddress: string,

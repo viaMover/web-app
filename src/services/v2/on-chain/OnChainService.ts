@@ -5,6 +5,7 @@ import { TransactionReceipt } from 'web3-eth';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import {
   AnyFn,
   CustomContractType,
@@ -17,7 +18,6 @@ import { Network } from '@/utils/networkTypes';
 import { ERC20_ABI } from '@/wallet/references/data';
 import { SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 
-import { NetworkFeatureNotSupportedError } from '../NetworkFeatureNotSupportedError';
 import { OnChainServiceError } from './OnChainServiceError';
 
 /**
@@ -129,7 +129,7 @@ export abstract class OnChainService {
 
       if (tokenContract === undefined) {
         throw new NetworkFeatureNotSupportedError(
-          `ERC20 contract on ${contractAddress}`,
+          `ERC20 Contract on ${contractAddress}`,
           this.network
         );
       }
@@ -214,8 +214,7 @@ export abstract class OnChainService {
     tokenAddress: string,
     spenderAddress: string,
     changeStepToProcess: () => Promise<void>,
-    gasLimit: string,
-    gasPrice?: string
+    gasLimit: string
   ): Promise<TransactionReceipt> {
     return new Promise((resolve, reject) => {
       try {
@@ -232,26 +231,14 @@ export abstract class OnChainService {
           );
         }
 
-        const transactionParams = {
-          from: this.currentAddress,
-          gas: this.web3Client.utils.toBN(gasLimit).toNumber(),
-          gasPrice: gasPrice
-            ? this.web3Client.utils
-                .toWei(this.web3Client.utils.toBN(gasPrice), 'gwei')
-                .toString()
-            : undefined,
-          maxPriorityFeePerGas: gasPrice ? undefined : null,
-          maxFeePerGas: gasPrice ? undefined : null
-        } as TransactionsParams;
-
         this.wrapWithSendMethodCallbacks(
           tokenContract.methods
             .approve(spenderAddress, MAXUINT256)
-            .send(transactionParams),
+            .send(this.getDefaultTransactionsParams(gasLimit, undefined)),
           resolve,
           reject,
           changeStepToProcess,
-          { tokenAddress, spenderAddress, transactionParams }
+          { tokenAddress, spenderAddress }
         );
       } catch (error) {
         Sentry.addBreadcrumb({
@@ -325,8 +312,7 @@ export abstract class OnChainService {
     amount: string,
     action: () => Promise<TransactionReceipt>,
     changeStepToProcess: () => Promise<void>,
-    gasLimit: string,
-    gasPriceInGwei?: string
+    gasLimit: string
   ): Promise<TransactionReceipt | never> {
     return this.wrapWithSentryLogger(async () => {
       if (await this.needsApprove(token, amount, contractAddress)) {
@@ -334,8 +320,7 @@ export abstract class OnChainService {
           token.address,
           contractAddress,
           changeStepToProcess,
-          gasLimit,
-          gasPriceInGwei
+          gasLimit
         );
       }
 
@@ -361,5 +346,33 @@ export abstract class OnChainService {
     }
 
     return address;
+  }
+
+  protected getDefaultTransactionsParams(
+    gasLimit: string,
+    value?: string
+  ): TransactionsParams {
+    return OnChainService.getDefaultTransactionsParams(
+      this.currentAddress,
+      this.web3Client,
+      gasLimit,
+      value
+    );
+  }
+
+  protected static getDefaultTransactionsParams(
+    fromAddress: string,
+    web3Client: Web3,
+    gasLimit: string,
+    value?: string
+  ): TransactionsParams {
+    return {
+      from: fromAddress,
+      value: value,
+      gas: web3Client.utils.toBN(gasLimit).toNumber(),
+      gasPrice: undefined,
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null
+    };
   }
 }
