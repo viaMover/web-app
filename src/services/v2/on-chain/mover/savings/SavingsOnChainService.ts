@@ -10,7 +10,6 @@ import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidiz
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
-import store from '@/store';
 import { sameAddress } from '@/utils/address';
 import { floorDivide, fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -59,7 +58,7 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   public async getSavingsAPY(): Promise<GetSavingsAPYReturn | never> {
-    return await this.wrapWithSentryLogger(async () => {
+    return this.wrapWithSentryLogger(async () => {
       if (this.savingsPoolContract === undefined) {
         throw new NetworkFeatureNotSupportedError('Savings APY', this.network);
       }
@@ -78,7 +77,7 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   public async getSavingsBalance(): Promise<string | never> {
-    return await this.wrapWithSentryLogger(async () => {
+    return this.wrapWithSentryLogger(async () => {
       if (this.savingsPoolContract === undefined) {
         throw new NetworkFeatureNotSupportedError(
           'Savings Balance',
@@ -132,6 +131,28 @@ export class SavingsOnChainService extends MoverOnChainService {
         approveGasLimit
       );
     } catch (error) {
+      if (error instanceof MoverAPISubsidizedRequestError) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to execute subsidized deposit',
+          data: {
+            error: error.message,
+            description: error.shortMessage,
+            payload: error.payload,
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData,
+            useSubsidized,
+            actionGasLimit,
+            approveGasLimit
+          }
+        });
+
+        throw error;
+      }
+
       Sentry.addBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
@@ -147,7 +168,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           error
         }
       });
-      throw error;
+      throw new OnChainServiceError('Failed to execute deposit').wrap(error);
     }
   }
 
@@ -332,6 +353,25 @@ export class SavingsOnChainService extends MoverOnChainService {
         changeStepToProcess
       );
     } catch (error) {
+      if (error instanceof MoverAPISubsidizedRequestError) {
+        Sentry.addBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to execute subsidized withdraw',
+          data: {
+            error: error.message,
+            description: error.shortMessage,
+            payload: error.payload,
+            outputAsset,
+            outputAmount,
+            actionGasLimit,
+            useSubsidized
+          }
+        });
+
+        throw error;
+      }
+
       Sentry.addBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
@@ -348,7 +388,22 @@ export class SavingsOnChainService extends MoverOnChainService {
     }
   }
 
-  public async estimateWithdraw(
+  public async estimateWithdrawCompound(
+    outputAsset: SmallToken,
+    inputAmount: string
+  ): Promise<CompoundEstimateResponse> {
+    const withdrawEstimate = await this.estimateWithdraw(
+      outputAsset,
+      inputAmount
+    );
+    return {
+      error: withdrawEstimate.error,
+      approveGasLimit: '0',
+      actionGasLimit: withdrawEstimate.gasLimit
+    };
+  }
+
+  protected async estimateWithdraw(
     outputAsset: SmallToken,
     inputAmount: string
   ): Promise<EstimateResponse> {
@@ -424,58 +479,37 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
     }
 
-    try {
-      return await new Promise<TransactionReceipt>((resolve, reject) => {
-        if (this.holyHandContract === undefined) {
-          throw new NetworkFeatureNotSupportedError(
-            'Savings deposit',
-            this.network
-          );
-        }
-
-        this.wrapWithSendMethodCallbacks(
-          this.holyHandContract.methods
-            .depositToPool(
-              lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-              this.substituteAssetAddressIfNeeded(inputAsset.address),
-              toWei(inputAmount, inputAsset.decimals),
-              this.mapTransferDataToExpectedMinimumAmount(transferData),
-              this.mapTransferDataToBytes(transferData)
-            )
-            .send(
-              this.getDefaultTransactionsParams(
-                gasLimit,
-                this.mapTransferDataToValue(transferData)
-              )
-            ),
-          resolve,
-          reject,
-          changeStepToProcess,
-          {
-            poolAddress: lookupAddress(
-              this.network,
-              'HOLY_SAVINGS_POOL_ADDRESS'
-            )
-          }
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.holyHandContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Savings deposit',
+          this.network
         );
-      });
-    } catch (error) {
-      Sentry.addBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to deposit',
-        data: {
-          error,
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData,
-          gasLimit
-        }
-      });
+      }
 
-      throw new OnChainServiceError('Failed to execute deposit').wrap(error);
-    }
+      this.wrapWithSendMethodCallbacks(
+        this.holyHandContract.methods
+          .depositToPool(
+            lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData)
+          )
+          .send(
+            this.getDefaultTransactionsParams(
+              gasLimit,
+              this.mapTransferDataToValue(transferData)
+            )
+          ),
+        resolve,
+        reject,
+        changeStepToProcess,
+        {
+          poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS')
+        }
+      );
+    });
   }
 
   protected async depositSubsidized(
@@ -492,81 +526,53 @@ export class SavingsOnChainService extends MoverOnChainService {
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    try {
-      const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
-        lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-        inputAsset.address,
-        inputAmountInWEI
+    const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
+      lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+      inputAsset.address,
+      inputAmountInWEI
+    );
+
+    const transactionResult =
+      await this.subsidizedAPIService.executeTransaction(
+        preparedAction.actionString,
+        preparedAction.signature,
+        changeStepToProcess
       );
 
-      const transactionResult =
-        await this.subsidizedAPIService.executeTransaction(
-          preparedAction.actionString,
-          preparedAction.signature,
-          changeStepToProcess
-        );
+    const tx: Transaction = {
+      blockNumber: '0',
+      fee: {
+        ethPrice: this.ethPriceGetterHandler?.() ?? '0',
+        feeInWEI: '0'
+      },
+      hash: transactionResult.txID ?? '',
+      isOffchain: true,
+      nonce: '0',
+      status: 'pending',
+      timestamp: currentTimestamp(),
+      type: TransactionTypes.transferERC20,
+      uniqHash: transactionResult.txID ? `${transactionResult.txID}-0` : '',
+      asset: {
+        address: inputAsset.address,
+        change: toWei(inputAmount, inputAsset.decimals),
+        decimals: inputAsset.decimals,
+        direction: 'out',
+        iconURL: '',
+        price: '0',
+        symbol: inputAsset.symbol
+      },
+      from: this.currentAddress,
+      to: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+      subsidizedQueueId: transactionResult.queueID,
+      moverType: 'subsidized_deposit'
+    };
+    await this.addTransactionToStoreHandler?.(tx);
 
-      const tx: Transaction = {
-        blockNumber: '0',
-        fee: {
-          ethPrice: store.getters['account/ethPrice'],
-          feeInWEI: '0'
-        },
-        hash: transactionResult.txID ?? '',
-        isOffchain: true,
-        nonce: '0',
-        status: 'pending',
-        timestamp: currentTimestamp(),
-        type: TransactionTypes.transferERC20,
-        uniqHash: transactionResult.txID ? `${transactionResult.txID}-0` : '',
-        asset: {
-          address: inputAsset.address,
-          change: toWei(inputAmount, inputAsset.decimals),
-          decimals: inputAsset.decimals,
-          direction: 'out',
-          iconURL: '',
-          price: '0',
-          symbol: inputAsset.symbol
-        },
-        from: this.currentAddress,
-        to: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
-        subsidizedQueueId: transactionResult.queueID,
-        moverType: 'subsidized_deposit'
-      };
-      await store.dispatch('account/addTransaction', tx); // fixme remove direct store side-effect
-
-      return await waitOffchainTransactionReceipt(
-        transactionResult.queueID,
-        transactionResult.txID,
-        this.web3Client
-      );
-    } catch (error) {
-      if (error instanceof MoverAPISubsidizedRequestError) {
-        Sentry.addBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to execute subsidized transaction',
-          data: {
-            error: error.message,
-            description: error.shortMessage,
-            payload: error.payload
-          }
-        });
-      } else {
-        Sentry.addBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to execute subsidized transaction',
-          data: {
-            error: error
-          }
-        });
-      }
-
-      throw new OnChainServiceError(
-        'Failed to execute subsidized deposit'
-      ).wrap(error);
-    }
+    return waitOffchainTransactionReceipt(
+      transactionResult.queueID,
+      transactionResult.txID,
+      this.web3Client
+    );
   }
 
   protected async withdraw(
@@ -575,48 +581,29 @@ export class SavingsOnChainService extends MoverOnChainService {
     gasLimit: string,
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt | never> {
-    try {
-      return await new Promise<TransactionReceipt>((resolve, reject) => {
-        if (this.holyHandContract === undefined) {
-          throw new NetworkFeatureNotSupportedError(
-            'Savings withdraw',
-            this.network
-          );
-        }
-
-        this.wrapWithSendMethodCallbacks(
-          this.holyHandContract.methods
-            .withdrawFromPool(
-              lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-              toWei(outputAmount, outputAsset.decimals)
-            )
-            .send(this.getDefaultTransactionsParams(gasLimit)),
-          resolve,
-          reject,
-          changeStepToProcess,
-          {
-            poolAddress: lookupAddress(
-              this.network,
-              'HOLY_SAVINGS_POOL_ADDRESS'
-            )
-          }
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.holyHandContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Savings withdraw',
+          this.network
         );
-      });
-    } catch (error) {
-      Sentry.addBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to withdraw',
-        data: {
-          error,
-          outputAsset,
-          outputAmount,
-          gasLimit
-        }
-      });
+      }
 
-      throw new OnChainServiceError(`Failed to execute withdraw`).wrap(error);
-    }
+      this.wrapWithSendMethodCallbacks(
+        this.holyHandContract.methods
+          .withdrawFromPool(
+            lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+            toWei(outputAmount, outputAsset.decimals)
+          )
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        {
+          poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS')
+        }
+      );
+    });
   }
 
   protected async withdrawSubsidized(
@@ -624,95 +611,53 @@ export class SavingsOnChainService extends MoverOnChainService {
     outputAmount: string,
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
-    try {
-      const preparedAction = await this.prepareSavingsSubsidizedWithdrawAction(
-        lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-        toWei(outputAmount, outputAsset.decimals)
-      );
-
-      const subsidizedResponse =
-        await this.subsidizedAPIService.executeTransaction(
-          preparedAction.actionString,
-          preparedAction.signature,
-          changeStepToProcess
-        );
-
-      const tx: Transaction = {
-        blockNumber: '0',
-        fee: {
-          ethPrice: store.getters['account/ethPrice'],
-          feeInWEI: '0'
-        },
-        hash: subsidizedResponse.txID ?? '',
-        isOffchain: true,
-        nonce: '0',
-        status: 'pending',
-        timestamp: currentTimestamp(),
-        type: TransactionTypes.transferERC20,
-        uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
-        asset: {
-          address: outputAsset.address,
-          change: toWei(outputAmount, outputAsset.decimals),
-          decimals: outputAsset.decimals,
-          direction: 'in',
-          iconURL: '',
-          price: '0',
-          symbol: outputAsset.symbol
-        },
-        from: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
-        to: this.currentAddress,
-        subsidizedQueueId: subsidizedResponse.queueID,
-        moverType: 'subsidized_withdraw'
-      };
-      await store.dispatch('account/addTransaction', tx);
-
-      return await waitOffchainTransactionReceipt(
-        subsidizedResponse.queueID,
-        subsidizedResponse.txID,
-        this.web3Client
-      );
-    } catch (error) {
-      if (error instanceof MoverAPISubsidizedRequestError) {
-        Sentry.addBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to execute subsidized transaction',
-          data: {
-            error: error.message,
-            description: error.shortMessage,
-            payload: error.payload
-          }
-        });
-      } else {
-        Sentry.addBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to execute subsidized transaction',
-          data: {
-            error: error
-          }
-        });
-      }
-
-      console.error('Failed to execute subsidized withdraw', error);
-      throw error;
-    }
-  }
-
-  estimateWithdrawCompound = async (
-    outputAsset: SmallToken,
-    inputAmount: string
-  ): Promise<CompoundEstimateResponse> => {
-    const withdrawEstimate = await this.estimateWithdraw(
-      outputAsset,
-      inputAmount
+    const preparedAction = await this.prepareSavingsSubsidizedWithdrawAction(
+      lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+      toWei(outputAmount, outputAsset.decimals)
     );
-    return {
-      error: withdrawEstimate.error,
-      approveGasLimit: '0',
-      actionGasLimit: withdrawEstimate.gasLimit
+
+    const subsidizedResponse =
+      await this.subsidizedAPIService.executeTransaction(
+        preparedAction.actionString,
+        preparedAction.signature,
+        changeStepToProcess
+      );
+
+    const tx: Transaction = {
+      blockNumber: '0',
+      fee: {
+        ethPrice: this.ethPriceGetterHandler?.() ?? '0',
+        feeInWEI: '0'
+      },
+      hash: subsidizedResponse.txID ?? '',
+      isOffchain: true,
+      nonce: '0',
+      status: 'pending',
+      timestamp: currentTimestamp(),
+      type: TransactionTypes.transferERC20,
+      uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+      asset: {
+        address: outputAsset.address,
+        change: toWei(outputAmount, outputAsset.decimals),
+        decimals: outputAsset.decimals,
+        direction: 'in',
+        iconURL: '',
+        price: '0',
+        symbol: outputAsset.symbol
+      },
+      from: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+      to: this.currentAddress,
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'subsidized_withdraw'
     };
-  };
+    await this.addTransactionToStoreHandler?.(tx);
+
+    return waitOffchainTransactionReceipt(
+      subsidizedResponse.queueID,
+      subsidizedResponse.txID,
+      this.web3Client
+    );
+  }
 
   protected async prepareSavingsSubsidizedDepositAction(
     poolAddress: string,

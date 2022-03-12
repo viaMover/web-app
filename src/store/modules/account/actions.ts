@@ -465,7 +465,7 @@ const actions: ActionFuncs<
       state.isWalletLoading = false;
     }
   },
-  initServices({ state, commit, dispatch }): void {
+  initServices({ state, commit, dispatch, getters }): void {
     if (!ensureAccountStateIsSafe(state)) {
       throw new Error('account store is not initialized');
     }
@@ -499,10 +499,10 @@ const actions: ActionFuncs<
         state.currentAddress,
         state.networkInfo.network,
         state.provider.web3
-      );
-      savingsOnChainService.setSmartTreasuryBonusBalanceExecutor(
-        smartTreasuryBonusBalanceExecutor
-      );
+      )
+        .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
+        .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
+        .setEthPriceGetterHandler(() => getters.ethPrice);
       dispatch('savings/setOnChainService', savingsOnChainService, {
         root: true
       });

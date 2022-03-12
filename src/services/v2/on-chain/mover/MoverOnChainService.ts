@@ -7,6 +7,10 @@ import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/v2/api/0x';
 import { MoverAPISubsidizedService } from '@/services/v2/api/mover/subsidized';
+import {
+  AddTransactionToStoreHandler,
+  EthPriceGetterHandler
+} from '@/services/v2/on-chain/mover/types';
 import { convertStringToHexWithPrefix } from '@/utils/address';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -23,6 +27,8 @@ import {
 export abstract class MoverOnChainService extends OnChainService {
   protected subsidizedOnChainService: SubsidizedTransactionsOnChainService;
   protected readonly subsidizedAPIService: MoverAPISubsidizedService;
+  protected addTransactionToStoreHandler?: AddTransactionToStoreHandler;
+  protected ethPriceGetterHandler?: EthPriceGetterHandler;
 
   /**
    * Constructs new MoverOnChainService with auxiliary services on board to send transactions and check statuses / availability
@@ -71,6 +77,67 @@ export abstract class MoverOnChainService extends OnChainService {
       txGasLimit,
       ethPrice
     );
+  }
+
+  public async prepareSubsidizedSendAction(
+    to: string,
+    tokenAddress: string,
+    amount: string
+  ): Promise<PreparedAction> {
+    return this.prepareSubsidizedAction(
+      `ON BEHALF ${
+        this.currentAddress
+      } TIMESTAMP ${dayjs().unix()} EXECUTE SEND TO ${to} TOKEN ${tokenAddress} AMOUNT ${amount}`
+    );
+  }
+
+  public async prepareSubsidizedSwapAction(
+    tokenFromAddress: string,
+    tokenToAddress: string,
+    amount: string,
+    expectedMinimum: string
+  ): Promise<PreparedAction> {
+    return this.prepareSubsidizedAction(
+      `ON BEHALF ${
+        this.currentAddress
+      } TIMESTAMP ${dayjs().unix()} EXECUTE SWAP TOKEN_FROM ${tokenFromAddress} TOKEN_TO ${tokenToAddress} AMOUNT_FROM ${amount} EXPECTED_MINIMUM ${expectedMinimum}`
+    );
+  }
+
+  /**
+   * Sets bonus balance executor that allows to query Smart Treasury bonus balance.
+   * @see ISmartTreasuryBonusBalanceExecutor
+   * @param executor
+   */
+  public setSmartTreasuryBonusBalanceExecutor(
+    executor?: ISmartTreasuryBonusBalanceExecutor
+  ): this {
+    this.subsidizedOnChainService.setSmartTreasuryBonusBalanceExecutor(
+      executor
+    );
+    return this;
+  }
+
+  /**
+   * Sets callback handler to allow inherited classes to add transactions to the account store
+   * @see AccountStoreState
+   * @param handler
+   */
+  public setAddTransactionToStoreHandler(
+    handler?: AddTransactionToStoreHandler
+  ): this {
+    this.addTransactionToStoreHandler = handler;
+    return this;
+  }
+
+  /**
+   * Sets callback handler to allow access to the eth price from account state
+   * @see AccountStoreState
+   * @param handler
+   */
+  public setEthPriceGetterHandler(handler?: EthPriceGetterHandler): this {
+    this.ethPriceGetterHandler = handler;
+    return this;
   }
 
   protected mapTransferDataToBytes(data?: TransferData): number[] {
@@ -135,46 +202,6 @@ export abstract class MoverOnChainService extends OnChainService {
     actionString: string
   ): Promise<PreparedAction> {
     return this.subsidizedOnChainService.prepareSubsidizedAction(actionString);
-  }
-
-  public async prepareSubsidizedSendAction(
-    to: string,
-    tokenAddress: string,
-    amount: string
-  ): Promise<PreparedAction> {
-    return this.prepareSubsidizedAction(
-      `ON BEHALF ${
-        this.currentAddress
-      } TIMESTAMP ${dayjs().unix()} EXECUTE SEND TO ${to} TOKEN ${tokenAddress} AMOUNT ${amount}`
-    );
-  }
-
-  public async prepareSubsidizedSwapAction(
-    tokenFromAddress: string,
-    tokenToAddress: string,
-    amount: string,
-    expectedMinimum: string
-  ): Promise<PreparedAction> {
-    return this.prepareSubsidizedAction(
-      `ON BEHALF ${
-        this.currentAddress
-      } TIMESTAMP ${dayjs().unix()} EXECUTE SWAP TOKEN_FROM ${tokenFromAddress} TOKEN_TO ${tokenToAddress} AMOUNT_FROM ${amount} EXPECTED_MINIMUM ${expectedMinimum}`
-    );
-  }
-
-  /**
-   * Sets bonus balance executor that allows to query Smart Treasury bonus balance.
-   * @see ISmartTreasuryBonusBalanceExecutor
-   * @param executor
-   * @protected
-   */
-  public setSmartTreasuryBonusBalanceExecutor(
-    executor?: ISmartTreasuryBonusBalanceExecutor
-  ): this {
-    this.subsidizedOnChainService.setSmartTreasuryBonusBalanceExecutor(
-      executor
-    );
-    return this;
   }
 
   /**

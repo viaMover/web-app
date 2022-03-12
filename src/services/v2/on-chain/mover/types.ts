@@ -1,3 +1,5 @@
+import { Transaction } from '@/wallet/types';
+
 import { ContractMethod, CustomContractType } from '../types';
 
 export type EstimateResponse = {
@@ -25,3 +27,6 @@ export type HolyHandContract = CustomContractType<{
   ): ContractMethod;
   withdrawFromPool(_poolAddress: string, _amount: string): ContractMethod;
 }>;
+
+export type AddTransactionToStoreHandler = (tx: Transaction) => Promise<void>;
+export type EthPriceGetterHandler = () => string;
