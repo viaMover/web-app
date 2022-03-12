@@ -22,19 +22,10 @@ import {
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
-import {
-  SmallToken,
-  SmallTokenInfo,
-  Transaction,
-  TransactionTypes
-} from '@/wallet/types';
+import { SmallTokenInfo, Transaction, TransactionTypes } from '@/wallet/types';
 
 import { MoverOnChainService } from '../MoverOnChainService';
-import {
-  CompoundEstimateResponse,
-  EstimateResponse,
-  HolyHandContract
-} from '../types';
+import { CompoundEstimateResponse, HolyHandContract } from '../types';
 import { GetSavingsAPYReturn, HolySavingsPoolContract } from './types';
 
 export class SavingsOnChainService extends MoverOnChainService {
@@ -173,8 +164,8 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   public async estimateDepositCompound(
-    inputAsset: SmallToken,
-    outputAsset: SmallToken,
+    inputAsset: SmallTokenInfo,
+    outputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData | undefined
   ): Promise<CompoundEstimateResponse> {
@@ -331,7 +322,7 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   public async withdrawCompound(
-    outputAsset: SmallToken,
+    outputAsset: SmallTokenInfo,
     outputAmount: string,
     actionGasLimit: string,
     useSubsidized: boolean,
@@ -389,24 +380,9 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   public async estimateWithdrawCompound(
-    outputAsset: SmallToken,
+    outputAsset: SmallTokenInfo,
     inputAmount: string
   ): Promise<CompoundEstimateResponse> {
-    const withdrawEstimate = await this.estimateWithdraw(
-      outputAsset,
-      inputAmount
-    );
-    return {
-      error: withdrawEstimate.error,
-      approveGasLimit: '0',
-      actionGasLimit: withdrawEstimate.gasLimit
-    };
-  }
-
-  protected async estimateWithdraw(
-    outputAsset: SmallToken,
-    inputAmount: string
-  ): Promise<EstimateResponse> {
     if (this.holyHandContract === undefined) {
       throw new NetworkFeatureNotSupportedError(
         'Savings withdraw',
@@ -429,7 +405,11 @@ export class SavingsOnChainService extends MoverOnChainService {
           multiply(gasLimitObj.toString(), '120'),
           '100'
         );
-        return { error: false, gasLimit: gasLimitWithBuffer };
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: gasLimitWithBuffer
+        };
       } else {
         Sentry.addBreadcrumb({
           type: 'error',
@@ -441,7 +421,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           }
         });
 
-        return { error: true, gasLimit: '0' };
+        return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
       }
     } catch (error) {
       Sentry.addBreadcrumb({
@@ -457,14 +437,15 @@ export class SavingsOnChainService extends MoverOnChainService {
 
       return {
         error: true,
-        gasLimit: '0'
+        approveGasLimit: '0',
+        actionGasLimit: '0'
       };
     }
   }
 
   protected async deposit(
-    inputAsset: SmallToken,
-    outputAsset: SmallToken,
+    inputAsset: SmallTokenInfo,
+    outputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData | undefined,
     changeStepToProcess: () => Promise<void>,
@@ -576,7 +557,7 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   protected async withdraw(
-    outputAsset: SmallToken,
+    outputAsset: SmallTokenInfo,
     outputAmount: string,
     gasLimit: string,
     changeStepToProcess: () => Promise<void>
@@ -607,7 +588,7 @@ export class SavingsOnChainService extends MoverOnChainService {
   }
 
   protected async withdrawSubsidized(
-    outputAsset: SmallToken,
+    outputAsset: SmallTokenInfo,
     outputAmount: string,
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
