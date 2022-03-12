@@ -284,8 +284,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           inputAsset,
           outputAsset,
           inputAmount,
-          transferData,
-          gasLimitObj
+          transferData
         }
       });
 
@@ -478,7 +477,8 @@ export class SavingsOnChainService extends MoverOnChainService {
         reject,
         changeStepToProcess,
         {
-          poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS')
+          poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+          gasLimit
         }
       );
     });
@@ -572,7 +572,8 @@ export class SavingsOnChainService extends MoverOnChainService {
         reject,
         changeStepToProcess,
         {
-          poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS')
+          poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
+          gasLimit
         }
       );
     });
