@@ -22,6 +22,7 @@ import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-trea
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
+import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import {
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
@@ -519,7 +520,17 @@ const actions: ActionFuncs<
         state.currentAddress,
         state.networkInfo.network
       );
-      commit('setSwapService', ZeroXService);
+      commit('setSwapAPIService', ZeroXService);
+
+      const swapOnChainService = new SwapOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      )
+        .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
+        .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
+        .setEthPriceGetterHandler(() => getters.ethPrice);
+      commit('setSwapOnChainService', swapOnChainService);
     }
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {

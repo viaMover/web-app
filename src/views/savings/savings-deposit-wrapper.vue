@@ -178,7 +178,7 @@ export default Vue.extend({
       tokens: 'tokens',
       usdcPriceInWeth: 'usdcPriceInWeth',
       provider: 'provider',
-      swapService: 'swapService'
+      swapService: 'swapAPIService'
     }),
     ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
     ...mapState('savings', {

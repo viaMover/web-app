@@ -61,7 +61,8 @@ export default {
     isDebitCardSectionVisible: true,
     isDepositCardSectionVisible: true,
     isOrderOfLibertySectionVisible: true,
-    swapService: undefined
+    swapAPIService: undefined,
+    swapOnChainService: undefined
   },
   actions,
   getters,

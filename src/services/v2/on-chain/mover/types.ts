@@ -31,6 +31,13 @@ export type HolyHandContract = CustomContractType<{
     _tokenMoveEthAmount: string
   ): ContractMethod;
   claimAndBurn(_amount: string): ContractMethod;
+  executeSwap(
+    _tokenFrom: string,
+    _tokenTo: string,
+    _amountFrom: string,
+    _expectedMinimumReceived: string,
+    _convertData: number[]
+  ): ContractMethod;
 }>;
 
 export type AddTransactionToStoreHandler = (tx: Transaction) => Promise<void>;

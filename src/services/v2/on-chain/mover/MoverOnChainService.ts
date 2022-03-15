@@ -91,19 +91,6 @@ export abstract class MoverOnChainService extends OnChainService {
     );
   }
 
-  public async prepareSubsidizedSwapAction(
-    tokenFromAddress: string,
-    tokenToAddress: string,
-    amount: string,
-    expectedMinimum: string
-  ): Promise<PreparedAction> {
-    return this.prepareSubsidizedAction(
-      `ON BEHALF ${
-        this.currentAddress
-      } TIMESTAMP ${dayjs().unix()} EXECUTE SWAP TOKEN_FROM ${tokenFromAddress} TOKEN_TO ${tokenToAddress} AMOUNT_FROM ${amount} EXPECTED_MINIMUM ${expectedMinimum}`
-    );
-  }
-
   /**
    * Sets bonus balance executor that allows to query Smart Treasury bonus balance.
    * @see ISmartTreasuryBonusBalanceExecutor
