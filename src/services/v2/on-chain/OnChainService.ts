@@ -380,10 +380,7 @@ export abstract class OnChainService {
     return {
       from: fromAddress,
       value: value,
-      gas: web3Client.utils.toBN(gasLimit).toNumber(),
-      gasPrice: undefined,
-      maxFeePerGas: null,
-      maxPriorityFeePerGas: null
+      gas: web3Client.utils.toBN(gasLimit).toNumber()
     };
   }
 
