@@ -33,7 +33,6 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import MewConnect from '@myetherwallet/mewconnect-web-client';
 import Portis from '@portis/web3';
 import Web3ModalVue from 'web3modal-vue';
@@ -69,13 +68,6 @@ export default Vue.extend({
           package: Portis,
           options: {
             id: APIKeys.PORTIS_DAPP_ID
-          }
-        },
-        coinbasewallet: {
-          package: CoinbaseWalletSDK,
-          options: {
-            appName: 'Mover App',
-            infuraId: APIKeys.INFURA_PROJECT_ID
           }
         }
       }

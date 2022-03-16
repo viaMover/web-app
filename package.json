@@ -13,7 +13,6 @@
     "tokens:list:generate": "node ./tools/token_list/index.js"
   },
   "dependencies": {
-    "@coinbase/wallet-sdk": "^3.0.4",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",
     "@myetherwallet/mewconnect-web-client": "^2.2.0-beta.13",
@@ -62,7 +61,7 @@
     "vuex": "^3.6.2",
     "web3": "^v1.6.0",
     "web3-eth-abi": "^1.6.1",
-    "web3modal-vue": "./libs/new-web3modal-vue-v1.0.6.tgz"
+    "web3modal-vue": "^1.0.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.14.5",
