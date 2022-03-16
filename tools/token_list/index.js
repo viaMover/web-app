@@ -128,36 +128,6 @@ const getExtendedCoingeckoTokenData = async (id) => {
   }
 };
 
-const getEthplorerTokenData = async (address, deep = 0) => {
-  try {
-    return (
-      await axios.get(
-        `https://api.ethplorer.io/getTokenInfo/${address}?apiKey=freekey`
-      )
-    ).data;
-  } catch (e) {
-    if (axios.isAxiosError(e) && e.response?.status === 429) {
-      if (deep > 2) {
-        logger.error(
-          'failed to get ethplorer info for',
-          address,
-          'recursion limit reached'
-        );
-        return undefined;
-      }
-
-      logger.warn('ethplorer api returns 429 for', address, 'waiting');
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 10000);
-      }).then(async () => await getEthplorerTokenData(address, deep + 1));
-    }
-    logger.error('failed to get ethplorer info for', address, e.message ?? e);
-    return undefined;
-  }
-};
-
 const getCoingekoMarketData = async (coingeckoIds) => {
   const marketUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coingeckoIds.join(
     ','
@@ -183,7 +153,7 @@ const enrichWithTWdata = async (assetAddresses, network) => {
   return assetAddresses.reduce(async (acc, address) => {
     try {
       const buf = readFileSync(
-        `${`${repDIR}/blockchains/${network}/assets`}/${address}/info.json`,
+        `${repDIR}/blockchains/${network}/assets/${address}/info.json`,
         'utf8'
       );
       const info = JSON.parse(buf);
@@ -235,11 +205,6 @@ const enrichWithCoingeckoData = async (assets, network) => {
     });
 
     if (as.isIncomplete) {
-      if (network !== 'ethereum') {
-        // TODO: we have to change ethplorer to another way to get decimals of token (for multichain)
-        newAssets.push({ ...as, coingeckoId: coingeckoAsset?.id });
-        continue;
-      }
       const coingeckoExtendedToken = await getExtendedCoingeckoTokenData(
         coingeckoAsset?.id
       );
@@ -263,7 +228,6 @@ const enrichWithCoingeckoData = async (assets, network) => {
           ) ?? `https://etherscan.io/token/${as.id}`,
         status: 'active',
         type: 'ERC20',
-        // decimals: Number.parseInt(ethplorerToken.decimals),
         website:
           coingeckoExtendedToken.links?.homepage?.find((url) => !!url) ?? '',
         imageUrl: coingeckoExtendedToken.image?.large ?? undefined,
