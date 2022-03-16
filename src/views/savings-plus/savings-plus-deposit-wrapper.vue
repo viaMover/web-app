@@ -8,17 +8,19 @@
       v-if="step === 'prepare'"
       :asset="inputAsset"
       has-select-modal
-      :header-description="$t('savings.deposit.txtDepositDescription')"
-      :header-title="$t('savings.deposit.lblDepositInSavings')"
+      :header-description="$t('savingsPlus.deposit.txtDepositDescription')"
+      :header-title="$t('savingsPlus.deposit.lblDepositInSP')"
       :input-amount="inputAmount"
       :input-amount-native="inputAmountNative"
-      :input-asset-heading="$t('savings.deposit.lblWhatDoWeDeposit')"
+      :input-asset-heading="$t('savingsPlus.deposit.lblWhatDoWeDeposit')"
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
-      :operation-description="$t('savings.deposit.txtYouCouldEarnInYear')"
+      :operation-description="$t('savingsPlus.deposit.txtYouCouldEarnInYear')"
       :operation-title="estimatedAnnualEarning"
-      :output-asset-heading-text="$t('savings.deposit.lblAmountWeDepositIn')"
+      :output-asset-heading-text="
+        $t('savingsPlus.deposit.lblAmountWeDepositIn')
+      "
       :selected-token-description="description"
       :transfer-error="transferError"
       @open-select-modal="handleOpenSelectModal"
@@ -46,17 +48,26 @@
     <review-form
       v-else-if="step === 'review'"
       :amount="inputAmount"
-      :button-text="$t('savings.deposit.lblDepositInSavings')"
-      :estimated-gas-cost="estimatedGasCost"
-      :header-title="$t('savings.deposit.lblReviewYourDeposit')"
+      :button-text="$t('savingsPlus.deposit.lblDepositInSP')"
+      :header-title="$t('savingsPlus.deposit.lblReviewYourDeposit')"
       :image="savings"
-      :input-amount-native-title="$t('savings.deposit.lblAndTotalOf')"
-      :input-amount-title="$t('savings.deposit.lblAmountWeDepositIn')"
-      :is-subsidized-enabled="isSubsidizedEnabled"
+      :input-amount-native-title="$t('savingsPlus.deposit.lblTotalGoesInSP')"
+      :input-amount-title="$t('savingsPlus.deposit.lblYourDepositIn')"
       :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
-    />
+    >
+      <template v-slot:additional-items>
+        <div class="item">
+          <h2>{{ $t('savingsPlus.deposit.lblBridgingFee') }}</h2>
+          <span> {{ bridgingFee }}}</span>
+        </div>
+        <div class="item">
+          <h2>{{ $t('savingsPlus.deposit.lblEstimatedVariableAPY') }}</h2>
+          <span>{{ estimatedVariableAPY }}</span>
+        </div>
+      </template>
+    </review-form>
     <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
   </secondary-page>
 </template>
@@ -82,18 +93,12 @@ import {
   convertNativeAmountFromAmount,
   divide,
   fromWei,
-  isZero,
   multiply,
   toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
 import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
-import {
-  calcTransactionFastNativePrice,
-  isSubsidizedAllowed
-} from '@/wallet/actions/subsidized';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import {
@@ -115,7 +120,7 @@ import { SecondaryPage } from '@/components/layout/secondary-page';
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
-  name: 'SavingsDepositWrapper',
+  name: 'SavingsPlusDepositWrapper',
   components: {
     CustomPicture,
     ReviewForm,
@@ -130,20 +135,20 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       savings: {
-        alt: this.$t('savings.lblSavings'),
-        src: require('@/assets/images/Savings@1x.png'),
+        alt: this.$t('savingsPlus.lblSavings'),
+        src: require('@/assets/images/SavingsPlus@1x.png'),
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
+          { src: require('@/assets/images/SavingsPlus@1x.png') },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
+            src: require('@/assets/images/SavingsPlus@2x.png')
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
+          { src: require('@/assets/images/SavingsPlus@1x.webp') },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: require('@/assets/images/SavingsPlus@2x.webp')
           }
         ]
       } as PictureDescriptor,
@@ -169,8 +174,6 @@ export default Vue.extend({
       transferError: undefined as undefined | string,
 
       //to tx
-      isSubsidizedEnabled: false,
-      estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined
     };
@@ -187,10 +190,16 @@ export default Vue.extend({
       provider: 'provider'
     }),
     ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
-    ...mapState('savings', {
-      savingsAPY: 'savingsAPY',
-      savingsBalance: 'savingsBalance'
+    ...mapState('savingsPlus', {
+      APY: 'APY',
+      balance: 'balance'
     }),
+    bridgingFee(): string {
+      return '84.19 USDc';
+    },
+    estimatedVariableAPY(): string {
+      return '29.4 %';
+    },
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
@@ -215,8 +224,8 @@ export default Vue.extend({
     description(): string {
       return (
         this.isSwapNeeded
-          ? this.$t('savings.deposit.txtAssetWillBeConverted')
-          : this.$t('savings.txtUSDCCoinIsAStable')
+          ? this.$t('savingsPlus.deposit.txtAssetWillBeConverted')
+          : this.$t('savingsPlus.deposit.txtUSDCCoinIsAStable')
       ) as string;
     },
     hasBackButton(): boolean {
@@ -236,19 +245,13 @@ export default Vue.extend({
         );
       }
 
-      if (this.savingsBalance !== undefined) {
-        possibleSavingsBalance = add(
-          this.savingsBalance,
-          possibleSavingsBalance
-        );
+      if (this.balance !== undefined) {
+        possibleSavingsBalance = add(this.balance, possibleSavingsBalance);
       }
 
       const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
-      const apyNative = multiply(
-        divide(this.savingsAPY, 100),
-        usdcAmountNative
-      );
+      const apyNative = multiply(divide(this.APY, 100), usdcAmountNative);
 
       return `~ $${formatToNative(apyNative)}`;
     },
@@ -317,8 +320,6 @@ export default Vue.extend({
         return;
       }
 
-      this.isSubsidizedEnabled = false;
-      this.estimatedGasCost = undefined;
       this.actionGasLimit = '0';
       this.approveGasLimit = '0';
       this.isProcessing = true;
@@ -332,64 +333,24 @@ export default Vue.extend({
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
 
-        console.info('Savings deposit action gaslimit:', this.actionGasLimit);
-        console.info('Savings deposit approve gaslimit:', this.approveGasLimit);
-
-        if (!isZero(this.actionGasLimit)) {
-          this.isSubsidizedEnabled = this.checkSubsidizedAvailability(
-            this.actionGasLimit
-          );
-          this.estimatedGasCost = this.subsidizedTxNativePrice(
-            this.actionGasLimit
-          );
-        }
+        console.info(
+          'SavingsPlus deposit action gaslimit:',
+          this.actionGasLimit
+        );
+        console.info(
+          'SavingsPlus deposit approve gaslimit:',
+          this.approveGasLimit
+        );
       } catch (err) {
-        this.isSubsidizedEnabled = false;
         console.error(err);
-        Sentry.captureException("can't estimate savings deposit for subs");
+        Sentry.captureException(err);
+        // Sentry.captureException("can't estimate savings-plus deposit for subs");
         return;
       } finally {
         this.isProcessing = false;
       }
 
       this.step = 'review';
-    },
-    subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
-      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we can't calculate subsidized tx native price"
-        );
-        return undefined;
-      }
-      return calcTransactionFastNativePrice(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice
-      );
-    },
-    checkSubsidizedAvailability(actionGasLimit: string): boolean {
-      const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we don't allow subsidized transaction"
-        );
-        return false;
-      }
-
-      if (this.inputAsset?.address === 'eth') {
-        console.info('Subsidizing for deposit ETH denied');
-        return false;
-      }
-
-      return isSubsidizedAllowed(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice,
-        this.treasuryBonusNative
-      );
     },
     async estimateAction(
       inputAmount: string,
@@ -539,7 +500,7 @@ export default Vue.extend({
         );
       }
     },
-    async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
+    async handleTxStart(): Promise<void> {
       if (this.inputAsset === undefined) {
         console.error('inputAsset is empty during `handleTxStart`');
         Sentry.captureException("can't start savings deposit TX");
@@ -572,26 +533,24 @@ export default Vue.extend({
         return;
       }
 
-      console.log('is smart treasury:', args.isSmartTreasury);
-
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await depositCompound(
-          this.inputAsset,
-          this.outputUSDCAsset,
-          this.inputAmount,
-          this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
-          args.isSmartTreasury,
-          async () => {
-            this.transactionStep = 'Process';
-          },
-          this.actionGasLimit,
-          this.approveGasLimit
-        );
+        // await depositCompound(
+        //   this.inputAsset,
+        //   this.outputUSDCAsset,
+        //   this.inputAmount,
+        //   this.transferData,
+        //   this.networkInfo.network,
+        //   this.provider.web3,
+        //   this.currentAddress,
+        //   args.isSmartTreasury,
+        //   async () => {
+        //     this.transactionStep = 'Process';
+        //   },
+        //   this.actionGasLimit,
+        //   this.approveGasLimit
+        // );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
       } catch (err) {

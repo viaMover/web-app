@@ -41,6 +41,7 @@
         <h2>{{ inputAmountNativeTitle }}</h2>
         <span>{{ nativeAmount }}</span>
       </div>
+      <slot name="additional-items" />
       <template v-if="isSubsidizedEnabled">
         <custom-switch v-model="isSmartTreasury">{{
           $t('forms.lblUseSmartTreasury')

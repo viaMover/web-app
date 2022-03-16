@@ -1,8 +1,11 @@
 import { Network } from '@/utils/networkTypes';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { SmallTokenInfoWithIcon } from '@/wallet/types';
 
 export type GlobalSettings = Array<Network> | boolean;
 export interface Globals {
   isSavingsOverviewSomeFieldsEnabled: GlobalSettings;
+  isSavingsPlusOverviewSomeFieldsEnabled: GlobalSettings;
   isSwapPassportEnabled: GlobalSettings;
   isReleaseRadarEnabled: GlobalSettings;
   isDebitCardEnabled: GlobalSettings;
@@ -43,6 +46,7 @@ export const isDevelop = (): boolean => {
 
 const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
+  isSavingsPlusOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: [Network.mainnet],
@@ -77,7 +81,7 @@ const values: Globals = {
   isVaultsRaceEnabled: false,
   isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
-  isSavingsPlusEnabled: false,
+  isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
   isOrderOfLibertyNFTEnabled: [Network.mainnet, Network.polygon, Network.fantom]
@@ -95,4 +99,27 @@ export const isFeatureEnabled = <T extends keyof Globals>(
     return true;
   }
   return settings.includes(network);
+};
+
+export const stableCoinForNetwork = (
+  network: Network
+): SmallTokenInfoWithIcon | undefined => {
+  return networkStableCoinMap[network];
+};
+
+type NetworkStableCoinMap<T> = {
+  [K in keyof T]: SmallTokenInfoWithIcon | undefined;
+};
+
+const networkStableCoinMap: NetworkStableCoinMap<typeof Network> = {
+  [Network.mainnet]: getUSDCAssetData(Network.mainnet),
+  [Network.polygon]: getUSDCAssetData(Network.polygon),
+  [Network.fantom]: getUSDCAssetData(Network.fantom),
+  [Network.binance]: undefined,
+  [Network.binanceTest]: undefined,
+  [Network.kovan]: undefined,
+  [Network.rinkeby]: undefined,
+  [Network.ropsten]: undefined,
+  [Network.avalanche]: undefined,
+  [Network.arbitrum]: undefined
 };

@@ -4,8 +4,7 @@
       <secondary-page-header :description="pageSubtitle" :title="pageTitle" />
     </template>
 
-    <treasury-monthly-chart-wrapper v-if="isTreasuryMonthlyChartEnabled" />
-    <treasury-monthly-statement :page-date="pageDate" />
+    <savings-plus-monthly-statistics :page-date="pageDate" />
   </secondary-page>
 </template>
 
@@ -15,22 +14,15 @@ import { mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { isFeatureEnabled } from '@/settings';
 import { dateFromExplicitPair } from '@/utils/time';
 
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
-import {
-  TreasuryMonthlyChartWrapper,
-  TreasuryMonthlyStatement
-} from '@/components/treasury';
 
 export default Vue.extend({
-  name: 'TreasuryMonthlyStatistics',
+  name: 'SavingsPlusMonthlyStatistics',
   components: {
-    SecondaryPage,
     SecondaryPageHeader,
-    TreasuryMonthlyChartWrapper,
-    TreasuryMonthlyStatement
+    SecondaryPage
   },
   computed: {
     ...mapState('account', { networkInfo: 'networkInfo' }),
@@ -52,12 +44,6 @@ export default Vue.extend({
       const right = this.pageDate.endOf('month').format('MMM DD, YYYY');
 
       return `${left} - ${right}`;
-    },
-    isTreasuryMonthlyChartEnabled(): boolean {
-      return isFeatureEnabled(
-        'isTreasuryMonthlyChartEnabled',
-        this.networkInfo?.network
-      );
     }
   },
   methods: {

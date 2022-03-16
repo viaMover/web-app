@@ -11,6 +11,7 @@ import governance from './modules/governance';
 import modals from './modules/modals';
 import nft from './modules/nft';
 import savings from './modules/savings';
+import savingsPlus from './modules/savings-plus';
 import shop from './modules/shop';
 import treasury from './modules/treasury';
 import mutations from './mutations';
@@ -29,6 +30,7 @@ const store = new Vuex.Store<RootStoreState>({
   actions: actions,
   mutations: mutations,
   modules: {
+    savingsPlus,
     savings,
     treasury,
     account,

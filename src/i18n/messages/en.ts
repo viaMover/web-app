@@ -49,6 +49,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
     lblEstimatedGasCost: 'Estimated gas cost',
     lblAvailable: 'Available',
+    lblOn: 'on',
     lblSwappingFor: 'Swapping for',
     lblChooseToken: 'Choose Token',
     lblChooseAmount: 'Choose amount',
@@ -1294,7 +1295,94 @@ if (isFeatureEnabled('isEarningsEnabled')) {
 
 if (isFeatureEnabled('isSavingsPlusEnabled')) {
   messages.savingsPlus = {
-    lblSavingsPlus: 'Savings Plus'
+    icon: '➕',
+    lblSP: 'Saving Plus',
+    txtLeveragedDeposits:
+      'Leveraged deposits introduce higher risk, but higher returns',
+    lblAutomaticLeverage: 'Automatic leverage',
+    lblMultichainZaps: 'Multichain Zaps',
+    lblMoreChainsMoreTokens: 'More chains, more tokens',
+    lblSPStatements: 'Savings Plus Statements',
+    lblSPBalance: 'Savings Plus Balance',
+    lblInProgress: 'In progress',
+    btn: {
+      view: 'View'
+    },
+    empty: {
+      lblUpTo: 'up to {value}',
+      lblMultichainZaps: 'Multichain Zaps',
+      lblMoreChains: 'More chains, more tokens',
+      lblAutomaticLeverage: 'Automatic leverage',
+      lblStartSaving: 'Start saving',
+      lblAPYOnAllSavings: 'APY on all savings',
+      txtLeveragedDeposit:
+        'Leveraged deposits introduce higher risk, but higher returns',
+      txtYouCouldApproximately:
+        'You could approximately earn in a year if you stake $10,000 now.'
+    },
+    leftRail: {
+      lblMySP: 'My Savings Plus',
+      lblManageSP: 'Manage Savings Plus',
+      lblDepositInSP: 'Deposit in Savings Plus',
+      lblDepositInSPDescription:
+        'Get up to 120% on leveraged multichain savings',
+      lblWithdrawFromSP: 'Withdraw from Savings Plus',
+      lblWithdrawFromSPDescription:
+        'Remove your assets from savings fully or partially',
+      lblGlobalAnalytics: 'Global analytics',
+      lblGlobalAnalyticsDescription: 'All information about Savings Plus'
+    },
+    deposit: {
+      txtUSDCCoinIsAStable:
+        'USD Coin is a stable asset and the easiest way to grow your savings Plus. Your returns will also be in USDC.',
+      txtAssetWillBeConverted:
+        'This token will be automatically swapped for USDC and deposited in the active yielding strategy. Your return will also be in USDC (USD Coin).',
+      lblWhatDoWeDeposit: 'What do we deposit',
+      txtYouCouldEarnInYear:
+        'You could earn in a year. Considering all changes.',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      lblYourDepositIn: 'Your deposit in',
+      lblReviewYourDeposit: 'Review your deposit',
+      lblTotalGoesInSP: 'The total that goes in Savings Plus',
+      lblDepositInSP: 'Deposit in Savings Plus',
+      lblEstimatedVariableAPY: 'Estimated variable APY',
+      lblBridgingFee: 'Bridging fee',
+      txtDepositDescription:
+        'Savings Plus is a multichain leveraged savings. Your input token will be swapped, leveraged and deposited to earn yield.'
+    },
+    withdraw: {
+      txtWithdrawDescription:
+        'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.',
+      lblWithdrawFromSP: 'Withdraw',
+      lblWhatDoWeWithdraw: 'What do we withdraw',
+      txtIfYouKeepSavings:
+        'If you keep your deposit, you could earn in a year.',
+      lblAmountWeDepositIn: 'Amount we withdraw in',
+      txtTokenDescription:
+        'You will receive your original deposit together with the earned interest.',
+      lblReviewTransaction: 'Review transaction',
+      lblReviewYourWithdraw: 'Review your withdrawal',
+      lblTotalAmountBack: 'The total amount you receive back',
+      lblAmountWeWithdrawIn: 'Amount we withdraw',
+      lblIncludingAccumulatedInterest: 'Including accumulated interest'
+    },
+    overview: {
+      lblSPOverview: 'Savings Plus Overview',
+      lblSPOverviewDescription:
+        'Savings Plus is a non-custodial and permissionless product. Check the global statistics across the board.',
+      lblDepositedAssets: 'My total deposited assets value',
+      lblCurrentVariableAPY: 'Current variable APY',
+      lbl30DayAverageAPY: '30-day average APY',
+      lblTotalAssetsUnderManagement: 'Total assets under management',
+      lblSPStats: 'Savings Plus Stats',
+      lblEarnedToday: 'Earned today',
+      lblEarnedThisMonth: 'Earned this month',
+      lblEarnedInTotal: 'Earned in total',
+      lblSPEstimation: 'Savings Plus Estimation',
+      lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
+      lblEstimatedEarningsNextMonth: 'Estimated earnings this month',
+      lblEstimatedEarningsAnnually: 'Estimated earnings annually'
+    }
   };
 }
 

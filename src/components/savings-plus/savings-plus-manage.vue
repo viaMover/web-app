@@ -2,7 +2,7 @@
   <secondary-page class="manage">
     <template v-slot:title>
       <secondary-page-header
-        :description="$t('savings.lblSavingsBalance')"
+        :description="$t('savingsPlus.lblSPBalance')"
         :title="savingsBalance"
       />
     </template>
@@ -21,12 +21,12 @@
     </div>
 
     <statements-nav-list
-      :button-text="$t('savings.btnView.simple')"
-      :icon="$t('savings.icon')"
-      :in-progress-text="$t('savings.lblInProgress')"
+      :button-text="$t('savingsPlus.btn.view')"
+      :icon="$t('savingsPlus.icon')"
+      :in-progress-text="$t('savingsPlus.lblInProgress')"
       :items="savingsMonthStatsOptions"
       navigate-to-name="savings-month-stats"
-      :title="$t('savings.lblSavingsStatements')"
+      :title="$t('savingsPlus.lblSPStatements')"
     />
   </secondary-page>
 </template>
@@ -48,7 +48,7 @@ import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import { StatementsNavList } from '@/components/statements-nav-list';
 
 export default Vue.extend({
-  name: 'SavingsManage',
+  name: 'SavingsPlusManage',
   components: {
     BarChart,
     SecondaryPageHeader,
@@ -63,26 +63,24 @@ export default Vue.extend({
   },
   computed: {
     ...mapState({ colors: 'colors' }),
-    ...mapState('savings', {
-      isSavingsInfoLoading: 'isSavingsInfoLoading'
-    }),
     ...mapState('account', {
       networkInfo: 'networkInfo'
     }),
-    ...mapGetters('savings', {
-      savingsInfo: 'savingsInfo',
-      savingsMonthStatsOptions: 'savingsMonthStatsOptions',
-      savingsInfoBalanceNative: 'savingsInfoBalanceNative',
-      savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
+    ...mapState('savingsPlus', {
+      isInfoLoading: 'isInfoLoading'
+    }),
+    ...mapGetters('savingsPlus', {
+      info: 'info',
+      monthStatsOptions: 'monthStatsOptions',
+      infoBalanceNative: 'infoBalanceNative',
+      infoEarnedThisMonthNative: 'infoEarnedThisMonthNative',
       usdcNativePrice: 'usdcNativePrice'
     }),
     savingsBalance(): string {
-      return `$${formatToNative(this.savingsInfoBalanceNative)}`;
+      return `$${formatToNative(this.infoBalanceNative)}`;
     },
     chartDataSource(): Array<SavingsMonthBalanceItem> {
-      return this.savingsInfo !== undefined
-        ? this.savingsInfo.last12MonthsBalances
-        : [];
+      return this.info !== undefined ? this.info.last12MonthsBalances : [];
     },
     selectedItemPrefix(): string {
       if (this.selectedItem === undefined) {
@@ -109,9 +107,7 @@ export default Vue.extend({
     },
     selectedItemValue(): string {
       if (this.selectedItem === undefined) {
-        return this.formatSelectedItemValue(
-          this.savingsInfoEarnedThisMonthNative
-        );
+        return this.formatSelectedItemValue(this.infoEarnedThisMonthNative);
       }
 
       const now = dayjs();
@@ -119,9 +115,7 @@ export default Vue.extend({
         this.selectedItem.month - 1 == now.get('month') &&
         this.selectedItem.year == now.get('year')
       ) {
-        return this.formatSelectedItemValue(
-          this.savingsInfoEarnedThisMonthNative
-        );
+        return this.formatSelectedItemValue(this.infoEarnedThisMonthNative);
       }
 
       return this.formatSelectedItemValue(

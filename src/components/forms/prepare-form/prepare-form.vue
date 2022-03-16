@@ -48,9 +48,21 @@
 
         <div class="available">
           {{ $t('forms.lblAvailable') }}
-          <span class="selector button-like" @click="handleSelectMaxAmount">{{
-            formattedMaxAmount
-          }}</span>
+          <span class="selector button-like" @click="handleSelectMaxAmount">
+            {{ formattedMaxAmount }}
+          </span>
+          <template v-if="isMultichain">
+            {{ $t('forms.lblOn') }}
+            <token-image
+              :address="networkInfo ? networkInfo.baseAsset.address : ''"
+              class="minimal inline"
+              :src="networkInfo ? networkInfo.baseAsset.iconURL : ''"
+              :symbol="networkInfo ? networkInfo.baseAsset.symbol : ''"
+            />
+            <span class="selector button-like">
+              {{ networkInfo.name }}
+            </span>
+          </template>
         </div>
 
         <div class="description">
@@ -141,6 +153,10 @@ export default Vue.extend({
     isProcessing: {
       type: Boolean,
       required: true
+    },
+    isMultichain: {
+      type: Boolean,
+      default: false
     },
     allowZeroAmount: {
       type: Boolean,
