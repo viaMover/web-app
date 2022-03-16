@@ -244,7 +244,7 @@ export default Vue.extend({
         inputAsset.address,
         inputInWei,
         true,
-        '1',
+        '10',
         this.networkInfo.network
       );
     },
