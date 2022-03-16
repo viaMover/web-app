@@ -330,7 +330,6 @@ const generateNewList = async () => {
     assets = await filterCompleteTokenData(assets);
     assets = await enrichWithCoingeckoMarketData(assets);
     save(assets, network);
-    return;
   }
 };
 
