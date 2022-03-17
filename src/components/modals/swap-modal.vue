@@ -889,8 +889,6 @@ export default Vue.extend({
           );
         }
 
-        console.log(priceResponse);
-
         if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
           this.output.asset.priceUSD = price;
         }
