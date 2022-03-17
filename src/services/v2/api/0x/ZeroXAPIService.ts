@@ -8,6 +8,7 @@ import { TransferData } from '@/services/0x/api';
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import { getPureBaseAssetAddress, isBaseAsset } from '@/utils/address';
 import { greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 
@@ -83,8 +84,8 @@ export class ZeroXAPIService extends MultiChainAPIService {
     const slippageFromPercents = multiply(slippage, '0.01');
 
     const base: Omit<SwapQuoteParams, 'sellAmount' | 'buyAmount'> = {
-      buyToken: buyTokenAddress,
-      sellToken: sellTokenAddress,
+      buyToken: this.substituteAssetAddressIfNeeded(buyTokenAddress),
+      sellToken: this.substituteAssetAddressIfNeeded(sellTokenAddress),
       slippagePercentage: slippageFromPercents
     };
 
@@ -323,5 +324,23 @@ export class ZeroXAPIService extends MultiChainAPIService {
       default:
         return 'https://api.0x.org';
     }
+  }
+
+  protected substituteAssetAddressIfNeeded(address: string): string {
+    return ZeroXAPIService.substituteAssetAddressIfNeeded(
+      address,
+      this.network
+    );
+  }
+
+  protected static substituteAssetAddressIfNeeded(
+    address: string,
+    network: Network
+  ): string {
+    if (isBaseAsset(address, network)) {
+      return getPureBaseAssetAddress();
+    }
+
+    return address;
   }
 }
