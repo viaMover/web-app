@@ -12,21 +12,38 @@ import Vibrant from 'node-vibrant';
 import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 
-const alsoIncludedAddresses = [
-  '0x383518188c0c6d7730d91b2c03a03c837814a899', // OHM
-  '0x04f2694c8fcee23e8fd0dfea1d4f5bb8c352111f', // SOHM
-  '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f', // GOHM
-  '0x8cd309e14575203535ef120b5b0ab4dded0c2073', // WSOHM
-  '0x090185f2135308bad17527004364ebcc2d37e5f6', // SPELL
-  '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b', // AXS
-  '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25', // SLP
-  '0x6bb61215298f296c55b19ad842d3df69021da2ef', // DOP
-  '0x9813037ee2218799597d83d4a5b6f3b6778218d9', // BONE
-  '0x27c70cd1946795b66be9d954418546998b546634', // LEASH
-  '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a', // BTRFLY
-  '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9', //wxBTRFLY
-  '0x2e9d63788249371f1dfc918a52f8d799f4a38c94' // TOKE
-];
+const netwroks = ['ethereum', 'fantom', 'polygon'];
+
+const getCoingeckoPlatform = (network) => {
+  switch (network) {
+    case 'ethereum':
+      return 'ethereum';
+    case 'fantom':
+      return 'fantom';
+    case 'polygon':
+      return 'polygon-pos';
+  }
+};
+
+const alsoIncludedAddresses = {
+  ethereum: [
+    '0x383518188c0c6d7730d91b2c03a03c837814a899', // OHM
+    '0x04f2694c8fcee23e8fd0dfea1d4f5bb8c352111f', // SOHM
+    '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f', // GOHM
+    '0x8cd309e14575203535ef120b5b0ab4dded0c2073', // WSOHM
+    '0x090185f2135308bad17527004364ebcc2d37e5f6', // SPELL
+    '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b', // AXS
+    '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25', // SLP
+    '0x6bb61215298f296c55b19ad842d3df69021da2ef', // DOP
+    '0x9813037ee2218799597d83d4a5b6f3b6778218d9', // BONE
+    '0x27c70cd1946795b66be9d954418546998b546634', // LEASH
+    '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a', // BTRFLY
+    '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9', //wxBTRFLY
+    '0x2e9d63788249371f1dfc918a52f8d799f4a38c94' // TOKE
+  ],
+  fantom: [],
+  polygon: []
+};
 
 const isDirEmpty = (dir) => {
   if (!existsSync(dir)) {
@@ -43,7 +60,6 @@ const progress = ({ method, stage, progress }) => {
 
 const twDIR = './tw';
 const repDIR = `${twDIR}/assets`;
-const twAssetFoler = `${repDIR}/blockchains/ethereum/assets`;
 
 const updateTrustwalletRepo = async () => {
   if (!isDirEmpty(twDIR)) {
@@ -59,13 +75,15 @@ const updateTrustwalletRepo = async () => {
   }
 };
 
-const iterateOverAssets = async () => {
+const iterateOverAssets = async (network) => {
   let assetsAddresses = [];
   try {
-    const files = await promises.readdir(twAssetFoler);
+    const files = await promises.readdir(
+      `${repDIR}/blockchains/${network}/assets`
+    );
     let assetCount = 0;
     for (const file of files) {
-      const fromPath = join(twAssetFoler, file);
+      const fromPath = join(`${repDIR}/blockchains/${network}/assets`, file);
       const stat = await promises.stat(fromPath);
 
       if (stat.isDirectory()) {
@@ -110,36 +128,6 @@ const getExtendedCoingeckoTokenData = async (id) => {
   }
 };
 
-const getEthplorerTokenData = async (address, deep = 0) => {
-  try {
-    return (
-      await axios.get(
-        `https://api.ethplorer.io/getTokenInfo/${address}?apiKey=freekey`
-      )
-    ).data;
-  } catch (e) {
-    if (axios.isAxiosError(e) && e.response?.status === 429) {
-      if (deep > 2) {
-        logger.error(
-          'failed to get ethplorer info for',
-          address,
-          'recursion limit reached'
-        );
-        return undefined;
-      }
-
-      logger.warn('ethplorer api returns 429 for', address, 'waiting');
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 10000);
-      }).then(async () => await getEthplorerTokenData(address, deep + 1));
-    }
-    logger.error('failed to get ethplorer info for', address, e.message ?? e);
-    return undefined;
-  }
-};
-
 const getCoingekoMarketData = async (coingeckoIds) => {
   const marketUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coingeckoIds.join(
     ','
@@ -161,10 +149,13 @@ const getAssetImageColor = async (source, address) => {
   }
 };
 
-const enrichWithTWdata = async (assetAddresses) => {
+const enrichWithTWdata = async (assetAddresses, network) => {
   return assetAddresses.reduce(async (acc, address) => {
     try {
-      const buf = readFileSync(`${twAssetFoler}/${address}/info.json`, 'utf8');
+      const buf = readFileSync(
+        `${repDIR}/blockchains/${network}/assets/${address}/info.json`,
+        'utf8'
+      );
       const info = JSON.parse(buf);
       if (info.status !== 'active') {
         return await acc;
@@ -172,7 +163,7 @@ const enrichWithTWdata = async (assetAddresses) => {
 
       logger.info(`Add token: ${address}`);
 
-      const imgPath = `${twAssetFoler}/${address}/logo.png`;
+      const imgPath = `${`${repDIR}/blockchains/${network}/assets`}/${address}/logo.png`;
       if (existsSync(imgPath)) {
         const buffer = Buffer.from(readFileSync(imgPath));
         info.color = await getAssetImageColor(buffer, address);
@@ -184,7 +175,8 @@ const enrichWithTWdata = async (assetAddresses) => {
     } catch (e) {
       logger.warn(
         'failed to read info for, create an incomplete entry',
-        address
+        address,
+        e
       );
       const fallbackInfo = {
         isIncomplete: true,
@@ -195,68 +187,69 @@ const enrichWithTWdata = async (assetAddresses) => {
   }, []);
 };
 
-const enrichWithCoingeckoData = async (assets) => {
+const enrichWithCoingeckoData = async (assets, network) => {
+  const platfrom = getCoingeckoPlatform(network);
   const coingeckoList = (await getCoingekoList()).filter(
-    (c) => c?.platforms?.ethereum
+    (c) => c?.platforms?.[platfrom]
   );
-  return await Promise.all(
-    assets.map(async (as) => {
-      const coingeckoAsset = coingeckoList.find((cas) => {
-        return (
-          (cas?.platforms?.ethereum ?? '').toLowerCase() ===
-          (as?.id ?? '').toLowerCase()
-        );
-      });
 
-      if (as.isIncomplete) {
-        const [coingeckoExtendedToken, ethplorerToken] = await Promise.all([
-          getExtendedCoingeckoTokenData(coingeckoAsset?.id),
-          getEthplorerTokenData(as.id)
-        ]);
+  console.log('Network:', network, 'coingecko list:', coingeckoList.length);
+  let newAssets = [];
+  for (let i = 0; i < assets.length; i++) {
+    const as = assets[i];
+    const coingeckoAsset = coingeckoList.find((cas) => {
+      return (
+        (cas?.platforms?.[network] ?? '').toLowerCase() ===
+        (as?.id ?? '').toLowerCase()
+      );
+    });
 
-        if (
-          coingeckoExtendedToken === undefined ||
-          ethplorerToken === undefined
-        ) {
-          logger.warn('failed to get remote info for', as.id);
-          return as;
-        }
+    if (as.isIncomplete) {
+      const coingeckoExtendedToken = await getExtendedCoingeckoTokenData(
+        coingeckoAsset?.id
+      );
 
-        const recoveredData = {
-          ...as,
-          isIncomplete: false,
-          coingeckoId: coingeckoAsset.id,
-          name: coingeckoAsset.name,
-          symbol: coingeckoAsset.symbol.toUpperCase(),
-          description: coingeckoExtendedToken.description?.en ?? '',
-          explorer:
-            coingeckoExtendedToken?.links?.blockchain_site?.find((url) =>
-              url.includes('etherscan.io/token/')
-            ) ?? `https://etherscan.io/token/${as.id}`,
-          status: 'active',
-          type: 'ERC20',
-          decimals: Number.parseInt(ethplorerToken.decimals),
-          website:
-            coingeckoExtendedToken.links?.homepage?.find((url) => !!url) ?? '',
-          imageUrl: coingeckoExtendedToken.image?.large ?? undefined,
-          color: undefined
-        };
-
-        if (recoveredData.imageUrl) {
-          recoveredData.color = await getAssetImageColor(
-            recoveredData.imageUrl,
-            as.id
-          );
-        }
-
-        delete recoveredData.isIncomplete;
-
-        return recoveredData;
+      if (coingeckoExtendedToken === undefined) {
+        logger.warn('failed to get remote info for', as.id);
+        newAssets.push({ ...as, coingeckoId: coingeckoAsset?.id });
+        continue;
       }
 
-      return { ...as, coingeckoId: coingeckoAsset?.id };
-    })
-  );
+      const recoveredData = {
+        ...as,
+        isIncomplete: false,
+        coingeckoId: coingeckoAsset.id,
+        name: coingeckoAsset.name,
+        symbol: coingeckoAsset.symbol.toUpperCase(),
+        description: coingeckoExtendedToken.description?.en ?? '',
+        explorer:
+          coingeckoExtendedToken?.links?.blockchain_site?.find((url) =>
+            url.includes('etherscan.io/token/')
+          ) ?? `https://etherscan.io/token/${as.id}`,
+        status: 'active',
+        type: 'ERC20',
+        website:
+          coingeckoExtendedToken.links?.homepage?.find((url) => !!url) ?? '',
+        imageUrl: coingeckoExtendedToken.image?.large ?? undefined,
+        color: undefined
+      };
+
+      if (recoveredData.imageUrl) {
+        recoveredData.color = await getAssetImageColor(
+          recoveredData.imageUrl,
+          as.id
+        );
+      }
+
+      delete recoveredData.isIncomplete;
+
+      newAssets.push(recoveredData);
+      continue;
+    }
+
+    newAssets.push({ ...as, coingeckoId: coingeckoAsset?.id });
+  }
+  return newAssets;
 };
 
 const enrichWithCoingeckoMarketData = async (assets) => {
@@ -271,7 +264,7 @@ const enrichWithCoingeckoMarketData = async (assets) => {
       const coingeckoMarketAsset = coingeckoList.find(
         (cma) => cma.id === as.coingeckoId
       );
-      if (coingeckoMarketAsset !== undefined) {
+      if (coingeckoMarketAsset?.market_cap !== undefined) {
         return { ...as, marketCap: coingeckoMarketAsset.market_cap };
       }
       return { ...as, marketCap: 0 };
@@ -283,7 +276,12 @@ const enrichWithCoingeckoMarketData = async (assets) => {
 };
 
 const filterCompleteTokenData = (assets) => {
-  return assets.filter((asset) => !asset.isIncomplete);
+  return assets.filter(
+    (asset) =>
+      !asset.isIncomplete &&
+      asset.decimals !== undefined &&
+      asset.decimals !== null
+  );
 };
 
 const preprocess = (assets) =>
@@ -312,21 +310,27 @@ const deduplicate = (tokens) => {
 const sort = (assets) =>
   assets.slice().sort((a, b) => a.name.localeCompare(b.name));
 
-const save = (assets) =>
+const save = (assets, network) =>
   writeFileSync(
-    './data/assetList.json',
+    `./data/assetList-${network}.json`,
     JSON.stringify(sort(deduplicate(preprocess(assets))))
   );
 
 const generateNewList = async () => {
   await updateTrustwalletRepo();
-  let assets = await iterateOverAssets();
-  assets = Array.from(new Set([...assets, ...alsoIncludedAddresses]));
-  assets = await enrichWithTWdata(assets);
-  assets = await enrichWithCoingeckoData(assets);
-  assets = await filterCompleteTokenData(assets);
-  assets = await enrichWithCoingeckoMarketData(assets);
-  save(assets);
+  for (let i = 0; i < netwroks.length; i++) {
+    const network = netwroks[i];
+    console.log('\n\nNETWORK:', network);
+    let assets = await iterateOverAssets(network);
+    assets = Array.from(
+      new Set([...assets, ...alsoIncludedAddresses[network]])
+    );
+    assets = await enrichWithTWdata(assets, network);
+    assets = await enrichWithCoingeckoData(assets, network);
+    assets = await filterCompleteTokenData(assets);
+    assets = await enrichWithCoingeckoMarketData(assets);
+    save(assets, network);
+  }
 };
 
 generateNewList().catch((e) => {

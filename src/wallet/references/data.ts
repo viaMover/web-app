@@ -1,3 +1,4 @@
+import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
@@ -25,7 +26,7 @@ import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 
-type AddressMapKey =
+export type AddressMapKey =
   | 'MOVE_ADDRESS'
   | 'MOBO_ADDRESS'
   | 'HOLY_HAND_ADDRESS'
@@ -158,7 +159,8 @@ const addresses = {
     USDC_TOKEN_ADDRESS: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     WETH_TOKEN_ADDRESS: '0xAe740d42E4ff0C5086b2b5b5d149eB2F9e1A754F',
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
-    NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2'
+    NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
+    HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -171,7 +173,8 @@ const addresses = {
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb'
   },
   [Network.fantom]: {
-    NFT_ORDER_OF_LIBERTY: '0x568F6DC40B2520522dC4745D881c990e57672d94'
+    NFT_ORDER_OF_LIBERTY: '0x568F6DC40B2520522dC4745D881c990e57672d94',
+    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B'
   },
   [Network.arbitrum]: {},
   [Network.avalanche]: {}
@@ -207,6 +210,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   POWERCARD_RARI_ID: number;
   ORDER_OF_LIBERTY_DEFAULT_PRICE: string;
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
+  SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -221,6 +225,11 @@ const constants = {
     ORDER_OF_LIBERTY_AVAILABLE_PRICES: [
       toWei('1', getBaseAssetData(Network.mainnet).decimals),
       toWei('10', getBaseAssetData(Network.mainnet).decimals)
+    ],
+    SUBSIDIZED_WALLET_ADDRESSES: [
+      '0x213793865Aca451B28fB15bf940b2b7E3aDd34a5',
+      '0x70Fb7f7840bD33635a7e33792F2bBeBDCde19889',
+      '0xdAc8619CD25a6FEDA197e354235c3bBA7d847b90'
     ]
   },
   [Network.fantom]: {
@@ -254,27 +263,15 @@ export const lookupConstant = <
   return constants[network]?.[key];
 };
 
-const swapSourceIcons = {
-  Uniswap_V2: '🦄',
-  Curve: '🧮',
-  Balancer: '⚖',
-  Balancer_V2: '⚖',
-  Bancor: '🕳',
-  Mooniswap: '🌑',
-  SnowSwap: '❄',
-  SushiSwap: '🍣',
-  'Shell Protocol': '🐚',
-  DODO: '🐣',
-  CREAM: '🍦',
-  CryptoCom: '🪙',
-  Uniswap_V3: '🦄',
-  ShibaSwap: '🐕',
-  OasisDEX: '🏝'
-} as Record<string, string>;
-const formatSwapSources = (swapSource: string): string => {
-  return swapSourceIcons[swapSource]
-    ? `${swapSource} ${swapSourceIcons[swapSource]}`
-    : swapSource;
+export const isSubsidizedWalletAddress = (
+  network: Network,
+  address?: string | null
+): boolean => {
+  return (
+    lookupConstant(network, 'SUBSIDIZED_WALLET_ADDRESSES')?.some(
+      (wallet: string) => sameAddress(wallet, address)
+    ) ?? false
+  );
 };
 
 const getMoveAssetData = (
@@ -433,7 +430,6 @@ export {
   getOhmAssetData,
   getBTRFLYAssetData,
   isTokenValidForTreasuryDeposit,
-  formatSwapSources,
   getEURSAssetData,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,

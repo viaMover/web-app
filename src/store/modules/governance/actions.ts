@@ -25,6 +25,7 @@ import {
   VoteParams,
   VoteResponse
 } from '@/services/mover/governance';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
@@ -531,7 +532,7 @@ const actions: ActionFuncs<
         error
       );
       Sentry.captureException(error);
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         message: 'trying to use fallback community voting power scenario'
       });
 
@@ -583,7 +584,7 @@ const actions: ActionFuncs<
         error
       );
       Sentry.captureException(error);
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         message: 'trying to use fallback self voting power votehub api scenario'
       });
 
@@ -633,7 +634,7 @@ const actions: ActionFuncs<
           fallbackErrorVoteApi
         );
         Sentry.captureException(error);
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           message: 'trying to use fallback self voting power on-chain scenario'
         });
 
@@ -708,7 +709,7 @@ const actions: ActionFuncs<
         error
       );
       Sentry.captureException(error);
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         message: 'trying to use fallback blockNumber etherscan scenario'
       });
 
@@ -734,7 +735,7 @@ const actions: ActionFuncs<
           'failed to get blockNumber from etherscan, trying an infura fallback',
           fallbackErrorEtherscan
         );
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           message: 'trying to use fallback blockNumber infura scenario'
         });
         Sentry.captureException(fallbackErrorEtherscan);

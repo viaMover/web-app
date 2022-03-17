@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import { isEth } from '@/utils/address';
+import { isBaseAsset } from '@/utils/address';
 import { fromWei, greaterThan } from '@/utils/bigmath';
 import { ERC20_ABI } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
@@ -40,7 +40,8 @@ export const needApprove = async (
   console.log(
     `checking asset needs unlocking: ${token.symbol} - ${token.address}`
   );
-  if (isEth(token.address)) {
+  // fixme: add network later on
+  if (isBaseAsset(token.address)) {
     console.log("Eth doesn't need unlocking");
     return false;
   }
