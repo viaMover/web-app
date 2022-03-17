@@ -10,6 +10,7 @@ import {
   NibbleShopApiError,
   NibbleShopRedeemPayload
 } from '@/services/mover/nibble-shop/types';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import {
   ClaimPayload,
@@ -147,7 +148,7 @@ const actions: ActionFuncs<Actions, ShopStoreState, MutationType, GetterType> =
               asset: res.value
             } as SetAssetData);
           } else {
-            Sentry.addBreadcrumb({
+            addSentryBreadcrumb({
               type: 'error',
               category: 'nibble-shop.init.refreshAssetsInfoList',
               message: "Can't get nibble token data",

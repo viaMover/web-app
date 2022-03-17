@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/vue';
 
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
@@ -204,7 +205,7 @@ const actions: ActionFuncs<
               RECEIPT_TIME_EXPIRE
             );
           } catch (error) {
-            Sentry.addBreadcrumb({
+            addSentryBreadcrumb({
               type: 'error',
               category: 'savings.store',
               message: 'An error occurred during setToPersistStore()',

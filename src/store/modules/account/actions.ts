@@ -106,6 +106,10 @@ const actions: ActionFuncs<
     }
   },
   startGasListening({ commit, state }, caller: string): void {
+    if (!isFeatureEnabled('isGasListenerEnabled', state.networkInfo?.network)) {
+      return;
+    }
+
     commit('pushGasListenerCaller', caller);
 
     if (state.gasUpdating) {

@@ -1,10 +1,10 @@
-import * as Sentry from '@sentry/vue';
 import axios, { AxiosInstance } from 'axios';
 
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
 import { MoverAPIService } from '@/services/v2/api/mover/MoverAPIService';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { getNetwork, Network } from '@/utils/networkTypes';
 
 import {
@@ -46,7 +46,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
       );
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'About to send subsidized request',
@@ -106,7 +106,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
 
       switch (response.txStatusCode) {
         case TransactionStatus.Discarded:
-          Sentry.addBreadcrumb({
+          addSentryBreadcrumb({
             type: 'error',
             message: 'Subsidized transaction was discarded',
             data: {
@@ -122,7 +122,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
         case TransactionStatus.Executing:
         case TransactionStatus.Completed:
           if (response.txID === undefined) {
-            Sentry.addBreadcrumb({
+            addSentryBreadcrumb({
               type: 'error',
               message: 'Subsidized transaction has no txID but must have one',
               data: {

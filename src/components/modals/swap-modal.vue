@@ -97,7 +97,10 @@
           </div>
         </transition>
       </div>
-      <div class="modal-wrapper-info-button">
+      <div
+        class="modal-wrapper-info-button"
+        :class="{ 'add-margin-bottom': !showGasSelector }"
+      >
         <action-button
           class="primary"
           :custom-style="actionButtonStyle"
@@ -107,6 +110,7 @@
         />
       </div>
       <gas-selector
+        v-if="showGasSelector"
         :approve-gas-limit="approveGasLimit"
         :avaialble-gas-modes="availableGasModes"
         :txn-gas-limit="allGasLimit"
@@ -147,6 +151,7 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { getMoveAssetData } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { GasData, SmallToken, Token, TokenWithBalance } from '@/wallet/types';
@@ -222,6 +227,9 @@ export default Vue.extend({
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
     }),
+    showGasSelector(): boolean {
+      return this.networkInfo?.network === Network.mainnet;
+    },
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },

@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { PromiEvent } from 'web3-core';
 import { TransactionReceipt } from 'web3-eth';
@@ -11,8 +10,16 @@ import {
   CustomContractType,
   ERC20ContractMethods
 } from '@/services/v2/on-chain/types';
-import { getPureEthAddress, isEth } from '@/utils/address';
-import { floorDivide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import { isFeatureEnabled } from '@/settings';
+import { getPureBaseAssetAddress, isBaseAsset } from '@/utils/address';
+import {
+  floorDivide,
+  fromWei,
+  greaterThan,
+  isZero,
+  multiply
+} from '@/utils/bigmath';
 import { MAXUINT256 } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
 import { ERC20_ABI } from '@/wallet/references/data';
@@ -33,7 +40,7 @@ export abstract class OnChainService {
   // web3 client
   protected readonly web3Client: Web3;
 
-  // sentry category prefix (used for `Sentry.addBreadcrumb({ category: ... })`
+  // sentry category prefix (used for `addSentryBreadcrumb({ category: ... })`
   protected abstract readonly sentryCategoryPrefix: string;
 
   /**
@@ -74,6 +81,17 @@ export abstract class OnChainService {
         options
       );
     } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to create / find Smart Contract at given address',
+        data: {
+          jsonInterface,
+          contractAddress,
+          options,
+          error
+        }
+      });
       return undefined;
     }
   }
@@ -94,7 +112,7 @@ export abstract class OnChainService {
       // strange circumstances, it's a good idea to add a breadcrumb with some useful info beforehand
       return await executor();
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'On-chain call failed',
@@ -119,8 +137,8 @@ export abstract class OnChainService {
     amountToApprove: string,
     contractAddress: string
   ): Promise<boolean | never> {
-    // ETH doesn't need approve to be spent by Smart Contracts
-    if (isEth(token.address)) {
+    // Base network asset doesn't need approve to be spent by Smart Contracts
+    if (isBaseAsset(token.address, this.network)) {
       return false;
     }
 
@@ -146,7 +164,7 @@ export abstract class OnChainService {
       const rawAmount = fromWei(amountToApprove, token.decimals);
       return !greaterThan(allowance, rawAmount);
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to get allowance for token',
@@ -196,12 +214,14 @@ export abstract class OnChainService {
 
       throw new Error(`empty gas limit`);
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate approve',
         data: {
-          error: error
+          tokenAddress,
+          spenderAddress,
+          error
         }
       });
 
@@ -242,12 +262,15 @@ export abstract class OnChainService {
           { tokenAddress, spenderAddress, gasLimit }
         );
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to approve',
           data: {
-            error: error
+            tokenAddress,
+            spenderAddress,
+            gasLimit,
+            error
           }
         });
 
@@ -267,7 +290,7 @@ export abstract class OnChainService {
    * @param resolve A resolver of transaction call / `new Promise((resolve, reject) => {...})`
    * @param reject A rejecter of transaction call / `new Promise((resolve, reject) => {...})`
    * @param onTransactionHash A callback of successful transaction handling
-   * @param breadcrumbPayload `Sentry.addBreadcrumb({data: ...})` payload
+   * @param breadcrumbPayload `addSentryBreadcrumb({data: ...})` payload
    * @protected
    */
   protected wrapWithSendMethodCallbacks<P>(
@@ -279,31 +302,39 @@ export abstract class OnChainService {
   ): PromiEvent<P> {
     return promiEvent
       .once('transactionHash', (hash: string) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           message: 'Received a transaction hash',
           data: {
-            ...breadcrumbPayload,
             hash
           }
         });
-        console.info('Received a transaction hash', hash);
         onTransactionHash?.();
       })
       .once('receipt', (receipt: TransactionReceipt) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           message: 'Received a transaction receipt',
           data: {
-            ...breadcrumbPayload,
             receipt
           }
         });
-        console.debug('Received a transaction receipt', receipt);
         resolve(receipt);
       })
+      .once('confirmation', (confirmationNumber, receipt, latestBlockHash) => {
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: this.sentryCategoryPrefix,
+          message: 'Transaction is confirmed',
+          data: {
+            confirmationNumber,
+            receipt,
+            latestBlockHash
+          }
+        });
+      })
       .once('error', (error) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'On-chain call failed',
@@ -325,18 +356,16 @@ export abstract class OnChainService {
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt | never> {
-    return this.wrapWithSentryLogger(async () => {
-      if (await this.needsApprove(token, amount, contractAddress)) {
-        await this.approve(
-          token.address,
-          contractAddress,
-          changeStepToProcess,
-          gasLimit
-        );
-      }
+    if (await this.needsApprove(token, amount, contractAddress)) {
+      await this.approve(
+        token.address,
+        contractAddress,
+        changeStepToProcess,
+        gasLimit
+      );
+    }
 
-      return await action();
-    });
+    return action();
   }
 
   protected async executeTransactionWithApproveExt(
@@ -348,12 +377,25 @@ export abstract class OnChainService {
       await approve();
     }
 
-    return await action();
+    return action();
   }
 
+  /**
+   * Replaces arbitrary address with pure `0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE`
+   * in case the given address is base asset of current chain
+   * @see getPureBaseAssetAddress
+   * @param address token/asset address
+   */
   protected substituteAssetAddressIfNeeded(address: string): string {
-    if (isEth(address)) {
-      return getPureEthAddress();
+    return OnChainService.substituteAssetAddressIfNeeded(address, this.network);
+  }
+
+  protected static substituteAssetAddressIfNeeded(
+    address: string,
+    network: Network
+  ): string {
+    if (isBaseAsset(address, network)) {
+      return getPureBaseAssetAddress();
     }
 
     return address;
@@ -385,6 +427,34 @@ export abstract class OnChainService {
       maxFeePerGas: null,
       maxPriorityFeePerGas: null
     };
+  }
+
+  /**
+   * Replaces gas price with 'undefined' if it is of zero amount or the gas listener
+   * is apparently not working
+   * @param gasPriceInWei suggested gas price by network gas listeners
+   */
+  protected substituteGasPriceIfNeeded(
+    gasPriceInWei: string
+  ): string | undefined {
+    return OnChainService.substituteGasPriceIfNeeded(
+      gasPriceInWei,
+      this.network
+    );
+  }
+
+  protected static substituteGasPriceIfNeeded(
+    gasPriceInWei: string,
+    network: Network
+  ): string | undefined {
+    if (
+      !isFeatureEnabled('isGasListenerEnabled', network) ||
+      isZero(gasPriceInWei)
+    ) {
+      return undefined;
+    }
+
+    return gasPriceInWei;
   }
 
   protected addGasBuffer(gas: string, buffer = '120'): string {

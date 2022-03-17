@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 import dayjs from 'dayjs';
 import Web3 from 'web3';
@@ -10,6 +9,7 @@ import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidiz
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import { fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -123,7 +123,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to execute subsidized deposit',
@@ -144,7 +144,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         throw error;
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to deposit',
@@ -177,7 +177,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit: failed "needsApprove" check',
@@ -198,7 +198,7 @@ export class SavingsOnChainService extends MoverOnChainService {
     }
 
     if (isApproveNeeded) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Needs approve'
@@ -216,7 +216,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           approveGasLimit: approveGasLimit
         };
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to estimate deposit: failed "approve" estimation',
@@ -262,11 +262,10 @@ export class SavingsOnChainService extends MoverOnChainService {
           this.mapTransferDataToExpectedMinimumAmount(transferData),
           this.mapTransferDataToBytes(transferData)
         )
-        .estimateGas(
-          this.getDefaultTransactionsParams(
-            this.mapTransferDataToValue(transferData)
-          )
-        );
+        .estimateGas({
+          from: this.currentAddress,
+          value: this.mapTransferDataToValue(transferData)
+        });
 
       if (gasLimitObj) {
         return {
@@ -276,7 +275,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit: empty gas limit',
@@ -294,7 +293,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         actionGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit',
@@ -339,7 +338,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to execute subsidized withdraw',
@@ -357,7 +356,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         throw error;
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to withdraw',
@@ -401,7 +400,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       } else {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to estimate withdraw: empty gas limit',
@@ -414,7 +413,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
       }
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate withdraw',

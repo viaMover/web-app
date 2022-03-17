@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 import dayjs from 'dayjs';
 import Web3 from 'web3';
@@ -11,6 +10,7 @@ import {
   AddTransactionToStoreHandler,
   EthPriceGetterHandler
 } from '@/services/v2/on-chain/mover/types';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { convertStringToHexWithPrefix } from '@/utils/address';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -213,7 +213,7 @@ export abstract class MoverOnChainService extends OnChainService {
       return contract;
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: this.sentryCategoryPrefix,
       message: 'Contract is not available in current network',

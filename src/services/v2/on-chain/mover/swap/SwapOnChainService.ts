@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
@@ -14,6 +13,7 @@ import {
 } from '@/services/v2/on-chain/mover';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized';
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
@@ -77,7 +77,7 @@ export class SwapOnChainService extends MoverOnChainService {
       );
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to execute subsidized swap',
@@ -99,7 +99,7 @@ export class SwapOnChainService extends MoverOnChainService {
         throw error;
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to swap',
@@ -133,7 +133,7 @@ export class SwapOnChainService extends MoverOnChainService {
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit: failed "needsApprove" check',
@@ -154,7 +154,7 @@ export class SwapOnChainService extends MoverOnChainService {
     }
 
     if (isApproveNeeded) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Needs approve'
@@ -172,7 +172,7 @@ export class SwapOnChainService extends MoverOnChainService {
           approveGasLimit: approveGasLimit
         };
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to estimate swap: failed "approve" estimation',
@@ -219,7 +219,7 @@ export class SwapOnChainService extends MoverOnChainService {
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate swap: empty gas limit',
@@ -237,7 +237,9 @@ export class SwapOnChainService extends MoverOnChainService {
         actionGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      console.error('failed to estimate swap', error);
+
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate swap',
@@ -286,9 +288,11 @@ export class SwapOnChainService extends MoverOnChainService {
               gasLimit,
               this.mapTransferDataToValue(transferData)
             ),
-            gasPrice: this.web3Client.utils
-              .toWei(this.web3Client.utils.toBN(gasPriceInGwei), 'gwei')
-              .toString()
+            gasPrice: this.substituteGasPriceIfNeeded(
+              this.web3Client.utils
+                .toWei(this.web3Client.utils.toBN(gasPriceInGwei), 'gwei')
+                .toString()
+            )
           }),
         resolve,
         reject,

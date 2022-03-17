@@ -7,6 +7,7 @@ import axiosRetry from 'axios-retry';
 import { TransferData } from '@/services/0x/api';
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 
@@ -163,13 +164,13 @@ export class ZeroXAPIService extends MultiChainAPIService {
 
   protected formatError(error: unknown): never {
     if (axios.isAxiosError(error)) {
-      Sentry.addBreadcrumb(this.formatAxiosErrorSentryBreadcrumb(error));
+      addSentryBreadcrumb(this.formatAxiosErrorSentryBreadcrumb(error));
 
       if (error.response !== undefined) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
         if (error.response.data === undefined) {
-          Sentry.addBreadcrumb({
+          addSentryBreadcrumb({
             type: 'error',
             message: 'API responded with an error',
             category: this.sentryCategoryPrefix,
@@ -187,7 +188,7 @@ export class ZeroXAPIService extends MultiChainAPIService {
           throw this.formatBadRequestResponse(error.response);
         }
 
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
@@ -200,7 +201,7 @@ export class ZeroXAPIService extends MultiChainAPIService {
       } else if (error.request !== undefined) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
@@ -217,7 +218,7 @@ export class ZeroXAPIService extends MultiChainAPIService {
       }
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       message: 'API responded with an error',
       category: this.sentryCategoryPrefix,
@@ -274,7 +275,7 @@ export class ZeroXAPIService extends MultiChainAPIService {
   protected formatBadRequestResponse(
     response: AxiosResponse<ZeroXBadRequestResponse>
   ): never {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: this.sentryCategoryPrefix,
       message: `Request failed with code ${response.status} (${response.statusText}): ${response.data.reason}`,

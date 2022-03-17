@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
@@ -10,6 +9,7 @@ import {
   CompoundEstimateResponse,
   HolyHandContract
 } from '@/services/v2/on-chain/mover/types';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import {
   add,
@@ -177,7 +177,6 @@ export class SmartTreasuryOnChainService
         return '0';
       }
 
-      // TODO: hardcode?
       apy = fromWei(apy, 18);
       return apy;
     });
@@ -368,7 +367,7 @@ export class SmartTreasuryOnChainService
         approveGasLimit
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to deposit',
@@ -396,7 +395,7 @@ export class SmartTreasuryOnChainService
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit: failed "needsApprove" check',
@@ -415,7 +414,7 @@ export class SmartTreasuryOnChainService
     }
 
     if (isApproveNeeded) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Needs approve'
@@ -433,7 +432,7 @@ export class SmartTreasuryOnChainService
           approveGasLimit: approveGasLimit
         };
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to estimate deposit: failed "approve" estimation',
@@ -499,7 +498,7 @@ export class SmartTreasuryOnChainService
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit: empty gas limit',
@@ -517,7 +516,7 @@ export class SmartTreasuryOnChainService
         actionGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit',
@@ -551,7 +550,7 @@ export class SmartTreasuryOnChainService
         changeStepToProcess
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to withdraw',
@@ -618,7 +617,7 @@ export class SmartTreasuryOnChainService
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate withdraw: empty gas limit',
@@ -636,7 +635,7 @@ export class SmartTreasuryOnChainService
         actionGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate withdraw',
@@ -678,7 +677,7 @@ export class SmartTreasuryOnChainService
         approveGasLimit
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to claim & burn',
@@ -707,7 +706,7 @@ export class SmartTreasuryOnChainService
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate claim & burn: failed "needsApprove" check',
@@ -726,7 +725,7 @@ export class SmartTreasuryOnChainService
     }
 
     if (isApproveNeeded) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Needs approve'
@@ -744,7 +743,7 @@ export class SmartTreasuryOnChainService
           approveGasLimit: approveGasLimit
         };
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message:
@@ -790,7 +789,7 @@ export class SmartTreasuryOnChainService
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate claim & burn: empty gas limit',
@@ -802,7 +801,7 @@ export class SmartTreasuryOnChainService
 
       return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate claim & burn',
@@ -847,7 +846,7 @@ export class SmartTreasuryOnChainService
         );
       });
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to claim & burn',
@@ -882,7 +881,7 @@ export class SmartTreasuryOnChainService
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate claim & burn MOBO: empty gas limit'
@@ -915,7 +914,7 @@ export class SmartTreasuryOnChainService
           )
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to stake powercard',
@@ -934,7 +933,7 @@ export class SmartTreasuryOnChainService
     try {
       isApproved = await this.isPowercardApproved();
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate stake: failed "isPowercardApproved" check',
@@ -951,7 +950,7 @@ export class SmartTreasuryOnChainService
     }
 
     if (!isApproved) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Needs approve'
@@ -968,7 +967,7 @@ export class SmartTreasuryOnChainService
           approveGasLimit: approveGasLimit
         };
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to estimate stake: failed "approve" estimation',
@@ -1005,7 +1004,7 @@ export class SmartTreasuryOnChainService
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate stake: empty gas limit'
@@ -1017,7 +1016,7 @@ export class SmartTreasuryOnChainService
         actionGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate stake',
@@ -1051,7 +1050,7 @@ export class SmartTreasuryOnChainService
           )
       );
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to unstake powercard',
@@ -1069,7 +1068,7 @@ export class SmartTreasuryOnChainService
     try {
       isApproved = await this.isPowercardApproved();
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message:
@@ -1087,7 +1086,7 @@ export class SmartTreasuryOnChainService
     }
 
     if (!isApproved) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Needs approve'
@@ -1104,7 +1103,7 @@ export class SmartTreasuryOnChainService
           approveGasLimit: approveGasLimit
         };
       } catch (error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to estimate unstake: failed "approve" estimation',
@@ -1141,7 +1140,7 @@ export class SmartTreasuryOnChainService
         };
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate unstake: empty gas limit'
@@ -1153,7 +1152,7 @@ export class SmartTreasuryOnChainService
         actionGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate unstake',
@@ -1489,12 +1488,13 @@ export class SmartTreasuryOnChainService
 
       throw new Error(`empty gas limit`);
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate approve for powercard',
         data: {
-          error: error
+          contractAddress,
+          error
         }
       });
 

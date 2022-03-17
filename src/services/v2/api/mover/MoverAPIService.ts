@@ -8,6 +8,7 @@ import axios, {
 
 import { MoverError } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 
 import { MoverAPIError } from './MoverAPIError';
 import {
@@ -20,7 +21,7 @@ import {
 export abstract class MoverAPIService extends MultiChainAPIService {
   protected formatError(error: unknown): never {
     if (error instanceof MoverAPIError) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         message: 'API responded with an error',
         category: this.sentryCategoryPrefix,
@@ -36,13 +37,13 @@ export abstract class MoverAPIService extends MultiChainAPIService {
 
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError<MoverAPIErrorResponse<unknown>>;
-      Sentry.addBreadcrumb(this.formatAxiosErrorSentryBreadcrumb(axiosError));
+      addSentryBreadcrumb(this.formatAxiosErrorSentryBreadcrumb(axiosError));
 
       if (axiosError.response !== undefined) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
         if (axiosError.response.data === undefined) {
-          Sentry.addBreadcrumb({
+          addSentryBreadcrumb({
             type: 'error',
             message: 'API responded with an error',
             category: this.sentryCategoryPrefix,
@@ -55,7 +56,7 @@ export abstract class MoverAPIService extends MultiChainAPIService {
           throw new MoverAPIError('Request failed', 'no data').wrap(axiosError); // no data available
         }
 
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
@@ -74,7 +75,7 @@ export abstract class MoverAPIService extends MultiChainAPIService {
       } else if (axiosError.request !== undefined) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
@@ -88,7 +89,7 @@ export abstract class MoverAPIService extends MultiChainAPIService {
       }
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       message: 'API responded with an error',
       category: this.sentryCategoryPrefix,
@@ -128,7 +129,7 @@ export abstract class MoverAPIService extends MultiChainAPIService {
         // if response.data.status === 'error' then API returned malformed
         // response and/or the response should be treated as an error
         if (isErrorResponse(response.data)) {
-          Sentry.addBreadcrumb({
+          addSentryBreadcrumb({
             type: 'error',
             message: 'API responded with code 200 but data.status is "error"',
             category: this.sentryCategoryPrefix,

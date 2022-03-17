@@ -5,6 +5,7 @@ import {
   PowerCardTimings,
   SmartTreasuryOnChainService
 } from '@/services/v2/on-chain/mover/smart-treasury';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   getFromPersistStoreWithExpire,
   setToPersistStore
@@ -268,7 +269,7 @@ const actions: ActionFuncs<
               RECEIPT_TIME_EXPIRE
             );
           } catch (error) {
-            Sentry.addBreadcrumb({
+            addSentryBreadcrumb({
               type: 'error',
               category: 'smart-treasury.store',
               message: 'An error occurred during setToPersistStore()',

@@ -1,5 +1,6 @@
-import * as Sentry from '@sentry/vue';
 import axios, { AxiosError } from 'axios';
+
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 
 import { Result } from '../../responses';
 import { baseUrl } from '../consts';
@@ -242,7 +243,7 @@ const formatError = <P = void>(error: unknown): Error => {
     const requestUrl = `${axiosError.config?.baseURL}${axiosError.config?.url}`;
     const code = axiosError.code;
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       message: 'A request to the Debit Card API is failed',
       data: {
         requestUrl,
@@ -258,7 +259,7 @@ const formatError = <P = void>(error: unknown): Error => {
       throw axiosError; // no data available
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       message: 'Debit Card API responded with an error',
       data: {
         error: axiosError.response.data.error,

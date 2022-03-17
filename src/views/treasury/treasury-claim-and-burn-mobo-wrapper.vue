@@ -70,6 +70,7 @@ import BigNumber from 'bignumber.js';
 
 import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { convertNativeAmountFromAmount, notZero } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
@@ -272,7 +273,7 @@ export default Vue.extend({
     async handleTxStart(): Promise<void> {
       if (this.inputAmount === '') {
         console.error('inputAmount is empty during `handleTxStart`');
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'treasury.claim-and-burn-mobo.handleTxStart',
           message: 'inputAmount is empty during `handleTxStart`'
@@ -283,7 +284,7 @@ export default Vue.extend({
 
       if (this.actionGasLimit === undefined) {
         console.error('action gas limit is empty during `handleTxStart`');
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'treasury.claim-and-burn-mobo.handleTxStart',
           message: 'action gas limit is empty during `handleTxStart`'
@@ -292,7 +293,7 @@ export default Vue.extend({
         return;
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: 'treasury.claim-and-burn-mobo.handleTxStart',
         data: {

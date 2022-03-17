@@ -1,16 +1,17 @@
 import axios from 'axios';
 import { CustomError } from 'ts-custom-error';
 
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+
 export class MoverError<T = void> extends CustomError {
   protected payload?: T;
-  protected wrappedErrors: Array<Error>;
+  protected wrappedError?: Error;
   protected originalMessage: string;
 
   constructor(message: string, payload?: T) {
     super(message);
     this.originalMessage = message;
     this.payload = payload;
-    this.wrappedErrors = new Array<Error>();
   }
 
   public formatMessage(wrappedError?: Error): string {
@@ -33,7 +34,7 @@ export class MoverError<T = void> extends CustomError {
 
   public wrap(error: Error): this {
     this.message = this.formatMessage(error);
-    this.wrappedErrors.push(error);
+    this.wrappedError = error;
     return this;
   }
 
@@ -46,11 +47,23 @@ export class MoverError<T = void> extends CustomError {
     return this.payload;
   }
 
-  public getWrappedErrors(): Array<Error> {
-    return this.wrappedErrors;
+  public getWrappedError(): Error | undefined {
+    return this.wrappedError;
   }
 
   public getOriginalMessage(): string {
     return this.originalMessage;
+  }
+
+  public addToBreadcrumb(): void {
+    addSentryBreadcrumb({
+      type: 'error',
+      category: 'mover.error',
+      message: this.originalMessage,
+      data: {
+        payload: this.payload,
+        wrappedError: this.wrappedError
+      }
+    });
   }
 }
