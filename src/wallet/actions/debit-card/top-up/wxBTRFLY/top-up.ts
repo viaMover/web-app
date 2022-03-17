@@ -3,6 +3,7 @@ import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { lookupAddress, WX_BTRFLY_ABI } from '@/wallet/references/data';
