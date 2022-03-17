@@ -46,7 +46,7 @@ export const getAllTokens = (network: Network): Array<Token> => {
           decimals: asset.decimals,
           symbol: asset.symbol,
           name: asset.name.slice(0, MAX_ASSET_NAME),
-          logo: asset.imageUrl ?? getTokenLogo(asset.id),
+          logo: asset.imageUrl ?? getTokenLogo(asset.id, network),
           color: asset.color,
           marketCap: asset.marketCap ?? 0,
           priceUSD: '0'
