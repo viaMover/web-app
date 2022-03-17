@@ -45,13 +45,8 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
-import {
-  MAX_ACTIVE_TIME,
-  MAX_COOLDOWN_TIME
-} from '@/services/chain/treasury/powercard';
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { unstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstake';
-import { estimateUnstakePowercardCompound } from '@/wallet/actions/treasury/powercard/unstakeEstimate';
 
 import {
   AnalyticsList,
@@ -101,7 +96,8 @@ export default Vue.extend({
       powercardBalance: 'powercardBalance',
       powercardState: 'powercardState',
       powercardActiveTime: 'powercardActiveTime',
-      powercardCooldownTime: 'powercardCooldownTime'
+      powercardCooldownTime: 'powercardCooldownTime',
+      smartTreasuryOnChainService: 'onChainService'
     }),
     ...mapState('account', {
       networkInfo: 'networkInfo',
@@ -121,12 +117,16 @@ export default Vue.extend({
     powercardProgress(): number {
       if (this.powercardActiveTime > 0) {
         return Math.round(
-          ((MAX_ACTIVE_TIME - this.powercardActiveTime) / MAX_ACTIVE_TIME) * 100
+          ((SmartTreasuryOnChainService.PowercardMaxActiveTimeSeconds -
+            this.powercardActiveTime) /
+            SmartTreasuryOnChainService.PowercardMaxActiveTimeSeconds) *
+            100
         );
       } else if (this.powercardCooldownTime > 0) {
         return Math.round(
-          ((MAX_COOLDOWN_TIME - this.powercardCooldownTime) /
-            MAX_COOLDOWN_TIME) *
+          ((SmartTreasuryOnChainService.PowercardMaxCooldownTimeSeconds -
+            this.powercardCooldownTime) /
+            SmartTreasuryOnChainService.PowercardMaxCooldownTimeSeconds) *
             100
         );
       } else {
@@ -154,13 +154,11 @@ export default Vue.extend({
       });
     },
     async handleRemoveCard(): Promise<void> {
-      const resp = await estimateUnstakePowercardCompound(
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
+      const estimation = await (
+        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+      ).estimateUnstakePowercardCompound();
 
-      if (resp.error) {
+      if (estimation.error) {
         Sentry.captureException("Can't estimate swap");
         this.actionError = this.$t('estimationError') as string;
         return;
@@ -168,12 +166,11 @@ export default Vue.extend({
 
       this.transactionStep = 'Confirm';
       try {
-        await unstakePowercardCompound(
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
-          resp.actionGasLimit,
-          resp.approveGasLimit,
+        await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).unstakePowercardCompound(
+          estimation.actionGasLimit,
+          estimation.approveGasLimit,
           async () => {
             this.transactionStep = 'Process';
           }

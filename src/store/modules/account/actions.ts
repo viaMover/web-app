@@ -16,6 +16,13 @@ import {
 } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
+import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
+import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
+import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
+import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
+import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import {
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
@@ -71,6 +78,7 @@ type Actions = {
   loadAvatar: Promise<void>;
   toggleAvatar: Promise<void>;
   initWallet: Promise<void>;
+  initServices: void;
   refreshWallet: Promise<void>;
   updateWalletAfterTxn: Promise<void>;
   waitWallet: Promise<boolean>;
@@ -98,6 +106,10 @@ const actions: ActionFuncs<
     }
   },
   startGasListening({ commit, state }, caller: string): void {
+    if (!isFeatureEnabled('isGasListenerEnabled', state.networkInfo?.network)) {
+      return;
+    }
+
     commit('pushGasListenerCaller', caller);
 
     if (state.gasUpdating) {
@@ -331,6 +343,8 @@ const actions: ActionFuncs<
         return;
       }
 
+      await dispatch('initServices');
+
       await dispatch('getBasicPrices');
 
       Sentry.setContext('crypto_person', {
@@ -454,6 +468,73 @@ const actions: ActionFuncs<
       console.info('Wallet refreshed');
     } finally {
       state.isWalletLoading = false;
+    }
+  },
+  initServices({ state, commit, dispatch, getters }): void {
+    if (!ensureAccountStateIsSafe(state)) {
+      throw new Error('account store is not initialized');
+    }
+
+    let smartTreasuryBonusBalanceExecutor:
+      | ISmartTreasuryBonusBalanceExecutor
+      | undefined;
+
+    if (isFeatureEnabled('isTreasuryEnabled', state.networkInfo.network)) {
+      const smartTreasuryOnChainService = new SmartTreasuryOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      smartTreasuryBonusBalanceExecutor = smartTreasuryOnChainService;
+      dispatch('treasury/setOnChainService', smartTreasuryOnChainService, {
+        root: true
+      });
+
+      const smartTreasuryAPIService = new MoverAPISmartTreasuryService(
+        state.currentAddress,
+        state.networkInfo.network
+      );
+      dispatch('treasury/setAPIService', smartTreasuryAPIService, {
+        root: true
+      });
+    }
+
+    if (isFeatureEnabled('isSavingsEnabled', state.networkInfo.network)) {
+      const savingsOnChainService = new SavingsOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      )
+        .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
+        .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
+        .setEthPriceGetterHandler(() => getters.ethPrice);
+      dispatch('savings/setOnChainService', savingsOnChainService, {
+        root: true
+      });
+
+      const savingsAPIService = new MoverAPISavingsService(
+        state.currentAddress,
+        state.networkInfo.network
+      );
+      dispatch('savings/setAPIService', savingsAPIService, { root: true });
+    }
+
+    if (isFeatureEnabled('isSwapEnabled', state.networkInfo.network)) {
+      const ZeroXService = new ZeroXAPIService(
+        state.currentAddress,
+        state.networkInfo.network
+      );
+      commit('setSwapAPIService', ZeroXService);
+
+      const swapOnChainService = new SwapOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      )
+        .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
+        .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
+        .setEthPriceGetterHandler(() => getters.ethPrice);
+      commit('setSwapOnChainService', swapOnChainService);
     }
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {

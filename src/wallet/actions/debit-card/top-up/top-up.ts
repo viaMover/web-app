@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
@@ -7,10 +6,11 @@ import { AbiItem } from 'web3-utils';
 
 import { getTransferData, TransferData } from '@/services/0x/api';
 import { currentBalance } from '@/services/chain/erc20/balance';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
-  getPureEthAddress
+  getPureBaseAssetAddress
 } from '@/utils/address';
 import { fromWei, multiply, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -58,7 +58,7 @@ export const topUpCompound = async (
     )
   ) {
     try {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'info',
         category: 'debit-card.top-up.topUpCompound',
         message: 'For wxBTRFLY we need to unwrap it',
@@ -120,7 +120,7 @@ export const topUpCompound = async (
       );
 
       if (resp.error) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.unwrap.extimation',
           message: 'failed estimate after the unwarp'
@@ -131,7 +131,7 @@ export const topUpCompound = async (
       topupActionGasLimit = resp.actionGasLimit;
       topupApproveGasLimit = resp.approveGasLimit;
     } catch (err) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: 'debit-card.top-up.unwrap',
         message: 'failed to unwrap for top up',
@@ -171,7 +171,7 @@ export const topUpCompound = async (
       gasPriceInGwei
     );
   } catch (err) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'debit-card.top-up.topUpCompound',
       message: 'failed to top up',
@@ -228,7 +228,7 @@ export const topUp = async (
 
   const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-  Sentry.addBreadcrumb({
+  addSentryBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.topUp',
     message: 'input amount in WEI',
@@ -245,7 +245,7 @@ export const topUp = async (
       multiply(transferData.buyAmount, '0.85')
     ).toFixed(0);
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.topUp',
       message: 'expected minimum received',
@@ -265,7 +265,7 @@ export const topUp = async (
       Web3.utils.hexToBytes(transferData.data)
     );
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.topUp',
       message: 'bytes',
@@ -276,7 +276,7 @@ export const topUp = async (
     });
   }
 
-  Sentry.addBreadcrumb({
+  addSentryBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.topUp',
     message: 'transaction params',
@@ -287,10 +287,10 @@ export const topUp = async (
 
   let inputCurrencyAddress = inputAsset.address;
   if (inputAsset.address === 'eth') {
-    inputCurrencyAddress = getPureEthAddress();
+    inputCurrencyAddress = getPureBaseAssetAddress();
   }
 
-  Sentry.addBreadcrumb({
+  addSentryBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.topUp',
     message: 'currencies',
@@ -312,7 +312,7 @@ export const topUp = async (
     )
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           category: 'debit-card.top-up.topUp',
           message: 'transaction hash',
@@ -325,7 +325,7 @@ export const topUp = async (
         changeStepToProcess('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           category: 'debit-card.top-up.topUp',
           message: 'transaction receipt',

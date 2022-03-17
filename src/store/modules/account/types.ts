@@ -5,6 +5,9 @@ import Web3 from 'web3';
 import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
+import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -83,6 +86,9 @@ export type AccountStoreState = {
   isDebitCardSectionVisible: boolean;
   isDepositCardSectionVisible: boolean;
   isOrderOfLibertySectionVisible: boolean;
+
+  swapAPIService: ZeroXAPIService | undefined;
+  swapOnChainService: SwapOnChainService | undefined;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {
@@ -112,7 +118,7 @@ export const ensureAccountStateIsSafe = (
   }
 
   if (reasons.length > 0) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'state.account.safe',
       data: {

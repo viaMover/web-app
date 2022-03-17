@@ -2,8 +2,10 @@ import * as Sentry from '@sentry/vue';
 
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
-import { isSubsidizedAddress } from '@/wallet/actions/subsidized';
-import { lookupAddress } from '@/wallet/references/data';
+import {
+  isSubsidizedWalletAddress,
+  lookupAddress
+} from '@/wallet/references/data';
 import { FeeData, TransactionStatus, TransactionUnknown } from '@/wallet/types';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 
@@ -38,13 +40,13 @@ const feeMap = (fee: { value: number; price: number }): FeeData => ({
   ethPrice: String(fee.price)
 });
 
-export const isMoverTransation = (
+export const isMoverTransaction = (
   zt: ZerionTransaction,
   network: Network
 ): boolean => {
   if (
-    isSubsidizedAddress(zt.address_from) ||
-    isSubsidizedAddress(zt.address_to)
+    isSubsidizedWalletAddress(network, zt.address_from) ||
+    isSubsidizedWalletAddress(network, zt.address_to)
   ) {
     return true;
   }
@@ -84,7 +86,7 @@ export const mapZerionTxns = async (
     let txns: Transaction[] = [];
 
     data.payload.transactions = data.payload.transactions.filter((t) =>
-      isMoverTransation(t, network)
+      isMoverTransaction(t, network)
     );
 
     let moverTypesData: TransactionMoveTypeData[] = [];

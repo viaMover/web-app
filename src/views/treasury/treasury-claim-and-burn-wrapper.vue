@@ -36,7 +36,6 @@
       :header-title="$t('treasury.claimAndBurn.lblReviewYourDecrease')"
       :input-amount-native-title="$t('treasury.claimAndBurn.lblAndTotalOf')"
       :input-amount-title="$t('treasury.claimAndBurn.lblAmountWeBurnIn')"
-      :is-subsidized-enabled="isSubsidizedEnabled"
       :native-amount="formattedNativeAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
@@ -70,7 +69,8 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import { getExitingAmount, getMaxBurn } from '@/services/chain';
+import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -81,9 +81,6 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { claimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurn';
-import { estimateClaimAndBurnCompound } from '@/wallet/actions/treasury/claimAndBurn/claimAndBurnEstimate';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getMoveAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -152,7 +149,6 @@ export default Vue.extend({
       isTokenSelectedByUser: false,
 
       //to tx
-      isSubsidizedEnabled: false,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined
     };
@@ -171,6 +167,9 @@ export default Vue.extend({
     }),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
+    }),
+    ...mapState('treasury', {
+      smartTreasuryOnChainService: 'onChainService'
     }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
@@ -235,14 +234,12 @@ export default Vue.extend({
             }
           }
 
-          this.maxBurnedAmount = await getMaxBurn(
-            this.currentAddress,
-            this.networkInfo.network,
-            this.provider.web3
-          );
-        } catch (err) {
-          console.error(`can't load max burn`, err);
-          Sentry.captureException(err);
+          this.maxBurnedAmount = await (
+            this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+          ).getMaxBurn();
+        } catch (error) {
+          console.error('Failed to get max burn amount', error);
+          Sentry.captureException(error);
         } finally {
           this.isLoading = false;
         }
@@ -267,18 +264,14 @@ export default Vue.extend({
       inputAmount: string,
       inputAsset: SmallToken
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateClaimAndBurnCompound(
-        inputAsset,
-        inputAmount,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
+      const estimation = await (
+        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+      ).estimateClaimAndBurnCompound(inputAsset, inputAmount);
+      if (estimation.error) {
         this.transferError = this.$t('estimationError') as string;
-        throw new Error("Can't estimate action");
+        throw new Error('Failed to estimate action');
       }
-      return resp;
+      return estimation;
     },
     handleToggleInputMode(): void {
       if (this.inputMode === 'NATIVE') {
@@ -326,7 +319,6 @@ export default Vue.extend({
         return;
       }
 
-      this.isSubsidizedEnabled = false;
       this.isProcessing = true;
       try {
         const gasLimits = await this.estimateAction(
@@ -340,7 +332,6 @@ export default Vue.extend({
         console.info('Claim and burn action gaslimit:', this.actionGasLimit);
         console.info('Claim and burn approve gaslimit:', this.approveGasLimit);
       } catch (err) {
-        this.isSubsidizedEnabled = false;
         this.isProcessing = false;
         console.error('failed to handle transaction review', err);
         Sentry.captureException("can't estimate claim and burn for subs");
@@ -381,12 +372,9 @@ export default Vue.extend({
             return;
           }
 
-          this.claimingFor = await getExitingAmount(
-            this.currentAddress,
-            this.inputAmount,
-            this.networkInfo.network,
-            this.provider.web3
-          );
+          this.claimingFor = await (
+            this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+          ).getExitingAmount(this.inputAmount);
 
           this.transferError = undefined;
         } else {
@@ -410,18 +398,15 @@ export default Vue.extend({
             ) as string;
             return;
           }
-          this.claimingFor = await getExitingAmount(
-            this.currentAddress,
-            this.inputAmount,
-            this.networkInfo.network,
-            this.provider.web3
-          );
+          this.claimingFor = await (
+            this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+          ).getExitingAmount(this.inputAmount);
           this.transferError = undefined;
         }
-      } catch (err) {
+      } catch (error) {
         this.transferError = this.$t('exchangeError') as string;
-        console.error(`transfer error`, err);
-        Sentry.captureException(err);
+        console.error('Failed to update amount', error);
+        Sentry.captureException(error);
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';
         } else {
@@ -461,12 +446,11 @@ export default Vue.extend({
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await claimAndBurnCompound(
+        await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).claimAndBurnCompound(
           this.inputAsset,
           this.inputAmount,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
           async () => {
@@ -475,10 +459,10 @@ export default Vue.extend({
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.error('Treasury claim and burn txn reverted', err);
-        Sentry.captureException(err);
+        console.error('Failed to claim & burn', error);
+        Sentry.captureException(error);
       }
     }
   }
