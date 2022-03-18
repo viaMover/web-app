@@ -72,7 +72,9 @@ export type AddressMapKey =
   | 'WX_BTRFLY_TOKEN_ADDRESS'
   | 'GOHM_TOKEN_ADDRESS'
   | 'TOKE_TOKEN_ADDRESS'
-  | 'NFT_ORDER_OF_LIBERTY';
+  | 'NFT_ORDER_OF_LIBERTY'
+  | 'APE_TOKEN_ADDRESS'
+  | 'UBT_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -125,6 +127,8 @@ const addresses = {
     WX_BTRFLY_TOKEN_ADDRESS: '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9',
     GOHM_TOKEN_ADDRESS: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
     TOKE_TOKEN_ADDRESS: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94',
+    APE_TOKEN_ADDRESS: '0x4d224452801aced8b2f0aebe155379bb5d594381',
+    UBT_TOKEN_ADDRESS: '0x8400d94a5cb0fa0d041a3788e395285d61c9ee5e',
     NFT_ORDER_OF_LIBERTY: '0xebFB3B9f34307De7a72eDdA8696c1E14e0f41d8b'
   },
   [Network.ropsten]: {
@@ -416,7 +420,9 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'BTRFLY_TOKEN_ADDRESS'),
     lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS'),
     lookupAddress(network, 'GOHM_TOKEN_ADDRESS'),
-    lookupAddress(network, 'TOKE_TOKEN_ADDRESS')
+    lookupAddress(network, 'TOKE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'APE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'UBT_TOKEN_ADDRESS')
   ];
 };
 

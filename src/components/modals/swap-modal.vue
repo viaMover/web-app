@@ -128,6 +128,8 @@ import * as Sentry from '@sentry/vue';
 import { Properties as CssProperties } from 'csstype';
 import Web3 from 'web3';
 
+import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
+import { getPriceByAddress } from '@/services/coingecko/tokens';
 import { GetTokenPrice } from '@/services/thegraph/api';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
@@ -218,7 +220,8 @@ export default Vue.extend({
       'ethPrice',
       'allTokens',
       'swapAPIService',
-      'swapOnChainService'
+      'swapOnChainService',
+      'nativeCurrency'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -820,10 +823,36 @@ export default Vue.extend({
       }
     },
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
-      const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!this.input.asset.priceUSD && price !== '0') {
-        this.input.asset.priceUSD = price;
+
+      if (!asset.priceUSD) {
+        const priceResponse = await getPriceByAddress(
+          getCoingeckoPlatform(this.networkInfo.network),
+          [asset.address],
+          [this.nativeCurrency]
+        );
+
+        let price = '0';
+
+        if (!priceResponse.isError) {
+          price = priceResponse.result?.[asset.address.toLowerCase()]?.[
+            this.nativeCurrency
+          ]
+            ? String(
+                priceResponse.result?.[asset.address.toLowerCase()]?.[
+                  this.nativeCurrency
+                ]
+              )
+            : '0';
+        } else {
+          console.warn(
+            `Can't find price for asset ${asset.symbol} on swap modal`
+          );
+        }
+
+        if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
+          this.input.asset.priceUSD = price;
+        }
       }
       this.input.amount = '';
       this.input.nativeAmount = '';
@@ -834,11 +863,37 @@ export default Vue.extend({
       this.transferData = undefined;
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
-      const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!this.output.asset.priceUSD && price !== '0') {
-        this.output.asset.priceUSD = price;
+      if (!asset.priceUSD || asset.priceUSD === '0') {
+        const priceResponse = await getPriceByAddress(
+          getCoingeckoPlatform(this.networkInfo.network),
+          [asset.address],
+          [this.nativeCurrency]
+        );
+
+        let price = '0';
+
+        if (!priceResponse.isError) {
+          price = priceResponse.result?.[asset.address.toLowerCase()]?.[
+            this.nativeCurrency
+          ]
+            ? String(
+                priceResponse.result?.[asset.address.toLowerCase()]?.[
+                  this.nativeCurrency
+                ]
+              )
+            : '0';
+        } else {
+          console.warn(
+            `Can't find price for asset ${asset.symbol} on swap modal`
+          );
+        }
+
+        if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
+          this.output.asset.priceUSD = price;
+        }
       }
+
       this.input.amount = '';
       this.input.nativeAmount = '';
       this.output.amount = '';

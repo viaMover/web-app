@@ -3,6 +3,7 @@ import { addABI, decodeMethod } from 'abi-decoder';
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
+import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
 import { getPriceByAddress, NetworkAlias } from '@/services/coingecko/tokens';
 import { Explorer } from '@/services/explorer';
 import { isError } from '@/services/responses';
@@ -236,9 +237,11 @@ export class MoralisExplorer implements Explorer {
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
     const addresses = tokens.map((t) => t.address);
-    const pricesResponse = await getPriceByAddress('ethereum', addresses, [
-      this.nativeCurrency
-    ]);
+    const pricesResponse = await getPriceByAddress(
+      getCoingeckoPlatform(this.network),
+      addresses,
+      [this.nativeCurrency]
+    );
     if (pricesResponse.isError) {
       Sentry.captureMessage(
         `Can't get token prices from coingecko: ${pricesResponse.error}`
