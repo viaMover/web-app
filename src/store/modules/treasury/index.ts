@@ -25,7 +25,9 @@ export default {
     powercardBalance: undefined,
     powercardState: undefined,
     powercardActiveTime: 0,
-    powercardCooldownTime: 0
+    powercardCooldownTime: 0,
+    apiService: undefined,
+    onChainService: undefined
   },
   actions,
   getters,

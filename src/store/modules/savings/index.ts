@@ -17,7 +17,9 @@ export default {
 
     savingsBalance: undefined,
     savingsAPY: undefined,
-    savingsDPY: undefined
+    savingsDPY: undefined,
+    apiService: undefined,
+    onChainService: undefined
   },
   actions,
   getters,

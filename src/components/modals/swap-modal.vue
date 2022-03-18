@@ -97,7 +97,10 @@
           </div>
         </transition>
       </div>
-      <div class="modal-wrapper-info-button">
+      <div
+        class="modal-wrapper-info-button"
+        :class="{ 'add-margin-bottom': !showGasSelector }"
+      >
         <action-button
           class="primary"
           :custom-style="actionButtonStyle"
@@ -107,6 +110,7 @@
         />
       </div>
       <gas-selector
+        v-if="showGasSelector"
         :approve-gas-limit="approveGasLimit"
         :avaialble-gas-modes="availableGasModes"
         :txn-gas-limit="allGasLimit"
@@ -124,13 +128,12 @@ import * as Sentry from '@sentry/vue';
 import { Properties as CssProperties } from 'csstype';
 import Web3 from 'web3';
 
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
+import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
+import { getPriceByAddress } from '@/services/coingecko/tokens';
 import { GetTokenPrice } from '@/services/thegraph/api';
+import { MoverError } from '@/services/v2';
+import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
+import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import {
   Modal as ModalTypes,
   TModalPayload
@@ -150,10 +153,8 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import { swapCompound } from '@/wallet/actions/swap/swap';
-import { estimateSwapCompound } from '@/wallet/actions/swap/swapEstimate';
-import { formatSwapSources, getMoveAssetData } from '@/wallet/references/data';
+import { Network } from '@/utils/networkTypes';
+import { getMoveAssetData } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { GasData, SmallToken, Token, TokenWithBalance } from '@/wallet/types';
 
@@ -217,7 +218,10 @@ export default Vue.extend({
       'gasPrices',
       'tokens',
       'ethPrice',
-      'allTokens'
+      'allTokens',
+      'swapAPIService',
+      'swapOnChainService',
+      'nativeCurrency'
     ]),
     ...mapState('modals', {
       state: 'state'
@@ -226,6 +230,9 @@ export default Vue.extend({
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
     }),
+    showGasSelector(): boolean {
+      return this.networkInfo?.network === Network.mainnet;
+    },
     headerLabel(): string | undefined {
       return this.loaderStep ? undefined : 'Swaps';
     },
@@ -254,7 +261,9 @@ export default Vue.extend({
       if (this.transferData === undefined) {
         return '';
       }
-      return formatSwapSources(this.transferData.swappingVia);
+      return this.swapAPIService.formatSwapSources(
+        this.transferData.swappingVia
+      );
     },
     rateString(): string {
       if (
@@ -492,14 +501,11 @@ export default Vue.extend({
 
       this.loaderStep = 'Confirm';
       try {
-        await swapCompound(
+        await this.swapOnChainService.swapCompound(
           this.input.asset,
           this.output.asset,
           this.input.amount,
           this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           this.actionGasLimit,
           this.approveGasLimit,
           this.selectedGasPrice,
@@ -509,9 +515,10 @@ export default Vue.extend({
           }
         );
         this.loaderStep = 'Success';
-      } catch (err) {
+      } catch (error) {
+        console.error('Failed to swap', error);
         this.loaderStep = 'Reverted';
-        Sentry.captureException(err);
+        Sentry.captureException(error);
       }
     },
     async flipAssets(): Promise<void> {
@@ -538,7 +545,7 @@ export default Vue.extend({
           this.input.amount = '';
           this.input.nativeAmount = '';
 
-          const assetInWallet: TokenWithBalance = this.tokens.find(
+          const assetInWallet: TokenWithBalance | undefined = this.tokens.find(
             (t: TokenWithBalance) => sameAddress(t.address, outputAsset.address)
           );
 
@@ -608,17 +615,17 @@ export default Vue.extend({
           this.output.asset,
           transferData
         );
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        console.error(`Transfer error`, error);
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapAPIService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
-          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
+          Sentry.captureException(error);
         }
         this.transferData = undefined;
-        console.error(`can't calc data:`, err);
-        return;
       } finally {
         this.loading = false;
       }
@@ -672,17 +679,17 @@ export default Vue.extend({
           this.output.asset,
           transferData
         );
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        console.error('Transfer error', error);
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapAPIService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
-          console.error(`can't calc data:`, err);
-          this.transferError = 'Swap error';
-          Sentry.captureException(err);
+          this.transferError = this.$t('exchangeError') as string;
+          Sentry.captureException(error);
         }
         this.transferData = undefined;
-        console.error(`can't calc data:`, err);
-        return;
       } finally {
         this.loading = false;
       }
@@ -736,17 +743,17 @@ export default Vue.extend({
           this.output.asset,
           transferData
         );
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        console.error('Transfer error', error);
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapAPIService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
-          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
+          Sentry.captureException(error);
         }
         this.transferData = undefined;
-        console.error(`can't calc data:`, err);
-        return;
       } finally {
         this.loading = false;
       }
@@ -800,26 +807,52 @@ export default Vue.extend({
           this.output.asset,
           transferData
         );
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        console.error('Transfer error', error);
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapAPIService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
-          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
+          Sentry.captureException(error);
         }
         this.transferData = undefined;
-
-        return;
       } finally {
         this.loading = false;
       }
     },
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
-      const price = await GetTokenPrice(asset.address);
       this.input.asset = asset;
-      if (!this.input.asset.priceUSD && price !== '0') {
-        this.input.asset.priceUSD = price;
+
+      if (!asset.priceUSD) {
+        const priceResponse = await getPriceByAddress(
+          getCoingeckoPlatform(this.networkInfo.network),
+          [asset.address],
+          [this.nativeCurrency]
+        );
+
+        let price = '0';
+
+        if (!priceResponse.isError) {
+          price = priceResponse.result?.[asset.address.toLowerCase()]?.[
+            this.nativeCurrency
+          ]
+            ? String(
+                priceResponse.result?.[asset.address.toLowerCase()]?.[
+                  this.nativeCurrency
+                ]
+              )
+            : '0';
+        } else {
+          console.warn(
+            `Can't find price for asset ${asset.symbol} on swap modal`
+          );
+        }
+
+        if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
+          this.input.asset.priceUSD = price;
+        }
       }
       this.input.amount = '';
       this.input.nativeAmount = '';
@@ -830,11 +863,37 @@ export default Vue.extend({
       this.transferData = undefined;
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
-      const price = await GetTokenPrice(asset.address);
       this.output.asset = asset;
-      if (!this.output.asset.priceUSD && price !== '0') {
-        this.output.asset.priceUSD = price;
+      if (!asset.priceUSD || asset.priceUSD === '0') {
+        const priceResponse = await getPriceByAddress(
+          getCoingeckoPlatform(this.networkInfo.network),
+          [asset.address],
+          [this.nativeCurrency]
+        );
+
+        let price = '0';
+
+        if (!priceResponse.isError) {
+          price = priceResponse.result?.[asset.address.toLowerCase()]?.[
+            this.nativeCurrency
+          ]
+            ? String(
+                priceResponse.result?.[asset.address.toLowerCase()]?.[
+                  this.nativeCurrency
+                ]
+              )
+            : '0';
+        } else {
+          console.warn(
+            `Can't find price for asset ${asset.symbol} on swap modal`
+          );
+        }
+
+        if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
+          this.output.asset.priceUSD = price;
+        }
       }
+
       this.input.amount = '';
       this.input.nativeAmount = '';
       this.output.amount = '';
@@ -873,17 +932,17 @@ export default Vue.extend({
           this.output.asset,
           transferData
         );
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        console.error('Transfer error', error);
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapAPIService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
-          console.error(`can't calc data:`, err);
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
+          Sentry.captureException(error);
         }
         this.transferData = undefined;
-        console.error(`can't calc data:`, err);
-        return;
       } finally {
         this.loading = false;
       }
@@ -904,13 +963,14 @@ export default Vue.extend({
         amount,
         isInput ? inputAsset.decimals : outputAsset.decimals
       );
-      const transferData = await getTransferData(
+      const transferData = await (
+        this.swapAPIService as ZeroXAPIService
+      ).getTransferData(
         outputAsset.address,
         inputAsset.address,
         inputInWei,
         isInput,
-        slippage,
-        this.networkInfo.network
+        slippage
       );
       this.transferData = transferData;
       return transferData;
@@ -921,14 +981,13 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await estimateSwapCompound(
+      const resp = await (
+        this.swapOnChainService as SwapOnChainService
+      ).estimateSwapCompound(
         inputAsset,
         outputAsset,
         inputAmount,
-        transferData,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
+        transferData
       );
 
       if (resp.error) {
@@ -942,13 +1001,10 @@ export default Vue.extend({
 
       this.checkSubsidizedAvailability();
     },
-    checkSubsidizedAvailability(): void {
+    async checkSubsidizedAvailability(): Promise<void> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we don't allow subsidized transaction"
-        );
         this.subsidizedAvaialbe = false;
         return;
       }
@@ -958,12 +1014,17 @@ export default Vue.extend({
         return;
       }
 
-      this.subsidizedAvaialbe = isSubsidizedAllowed(
-        gasPrice,
-        this.actionGasLimit,
-        this.ethPrice,
-        this.treasuryBonusNative
-      );
+      try {
+        this.subsidizedAvaialbe = await (
+          this.swapOnChainService as SwapOnChainService
+        ).isSubsidizedTransactionAllowed(
+          gasPrice,
+          this.actionGasLimit,
+          this.ethPrice
+        );
+      } catch (error) {
+        Sentry.captureException(error);
+      }
     }
   }
 });

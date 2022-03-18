@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
 
 import store from '@/store/index';
 import { Network } from '@/utils/networkTypes';
@@ -120,7 +121,7 @@ export const waitOffchainTransactionReceipt = (
   queueId: string | undefined,
   hash: string | undefined,
   web3: Web3
-): Promise<unknown> => {
+): Promise<TransactionReceipt> => {
   if (hash !== undefined) {
     return getTransactionReceiptMined(
       hash,
@@ -128,22 +129,22 @@ export const waitOffchainTransactionReceipt = (
       web3
     );
   }
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<TransactionReceipt>((resolve, reject) => {
     const checkTxStatus = async () => {
       const tx: Transaction =
         store.getters['account/getTransactionByQueueId'](queueId);
       if (tx != undefined && tx.subsidizedQueueId === undefined) {
         if (tx.status === 'confirmed' && tx.hash) {
           try {
-            await getTransactionReceiptMined(
+            const transactionReceipt = await getTransactionReceiptMined(
               tx.hash,
               REFRESH_OFFCHAIN_RECEIPT_TIMEOUT,
               web3
             );
+            resolve(transactionReceipt);
           } catch {
             reject();
           }
-          resolve();
         } else if (tx.status === 'failed') {
           reject();
         }

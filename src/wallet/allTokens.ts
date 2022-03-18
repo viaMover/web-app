@@ -4,19 +4,49 @@ import { Network } from '@/utils/networkTypes';
 
 import { getTestnetAssets } from './references/testnetAssets';
 import { Token } from './types';
-import assetList from '@/../data/assetList.json';
+import assetListEth from '@/../data/assets/assetList-ethereum.json';
+import assetListFantom from '@/../data/assets/assetList-fantom.json';
+import assetListPolygon from '@/../data/assets/assetList-polygon.json';
 
+type AssetListType = {
+  id: string;
+  decimals: number;
+  symbol: string;
+  name: string;
+  color?: string;
+  marketCap?: number;
+  imageUrl?: string;
+};
+
+export const avaialbleNetworks = [
+  Network.mainnet,
+  Network.fantom,
+  Network.polygon
+];
+
+const getAssetList = (network: Network): Array<AssetListType> => {
+  switch (network) {
+    case Network.mainnet:
+      return assetListEth;
+    case Network.fantom:
+      return assetListFantom;
+    case Network.polygon:
+      return assetListPolygon;
+    default:
+      return [];
+  }
+};
 export const getAllTokens = (network: Network): Array<Token> => {
   let assets: Array<Token>;
-  if (network === Network.mainnet) {
-    assets = assetList.map(
+  if (avaialbleNetworks.includes(network)) {
+    assets = getAssetList(network).map(
       (asset) =>
         ({
           address: asset.id,
           decimals: asset.decimals,
           symbol: asset.symbol,
           name: asset.name.slice(0, MAX_ASSET_NAME),
-          logo: asset.imageUrl ?? getTokenLogo(asset.id),
+          logo: asset.imageUrl ?? getTokenLogo(asset.id, network),
           color: asset.color,
           marketCap: asset.marketCap ?? 0,
           priceUSD: '0'

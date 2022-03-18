@@ -1,14 +1,14 @@
-import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 import Web3 from 'web3';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
-  getPureEthAddress
+  getPureBaseAssetAddress
 } from '@/utils/address';
 import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
@@ -42,7 +42,7 @@ export const estimateTopUpCompound = async (
       lookupAddress(network, 'WX_BTRFLY_TOKEN_ADDRESS')
     )
   ) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUpCompound',
       message: 'For wxBTRFLY we need to unwrap it',
@@ -58,7 +58,7 @@ export const estimateTopUpCompound = async (
       accountAddress
     );
     if (estimation.error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: 'debit-card.top-up.estimateTopUpCompound',
         message: 'failed to estimate unwrap'
@@ -90,7 +90,7 @@ export const estimateTopUpCompound = async (
       web3
     );
   } catch (err) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'debit-card.top-up.estimateTopUpCompound',
       message: 'failed to estimate approve',
@@ -108,7 +108,7 @@ export const estimateTopUpCompound = async (
   }
 
   if (isApproveNeeded) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUpCompound',
       message: "Needs approve, can't do a proper estimation"
@@ -129,7 +129,7 @@ export const estimateTopUpCompound = async (
         unwrapGasLimit: '0'
       };
     } catch (error) {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: 'debit-card.top-up.estimateTopUpCompound',
         message: 'Failed to estimate approve',
@@ -203,7 +203,7 @@ export const estimateTopUp = async (
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUp',
       message: 'input amount in WEI',
@@ -220,7 +220,7 @@ export const estimateTopUp = async (
         multiply(transferData.buyAmount, '0.85')
       ).toFixed(0);
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'info',
         category: 'debit-card.top-up.estimateTopUp',
         message: 'expected minimum received',
@@ -240,7 +240,7 @@ export const estimateTopUp = async (
         Web3.utils.hexToBytes(transferData.data)
       );
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'info',
         category: 'debit-card.top-up.estimateTopUp',
         message: 'bytes',
@@ -251,7 +251,7 @@ export const estimateTopUp = async (
       });
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUp',
       message: 'transaction params',
@@ -262,10 +262,10 @@ export const estimateTopUp = async (
 
     let inputCurrencyAddress = inputAsset.address;
     if (inputAsset.address === 'eth') {
-      inputCurrencyAddress = getPureEthAddress();
+      inputCurrencyAddress = getPureBaseAssetAddress();
     }
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUp',
       message: 'currencies',
@@ -289,7 +289,7 @@ export const estimateTopUp = async (
       const gasLimit = gasLimitObj.toString();
       const gasLimitWithBuffer = floorDivide(multiply(gasLimit, '120'), '100');
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'info',
         category: 'debit-card.top-up.estimateTopUp',
         message: 'gas estimations',
@@ -304,7 +304,7 @@ export const estimateTopUp = async (
       throw new Error('empty gas limit');
     }
   } catch (error) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'debit-card.top-up.estimateTopUp',
       message: 'failed to estimate top up',
