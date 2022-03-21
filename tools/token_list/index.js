@@ -11,8 +11,32 @@ import logger from 'node-color-log';
 import Vibrant from 'node-vibrant';
 import { basename, join } from 'path';
 import simpleGit from 'simple-git';
+import Web3 from 'web3';
 
-const netwroks = ['ethereum', 'fantom', 'polygon'];
+const netwroks = ['fantom', 'polygon'];
+
+const getDecimalsFromContract = async (address, web3) => {
+  const tokenContract = new web3.eth.Contract(
+    [
+      {
+        constant: true,
+        inputs: [],
+        name: 'decimals',
+        outputs: [
+          {
+            name: '',
+            type: 'uint8'
+          }
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function'
+      }
+    ],
+    address
+  );
+  return await tokenContract.methods.decimals().call();
+};
 
 const getCoingeckoPlatform = (network) => {
   switch (network) {
@@ -187,7 +211,7 @@ const enrichWithTWdata = async (assetAddresses, network) => {
   }, []);
 };
 
-const enrichWithCoingeckoData = async (assets, network) => {
+const enrichWithCoingeckoData = async (assets, network, web3) => {
   const platfrom = getCoingeckoPlatform(network);
   const coingeckoList = (await getCoingekoList()).filter(
     (c) => c?.platforms?.[platfrom]
@@ -195,11 +219,38 @@ const enrichWithCoingeckoData = async (assets, network) => {
 
   console.log('Network:', network, 'coingecko list:', coingeckoList.length);
   let newAssets = [];
+  for (let i = 0; i < coingeckoList.length; i++) {
+    await new Promise((r) => setTimeout(r, 700));
+
+    const coingeckoAsset = coingeckoList[i];
+    const address = coingeckoAsset?.platforms?.[platfrom];
+
+    const coingeckoExtendedToken = await getExtendedCoingeckoTokenData(
+      coingeckoAsset?.id
+    );
+
+    const data = {
+      id: address,
+      coingeckoId: coingeckoAsset.id,
+      name: coingeckoAsset.name,
+      symbol: coingeckoAsset.symbol.toUpperCase(),
+      decimals: parseInt(await getDecimalsFromContract(address, web3)),
+      status: 'active',
+      type: 'ERC20',
+      imageUrl: coingeckoExtendedToken.image?.large ?? undefined
+    };
+
+    data.color = await getAssetImageColor(data.imageUrl, address);
+
+    console.log('added token from coingecko:', data);
+    newAssets.push(data);
+  }
+
   for (let i = 0; i < assets.length; i++) {
     const as = assets[i];
     const coingeckoAsset = coingeckoList.find((cas) => {
       return (
-        (cas?.platforms?.[network] ?? '').toLowerCase() ===
+        (cas?.platforms?.[platfrom] ?? '').toLowerCase() ===
         (as?.id ?? '').toLowerCase()
       );
     });
@@ -298,11 +349,11 @@ const preprocess = (assets) =>
 const deduplicate = (tokens) => {
   const knownAddresses = new Set();
   return tokens.reduce((acc, t) => {
-    if (knownAddresses.has(t.id)) {
+    if (knownAddresses.has(t.id.toLowerCase())) {
       return acc;
     }
 
-    knownAddresses.add(t.id);
+    knownAddresses.add(t.id.toLowerCase());
     return acc.concat(t);
   }, []);
 };
@@ -316,17 +367,39 @@ const save = (assets, network) =>
     JSON.stringify(sort(deduplicate(preprocess(assets))))
   );
 
+const getWeb3 = (network) => {
+  let rpcUrl = undefined;
+  switch (network) {
+    case 'ethereum':
+      rpcUrl = `https://mainnet.infura.io/v3/d7de8e7d8f364da0b0f4b4be9a1636fd`;
+      break;
+    case 'fantom':
+      rpcUrl = 'https://rpc.ftm.tools/';
+      break;
+    case 'polygon':
+      rpcUrl = 'https://polygon-rpc.com/';
+      break;
+    default:
+      throw new Error(`There is no RPC link for network: ${network}`);
+  }
+  const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl));
+  return web3;
+};
+
 const generateNewList = async () => {
   await updateTrustwalletRepo();
   for (let i = 0; i < netwroks.length; i++) {
     const network = netwroks[i];
     console.log('\n\nNETWORK:', network);
+
+    const web3 = getWeb3(network);
+
     let assets = await iterateOverAssets(network);
     assets = Array.from(
       new Set([...assets, ...alsoIncludedAddresses[network]])
     );
     assets = await enrichWithTWdata(assets, network);
-    assets = await enrichWithCoingeckoData(assets, network);
+    assets = await enrichWithCoingeckoData(assets, network, web3);
     assets = await filterCompleteTokenData(assets);
     assets = await enrichWithCoingeckoMarketData(assets);
     save(assets, network);

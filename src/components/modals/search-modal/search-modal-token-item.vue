@@ -33,6 +33,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { mapState } from 'vuex';
 
 import BigNumber from 'bignumber.js';
 
@@ -70,6 +71,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState('account', {
+      networkInfo: 'networkInfo'
+    }),
     assetBalance(): string {
       if (isTokenWithBalance(this.item)) {
         return new BigNumber(this.item.balance).decimalPlaces(4).toFormat();
@@ -80,7 +84,7 @@ export default Vue.extend({
       return this.item.symbol !== 'ETH';
     },
     infoButtonSrc(): string {
-      return `https://etherscan.io/token/${this.item.address}`;
+      return `${this.networkInfo.explorer}/token/${this.item.address}`;
     }
   },
   methods: {
