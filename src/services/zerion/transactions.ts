@@ -135,7 +135,10 @@ export const mapZerionTxns = async (
     });
 
     console.debug('txns:', txns);
-    return txns;
+    return txns.map((tx) => {
+      tx.network = network;
+      return tx;
+    });
   } catch (e) {
     Sentry.captureException(e);
     return [];

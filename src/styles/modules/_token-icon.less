@@ -8,6 +8,7 @@
   border-radius: 50%;
   width: 38px;
   height: $width;
+  position: relative;
 
   img {
     border-radius: 50%;
@@ -18,6 +19,22 @@
 
   @media screen and (max-width: 1279px) {
     margin-right: 8px;
+  }
+
+  .network {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    width: 15px;
+    height: $width;
+
+    img {
+      border-radius: 50%;
+      width: inherit;
+      height: $width;
+      @drop-token-shadow();
+    }
   }
 
   &.small {

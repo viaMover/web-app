@@ -14,6 +14,7 @@
     <token-image
       v-else
       :address="tokenAddress"
+      :network="transaction.network"
       :src="tokenImageSrc"
       :symbol="tokenSymbol"
     />

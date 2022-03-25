@@ -6,6 +6,13 @@
       :src="src"
       :style="shadowStyles"
     />
+
+    <img
+      v-if="shouldDisplayNetworkBadge"
+      :alt="network"
+      class="network"
+      :src="networkInfo.baseAsset.iconURL"
+    />
   </div>
   <div v-else class="icon token-icon fallback">
     <span>{{ truncatedSymbol }}</span>
@@ -17,6 +24,8 @@ import Vue, { PropType } from 'vue';
 import { mapGetters } from 'vuex';
 
 import { Properties } from 'csstype';
+
+import { Network } from '@/utils/networkTypes';
 
 import { IImageFallbackOpts } from './types';
 
@@ -37,6 +46,10 @@ export default Vue.extend({
     },
     fallbackSrcList: {
       type: Array as PropType<Array<string>>,
+      default: undefined
+    },
+    network: {
+      type: String as PropType<Network | undefined>,
       default: undefined
     }
   },
@@ -60,6 +73,9 @@ export default Vue.extend({
       return (
         this.getTokenColor(this.address) ?? 'var(--color-token-image-shadow)'
       );
+    },
+    shouldDisplayNetworkBadge(): boolean {
+      return this.network !== undefined && this.currentNetwork !== this.network;
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {

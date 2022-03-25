@@ -461,7 +461,8 @@ export class MoralisExplorer implements Explorer {
               isOffchain: false,
               moverType:
                 moverTypesData.find((t) => t.txID === txn.hash)?.moverTypes ??
-                'unknown'
+                'unknown',
+              network: this.network
             });
           }
         }
@@ -531,7 +532,8 @@ export class MoralisExplorer implements Explorer {
           isOffchain: false,
           moverType:
             moverTypesData.find((t) => t.txID === txn.transaction_hash)
-              ?.moverTypes ?? 'unknown'
+              ?.moverTypes ?? 'unknown',
+          network: this.network
         });
 
         return acc;
