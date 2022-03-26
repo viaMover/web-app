@@ -19,7 +19,6 @@
       :operation-title="estimatedAnnualEarnings"
       :output-asset-heading-text="$t('savings.withdraw.lblAmountWeDepositIn')"
       :selected-token-description="$t('savings.txtUSDCCoinIsAStable')"
-      :transfer-error="transferError"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
       @update-amount="handleUpdateAmount"
@@ -48,19 +47,11 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { TransferData } from '@/services/0x/api';
+import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { divide, isZero, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { withdrawCompound } from '@/wallet/actions/savings/withdraw/withdraw';
-import {
-  CompoundEstimateResponse,
-  estimateWithdrawCompound
-} from '@/wallet/actions/savings/withdraw/withdrawEstimate';
-import {
-  calcTransactionFastNativePrice,
-  isSubsidizedAllowed
-} from '@/wallet/actions/subsidized';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import {
   SmallToken,
@@ -128,8 +119,6 @@ export default Vue.extend({
       isTokenSelectedByUser: false,
       inputMode: 'TOKEN' as InputMode,
       inputAmountNative: '',
-      transferData: undefined as TransferData | undefined,
-      transferError: undefined as undefined | string,
 
       //to tx
       isSubsidizedEnabled: false,
@@ -149,7 +138,8 @@ export default Vue.extend({
     }),
     ...mapState('savings', {
       savingsAPY: 'savingsAPY',
-      savingsBalance: 'savingsBalance'
+      savingsBalance: 'savingsBalance',
+      savingsOnChainService: 'onChainService'
     }),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative',
@@ -210,49 +200,55 @@ export default Vue.extend({
       amount: string,
       asset: SmallToken
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateWithdrawCompound(
-        asset,
-        amount,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
-        throw new Error("Can't estimate action");
+      const estimation = await (
+        this.savingsOnChainService as SavingsOnChainService
+      ).estimateWithdrawCompound(asset, amount);
+
+      if (estimation.error) {
+        throw new Error('Failed to estimate withdraw');
       }
-      return resp;
+
+      return estimation;
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we can't calculate subsidized tx native price"
-        );
         return undefined;
       }
-      return calcTransactionFastNativePrice(
+      return (
+        this.savingsOnChainService as SavingsOnChainService
+      ).calculateTransactionNativePrice(
         gasPrice,
         actionGasLimit,
         this.ethPrice
       );
     },
-    checkSubsidizedAvailability(actionGasLimit: string): boolean {
+    async checkSubsidizedAvailability(
+      actionGasLimit: string
+    ): Promise<boolean> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we don't allow subsidized transaction"
-        );
         return false;
       }
 
-      return isSubsidizedAllowed(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice,
-        this.treasuryBonusNative
-      );
+      try {
+        return await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).isSubsidizedTransactionAllowed(
+          gasPrice,
+          actionGasLimit,
+          this.ethPrice
+        );
+      } catch (error) {
+        console.warn(
+          'Failed to check if subsidized transaction is allowed',
+          error
+        );
+        Sentry.captureException(error);
+        return false;
+      }
     },
     async handleTxReview(): Promise<void> {
       this.isSubsidizedEnabled = false;
@@ -267,20 +263,18 @@ export default Vue.extend({
 
         this.actionGasLimit = gasLimits.actionGasLimit;
 
-        console.info('Savings withdraw action gaslimit:', this.actionGasLimit);
-
         if (!isZero(this.actionGasLimit)) {
-          this.isSubsidizedEnabled = this.checkSubsidizedAvailability(
+          this.isSubsidizedEnabled = await this.checkSubsidizedAvailability(
             this.actionGasLimit
           );
           this.estimatedGasCost = this.subsidizedTxNativePrice(
             this.actionGasLimit
           );
         }
-      } catch (err) {
+      } catch (error) {
         this.isSubsidizedEnabled = false;
-        console.error(err);
-        Sentry.captureException("can't estimate savings deposit for subs");
+        console.warn('Failed to estimate transaction', error);
+        Sentry.captureException(error);
       } finally {
         this.isProcessing = false;
       }
@@ -306,17 +300,14 @@ export default Vue.extend({
         return;
       }
 
-      console.log('is smart treasury:', args.isSmartTreasury);
-
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await withdrawCompound(
+        await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).withdrawCompound(
           this.inputAsset,
           this.inputAmountNative,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           this.actionGasLimit,
           args.isSmartTreasury,
           async () => {
@@ -325,10 +316,10 @@ export default Vue.extend({
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.log('Savings withdraw swap reverted');
-        Sentry.captureException(err);
+        console.error('Failed to withdraw', error);
+        Sentry.captureException(error);
       }
     }
   }

@@ -1,8 +1,8 @@
-import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -32,7 +32,7 @@ export const estimateWXBTRFLYUnwrap = async (
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateWxBtrflyUnwrap',
       message: 'input amount in WEI',
@@ -41,7 +41,7 @@ export const estimateWXBTRFLYUnwrap = async (
       }
     });
 
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateWxBtrflyUnwrap',
       message: 'transaction params',
@@ -59,7 +59,7 @@ export const estimateWXBTRFLYUnwrap = async (
       const gasLimit = gasLimitObj.toString();
       const gasLimitWithBuffer = floorDivide(multiply(gasLimit, '120'), '100');
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'info',
         category: 'debit-card.top-up.estimateWxBtrflyUnwrap',
         message: 'gas estimations',
@@ -74,7 +74,7 @@ export const estimateWXBTRFLYUnwrap = async (
       throw new Error('empty gas limit');
     }
   } catch (error) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'debit-card.top-up.estimateWxBtrflyUnwrap',
       message: 'failed to estimate top up',

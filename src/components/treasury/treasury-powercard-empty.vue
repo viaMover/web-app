@@ -56,10 +56,9 @@ import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
+import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { greaterThan } from '@/utils/bigmath';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { stakePowercardCompound } from '@/wallet/actions/treasury/powercard/stake';
-import { estimateStakePowercardCompound } from '@/wallet/actions/treasury/powercard/stakeEstimate';
 
 import { ActionButton } from '@/components/buttons';
 import { LoaderForm, LoaderStep } from '@/components/forms';
@@ -104,7 +103,8 @@ export default Vue.extend({
   computed: {
     ...mapState('treasury', {
       powercardBalance: 'powercardBalance',
-      powercardState: 'powercardState'
+      powercardState: 'powercardState',
+      smartTreasuryOnChainService: 'onChainService'
     }),
     ...mapState('account', {
       networkInfo: 'networkInfo',
@@ -129,26 +129,23 @@ export default Vue.extend({
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
     async handleActivateCard(): Promise<void> {
-      const resp = await estimateStakePowercardCompound(
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
+      const estimation = await (
+        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+      ).estimateStakePowercardCompound();
 
-      if (resp.error) {
-        Sentry.captureException("Can't estimate swap");
+      if (estimation.error) {
+        Sentry.captureException("Can't estimate stake");
         this.actionError = this.$t('estimationError') as string;
         return;
       }
 
       this.txStep = 'Confirm';
       try {
-        await stakePowercardCompound(
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
-          resp.actionGasLimit,
-          resp.approveGasLimit,
+        await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).stakePowercardCompound(
+          estimation.actionGasLimit,
+          estimation.approveGasLimit,
           async () => {
             this.txStep = 'Process';
           }

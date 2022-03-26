@@ -1,6 +1,5 @@
+import { APIKeys } from '@/settings/keys';
 import { SmallTokenInfoWithIcon } from '@/wallet/types';
-
-import { APIKeys } from './../settings/keys';
 
 export enum Network {
   binance = 'binance',
@@ -12,7 +11,9 @@ export enum Network {
   ropsten = 'ropsten',
   avalanche = 'avalanche',
   arbitrum = 'arbitrum',
-  fantom = 'fantom'
+  fantom = 'fantom',
+  celo = 'celo',
+  optimism = 'optimism'
 }
 
 export type NetworkInfo = {

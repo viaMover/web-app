@@ -1,7 +1,7 @@
 import { isProduction } from '@/settings';
 import { AccountStoreState } from '@/store/modules/account/types';
 import { AugmentedModule } from '@/store/types';
-import { Network } from '@/utils/networkTypes';
+import { avaialbleNetworks } from '@/wallet/allTokens';
 
 import actions, { ActionType } from './actions';
 import getters, { GetterType } from './getters';
@@ -30,7 +30,7 @@ export default {
     isWalletLoading: true,
     balance: undefined,
     networkInfo: undefined,
-    availableNetworks: [Network.mainnet, Network.fantom, Network.polygon],
+    availableNetworks: avaialbleNetworks,
 
     gasPrices: undefined,
     gasUpdating: false,
@@ -60,7 +60,9 @@ export default {
 
     isDebitCardSectionVisible: true,
     isDepositCardSectionVisible: true,
-    isOrderOfLibertySectionVisible: true
+    isOrderOfLibertySectionVisible: true,
+    swapAPIService: undefined,
+    swapOnChainService: undefined
   },
   actions,
   getters,

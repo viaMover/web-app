@@ -68,12 +68,9 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
+import { MoverError } from '@/services/v2';
+import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
+import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -88,12 +85,6 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { depositCompound } from '@/wallet/actions/savings/deposit/deposit';
-import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
-import {
-  calcTransactionFastNativePrice,
-  isSubsidizedAllowed
-} from '@/wallet/actions/subsidized';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import {
@@ -184,12 +175,14 @@ export default Vue.extend({
       ethPrice: 'ethPrice',
       tokens: 'tokens',
       usdcPriceInWeth: 'usdcPriceInWeth',
-      provider: 'provider'
+      provider: 'provider',
+      swapService: 'swapAPIService'
     }),
     ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
     ...mapState('savings', {
       savingsAPY: 'savingsAPY',
-      savingsBalance: 'savingsBalance'
+      savingsBalance: 'savingsBalance',
+      savingsOnChainService: 'onChainService'
     }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
@@ -332,21 +325,18 @@ export default Vue.extend({
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
 
-        console.info('Savings deposit action gaslimit:', this.actionGasLimit);
-        console.info('Savings deposit approve gaslimit:', this.approveGasLimit);
-
         if (!isZero(this.actionGasLimit)) {
-          this.isSubsidizedEnabled = this.checkSubsidizedAvailability(
+          this.isSubsidizedEnabled = await this.checkSubsidizedAvailability(
             this.actionGasLimit
           );
           this.estimatedGasCost = this.subsidizedTxNativePrice(
             this.actionGasLimit
           );
         }
-      } catch (err) {
+      } catch (error) {
+        console.warn('Failed to estimate transaction', error);
+        Sentry.captureException(error);
         this.isSubsidizedEnabled = false;
-        console.error(err);
-        Sentry.captureException("can't estimate savings deposit for subs");
         return;
       } finally {
         this.isProcessing = false;
@@ -358,58 +348,68 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we can't calculate subsidized tx native price"
-        );
         return undefined;
       }
-      return calcTransactionFastNativePrice(
+
+      return (
+        this.savingsOnChainService as SavingsOnChainService
+      ).calculateTransactionNativePrice(
         gasPrice,
         actionGasLimit,
         this.ethPrice
       );
     },
-    checkSubsidizedAvailability(actionGasLimit: string): boolean {
+    async checkSubsidizedAvailability(
+      actionGasLimit: string
+    ): Promise<boolean> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
+
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
-        console.log(
-          "With empty parameter we don't allow subsidized transaction"
-        );
         return false;
       }
 
       if (this.inputAsset?.address === 'eth') {
-        console.info('Subsidizing for deposit ETH denied');
         return false;
       }
 
-      return isSubsidizedAllowed(
-        gasPrice,
-        actionGasLimit,
-        this.ethPrice,
-        this.treasuryBonusNative
-      );
+      try {
+        return await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).isSubsidizedTransactionAllowed(gasPrice, actionGasLimit, ethPrice);
+      } catch (error) {
+        console.warn(
+          'Failed to check if subsidized transaction is allowed',
+          error
+        );
+        Sentry.captureException(error);
+        return false;
+      }
     },
     async estimateAction(
       inputAmount: string,
       inputAsset: SmallToken,
       transferData: TransferData | undefined
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateDepositCompound(
-        inputAsset,
-        this.outputUSDCAsset,
-        inputAmount,
-        transferData,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
+      try {
+        const estimation = await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).estimateDepositCompound(
+          inputAsset,
+          this.outputUSDCAsset,
+          inputAmount,
+          transferData
+        );
+
+        if (estimation.error) {
+          throw new Error('Failed to estimate action');
+        }
+
+        return estimation;
+      } catch (error) {
         this.transferError = this.$t('estimationError') as string;
-        throw new Error("Can't estimate action");
+        throw error;
       }
-      return resp;
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
@@ -423,7 +423,6 @@ export default Vue.extend({
 
       try {
         if (!this.isSwapNeeded) {
-          console.log('Dont need transfer, token is USDC');
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -446,13 +445,14 @@ export default Vue.extend({
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
             const inputInWei = toWei(value, this.inputAsset.decimals);
-            this.transferData = await getTransferData(
+            this.transferData = await (
+              this.swapService as ZeroXAPIService
+            ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
-              '10',
-              this.networkInfo.network
+              '10'
             );
             this.transferError = undefined;
           } else {
@@ -465,13 +465,14 @@ export default Vue.extend({
               ),
               this.inputAsset.decimals
             );
-            this.transferData = await getTransferData(
+            this.transferData = await (
+              this.swapService as ZeroXAPIService
+            ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
-              '10',
-              this.networkInfo.network
+              '10'
             );
             this.transferError = undefined;
             this.inputAmount = fromWei(
@@ -480,14 +481,17 @@ export default Vue.extend({
             );
           }
         }
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
         }
-        console.error(`transfer error:`, err);
+
+        Sentry.captureException(error);
+        console.error(`Transfer error`, error);
         this.transferData = undefined;
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';
@@ -572,19 +576,16 @@ export default Vue.extend({
         return;
       }
 
-      console.log('is smart treasury:', args.isSmartTreasury);
-
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        await depositCompound(
+        await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).depositCompound(
           this.inputAsset,
           this.outputUSDCAsset,
           this.inputAmount,
           this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           args.isSmartTreasury,
           async () => {
             this.transactionStep = 'Process';
@@ -594,10 +595,10 @@ export default Vue.extend({
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.log('Savings deposit swap reverted');
-        Sentry.captureException(err);
+        console.error('Failed to deposit', error);
+        Sentry.captureException(error);
       }
     }
   }

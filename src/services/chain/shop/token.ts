@@ -1,9 +1,9 @@
-import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { TokenData } from '@/store/modules/shop/types';
 import { floorDivide, greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -97,7 +97,7 @@ export const claimNibbleToken = async (
       );
       gasLimit = gasLimitWithBuffer;
     } else {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: 'nibble-shop.claim.claimNibbleToken',
         message: 'failed to estimate claim txn',
@@ -108,7 +108,7 @@ export const claimNibbleToken = async (
       gasLimit = '0';
     }
   } catch (err) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'nibble-shop.claim.claimNibbleToken',
       message: 'failed to estimate claim txn',
@@ -136,7 +136,7 @@ export const claimNibbleToken = async (
         changeStep('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           category: 'nibble-shop.claim.claim',
           message: 'transaction receipt',
@@ -191,7 +191,7 @@ export const redeemNibbleToken = async (
       );
       gasLimit = gasLimitWithBuffer;
     } else {
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'error',
         category: 'nibble-shop.redeem.redeemNibbleToken',
         message: 'failed to estimate redeem txn',
@@ -202,7 +202,7 @@ export const redeemNibbleToken = async (
       gasLimit = '0';
     }
   } catch (err) {
-    Sentry.addBreadcrumb({
+    addSentryBreadcrumb({
       type: 'error',
       category: 'nibble-shop.redeem.redeemNibbleToken',
       message: 'failed to estimate redeem txn',
@@ -229,7 +229,7 @@ export const redeemNibbleToken = async (
         changeStep('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           category: 'nibble-shop.redeem.redeem',
           message: 'transaction receipt',

@@ -1,5 +1,6 @@
 import VueI18n from 'vue-i18n';
 
+import { ValidationErrorReason } from '@/services/v2/api/0x/types';
 import { isFeatureEnabled } from '@/settings';
 import { NftAssetId } from '@/store/modules/nft/types';
 
@@ -82,6 +83,10 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSwapsSubheading: 'Swap any tokens with @:treasury.lblTreasury benefits',
     btnSwap: {
       simple: 'Swap'
+    },
+    errors: {
+      [ValidationErrorReason.InsufficientAssetLiquidity]:
+        'Cannot execute swap. Not enough liquidity'
     }
   },
   debitCard: {

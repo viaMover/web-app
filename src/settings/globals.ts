@@ -34,6 +34,9 @@ export interface Globals {
   isMultiChainMastheadEnabled: GlobalSettings;
   isHomeSwapModalEnabled: GlobalSettings;
   isOrderOfLibertyNFTEnabled: GlobalSettings;
+  isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
+  isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
+  isGasListenerEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -60,7 +63,7 @@ const values: Globals = {
   isDebitCardChangeSkinEnabled: false,
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
-  isSwapEnabled: [Network.mainnet],
+  isSwapEnabled: [Network.mainnet, Network.fantom, Network.polygon],
   isExplorerEnabled: [
     Network.mainnet,
     Network.binance,
@@ -84,7 +87,14 @@ const values: Globals = {
   isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
-  isOrderOfLibertyNFTEnabled: [Network.mainnet, Network.polygon, Network.fantom]
+  isOrderOfLibertyNFTEnabled: [
+    Network.mainnet,
+    Network.polygon,
+    Network.fantom
+  ],
+  isMoverAPISavingsServiceFieldsReducerEnabled: true,
+  isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
+  isGasListenerEnabled: [Network.mainnet]
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(
