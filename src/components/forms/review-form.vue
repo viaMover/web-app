@@ -7,9 +7,9 @@
         <slot name="first-token-image">
           <token-image
             :address="token.address"
+            class="no-margin item-coin"
             :src="token.logo"
             :symbol="token.symbol"
-            wrapper-class="item-coin"
           />
         </slot>
       </div>

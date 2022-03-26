@@ -38,7 +38,9 @@
             >
               <navigation-section-item-image
                 :description="
-                  $t('savingsPlus.leftRail.lblDepositInSPDescription')
+                  $t('savingsPlus.leftRail.lblDepositInSPDescription', {
+                    value: formattedAPY
+                  })
                 "
                 description-class="disabled"
                 navigate-to="savings-plus-deposit"

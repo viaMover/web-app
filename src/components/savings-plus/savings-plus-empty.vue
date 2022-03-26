@@ -26,12 +26,12 @@
         :title="$t('savingsPlus.empty.lblUpTo', { value: currentVariableAPY })"
       />
       <product-info-item
-        :description="$t('savingsPlus.empty.lblAutomaticLeverage')"
-        :title="$t('savingsPlus.empty.lblUpTo', { value: currentVariableAPY })"
+        :description="$t('savingsPlus.empty.lblZapsFromChain')"
+        :title="$t('savingsPlus.empty.lblMultichainZaps')"
       />
       <product-info-item
-        :description="$t('savingsPlus.empty.lblMoreChains')"
-        :title="$t('savingsPlus.empty.lblMultichainZaps')"
+        :description="$t('savingsPlus.empty.lblZapsIntoUSDC')"
+        :title="$t('savingsPlus.empty.lblTokenZaps')"
       />
     </product-info-wrapper>
 

@@ -1314,13 +1314,15 @@ if (isFeatureEnabled('isSavingsPlusEnabled')) {
     lblSPBalance: 'Savings Plus Balance',
     lblInProgress: 'In progress',
     btn: {
-      view: 'View'
+      view: 'View',
+      withdrawFromSP: 'Withdraw from Savings Plus'
     },
     empty: {
       lblUpTo: 'up to {value}',
       lblMultichainZaps: 'Multichain Zaps',
-      lblMoreChains: 'More chains, more tokens',
-      lblAutomaticLeverage: 'Automatic leverage',
+      lblZapsFromChain: 'Zap from any supported chain',
+      lblTokenZaps: 'Token Zaps',
+      lblZapsIntoUSDC: 'Zaps into USDC from any token',
       lblStartSaving: 'Start saving',
       lblAPYOnAllSavings: 'APY on all savings',
       txtLeveragedDeposit:
@@ -1332,8 +1334,7 @@ if (isFeatureEnabled('isSavingsPlusEnabled')) {
       lblMySP: 'My Savings Plus',
       lblManageSP: 'Manage Savings Plus',
       lblDepositInSP: 'Deposit in Savings Plus',
-      lblDepositInSPDescription:
-        'Get up to 120% on leveraged multichain savings',
+      lblDepositInSPDescription: 'Get up to {value} on multichain savings',
       lblWithdrawFromSP: 'Withdraw from Savings Plus',
       lblWithdrawFromSPDescription:
         'Remove your assets from savings fully or partially',
@@ -1344,7 +1345,7 @@ if (isFeatureEnabled('isSavingsPlusEnabled')) {
       txtUSDCCoinIsAStable:
         'USD Coin is a stable asset and the easiest way to grow your savings Plus. Your returns will also be in USDC.',
       txtAssetWillBeConverted:
-        'This token will be automatically swapped for USDC and deposited in the active yielding strategy. Your return will also be in USDC (USD Coin).',
+        'This token will be automatically swapped for USDC, and deposited in the savings position. Your return will also be in USDC (USD Coin).',
       lblWhatDoWeDeposit: 'What do we deposit',
       txtYouCouldEarnInYear:
         'You could earn in a year. Considering all changes.',
@@ -1355,8 +1356,9 @@ if (isFeatureEnabled('isSavingsPlusEnabled')) {
       lblDepositInSP: 'Deposit in Savings Plus',
       lblEstimatedVariableAPY: 'Estimated variable APY',
       lblBridgingFee: 'Bridging fee',
+      lblDepositingFrom: 'Depositing from',
       txtDepositDescription:
-        'Savings Plus is a multichain leveraged savings. Your input token will be swapped, leveraged and deposited to earn yield.'
+        'Savings Plus is multichain savings. Your input token will be swapped, and deposited to earn yield across various network'
     },
     withdraw: {
       txtWithdrawDescription:
@@ -1365,13 +1367,12 @@ if (isFeatureEnabled('isSavingsPlusEnabled')) {
       lblWhatDoWeWithdraw: 'What do we withdraw',
       txtIfYouKeepSavings:
         'If you keep your deposit, you could earn in a year.',
-      lblAmountWeDepositIn: 'Amount we withdraw in',
+      lblAmountWeWithdrawIn: 'Amount we withdraw in',
       txtTokenDescription:
         'You will receive your original deposit together with the earned interest.',
       lblReviewTransaction: 'Review transaction',
       lblReviewYourWithdraw: 'Review your withdrawal',
       lblTotalAmountBack: 'The total amount you receive back',
-      lblAmountWeWithdrawIn: 'Amount we withdraw',
       lblIncludingAccumulatedInterest: 'Including accumulated interest'
     },
     overview: {

@@ -131,5 +131,7 @@ const networkStableCoinMap: NetworkStableCoinMap<typeof Network> = {
   [Network.rinkeby]: undefined,
   [Network.ropsten]: undefined,
   [Network.avalanche]: undefined,
-  [Network.arbitrum]: undefined
+  [Network.arbitrum]: undefined,
+  [Network.celo]: undefined,
+  [Network.optimism]: undefined
 };

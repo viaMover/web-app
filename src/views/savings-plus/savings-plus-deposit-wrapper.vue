@@ -15,6 +15,7 @@
       :input-asset-heading="$t('savingsPlus.deposit.lblWhatDoWeDeposit')"
       :input-mode="inputMode"
       :is-loading="isLoading"
+      is-multichain
       :is-processing="isProcessing"
       :operation-description="$t('savingsPlus.deposit.txtYouCouldEarnInYear')"
       :operation-title="estimatedAnnualEarning"
@@ -59,8 +60,12 @@
     >
       <template v-slot:additional-items>
         <div class="item">
+          <h2>{{ $t('savingsPlus.deposit.lblDepositingFrom') }}</h2>
+          <span> {{ formattedNetworkInfo }}</span>
+        </div>
+        <div class="item">
           <h2>{{ $t('savingsPlus.deposit.lblBridgingFee') }}</h2>
-          <span> {{ bridgingFee }}}</span>
+          <span> {{ bridgingFee }}</span>
         </div>
         <div class="item">
           <h2>{{ $t('savingsPlus.deposit.lblEstimatedVariableAPY') }}</h2>
@@ -98,7 +103,6 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { estimateDepositCompound } from '@/wallet/actions/savings/deposit/depositEstimate';
 import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import {
@@ -194,6 +198,9 @@ export default Vue.extend({
       APY: 'APY',
       balance: 'balance'
     }),
+    formattedNetworkInfo(): string {
+      return `${this.networkInfo.name}`;
+    },
     bridgingFee(): string {
       return '84.19 USDc';
     },
@@ -357,20 +364,7 @@ export default Vue.extend({
       inputAsset: SmallToken,
       transferData: TransferData | undefined
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateDepositCompound(
-        inputAsset,
-        this.outputUSDCAsset,
-        inputAmount,
-        transferData,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
-        this.transferError = this.$t('estimationError') as string;
-        throw new Error("Can't estimate action");
-      }
-      return resp;
+      return { error: false, actionGasLimit: '0', approveGasLimit: '0' };
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);

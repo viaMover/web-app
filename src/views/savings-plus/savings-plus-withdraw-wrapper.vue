@@ -14,11 +14,12 @@
       :input-asset-heading="$t('savingsPlus.withdraw.lblWhatDoWeWithdraw')"
       :input-mode="inputMode"
       :is-loading="isLoading"
+      is-multichain
       :is-processing="isProcessing"
       :operation-description="$t('savingsPlus.withdraw.txtIfYouKeepSavings')"
       :operation-title="estimatedAnnualEarnings"
       :output-asset-heading-text="
-        $t('savingsPlus.withdraw.lblAmountWeDepositIn')
+        $t('savingsPlus.withdraw.lblAmountWeWithdrawIn')
       "
       :selected-token-description="
         $t('savingsPlus.withdraw.txtTokenDescription')
@@ -31,7 +32,7 @@
     <review-form
       v-else-if="step === 'review'"
       :amount="inputAmountNative"
-      :button-text="$t('savingsPlus.withdraw.lblWithdrawFromSavings')"
+      :button-text="$t('savingsPlus.btn.withdrawFromSP')"
       :header-title="$t('savingsPlus.withdraw.lblReviewYourWithdraw')"
       :image="savings"
       :input-amount-native-title="$t('savingsPlus.withdraw.lblTotalAmountBack')"
@@ -64,10 +65,7 @@ import { stableCoinForNetwork } from '@/settings';
 import { divide, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import {
-  CompoundEstimateResponse,
-  estimateWithdrawCompound
-} from '@/wallet/actions/savings/withdraw/withdrawEstimate';
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import {
   SmallToken,
   SmallTokenInfoWithIcon,
@@ -213,17 +211,7 @@ export default Vue.extend({
       amount: string,
       asset: SmallToken
     ): Promise<CompoundEstimateResponse> {
-      const resp = await estimateWithdrawCompound(
-        asset,
-        amount,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
-        throw new Error("Can't estimate action");
-      }
-      return resp;
+      return { error: false, actionGasLimit: '0', approveGasLimit: '0' };
     },
     async handleTxReview(): Promise<void> {
       this.actionGasLimit = '0';
