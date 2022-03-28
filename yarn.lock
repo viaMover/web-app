@@ -16174,6 +16174,13 @@ web3modal-vue@./libs/web3modal-vue-v1.0.7.tgz:
     detect-browser "^5.2.0"
     vue-styled-components "^1.6.0"
 
+web3modal-vue@./libs/web3modal-vue-v1.0.8.tgz:
+  version "1.0.8"
+  resolved "./libs/web3modal-vue-v1.0.8.tgz#102f8976dbe1b16bbb7e7f4328410f7805325879"
+  dependencies:
+    detect-browser "^5.2.0"
+    vue-styled-components "^1.6.0"
+
 webidl-conversions@^4.0.2:
   version "4.0.2"
   resolved "https://registry.npm.taobao.org/webidl-conversions/download/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"

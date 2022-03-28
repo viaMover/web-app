@@ -63,7 +63,7 @@
     "vuex": "^3.6.2",
     "web3": "^v1.6.0",
     "web3-eth-abi": "^1.6.1",
-    "web3modal-vue": "./libs/web3modal-vue-v1.0.7.tgz"
+    "web3modal-vue": "./libs/web3modal-vue-v1.0.8.tgz"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.14.5",
