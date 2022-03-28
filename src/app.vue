@@ -44,6 +44,7 @@ import Mobile from '@/views/mobile.vue';
 import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { TopMessageModal } from './components/modals';
+import { sendGlobalTopMessageEvent } from './global-event-bus';
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/types';
 import { InitCallbacks } from './web3/callbacks';
@@ -77,6 +78,9 @@ export default Vue.extend({
             appName: 'Mover App',
             infuraId: APIKeys.INFURA_PROJECT_ID
           }
+        },
+        metamask: {
+          package: {}
         }
       }
     };
@@ -130,13 +134,23 @@ export default Vue.extend({
       const web3modal = this.$refs.web3modal as any;
       this.setWeb3Modal(web3modal);
       if (web3modal.cachedProvider) {
-        const provider = await web3modal.connect();
-        const providerWithCb = await InitCallbacks(provider);
-        await this.initWallet({
-          provider: providerWithCb.provider,
-          providerBeforeCloseCb: providerWithCb.onDisconnectCb,
-          injected: false
-        } as InitWalletPayload);
+        try {
+          const provider = await web3modal.connect();
+          const providerWithCb = await InitCallbacks(provider);
+          await this.initWallet({
+            provider: providerWithCb.provider,
+            providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+            injected: false
+          } as InitWalletPayload);
+        } catch (error) {
+          console.log("Can't connect to cached provider due to: ", error);
+          web3modal.clearCachedProvider();
+          sendGlobalTopMessageEvent(
+            (this.$t('errors.default') as string) ??
+              'Oh no. Something went wrong',
+            'error'
+          );
+        }
       }
       this.setIsDetecting(false);
     });
