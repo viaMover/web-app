@@ -536,6 +536,16 @@ const actions: ActionFuncs<
         .setEthPriceGetterHandler(() => getters.ethPrice);
       commit('setSwapOnChainService', swapOnChainService);
     }
+
+    if (isFeatureEnabled('isSavingsPlusEnabled', state.networkInfo.network)) {
+      const savingsPlusAPIService = new SavingsPlusMoverAPIService(
+        state.currentAddress,
+        state.networkInfo.network
+      );
+      dispatch('savingsPlus/setAPIService', savingsPlusAPIService, {
+        root: true
+      });
+    }
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
