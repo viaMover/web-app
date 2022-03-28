@@ -288,10 +288,12 @@ export default Vue.extend({
         return this.forceTokenArray;
       }
 
+      const searchTermLower = searchTerm.toLowerCase();
+
       return this.forceTokenArray.filter(
         (t) =>
-          t.symbol.toLowerCase().includes(searchTerm) ||
-          t.name.toLowerCase().includes(searchTerm)
+          t.symbol.toLowerCase().includes(searchTermLower) ||
+          t.name.toLowerCase().includes(searchTermLower)
       );
     },
     filterTokens<T extends TokenWithBalance | Token>(

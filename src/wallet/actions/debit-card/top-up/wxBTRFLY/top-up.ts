@@ -1,9 +1,9 @@
-import * as Sentry from '@sentry/vue';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { lookupAddress, WX_BTRFLY_ABI } from '@/wallet/references/data';
@@ -41,7 +41,7 @@ export const unwrap = async (
 
   const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-  Sentry.addBreadcrumb({
+  addSentryBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.unwrap',
     message: 'input amount in WEI',
@@ -50,7 +50,7 @@ export const unwrap = async (
     }
   });
 
-  Sentry.addBreadcrumb({
+  addSentryBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.unwrap',
     message: 'transaction params',
@@ -59,7 +59,7 @@ export const unwrap = async (
     }
   });
 
-  Sentry.addBreadcrumb({
+  addSentryBreadcrumb({
     type: 'info',
     category: 'debit-card.top-up.unwrap',
     message: 'currency'
@@ -69,7 +69,7 @@ export const unwrap = async (
     (contract.methods.unwrapToBTRFLY(inputAmountInWEI) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           category: 'debit-card.top-up.unwrap',
           message: 'transaction hash',
@@ -82,7 +82,7 @@ export const unwrap = async (
         changeStepToProcess('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'debug',
           category: 'debit-card.top-up.unwrap',
           message: 'transaction receipt',

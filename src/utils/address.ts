@@ -1,4 +1,7 @@
 import { BigNumber } from 'bignumber.js';
+
+import { Network } from '@/utils/networkTypes';
+import { getBaseAssetData } from '@/wallet/references/data';
 export const sameAddress = (
   addr1?: string | null,
   addr2?: string | null
@@ -14,9 +17,14 @@ export const sameAddress = (
   return addr1.toLowerCase() === addr2.toLowerCase();
 };
 
-export const isEth = (addr: string): boolean => addr === 'eth';
+export const isBaseAsset = (addr: string, network?: Network): boolean => {
+  return sameAddress(
+    getBaseAssetData(network ?? Network.mainnet).address,
+    addr
+  );
+};
 
-export const getPureEthAddress = (): string =>
+export const getPureBaseAssetAddress = (): string =>
   '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
 export const convertStringToHexWithPrefix = (stringToConvert: string): string =>

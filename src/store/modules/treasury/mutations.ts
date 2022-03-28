@@ -1,11 +1,14 @@
-import { PowercardState } from '@/services/chain';
-import { TreasuryInfo } from '@/services/mover';
 import {
-  INFO_TIME_EXPIRE,
-  RECEIPT_TIME_EXPIRE
-} from '@/store/modules/treasury/actions';
+  MoverAPISmartTreasuryService,
+  TreasuryInfo
+} from '@/services/v2/api/mover/smart-treasury';
+import {
+  PowercardState,
+  SmartTreasuryOnChainService
+} from '@/services/v2/on-chain/mover/smart-treasury';
 import { MutationFuncs } from '@/store/types';
 
+import { INFO_TIME_EXPIRE, RECEIPT_TIME_EXPIRE } from './actions';
 import { SetTreasuryReceiptPayload, TreasuryStoreState } from './types';
 
 type Mutations = {
@@ -22,6 +25,8 @@ type Mutations = {
   setPowercardState: void;
   setPowercardActiveTime: void;
   setPowercardCooldownTime: void;
+  setOnChainService: void;
+  setAPIService: void;
 };
 
 const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
@@ -76,6 +81,12 @@ const mutations: MutationFuncs<Mutations, TreasuryStoreState> = {
   },
   setPowercardCooldownTime(state, cooldownTime: number): void {
     state.powercardCooldownTime = cooldownTime;
+  },
+  setOnChainService(state, service: SmartTreasuryOnChainService): void {
+    state.onChainService = service;
+  },
+  setAPIService(state, service: MoverAPISmartTreasuryService): void {
+    state.apiService = service;
   }
 };
 

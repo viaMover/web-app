@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Network } from '@/utils/networkTypes';
 
 import { Result } from '../responses';
+import { CoingeckoPlatform } from './mapper';
 
 export enum NetworkAlias {
   Eth = 'eth',
@@ -97,7 +98,7 @@ export const getUsdcPriceInEur = async (): Promise<Result<string, string>> => {
 };
 
 export const getPriceByAddress = async (
-  platformId: string,
+  platformId: CoingeckoPlatform,
   addresses: Array<string>,
   currencies: Array<string>,
   opts?: GetSimplePriceOptions

@@ -118,6 +118,10 @@ export default Vue.extend({
         close: () => {
           // do nothing.
         }
+      },
+      rpc: {
+        137: 'https://matic-mainnet.chainstacklabs.com',
+        250: 'https://rpc.ftm.tools/'
       }
     });
     provider.enable().then(async () => {

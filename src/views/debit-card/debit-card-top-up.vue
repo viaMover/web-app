@@ -73,8 +73,9 @@ import {
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
 import { getUsdcPriceInEur } from '@/services/coingecko/tokens';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { isEth, sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
@@ -285,7 +286,9 @@ export default Vue.extend({
           if (this.isTokenSelectedByUser) {
             return;
           }
-          const eth = newVal.find((t: TokenWithBalance) => isEth(t.address));
+          const eth = newVal.find((t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo?.network)
+          );
           if (eth !== undefined) {
             this.inputAsset = eth;
             return;
@@ -375,7 +378,7 @@ export default Vue.extend({
       );
       if (resp.error) {
         this.transferError = this.$t('estimationError') as string;
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.estimateAction',
           message: 'failed to estimate top-up',
@@ -519,7 +522,7 @@ export default Vue.extend({
 
       const res = await getUsdcPriceInEur();
       if (res.isError) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.getUsdcPriceInEur',
           message: 'failed to get USDC price in EUR',
@@ -704,7 +707,7 @@ export default Vue.extend({
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
       if (this.inputAsset === undefined) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
           message: 'inputAsset is empty during `handleTxStart`'
@@ -714,7 +717,7 @@ export default Vue.extend({
       }
 
       if (this.inputAmount === '') {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
           message: 'inputAmount is empty during `handleTxStart`'
@@ -724,7 +727,7 @@ export default Vue.extend({
       }
 
       if (this.actionGasLimit === undefined) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
           message: 'action gas limit is empty during `handleTxStart`'
@@ -734,7 +737,7 @@ export default Vue.extend({
       }
 
       if (this.approveGasLimit === undefined) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
           message: 'approve gas limit is empty during `handleTxStart`'
@@ -744,7 +747,7 @@ export default Vue.extend({
       }
 
       if (this.unwrapGasLimit === undefined) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
           message: 'unwrap gas limit is empty during `handleTxStart`'
@@ -754,7 +757,7 @@ export default Vue.extend({
       }
 
       if (this.isNeedTransfer && this.transferData === undefined) {
-        Sentry.addBreadcrumb({
+        addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
           message:
@@ -764,7 +767,7 @@ export default Vue.extend({
         return;
       }
 
-      Sentry.addBreadcrumb({
+      addSentryBreadcrumb({
         type: 'debug',
         category: 'debit-card.top-up.handleTxStart',
         data: {
