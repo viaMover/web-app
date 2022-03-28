@@ -16154,10 +16154,6 @@ web3modal-vue@./libs/web3modal-vue-v1.0.7.tgz:
     detect-browser "^5.2.0"
     vue-styled-components "^1.6.0"
 
-"web3modal-vue@link:./../web3modal-vue":
-  version "0.0.0"
-  uid ""
-
 webidl-conversions@^4.0.2:
   version "4.0.2"
   resolved "https://registry.npm.taobao.org/webidl-conversions/download/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
