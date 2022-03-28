@@ -11,7 +11,7 @@ import { formatPercents } from '@/utils/format';
 
 export type Slippage = '10' | '5' | '1';
 
-const avaialbelSlippages = Array<Slippage>('10', '5', '1');
+const availabelSlippages = Array<Slippage>('10', '5', '1');
 
 export default Vue.extend({
   name: 'SlippageSelector',
@@ -23,8 +23,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      availabelSlippages: avaialbelSlippages,
-      selectedSlippageIndex: avaialbelSlippages.findIndex(
+      availabelSlippages: availabelSlippages,
+      selectedSlippageIndex: availabelSlippages.findIndex(
         (s) => s === this.slippage
       )
     };
