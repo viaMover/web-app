@@ -1,7 +1,6 @@
 import VueI18n from 'vue-i18n';
 
 import { ValidationErrorReason } from '@/services/v2/api/0x/types';
-import { isFeatureEnabled } from '@/settings';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
@@ -995,11 +994,8 @@ const messages: VueI18n.LocaleMessageObject = {
     txtOrderOfLiberty:
       'Humanitarian-only aid dedicated to the most vulnerable groups that need help now.',
     lblOrderOfLibertyHeading: 'Help Ukraine'
-  }
-};
-
-if (isFeatureEnabled('isVaultsRaceEnabled')) {
-  messages.vaultsRace = {
+  },
+  vaultsRace: {
     lblGames: 'Games',
     txtGamesAlt: 'Vaults race promo image',
     lblMyVaults: 'My Vaults',
@@ -1038,11 +1034,8 @@ if (isFeatureEnabled('isVaultsRaceEnabled')) {
       lblPositionInTheRace: 'Position in the race',
       lblTotalPointsScored: 'Total points scored'
     }
-  };
-}
-
-if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  messages.radar = {
+  },
+  radar: {
     lblTokenOfTheDay: 'Token of the day',
     liveUpdates: {
       lblLiveUpdates: 'Live updates',
@@ -1068,18 +1061,12 @@ if (isFeatureEnabled('isReleaseRadarEnabled')) {
     btnSearch: {
       emoji: '🔍'
     }
-  };
-}
-
-if (isFeatureEnabled('isBondsEnabled')) {
-  messages.bonds = {
+  },
+  bonds: {
     icon: '🏦',
     lblBonds: 'Bonds'
-  };
-}
-
-if (isFeatureEnabled('isNibbleShopEnabled')) {
-  messages.nibbleShop = {
+  },
+  nibbleShop: {
     lblNibbleShop: 'Nibble shop',
     lblNoSweetAndSourNFTHeading: "That's sour! You have no Sweet & Sour",
     lblNoSweetAndSourNFTSubheading:
@@ -1185,11 +1172,8 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
         required: 'Post code is required'
       }
     }
-  };
-}
-
-if (isFeatureEnabled('isEarningsEnabled')) {
-  messages.earnings = {
+  },
+  earnings: {
     icon: '🌻',
     lblEarnings: 'Earnings',
     lblMyEarnings: 'My Earnings',
@@ -1297,13 +1281,10 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtNavIconAlt: 'Olympus',
       lblOHMTokenAlt: 'Olympus token image'
     }
-  };
-}
-
-if (isFeatureEnabled('isSavingsPlusEnabled')) {
-  messages.savingsPlus = {
+  },
+  savingsPlus: {
     lblSavingsPlus: 'Savings Plus'
-  };
-}
+  }
+};
 
 export default messages;
