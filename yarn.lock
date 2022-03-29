@@ -16167,16 +16167,9 @@ web3@^v1.6.0:
     web3-shh "1.6.0"
     web3-utils "1.6.0"
 
-web3modal-vue@./libs/web3modal-vue-v1.0.7.tgz:
-  version "1.0.7"
-  resolved "./libs/web3modal-vue-v1.0.7.tgz#769eefad50fa9a8013d270b555b504bdee327293"
-  dependencies:
-    detect-browser "^5.2.0"
-    vue-styled-components "^1.6.0"
-
-web3modal-vue@./libs/web3modal-vue-v1.0.8.tgz:
-  version "1.0.8"
-  resolved "./libs/web3modal-vue-v1.0.8.tgz#102f8976dbe1b16bbb7e7f4328410f7805325879"
+web3modal-vue@./libs/web3modal-vue-v1.0.9.tgz:
+  version "1.0.9"
+  resolved "./libs/web3modal-vue-v1.0.9.tgz#16e4117417111d15298f1a42285b48b93bc9e808"
   dependencies:
     detect-browser "^5.2.0"
     vue-styled-components "^1.6.0"
