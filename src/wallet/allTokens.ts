@@ -18,7 +18,7 @@ type AssetListType = {
   imageUrl?: string;
 };
 
-export const avaialbleNetworks = [
+export const availableNetworks = [
   Network.mainnet,
   Network.fantom,
   Network.polygon
@@ -38,7 +38,7 @@ const getAssetList = (network: Network): Array<AssetListType> => {
 };
 export const getAllTokens = (network: Network): Array<Token> => {
   let assets: Array<Token>;
-  if (avaialbleNetworks.includes(network)) {
+  if (availableNetworks.includes(network)) {
     assets = getAssetList(network).map(
       (asset) =>
         ({
