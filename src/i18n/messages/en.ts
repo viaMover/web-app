@@ -269,7 +269,7 @@ const messages: VueI18n.LocaleMessageObject = {
         length: 'Security code should contain exactly {length} symbols'
       },
       gender: {
-        required: 'Gender is requied'
+        required: 'Gender is required'
       },
       title: {
         required: 'Title is required'
