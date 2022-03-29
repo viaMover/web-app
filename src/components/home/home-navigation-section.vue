@@ -256,9 +256,9 @@ export default Vue.extend({
         ]
       } as PictureDescriptor,
       stakingUBTPicture: {
-        src: require('@/assets/images/savings-plus@1x.png'),
+        src: require('@/assets/images/StakingUBT@1x.png'),
         sources: [
-          { src: require('@/assets/images/savings-plus@2x.png'), variant: '2x' }
+          { src: require('@/assets/images/StakingUBT@2x.png'), variant: '2x' }
         ]
       } as PictureDescriptor
     };
