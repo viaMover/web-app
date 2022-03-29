@@ -575,7 +575,7 @@ const routes: Array<RouteConfig> = [
       customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
         return isFeatureEnabled(
-          'isStakingUBTEnabled',
+          'isStakingUbtEnabled',
           store.state?.account?.networkInfo?.network
         );
       }

@@ -364,7 +364,7 @@ export default Vue.extend({
       );
     },
     isStakingUBTEnabled(): boolean {
-      return isFeatureEnabled('isStakingUBTEnabled', this.networkInfo?.network);
+      return isFeatureEnabled('isStakingUbtEnabled', this.networkInfo?.network);
     },
     stakingUBTBalance(): string {
       return `$${formatToNative(this.stakingUBTBalanceNative)}`;

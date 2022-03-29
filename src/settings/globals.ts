@@ -34,7 +34,8 @@ export interface Globals {
   isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
   isGasListenerEnabled: GlobalSettings;
-  isStakingUBTEnabled: GlobalSettings;
+  isStakingUbtEnabled: GlobalSettings;
+  isStakingUbtFieldReducerEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -92,7 +93,8 @@ const values: Globals = {
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
-  isStakingUBTEnabled: [Network.mainnet]
+  isStakingUbtEnabled: [Network.mainnet],
+  isStakingUbtFieldReducerEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

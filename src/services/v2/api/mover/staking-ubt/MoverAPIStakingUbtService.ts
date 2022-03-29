@@ -31,7 +31,7 @@ export class MoverAPIStakingUbtService extends MoverAPIService {
       })
     );
     this.isFieldsReducerEnabled = isFeatureEnabled(
-      'isStakingUBTFieldReducerEnabled',
+      'isStakingUbtFieldReducerEnabled',
       network
     );
   }
