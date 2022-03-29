@@ -1310,7 +1310,18 @@ const messages: VueI18n.LocaleMessageObject = {
       'Once you deposit your assets in staking, Mover is constantly searching for the highest staking option on UBT staking. Mover does automatic rebalancing, yield collection, and capital optimization.',
     txtWithdrawDescription:
       'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield',
-    txtKeepEstimation: 'If you keep your savings, you could earn in a year.'
+    txtKeepEstimation: 'If you keep your savings, you could earn in a year.',
+    statements: {
+      lblMonthStatisticFallback: 'Month statistic',
+      lblBalance: '{month} balance',
+      lblDeposits: '{month} deposits',
+      lblWithdrawals: '{month} withdrawals',
+      lblSavedFees: 'Saved fees',
+      lblPayoutsToTreasury: 'Payouts to @:treasury.lblTreasury',
+      lblTotalEarnedInMonth: 'Total earned in {month}',
+      lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}'
+    },
+    lblLoadMonthStatError: 'Failed to load Staking monthly statements'
   }
 };
 
