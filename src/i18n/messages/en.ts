@@ -1284,6 +1284,28 @@ const messages: VueI18n.LocaleMessageObject = {
   },
   savingsPlus: {
     lblSavingsPlus: 'Savings Plus'
+  },
+  stakingUBT: {
+    lblMain: 'My Staking',
+    lblManage: 'Manage Staking',
+    lblDeposit: 'Deposit in Staking',
+    txtDeposit: 'Simple staking in friendly protocols',
+    lblWithdraw: 'Withdraw from Staking',
+    txtWithdraw: 'Remove your assets from staking fully or partially',
+    lblBalance: 'Staking Balance',
+    lblStakingStatements: 'Staking Statements',
+    btnView: 'View',
+    txtYieldEarnedIn: 'Yield earned in {month}',
+    txtApproximateEarnEstimation:
+      'You could approximately earn in a year if you deposit {amount} now.',
+    txtIfYouDeposit: 'If you deposit in Staking now, you are getting',
+    btnStartStaking: 'Start staking',
+    txtEarnEstimation: 'You could earn in a year. Considering all changes.',
+    txtDepositDescription:
+      'Once you deposit your assets in staking, Mover is constantly searching for the highest staking option on UBT staking. Mover does automatic rebalancing, yield collection, and capital optimization.',
+    txtWithdrawDescription:
+      'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield',
+    txtKeepEstimation: 'If you keep your savings, you could earn in a year.'
   }
 };
 
