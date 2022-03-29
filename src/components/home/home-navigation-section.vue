@@ -98,6 +98,25 @@
             />
           </template>
         </navigation-section-item-image>
+
+        <navigation-section-item-image
+          v-if="isStakingUBTEnabled"
+          class="no-hover"
+          :description="stakingUBTBalance"
+          description-class="bold emphasize"
+          navigate-to="staking-ubt-manage"
+          :title="$t('stakingUBT.lblStaking')"
+          title-class="medium muted"
+        >
+          <template v-slot:picture>
+            <custom-picture
+              :alt="$t('stakingUBT.lblStaking')"
+              :sources="stakingUBTPicture.sources"
+              :src="stakingUBTPicture.src"
+              :webp-sources="stakingUBTPicture.webpSources"
+            />
+          </template>
+        </navigation-section-item-image>
       </navigation-section>
     </nav>
 
@@ -150,6 +169,14 @@
           emoji="➕"
           navigate-to="savings-plus-deposit"
           :text="$t('menu.lblDepositInSavingsPlus')"
+        />
+
+        <navigation-section-item-emoji
+          v-if="isStakingUBTEnabled"
+          class="no-hover"
+          emoji="🥩"
+          navigate-to="staking-ubt-deposit"
+          :text="$t('menu.lblStakeUBT')"
         />
       </navigation-section>
     </nav>
@@ -227,6 +254,12 @@ export default Vue.extend({
         sources: [
           { src: require('@/assets/images/savings-plus@2x.png'), variant: '2x' }
         ]
+      } as PictureDescriptor,
+      stakingUBTPicture: {
+        src: require('@/assets/images/savings-plus@1x.png'),
+        sources: [
+          { src: require('@/assets/images/savings-plus@2x.png'), variant: '2x' }
+        ]
       } as PictureDescriptor
     };
   },
@@ -253,6 +286,9 @@ export default Vue.extend({
         debitCardState: 'cardState'
       })),
     ...mapState('account', { networkInfo: 'networkInfo' }),
+    ...mapGetters('stakingUBT', {
+      stakingUBTBalanceNative: 'balanceNative'
+    }),
     savingsBalance(): string {
       return `$${formatToNative(this.savingsInfoBalanceNative)}`;
     },
@@ -326,6 +362,12 @@ export default Vue.extend({
         'isSavingsPlusEnabled',
         this.networkInfo?.network
       );
+    },
+    isStakingUBTEnabled(): boolean {
+      return isFeatureEnabled('isStakingUBTEnabled', this.networkInfo?.network);
+    },
+    stakingUBTBalance(): string {
+      return `$${formatToNative(this.stakingUBTBalanceNative)}`;
     },
     isMoreSectionEnabled(): boolean {
       return (
