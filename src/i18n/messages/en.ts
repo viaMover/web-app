@@ -64,7 +64,8 @@ const messages: VueI18n.LocaleMessageObject = {
     lblBeautifulCard: 'Beautiful Card',
     lblComingSoon: 'Coming soon',
     lblCardTopUp: 'Card top up',
-    lblDepositInSavingsPlus: 'Deposit in Savings Plus'
+    lblDepositInSavingsPlus: 'Deposit in Savings Plus',
+    lblStakeUBT: 'Stake UBT'
   },
   swaps: {
     lblSwaps: 'Swaps',
@@ -1287,6 +1288,7 @@ const messages: VueI18n.LocaleMessageObject = {
   },
   stakingUBT: {
     lblMain: 'My Staking',
+    lblStaking: 'Staking',
     lblManage: 'Manage Staking',
     lblDeposit: 'Deposit in Staking',
     txtDeposit: 'Simple staking in friendly protocols',
