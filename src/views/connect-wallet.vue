@@ -65,6 +65,8 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import QRCode from 'qrcode';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { APIKeys } from '@/settings';
 import { InitWalletPayload } from '@/store/modules/account/types';
 import { InitCallbacks } from '@/web3/callbacks';
@@ -125,6 +127,14 @@ export default Vue.extend({
     });
     provider.enable().then(async () => {
       console.info('User enabled WC provider by QR');
+      addSentryBreadcrumb({
+        type: 'info',
+        category: 'connect-wallet.wcProvider',
+        message: 'User enabled WC provider by QR',
+        data: {
+          provider
+        }
+      });
       const providerWithCb = await InitCallbacks(provider);
       await this.initWallet({
         provider: providerWithCb.provider,
@@ -141,8 +151,33 @@ export default Vue.extend({
       this.$router.replace(this.$route.redirectedFrom ?? { name: 'home' });
     },
     async otherProvider(): Promise<void> {
-      const provider = await this.web3Modal.connect();
-      console.log('Other provider');
+      let provider;
+      try {
+        provider = await this.web3Modal.connect();
+      } catch (error) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'connect-wallet.otherProvider',
+          message: "Can't connect to provider",
+          data: {
+            error
+          }
+        });
+        sendGlobalTopMessageEvent(
+          (this.$t('errors.default') as string) ??
+            'Oh no. Something went wrong',
+          'error'
+        );
+        return;
+      }
+      addSentryBreadcrumb({
+        type: 'info',
+        category: 'connect-wallet.otherProvider',
+        message: 'Connected to provider',
+        data: {
+          provider
+        }
+      });
       const providerWithCb = await InitCallbacks(provider);
       await this.initWallet({
         provider: providerWithCb.provider,
