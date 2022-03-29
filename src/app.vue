@@ -45,6 +45,7 @@ import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { TopMessageModal } from './components/modals';
 import { sendGlobalTopMessageEvent } from './global-event-bus';
+import { addSentryBreadcrumb } from './services/v2/utils/sentry';
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/types';
 import { InitCallbacks } from './web3/callbacks';
@@ -143,7 +144,14 @@ export default Vue.extend({
             injected: false
           } as InitWalletPayload);
         } catch (error) {
-          console.log("Can't connect to cached provider due to: ", error);
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'app',
+            message: "Can't connect to cached provider",
+            data: {
+              error
+            }
+          });
           web3modal.clearCachedProvider();
           sendGlobalTopMessageEvent(
             (this.$t('errors.default') as string) ??
