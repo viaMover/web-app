@@ -1299,8 +1299,9 @@ const messages: VueI18n.LocaleMessageObject = {
     btnView: 'View',
     txtYieldEarnedIn: 'Yield earned in {month}',
     txtApproximateEarnEstimation:
-      'You could approximately earn in a year if you deposit {amount} now.',
+      'You could approximately earn in a year if you deposit $10,000 now.',
     txtIfYouDeposit: 'If you deposit in Staking now, you are getting',
+    txtAPY: 'APY on all staking',
     btnStartStaking: 'Start staking',
     txtEarnEstimation: 'You could earn in a year. Considering all changes.',
     txtDepositDescription:
