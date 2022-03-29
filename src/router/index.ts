@@ -522,7 +522,7 @@ const routes: Array<RouteConfig> = [
       path: '/staking/ubt',
       component: () =>
         import(
-          /* webpackChunkName: "staking-ubt" */ '@/views/savings/savings-root.vue'
+          /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-root.vue'
         ),
       children: [
         {
