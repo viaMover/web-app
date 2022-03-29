@@ -516,6 +516,70 @@ const routes: Array<RouteConfig> = [
         );
       }
     }
+  ),
+  wrapWithCustomPreloadView(
+    {
+      path: '/staking/ubt',
+      component: () =>
+        import(
+          /* webpackChunkName: "staking-ubt" */ '@/views/savings/savings-root.vue'
+        ),
+      children: [
+        {
+          path: '',
+          name: 'staking-ubt-manage',
+          component: () =>
+            import(
+              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-manage-wrapper.vue'
+            )
+        },
+        {
+          path: 'deposit',
+          name: 'staking-ubt-deposit',
+          component: () =>
+            import(
+              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-deposit-wrapper.vue'
+            )
+        },
+        {
+          path: 'withdraw',
+          name: 'staking-ubt-withdraw',
+          component: () =>
+            import(
+              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-withdraw-wrapper.vue'
+            )
+        },
+        {
+          path: 'analytics',
+          name: 'staking-ubt-global-analytics',
+          component: () =>
+            import(
+              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-global-analytics.vue'
+            )
+        },
+        {
+          path: 'month-statistics/:year/:month',
+          name: 'staking-ubt-month-stats',
+          component: () =>
+            import(
+              /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-monthly-statistics.vue'
+            )
+        }
+      ]
+    },
+    () =>
+      import(
+        /* webpackChunkName: "staking-ubt" */ '@/views/preload/preload-product/preload-product.vue'
+      ),
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isStakingUBTEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
   )
 ];
 
