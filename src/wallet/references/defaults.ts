@@ -1,6 +1,7 @@
 export default {
   basic_approval: '44406',
   basic_holy_savings_deposit: '450000',
+  basic_holy_staking_deposit_ubt: '450000', // fixme: Estimate manually
   basic_holy_savings_withdraw: '120000',
   basic_holy_treasury_burn: '450000',
   basic_holy_treasury_deposit: '450000',

@@ -164,7 +164,8 @@ const addresses = {
     WETH_TOKEN_ADDRESS: '0xAe740d42E4ff0C5086b2b5b5d149eB2F9e1A754F',
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
-    HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94'
+    HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
+    UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -355,6 +356,19 @@ const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const getUBTAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & { name: string } => {
+  return {
+    address: lookupAddress(network, 'UBT_TOKEN_ADDRESS'),
+    decimals: 8,
+    symbol: 'UBT',
+    name: 'Unibright',
+    iconURL:
+      'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png'
+  };
+};
+
 const getAssetsForTreasury = (
   network: Network,
   moveNativePrice: string,
@@ -437,6 +451,7 @@ export {
   getBTRFLYAssetData,
   isTokenValidForTreasuryDeposit,
   getEURSAssetData,
+  getUBTAssetData,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,

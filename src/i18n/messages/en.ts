@@ -1307,10 +1307,15 @@ const messages: VueI18n.LocaleMessageObject = {
     btnStartStaking: 'Start staking',
     txtEarnEstimation: 'You could earn in a year. Considering all changes.',
     txtDepositDescription:
-      'Once you deposit your assets in staking, Mover is constantly searching for the highest staking option on UBT staking. Mover does automatic rebalancing, yield collection, and capital optimization.',
+      'Once you deposit your assets in staking, Mover is constantly searching ' +
+      'for the highest staking option on UBT staking. ' +
+      'Mover does automatic rebalancing, yield collection, ' +
+      'and capital optimization.',
     txtWithdrawDescription:
-      'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield',
-    txtKeepEstimation: 'If you keep your savings, you could earn in a year.',
+      'You can withdraw the entire or partial balance. ' +
+      'Available balance consists of principal amount you deposited together ' +
+      'with the accumulated yield',
+    txtKeepEstimation: 'If you keep your Staking, you could earn in a year.',
     statements: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
@@ -1321,7 +1326,18 @@ const messages: VueI18n.LocaleMessageObject = {
       lblTotalEarnedInMonth: 'Total earned in {month}',
       lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}'
     },
-    lblLoadMonthStatError: 'Failed to load Staking monthly statements'
+    lblLoadMonthStatError: 'Failed to load Staking monthly statements',
+    lblWhatDoWeDeposit: 'What do we deposit',
+    btnDeposit: 'Deposit',
+    lblAmountWeDepositIn: 'Amount we deposit in',
+    lblReviewYourDeposit: 'Review your deposit',
+    lblAndTotalOf: 'And it will be a total of',
+    btnDepositInStaking: 'Deposit in Staking',
+    lblNoUBTTokens: "You don't have any UBT to stake",
+    lblAmountWeWithdrawIn: 'Amount we withdraw in',
+    lblWhatDoWeWithdraw: 'What we do withdraw',
+    btnWithdrawFromStaking: 'Withdraw from Staking',
+    lblReviewYourWithdraw: 'Review your withdraw'
   }
 };
 
