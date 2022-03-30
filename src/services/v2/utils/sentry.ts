@@ -24,9 +24,9 @@ if (!isProduction()) {
   };
 }
 
-export let captureException = originalCaptureException;
+export let captureSentryException = originalCaptureException;
 if (!isProduction()) {
-  captureException = (exception, captureContext) => {
+  captureSentryException = (exception, captureContext) => {
     console.error(exception, { captureContext });
     return originalCaptureException(exception, captureContext);
   };

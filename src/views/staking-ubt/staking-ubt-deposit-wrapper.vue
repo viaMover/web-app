@@ -48,7 +48,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import BigNumber from 'bignumber.js';
 
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
-import { captureException } from '@/services/v2/utils/sentry';
+import { captureSentryException } from '@/services/v2/utils/sentry';
 import {
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
@@ -187,7 +187,7 @@ export default Vue.extend({
         this.step = 'review';
       } catch (error) {
         this.error = this.$t('estimationError') as string;
-        captureException(error);
+        captureSentryException(error);
       } finally {
         this.isProcessing = false;
       }
@@ -258,7 +258,7 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (error) {
         this.transactionStep = 'Reverted';
-        captureException(error);
+        captureSentryException(error);
       }
     }
   }
