@@ -138,6 +138,6 @@ export class MoverAPIStakingUbtService extends MoverAPIService {
   }
 
   protected lookupBaseURL(): string {
-    return 'https://apiview.viamover.com/api/v1/savings'; // fixme: replace with an actual url
+    return 'https://apiview.viamover.com/api/v1/staking-ubt'; // fixme: replace with an actual url
   }
 }

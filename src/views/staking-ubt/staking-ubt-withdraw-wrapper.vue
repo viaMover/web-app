@@ -7,9 +7,9 @@
     <prepare-form
       v-if="step === 'prepare'"
       :asset="inputAsset"
-      :header-description="$t('stakingUBT.lblWithdraw')"
-      :header-title="$t('stakingUBT.lblWithdrawFromSavings')"
-      :input-amount="inputAmountNative"
+      :header-description="$t('stakingUBT.txtWithdraw')"
+      :header-title="$t('stakingUBT.lblWithdraw')"
+      :input-amount="inputAmount"
       :input-amount-native="inputAmountNative"
       :input-asset-heading="$t('stakingUBT.lblWhatDoWeWithdraw')"
       :input-mode="inputMode"
@@ -21,6 +21,7 @@
       :transfer-error="error"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
+      @toggle-input-mode="handleToggleInputMode"
       @update-amount="handleUpdateAmount"
     />
     <review-form
@@ -43,11 +44,18 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
+import BigNumber from 'bignumber.js';
+
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { captureSentryException } from '@/services/v2/utils/sentry';
+import {
+  convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
+  multiply
+} from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import { getUBTAssetData, getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
+import { getUBTAssetData } from '@/wallet/references/data';
+import { TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -89,6 +97,7 @@ export default Vue.extend({
       isProcessing: false,
       isTokenSelectedByUser: false,
       inputMode: 'TOKEN' as InputMode,
+      inputAmount: '',
       inputAmountNative: '',
       error: undefined as string | undefined,
 
@@ -106,13 +115,11 @@ export default Vue.extend({
       getTokenColor: 'getTokenColor'
     }),
     ...mapState('stakingUBT', {
-      isLoadingUBTNativePrice: 'isLoadingUBTNativePrice',
-      stakingOnChainService: 'onChainService',
-      UBTBalance: 'contractUBTBalance'
+      stakingOnChainService: 'onChainService'
     }),
     ...mapGetters('stakingUBT', {
-      walletUBTBalance: 'walletUBTBalance',
-      ubtNativePrice: 'ubtNativePrice'
+      ubtNativePrice: 'ubtNativePrice',
+      UBTBalance: 'balance'
     }),
     hasBackButton(): boolean {
       return this.step !== 'loader';
@@ -124,9 +131,6 @@ export default Vue.extend({
       return `${formatToNative(this.inputAmountNative)} ${
         this.nativeCurrencySymbol
       }`;
-    },
-    USDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
     },
     inputAsset(): TokenWithBalance {
       const data = getUBTAssetData(this.networkInfo.network);
@@ -158,6 +162,45 @@ export default Vue.extend({
         this.$router.back();
       }
     },
+    handleUpdateAmount(val: string): void {
+      this.updateAmount(val, this.inputMode);
+    },
+    updateAmount(value: string, mode: InputMode): void {
+      if (mode === 'TOKEN') {
+        this.inputAmount = value;
+        this.inputAmountNative = convertNativeAmountFromAmount(
+          value,
+          this.inputAsset.priceUSD
+        );
+        return;
+      }
+
+      this.inputAmount = convertAmountFromNativeValue(
+        value,
+        this.inputAsset.priceUSD,
+        this.inputAsset.decimals
+      );
+      this.inputAmountNative = value;
+    },
+    handleToggleInputMode(): void {
+      if (this.inputMode === 'NATIVE') {
+        this.inputMode = 'TOKEN';
+        return;
+      }
+      this.inputMode = 'NATIVE';
+    },
+    async handleSelectMaxAmount(): Promise<void> {
+      if (this.inputMode === 'TOKEN') {
+        await this.updateAmount(this.inputAsset.balance, 'TOKEN');
+      } else {
+        await this.updateAmount(
+          new BigNumber(
+            multiply(this.inputAsset.balance, this.inputAsset.priceUSD)
+          ).toFixed(2, BigNumber.ROUND_DOWN),
+          'NATIVE'
+        );
+      }
+    },
     async handleTxReview(): Promise<void> {
       this.actionGasLimit = '0';
       this.isProcessing = true;
@@ -174,12 +217,6 @@ export default Vue.extend({
       } finally {
         this.isProcessing = false;
       }
-    },
-    handleSelectMaxAmount(): void {
-      this.inputAmountNative = this.inputAsset.balance;
-    },
-    handleUpdateAmount(val: string): void {
-      this.inputAmountNative = val;
     },
     async handleTxStart(): Promise<void> {
       if (this.inputAmountNative === '' || this.actionGasLimit === undefined) {

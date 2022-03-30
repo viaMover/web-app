@@ -61,7 +61,7 @@
               >
                 <template v-slot:picture>
                   <custom-picture
-                    :alt="withdraw.alt"
+                    :alt="$t('stakingUBT.lblWithdraw')"
                     :sources="withdraw.sources"
                     :src="withdraw.src"
                     :webp-sources="withdraw.webpSources"
@@ -113,7 +113,6 @@ export default Vue.extend({
   data() {
     return {
       stakingUBT: {
-        alt: 'Savings',
         src: require('@/assets/images/StakingUBT@1x.png'),
         sources: [
           {
@@ -123,7 +122,6 @@ export default Vue.extend({
         ]
       } as PictureDescriptor,
       withdraw: {
-        alt: 'Withdraw',
         src: require('@/assets/images/StakingUBTWithdraw@1x.png'),
         sources: [
           { src: require('@/assets/images/StakingUBTWithdraw@1x.png') },

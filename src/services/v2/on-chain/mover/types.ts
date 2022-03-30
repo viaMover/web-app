@@ -38,8 +38,6 @@ export type HolyHandContract = CustomContractType<{
     _expectedMinimumReceived: string,
     _convertData: number[]
   ): ContractMethod;
-  stakeUbt(_amount: string): ContractMethod;
-  unstakeUbt(_amount: string): ContractMethod;
 }>;
 
 export type AddTransactionToStoreHandler = (tx: Transaction) => Promise<void>;

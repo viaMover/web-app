@@ -8,32 +8,46 @@ import {
   CompoundEstimateResponse,
   MoverOnChainService
 } from '@/services/v2/on-chain/mover';
-import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { toWei } from '@/utils/bigmath';
+import { convertToString, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   getUBTAssetData,
-  HOLY_HAND_ABI,
-  lookupAddress
+  lookupAddress,
+  UBT_STAKING_CONTRACT_ABI
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallTokenInfo } from '@/wallet/types';
 
+import { StakingContract } from './types';
+
 export class StakingUbtOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'staking-ubt.on-chain.service';
-  protected readonly holyHandContract: HolyHandContract | undefined;
+  protected readonly stakingContract: StakingContract | undefined;
   protected readonly UBTAssetData: SmallTokenInfo;
 
   constructor(currentAddress: string, network: Network, web3Client: Web3) {
     super(currentAddress, network, web3Client);
 
-    this.holyHandContract = this.createContract(
-      'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+    this.stakingContract = this.createContract(
+      'STAKING_UBT_CONTRACT_ADDRESS',
+      UBT_STAKING_CONTRACT_ABI as AbiItem[]
     );
     this.UBTAssetData = getUBTAssetData(this.network);
+  }
+
+  public async getStakedBalance(): Promise<string> {
+    return this.wrapWithSentryLogger(async () => {
+      if (this.stakingContract === undefined) {
+        throw new NetworkFeatureNotSupportedError('UBT token', this.network);
+      }
+      const balanceOf = await this.stakingContract.methods
+        .getStakingBalance(this.currentAddress)
+        .call({ from: this.currentAddress });
+
+      return convertToString(balanceOf);
+    });
   }
 
   public async depositCompound(
@@ -53,7 +67,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     try {
       return await this.executeTransactionWithApprove(
         inputAsset,
-        lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+        lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS'),
         inputAmount,
         () =>
           this.deposit(
@@ -99,7 +113,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       isApproveNeeded = await this.needsApprove(
         inputAsset,
         inputAmount,
-        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+        lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -126,7 +140,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       try {
         const approveGasLimit = await this.estimateApprove(
           inputAsset.address,
-          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+          lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
         );
 
         return {
@@ -150,7 +164,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       }
     }
 
-    if (this.holyHandContract === undefined) {
+    if (this.stakingContract === undefined) {
       throw new NetworkFeatureNotSupportedError(
         'UBT staking deposit',
         this.network
@@ -158,7 +172,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = this.holyHandContract.methods
+      const gasLimitObj = this.stakingContract.methods
         .stakeUbt(toWei(inputAmount, inputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
@@ -224,7 +238,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     outputAmount: string
   ): Promise<CompoundEstimateResponse> {
-    if (this.holyHandContract === undefined) {
+    if (this.stakingContract === undefined) {
       throw new NetworkFeatureNotSupportedError(
         'UBT staking withdraw',
         this.network
@@ -232,7 +246,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = this.holyHandContract.methods
+      const gasLimitObj = this.stakingContract.methods
         .unstakeUbt(toWei(outputAmount, outputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
@@ -264,7 +278,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     gasLimit: string
   ): Promise<TransactionReceipt> {
     return new Promise<TransactionReceipt>((resolve, reject) => {
-      if (this.holyHandContract === undefined) {
+      if (this.stakingContract === undefined) {
         throw new NetworkFeatureNotSupportedError(
           'UBT staking deposit',
           this.network
@@ -272,7 +286,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       }
 
       this.wrapWithSendMethodCallbacks(
-        this.holyHandContract.methods
+        this.stakingContract.methods
           .stakeUbt(toWei(inputAmount, inputAsset.decimals))
           .send(this.getDefaultTransactionsParams(gasLimit)),
         resolve,
@@ -292,7 +306,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     gasLimit: string
   ): Promise<TransactionReceipt> {
     return new Promise<TransactionReceipt>((resolve, reject) => {
-      if (this.holyHandContract === undefined) {
+      if (this.stakingContract === undefined) {
         throw new NetworkFeatureNotSupportedError(
           'UBT staking withdraw',
           this.network
@@ -300,7 +314,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       }
 
       this.wrapWithSendMethodCallbacks(
-        this.holyHandContract.methods
+        this.stakingContract.methods
           .unstakeUbt(toWei(outputAmount, outputAsset.decimals))
           .send(this.getDefaultTransactionsParams(gasLimit)),
         resolve,

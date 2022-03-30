@@ -24,6 +24,7 @@ import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
+import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 
 export type AddressMapKey =
@@ -74,7 +75,8 @@ export type AddressMapKey =
   | 'TOKE_TOKEN_ADDRESS'
   | 'NFT_ORDER_OF_LIBERTY'
   | 'APE_TOKEN_ADDRESS'
-  | 'UBT_TOKEN_ADDRESS';
+  | 'UBT_TOKEN_ADDRESS'
+  | 'STAKING_UBT_CONTRACT_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -474,5 +476,6 @@ export {
   EARNINGS_OLYMPUS_ABI,
   WX_BTRFLY_ABI,
   NFT_ORDER_OF_LIBERTY_ABI,
+  UBT_STAKING_CONTRACT_ABI,
   validTopUpAssets
 };

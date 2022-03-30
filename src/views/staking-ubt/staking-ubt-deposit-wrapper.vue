@@ -119,11 +119,11 @@ export default Vue.extend({
       stakingOnChainService: 'onChainService'
     }),
     ...mapGetters('stakingUBT', {
-      walletUBTBalance: 'walletUBTBalance',
+      walletBalance: 'walletBalance',
       ubtNativePrice: 'ubtNativePrice'
     }),
     complexError(): string | undefined {
-      if (!greaterThan(this.walletUBTBalance, '0')) {
+      if (!greaterThan(this.walletBalance, '0')) {
         return this.$t('stakingUBT.lblNoUBTTokens') as string;
       }
 
@@ -156,7 +156,7 @@ export default Vue.extend({
         name: data.name,
         priceUSD: this.ubtNativePrice,
         logo: data.iconURL,
-        balance: this.walletUBTBalance,
+        balance: this.walletBalance,
         marketCap: Number.MAX_SAFE_INTEGER,
         color: this.getTokenColor(data.address)
       };
