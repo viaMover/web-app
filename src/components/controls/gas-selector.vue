@@ -11,7 +11,7 @@
     <div class="modal-wrapper-info-footer-right button-active">
       <div class="swiper-pagination-bullets">
         <span
-          v-for="mode in avaialbleGasModes"
+          v-for="mode in availableGasModes"
           :key="mode"
           class="swiper-pagination-bullet"
           :class="{
@@ -69,7 +69,7 @@ export type GasPrice = {
 export default Vue.extend({
   name: 'GasSelector',
   props: {
-    avaialbleGasModes: {
+    availableGasModes: {
       type: Array as PropType<Array<GasMode>>,
       required: true
     },
@@ -92,7 +92,7 @@ export default Vue.extend({
   computed: {
     ...mapState('account', ['gasPrices', 'ethPrice']),
     selectedGasMode(): GasMode {
-      return this.avaialbleGasModes[this.selectedGasModeIndex];
+      return this.availableGasModes[this.selectedGasModeIndex];
     },
     selectedGasData(): GasModeData | undefined {
       if (this.gasPrices === undefined) {
@@ -178,11 +178,11 @@ export default Vue.extend({
     }
   },
   watch: {
-    avaialbleGasModes: function (
+    availableGasModes: function (
       newVal: Array<GasMode>,
       oldVal: Array<GasMode>
     ) {
-      console.log('avaialbleGasModes changed: ', newVal, ' | was: ', oldVal);
+      console.log('availableGasModes changed: ', newVal, ' | was: ', oldVal);
       if (
         newVal.find((v) => v === 'treasury') !== undefined &&
         oldVal.find((v) => v === 'treasury') === undefined &&
@@ -212,7 +212,7 @@ export default Vue.extend({
   },
   methods: {
     changeGasPriceToTreasury() {
-      const treasuryModeIndex = this.avaialbleGasModes.findIndex(
+      const treasuryModeIndex = this.availableGasModes.findIndex(
         (m) => m === 'treasury'
       );
       if (treasuryModeIndex === -1) {
@@ -230,7 +230,7 @@ export default Vue.extend({
         this.clicked = true;
       }
       this.selectedGasModeIndex =
-        (this.selectedGasModeIndex + 1) % this.avaialbleGasModes.length;
+        (this.selectedGasModeIndex + 1) % this.availableGasModes.length;
       this.$nextTick(() => {
         if (this.selectedGasData !== undefined) {
           this.$emit('selected-gas-changed', this.selectedGasData);
