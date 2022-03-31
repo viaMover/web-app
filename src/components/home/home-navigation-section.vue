@@ -423,6 +423,8 @@ export default Vue.extend({
     ) {
       await this.loadEarningsMinimalInfo();
     }
+
+    await this.loadStakingUBTMinimalInfo();
   },
   methods: {
     ...mapActions('modals', {
@@ -434,6 +436,9 @@ export default Vue.extend({
       })),
     ...(isFeatureEnabled('isDebitCardEnabled') &&
       mapActions('debitCard', { loadDebitCardInfo: 'loadInfo' })),
+    ...mapActions('stakingUBT', {
+      loadStakingUBTMinimalInfo: 'getMinimalInfo'
+    }),
     handleOpenSwapModal(payload: unknown): void {
       this.setIsModalDisplayed({
         id: ModalType.Swap,

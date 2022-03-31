@@ -43,7 +43,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
         throw new NetworkFeatureNotSupportedError('UBT token', this.network);
       }
       const balanceOf = await this.stakingContract.methods
-        .getStakingBalance(this.currentAddress)
+        .getDepositBalance(this.currentAddress)
         .call({ from: this.currentAddress });
 
       return convertToString(balanceOf);
@@ -173,7 +173,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
     try {
       const gasLimitObj = this.stakingContract.methods
-        .stakeUbt(toWei(inputAmount, inputAsset.decimals))
+        .deposit(toWei(inputAmount, inputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
       return {
@@ -247,7 +247,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
     try {
       const gasLimitObj = this.stakingContract.methods
-        .unstakeUbt(toWei(outputAmount, outputAsset.decimals))
+        .withdraw(toWei(outputAmount, outputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
       return {
@@ -287,7 +287,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
       this.wrapWithSendMethodCallbacks(
         this.stakingContract.methods
-          .stakeUbt(toWei(inputAmount, inputAsset.decimals))
+          .deposit(toWei(inputAmount, inputAsset.decimals))
           .send(this.getDefaultTransactionsParams(gasLimit)),
         resolve,
         reject,
@@ -315,7 +315,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
       this.wrapWithSendMethodCallbacks(
         this.stakingContract.methods
-          .unstakeUbt(toWei(outputAmount, outputAsset.decimals))
+          .withdraw(toWei(outputAmount, outputAsset.decimals))
           .send(this.getDefaultTransactionsParams(gasLimit)),
         resolve,
         reject,
