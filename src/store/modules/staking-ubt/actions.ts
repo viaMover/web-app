@@ -9,6 +9,7 @@ import {
 import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
+import { isZero } from '@/utils/bigmath';
 import { getUBTAssetData } from '@/wallet/references/data';
 
 import { GetterType } from './getters';
@@ -102,29 +103,31 @@ const actions: ActionFuncs<
 
     const ubtAssetData = getUBTAssetData(rootState.account.networkInfo.network);
 
-    try {
-      const ubtNativePrice = await getPriceByAddress(
-        getCoingeckoPlatform(rootState.account.networkInfo.network),
-        [ubtAssetData.address],
-        [rootState.account.nativeCurrency]
-      );
-      if (!ubtNativePrice.isError) {
-        commit(
-          'setUbtNativePrice',
-          ubtNativePrice.result[ubtAssetData.address]?.[
-            rootState.account.nativeCurrency
-          ]
+    if (state.ubtNativePrice === undefined || isZero(state.ubtNativePrice)) {
+      try {
+        const ubtNativePrice = await getPriceByAddress(
+          getCoingeckoPlatform(rootState.account.networkInfo.network),
+          [ubtAssetData.address],
+          [rootState.account.nativeCurrency]
         );
-      }
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: 'getMinimalInfo.staking-ubt.store',
-        message: 'Failed to get UBT native price',
-        data: {
-          error
+        if (!ubtNativePrice.isError) {
+          commit(
+            'setUbtNativePrice',
+            ubtNativePrice.result[ubtAssetData.address]?.[
+              rootState.account.nativeCurrency
+            ]
+          );
         }
-      });
+      } catch (error) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'getMinimalInfo.staking-ubt.store',
+          message: 'Failed to get UBT native price',
+          data: {
+            error
+          }
+        });
+      }
     }
 
     if (!ensureOnChainServiceExists(state)) {
