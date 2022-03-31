@@ -6,7 +6,6 @@
   >
     <prepare-form
       v-if="step === 'prepare'"
-      allow-zero-amount
       :asset="inputAsset"
       :header-description="$t('stakingUBT.txtDepositDescription')"
       :header-title="$t('stakingUBT.lblDeposit')"
