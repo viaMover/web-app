@@ -1337,11 +1337,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblAmountWeWithdrawIn: 'Amount we withdraw in',
     lblWhatDoWeWithdraw: 'What we do withdraw',
     btnWithdrawFromStaking: 'Withdraw from Staking',
-    lblReviewYourWithdraw: 'Review your withdraw',
-    lblComingSoon: "Coming soon, let's MOVE together",
-    txtComingSoon:
-      'Detailed overview, analytics & many more are coming soon but here is something you already can do',
-    lblOr: 'or'
+    lblReviewYourWithdraw: 'Review your withdraw'
   }
 };
 
