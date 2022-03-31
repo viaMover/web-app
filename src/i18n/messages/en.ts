@@ -1154,7 +1154,7 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     errors: {
       default: 'Oh no. Something went wrong',
-      cantClaim: 'There are no avaialble NFT tokens to claim',
+      cantClaim: 'There are no available NFT tokens to claim',
       cantRedeem: 'You have no NFT to redeem',
       email: {
         required: 'Email is required',
