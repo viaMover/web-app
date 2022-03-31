@@ -108,6 +108,13 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       );
     }
 
+    if (this.stakingContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'UBT staking deposit',
+        this.network
+      );
+    }
+
     let isApproveNeeded = true;
     try {
       isApproveNeeded = await this.needsApprove(
@@ -162,13 +169,6 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
         throw new OnChainServiceError('Failed approve estimation').wrap(error);
       }
-    }
-
-    if (this.stakingContract === undefined) {
-      throw new NetworkFeatureNotSupportedError(
-        'UBT staking deposit',
-        this.network
-      );
     }
 
     try {
