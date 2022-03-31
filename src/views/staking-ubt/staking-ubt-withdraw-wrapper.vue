@@ -215,7 +215,7 @@ export default Vue.extend({
       try {
         const gasLimits = await (
           this.stakingOnChainService as StakingUbtOnChainService
-        ).estimateWithdrawCompound(this.inputAsset, this.inputAmountNative);
+        ).estimateWithdrawCompound(this.inputAsset, this.inputAmount);
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.step = 'review';
@@ -227,7 +227,7 @@ export default Vue.extend({
       }
     },
     async handleTxStart(): Promise<void> {
-      if (this.inputAmountNative === '' || this.actionGasLimit === undefined) {
+      if (this.inputAmount === '' || this.actionGasLimit === undefined) {
         return;
       }
 
@@ -238,7 +238,7 @@ export default Vue.extend({
           this.stakingOnChainService as StakingUbtOnChainService
         ).withdrawCompound(
           this.inputAsset,
-          this.inputAmountNative,
+          this.inputAmount,
           async () => {
             this.transactionStep = 'Process';
           },
