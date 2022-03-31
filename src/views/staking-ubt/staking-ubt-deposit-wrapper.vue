@@ -200,6 +200,7 @@ export default Vue.extend({
       }
     },
     handleUpdateAmount(val: string): void {
+      this.error = undefined;
       this.updateAmount(val, this.inputMode);
     },
     updateAmount(value: string, mode: InputMode): void {

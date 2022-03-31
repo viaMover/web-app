@@ -172,7 +172,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = this.stakingContract.methods
+      const gasLimitObj = await this.stakingContract.methods
         .deposit(toWei(inputAmount, inputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
@@ -246,7 +246,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = this.stakingContract.methods
+      const gasLimitObj = await this.stakingContract.methods
         .withdraw(toWei(outputAmount, outputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
