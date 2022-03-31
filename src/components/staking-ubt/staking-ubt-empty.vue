@@ -59,7 +59,7 @@ export default Vue.extend({
   computed: {
     ...mapState({ colors: 'colors' }),
     apy(): string {
-      return '8.3';
+      return '0.0';
     },
     balance(): string {
       const annualYield = multiply(divide(this.apy, '100'), '10000');
