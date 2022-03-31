@@ -19,9 +19,11 @@ import { BuildExplorer } from '@/services/explorer';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
+import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
+import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import {
   getAvatarFromPersist,
@@ -535,6 +537,23 @@ const actions: ActionFuncs<
         .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
         .setEthPriceGetterHandler(() => getters.ethPrice);
       commit('setSwapOnChainService', swapOnChainService);
+    }
+
+    if (isFeatureEnabled('isStakingUbtEnabled', state.networkInfo?.network)) {
+      const stakingAPIService = new MoverAPIStakingUbtService(
+        state.currentAddress,
+        state.networkInfo.network
+      );
+      dispatch('stakingUBT/setAPIService', stakingAPIService, { root: true });
+
+      const stakingOnChainService = new StakingUbtOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      dispatch('stakingUBT/setOnChainService', stakingOnChainService, {
+        root: true
+      });
     }
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {

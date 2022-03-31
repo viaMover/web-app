@@ -1,7 +1,6 @@
 import VueI18n from 'vue-i18n';
 
 import { ValidationErrorReason } from '@/services/v2/api/0x/types';
-import { isFeatureEnabled } from '@/settings';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
@@ -65,7 +64,8 @@ const messages: VueI18n.LocaleMessageObject = {
     lblBeautifulCard: 'Beautiful Card',
     lblComingSoon: 'Coming soon',
     lblCardTopUp: 'Card top up',
-    lblDepositInSavingsPlus: 'Deposit in Savings Plus'
+    lblDepositInSavingsPlus: 'Deposit in Savings Plus',
+    lblStakeUBT: 'Stake UBT'
   },
   swaps: {
     lblSwaps: 'Swaps',
@@ -270,7 +270,7 @@ const messages: VueI18n.LocaleMessageObject = {
         length: 'Security code should contain exactly {length} symbols'
       },
       gender: {
-        required: 'Gender is requied'
+        required: 'Gender is required'
       },
       title: {
         required: 'Title is required'
@@ -995,11 +995,8 @@ const messages: VueI18n.LocaleMessageObject = {
     txtOrderOfLiberty:
       'Humanitarian-only aid dedicated to the most vulnerable groups that need help now.',
     lblOrderOfLibertyHeading: 'Help Ukraine'
-  }
-};
-
-if (isFeatureEnabled('isVaultsRaceEnabled')) {
-  messages.vaultsRace = {
+  },
+  vaultsRace: {
     lblGames: 'Games',
     txtGamesAlt: 'Vaults race promo image',
     lblMyVaults: 'My Vaults',
@@ -1038,11 +1035,8 @@ if (isFeatureEnabled('isVaultsRaceEnabled')) {
       lblPositionInTheRace: 'Position in the race',
       lblTotalPointsScored: 'Total points scored'
     }
-  };
-}
-
-if (isFeatureEnabled('isReleaseRadarEnabled')) {
-  messages.radar = {
+  },
+  radar: {
     lblTokenOfTheDay: 'Token of the day',
     liveUpdates: {
       lblLiveUpdates: 'Live updates',
@@ -1068,18 +1062,12 @@ if (isFeatureEnabled('isReleaseRadarEnabled')) {
     btnSearch: {
       emoji: '🔍'
     }
-  };
-}
-
-if (isFeatureEnabled('isBondsEnabled')) {
-  messages.bonds = {
+  },
+  bonds: {
     icon: '🏦',
     lblBonds: 'Bonds'
-  };
-}
-
-if (isFeatureEnabled('isNibbleShopEnabled')) {
-  messages.nibbleShop = {
+  },
+  nibbleShop: {
     lblNibbleShop: 'Nibble shop',
     lblNoSweetAndSourNFTHeading: "That's sour! You have no Sweet & Sour",
     lblNoSweetAndSourNFTSubheading:
@@ -1185,11 +1173,8 @@ if (isFeatureEnabled('isNibbleShopEnabled')) {
         required: 'Post code is required'
       }
     }
-  };
-}
-
-if (isFeatureEnabled('isEarningsEnabled')) {
-  messages.earnings = {
+  },
+  earnings: {
     icon: '🌻',
     lblEarnings: 'Earnings',
     lblMyEarnings: 'My Earnings',
@@ -1297,13 +1282,63 @@ if (isFeatureEnabled('isEarningsEnabled')) {
       txtNavIconAlt: 'Olympus',
       lblOHMTokenAlt: 'Olympus token image'
     }
-  };
-}
-
-if (isFeatureEnabled('isSavingsPlusEnabled')) {
-  messages.savingsPlus = {
+  },
+  savingsPlus: {
     lblSavingsPlus: 'Savings Plus'
-  };
-}
+  },
+  stakingUBT: {
+    lblMain: 'My Staking',
+    lblStaking: 'Staking',
+    lblManage: 'Manage Staking',
+    lblDeposit: 'Deposit in Staking',
+    txtDeposit: 'Simple staking in friendly protocols',
+    lblWithdraw: 'Withdraw from Staking',
+    txtWithdraw: 'Remove your assets from staking fully or partially',
+    lblBalance: 'Staking Balance',
+    lblStakingStatements: 'Staking Statements',
+    btnView: 'View',
+    lblInProgress: 'In progress',
+    txtYieldEarnedIn: 'Yield earned in {month}',
+    txtYieldEarnedThisMonth: 'Yield earned this month',
+    txtApproximateEarnEstimation:
+      'You could approximately earn in a year if you deposit $10,000 now.',
+    txtIfYouDeposit: 'If you deposit in Staking now, you are getting',
+    txtAPY: 'APY on all staking',
+    btnStartStaking: 'Start staking',
+    txtEarnEstimation: 'You could earn in a year. Considering all changes.',
+    txtDepositDescription:
+      'Once you deposit your assets in staking, Mover is constantly searching ' +
+      'for the highest staking option on UBT staking. ' +
+      'Mover does automatic rebalancing, yield collection, ' +
+      'and capital optimization.',
+    txtWithdrawDescription:
+      'You can withdraw the entire or partial balance. ' +
+      'Available balance consists of principal amount you deposited together ' +
+      'with the accumulated yield',
+    txtKeepEstimation: 'If you keep your Staking, you could earn in a year.',
+    statements: {
+      lblMonthStatisticFallback: 'Month statistic',
+      lblBalance: '{month} balance',
+      lblDeposits: '{month} deposits',
+      lblWithdrawals: '{month} withdrawals',
+      lblSavedFees: 'Saved fees',
+      lblPayoutsToTreasury: 'Payouts to @:treasury.lblTreasury',
+      lblTotalEarnedInMonth: 'Total earned in {month}',
+      lblAverageDailyEarningsInMonth: 'Average daily earnings in {month}'
+    },
+    lblLoadMonthStatError: 'Failed to load Staking monthly statements',
+    lblWhatDoWeDeposit: 'What do we deposit',
+    btnDeposit: 'Deposit',
+    lblAmountWeDepositIn: 'Amount we deposit in',
+    lblReviewYourDeposit: 'Review your deposit',
+    lblAndTotalOf: 'And it will be a total of',
+    btnDepositInStaking: 'Deposit in Staking',
+    lblNoUBTTokens: "You don't have any UBT to stake",
+    lblAmountWeWithdrawIn: 'Amount we withdraw in',
+    lblWhatDoWeWithdraw: 'What we do withdraw',
+    btnWithdrawFromStaking: 'Withdraw from Staking',
+    lblReviewYourWithdraw: 'Review your withdraw'
+  }
+};
 
 export default messages;
