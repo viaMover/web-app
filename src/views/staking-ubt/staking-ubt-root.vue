@@ -113,24 +113,36 @@ export default Vue.extend({
   data() {
     return {
       stakingUBT: {
-        src: require('@/assets/images/StakingUBT@1x.png'),
+        src: require('@/assets/images/staking-ubt/Staking_General.png'),
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/StakingUBT@2x.png')
+            src: require('@/assets/images/staking-ubt/Staking_General@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/staking-ubt/Staking_General.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/staking-ubt/Staking_General@2x.webp')
           }
         ]
       } as PictureDescriptor,
       withdraw: {
-        src: require('@/assets/images/StakingUBTWithdraw@1x.png'),
+        src: require('@/assets/images/staking-ubt/Staking_Withdraw.png'),
         sources: [
-          { src: require('@/assets/images/StakingUBTWithdraw@1x.png') },
           {
             variant: '2x',
-            src: require('@/assets/images/StakingUBTWithdraw@2x.png')
+            src: require('@/assets/images/staking-ubt/Staking_Withdraw@2x.png')
           }
         ],
-        webpSources: []
+        webpSources: [
+          { src: require('@/assets/images/staking-ubt/Staking_Withdraw.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/staking-ubt/Staking_Withdraw@2x.webp')
+          }
+        ]
       } as PictureDescriptor
     };
   },

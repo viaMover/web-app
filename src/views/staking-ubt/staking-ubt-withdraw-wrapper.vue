@@ -83,11 +83,18 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       withdrawUbtPicture: {
-        src: require('@/assets/images/StakingUBT@1x.png'),
+        src: require('@/assets/images/staking-ubt/Staking_Withdraw.png'),
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/StakingUBT@2x.png')
+            src: require('@/assets/images/staking-ubt/Staking_Withdraw@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/staking-ubt/Staking_Withdraw.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/staking-ubt/Staking_Withdraw@2x.webp')
           }
         ]
       } as PictureDescriptor,

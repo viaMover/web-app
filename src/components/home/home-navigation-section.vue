@@ -174,7 +174,7 @@
         <navigation-section-item-emoji
           v-if="isStakingUBTEnabled"
           class="no-hover"
-          emoji="🥩"
+          emoji="🌻"
           navigate-to="staking-ubt-deposit"
           :text="$t('menu.lblStakeUBT')"
         />
@@ -256,9 +256,19 @@ export default Vue.extend({
         ]
       } as PictureDescriptor,
       stakingUBTPicture: {
-        src: require('@/assets/images/StakingUBT@1x.png'),
+        src: require('@/assets/images/staking-ubt/Staking_General.png'),
         sources: [
-          { src: require('@/assets/images/StakingUBT@2x.png'), variant: '2x' }
+          {
+            variant: '2x',
+            src: require('@/assets/images/staking-ubt/Staking_General@2x.png')
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/staking-ubt/Staking_General.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/staking-ubt/Staking_General@2x.webp')
+          }
         ]
       } as PictureDescriptor
     };

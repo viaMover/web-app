@@ -22,7 +22,7 @@
 
     <statements-nav-list
       :button-text="$t('stakingUBT.btnView')"
-      icon="🥩"
+      icon="🌻"
       :in-progress-text="$t('stakingUBT.lblInProgress')"
       :items="monthStatsOptions"
       navigate-to-name="staking-ubt-month-stats"
