@@ -22,6 +22,8 @@ type Getters = {
   hasActiveStaking: boolean;
   receipt: (y: number, m: number) => Promise<StakingUbtReceipt> | undefined;
   ubtNativePrice: string;
+  earnedThisMonth: string;
+  earnedThisMonthNative: string;
 };
 
 const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
@@ -93,18 +95,26 @@ const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
     }
 
     let hasTrimmedLeft = false;
-    return (
-      getters.info.last12MonthsBalances
-        .reduce((acc, item) => {
-          if (item.balance === 0 && !hasTrimmedLeft) {
-            return acc;
-          }
+    const result = getters.info.last12MonthsBalances
+      .reduce((acc, item) => {
+        if (item.balance === 0 && !hasTrimmedLeft) {
+          return acc;
+        }
 
-          hasTrimmedLeft = true;
-          return [...acc, item];
-        }, new Array<StakingUbtMonthBalanceItem>())
-        .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp) ?? []
-    );
+        hasTrimmedLeft = true;
+        return [...acc, item];
+      }, new Array<StakingUbtMonthBalanceItem>())
+      .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
+
+    if (result.length === 0 && getters.info.last12MonthsBalances.length > 0) {
+      return [
+        getters.info.last12MonthsBalances[
+          getters.info.last12MonthsBalances.length - 1
+        ]
+      ];
+    }
+
+    return result;
   },
   hasActiveStaking(state, getters): boolean {
     if (greaterThan(getters.balance, 0)) {
@@ -131,6 +141,22 @@ const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
       const item = state.receipts.get(`${year}/${month}`);
       return unwrapCacheItem(item);
     };
+  },
+  earnedThisMonth(state, getters, rootState): string {
+    if (
+      getters.info !== undefined &&
+      ensureAccountStateIsSafe(rootState.account)
+    ) {
+      const ubtAssetData = getUBTAssetData(
+        rootState.account.networkInfo.network
+      );
+      return fromWei(getters.info.earnedThisMonth, ubtAssetData.decimals);
+    }
+
+    return '0';
+  },
+  earnedThisMonthNative(state, getters): string {
+    return multiply(getters.earnedThisMonth, getters.ubtNativePrice);
   }
 };
 

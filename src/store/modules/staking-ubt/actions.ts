@@ -6,10 +6,7 @@ import {
   addSentryBreadcrumb,
   captureSentryException
 } from '@/services/v2/utils/sentry';
-import {
-  getFromPersistStoreWithExpire,
-  setToPersistStore
-} from '@/settings/persist/utils';
+import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 import { getUBTAssetData } from '@/wallet/references/data';
@@ -149,7 +146,7 @@ const actions: ActionFuncs<
       });
     }
   },
-  async getInfo({ state, commit, getters, rootState }): Promise<void> {
+  async getInfo({ state, commit, getters }): Promise<void> {
     try {
       if (!ensureAPIServiceExists(state)) {
         console.warn('API service does not exist in store');
@@ -166,16 +163,16 @@ const actions: ActionFuncs<
       const info = await state.apiService.getInfo();
       commit('setInfo', info);
 
-      if (ensureAccountStateIsSafe(rootState.account)) {
-        // noinspection ES6MissingAwait
-        setToPersistStore(
-          rootState.account.currentAddress,
-          'stakingUbt',
-          'info',
-          info,
-          INFO_TIME_EXPIRE
-        );
-      }
+      // if (ensureAccountStateIsSafe(rootState.account)) {
+      //   // noinspection ES6MissingAwait
+      //   setToPersistStore(
+      //     rootState.account.currentAddress,
+      //     'stakingUbt',
+      //     'info',
+      //     info,
+      //     INFO_TIME_EXPIRE
+      //   );
+      // }
     } catch (error) {
       captureSentryException(error);
     } finally {
@@ -207,34 +204,34 @@ const actions: ActionFuncs<
       return;
     }
 
-    // noinspection ES6MissingAwait
-    (async () => {
-      for (const [key, value] of state.receipts.entries()) {
-        if (value !== undefined) {
-          try {
-            await setToPersistStore(
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              rootState.account!.currentAddress!,
-              'stakingUbtReceipts',
-              key,
-              await value.data,
-              RECEIPT_TIME_EXPIRE
-            );
-          } catch (error) {
-            addSentryBreadcrumb({
-              type: 'error',
-              category: 'getReceipt.staking-ubt.store',
-              message: 'An error occurred during setToPersistStore()',
-              data: {
-                error,
-                key,
-                value
-              }
-            });
-          }
-        }
-      }
-    })();
+    // // noinspection ES6MissingAwait
+    // (async () => {
+    //   for (const [key, value] of state.receipts.entries()) {
+    //     if (value !== undefined) {
+    //       try {
+    //         await setToPersistStore(
+    //           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    //           rootState.account!.currentAddress!,
+    //           'stakingUbtReceipts',
+    //           key,
+    //           await value.data,
+    //           RECEIPT_TIME_EXPIRE
+    //         );
+    //       } catch (error) {
+    //         addSentryBreadcrumb({
+    //           type: 'error',
+    //           category: 'getReceipt.staking-ubt.store',
+    //           message: 'An error occurred during setToPersistStore()',
+    //           data: {
+    //             error,
+    //             key,
+    //             value
+    //           }
+    //         });
+    //       }
+    //     }
+    //   }
+    // })();
   },
   setAPIService({ commit }, service: MoverAPIStakingUbtService): void {
     commit('setAPIService', service);

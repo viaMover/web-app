@@ -107,7 +107,7 @@ export const buildBalancesChartData = (
           break;
       }
 
-      if (!hasTrimmedLeft && shouldTrimLeft) {
+      if (!hasTrimmedLeft && shouldTrimLeft && idx < arr.length - 1) {
         return acc;
       }
 
