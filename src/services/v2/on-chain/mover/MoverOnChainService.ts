@@ -222,11 +222,6 @@ export abstract class MoverOnChainService extends OnChainService {
         name: contractAddressMapKey
       }
     });
-    console.error(
-      'Contract is not available in current network',
-      contractAddressMapKey,
-      this.network
-    );
     return undefined;
   }
 }
