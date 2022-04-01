@@ -76,7 +76,8 @@ export type AddressMapKey =
   | 'NFT_ORDER_OF_LIBERTY'
   | 'APE_TOKEN_ADDRESS'
   | 'UBT_TOKEN_ADDRESS'
-  | 'STAKING_UBT_CONTRACT_ADDRESS';
+  | 'STAKING_UBT_CONTRACT_ADDRESS'
+  | 'CONCAVE_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -132,7 +133,8 @@ const addresses = {
     APE_TOKEN_ADDRESS: '0x4d224452801aced8b2f0aebe155379bb5d594381',
     UBT_TOKEN_ADDRESS: '0x8400d94a5cb0fa0d041a3788e395285d61c9ee5e',
     NFT_ORDER_OF_LIBERTY: '0xebFB3B9f34307De7a72eDdA8696c1E14e0f41d8b',
-    STAKING_UBT_CONTRACT_ADDRESS: '0x1f15F293C1Cd3d05d58d3EdeAf0C72c5A2dfeaFf'
+    STAKING_UBT_CONTRACT_ADDRESS: '0x1f15F293C1Cd3d05d58d3EdeAf0C72c5A2dfeaFf',
+    CONCAVE_TOKEN_ADDRESS: '0x000000007a58f5f58E697e51Ab0357BC9e260A04'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -439,7 +441,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'GOHM_TOKEN_ADDRESS'),
     lookupAddress(network, 'TOKE_TOKEN_ADDRESS'),
     lookupAddress(network, 'APE_TOKEN_ADDRESS'),
-    lookupAddress(network, 'UBT_TOKEN_ADDRESS')
+    lookupAddress(network, 'UBT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'CONCAVE_TOKEN_ADDRESS')
   ];
 };
 
