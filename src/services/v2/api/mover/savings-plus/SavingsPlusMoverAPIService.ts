@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
+import { SuccessfulResponse } from '@/services/mover/responses';
 import { MoverAPIService } from '@/services/v2/api/mover';
 import { DepositTransactionData } from '@/services/v2/api/mover/savings-plus/types';
 import { Network } from '@/utils/networkTypes';
@@ -24,11 +25,14 @@ export class SavingsPlusMoverAPIService extends MoverAPIService {
     inputAssetAddress: string
   ): Promise<DepositTransactionData> {
     return (
-      await this.client.post<DepositTransactionData>('/depositTx', {
-        amount: inputAmountInWei,
-        address: inputAssetAddress
-      })
-    ).data;
+      await this.client.post<SuccessfulResponse<DepositTransactionData>>(
+        '/depositTx',
+        {
+          amount: inputAmountInWei,
+          address: inputAssetAddress
+        }
+      )
+    ).data.payload;
   }
 
   protected lookupBaseURL(): string {
