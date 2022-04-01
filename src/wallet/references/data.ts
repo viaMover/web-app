@@ -196,6 +196,10 @@ export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   return addresses[network]?.[key] ?? defaultAddress;
 };
 
+export const isDefaultAddress = (address?: string | null): boolean => {
+  return address === defaultAddress;
+};
+
 const getBaseAssetData = (
   network: Network
 ): SmallTokenInfoWithIcon & {
