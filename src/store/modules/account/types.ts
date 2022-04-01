@@ -161,12 +161,12 @@ export const nativeCurrencyFormatters = {
   },
   [NativeCurrency.Ether]: {
     sign: 'Ξ',
-    currency: undefined,
+    currency: 'ETH',
     position: 'prefix'
   },
   [NativeCurrency.Bitcoin]: {
     sign: '₿',
-    currency: undefined,
+    currency: 'BTC',
     position: 'prefix'
   }
 };
