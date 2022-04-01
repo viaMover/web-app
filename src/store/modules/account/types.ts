@@ -36,6 +36,15 @@ export type Avatar = {
   | { type: 'image'; imageSrc: string; imageAlt: string }
 );
 
+export enum NativeCurrency {
+  Bitcoin = 'btc',
+  Ether = 'eth',
+  USD = 'usd',
+  EUR = 'eur',
+  GBP = 'gbp',
+  RUB = 'rub'
+}
+
 export type AccountStoreState = {
   web3Modal: any;
 
@@ -62,7 +71,7 @@ export type AccountStoreState = {
   isWalletLoading: boolean;
   refreshError: undefined | string;
 
-  nativeCurrency: 'usd';
+  nativeCurrency: NativeCurrency;
   // main prices in native currency
   ethPrice: undefined | string;
   movePriceInWeth: undefined | string;
@@ -127,4 +136,48 @@ export type InitWalletPayload = {
   provider: provider;
   injected: boolean;
   providerBeforeCloseCb: () => void;
+};
+
+export const nativeCurrencyFormatters = {
+  [NativeCurrency.USD]: {
+    sign: '$',
+    currency: 'USD',
+    position: 'prefix'
+  },
+  [NativeCurrency.GBP]: {
+    sign: '£',
+    currency: 'GBP',
+    position: 'prefix'
+  },
+  [NativeCurrency.EUR]: {
+    sign: '€',
+    currency: 'EUR',
+    position: 'prefix'
+  },
+  [NativeCurrency.RUB]: {
+    sign: '₽',
+    currency: 'RUB',
+    position: 'postfix'
+  },
+  [NativeCurrency.Ether]: {
+    sign: 'Ξ',
+    currency: undefined,
+    position: 'prefix'
+  },
+  [NativeCurrency.Bitcoin]: {
+    sign: '₿',
+    currency: undefined,
+    position: 'prefix'
+  }
+};
+
+export type PriceRecord = {
+  [address: string]: {
+    [currency: string]: string;
+  };
+};
+
+export type FetchTokenPricesByContractAddressesPayload = {
+  contractAddresses: Array<string> | string;
+  currencies: Array<NativeCurrency> | NativeCurrency;
 };

@@ -1,5 +1,8 @@
 import { isProduction } from '@/settings';
-import { AccountStoreState } from '@/store/modules/account/types';
+import {
+  AccountStoreState,
+  NativeCurrency
+} from '@/store/modules/account/types';
 import { AugmentedModule } from '@/store/types';
 import { availableNetworks } from '@/wallet/allTokens';
 
@@ -37,7 +40,7 @@ export default {
     gasUpdaterHandle: undefined,
     gasUpdaterCallers: [],
 
-    nativeCurrency: 'usd',
+    nativeCurrency: NativeCurrency.USD,
 
     ethPrice: undefined,
     movePriceInWeth: undefined,
