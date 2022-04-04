@@ -37,7 +37,7 @@ import {
   removeExpiredPersistItemsFromLocalStorage
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
-import { errorToString } from '@/utils/errors';
+import { CommonErrors, errorToString } from '@/utils/errors';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
@@ -295,10 +295,12 @@ const actions: ActionFuncs<
       console.log("can't init the wallet");
       console.log(err);
       sendGlobalTopMessageEvent(
-        (rootState.i18n?.t('errors.default') as string) ??
-          'Oh no. Something went wrong',
+        (rootState.i18n?.t('errors.default', {
+          code: CommonErrors.INIT_WALLET_ERROR
+        }) as string) ?? 'Oh no. Something went wrong',
         'error'
       );
+      throw err;
     }
   },
   async refreshWallet(
@@ -673,8 +675,9 @@ const actions: ActionFuncs<
           });
         } catch (err: any) {
           sendGlobalTopMessageEvent(
-            (rootState.i18n?.t('errors.default') as string) ??
-              'Oh no. Something went wrong',
+            (rootState.i18n?.t('errors.default', {
+              code: CommonErrors.ADD_ETH_CHAIN_ERROR
+            }) as string) ?? 'Oh no. Something went wrong',
             'error'
           );
           console.error(
@@ -684,8 +687,9 @@ const actions: ActionFuncs<
         }
       } else {
         sendGlobalTopMessageEvent(
-          (rootState.i18n?.t('errors.default') as string) ??
-            'Oh no. Something went wrong',
+          (rootState.i18n?.t('errors.default', {
+            code: CommonErrors.SWITCH_ETH_CHAIN_ERROR
+          }) as string) ?? 'Oh no. Something went wrong',
           'error'
         );
         console.log(
