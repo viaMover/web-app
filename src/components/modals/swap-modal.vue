@@ -104,7 +104,7 @@
         <action-button
           class="primary"
           :custom-style="actionButtonStyle"
-          :disabled="!actionAvaialble"
+          :disabled="!actionAvailable"
           :text="actionButtonText"
           @button-click="handleExecuteSwap"
         />
@@ -112,7 +112,7 @@
       <gas-selector
         v-if="showGasSelector"
         :approve-gas-limit="approveGasLimit"
-        :avaialble-gas-modes="availableGasModes"
+        :available-gas-modes="availableGasModes"
         :txn-gas-limit="allGasLimit"
         @selected-gas-changed="handleSelectedGasChanged"
       />
@@ -201,7 +201,7 @@ export default Vue.extend({
       slippage: '10',
       selectedGasPrice: '0',
       useSubsidized: false,
-      subsidizedAvaialbe: false,
+      subsidizedAvailable: false,
       actionGasLimit: ethDefaults.basic_holy_swap,
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
@@ -303,7 +303,7 @@ export default Vue.extend({
       );
       return `${formatToDecimals(minReceived, 8)} ${this.output.asset.symbol}`;
     },
-    actionAvaialble(): boolean {
+    actionAvailable(): boolean {
       return this.error === undefined && !this.loading;
     },
     actionButtonText(): string {
@@ -321,7 +321,7 @@ export default Vue.extend({
       return '💸 Swap';
     },
     availableGasModes(): Array<GasMode> {
-      if (this.subsidizedAvaialbe) {
+      if (this.subsidizedAvailable) {
         return ['treasury', 'low', 'normal', 'high'];
       } else {
         return ['low', 'normal', 'high'];
@@ -390,7 +390,7 @@ export default Vue.extend({
       return this.getTokenColor(this.output.asset.address);
     },
     actionButtonStyle(): CssProperties {
-      if (this.actionAvaialble) {
+      if (this.actionAvailable) {
         return {
           backgroundColor: this.toAssetColor ?? '#000'
         };
@@ -1005,17 +1005,17 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
-        this.subsidizedAvaialbe = false;
+        this.subsidizedAvailable = false;
         return;
       }
 
       if (this.input.asset?.address === 'eth') {
-        this.subsidizedAvaialbe = false;
+        this.subsidizedAvailable = false;
         return;
       }
 
       try {
-        this.subsidizedAvaialbe = await (
+        this.subsidizedAvailable = await (
           this.swapOnChainService as SwapOnChainService
         ).isSubsidizedTransactionAllowed(
           gasPrice,

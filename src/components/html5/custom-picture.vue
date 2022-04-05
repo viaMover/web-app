@@ -24,7 +24,7 @@ export default Vue.extend({
   props: {
     alt: {
       type: String,
-      required: true
+      default: undefined
     },
     src: {
       type: String,

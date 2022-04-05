@@ -15,6 +15,7 @@ import {
   OlympusHourlyBalancesItem,
   OlympusMonthBalanceItem
 } from '@/services/mover/earnings/olympus/types';
+import { StakingUbtMonthBalanceItem } from '@/services/v2/api/mover/staking-ubt';
 import { divide, fromWei, greaterThan, lessThan, sub } from '@/utils/bigmath';
 import { dateFromExplicitPair } from '@/utils/time';
 
@@ -27,7 +28,8 @@ export type TItem =
   | TreasuryMonthBonusesItem
   | SavingsMonthBalanceItem
   | OlympusMonthBalanceItem
-  | EthereumMonthBalanceItem;
+  | EthereumMonthBalanceItem
+  | StakingUbtMonthBalanceItem;
 const filterByPeriod = (
   list: Array<TItem>,
   period: FilterPeriod
@@ -75,6 +77,7 @@ export const buildBalancesChartData = (
           shouldTrimLeft = val.balance === 0;
           break;
         case 'savings_month_balance_item':
+        case 'staking_ubt_month_balance_item':
           valSource = val.earned;
           shouldTrimLeft = val.earned === 0 && val.balance === 0;
           break;
@@ -104,7 +107,7 @@ export const buildBalancesChartData = (
           break;
       }
 
-      if (!hasTrimmedLeft && shouldTrimLeft) {
+      if (!hasTrimmedLeft && shouldTrimLeft && idx < arr.length - 1) {
         return acc;
       }
 

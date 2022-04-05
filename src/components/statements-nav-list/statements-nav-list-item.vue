@@ -80,13 +80,9 @@ export default Vue.extend({
       );
     },
     currentMonthProgress(): number {
-      const currentDate = dayjs();
-      const dayInCurrentMonth = new Date(
-        currentDate.get('year'),
-        currentDate.get('month'),
-        0
-      ).getDate();
-      return Math.round((currentDate.get('date') / dayInCurrentMonth) * 100);
+      const currentDate = dayjs().get('date');
+      const dayInCurrentMonth = dayjs().daysInMonth();
+      return Math.round((currentDate / dayInCurrentMonth) * 100);
     },
     headerText(): string {
       return dateFromExplicitPair(this.item.year, this.item.month).format(

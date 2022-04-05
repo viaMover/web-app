@@ -31,6 +31,7 @@ import {
   SavingsMonthBalanceItem,
   TreasuryMonthBonusesItem
 } from '@/services/mover';
+import { StakingUbtMonthBalanceItem } from '@/services/v2/api/mover/staking-ubt';
 import {
   buildBalancesChartData,
   ChartDataItem,
@@ -59,6 +60,7 @@ export default Vue.extend({
           | TreasuryMonthBonusesItem
           | OlympusMonthBalanceItem
           | EthereumMonthBalanceItem
+          | StakingUbtMonthBalanceItem
         >
       >,
       required: true

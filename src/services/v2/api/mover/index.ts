@@ -11,3 +11,4 @@ export * as Savings from './savings';
 export * as SavingsPlus from './savings-plus';
 export * as SmartTreasury from './smart-treasury';
 export * as Subsidized from './subsidized';
+export * as StakingUbt from './staking-ubt';
