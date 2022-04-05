@@ -2,6 +2,7 @@ export default {
   basic_approval: '44406',
   basic_holy_savings_deposit: '450000',
   basic_holy_staking_deposit_ubt: '175000',
+  basic_holy_savings_plus_deposit: '850000', // basic_holy_swap + 350,000
   basic_holy_savings_withdraw: '120000',
   basic_holy_treasury_burn: '450000',
   basic_holy_treasury_deposit: '450000',

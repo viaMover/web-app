@@ -8,6 +8,7 @@ export type EstimateResponse = {
 };
 
 export type CompoundEstimateResponse = {
+  // @deprecated use `false` when creating new wrapper methods as it is expected to MOVE towards transparent estimation error flow instead of shadowed one
   error: boolean;
   approveGasLimit: string;
   actionGasLimit: string;
@@ -37,6 +38,14 @@ export type HolyHandContract = CustomContractType<{
     _amountFrom: string,
     _expectedMinimumReceived: string,
     _convertData: number[]
+  ): ContractMethod;
+  swapBridgeAsset(
+    _tokenFrom: string,
+    _tokenTo: string,
+    _amountFrom: string,
+    _expectedMinimumReceived: string,
+    _convertData: number[],
+    _bridgeTxData: number[]
   ): ContractMethod;
 }>;
 

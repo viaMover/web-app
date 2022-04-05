@@ -853,5 +853,43 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tokenFrom",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_tokenTo",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountFrom",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_expectedMinimumReceived",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_convertData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_bridgeTxData",
+        "type": "bytes"
+      }
+    ],
+    "name": "swapBridgeAsset",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
   }
 ]
