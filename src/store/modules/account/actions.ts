@@ -23,6 +23,7 @@ import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-trea
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
@@ -565,6 +566,15 @@ const actions: ActionFuncs<
         state.networkInfo.network
       );
       dispatch('savingsPlus/setAPIService', savingsPlusAPIService, {
+        root: true
+      });
+
+      const savingsPlusOnChainService = new SavingsPlusOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      dispatch('savingsPlus/setOnChainService', savingsPlusOnChainService, {
         root: true
       });
     }
