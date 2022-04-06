@@ -7,6 +7,7 @@ import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
+import { chunkArray, toArray } from '@/utils/arrays';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { getBaseAssetData } from '@/wallet/references/data';
 
@@ -23,6 +24,7 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
   protected readonly platformId: string | undefined;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'coinGecko.api.service';
+  protected static readonly MaxChunkSize = 100;
 
   constructor(currentAddress: string, network: Network) {
     super(currentAddress, network);
@@ -59,9 +61,23 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
       );
     }
 
-    const addresses = Array.isArray(contractAddresses)
-      ? contractAddresses
-      : [contractAddresses];
+    // prevent from sending chunks too large to handle (recursive call)
+    const addresses = toArray(contractAddresses);
+    if (addresses.length > CoinGeckoAPIService.MaxChunkSize) {
+      const chunks = chunkArray(addresses, CoinGeckoAPIService.MaxChunkSize);
+      const promises = new Array<Promise<PriceRecord>>();
+      for (const chunk of chunks) {
+        promises.push(this.getPricesByContractAddress(chunk, currencies, opts));
+      }
+
+      const results = await Promise.all(promises);
+      let aggregateObject: PriceRecord = {};
+      for (const result of results) {
+        aggregateObject = Object.assign(aggregateObject, result);
+      }
+
+      return aggregateObject;
+    }
 
     // check if base asset address is present in the requested addresses
     const baseAssetAddress = getBaseAssetData(this.network).address;

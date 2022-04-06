@@ -10,6 +10,7 @@ import { CurrencyNotSupportedError } from '@/services/v2/api/theGraph/CurrencyNo
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { NativeCurrency } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
+import { chunkArray, toArray } from '@/utils/arrays';
 import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { getBaseAssetData } from '@/wallet/references/data';
@@ -20,6 +21,7 @@ export class TheGraphAPIService extends MultiChainAPIService {
   protected baseURL: string;
   protected readonly client: ApolloClient<NormalizedCacheObject>;
   protected readonly sentryCategoryPrefix = 'theGraph.api.service';
+  protected static readonly MaxChunkSize = 150;
 
   constructor(currentAddress: string, network: Network) {
     super(currentAddress, network);
@@ -45,9 +47,7 @@ export class TheGraphAPIService extends MultiChainAPIService {
     }
 
     if (
-      !(Array.isArray(currencies) ? currencies : [currencies]).some(
-        (currency) => currency === NativeCurrency.USD
-      )
+      !toArray(currencies).some((currency) => currency === NativeCurrency.USD)
     ) {
       throw new CurrencyNotSupportedError(
         'Requested currencies are not supported by TheGraph',
@@ -55,10 +55,25 @@ export class TheGraphAPIService extends MultiChainAPIService {
       );
     }
 
+    // prevent from sending chunks too large to handle (recursive call)
+    const addresses = toArray(contractAddresses);
+    if (addresses.length > TheGraphAPIService.MaxChunkSize) {
+      const chunks = chunkArray(addresses, TheGraphAPIService.MaxChunkSize);
+      const promises = new Array<Promise<PriceRecord>>();
+      for (const chunk of chunks) {
+        promises.push(this.getPricesByContractAddress(chunk, currencies));
+      }
+
+      const results = await Promise.all(promises);
+      let aggregateObject: PriceRecord = {};
+      for (const result of results) {
+        aggregateObject = Object.assign(aggregateObject, result);
+      }
+
+      return aggregateObject;
+    }
+
     try {
-      const addresses = Array.isArray(contractAddresses)
-        ? contractAddresses.slice()
-        : [contractAddresses];
       const result: PriceRecord = {};
 
       const res = await sushiswapClient.query<SushiSwapPriceResponse>({
