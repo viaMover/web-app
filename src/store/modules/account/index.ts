@@ -65,7 +65,9 @@ export default {
     isDepositCardSectionVisible: true,
     isOrderOfLibertySectionVisible: true,
     swapAPIService: undefined,
-    swapOnChainService: undefined
+    swapOnChainService: undefined,
+    theGraphAPIService: undefined,
+    coinGeckoAPIService: undefined
   },
   actions,
   getters,

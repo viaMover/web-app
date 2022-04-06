@@ -4,7 +4,7 @@ import { NativeCurrency } from '@/store/modules/account/types';
 
 type PriceRecord = CoinGeckoPriceRecord | TheGraphPriceRecord;
 
-export const getAssetPrice = (
+export const getAssetPriceFromPriceRecord = (
   priceRecord: PriceRecord,
   address: string,
   currency: NativeCurrency

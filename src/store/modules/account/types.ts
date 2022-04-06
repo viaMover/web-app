@@ -4,6 +4,8 @@ import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
@@ -95,6 +97,9 @@ export type AccountStoreState = {
 
   swapAPIService: ZeroXAPIService | undefined;
   swapOnChainService: SwapOnChainService | undefined;
+
+  coinGeckoAPIService: CoinGeckoAPIService | undefined;
+  theGraphAPIService: TheGraphAPIService | undefined;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {
