@@ -46,6 +46,10 @@ export const isDevelop = (): boolean => {
   return process.env.NODE_ENV === 'development';
 };
 
+export const isConsoleEnabled = (): boolean => {
+  return process.env.VUE_APP_CONSOLE_LOGS === 'true';
+};
+
 const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
