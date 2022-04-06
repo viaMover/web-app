@@ -436,7 +436,12 @@ const actions: ActionFuncs<
             },
             (val: boolean) => {
               commit('setIsTokensListLoaded', val);
-            }
+            },
+            (addresses, nativeCurrency) =>
+              dispatch('fetchTokensPriceByContractAddresses', {
+                contractAddresses: addresses,
+                currencies: nativeCurrency
+              } as FetchTokenPricesByContractAddressesPayload)
           );
 
           explorerInitPromise
