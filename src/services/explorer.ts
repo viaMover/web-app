@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/vue';
 import { APIKeys } from '@/settings';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { Network } from '@/utils/networkTypes';
-import { TokenWithBalance, Transaction } from '@/wallet/types';
+import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 import { MoralisExplorer } from './moralis/explorer';
 import { InitZerionExplorer } from './zerion/explorer';
@@ -34,7 +34,8 @@ export const BuildExplorer = async (
   fetchTokensPriceByContractAddresses: (
     addresses: Array<string>,
     nativeCurrency: NativeCurrency
-  ) => Promise<PriceRecord>
+  ) => Promise<PriceRecord>,
+  localTokens: Array<Token>
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
@@ -47,7 +48,8 @@ export const BuildExplorer = async (
     setTokens,
     setIsTokensListLoaded,
     setChartData,
-    fetchTokensPriceByContractAddresses
+    fetchTokensPriceByContractAddresses,
+    localTokens
   );
 
   try {

@@ -441,7 +441,8 @@ const actions: ActionFuncs<
               dispatch('fetchTokensPriceByContractAddresses', {
                 contractAddresses: addresses,
                 currencies: nativeCurrency
-              } as FetchTokenPricesByContractAddressesPayload)
+              } as FetchTokenPricesByContractAddressesPayload),
+            state.allTokens
           );
 
           explorerInitPromise
