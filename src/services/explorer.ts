@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/vue';
 
 import { APIKeys } from '@/settings';
 import { Network } from '@/utils/networkTypes';
-import { TokenWithBalance, Transaction } from '@/wallet/types';
+import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 import { MoralisExplorer } from './moralis/explorer';
 import { InitZerionExplorer } from './zerion/explorer';
@@ -29,7 +29,8 @@ export const BuildExplorer = async (
   removeTokens: (tokens: Array<string>) => void,
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void,
   setIsTransactionsListLoaded: (val: boolean) => void,
-  setIsTokensListLoaded: (val: boolean) => void
+  setIsTokensListLoaded: (val: boolean) => void,
+  localTokens: Array<Token>
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
@@ -41,7 +42,8 @@ export const BuildExplorer = async (
     setIsTransactionsListLoaded,
     setTokens,
     setIsTokensListLoaded,
-    setChartData
+    setChartData,
+    localTokens
   );
 
   try {

@@ -413,7 +413,8 @@ const actions: ActionFuncs<
             },
             (val: boolean) => {
               commit('setIsTokensListLoaded', val);
-            }
+            },
+            state.allTokens
           );
 
           explorerInitPromise
