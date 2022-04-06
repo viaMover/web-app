@@ -424,7 +424,9 @@ export default Vue.extend({
       await this.loadEarningsMinimalInfo();
     }
 
-    await this.loadStakingUBTMinimalInfo();
+    if (isFeatureEnabled('isStakingUbtEnabled', this.networkInfo?.network)) {
+      await this.loadStakingUBTMinimalInfo();
+    }
   },
   methods: {
     ...mapActions('modals', {
