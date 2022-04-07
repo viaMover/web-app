@@ -34,7 +34,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblNoMoreTransactions: 'No more transactions',
   lblNoMoreTokens: 'No more tokens',
   errors: {
-    default: 'Oh no. Something went wrong'
+    default: 'Oh no. Something went wrong. (Code: {code})'
   },
   connect: {
     txtMoverDescription:
