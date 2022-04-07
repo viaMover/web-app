@@ -47,6 +47,7 @@ export const isDevelop = (): boolean => {
 };
 
 // enables console output in browser developer tools
+// use .env files to change it
 export const isConsoleEnabled = (): boolean => {
   return process.env.VUE_APP_CONSOLE_LOGS === 'true';
 };
