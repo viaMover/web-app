@@ -138,8 +138,8 @@ workflows:
       - build_stg:
           filters:
             branches:
-              only:
-                - staging
+              ignore:
+                - release
       - deploy_stg:
           filters:
             branches:
