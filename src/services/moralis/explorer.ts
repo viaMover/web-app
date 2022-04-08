@@ -249,8 +249,14 @@ export class MoralisExplorer implements Explorer {
 
     return tokens.map((t) => ({
       ...t,
-      priceUSD: pricesResponse.result?.[t.address]?.[this.nativeCurrency]
-        ? String(pricesResponse.result?.[t.address]?.[this.nativeCurrency])
+      priceUSD: pricesResponse.result?.[t.address.toLocaleLowerCase()]?.[
+        this.nativeCurrency
+      ]
+        ? String(
+            pricesResponse.result?.[t.address.toLocaleLowerCase()]?.[
+              this.nativeCurrency
+            ]
+          )
         : t.priceUSD
     }));
   };
@@ -590,7 +596,9 @@ export class MoralisExplorer implements Explorer {
         erc20ParsedTransactions = erc20ParsedTransactions.map((txn) => {
           if ('asset' in txn && txn.asset !== undefined) {
             const loadedPrice =
-              pricesResponse.result?.[txn.asset.address]?.[this.nativeCurrency];
+              pricesResponse.result?.[txn.asset.address.toLocaleLowerCase()]?.[
+                this.nativeCurrency
+              ];
             if (loadedPrice && 'price' in txn.asset) {
               return {
                 ...txn,
