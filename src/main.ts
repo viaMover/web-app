@@ -13,10 +13,10 @@ import * as bignumber from './bignumber';
 import * as dayjs from './dayjs';
 import i18n from './i18n';
 import router from './router';
-import { isDevelop, isProduction } from './settings';
+import { isConsoleEnabled, isDevelop } from './settings';
 import store from './store';
 
-if (isProduction()) {
+if (!isConsoleEnabled()) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.warn = () => {};
   // eslint-disable-next-line @typescript-eslint/no-empty-function

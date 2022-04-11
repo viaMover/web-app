@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 3000",
-    "build": "vue-cli-service build",
+    "serve-stage": "vue-cli-service serve --port 3000 --mode stage",
+    "build-prod": "vue-cli-service build",
+    "build-stage": "vue-cli-service build --mode stage",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "lint:css": "stylelint src/styles/*.less --syntax less",

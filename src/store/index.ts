@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { isFeatureEnabled } from '@/settings';
 import { Theme } from '@/settings/theme';
 
 import actions from './actions';
@@ -12,6 +11,7 @@ import modals from './modules/modals';
 import nft from './modules/nft';
 import savings from './modules/savings';
 import shop from './modules/shop';
+import stakingUBT from './modules/staking-ubt';
 import treasury from './modules/treasury';
 import mutations from './mutations';
 import { RootStoreState } from './types';
@@ -34,16 +34,10 @@ const store = new Vuex.Store<RootStoreState>({
     account,
     modals,
     governance,
-    nft
+    nft,
+    stakingUBT,
+    shop,
+    debitCard
   }
 });
-
-if (isFeatureEnabled('isNibbleShopEnabled')) {
-  store.registerModule('shop', shop);
-}
-
-if (isFeatureEnabled('isDebitCardEnabled')) {
-  store.registerModule('debitCard', debitCard);
-}
-
 export default store;

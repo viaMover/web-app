@@ -24,6 +24,7 @@ import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
+import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 
 export type AddressMapKey =
@@ -74,7 +75,9 @@ export type AddressMapKey =
   | 'TOKE_TOKEN_ADDRESS'
   | 'NFT_ORDER_OF_LIBERTY'
   | 'APE_TOKEN_ADDRESS'
-  | 'UBT_TOKEN_ADDRESS';
+  | 'UBT_TOKEN_ADDRESS'
+  | 'STAKING_UBT_CONTRACT_ADDRESS'
+  | 'CONCAVE_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -129,7 +132,9 @@ const addresses = {
     TOKE_TOKEN_ADDRESS: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94',
     APE_TOKEN_ADDRESS: '0x4d224452801aced8b2f0aebe155379bb5d594381',
     UBT_TOKEN_ADDRESS: '0x8400d94a5cb0fa0d041a3788e395285d61c9ee5e',
-    NFT_ORDER_OF_LIBERTY: '0xebFB3B9f34307De7a72eDdA8696c1E14e0f41d8b'
+    NFT_ORDER_OF_LIBERTY: '0xebFB3B9f34307De7a72eDdA8696c1E14e0f41d8b',
+    STAKING_UBT_CONTRACT_ADDRESS: '0x1f15F293C1Cd3d05d58d3EdeAf0C72c5A2dfeaFf',
+    CONCAVE_TOKEN_ADDRESS: '0x000000007a58f5f58E697e51Ab0357BC9e260A04'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -164,7 +169,8 @@ const addresses = {
     WETH_TOKEN_ADDRESS: '0xAe740d42E4ff0C5086b2b5b5d149eB2F9e1A754F',
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
-    HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94'
+    HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
+    UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -355,6 +361,19 @@ const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const getUBTAssetData = (
+  network: Network
+): SmallTokenInfoWithIcon & { name: string } => {
+  return {
+    address: lookupAddress(network, 'UBT_TOKEN_ADDRESS'),
+    decimals: 8,
+    symbol: 'UBT',
+    name: 'Unibright',
+    iconURL:
+      'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png'
+  };
+};
+
 const getAssetsForTreasury = (
   network: Network,
   moveNativePrice: string,
@@ -422,7 +441,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'GOHM_TOKEN_ADDRESS'),
     lookupAddress(network, 'TOKE_TOKEN_ADDRESS'),
     lookupAddress(network, 'APE_TOKEN_ADDRESS'),
-    lookupAddress(network, 'UBT_TOKEN_ADDRESS')
+    lookupAddress(network, 'UBT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'CONCAVE_TOKEN_ADDRESS')
   ];
 };
 
@@ -437,6 +457,7 @@ export {
   getBTRFLYAssetData,
   isTokenValidForTreasuryDeposit,
   getEURSAssetData,
+  getUBTAssetData,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
@@ -459,5 +480,6 @@ export {
   EARNINGS_OLYMPUS_ABI,
   WX_BTRFLY_ABI,
   NFT_ORDER_OF_LIBERTY_ABI,
+  UBT_STAKING_CONTRACT_ABI,
   validTopUpAssets
 };
