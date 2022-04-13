@@ -4,11 +4,12 @@ import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 
-import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
-import { getPriceByAddress, NetworkAlias } from '@/services/coingecko/tokens';
 import { Explorer } from '@/services/explorer';
+import { NetworkAlias } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
+import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import store from '@/store/index';
+import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
 import { fromWei } from '@/utils/bigmath';
 import { MAX_ASSET_NAME } from '@/utils/consts';
@@ -69,7 +70,7 @@ export class MoralisExplorer implements Explorer {
 
   constructor(
     private readonly accountAddress: string,
-    private readonly nativeCurrency: string,
+    private readonly nativeCurrency: NativeCurrency,
     private readonly network: Network,
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
@@ -80,6 +81,10 @@ export class MoralisExplorer implements Explorer {
     private readonly setChartData: (
       chartData: Record<string, Array<[number, number]>>
     ) => void,
+    private readonly fetchTokensPriceByContractAddresses: (
+      addresses: Array<string>,
+      nativeCurrency: NativeCurrency
+    ) => Promise<PriceRecord>,
     private readonly localTokens: Array<Token>
   ) {
     this.apiClient = axios.create({
@@ -235,30 +240,24 @@ export class MoralisExplorer implements Explorer {
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
     const addresses = tokens.map((t) => t.address);
-    const pricesResponse = await getPriceByAddress(
-      getCoingeckoPlatform(this.network),
+    const pricesResponse = await this.fetchTokensPriceByContractAddresses(
       addresses,
-      [this.nativeCurrency]
+      this.nativeCurrency
     );
-    if (pricesResponse.isError) {
-      Sentry.captureMessage(
-        `Can't get token prices from coingecko: ${pricesResponse.error}`
-      );
-      return tokens;
-    }
 
-    return tokens.map((t) => ({
-      ...t,
-      priceUSD: pricesResponse.result?.[t.address.toLocaleLowerCase()]?.[
+    return tokens.map((t) => {
+      const retrievedPrice = getAssetPriceFromPriceRecord(
+        pricesResponse,
+        t.address,
         this.nativeCurrency
-      ]
-        ? String(
-            pricesResponse.result?.[t.address.toLocaleLowerCase()]?.[
-              this.nativeCurrency
-            ]
-          )
-        : t.priceUSD
-    }));
+      );
+      if (retrievedPrice === undefined) {
+        return t;
+      }
+
+      t.priceUSD = retrievedPrice;
+      return t;
+    });
   };
 
   private enrichTokensWithNative = async (
@@ -583,35 +582,30 @@ export class MoralisExplorer implements Explorer {
     ];
 
     if (uniqueAddressesOfTokensWithoutPrices.length > 0) {
-      const pricesResponse = await getPriceByAddress(
-        'ethereum',
+      const pricesResponse = await this.fetchTokensPriceByContractAddresses(
         uniqueAddressesOfTokensWithoutPrices,
-        [this.nativeCurrency]
+        this.nativeCurrency
       );
-      if (pricesResponse.isError) {
-        Sentry.captureMessage(
-          `Can't get token prices from coingecko: for additional transaction tokens ${pricesResponse.error}`
-        );
-      } else {
-        erc20ParsedTransactions = erc20ParsedTransactions.map((txn) => {
-          if ('asset' in txn && txn.asset !== undefined) {
-            const loadedPrice =
-              pricesResponse.result?.[txn.asset.address.toLocaleLowerCase()]?.[
-                this.nativeCurrency
-              ];
-            if (loadedPrice && 'price' in txn.asset) {
-              return {
-                ...txn,
-                asset: {
-                  ...txn.asset,
-                  price: String(loadedPrice)
-                }
-              };
-            }
+
+      erc20ParsedTransactions = erc20ParsedTransactions.map((txn) => {
+        if ('asset' in txn && txn.asset !== undefined) {
+          const price = getAssetPriceFromPriceRecord(
+            pricesResponse,
+            txn.asset.address,
+            this.nativeCurrency
+          );
+          if (price !== undefined && 'price' in txn.asset) {
+            return {
+              ...txn,
+              asset: {
+                ...txn.asset,
+                price
+              }
+            };
           }
-          return txn;
-        });
-      }
+        }
+        return txn;
+      });
     }
 
     return [...erc20ParsedTransactions, ...nativeParsedTransactions];
