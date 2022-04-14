@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/vue';
 
 import { APIKeys } from '@/settings';
+import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { Network } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
@@ -19,7 +20,7 @@ export interface Explorer {
 
 export const BuildExplorer = async (
   accountAddress: string,
-  nativeCurrency: string,
+  nativeCurrency: NativeCurrency,
   network: Network,
   setTransactions: (txns: Array<Transaction>) => void,
   updateTransactions: (txns: Array<Transaction>) => void,
@@ -30,6 +31,10 @@ export const BuildExplorer = async (
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void,
   setIsTransactionsListLoaded: (val: boolean) => void,
   setIsTokensListLoaded: (val: boolean) => void,
+  fetchTokensPriceByContractAddresses: (
+    addresses: Array<string>,
+    nativeCurrency: NativeCurrency
+  ) => Promise<PriceRecord>,
   localTokens: Array<Token>
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
@@ -43,6 +48,7 @@ export const BuildExplorer = async (
     setTokens,
     setIsTokensListLoaded,
     setChartData,
+    fetchTokensPriceByContractAddresses,
     localTokens
   );
 
@@ -69,6 +75,7 @@ export const BuildExplorer = async (
     setTokens,
     updateTokens,
     removeTokens,
-    setChartData
+    setChartData,
+    fetchTokensPriceByContractAddresses
   );
 };
