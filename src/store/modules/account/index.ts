@@ -1,7 +1,10 @@
 import { isProduction } from '@/settings';
-import { AccountStoreState } from '@/store/modules/account/types';
+import {
+  AccountStoreState,
+  NativeCurrency
+} from '@/store/modules/account/types';
 import { AugmentedModule } from '@/store/types';
-import { avaialbleNetworks } from '@/wallet/allTokens';
+import { availableNetworks } from '@/wallet/allTokens';
 
 import actions, { ActionType } from './actions';
 import getters, { GetterType } from './getters';
@@ -30,14 +33,14 @@ export default {
     isWalletLoading: true,
     balance: undefined,
     networkInfo: undefined,
-    availableNetworks: avaialbleNetworks,
+    availableNetworks: availableNetworks,
 
     gasPrices: undefined,
     gasUpdating: false,
     gasUpdaterHandle: undefined,
     gasUpdaterCallers: [],
 
-    nativeCurrency: 'usd',
+    nativeCurrency: NativeCurrency.USD,
 
     ethPrice: undefined,
     movePriceInWeth: undefined,
@@ -62,7 +65,9 @@ export default {
     isDepositCardSectionVisible: true,
     isOrderOfLibertySectionVisible: true,
     swapAPIService: undefined,
-    swapOnChainService: undefined
+    swapOnChainService: undefined,
+    theGraphAPIService: undefined,
+    coinGeckoAPIService: undefined
   },
   actions,
   getters,

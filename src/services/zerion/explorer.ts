@@ -1,13 +1,13 @@
-import findIndex from 'lodash-es/findIndex';
 import io from 'socket.io-client';
 
 import { Explorer } from '@/services/explorer';
+import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import { APIKeys } from '@/settings';
+import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
 import { Network } from '@/utils/networkTypes';
 import { TokenWithBalance, Transaction } from '@/wallet/types';
 
-import { GetTokensPrice } from '../thegraph/api';
 import { messages, TRANSACTIONS_LIMIT } from './messages';
 import {
   ZerionAssetsReceived,
@@ -19,7 +19,7 @@ import { mapZerionTxns } from './transactions';
 
 export const InitZerionExplorer = (
   accountAddress: string,
-  nativeCurrency: string,
+  nativeCurrency: NativeCurrency,
   network: Network,
   setTransactions: (txns: Array<Transaction>) => void,
   updateTransactions: (txns: Array<Transaction>) => void,
@@ -27,7 +27,11 @@ export const InitZerionExplorer = (
   setTokens: (tokens: Array<TokenWithBalance>) => void,
   updateTokens: (tokens: Array<TokenWithBalance>) => void,
   removeTokens: (tokens: Array<string>) => void,
-  setChartData: (chartData: Record<string, Array<[number, number]>>) => void
+  setChartData: (chartData: Record<string, Array<[number, number]>>) => void,
+  fetchTokensPriceByContractAddresses: (
+    addresses: Array<string>,
+    nativeCurrency: NativeCurrency
+  ) => Promise<PriceRecord>
 ): Explorer => {
   const io_options = {
     extraHeaders: { origin: APIKeys.ZERION_API_KEY_ORIGIN },
@@ -98,14 +102,29 @@ export const InitZerionExplorer = (
 
       console.log('missingPriceAssetAddresses: ', missingPriceAssetAddresses);
 
-      if (missingPriceAssetAddresses) {
-        const missingPrices = await GetTokensPrice(missingPriceAssetAddresses);
-        Array.from(missingPrices).forEach(([addr, price]) => {
-          const ind = findIndex(tokens, (t) => sameAddress(t.address, addr));
-          if (ind !== -1) {
-            tokens[ind].priceUSD = price;
+      if (missingPriceAssetAddresses.length > 0) {
+        const missingPrices = await fetchTokensPriceByContractAddresses(
+          missingPriceAssetAddresses,
+          nativeCurrency
+        );
+        for (const token of tokens) {
+          if (
+            !missingPriceAssetAddresses.some((addr) =>
+              sameAddress(addr, token.address)
+            )
+          ) {
+            continue;
           }
-        });
+
+          const retrievedPrice = getAssetPriceFromPriceRecord(
+            missingPrices,
+            token.address,
+            nativeCurrency
+          );
+          if (retrievedPrice !== undefined) {
+            token.priceUSD = retrievedPrice;
+          }
+        }
       }
 
       console.log('tokens: ', tokens);

@@ -63,7 +63,8 @@ const alsoIncludedAddresses = {
     '0x27c70cd1946795b66be9d954418546998b546634', // LEASH
     '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a', // BTRFLY
     '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9', //wxBTRFLY
-    '0x2e9d63788249371f1dfc918a52f8d799f4a38c94' // TOKE
+    '0x2e9d63788249371f1dfc918a52f8d799f4a38c94', // TOKE
+    '0x000000007a58f5f58e697e51ab0357bc9e260a04' // CNV
   ],
   fantom: [],
   polygon: []

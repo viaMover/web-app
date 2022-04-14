@@ -104,7 +104,7 @@
         <action-button
           class="primary"
           :custom-style="actionButtonStyle"
-          :disabled="!actionAvaialble"
+          :disabled="!actionAvailable"
           :text="actionButtonText"
           @button-click="handleExecuteSwap"
         />
@@ -112,7 +112,7 @@
       <gas-selector
         v-if="showGasSelector"
         :approve-gas-limit="approveGasLimit"
-        :avaialble-gas-modes="availableGasModes"
+        :available-gas-modes="availableGasModes"
         :txn-gas-limit="allGasLimit"
         @selected-gas-changed="handleSelectedGasChanged"
       />
@@ -122,15 +122,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 import { Properties as CssProperties } from 'csstype';
 import Web3 from 'web3';
 
-import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
-import { getPriceByAddress } from '@/services/coingecko/tokens';
-import { GetTokenPrice } from '@/services/thegraph/api';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
@@ -201,7 +198,7 @@ export default Vue.extend({
       slippage: '10',
       selectedGasPrice: '0',
       useSubsidized: false,
-      subsidizedAvaialbe: false,
+      subsidizedAvailable: false,
       actionGasLimit: ethDefaults.basic_holy_swap,
       approveGasLimit: '0',
       transferData: undefined as TransferData | undefined,
@@ -303,7 +300,7 @@ export default Vue.extend({
       );
       return `${formatToDecimals(minReceived, 8)} ${this.output.asset.symbol}`;
     },
-    actionAvaialble(): boolean {
+    actionAvailable(): boolean {
       return this.error === undefined && !this.loading;
     },
     actionButtonText(): string {
@@ -321,7 +318,7 @@ export default Vue.extend({
       return '💸 Swap';
     },
     availableGasModes(): Array<GasMode> {
-      if (this.subsidizedAvaialbe) {
+      if (this.subsidizedAvailable) {
         return ['treasury', 'low', 'normal', 'high'];
       } else {
         return ['low', 'normal', 'high'];
@@ -390,7 +387,7 @@ export default Vue.extend({
       return this.getTokenColor(this.output.asset.address);
     },
     actionButtonStyle(): CssProperties {
-      if (this.actionAvaialble) {
+      if (this.actionAvailable) {
         return {
           backgroundColor: this.toAssetColor ?? '#000'
         };
@@ -475,6 +472,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    ...mapActions('account', {
+      recoverTokenPriceIfNeeded: 'recoverTokenPriceIfNeeded'
+    }),
     expandInfo(): void {
       this.infoExpanded = !this.infoExpanded;
     },
@@ -823,37 +823,8 @@ export default Vue.extend({
       }
     },
     async handleUpdateInputAsset(asset: TokenWithBalance): Promise<void> {
-      this.input.asset = asset;
+      this.input.asset = await this.recoverTokenPriceIfNeeded(asset);
 
-      if (!asset.priceUSD) {
-        const priceResponse = await getPriceByAddress(
-          getCoingeckoPlatform(this.networkInfo.network),
-          [asset.address],
-          [this.nativeCurrency]
-        );
-
-        let price = '0';
-
-        if (!priceResponse.isError) {
-          price = priceResponse.result?.[asset.address.toLowerCase()]?.[
-            this.nativeCurrency
-          ]
-            ? String(
-                priceResponse.result?.[asset.address.toLowerCase()]?.[
-                  this.nativeCurrency
-                ]
-              )
-            : '0';
-        } else {
-          console.warn(
-            `Can't find price for asset ${asset.symbol} on swap modal`
-          );
-        }
-
-        if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
-          this.input.asset.priceUSD = price;
-        }
-      }
       this.input.amount = '';
       this.input.nativeAmount = '';
       this.output.amount = '';
@@ -863,36 +834,7 @@ export default Vue.extend({
       this.transferData = undefined;
     },
     async handleUpdateOutputAsset(asset: Token): Promise<void> {
-      this.output.asset = asset;
-      if (!asset.priceUSD || asset.priceUSD === '0') {
-        const priceResponse = await getPriceByAddress(
-          getCoingeckoPlatform(this.networkInfo.network),
-          [asset.address],
-          [this.nativeCurrency]
-        );
-
-        let price = '0';
-
-        if (!priceResponse.isError) {
-          price = priceResponse.result?.[asset.address.toLowerCase()]?.[
-            this.nativeCurrency
-          ]
-            ? String(
-                priceResponse.result?.[asset.address.toLowerCase()]?.[
-                  this.nativeCurrency
-                ]
-              )
-            : '0';
-        } else {
-          console.warn(
-            `Can't find price for asset ${asset.symbol} on swap modal`
-          );
-        }
-
-        if ((!asset.priceUSD || asset.priceUSD === '0') && price !== '0') {
-          this.output.asset.priceUSD = price;
-        }
-      }
+      this.output.asset = await this.recoverTokenPriceIfNeeded(asset);
 
       this.input.amount = '';
       this.input.nativeAmount = '';
@@ -1005,17 +947,17 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
-        this.subsidizedAvaialbe = false;
+        this.subsidizedAvailable = false;
         return;
       }
 
       if (this.input.asset?.address === 'eth') {
-        this.subsidizedAvaialbe = false;
+        this.subsidizedAvailable = false;
         return;
       }
 
       try {
-        this.subsidizedAvaialbe = await (
+        this.subsidizedAvailable = await (
           this.swapOnChainService as SwapOnChainService
         ).isSubsidizedTransactionAllowed(
           gasPrice,

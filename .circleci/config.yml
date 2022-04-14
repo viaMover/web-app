@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  build_stg:
     working_directory: /tmp/workspace
     docker:
       - image: cimg/node:14.17.4
@@ -17,7 +17,28 @@ jobs:
             mv deploy/keys-stg.dec src/settings/keys.ts
       - run:
           name: Build web app
-          command: yarn && yarn build
+          command: yarn && yarn build-stage
+      - persist_to_workspace:
+          root:  /tmp/workspace
+          paths: [ '*' ]
+
+  build_prod:
+    working_directory: /tmp/workspace
+    docker:
+      - image: cimg/node:14.17.4
+    environment:
+      - VUE_APP_IS_DEV: false
+    steps:
+      - checkout
+      - run:
+          name: Prepare files to build static web app
+          command: |
+            cd /tmp/workspace
+            openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-stg.enc -out deploy/keys-stg.dec
+            mv deploy/keys-stg.dec src/settings/keys.ts
+      - run:
+          name: Build web app
+          command: yarn && yarn build-prod
       - persist_to_workspace:
           root:  /tmp/workspace
           paths: [ '*' ]
@@ -114,18 +135,27 @@ workflows:
   version: 2
   commit:
     jobs:
-      - build
+      - build_stg:
+          filters:
+            branches:
+              ignore:
+                - release
       - deploy_stg:
           filters:
             branches:
               only:
                 - staging
           requires:
-            - build
+            - build_stg
+      - build_prod:
+          filters:
+            branches:
+              only:
+                - release
       - deploy_prod:
           filters:
             branches:
               only:
                 - release
           requires:
-            - build
+            - build_prod

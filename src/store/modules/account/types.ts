@@ -1,13 +1,12 @@
-import * as Sentry from '@sentry/vue';
-import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
-import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -39,6 +38,15 @@ export type Avatar = {
   | { type: 'image'; imageSrc: string; imageAlt: string }
 );
 
+export enum NativeCurrency {
+  Bitcoin = 'btc',
+  Ether = 'eth',
+  USD = 'usd',
+  EUR = 'eur',
+  GBP = 'gbp',
+  RUB = 'rub'
+}
+
 export type AccountStoreState = {
   web3Modal: any;
 
@@ -65,7 +73,7 @@ export type AccountStoreState = {
   isWalletLoading: boolean;
   refreshError: undefined | string;
 
-  nativeCurrency: 'usd';
+  nativeCurrency: NativeCurrency;
   // main prices in native currency
   ethPrice: undefined | string;
   movePriceInWeth: undefined | string;
@@ -89,6 +97,9 @@ export type AccountStoreState = {
 
   swapAPIService: ZeroXAPIService | undefined;
   swapOnChainService: SwapOnChainService | undefined;
+
+  coinGeckoAPIService: CoinGeckoAPIService | undefined;
+  theGraphAPIService: TheGraphAPIService | undefined;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {
@@ -100,40 +111,19 @@ export type SafeAccountStoreState = AccountStoreState & {
 export const ensureAccountStateIsSafe = (
   state: AccountStoreState | undefined
 ): state is SafeAccountStoreState => {
-  const reasons = new Array<string>();
   if (state === undefined) {
-    reasons.push('empty account state');
-  }
-
-  if (state?.currentAddress === undefined) {
-    reasons.push('failed to get currentAddress from state');
-  }
-
-  if (state?.provider?.web3 === undefined) {
-    reasons.push('failed to get web3 provider from state');
-  }
-
-  if (state?.networkInfo?.network === undefined) {
-    reasons.push('failed to get network from state');
-  }
-
-  if (reasons.length > 0) {
-    addSentryBreadcrumb({
-      type: 'error',
-      category: 'state.account.safe',
-      data: {
-        reasons
-      },
-      level: Sentry.Severity.Error,
-      message: 'account state check failed',
-      timestamp: dayjs().unix()
-    });
-
-    console.error('account state check failed:', reasons);
     return false;
   }
 
-  return true;
+  if (state?.currentAddress === undefined) {
+    return false;
+  }
+
+  if (state?.provider?.web3 === undefined) {
+    return false;
+  }
+
+  return state?.networkInfo?.network !== undefined;
 };
 
 export type EmitChartRequestPayload = {
@@ -151,4 +141,48 @@ export type InitWalletPayload = {
   provider: provider;
   injected: boolean;
   providerBeforeCloseCb: () => void;
+};
+
+export const nativeCurrencyFormatters = {
+  [NativeCurrency.USD]: {
+    sign: '$',
+    currency: 'USD',
+    position: 'prefix'
+  },
+  [NativeCurrency.GBP]: {
+    sign: '£',
+    currency: 'GBP',
+    position: 'prefix'
+  },
+  [NativeCurrency.EUR]: {
+    sign: '€',
+    currency: 'EUR',
+    position: 'prefix'
+  },
+  [NativeCurrency.RUB]: {
+    sign: '₽',
+    currency: 'RUB',
+    position: 'postfix'
+  },
+  [NativeCurrency.Ether]: {
+    sign: 'Ξ',
+    currency: 'ETH',
+    position: 'prefix'
+  },
+  [NativeCurrency.Bitcoin]: {
+    sign: '₿',
+    currency: 'BTC',
+    position: 'prefix'
+  }
+};
+
+export type PriceRecord = {
+  [address: string]: {
+    [currency: string]: string;
+  };
+};
+
+export type FetchTokenPricesByContractAddressesPayload = {
+  contractAddresses: Array<string> | string;
+  currencies: Array<NativeCurrency> | NativeCurrency;
 };

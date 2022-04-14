@@ -33,6 +33,7 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import MewConnect from '@myetherwallet/mewconnect-web-client';
 import Portis from '@portis/web3';
 import Web3ModalVue from 'web3modal-vue';
@@ -43,8 +44,11 @@ import Mobile from '@/views/mobile.vue';
 import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { TopMessageModal } from './components/modals';
+import { sendGlobalTopMessageEvent } from './global-event-bus';
+import { addSentryBreadcrumb } from './services/v2/utils/sentry';
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/types';
+import { CommonErrors } from './utils/errors';
 import { InitCallbacks } from './web3/callbacks';
 
 export default Vue.extend({
@@ -69,6 +73,16 @@ export default Vue.extend({
           options: {
             id: APIKeys.PORTIS_DAPP_ID
           }
+        },
+        coinbasewallet: {
+          package: CoinbaseWalletSDK,
+          options: {
+            appName: 'Mover App',
+            infuraId: APIKeys.INFURA_PROJECT_ID
+          }
+        },
+        metamask: {
+          package: {}
         }
       }
     };
@@ -122,13 +136,31 @@ export default Vue.extend({
       const web3modal = this.$refs.web3modal as any;
       this.setWeb3Modal(web3modal);
       if (web3modal.cachedProvider) {
-        const provider = await web3modal.connect();
-        const providerWithCb = await InitCallbacks(provider);
-        await this.initWallet({
-          provider: providerWithCb.provider,
-          providerBeforeCloseCb: providerWithCb.onDisconnectCb,
-          injected: false
-        } as InitWalletPayload);
+        try {
+          const provider = await web3modal.connect();
+          const providerWithCb = await InitCallbacks(provider);
+          await this.initWallet({
+            provider: providerWithCb.provider,
+            providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+            injected: false
+          } as InitWalletPayload);
+        } catch (error) {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'app',
+            message: "Can't connect to cached provider",
+            data: {
+              error
+            }
+          });
+          web3modal.clearCachedProvider();
+          sendGlobalTopMessageEvent(
+            this.$t('errors.default', {
+              code: CommonErrors.CACHED_PROVIDER_CONNECT_ERROR
+            }) as string,
+            'error'
+          );
+        }
       }
       this.setIsDetecting(false);
     });

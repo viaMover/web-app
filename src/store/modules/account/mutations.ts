@@ -1,18 +1,24 @@
+import Vue from 'vue';
+
 import Fuse from 'fuse.js';
 
 import { Explorer } from '@/services/explorer';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import {
   AccountData,
   AccountStoreState,
   Avatar,
   ChartPair,
+  NativeCurrency,
   ProviderData
 } from '@/store/modules/account/types';
 import { sortAndDeduplicateTokens } from '@/store/modules/account/utils/tokens';
 import { sortAndDeduplicateTransactions } from '@/store/modules/account/utils/transactions';
 import { MutationFuncs } from '@/store/types';
+import { sameAddress } from '@/utils/address';
 import { getNetworkByChainId } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -56,6 +62,10 @@ type Mutations = {
   setIsTokensListLoaded: void;
   setSwapAPIService: void;
   setSwapOnChainService: void;
+  setTokenNativePrice: void;
+  setNativeCurrency: void;
+  setCoinGeckoAPIService: void;
+  setTheGraphAPIService: void;
 };
 
 const mutations: MutationFuncs<Mutations, AccountStoreState> = {
@@ -240,6 +250,40 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setSwapOnChainService(state, service: SwapOnChainService): void {
     state.swapOnChainService = service;
+  },
+  setTokenNativePrice(
+    state,
+    { address, nativePrice }: { address: string; nativePrice: string }
+  ): void {
+    const tokensIdx = state.tokens.findIndex((t) =>
+      sameAddress(t.address, address)
+    );
+    const allTokensIdx = state.tokens.findIndex((t) =>
+      sameAddress(t.address, address)
+    );
+
+    if (tokensIdx > -1) {
+      Vue.set(state.tokens, tokensIdx, {
+        ...state.tokens[tokensIdx],
+        priceUSD: nativePrice
+      });
+    }
+
+    if (allTokensIdx > -1) {
+      Vue.set(state.tokens, allTokensIdx, {
+        ...state.tokens[allTokensIdx],
+        priceUSD: nativePrice
+      });
+    }
+  },
+  setNativeCurrency(state, nativeCurrency: NativeCurrency): void {
+    state.nativeCurrency = nativeCurrency;
+  },
+  setCoinGeckoAPIService(state, service: CoinGeckoAPIService): void {
+    state.coinGeckoAPIService = service;
+  },
+  setTheGraphAPIService(state, service: TheGraphAPIService): void {
+    state.theGraphAPIService = service;
   }
 };
 

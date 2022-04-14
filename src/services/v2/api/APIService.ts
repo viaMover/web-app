@@ -1,7 +1,8 @@
+import { ApolloClient } from 'apollo-client';
 import { AxiosInstance } from 'axios';
 
 export abstract class APIService {
-  protected abstract readonly client: AxiosInstance;
+  protected abstract readonly client: AxiosInstance | ApolloClient<unknown>;
   protected readonly currentAddress: string;
   protected abstract baseURL: string;
   protected abstract readonly sentryCategoryPrefix: string;
@@ -10,7 +11,7 @@ export abstract class APIService {
     this.currentAddress = currentAddress;
   }
 
-  protected abstract formatError(error: unknown): void;
+  protected abstract formatError(error: unknown): never;
 
   protected getParamsSerializer(
     params: Record<string, number | string | Array<string> | undefined>

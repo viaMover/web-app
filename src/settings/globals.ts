@@ -37,6 +37,8 @@ export interface Globals {
   isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
   isGasListenerEnabled: GlobalSettings;
+  isStakingUbtEnabled: GlobalSettings;
+  isStakingUbtFieldReducerEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -45,6 +47,11 @@ export const isProduction = (): boolean => {
 
 export const isDevelop = (): boolean => {
   return process.env.NODE_ENV === 'development';
+};
+
+// enables console output in browser developer tools
+export const isConsoleEnabled = (): boolean => {
+  return process.env.VUE_APP_CONSOLE_LOGS === 'true';
 };
 
 const values: Globals = {
@@ -94,7 +101,9 @@ const values: Globals = {
   ],
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
-  isGasListenerEnabled: [Network.mainnet]
+  isGasListenerEnabled: [Network.mainnet],
+  isStakingUbtEnabled: [Network.mainnet],
+  isStakingUbtFieldReducerEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

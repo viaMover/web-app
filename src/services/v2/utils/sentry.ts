@@ -1,9 +1,12 @@
-import { addBreadcrumb as originalFunction } from '@sentry/vue';
+import {
+  addBreadcrumb as originalAddSentryBreadcrumb,
+  captureException as originalCaptureException
+} from '@sentry/vue';
 
-import { isProduction } from '@/settings';
+import { isConsoleEnabled } from '@/settings';
 
-export let addSentryBreadcrumb = originalFunction;
-if (!isProduction()) {
+export let addSentryBreadcrumb = originalAddSentryBreadcrumb;
+if (isConsoleEnabled()) {
   addSentryBreadcrumb = (breadcrumb) => {
     switch (breadcrumb.type) {
       case 'error':
@@ -17,6 +20,14 @@ if (!isProduction()) {
         break;
     }
 
-    originalFunction(breadcrumb);
+    originalAddSentryBreadcrumb(breadcrumb);
+  };
+}
+
+export let captureSentryException = originalCaptureException;
+if (isConsoleEnabled()) {
+  captureSentryException = (exception, captureContext) => {
+    console.error(exception, { captureContext });
+    return originalCaptureException(exception, captureContext);
   };
 }
