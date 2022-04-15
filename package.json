@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve --port 3000",
     "serve-stage": "vue-cli-service serve --port 3000 --mode stage",
     "build-prod": "vue-cli-service build",
-    "build-stage": "vue-cli-service build --mode stage",
+    "build-stage": "vue-cli-service build --mode stage --silent",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "lint:css": "stylelint src/styles/*.less --syntax less",
