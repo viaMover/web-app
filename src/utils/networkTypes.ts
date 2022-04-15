@@ -40,6 +40,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.mainnet,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -56,6 +57,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.ropsten,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -72,6 +74,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.rinkeby,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -88,6 +91,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.kovan,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -104,6 +108,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'MATIC',
       name: 'Matic',
+      network: Network.polygon,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/info/logo.png'
     },
@@ -120,6 +125,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.binance,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -136,6 +142,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.binanceTest,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -152,6 +159,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 9,
       symbol: 'AVAX',
       name: 'Avalanche X-Chain',
+      network: Network.avalanche,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchex/info/logo.png'
     },
@@ -168,6 +176,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ARETH',
       name: 'Arbitrum',
+      network: Network.arbitrum,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/arbitrum/info/logo.png'
     },
@@ -184,6 +193,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'FTM',
       name: 'Fantom',
+      network: Network.fantom,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/fantom/info/logo.png'
     },

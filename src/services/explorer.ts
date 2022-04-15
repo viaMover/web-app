@@ -46,6 +46,7 @@ export const BuildExplorer = async (
     updateTransactions,
     setIsTransactionsListLoaded,
     setTokens,
+    updateTokens,
     setIsTokensListLoaded,
     setChartData,
     fetchTokensPriceByContractAddresses,

@@ -77,6 +77,7 @@ export class MoralisExplorer implements Explorer {
     private readonly updateTransactions: (txns: Array<Transaction>) => void,
     private readonly setIsTransactionsListLoaded: (val: boolean) => void,
     private readonly setTokens: (tokens: Array<TokenWithBalance>) => void,
+    private readonly updateTokens: (tokens: Array<TokenWithBalance>) => void,
     private readonly setIsTokensListLoaded: (val: boolean) => void,
     private readonly setChartData: (
       chartData: Record<string, Array<[number, number]>>
@@ -99,6 +100,7 @@ export class MoralisExplorer implements Explorer {
 
   async init(): Promise<void> {
     this.setIsTransactionsListLoaded(false);
+    this.setTokens([]);
     await this.refreshWalletData();
   }
 
