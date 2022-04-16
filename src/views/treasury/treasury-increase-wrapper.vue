@@ -144,14 +144,16 @@ export default Vue.extend({
   computed: {
     ...mapState('account', {
       networkInfo: 'networkInfo',
-      tokens: 'tokens',
       currentAddress: 'currentAddress',
       provider: 'provider',
-      ethPrice: 'ethPrice',
       gasPrices: 'gasPrices',
       nativeCurrency: 'nativeCurrency'
     }),
     ...mapGetters('treasury', { treasuryBoost: 'treasuryBoost' }),
+    ...mapGetters('account', {
+      currentNetworkBaseTokenPrice: 'currentNetworkBaseTokenPrice',
+      currentNetworkWalletTokens: 'currentNetworkWalletTokens'
+    }),
     ...mapState('treasury', {
       treasuryBalanceMove: 'treasuryBalanceMove',
       treasuryBalanceLP: 'treasuryBalanceLP',
@@ -192,12 +194,12 @@ export default Vue.extend({
       const slp = getMoveWethLPAssetData(this.networkInfo.network);
 
       let walletBalanceMove =
-        this.tokens.find((t: TokenWithBalance) =>
+        this.currentNetworkWalletTokens.find((t: TokenWithBalance) =>
           sameAddress(t.address, move.address)
         )?.balance ?? '0';
 
       let walletBalanceLP =
-        this.tokens.find((t: TokenWithBalance) =>
+        this.currentNetworkWalletTokens.find((t: TokenWithBalance) =>
           sameAddress(t.address, slp.address)
         )?.balance ?? '0';
 
@@ -233,7 +235,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    tokens: {
+    currentNetworkWalletTokens: {
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
@@ -332,8 +334,11 @@ export default Vue.extend({
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+      if (
+        isZero(gasPrice) ||
+        isZero(actionGasLimit) ||
+        isZero(this.currentNetworkBaseTokenPrice)
+      ) {
         return undefined;
       }
 
@@ -342,7 +347,7 @@ export default Vue.extend({
       ).calculateTransactionNativePrice(
         gasPrice,
         actionGasLimit,
-        this.ethPrice
+        this.currentNetworkBaseTokenPrice
       );
     },
     async estimateAction(

@@ -15,6 +15,7 @@ export interface Globals {
   isTreasuryEnabled: GlobalSettings;
   isSavingsEnabled: GlobalSettings;
   isSwapEnabled: GlobalSettings;
+  isMultichainTokensEnabled: GlobalSettings;
   isExplorerEnabled: GlobalSettings;
   isOffchainExplorerEnabled: GlobalSettings;
   isEarningsEnabled: GlobalSettings;
@@ -67,6 +68,7 @@ const values: Globals = {
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
   isSwapEnabled: [Network.mainnet, Network.fantom, Network.polygon],
+  isMultichainTokensEnabled: false,
   isExplorerEnabled: [
     Network.mainnet,
     Network.binance,

@@ -19,7 +19,7 @@ import { sortAndDeduplicateTokens } from '@/store/modules/account/utils/tokens';
 import { sortAndDeduplicateTransactions } from '@/store/modules/account/utils/transactions';
 import { MutationFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
-import { getNetworkByChainId } from '@/utils/networkTypes';
+import { getNetworkByChainId, Network } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
@@ -32,7 +32,7 @@ type Mutations = {
   toggleIsDebitCardSectionVisible: void;
   toggleIsDepositCardSectionVisible: void;
   toggleIsOrderOfLibertySectionVisible: void;
-  setEthPrice: void;
+  setBaseTokenPrices: void;
   setMovePriceInWeth: void;
   setUsdcPriceInWeth: void;
   setSLPPriceInWETH: void;
@@ -96,8 +96,8 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   toggleIsDepositCardSectionVisible(state): void {
     state.isDepositCardSectionVisible = !state.isDepositCardSectionVisible;
   },
-  setEthPrice(state, ethPrice: string): void {
-    state.ethPrice = ethPrice;
+  setBaseTokenPrices(state, baseTokensPrices: Map<Network, string>): void {
+    state.baseTokensPrices = baseTokensPrices;
   },
   setMovePriceInWeth(state, movePriceInWeth: string): void {
     state.movePriceInWeth = movePriceInWeth;
@@ -128,7 +128,6 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
     state.tokens = sortAndDeduplicateTokens(tokens);
-    state.tokensSearcher = undefined;
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];

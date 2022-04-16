@@ -174,13 +174,15 @@ export default Vue.extend({
       currentAddress: 'currentAddress',
       nativeCurrency: 'nativeCurrency',
       gasPrices: 'gasPrices',
-      ethPrice: 'ethPrice',
-      tokens: 'tokens',
       usdcPriceInWeth: 'usdcPriceInWeth',
       provider: 'provider',
       swapService: 'swapAPIService'
     }),
     ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
+    ...mapGetters('account', {
+      currentNetworkBaseTokenPrice: 'currentNetworkBaseTokenPrice',
+      currentNetworkWalletTokens: 'currentNetworkWalletTokens'
+    }),
     ...mapState('savings', {
       savingsAPY: 'savingsAPY',
       savingsBalance: 'savingsBalance',
@@ -238,7 +240,10 @@ export default Vue.extend({
         );
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const usdcNative = multiply(
+        this.usdcPriceInWeth,
+        this.currentNetworkBaseTokenPrice
+      );
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
       const apyNative = multiply(
         divide(this.savingsAPY, 100),
@@ -278,7 +283,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    tokens: {
+    currentNetworkWalletTokens: {
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
@@ -348,8 +353,11 @@ export default Vue.extend({
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+      if (
+        isZero(gasPrice) ||
+        isZero(actionGasLimit) ||
+        isZero(this.currentNetworkBaseTokenPrice)
+      ) {
         return undefined;
       }
 
@@ -358,16 +366,19 @@ export default Vue.extend({
       ).calculateTransactionNativePrice(
         gasPrice,
         actionGasLimit,
-        this.ethPrice
+        this.currentNetworkBaseTokenPrice
       );
     },
     async checkSubsidizedAvailability(
       actionGasLimit: string
     ): Promise<boolean> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
 
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+      if (
+        isZero(gasPrice) ||
+        isZero(actionGasLimit) ||
+        isZero(this.currentNetworkBaseTokenPrice)
+      ) {
         return false;
       }
 
@@ -378,7 +389,11 @@ export default Vue.extend({
       try {
         return await (
           this.savingsOnChainService as SavingsOnChainService
-        ).isSubsidizedTransactionAllowed(gasPrice, actionGasLimit, ethPrice);
+        ).isSubsidizedTransactionAllowed(
+          gasPrice,
+          actionGasLimit,
+          this.currentNetworkBaseTokenPrice
+        );
       } catch (error) {
         console.warn(
           'Failed to check if subsidized transaction is allowed',

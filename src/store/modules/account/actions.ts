@@ -65,6 +65,7 @@ import {
   Transaction
 } from '@/wallet/types';
 
+import { availableNetworks } from './../../../wallet/allTokens';
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
@@ -437,10 +438,11 @@ const actions: ActionFuncs<
             (val: boolean) => {
               commit('setIsTokensListLoaded', val);
             },
-            (addresses, nativeCurrency) =>
+            (addresses, nativeCurrency, network) =>
               dispatch('fetchTokensPriceByContractAddresses', {
                 contractAddresses: addresses,
-                currencies: nativeCurrency
+                currencies: nativeCurrency,
+                network: network
               } as FetchTokenPricesByContractAddressesPayload),
             state.allTokens
           );
@@ -510,6 +512,9 @@ const actions: ActionFuncs<
 
     const coinGeckoAPIService = new CoinGeckoAPIService(
       state.currentAddress,
+      isFeatureEnabled('isMultichainTokensEnabled', state.networkInfo.network)
+        ? availableNetworks
+        : [state.networkInfo.network],
       state.networkInfo.network
     );
     commit('setCoinGeckoAPIService', coinGeckoAPIService);
@@ -552,7 +557,7 @@ const actions: ActionFuncs<
       )
         .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
         .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
-        .setEthPriceGetterHandler(() => getters.ethPrice);
+        .setEthPriceGetterHandler(() => getters.currentNetworkBaseTokenPrice);
       dispatch('savings/setOnChainService', savingsOnChainService, {
         root: true
       });
@@ -578,7 +583,7 @@ const actions: ActionFuncs<
       )
         .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
         .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
-        .setEthPriceGetterHandler(() => getters.ethPrice);
+        .setEthPriceGetterHandler(() => getters.currentNetworkBaseTokenPrice);
       commit('setSwapOnChainService', swapOnChainService);
     }
 
@@ -747,9 +752,8 @@ const actions: ActionFuncs<
     }
 
     try {
-      const getEthPriceInUsdPromise = getBaseTokenPrice(
-        state.networkInfo.network
-      );
+      const getBaseTokensPricesInUsdPromise =
+        getBaseTokenPrice(availableNetworks);
 
       const getMovePriceInWethPromise = getMOVEPriceInWETH(
         state.currentAddress,
@@ -782,15 +786,19 @@ const actions: ActionFuncs<
         state.provider.web3
       );
 
-      const [ethInUsdPrice, slpInWethPrice, usdcInWethPrice, eursInWethPrice] =
-        await Promise.all([
-          getEthPriceInUsdPromise,
-          slpPriceInWETHPromise,
-          getUSDCPriceInWETHPromise,
-          getEURSPriceInWETHPromise,
-          getMovePriceInWethPromise
-        ]);
-      commit('setEthPrice', ethInUsdPrice);
+      const [
+        baseTokensPricesInUsd,
+        slpInWethPrice,
+        usdcInWethPrice,
+        eursInWethPrice
+      ] = await Promise.all([
+        getBaseTokensPricesInUsdPromise,
+        slpPriceInWETHPromise,
+        getUSDCPriceInWETHPromise,
+        getEURSPriceInWETHPromise,
+        getMovePriceInWethPromise
+      ]);
+      commit('setBaseTokenPrices', baseTokensPricesInUsd);
       commit('setSLPPriceInWETH', slpInWethPrice);
       commit('setUsdcPriceInWeth', usdcInWethPrice);
       commit('setEursPriceInWeth', eursInWethPrice);
@@ -806,7 +814,8 @@ const actions: ActionFuncs<
     { state },
     {
       contractAddresses,
-      currencies
+      currencies,
+      network
     }: FetchTokenPricesByContractAddressesPayload
   ): Promise<PriceRecord> {
     let res: PriceRecord = {};
@@ -819,7 +828,8 @@ const actions: ActionFuncs<
 
       res = await state.coinGeckoAPIService.getPricesByContractAddress(
         contractAddresses,
-        currencies
+        currencies,
+        network
       );
     } catch (error) {
       addSentryBreadcrumb({

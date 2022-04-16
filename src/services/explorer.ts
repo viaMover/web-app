@@ -1,10 +1,11 @@
 import * as Sentry from '@sentry/vue';
 
-import { APIKeys } from '@/settings';
+import { APIKeys, isFeatureEnabled } from '@/settings';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { Network } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
+import { availableNetworks } from './../wallet/allTokens';
 import { MoralisExplorer } from './moralis/explorer';
 import { InitZerionExplorer } from './zerion/explorer';
 export interface Explorer {
@@ -33,14 +34,19 @@ export const BuildExplorer = async (
   setIsTokensListLoaded: (val: boolean) => void,
   fetchTokensPriceByContractAddresses: (
     addresses: Array<string>,
-    nativeCurrency: NativeCurrency
+    nativeCurrency: NativeCurrency,
+    network: Network
   ) => Promise<PriceRecord>,
   localTokens: Array<Token>
 ): Promise<Explorer> => {
+  const tokenNetworks = isFeatureEnabled('isMultichainTokensEnabled', network)
+    ? availableNetworks
+    : [network];
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
     nativeCurrency,
     network,
+    tokenNetworks,
     APIKeys.MORALIS_API_KEY,
     setTransactions,
     updateTransactions,

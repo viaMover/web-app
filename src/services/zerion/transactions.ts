@@ -102,31 +102,31 @@ export const mapZerionTxns = async (
       moverTypesData = moverTypesDataRes.result;
     }
     data.payload.transactions.forEach((t) => {
-      const tradeTxns = parseTradeTransaction(t, moverTypesData);
+      const tradeTxns = parseTradeTransaction(t, moverTypesData, network);
       if (tradeTxns !== undefined) {
         txns = txns.concat(tradeTxns);
         return;
       }
 
-      const receiveTxns = parseReceiveTransaction(t, moverTypesData);
+      const receiveTxns = parseReceiveTransaction(t, moverTypesData, network);
       if (receiveTxns !== undefined) {
         txns = txns.concat(receiveTxns);
         return;
       }
 
-      const sendTxns = parseSendTransaction(t, moverTypesData);
+      const sendTxns = parseSendTransaction(t, moverTypesData, network);
       if (sendTxns !== undefined) {
         txns = txns.concat(sendTxns);
         return;
       }
 
-      const authTxns = parseAuthorizeTransaction(t, moverTypesData);
+      const authTxns = parseAuthorizeTransaction(t, moverTypesData, network);
       if (authTxns !== undefined) {
         txns = txns.concat(authTxns);
         return;
       }
 
-      const unknownTxns = tryToParseToUnknown(t, moverTypesData);
+      const unknownTxns = tryToParseToUnknown(t, moverTypesData, network);
       if (unknownTxns !== undefined) {
         //txns = txns.concat(unknownTxns);
         console.debug('Unknown txns:', unknownTxns);
@@ -144,7 +144,8 @@ export const mapZerionTxns = async (
 
 const parseTradeTransaction = (
   tx: ZerionTransaction,
-  moverTypeDate: TransactionMoveTypeData[]
+  moverTypeDate: TransactionMoveTypeData[],
+  network: Network
 ): Transaction[] | undefined => {
   if (tx.type === 'trade' && tx.changes.length > 1) {
     return tx.changes
@@ -168,7 +169,8 @@ const parseTradeTransaction = (
               change: String(c.value),
               iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
-              direction: c.direction
+              direction: c.direction,
+              network: network
             },
             blockNumber: String(tx.block_number),
             hash: tx.hash,
@@ -192,7 +194,8 @@ const parseTradeTransaction = (
               change: String(c.value),
               iconURL: c.asset.icon_url ?? '',
               price: String(c.price ?? '0'),
-              direction: c.direction
+              direction: c.direction,
+              network: network
             },
             blockNumber: String(tx.block_number),
             hash: tx.hash,
@@ -223,7 +226,8 @@ const parseTradeTransaction = (
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
-          direction: c.direction
+          direction: c.direction,
+          network: network
         },
         blockNumber: String(tx.block_number),
         hash: tx.hash,
@@ -246,7 +250,8 @@ const parseTradeTransaction = (
 
 const parseReceiveTransaction = (
   tx: ZerionTransaction,
-  moverTypeDate: TransactionMoveTypeData[]
+  moverTypeDate: TransactionMoveTypeData[],
+  network: Network
 ): Transaction[] | undefined => {
   if (tx.type === 'receive') {
     return tx.changes.map((c, ind) => ({
@@ -257,7 +262,8 @@ const parseReceiveTransaction = (
         change: String(c.value),
         iconURL: c.asset.icon_url ?? '',
         price: String(c.price ?? '0'),
-        direction: c.direction
+        direction: c.direction,
+        network: network
       },
       blockNumber: String(tx.block_number),
       hash: tx.hash,
@@ -279,7 +285,8 @@ const parseReceiveTransaction = (
 
 const parseAuthorizeTransaction = (
   tx: ZerionTransaction,
-  moverTypeDate: TransactionMoveTypeData[]
+  moverTypeDate: TransactionMoveTypeData[],
+  network: Network
 ): Transaction[] | undefined => {
   if (tx.type === 'authorize') {
     return [
@@ -288,7 +295,8 @@ const parseAuthorizeTransaction = (
           address: tx.meta.asset.asset_code,
           decimals: tx.meta.asset.decimals,
           iconURL: tx.meta.asset.icon_url ?? '',
-          symbol: mapZerionSymbol(tx.meta.asset.symbol)
+          symbol: mapZerionSymbol(tx.meta.asset.symbol),
+          network: network
         },
         blockNumber: String(tx.block_number),
         hash: tx.hash,
@@ -309,7 +317,8 @@ const parseAuthorizeTransaction = (
 
 const parseSendTransaction = (
   tx: ZerionTransaction,
-  moverTypeDate: TransactionMoveTypeData[]
+  moverTypeDate: TransactionMoveTypeData[],
+  network: Network
 ): Transaction[] | undefined => {
   if (tx.type === 'send' && tx.changes.length === 1) {
     const c = tx.changes[0];
@@ -322,7 +331,8 @@ const parseSendTransaction = (
           change: String(c.value),
           iconURL: c.asset.icon_url ?? '',
           price: String(c.price ?? '0'),
-          direction: c.direction
+          direction: c.direction,
+          network
         },
         blockNumber: String(tx.block_number),
         hash: tx.hash,
@@ -345,7 +355,8 @@ const parseSendTransaction = (
 
 const tryToParseToUnknown = (
   tx: ZerionTransaction,
-  moverTypeDate: TransactionMoveTypeData[]
+  moverTypeDate: TransactionMoveTypeData[],
+  network: Network
 ): TransactionUnknown[] | undefined => {
   if (
     (tx.type === 'trade' || tx.type === 'send' || tx.type === 'receive') &&
@@ -359,7 +370,8 @@ const tryToParseToUnknown = (
         change: String(c.value),
         iconURL: c.asset.icon_url ?? '',
         price: String(c.price),
-        direction: c.direction
+        direction: c.direction,
+        network
       },
       blockNumber: String(tx.block_number),
       hash: tx.hash,

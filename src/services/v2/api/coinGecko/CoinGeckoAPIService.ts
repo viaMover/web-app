@@ -21,15 +21,17 @@ import {
 
 export class CoinGeckoAPIService extends MultiChainAPIService {
   protected readonly baseURL: string;
-  protected readonly platformId: string | undefined;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'coinGecko.api.service';
   protected static readonly MaxChunkSize = 100;
 
-  constructor(currentAddress: string, network: Network) {
-    super(currentAddress, network);
+  constructor(
+    currentAddress: string,
+    networks: Array<Network>,
+    currentNetwork: Network
+  ) {
+    super(currentAddress, currentNetwork);
     this.baseURL = this.lookupBaseURL();
-    this.platformId = this.lookupPlatformId(network);
     this.client = axios.create({
       baseURL: this.baseURL,
       headers: {
@@ -52,12 +54,14 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
   public async getPricesByContractAddress(
     contractAddresses: Array<string> | string,
     currencies: Array<Currency> | Currency,
+    network: Network,
     opts?: GetPriceOptions
   ): Promise<PriceRecord> {
-    if (this.platformId === undefined) {
+    const platformId = this.lookupPlatformId(network);
+    if (platformId === undefined) {
       throw new NetworkFeatureNotSupportedError(
         'CoinGecko price by contract address',
-        this.network
+        network
       );
     }
 
@@ -67,7 +71,9 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
       const chunks = chunkArray(addresses, CoinGeckoAPIService.MaxChunkSize);
       const promises = new Array<Promise<PriceRecord>>();
       for (const chunk of chunks) {
-        promises.push(this.getPricesByContractAddress(chunk, currencies, opts));
+        promises.push(
+          this.getPricesByContractAddress(chunk, currencies, network, opts)
+        );
       }
 
       const results = await Promise.all(promises);
@@ -80,7 +86,7 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
     }
 
     // check if base asset address is present in the requested addresses
-    const baseAssetAddress = getBaseAssetData(this.network).address;
+    const baseAssetAddress = getBaseAssetData(network).address;
     const baseAssetAddressIdx = addresses.findIndex((address) =>
       sameAddress(address, baseAssetAddress)
     );
@@ -95,7 +101,7 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
     if (addresses.length > 0) {
       const data = (
         await this.client.get<APIPriceRecord>(
-          `/simple/token_price/${this.platformId}`,
+          `/simple/token_price/${platformId}`,
           {
             params: {
               ...opts,
@@ -106,12 +112,16 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
         )
       ).data;
 
-      result = this.mapAPIPriceRecord(data, addresses);
+      result = this.mapAPIPriceRecord(data, network, addresses);
     }
 
     // append base asset price to the result manually if needed
     if (shouldGetBaseAssetPrice) {
-      result[baseAssetAddress] = await this.getBaseAssetPrice(currencies, opts);
+      result[baseAssetAddress] = await this.getBaseAssetPrice(
+        currencies,
+        network,
+        opts
+      );
     }
 
     return result;
@@ -120,6 +130,7 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
   public async getPricesById(
     ids: Array<string> | string,
     currencies: Array<Currency> | Currency,
+    network: Network,
     opts?: GetPriceOptions
   ): Promise<PriceRecord> {
     const data = (
@@ -132,22 +143,28 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
       })
     ).data;
 
-    return this.mapAPIPriceRecord(data);
+    return this.mapAPIPriceRecord(data, network);
   }
 
   public async getBaseAssetPrice(
     currencies: Array<Currency> | Currency,
+    network: Network,
     opts?: GetPriceOptions
   ): Promise<BaseAssetPriceRecord> {
-    const baseAssetId = this.lookupBaseAssetId(this.network);
+    const baseAssetId = this.lookupBaseAssetId(network);
     if (baseAssetId === undefined) {
       throw new NetworkFeatureNotSupportedError(
         'CoinGecko base asset price',
-        this.network
+        network
       );
     }
 
-    const data = await this.getPricesById(baseAssetId, currencies, opts);
+    const data = await this.getPricesById(
+      baseAssetId,
+      currencies,
+      network,
+      opts
+    );
     if (data[baseAssetId] === undefined) {
       throw new MoverError(
         'Failed to get CoinGecko base asset price: response is empty',
@@ -175,10 +192,11 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
 
   protected mapAPIPriceRecord(
     data: APIPriceRecord,
+    network: Network,
     addresses?: Array<string>
   ): PriceRecord {
     const result: PriceRecord = {};
-    const chainId = getNetwork(this.network)?.chainId;
+    const chainId = getNetwork(network)?.chainId;
     for (const assetAddress in data) {
       let recoveredKey = addresses?.find((address) =>
         sameAddress(assetAddress, address)

@@ -17,7 +17,7 @@
 
         <home-wallet-token-item
           v-for="token in tokens"
-          :key="token.address"
+          :key="key(token)"
           :token="token"
         />
       </home-wallet-tokens-wrapper>
@@ -53,6 +53,7 @@ import { mapGetters, mapState } from 'vuex';
 
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { NftAssetCardMini } from '@/components/nft';
 import { NibbleShopProductMini } from '@/components/nibble-shop';
@@ -110,6 +111,11 @@ export default Vue.extend({
     },
     showEmptyState(): boolean {
       return !this.showTokensList && !this.showCollectiblesList;
+    }
+  },
+  methods: {
+    key(token: TokenWithBalance): string {
+      return `${token.network}_${token.address}`;
     }
   }
 });

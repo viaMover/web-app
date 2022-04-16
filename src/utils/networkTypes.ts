@@ -104,7 +104,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://polygonscan.com/',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'mtc',
       decimals: 18,
       symbol: 'MATIC',
       name: 'Matic',
@@ -155,7 +155,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://snowtrace.io/',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'avax',
+      address: 'eth',
       decimals: 9,
       symbol: 'AVAX',
       name: 'Avalanche X-Chain',
@@ -172,7 +172,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://arbiscan.io/',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'areth',
+      address: 'eth',
       decimals: 18,
       symbol: 'ARETH',
       name: 'Arbitrum',
@@ -189,7 +189,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://ftmscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'ftm',
+      address: 'eth',
       decimals: 18,
       symbol: 'FTM',
       name: 'Fantom',

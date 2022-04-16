@@ -50,6 +50,7 @@ export type DisplayableToken = {
   balanceNativeFormatted: string;
   balanceFormatted: string;
   logo: string;
+  network: Network;
 };
 
 export enum TransactionTypes {

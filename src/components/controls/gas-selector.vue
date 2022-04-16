@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import Web3 from 'web3';
 
@@ -90,7 +90,8 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', ['gasPrices', 'ethPrice']),
+    ...mapState('account', ['gasPrices']),
+    ...mapGetters('account', ['currentNetworkBaseTokenPrice']),
     selectedGasMode(): GasMode {
       return this.availableGasModes[this.selectedGasModeIndex];
     },
@@ -139,8 +140,7 @@ export default Vue.extend({
     networkFee(): string {
       if (
         this.selectedGasData === undefined ||
-        this.txnGasLimit === undefined ||
-        this.ethPrice === undefined
+        this.txnGasLimit === undefined
       ) {
         return this.$t('lblNoData') as string;
       }
@@ -160,7 +160,10 @@ export default Vue.extend({
         );
       }
       const txnPriceInEth = Web3.utils.fromWei(txnPriceInWEI, 'ether');
-      const txnPriceNative = multiply(txnPriceInEth, this.ethPrice);
+      const txnPriceNative = multiply(
+        txnPriceInEth,
+        this.currentNetworkBaseTokenPrice
+      );
 
       return `${this.nativeCurrencySymbol}${formatToNative(txnPriceNative)}`;
     },

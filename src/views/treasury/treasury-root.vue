@@ -270,14 +270,17 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('treasury', { isStoreLoading: 'isTreasuryInfoLoading' }),
-    ...mapState('account', { networkInfo: 'networkInfo', tokens: 'tokens' }),
+    ...mapState('account', { networkInfo: 'networkInfo' }),
     ...mapGetters('treasury', {
       hasActiveTreasury: 'hasActiveTreasury',
       treasuryStakedBalanceNative: 'treasuryStakedBalanceNative'
     }),
+    ...mapGetters('account', {
+      currentNetworkWalletTokens: 'currentNetworkWalletTokens'
+    }),
     hasMoveOnBalance(): boolean {
       const walletBalanceMove =
-        this.tokens.find((t: Token) =>
+        this.currentNetworkWalletTokens.find((t: Token) =>
           sameAddress(
             t.address,
             getMoveAssetData(this.networkInfo.network).address

@@ -228,7 +228,6 @@ export const calcTransactionFastNativePrice = (
   console.log('fastGasPriceGWEI;', fastGasPriceGWEI);
   const fastGasPriceWEI = Web3.utils.toWei(fastGasPriceGWEI, 'Gwei');
   console.log('fastGasPriceWEI;', fastGasPriceWEI);
-
   console.log('gasLimit:', txGasLimit);
 
   const fastTransactionPriceWEI = multiply(txGasLimit, fastGasPriceWEI);
@@ -236,7 +235,6 @@ export const calcTransactionFastNativePrice = (
 
   const fastTransactionPriceEth = fromWei(fastTransactionPriceWEI, '18');
   console.log('fastTransactionPriceEth:', fastTransactionPriceEth);
-
   console.log('ethPrice:', ethPrice);
 
   const fastTransactionPriceNative = multiply(

@@ -147,9 +147,7 @@ export default Vue.extend({
     ...mapState('account', {
       networkInfo: 'networkInfo',
       nativeCurrency: 'nativeCurrency',
-      tokens: 'tokens',
-      gasPrices: 'gasPrices',
-      ethPrice: 'ethPrice'
+      gasPrices: 'gasPrices'
     }),
     ...mapState('earnings/olympus', {
       olympusBalance: 'olympusBalance',
@@ -157,7 +155,8 @@ export default Vue.extend({
       ohmNativePrice: 'ohmNativePrice'
     }),
     ...mapGetters('account', {
-      treasuryBonusNative: 'treasuryBonusNative'
+      treasuryBonusNative: 'treasuryBonusNative',
+      currentNetworkBaseTokenPrice: 'currentNetworkBaseTokenPrice'
     }),
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
@@ -181,7 +180,10 @@ export default Vue.extend({
         return `~ $${formatToNative(0)}`;
       }
 
-      const usdcNative = multiply(this.ohmNativePrice, this.ethPrice);
+      const usdcNative = multiply(
+        this.ohmNativePrice,
+        this.currentNetworkBaseTokenPrice
+      );
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
       let apyNative = multiply(divide(this.olympusAPY, 100), usdcAmountNative);
 
@@ -294,8 +296,11 @@ export default Vue.extend({
     },
     checkSubsidizedAvailability(actionGasLimit: string): boolean {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+      if (
+        isZero(gasPrice) ||
+        isZero(actionGasLimit) ||
+        isZero(this.currentNetworkBaseTokenPrice)
+      ) {
         console.log(
           "With empty parameter we don't allow subsidized transaction"
         );
@@ -310,7 +315,7 @@ export default Vue.extend({
       return isSubsidizedAllowed(
         gasPrice,
         actionGasLimit,
-        this.ethPrice,
+        this.currentNetworkBaseTokenPrice,
         this.treasuryBonusNative
       );
     },

@@ -350,7 +350,8 @@ export class SwapOnChainService extends MoverOnChainService {
         direction: 'out',
         iconURL: '',
         price: '0',
-        symbol: inputAsset.symbol
+        symbol: inputAsset.symbol,
+        network: this.network
       },
       subsidizedQueueId: subsidizedResponse.queueID,
       moverType: 'execute_swap'

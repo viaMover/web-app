@@ -141,7 +141,6 @@ export default Vue.extend({
   computed: {
     ...mapState('account', {
       networkInfo: 'networkInfo',
-      tokens: 'tokens',
       currentAddress: 'currentAddress',
       provider: 'provider',
       nativeCurrency: 'nativeCurrency',
@@ -166,7 +165,8 @@ export default Vue.extend({
         priceUSD: this.usdcNativePrice,
         logo: this.moboTokenInfo.iconURL,
         balance: this.treasuryBonus ?? '0',
-        marketCap: Number.MAX_SAFE_INTEGER
+        marketCap: Number.MAX_SAFE_INTEGER,
+        network: this.moboTokenInfo.network
       };
     },
     hasBackButton(): boolean {

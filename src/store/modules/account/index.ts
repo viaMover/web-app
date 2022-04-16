@@ -26,7 +26,6 @@ export default {
 
     tokens: [],
     isTokensListLoaded: false,
-    tokensSearcher: undefined,
     tokenInfoMap: undefined,
     provider: undefined,
     isDetecting: true,
@@ -42,7 +41,8 @@ export default {
 
     nativeCurrency: NativeCurrency.USD,
 
-    ethPrice: undefined,
+    baseTokensPrices: undefined,
+
     movePriceInWeth: undefined,
     usdcPriceInWeth: undefined,
     slpPriceInWeth: undefined,
