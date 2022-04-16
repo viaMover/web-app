@@ -144,7 +144,6 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', {
-      getTokenColor: 'getTokenColor',
       moveNativePrice: 'moveNativePrice',
       slpNativePrice: 'slpNativePrice',
       treasuryBoost: 'treasuryBoost',

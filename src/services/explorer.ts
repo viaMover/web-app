@@ -5,7 +5,6 @@ import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { Network } from '@/utils/networkTypes';
 import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
-import { availableNetworks } from './../wallet/allTokens';
 import { MoralisExplorer } from './moralis/explorer';
 import { InitZerionExplorer } from './zerion/explorer';
 export interface Explorer {
@@ -23,6 +22,7 @@ export const BuildExplorer = async (
   accountAddress: string,
   nativeCurrency: NativeCurrency,
   network: Network,
+  availableNetworks: Array<Network>,
   setTransactions: (txns: Array<Transaction>) => void,
   updateTransactions: (txns: Array<Transaction>) => void,
   removeTransactions: (txns: Array<string>) => void,
@@ -37,7 +37,7 @@ export const BuildExplorer = async (
     nativeCurrency: NativeCurrency,
     network: Network
   ) => Promise<PriceRecord>,
-  localTokens: Array<Token>
+  localTokens: Record<Network, Array<Token>>
 ): Promise<Explorer> => {
   const tokenNetworks = isFeatureEnabled('isMultichainTokensEnabled', network)
     ? availableNetworks

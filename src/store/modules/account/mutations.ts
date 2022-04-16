@@ -23,6 +23,7 @@ import { getNetworkByChainId, Network } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
+import assetListEthereum from '@/../../data/assets/assetList-ethereum.json';
 type Mutations = {
   addTransaction: void;
   setIsTransactionsListLoaded: void;
@@ -138,8 +139,7 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
       (t: TokenWithBalance) => !removeHashes.includes(t.address)
     );
   },
-  setAllTokens(state, tokens: Array<Token>): void {
-    state.allTokens = tokens;
+  setAllTokens(state, tokens: Map<Network, Array<Token>>): void {
     const searchOptions = {
       keys: [
         {
@@ -155,17 +155,18 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
       threshold: 0,
       shouldSort: true
     };
-    const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
 
-    state.allTokensSearcher = new Fuse(state.allTokens, searchOptions, index);
+    tokens.forEach((tokens, network) => {
+      state.allTokens[network] = tokens;
+      const aggregateObject: Record<string, Token> = {};
+      for (let i = 0; i < tokens.length; i++) {
+        aggregateObject[tokens[i].address.toLowerCase()] = tokens[i];
+      }
+      state.tokenInfoMap[network] = aggregateObject;
 
-    const aggregateObject: Record<string, Token> = {};
-    for (let i = 0; i < state.allTokens.length; i++) {
-      aggregateObject[state.allTokens[i].address.toLowerCase()] =
-        state.allTokens[i];
-    }
-
-    state.tokenInfoMap = aggregateObject;
+      const index = Fuse.createIndex(searchOptions.keys, tokens);
+      state.allTokensSearcher[network] = new Fuse(tokens, searchOptions, index);
+    });
   },
   setRefreshError(state, error): void {
     state.refreshError = error;

@@ -7,6 +7,7 @@
         <slot name="first-token-image">
           <token-image
             :address="token.address"
+            :network="token.network"
             :src="token.logo"
             :symbol="token.symbol"
             wrapper-class="item-coin"

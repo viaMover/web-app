@@ -389,7 +389,7 @@ const actions: ActionFuncs<
         });
 
         console.info('getting all tokens...');
-        const allTokens = getAllTokens(state.networkInfo.network);
+        const allTokens = getAllTokens(state.availableNetworks);
         commit('setAllTokens', allTokens);
       }
 
@@ -411,6 +411,7 @@ const actions: ActionFuncs<
             state.currentAddress,
             state.nativeCurrency,
             state.networkInfo.network,
+            state.availableNetworks,
             (txns: Array<Transaction>) => {
               commit('setWalletTransactions', txns);
             },
@@ -513,7 +514,7 @@ const actions: ActionFuncs<
     const coinGeckoAPIService = new CoinGeckoAPIService(
       state.currentAddress,
       isFeatureEnabled('isMultichainTokensEnabled', state.networkInfo.network)
-        ? availableNetworks
+        ? state.availableNetworks
         : [state.networkInfo.network],
       state.networkInfo.network
     );
@@ -752,8 +753,9 @@ const actions: ActionFuncs<
     }
 
     try {
-      const getBaseTokensPricesInUsdPromise =
-        getBaseTokenPrice(availableNetworks);
+      const getBaseTokensPricesInUsdPromise = getBaseTokenPrice(
+        state.availableNetworks
+      );
 
       const getMovePriceInWethPromise = getMOVEPriceInWETH(
         state.currentAddress,

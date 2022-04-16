@@ -390,7 +390,10 @@ export default Vue.extend({
       if (this.output.asset === undefined) {
         return undefined;
       }
-      return this.getTokenColor(this.output.asset.address);
+      return this.getTokenColor(
+        this.output.asset.network,
+        this.output.asset.address
+      );
     },
     actionButtonStyle(): CssProperties {
       if (this.actionAvailable) {

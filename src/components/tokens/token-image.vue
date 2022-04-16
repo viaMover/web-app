@@ -18,6 +18,8 @@ import { mapGetters } from 'vuex';
 
 import { Properties } from 'csstype';
 
+import { Network } from '@/utils/networkTypes';
+
 import { IImageFallbackOpts } from './types';
 
 export default Vue.extend({
@@ -37,6 +39,10 @@ export default Vue.extend({
     },
     fallbackSrcList: {
       type: Array as PropType<Array<string>>,
+      default: undefined
+    },
+    network: {
+      type: String as PropType<Network | undefined>,
       default: undefined
     }
   },
@@ -58,7 +64,8 @@ export default Vue.extend({
     },
     color(): string | undefined {
       return (
-        this.getTokenColor(this.address) ?? 'var(--color-token-image-shadow)'
+        this.getTokenColor(this.network ?? Network.mainnet, this.address) ??
+        'var(--color-token-image-shadow)'
       );
     },
     imageFallbackOpts(): IImageFallbackOpts {

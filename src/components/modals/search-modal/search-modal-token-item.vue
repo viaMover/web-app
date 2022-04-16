@@ -3,6 +3,7 @@
     <div class="swaps__wrapper-search-items-item-info">
       <token-image
         :address="item.address"
+        :network="item.network"
         :src="item.logo"
         :symbol="item.symbol"
         wrapper-class="icon"

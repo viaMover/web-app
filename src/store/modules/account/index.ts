@@ -4,6 +4,7 @@ import {
   NativeCurrency
 } from '@/store/modules/account/types';
 import { AugmentedModule } from '@/store/types';
+import { Network } from '@/utils/networkTypes';
 import { availableNetworks } from '@/wallet/allTokens';
 
 import actions, { ActionType } from './actions';
@@ -26,7 +27,20 @@ export default {
 
     tokens: [],
     isTokensListLoaded: false,
-    tokenInfoMap: undefined,
+    tokenInfoMap: {
+      [Network.mainnet]: undefined,
+      [Network.arbitrum]: undefined,
+      [Network.avalanche]: undefined,
+      [Network.binance]: undefined,
+      [Network.binanceTest]: undefined,
+      [Network.celo]: undefined,
+      [Network.fantom]: undefined,
+      [Network.kovan]: undefined,
+      [Network.optimism]: undefined,
+      [Network.polygon]: undefined,
+      [Network.rinkeby]: undefined,
+      [Network.ropsten]: undefined
+    },
     provider: undefined,
     isDetecting: true,
     isWalletLoading: true,
@@ -57,8 +71,34 @@ export default {
 
     // eslint-disable-next-line
     providerBeforeClose: () => {},
-    allTokens: [],
-    allTokensSearcher: undefined,
+    allTokens: {
+      [Network.mainnet]: [],
+      [Network.arbitrum]: [],
+      [Network.avalanche]: [],
+      [Network.binance]: [],
+      [Network.binanceTest]: [],
+      [Network.celo]: [],
+      [Network.fantom]: [],
+      [Network.kovan]: [],
+      [Network.optimism]: [],
+      [Network.polygon]: [],
+      [Network.rinkeby]: [],
+      [Network.ropsten]: []
+    },
+    allTokensSearcher: {
+      [Network.mainnet]: undefined,
+      [Network.arbitrum]: undefined,
+      [Network.avalanche]: undefined,
+      [Network.binance]: undefined,
+      [Network.binanceTest]: undefined,
+      [Network.celo]: undefined,
+      [Network.fantom]: undefined,
+      [Network.kovan]: undefined,
+      [Network.optimism]: undefined,
+      [Network.polygon]: undefined,
+      [Network.rinkeby]: undefined,
+      [Network.ropsten]: undefined
+    },
     refreshError: undefined,
 
     isDebitCardSectionVisible: true,

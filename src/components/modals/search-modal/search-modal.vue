@@ -221,6 +221,7 @@ export default Vue.extend({
         this.globalsTokensDataOffset = 0;
         this.globalTokensData = this.filterTokens(
           this.searchInAllTokens(
+            this.networkInfo.network,
             this.searchTermDebounced,
             this.globalsTokensDataOffset
           )
@@ -247,6 +248,7 @@ export default Vue.extend({
 
       this.globalTokensData = this.filterTokens(
         this.searchInAllTokens(
+          this.networkInfo.network,
           this.searchTermDebounced,
           this.globalsTokensDataOffset
         )
@@ -272,6 +274,7 @@ export default Vue.extend({
       }
       const newData = this.filterTokens(
         this.searchInAllTokens(
+          this.networkInfo.network,
           this.searchTermDebounced,
           this.globalsTokensDataOffset + 100
         )

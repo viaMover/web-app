@@ -51,6 +51,7 @@
       <template v-slot:second-token-image>
         <token-image
           :address="usdcTokenInfo.address"
+          :network="usdcTokenInfo.network"
           :src="usdcTokenInfo.iconURL"
           :symbol="usdcTokenInfo.symbol"
           wrapper-class="item-coin"
@@ -147,8 +148,7 @@ export default Vue.extend({
       treasuryBonus: 'treasuryBonus'
     }),
     ...mapGetters('account', {
-      usdcNativePrice: 'usdcNativePrice',
-      getTokenColor: 'getTokenColor'
+      usdcNativePrice: 'usdcNativePrice'
     }),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'

@@ -14,6 +14,7 @@
     <token-image
       v-else
       :address="tokenAddress"
+      :network="tokenNetwork"
       :src="tokenImageSrc"
       :symbol="tokenSymbol"
     />
@@ -36,6 +37,7 @@ import {
   formatToNative,
   getSignIfNeeded
 } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 
 import { TokenImage } from '@/components/tokens';
@@ -133,6 +135,16 @@ export default Vue.extend({
         return this.transaction.asset.symbol;
       }
       return '';
+    },
+    tokenNetwork(): Network | undefined {
+      if (
+        this.transaction.type === TransactionTypes.swapERC20 ||
+        this.transaction.type === TransactionTypes.transferERC20 ||
+        this.transaction.type === TransactionTypes.approvalERC20
+      ) {
+        return this.transaction.asset.network;
+      }
+      return undefined;
     },
     isLoading(): boolean {
       return this.transaction.status === 'pending';

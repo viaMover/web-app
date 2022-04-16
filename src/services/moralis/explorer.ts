@@ -88,7 +88,7 @@ export class MoralisExplorer implements Explorer {
       nativeCurrency: NativeCurrency,
       network: Network
     ) => Promise<PriceRecord>,
-    private readonly localTokens: Array<Token>
+    private readonly localTokens: Record<Network, Array<Token>>
   ) {
     this.apiClient = axios.create({
       baseURL: this.apiURL,
@@ -120,7 +120,7 @@ export class MoralisExplorer implements Explorer {
       for (let i = 0; i < this.netwroks.length; i++) {
         const network = this.netwroks[i];
         const tokensWithPricePromise = this.getErc20Tokens(network)
-          .then((tokens) => this.mergeTokensWithLocalTokens(tokens))
+          .then((tokens) => this.mergeTokensWithLocalTokens(tokens, network))
           .then((tokens) => this.mapTokensToChecksumAddresses(tokens, network))
           .then((tokens) => this.enrichTokensWithPrices(tokens, network))
           .then((tokens) => this.enrichTokensWithNative(tokens, network))
@@ -198,7 +198,7 @@ export class MoralisExplorer implements Explorer {
       }
 
       const transactions = await this.parseTransactions(
-        this.localTokens,
+        this.localTokens[this.currentNetwork],
         erc20Transactions,
         nativeTransactions,
         this.currentNetwork
@@ -296,13 +296,17 @@ export class MoralisExplorer implements Explorer {
           balance: nativeBalance,
           priceUSD: store.getters['account/baseTokenPrice'](network),
           marketCap: store.getters['account/getTokenMarketCap'](
+            network,
             baseAssetData.address
           ),
           decimals: baseAssetData.decimals,
           logo: baseAssetData.iconURL,
           name: baseAssetData.name,
           symbol: baseAssetData.symbol,
-          color: store.getters['account/getTokenColor'](baseAssetData.address),
+          color: store.getters['account/getTokenColor'](
+            baseAssetData.network,
+            baseAssetData.address
+          ),
           network: network
         }
       ];
@@ -369,6 +373,7 @@ export class MoralisExplorer implements Explorer {
             decimals: parseInt(t.decimals),
             logo: assetLogo,
             marketCap: store.getters['account/getTokenMarketCap'](
+              network,
               t.token_address
             ),
             name: assetName,
@@ -388,10 +393,11 @@ export class MoralisExplorer implements Explorer {
   };
 
   private mergeTokensWithLocalTokens<T extends Token>(
-    tokens: Array<T>
+    tokens: Array<T>,
+    network: Network
   ): Array<T> {
     return tokens.map((token) => {
-      const localToken = this.localTokens.find((localToken) =>
+      const localToken = this.localTokens[network].find((localToken) =>
         sameAddress(localToken.address, token.address)
       );
       if (localToken === undefined) {
@@ -507,7 +513,10 @@ export class MoralisExplorer implements Explorer {
             );
 
             if (token === undefined) {
-              token = store.state?.account?.tokenInfoMap?.[txn.to_address];
+              token =
+                store.state?.account?.tokenInfoMap?.[this.currentNetwork]?.[
+                  txn.to_address
+                ];
               if (token === undefined) {
                 return acc;
               }
@@ -549,7 +558,10 @@ export class MoralisExplorer implements Explorer {
         );
 
         if (token === undefined) {
-          token = store.state?.account?.tokenInfoMap?.[txn.to_address];
+          token =
+            store.state?.account?.tokenInfoMap?.[this.currentNetwork]?.[
+              txn.to_address
+            ];
           if (token === undefined) {
             return acc;
           }

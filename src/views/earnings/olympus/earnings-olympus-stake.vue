@@ -36,6 +36,7 @@
             {{ $t('forms.lblSwappingFor') }}
             <token-image
               :address="ohmAssetData.address"
+              :network="ohmAssetData.network"
               :src="ohmAssetData.iconURL"
               :symbol="ohmAssetData.symbol"
               wrapper-class="token"

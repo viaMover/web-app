@@ -52,6 +52,7 @@
       <template v-slot:second-token-image>
         <token-image
           :address="inputAsset.address"
+          :network="inputAsset.network"
           :src="inputAsset.logo"
           :symbol="inputAsset.symbol"
           wrapper-class="item-coin"
@@ -161,7 +162,6 @@ export default Vue.extend({
       nativeCurrency: 'nativeCurrency'
     }),
     ...mapGetters('account', {
-      getTokenColor: 'getTokenColor',
       moveNativePrice: 'moveNativePrice',
       currentNetworkWalletTokens: 'currentNetworkWalletTokens'
     }),

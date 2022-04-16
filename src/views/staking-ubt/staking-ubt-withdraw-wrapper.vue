@@ -151,7 +151,7 @@ export default Vue.extend({
         logo: data.iconURL,
         balance: this.UBTBalance,
         marketCap: Number.MAX_SAFE_INTEGER,
-        color: this.getTokenColor(data.address),
+        color: this.getTokenColor(data.network, data.address),
         network: data.network
       };
     },
