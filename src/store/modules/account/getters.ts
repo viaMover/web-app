@@ -214,17 +214,13 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       if (searchTermProcessed === '') {
         return getters.allTokensSortedByMarketCap[network].slice(of, of + 100);
       }
-
-      // TODO: fuze search doesn't work if we work with record<Network, Array<Token>>
-      // probably it related to computed logic that wraps  vuex state
-
-      // const searcher = state.allTokensSearcher[network];
-      // if (searcher !== undefined) {
-      //   console.log(searcher.search(searchTerm, { limit: 100 }));
-      //   return searcher
-      //     .search(searchTerm, { limit: 100 })
-      //     .map((res) => res.item);
-      // }
+      const searcher = state.allTokensSearcher[network];
+      if (searcher !== undefined) {
+        console.log(searcher.search(searchTerm, { limit: 100 }));
+        return searcher
+          .search(searchTerm, { limit: 100 })
+          .map((res) => res.item);
+      }
 
       return getters.allTokensSortedByMarketCap[network]
         .filter(

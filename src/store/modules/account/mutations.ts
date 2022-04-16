@@ -164,8 +164,13 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
       }
       state.tokenInfoMap[network] = aggregateObject;
 
-      const index = Fuse.createIndex(searchOptions.keys, tokens);
-      state.allTokensSearcher[network] = new Fuse(tokens, searchOptions, index);
+      // We should use plain arrays for Fuse
+      const index = Fuse.createIndex(searchOptions.keys, Array.from(tokens));
+      state.allTokensSearcher[network] = new Fuse(
+        Array.from(tokens),
+        searchOptions,
+        index
+      );
     });
   },
   setRefreshError(state, error): void {

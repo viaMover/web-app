@@ -7,7 +7,9 @@ export class NetworkFeatureNotSupportedError extends MoverError {
     protected readonly featureName: string,
     protected readonly network: Network
   ) {
-    super(`Feature "${featureName}" is not supported in current network`);
+    super(
+      `Feature "${featureName}" is not supported in current network (${network})`
+    );
   }
 
   public getFeatureName(): string {

@@ -893,7 +893,8 @@ const actions: ActionFuncs<
       'fetchTokensPriceByContractAddresses',
       {
         contractAddresses: token.address,
-        currencies: state.nativeCurrency
+        currencies: state.nativeCurrency,
+        network: token.network
       } as FetchTokenPricesByContractAddressesPayload
     )) as PriceRecord;
 
