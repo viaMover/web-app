@@ -17,10 +17,10 @@ jobs:
             mv deploy/keys-stg.dec src/settings/keys.ts
       - run:
           name: Build web app
-          command: yarn && yarn build
+          command: yarn install --frozen-lockfile && yarn build
       - persist_to_workspace:
-          root:  /tmp/workspace
-          paths: [ '*' ]
+          root: /tmp/workspace
+          paths: ["*"]
 
   deploy_stg:
     working_directory: /tmp/workspace
@@ -55,7 +55,7 @@ jobs:
             cp deploy/moverwebapp-stg.yaml dist/
             cd dist
             /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-stg.yaml --promote
-      - run: 
+      - run:
           name: Create release and notify Sentry of deploy
           command: |
             curl -sL https://sentry.io/get-cli/ | bash
