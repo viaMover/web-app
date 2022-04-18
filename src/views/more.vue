@@ -42,13 +42,7 @@ export default Vue.extend({
       return isFeatureEnabled('isNibbleShopEnabled', this.networkInfo?.network);
     },
     isNftDropsEnabled(): boolean {
-      return (
-        isFeatureEnabled('isNftDropsEnabled', this.networkInfo?.network) ||
-        isFeatureEnabled(
-          'isOrderOfLibertyNFTEnabled',
-          this.networkInfo?.network
-        )
-      );
+      return isFeatureEnabled('isNftDropsEnabled', this.networkInfo?.network);
     }
   },
   methods: {

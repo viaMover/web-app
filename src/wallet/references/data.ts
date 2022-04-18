@@ -13,6 +13,7 @@ import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
+import NFT_BASELEDGER_STAKING_OG_ABI from './abi/nft-baseledger-staking-og.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
 import NFT_NIBBLE_SHOP_ABI from './abi/nft-nibble-shop.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
@@ -77,7 +78,8 @@ export type AddressMapKey =
   | 'APE_TOKEN_ADDRESS'
   | 'UBT_TOKEN_ADDRESS'
   | 'STAKING_UBT_CONTRACT_ADDRESS'
-  | 'CONCAVE_TOKEN_ADDRESS';
+  | 'CONCAVE_TOKEN_ADDRESS'
+  | 'NFT_BASELEDGER_STAKING_OG';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -170,7 +172,8 @@ const addresses = {
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
     HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
-    UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62'
+    UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62',
+    NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -485,5 +488,6 @@ export {
   WX_BTRFLY_ABI,
   NFT_ORDER_OF_LIBERTY_ABI,
   UBT_STAKING_CONTRACT_ABI,
+  NFT_BASELEDGER_STAKING_OG_ABI,
   validTopUpAssets
 };

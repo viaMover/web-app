@@ -19,7 +19,7 @@
         v-for="nft in nftList"
         :key="nft.id"
         class="item button-like"
-        :to="routeTo(nft.name)"
+        :to="routeTo(nft.id)"
       >
         <custom-picture
           :alt="$t('NFTs.txtAssetAlt', { name: nft.name })"
@@ -78,9 +78,9 @@ export default Vue.extend({
     handleClose(): void {
       this.$router.back();
     },
-    routeTo(name: string): RawLocation {
+    routeTo(id: string): RawLocation {
       return {
-        name: name.toLowerCase().replaceAll(' ', '-')
+        name: id
       };
     }
   }
