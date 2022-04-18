@@ -60,6 +60,7 @@ export {
   claimBaseledgerStakingOG
 } from './nft/baseledger-staking-og/baseledger-staking-og';
 export { BaseledgerStakingOGData } from './nft/baseledger-staking-og/types';
+export { getBaseledgerStakingOGSignature } from './nft/baseledger-staking-og/service';
 
 export {
   getVotingPower,

@@ -18,13 +18,13 @@ export type NFTStoreState = {
 };
 
 export enum NftAssetId {
-  MovingWithOlympus = 'olympus',
+  MovingWithOlympus = 'moving-with-olympus',
   UnexpectedMove = 'unexpected-move',
-  SweetAndSour = 'sweet-and-sour',
+  SweetAndSour = 'sweet-&-sour',
   Vaults = 'vaults',
-  Dice = 'dice',
+  Dice = 'dice-project',
   SwapPassport = 'swap-passport',
-  OrderOfLiberty = 'order-of-liberty',
+  OrderOfLiberty = 'the-order-of-liberty',
   BaseledgerStakingOG = 'baseledger-staking-og'
 }
 

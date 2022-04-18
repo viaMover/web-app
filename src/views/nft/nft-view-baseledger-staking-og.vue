@@ -29,7 +29,7 @@
 
       <form
         class="form"
-        :class="{ error: !!actionError || !!getNftError }"
+        :class="{ error: !!error }"
         @submit.prevent="handleClaim"
       >
         <div class="actions">
@@ -43,12 +43,8 @@
             />
           </div>
 
-          <div v-if="getNftError !== undefined" class="group error-message">
-            {{ getNftError }}
-          </div>
-
-          <div v-if="actionError !== undefined" class="group error-message">
-            {{ actionError }}
+          <div v-if="error !== undefined" class="group error-message">
+            {{ error }}
           </div>
         </div>
       </form>
@@ -67,7 +63,10 @@
           src="https://storage.googleapis.com/movermedia/UNIbaseFin.mp4"
           type="video/mp4"
         />
-        <source src="https://ipfs.io/ipfs/TODO:" type="video/mp4" />
+        <source
+          src="https://ipfs.io/ipfs/QmQ3Qf11pDKHSUfE9TZkj7fzDvYHFyCwioU48uQDcF5pEB"
+          type="video/mp4"
+        />
       </video>
     </template>
 
@@ -85,7 +84,8 @@
 import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
-import { ChangePayload } from '@/store/modules/nft/types';
+import { getBaseledgerStakingOGSignature } from '@/services/chain';
+import { ClaimPayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
@@ -108,8 +108,7 @@ export default Vue.extend({
   data() {
     return {
       transactionStep: undefined as Step | undefined,
-      getNftError: undefined as string | undefined,
-      actionError: undefined as string | undefined
+      error: undefined as string | undefined
     };
   },
   computed: {
@@ -126,8 +125,7 @@ export default Vue.extend({
   },
   mounted(): void {
     this.transactionStep = undefined;
-    this.getNftError = undefined;
-    this.actionError = undefined;
+    this.error = undefined;
   },
   methods: {
     ...mapActions('nft', {
@@ -138,13 +136,21 @@ export default Vue.extend({
       this.$router.back();
     },
     async handleClaim(): Promise<void> {
+      let sig = '';
+      try {
+        sig = await getBaseledgerStakingOGSignature(this.currentAddress);
+      } catch {
+        this.error = this.$t('NFTs.txtOhNo') as string;
+        return;
+      }
       try {
         this.transactionStep = 'Confirm';
         await this.claimBaseledgerStakingOG({
+          signature: sig,
           changeStep: () => {
             this.transactionStep = 'Process';
           }
-        } as ChangePayload);
+        } as ClaimPayload);
         await this.refreshNftStats();
         this.transactionStep = 'Success';
       } catch (err) {

@@ -48,6 +48,7 @@ export const getBaseledgerStakingOGData = async (
 
 export const claimBaseledgerStakingOG = async (
   accountAddress: string,
+  signature: string,
   network: Network,
   web3: Web3,
   changeStep: (step: Step) => void
@@ -66,7 +67,7 @@ export const claimBaseledgerStakingOG = async (
   let gasLimit = undefined;
   try {
     const gasLimitObj = await baseledgerStakingOG.methods
-      .claimNFT()
+      .claimNFT(signature)
       .estimateGas(transacionParamsEstimate);
     if (gasLimitObj) {
       const gasLimitRaw = gasLimitObj.toString();
@@ -98,7 +99,7 @@ export const claimBaseledgerStakingOG = async (
   };
 
   await new Promise<void>((resolve, reject) => {
-    (baseledgerStakingOG.methods.claimNFT() as ContractSendMethod)
+    (baseledgerStakingOG.methods.claimNFT(signature) as ContractSendMethod)
       .send(transactionParams)
       .once('transactionHash', (hash: string) => {
         console.log(`Claim txn hash: ${hash}`);

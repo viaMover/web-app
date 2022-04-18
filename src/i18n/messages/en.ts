@@ -899,6 +899,7 @@ const messages: VueI18n.LocaleMessageObject = {
         pageDescriptionPartTwo: 'For more details, please visit the {0}.'
       },
       [NftAssetId.BaseledgerStakingOG]: {
+        description: 'For early UBT stakers',
         pageDescriptionPartOne:
           'You find yourself in the middle of a scene: a massive stadium, people everywhere.' +
           "The color on the fan's shirt is familiar, you saw it before. " +

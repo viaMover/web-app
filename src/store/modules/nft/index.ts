@@ -273,7 +273,7 @@ export default {
       id: NftAssetId.BaseledgerStakingOG,
       networks: [Network.polygon],
       balance: '0',
-      name: 'Baseledger Staking OG',
+      name: '👨🐝☕️',
       picture: {
         src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@1x.png'),
         sources: [
