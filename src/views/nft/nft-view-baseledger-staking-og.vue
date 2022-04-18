@@ -38,9 +38,10 @@
               class="primary"
               :disabled="isStoreLoading"
               propagate-original-event
-              :text="`${$t(`NFTs.btn.${nft.id}.get`)}👨🐝☕️`"
               type="submit"
-            />
+            >
+              {{ $t(`NFTs.btn.${nft.id}.get`) }}👨🐝☕️
+            </action-button>
           </div>
 
           <div v-if="error !== undefined" class="group error-message">

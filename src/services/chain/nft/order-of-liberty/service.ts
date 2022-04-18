@@ -36,8 +36,6 @@ export const getOrderOfLibertyData = async (
     contractAddress
   );
 
-  console.log('contract', contract);
-
   const balanceResponse = await contract.methods
     .balanceOf(accountAddress)
     .call({ from: accountAddress });
