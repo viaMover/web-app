@@ -1,4 +1,5 @@
 import {
+  BaseledgerStakingOGData,
   DiceData,
   OlympusData,
   OrderOfLibertyData,
@@ -18,6 +19,7 @@ type Mutations = {
   setDiceData: void;
   setOlympusData: void;
   setOrderOfLibertyData: void;
+  setBaseledgerStakingOGData: void;
 };
 
 const mutations: MutationFuncs<Mutations, NFTStoreState> = {
@@ -43,6 +45,9 @@ const mutations: MutationFuncs<Mutations, NFTStoreState> = {
   setDiceData(state, data: DiceData): void {
     state.dice.meta.totalClaimed = data.totalClaimed;
     state.dice.balance = data.balance;
+  },
+  setBaseledgerStakingOGData(state, data: BaseledgerStakingOGData): void {
+    state.baseledgerStakingOG.meta.totalSupply = data.totalSupply;
   },
   setOlympusData(state, data: OlympusData): void {
     state.movingWithOlympus.meta.totalClaimed = data.totalClaimed;

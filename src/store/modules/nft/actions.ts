@@ -3,12 +3,14 @@ import * as Sentry from '@sentry/vue';
 
 import {
   claimAndExchangeUnexpectedMove,
+  claimBaseledgerStakingOG,
   claimDice,
   claimOlympus,
   claimOrderOfLiberty,
   claimSweetAndSour,
   claimUnexpectedMove,
   exchangeUnexpectedMove,
+  getBaseledgerStakingOGData,
   getDiceData,
   getOlympusData,
   getOrderOfLibertyData,
@@ -40,6 +42,7 @@ type Actions = {
   fetchSweetAndSourData: Promise<void>;
   fetchVaultsData: Promise<void>;
   fetchDiceData: Promise<void>;
+  fetchBaseledgerStakingOGData: Promise<void>;
   checkOlympusClaimable: boolean;
   claimOlympus: Promise<void>;
   claimVaults: Promise<void>;
@@ -50,48 +53,49 @@ type Actions = {
   exchangeUnexpectedMove: Promise<void>;
   fetchOrderOfLibertyData: Promise<void>;
   claimOrderOfLiberty: Promise<void>;
+  claimBaseledgerStakingOG: Promise<void>;
 };
 
 const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
-  async loadNFTInfo({ rootState, commit, dispatch }): Promise<void> {
+  async loadNFTInfo({ state, rootState, commit, dispatch }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
     }
 
-    if (
-      !isFeatureEnabled(
-        'isNftDropsEnabled',
-        rootState.account.networkInfo.network
-      ) &&
-      isFeatureEnabled(
-        'isOrderOfLibertyNFTEnabled',
-        rootState.account.networkInfo.network
-      )
-    ) {
-      commit('setIsLoading', true);
-      await dispatch('fetchOrderOfLibertyData');
-      commit('setIsLoading', false);
+    const network = rootState.account.networkInfo.network;
 
+    if (!isFeatureEnabled('isNftDropsEnabled', network)) {
       return;
     }
 
     commit('setIsLoading', true);
 
-    const fetchOrderOfLibertyDataPromise = dispatch('fetchOrderOfLibertyData');
-    const fetchUnexpectedMoveDataPromise = dispatch('fetchUnexpectedMoveData');
-    const fetchSweetAndSourDataPromise = dispatch('fetchSweetAndSourData');
-    const fetchOlympusDataPromise = dispatch('fetchOlympusData');
-    const fetchVaultsDataPromise = dispatch('fetchVaultsData');
-    const fetchDiceDataPromise = dispatch('fetchDiceData');
+    const nftPromises: Array<Promise<void>> = [];
+    if (state.orderOfLiberty.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchOrderOfLibertyData'));
+    }
+    if (state.unexpectedMove.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchUnexpectedMoveData'));
+    }
+    if (state.sweetAndSour.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchSweetAndSourData'));
+    }
+    if (state.movingWithOlympus.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchOlympusData'));
+    }
+    if (state.vaults.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchVaultsData'));
+    }
+    if (state.dice.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchDiceData'));
+    }
+    if (state.baseledgerStakingOG.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchBaseledgerStakingOGData'));
+    }
 
-    await Promise.allSettled([
-      fetchOrderOfLibertyDataPromise,
-      fetchUnexpectedMoveDataPromise,
-      fetchSweetAndSourDataPromise,
-      fetchOlympusDataPromise,
-      fetchVaultsDataPromise,
-      fetchDiceDataPromise
-    ]);
+    console.log('prromises NFT:', nftPromises);
+
+    await Promise.allSettled(nftPromises);
 
     commit('setIsLoading', false);
   },
@@ -184,6 +188,39 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       logger.error("Can't get data about Dice", e);
       Sentry.captureException("Can't get data about Dice");
     }
+  },
+  async fetchBaseledgerStakingOGData({ rootState, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
+    }
+
+    try {
+      const data = await getBaseledgerStakingOGData(
+        rootState.account.currentAddress,
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3
+      );
+
+      commit('setBaseledgerStakingOGData', data);
+    } catch (e) {
+      logger.error("Can't get data about baseledger staking OG", e);
+      Sentry.captureException("Can't get data about baseledger staking OG");
+    }
+  },
+  async claimBaseledgerStakingOG(
+    { rootState },
+    payload: OrderOfLibertyPayload
+  ): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error('account state is not ready');
+    }
+
+    await claimBaseledgerStakingOG(
+      rootState.account.currentAddress,
+      rootState.account.networkInfo.network,
+      rootState.account.provider.web3,
+      payload.changeStep
+    );
   },
   checkOlympusClaimable({ state }): boolean {
     return (

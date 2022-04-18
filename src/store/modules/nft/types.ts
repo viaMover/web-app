@@ -1,4 +1,5 @@
 import { DiceType } from '@/services/chain';
+import { Network } from '@/utils/networkTypes';
 
 import { Step } from '@/components/forms/form-loader';
 import { PictureDescriptor } from '@/components/html5';
@@ -13,6 +14,7 @@ export type NFTStoreState = {
   vaults: NftAsset<NftAssetId.Vaults>;
   dice: NftAsset<NftAssetId.Dice>;
   swapPassport: NftAsset<NftAssetId.SwapPassport> | undefined;
+  baseledgerStakingOG: NftAsset<NftAssetId.BaseledgerStakingOG>;
 };
 
 export enum NftAssetId {
@@ -22,7 +24,8 @@ export enum NftAssetId {
   Vaults = 'vaults',
   Dice = 'dice',
   SwapPassport = 'swap-passport',
-  OrderOfLiberty = 'order-of-liberty'
+  OrderOfLiberty = 'order-of-liberty',
+  BaseledgerStakingOG = 'baseledger-staking-og'
 }
 
 export interface NftAssetsMeta {
@@ -53,6 +56,9 @@ export interface NftAssetsMeta {
     availablePrices: Array<string>;
     defaultPrice: string;
   };
+  [NftAssetId.BaseledgerStakingOG]: {
+    totalSupply: string;
+  };
 }
 
 export type TNftAssetKey = keyof NftAssetsMeta;
@@ -62,6 +68,7 @@ export interface BaseNftAsset {
   picture: PictureDescriptor;
   bigPicture: PictureDescriptor;
   balance: string;
+  networks: Array<Network>;
 }
 export type NftAsset<I extends TNftAssetKey> = {
   id: I;
