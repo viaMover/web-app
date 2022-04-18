@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const netwroks = ['fantom', 'polygon'];
+const networks = ['fantom', 'polygon'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -389,8 +389,8 @@ const getWeb3 = (network) => {
 
 const generateNewList = async () => {
   await updateTrustwalletRepo();
-  for (let i = 0; i < netwroks.length; i++) {
-    const network = netwroks[i];
+  for (let i = 0; i < networks.length; i++) {
+    const network = networks[i];
     console.log('\n\nNETWORK:', network);
 
     const web3 = getWeb3(network);
