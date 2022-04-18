@@ -207,7 +207,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   },
   async claimBaseledgerStakingOG(
     { rootState },
-    payload: OrderOfLibertyPayload
+    payload: ChangePayload
   ): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       throw new Error('account state is not ready');
