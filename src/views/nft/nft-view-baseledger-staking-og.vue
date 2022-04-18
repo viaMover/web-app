@@ -6,7 +6,7 @@
   >
     <template v-slot:left>
       <div class="page-header">
-        <h1 class="title">{{ $t('NFTs.lblBaseledgerStakingOG') }}</h1>
+        <h1 class="title">👨🐝☕️</h1>
         <div class="description">
           {{ $t(`NFTs.txtNFTs.${nft.id}.pageDescriptionPartOne`) }}
           <br /><br />
@@ -21,7 +21,7 @@
           :title="$t('NFTs.lblMaximumSupply')"
         />
         <analytics-list-item
-          :description="'Free'"
+          :description="$t(`lblFree`)"
           :is-loading="isStoreLoading"
           :title="$t('NFTs.lblPrice')"
         />
@@ -38,7 +38,7 @@
               class="primary"
               :disabled="isStoreLoading"
               propagate-original-event
-              :text="$t(`NFTs.btn.${nft.id}.get`)"
+              :text="`${$t(`NFTs.btn.${nft.id}.get`)}👨🐝☕️`"
               type="submit"
             />
           </div>
@@ -53,7 +53,7 @@
     <template v-slot:right>
       <video
         autoplay="autoplay"
-        class="unexpected-move"
+        class="baseledger-staking-og"
         data-keepplaying="data-keepplaying"
         loop="loop"
         muted="muted"
@@ -87,7 +87,6 @@ import { mapActions, mapState } from 'vuex';
 import { getBaseledgerStakingOGSignature } from '@/services/chain';
 import { ClaimPayload } from '@/store/modules/nft/types';
 import { formatToDecimals } from '@/utils/format';
-import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { ActionButton } from '@/components/buttons';
@@ -104,7 +103,6 @@ export default Vue.extend({
     AnalyticsListItem,
     SimpleLoaderModal
   },
-  mixins: [GasListenerMixin],
   data() {
     return {
       transactionStep: undefined as Step | undefined,

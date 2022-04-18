@@ -23,6 +23,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblInsufficientBalance: 'Insufficient Balance',
   lblEnterAmount: 'Enter amount',
   lblNoData: 'No data',
+  lblFree: 'Free',
   lblDashboardMobile: 'Oh no!',
   txtDashboardMobile:
     'Mover web app is for the big screens. We’ve got mobile apps for all the smaller screens.',
@@ -838,7 +839,6 @@ const messages: VueI18n.LocaleMessageObject = {
     lblMovingWithOlympus: 'Moving with Olympus',
     lblSweetAndSour: 'Sweet & Sour',
     lblOrderOfLiberty: 'Help Ukraine',
-    lblBaseledgerStakingOG: '👨🐝☕️',
     lblNFTDrops: 'NFT Drops',
     lblNFTOverview: '{name} Overview',
     lblTotalNumberOfNFTs: 'Total number of NFTs',
@@ -901,10 +901,10 @@ const messages: VueI18n.LocaleMessageObject = {
       [NftAssetId.BaseledgerStakingOG]: {
         description: 'For early UBT stakers',
         pageDescriptionPartOne:
-          'You find yourself in the middle of a scene: a massive stadium, people everywhere.' +
+          'You find yourself in the middle of a scene: a massive stadium, people everywhere. ' +
           "The color on the fan's shirt is familiar, you saw it before. " +
           'The sound is distorted, but it gets clearer. You start hearing the letters. It’s YOU; ' +
-          "it's a BEE, it's a TEA. What does it all mean? ",
+          "it's a BEE, it's a TEA. What does it all mean?",
         pageDescriptionPartTwo:
           'So you ask a person next to you, like, what is going on? The answer isn’t shocking, though. ' +
           'It is a stadium full of early UBT stakers. And while Anton Z is rocking the metal scene, ' +
@@ -972,7 +972,7 @@ const messages: VueI18n.LocaleMessageObject = {
         exchange: 'Exchange for MOVE'
       },
       [NftAssetId.BaseledgerStakingOG]: {
-        get: 'Mint 👨🐝☕️'
+        get: 'Mint'
       },
       [NftAssetId.SweetAndSour]: {
         get: 'Get my Sweet & Sour'

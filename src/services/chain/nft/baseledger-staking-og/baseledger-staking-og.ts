@@ -7,6 +7,7 @@ import { AbiItem } from 'web3-utils';
 import { floorDivide, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
+  isDefaultAddress,
   lookupAddress,
   NFT_BASELEDGER_STAKING_OG_ABI
 } from '@/wallet/references/data';
@@ -27,9 +28,10 @@ export const getBaseledgerStakingOGData = async (
 
   const contractAddress = lookupAddress(network, 'NFT_BASELEDGER_STAKING_OG');
 
-  if (contractAddress === '0x1') {
+  if (isDefaultAddress(contractAddress)) {
     return {
-      totalSupply: '0'
+      totalSupply: '0',
+      balance: '0'
     };
   }
 
@@ -38,11 +40,16 @@ export const getBaseledgerStakingOGData = async (
     contractAddress
   );
 
+  const balance = await baseledgerStakingOG.methods
+    .balanceOf(accountAddress)
+    .call(transactionParams);
+
   const totalSupply = await baseledgerStakingOG.methods
     .totalSupply()
     .call(transactionParams);
   return {
-    totalSupply: totalSupply.toString()
+    totalSupply: totalSupply.toString(),
+    balance: balance.toString()
   };
 };
 

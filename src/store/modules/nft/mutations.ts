@@ -48,6 +48,7 @@ const mutations: MutationFuncs<Mutations, NFTStoreState> = {
   },
   setBaseledgerStakingOGData(state, data: BaseledgerStakingOGData): void {
     state.baseledgerStakingOG.meta.totalSupply = data.totalSupply;
+    state.baseledgerStakingOG.balance = data.balance;
   },
   setOlympusData(state, data: OlympusData): void {
     state.movingWithOlympus.meta.totalClaimed = data.totalClaimed;
