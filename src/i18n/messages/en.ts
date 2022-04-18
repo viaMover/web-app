@@ -907,7 +907,7 @@ const messages: VueI18n.LocaleMessageObject = {
         pageDescriptionPartTwo:
           'So you ask a person next to you, like, what is going on? The answer isn’t shocking, though. ' +
           'It is a stadium full of early UBT stakers. And while Anton Z is rocking the metal scene, ' +
-          "you decided to mint early starkers's special."
+          "you decided to mint early stakers's special."
       },
       [NftAssetId.Vaults]: {
         description:

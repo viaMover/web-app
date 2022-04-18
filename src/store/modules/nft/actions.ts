@@ -93,8 +93,6 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
       nftPromises.push(dispatch('fetchBaseledgerStakingOGData'));
     }
 
-    console.log('prromises NFT:', nftPromises);
-
     await Promise.allSettled(nftPromises);
 
     commit('setIsLoading', false);
