@@ -48,6 +48,7 @@ import { sendGlobalTopMessageEvent } from './global-event-bus';
 import { addSentryBreadcrumb } from './services/v2/utils/sentry';
 import { APIKeys } from './settings';
 import { InitWalletPayload } from './store/modules/account/types';
+import { CommonErrors } from './utils/errors';
 import { InitCallbacks } from './web3/callbacks';
 
 export default Vue.extend({
@@ -153,9 +154,14 @@ export default Vue.extend({
             }
           });
           web3modal.clearCachedProvider();
+          Object.entries(localStorage)
+            .map((x) => x[0])
+            .filter((x) => x.startsWith('-walletlink'))
+            .forEach((x) => localStorage.removeItem(x));
           sendGlobalTopMessageEvent(
-            (this.$t('errors.default') as string) ??
-              'Oh no. Something went wrong',
+            this.$t('errors.default', {
+              code: CommonErrors.CACHED_PROVIDER_CONNECT_ERROR
+            }) as string,
             'error'
           );
         }

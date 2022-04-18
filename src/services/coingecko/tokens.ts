@@ -5,20 +5,6 @@ import { Network } from '@/utils/networkTypes';
 import { Result } from '../responses';
 import { CoingeckoPlatform } from './mapper';
 
-export enum NetworkAlias {
-  Eth = 'eth',
-  Ropsten = 'ropsten',
-  Rinkeby = 'rinkeby',
-  Goerli = 'goerli',
-  Koven = 'kovan',
-  Polygon = 'polygon',
-  Mumbai = 'mumbai',
-  Bsc = 'bsc',
-  BscTestnet = 'bsc testnet',
-  Avalanche = 'avalanche',
-  Fantom = 'fantom'
-}
-
 export enum TokenAlias {
   Ethereum = 'ethereum',
   Avalanche = 'avalanche-2',

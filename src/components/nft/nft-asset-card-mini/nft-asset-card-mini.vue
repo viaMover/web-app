@@ -30,7 +30,7 @@ export default Vue.extend({
   computed: {
     routeTo(): RawLocation {
       return {
-        name: this.item.name.toLowerCase().replaceAll(' ', '-')
+        name: this.item.id
       };
     }
   }

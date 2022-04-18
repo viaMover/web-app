@@ -383,11 +383,7 @@ export default Vue.extend({
       return (
         isFeatureEnabled('isNibbleShopEnabled', this.networkInfo?.network) ||
         isFeatureEnabled('isGovernanceEnabled', this.networkInfo?.network) ||
-        isFeatureEnabled('isNftDropsEnabled', this.networkInfo?.network) ||
-        isFeatureEnabled(
-          'isOrderOfLibertyNFTEnabled',
-          this.networkInfo?.network
-        )
+        isFeatureEnabled('isNftDropsEnabled', this.networkInfo?.network)
       );
     },
     debitCardTopUpLocation(): Location {
@@ -424,7 +420,9 @@ export default Vue.extend({
       await this.loadEarningsMinimalInfo();
     }
 
-    await this.loadStakingUBTMinimalInfo();
+    if (isFeatureEnabled('isStakingUbtEnabled', this.networkInfo?.network)) {
+      await this.loadStakingUBTMinimalInfo();
+    }
   },
   methods: {
     ...mapActions('modals', {

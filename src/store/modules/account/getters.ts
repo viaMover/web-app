@@ -12,7 +12,11 @@ import {
   Transaction
 } from '@/wallet/types';
 
-import { AccountStoreState, TransactionGroup } from './types';
+import {
+  AccountStoreState,
+  nativeCurrencyFormatters,
+  TransactionGroup
+} from './types';
 
 type Getters = {
   getPendingTransactions: Transaction[];
@@ -36,6 +40,7 @@ type Getters = {
   searchInWalletTokens: (searchTerm: string) => Array<TokenWithBalance>;
   getOffchainExplorerHanlder: OffchainExplorerHanler | undefined;
   getCurrentAddresses: string[];
+  nativeCurrencyFormatter: (value: number | string) => string;
 };
 
 const getters: GettersFuncs<Getters, AccountStoreState> = {
@@ -188,7 +193,8 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
           .filter(
             (t: Token) =>
               t.symbol.toLowerCase().includes(searchTermProcessed) ||
-              t.name.toLowerCase().includes(searchTermProcessed)
+              t.name.toLowerCase().includes(searchTermProcessed) ||
+              t.address.toLowerCase().includes(searchTermProcessed)
           )
           .slice(of, of + 100);
       }
@@ -237,7 +243,8 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
         return state.tokens.filter(
           (t) =>
             t.symbol.toLowerCase().includes(searchTermProcessed) ||
-            t.name.toLowerCase().includes(searchTermProcessed)
+            t.name.toLowerCase().includes(searchTermProcessed) ||
+            t.address.toLowerCase().includes(searchTermProcessed)
         );
       }
 
@@ -249,6 +256,20 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
   },
   getCurrentAddresses(state): string[] {
     return state.addresses;
+  },
+  nativeCurrencyFormatter(state): (value: number | string) => string {
+    const formatter = nativeCurrencyFormatters[state.nativeCurrency];
+    if (formatter === undefined) {
+      return formatToNative;
+    }
+
+    switch (formatter.position) {
+      case 'postfix':
+        return (value) => `${formatToNative(value)}${formatter.sign}`;
+      case 'prefix':
+      default:
+        return (value) => `${formatter.sign}${formatToNative(value)}`;
+    }
   }
 };
 

@@ -30,7 +30,6 @@ export interface Globals {
   isSavingsPlusEnabled: GlobalSettings;
   isMultiChainMastheadEnabled: GlobalSettings;
   isHomeSwapModalEnabled: GlobalSettings;
-  isOrderOfLibertyNFTEnabled: GlobalSettings;
   isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
   isGasListenerEnabled: GlobalSettings;
@@ -44,6 +43,11 @@ export const isProduction = (): boolean => {
 
 export const isDevelop = (): boolean => {
   return process.env.NODE_ENV === 'development';
+};
+
+// enables console output in browser developer tools
+export const isConsoleEnabled = (): boolean => {
+  return process.env.VUE_APP_CONSOLE_LOGS === 'true';
 };
 
 const values: Globals = {
@@ -76,7 +80,7 @@ const values: Globals = {
   isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,
   isGovernanceEnabled: [Network.mainnet],
-  isNftDropsEnabled: [Network.mainnet],
+  isNftDropsEnabled: [Network.mainnet, Network.polygon, Network.fantom],
   isEarningsEthereumEnabled: false,
   isEarningsOlympusEnabled: false,
   isVaultsRaceEnabled: false,
@@ -85,11 +89,6 @@ const values: Globals = {
   isSavingsPlusEnabled: false,
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
-  isOrderOfLibertyNFTEnabled: [
-    Network.mainnet,
-    Network.polygon,
-    Network.fantom
-  ],
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],

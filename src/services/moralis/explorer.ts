@@ -2,16 +2,18 @@ import * as Sentry from '@sentry/vue';
 import { addABI, decodeMethod } from 'abi-decoder';
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
+import Web3 from 'web3';
 
-import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
-import { getPriceByAddress, NetworkAlias } from '@/services/coingecko/tokens';
 import { Explorer } from '@/services/explorer';
+import { NetworkAlias } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
+import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import store from '@/store/index';
+import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
 import { fromWei } from '@/utils/bigmath';
 import { MAX_ASSET_NAME } from '@/utils/consts';
-import { Network } from '@/utils/networkTypes';
+import { getNetwork, Network } from '@/utils/networkTypes';
 import { getBaseAssetData, getMoveAssetData } from '@/wallet/references/data';
 import {
   Token,
@@ -68,7 +70,7 @@ export class MoralisExplorer implements Explorer {
 
   constructor(
     private readonly accountAddress: string,
-    private readonly nativeCurrency: string,
+    private readonly nativeCurrency: NativeCurrency,
     private readonly network: Network,
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
@@ -78,7 +80,12 @@ export class MoralisExplorer implements Explorer {
     private readonly setIsTokensListLoaded: (val: boolean) => void,
     private readonly setChartData: (
       chartData: Record<string, Array<[number, number]>>
-    ) => void
+    ) => void,
+    private readonly fetchTokensPriceByContractAddresses: (
+      addresses: Array<string>,
+      nativeCurrency: NativeCurrency
+    ) => Promise<PriceRecord>,
+    private readonly localTokens: Array<Token>
   ) {
     this.apiClient = axios.create({
       baseURL: this.apiURL,
@@ -102,9 +109,17 @@ export class MoralisExplorer implements Explorer {
   public async refreshWalletData(): Promise<void> {
     try {
       this.setIsTransactionsListLoaded(false);
-      const tokensWithPricePromise = this.getErc20Tokens().then((tokens) =>
-        this.enrichTokensWithPrices(tokens)
-      );
+      const tokensWithPricePromise = this.getErc20Tokens()
+        .then((tokens) => this.mergeTokensWithLocalTokens(tokens))
+        .then((tokens) => this.mapTokensToChecksumAddresses(tokens))
+        .then((tokens) => this.enrichTokensWithPrices(tokens))
+        .then((tokens) => this.enrichTokensWithNative(tokens))
+        .then((tokensWithNative) => {
+          this.setTokens(tokensWithNative);
+          // set tokens list loaded as early as possible
+          this.setIsTokensListLoaded(true);
+          return tokensWithNative;
+        });
       const erc20TransactionsPromise = this.getErc20Transactions(
         MoralisExplorer.TRANSACTIONS_PER_BATCH,
         0
@@ -120,12 +135,6 @@ export class MoralisExplorer implements Explorer {
           erc20TransactionsPromise,
           nativeTransactionsPromise
         ]);
-
-      this.enrichTokensWithNative(tokensWithPrices).then((tokensWithNative) => {
-        this.setTokens(tokensWithNative);
-        // set tokens list loaded as early as possible
-        this.setIsTokensListLoaded(true);
-      });
 
       const transactions = await this.parseTransactions(
         tokensWithPrices,
@@ -169,14 +178,8 @@ export class MoralisExplorer implements Explorer {
         return false;
       }
 
-      const tokens = store.state?.account?.tokens;
-
-      if (tokens === undefined) {
-        return true;
-      }
-
       const transactions = await this.parseTransactions(
-        tokens,
+        this.localTokens,
         erc20Transactions,
         nativeTransactions
       );
@@ -237,24 +240,24 @@ export class MoralisExplorer implements Explorer {
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
     const addresses = tokens.map((t) => t.address);
-    const pricesResponse = await getPriceByAddress(
-      getCoingeckoPlatform(this.network),
+    const pricesResponse = await this.fetchTokensPriceByContractAddresses(
       addresses,
-      [this.nativeCurrency]
+      this.nativeCurrency
     );
-    if (pricesResponse.isError) {
-      Sentry.captureMessage(
-        `Can't get token prices from coingecko: ${pricesResponse.error}`
-      );
-      return tokens;
-    }
 
-    return tokens.map((t) => ({
-      ...t,
-      priceUSD: pricesResponse.result?.[t.address]?.[this.nativeCurrency]
-        ? String(pricesResponse.result?.[t.address]?.[this.nativeCurrency])
-        : t.priceUSD
-    }));
+    return tokens.map((t) => {
+      const retrievedPrice = getAssetPriceFromPriceRecord(
+        pricesResponse,
+        t.address,
+        this.nativeCurrency
+      );
+      if (retrievedPrice === undefined) {
+        return t;
+      }
+
+      t.priceUSD = retrievedPrice;
+      return t;
+    });
   };
 
   private enrichTokensWithNative = async (
@@ -323,10 +326,7 @@ export class MoralisExplorer implements Explorer {
             assetSymbol = moverData.symbol;
             assetLogo = moverData.iconURL;
           } else {
-            assetName = t.name;
-            if (assetName.length > MAX_ASSET_NAME) {
-              assetName = assetName.substring(0, MAX_ASSET_NAME);
-            }
+            assetName = t.name.slice(0, MAX_ASSET_NAME);
             assetSymbol = t.symbol;
             assetLogo = t.logo ?? '';
           }
@@ -357,6 +357,44 @@ export class MoralisExplorer implements Explorer {
       throw new Error(`Can't get erc20 tokens from Moralis: ${String(e)}`);
     }
   };
+
+  private mergeTokensWithLocalTokens<T extends Token>(
+    tokens: Array<T>
+  ): Array<T> {
+    return tokens.map((token) => {
+      const localToken = this.localTokens.find((localToken) =>
+        sameAddress(localToken.address, token.address)
+      );
+      if (localToken === undefined) {
+        return token;
+      }
+
+      if (token.logo == '') {
+        token.logo = localToken.logo;
+      }
+
+      if (token.priceUSD == '0') {
+        token.priceUSD = localToken.priceUSD;
+      }
+
+      return token;
+    });
+  }
+
+  private mapTokensToChecksumAddresses<T extends Token>(
+    tokens: Array<T>
+  ): Array<T> {
+    const chainId = getNetwork(this.network)?.chainId;
+
+    return tokens.map((token) => {
+      try {
+        token.address = Web3.utils.toChecksumAddress(token.address, chainId);
+        return token;
+      } catch {
+        return token;
+      }
+    });
+  }
 
   private parseTransactions = async (
     walletTokens: Array<Token>,
@@ -544,33 +582,30 @@ export class MoralisExplorer implements Explorer {
     ];
 
     if (uniqueAddressesOfTokensWithoutPrices.length > 0) {
-      const pricesResponse = await getPriceByAddress(
-        'ethereum',
+      const pricesResponse = await this.fetchTokensPriceByContractAddresses(
         uniqueAddressesOfTokensWithoutPrices,
-        [this.nativeCurrency]
+        this.nativeCurrency
       );
-      if (pricesResponse.isError) {
-        Sentry.captureMessage(
-          `Can't get token prices from coingecko: for additional transaction tokens ${pricesResponse.error}`
-        );
-      } else {
-        erc20ParsedTransactions = erc20ParsedTransactions.map((txn) => {
-          if ('asset' in txn && txn.asset !== undefined) {
-            const loadedPrice =
-              pricesResponse.result?.[txn.asset.address]?.[this.nativeCurrency];
-            if (loadedPrice && 'price' in txn.asset) {
-              return {
-                ...txn,
-                asset: {
-                  ...txn.asset,
-                  price: String(loadedPrice)
-                }
-              };
-            }
+
+      erc20ParsedTransactions = erc20ParsedTransactions.map((txn) => {
+        if ('asset' in txn && txn.asset !== undefined) {
+          const price = getAssetPriceFromPriceRecord(
+            pricesResponse,
+            txn.asset.address,
+            this.nativeCurrency
+          );
+          if (price !== undefined && 'price' in txn.asset) {
+            return {
+              ...txn,
+              asset: {
+                ...txn.asset,
+                price
+              }
+            };
           }
-          return txn;
-        });
-      }
+        }
+        return txn;
+      });
     }
 
     return [...erc20ParsedTransactions, ...nativeParsedTransactions];

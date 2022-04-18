@@ -69,6 +69,7 @@ import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { APIKeys } from '@/settings';
 import { InitWalletPayload } from '@/store/modules/account/types';
+import { CommonErrors } from '@/utils/errors';
 import { InitCallbacks } from '@/web3/callbacks';
 
 import { ContentWrapper } from '@/components/layout';
@@ -135,12 +136,34 @@ export default Vue.extend({
           provider
         }
       });
-      const providerWithCb = await InitCallbacks(provider);
-      await this.initWallet({
-        provider: providerWithCb.provider,
-        providerBeforeCloseCb: providerWithCb.onDisconnectCb,
-        injected: false
-      } as InitWalletPayload);
+      try {
+        const providerWithCb = await InitCallbacks(provider);
+        await this.initWallet({
+          provider: providerWithCb.provider,
+          providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+          injected: false
+        } as InitWalletPayload);
+      } catch (error) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'app',
+          message: "Can't init WC provider",
+          data: {
+            error
+          }
+        });
+        this.web3Modal.clearCachedProvider();
+        Object.entries(localStorage)
+          .map((x) => x[0])
+          .filter((x) => x.startsWith('-walletlink'))
+          .forEach((x) => localStorage.removeItem(x));
+        sendGlobalTopMessageEvent(
+          this.$t('errors.default', {
+            code: CommonErrors.WC_PROVIDER_INIT_ERROR
+          }) as string,
+          'error'
+        );
+      }
     });
   },
   methods: {
@@ -164,8 +187,9 @@ export default Vue.extend({
           }
         });
         sendGlobalTopMessageEvent(
-          (this.$t('errors.default') as string) ??
-            'Oh no. Something went wrong',
+          this.$t('errors.default', {
+            code: CommonErrors.OTHER_PROVIDER_CONNECT_ERROR
+          }) as string,
           'error'
         );
         return;
@@ -178,12 +202,30 @@ export default Vue.extend({
           provider
         }
       });
-      const providerWithCb = await InitCallbacks(provider);
-      await this.initWallet({
-        provider: providerWithCb.provider,
-        providerBeforeCloseCb: providerWithCb.onDisconnectCb,
-        injected: provider.isMetaMask
-      } as InitWalletPayload);
+      try {
+        const providerWithCb = await InitCallbacks(provider);
+        await this.initWallet({
+          provider: providerWithCb.provider,
+          providerBeforeCloseCb: providerWithCb.onDisconnectCb,
+          injected: provider.isMetaMask
+        } as InitWalletPayload);
+      } catch (error) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'connect-wallet.otherProvider',
+          message: "Can't init wallet",
+          data: {
+            error
+          }
+        });
+        sendGlobalTopMessageEvent(
+          this.$t('errors.default', {
+            code: CommonErrors.OTHER_PROVIDER_INIT_ERROR
+          }) as string,
+          'error'
+        );
+        return;
+      }
     }
   }
 });
