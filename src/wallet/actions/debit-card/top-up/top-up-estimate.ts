@@ -15,6 +15,7 @@ import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
 import { needApprove } from '@/wallet/actions/approve/needApprove';
+import { estimateGALCXUnstake } from '@/wallet/actions/debit-card/top-up/gALCX/estimate';
 import {
   CompoundEstimateWithUnwrapResponse,
   EstimateResponse
@@ -64,6 +65,52 @@ export const estimateTopUpCompound = async (
         message: 'failed to estimate unwrap'
       });
       console.error("can't estimate unwrap");
+      return {
+        error: true,
+        approveGasLimit: '0',
+        actionGasLimit: '0',
+        unwrapGasLimit: '0'
+      };
+    }
+
+    return {
+      error: false,
+      actionGasLimit: ethDefaults.basic_move_card_top_up,
+      approveGasLimit: ethDefaults.basic_approval,
+      unwrapGasLimit: estimation.gasLimit
+    };
+  }
+
+  if (
+    sameAddress(
+      inputAsset.address,
+      lookupAddress(network, 'GALCX_TOKEN_ADDRESS')
+    )
+  ) {
+    addSentryBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.topUpCompound',
+      message: 'Input asset is gALCX. Unstake is needed',
+      data: {
+        inputAsset: inputAsset
+      }
+    });
+
+    const estimation = await estimateGALCXUnstake(
+      inputAsset,
+      inputAmount,
+      network,
+      web3,
+      accountAddress
+    );
+    if (estimation.error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.estimateTopUpCompound',
+        message: 'failed to estimate unstake'
+      });
+
+      console.error("can't estimate unstake");
       return {
         error: true,
         approveGasLimit: '0',
