@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['fantom', 'polygon'];
+const networks = ['ethereum', 'fantom', 'polygon'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -49,22 +49,110 @@ const getCoingeckoPlatform = (network) => {
   }
 };
 
-const alsoIncludedAddresses = {
+const alsoIncludedTokens = {
   ethereum: [
-    '0x383518188c0c6d7730d91b2c03a03c837814a899', // OHM
-    '0x04f2694c8fcee23e8fd0dfea1d4f5bb8c352111f', // SOHM
-    '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f', // GOHM
-    '0x8cd309e14575203535ef120b5b0ab4dded0c2073', // WSOHM
-    '0x090185f2135308bad17527004364ebcc2d37e5f6', // SPELL
-    '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b', // AXS
-    '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25', // SLP
-    '0x6bb61215298f296c55b19ad842d3df69021da2ef', // DOP
-    '0x9813037ee2218799597d83d4a5b6f3b6778218d9', // BONE
-    '0x27c70cd1946795b66be9d954418546998b546634', // LEASH
-    '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a', // BTRFLY
-    '0x4B16d95dDF1AE4Fe8227ed7B7E80CF13275e61c9', //wxBTRFLY
-    '0x2e9d63788249371f1dfc918a52f8d799f4a38c94', // TOKE
-    '0x000000007a58f5f58e697e51ab0357bc9e260a04' // CNV
+    {
+      id: '0x383518188c0c6d7730d91b2c03a03c837814a899',
+      decimals: 9,
+      symbol: 'OHM',
+      name: 'Olympus'
+    }, // OHM
+    {
+      id: '0x04f2694c8fcee23e8fd0dfea1d4f5bb8c352111f',
+      decimals: 9,
+      symbol: 'sOHM',
+      name: 'Staked Olympus'
+    }, // SOHM
+    {
+      id: '0x0ab87046fBb341D058F17CBC4c1133F25a20a52f',
+      decimals: 18,
+      symbol: 'gOHM',
+      name: 'Governance OHM'
+    }, // GOHM
+    {
+      id: '0x8cd309e14575203535ef120b5b0ab4dded0c2073'
+    }, // WSOHM (rebrand?)
+    {
+      id: '0x090185f2135308bad17527004364ebcc2d37e5f6',
+      decimals: 18,
+      symbol: 'SPELL',
+      name: 'Spell Token'
+    }, // SPELL
+    {
+      id: '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b',
+      decimals: 18,
+      symbol: 'AXS',
+      name: 'Axie Infinity Shard'
+    }, // AXS
+    {
+      id: '0xCC8Fa225D80b9c7D42F96e9570156c65D6cAAa25'
+    }, // SLP (MIGRATED? decimals = 0 in contract)
+    {
+      id: '0x6bb61215298f296c55b19ad842d3df69021da2ef',
+      decimals: 18,
+      symbol: 'DOP',
+      name: 'Drops Ownership Power'
+    }, // DOP
+    {
+      id: '0x9813037ee2218799597d83d4a5b6f3b6778218d9',
+      decimals: 18,
+      symbol: 'BONE',
+      name: 'BONE SHIBASWAP'
+    }, // BONE
+    {
+      id: '0x27c70cd1946795b66be9d954418546998b546634',
+      decimals: 18,
+      symbol: 'LEASH',
+      name: 'DOGE KILLER'
+    }, // LEASH
+    {
+      id: '0xc0d4ceb216b3ba9c3701b291766fdcba977cec3a',
+      decimals: 9,
+      symbol: 'BTRFLY',
+      name: 'BTRFLY'
+    }, // BTRFLY
+    {
+      id: '0x4b16d95ddf1ae4fe8227ed7b7e80cf13275e61c9',
+      decimals: 18,
+      symbol: 'wxBTRFLY',
+      name: 'wxBTRFLY'
+    }, //wxBTRFLY
+    {
+      id: '0x2e9d63788249371f1dfc918a52f8d799f4a38c94',
+      decimals: 18,
+      symbol: 'TOKE',
+      name: 'Tokemak'
+    }, // TOKE
+    {
+      id: '0x000000007a58f5f58e697e51ab0357bc9e260a04',
+      decimals: 18,
+      symbol: 'CNV',
+      name: 'Concave'
+    }, // CNV
+    {
+      id: '0xdbdb4d16eda451d0503b854cf79d55697f90c8df',
+      decimals: 18,
+      symbol: 'ALCX',
+      name: 'Alchemix'
+    }, // ALCX
+    {
+      id: '0xBC6DA0FE9aD5f3b0d58160288917AA56653660E9',
+      decimals: 18,
+      symbol: 'alUSD',
+      name: 'Alchemix USD'
+    }, // alUSD
+    {
+      id: '0x0100546F2cD4C9D97f798fFC9755E47865FF7Ee6',
+      decimals: 18,
+      symbol: 'alETH',
+      name: 'Alchemix ETH'
+    }, // alETH
+    {
+      id: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35',
+      decimals: 18,
+      symbol: 'gALCX',
+      name: 'governanceALCX'
+    } // gALCX
   ],
   fantom: [],
   polygon: []
@@ -220,31 +308,42 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
 
   console.log('Network:', network, 'coingecko list:', coingeckoList.length);
   let newAssets = [];
-  for (let i = 0; i < coingeckoList.length; i++) {
-    await new Promise((r) => setTimeout(r, 700));
 
-    const coingeckoAsset = coingeckoList[i];
-    const address = coingeckoAsset?.platforms?.[platfrom];
+  if (network !== 'ethereum') {
+    for (let i = 0; i < coingeckoList.length; i++) {
+      await new Promise((r) => setTimeout(r, 700));
 
-    const coingeckoExtendedToken = await getExtendedCoingeckoTokenData(
-      coingeckoAsset?.id
-    );
+      try {
+        const coingeckoAsset = coingeckoList[i];
+        const address = coingeckoAsset?.platforms?.[platfrom];
 
-    const data = {
-      id: address,
-      coingeckoId: coingeckoAsset.id,
-      name: coingeckoAsset.name,
-      symbol: coingeckoAsset.symbol.toUpperCase(),
-      decimals: parseInt(await getDecimalsFromContract(address, web3)),
-      status: 'active',
-      type: 'ERC20',
-      imageUrl: coingeckoExtendedToken.image?.large ?? undefined
-    };
+        const coingeckoExtendedToken = await getExtendedCoingeckoTokenData(
+          coingeckoAsset?.id
+        );
 
-    data.color = await getAssetImageColor(data.imageUrl, address);
+        if (coingeckoExtendedToken === undefined) {
+          continue;
+        }
 
-    console.log('added token from coingecko:', data);
-    newAssets.push(data);
+        const data = {
+          id: address,
+          coingeckoId: coingeckoAsset.id,
+          name: coingeckoAsset.name,
+          symbol: coingeckoAsset.symbol.toUpperCase(),
+          decimals: parseInt(await getDecimalsFromContract(address, web3)),
+          status: 'active',
+          type: 'ERC20',
+          imageUrl: coingeckoExtendedToken.image?.large ?? undefined
+        };
+
+        data.color = await getAssetImageColor(data.imageUrl, address);
+
+        console.log('added token from coingecko:', data);
+        newAssets.push(data);
+      } catch (err) {
+        console.error("Can't add token from coingecko");
+      }
+    }
   }
 
   for (let i = 0; i < assets.length; i++) {
@@ -256,6 +355,8 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
       );
     });
 
+    const address = coingeckoAsset?.platforms?.[platfrom];
+
     if (as.isIncomplete) {
       const coingeckoExtendedToken = await getExtendedCoingeckoTokenData(
         coingeckoAsset?.id
@@ -263,7 +364,16 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
 
       if (coingeckoExtendedToken === undefined) {
         logger.warn('failed to get remote info for', as.id);
-        newAssets.push({ ...as, coingeckoId: coingeckoAsset?.id });
+
+        const forceIncludedToken = alsoIncludedTokens[network].find(
+          (t) => t.id.toLowerCase() === as.id.toLowerCase()
+        );
+
+        if (forceIncludedToken) {
+          newAssets.push({ ...forceIncludedToken });
+        } else {
+          newAssets.push({ ...as, coingeckoId: coingeckoAsset?.id });
+        }
         continue;
       }
 
@@ -272,6 +382,8 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
         isIncomplete: false,
         coingeckoId: coingeckoAsset.id,
         name: coingeckoAsset.name,
+        decimals:
+          as.decimals ?? parseInt(await getDecimalsFromContract(address, web3)),
         symbol: coingeckoAsset.symbol.toUpperCase(),
         description: coingeckoExtendedToken.description?.en ?? '',
         explorer:
@@ -397,10 +509,12 @@ const generateNewList = async () => {
 
     let assets = await iterateOverAssets(network);
     assets = Array.from(
-      new Set([...assets, ...alsoIncludedAddresses[network]])
+      new Set([...assets, ...alsoIncludedTokens[network].map((a) => a.id)])
     );
     assets = await enrichWithTWdata(assets, network);
+    console.log('assets enriched with TW data length: ', assets.length);
     assets = await enrichWithCoingeckoData(assets, network, web3);
+    console.log('assets enriched with Coingecko data length: ', assets.length);
     assets = await filterCompleteTokenData(assets);
     assets = await enrichWithCoingeckoMarketData(assets);
     save(assets, network);
