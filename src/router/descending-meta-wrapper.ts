@@ -12,7 +12,7 @@ export const wrapWithMeta = (
   record: RouteConfig,
   metaEntry: MetaEntry
 ): RouteConfig => {
-  record.meta = { ...record.meta, ...metaEntry };
+  record.meta = appendMetaEntry(record.meta, metaEntry);
   if (record.children === undefined) {
     return record;
   }
@@ -22,6 +22,22 @@ export const wrapWithMeta = (
   }
 
   return record;
+};
+
+const appendMetaEntry = (
+  existingMeta: MetaEntry | undefined,
+  append: MetaEntry | undefined
+): MetaEntry => {
+  if (metaHasCustomCondition(existingMeta) && metaHasCustomCondition(append)) {
+    return {
+      ...existingMeta,
+      ...append,
+      customCondition: (store) =>
+        existingMeta.customCondition(store) && append.customCondition(store)
+    } as MetaEntry;
+  }
+
+  return { ...existingMeta, ...append };
 };
 
 export const wrapWithCustomPreloadView = (
@@ -74,4 +90,15 @@ const isMultipleViews = (
   record: RouteConfig
 ): record is RouteConfigMultipleViews => {
   return 'components' in record && !('component' in record);
+};
+
+const metaHasCustomCondition = (
+  meta: MetaEntry | undefined
+): meta is Omit<MetaEntry, 'customCondition'> &
+  Required<Pick<MetaEntry, 'customCondition'>> => {
+  if (meta === undefined) {
+    return false;
+  }
+
+  return 'customCondition' in meta && meta.customCondition !== undefined;
 };
