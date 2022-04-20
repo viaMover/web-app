@@ -195,7 +195,8 @@ export default Vue.extend({
       'provider'
     ]),
     ...mapState('debitCard', {
-      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex'
+      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
+      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
     }),
     ...mapGetters('account', ['treasuryBonusNative']),
     ...mapGetters('debitCard', {
@@ -471,9 +472,9 @@ export default Vue.extend({
                 lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
               )
             ) {
-              const newInputInTokens = fromWei(
-                inputInWei,
-                referenceToken.decimals
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
               );
               referenceToken = getALCXAssetData(this.networkInfo.network);
               inputInWei = getInteger(
@@ -616,9 +617,9 @@ export default Vue.extend({
                 lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
               )
             ) {
-              const newInputInTokens = fromWei(
-                inputInWei,
-                referenceToken.decimals
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
               );
               referenceToken = getALCXAssetData(this.networkInfo.network);
               inputInWei = getInteger(
@@ -673,9 +674,9 @@ export default Vue.extend({
                 lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
               )
             ) {
-              const newInputInTokens = fromWei(
-                inputInWei,
-                referenceToken.decimals
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
               );
               referenceToken = getALCXAssetData(this.networkInfo.network);
               inputInWei = getInteger(

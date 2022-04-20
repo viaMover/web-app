@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 import { SHA3 } from 'sha3';
 
+import { getGALCXToALCXMultiplier } from '@/services/chain/gALCX/multiplier';
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
 import { getRealIndex } from '@/services/chain/wxbtrfly/wxbtrfly';
 import {
@@ -14,6 +15,7 @@ import {
   sendEmailHash,
   validatePhoneNumber
 } from '@/services/mover/debit-card';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   deleteEmailHashFromPersist,
   getAvailableSkinsFromPersist,
@@ -24,6 +26,7 @@ import {
   setCurrentSkinToPersist,
   setEmailHashToPersist
 } from '@/settings';
+import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 
 import { ActionFuncs } from '../../types';
 import { allSkins, defaultSkin } from './consts';
@@ -51,6 +54,7 @@ type Actions = {
   setOrderState: void;
   changePhoneNumber: Promise<void>;
   loadWxBTRFLYrealIndex: Promise<void>;
+  loadGALCXToALCXMultiplier: Promise<void>;
 };
 
 const actions: ActionFuncs<
@@ -164,8 +168,11 @@ const actions: ActionFuncs<
           throw new DebitCardApiError(res.error, res.shortError);
         }
 
-        await dispatch('loadWxBTRFLYrealIndex');
-        await dispatch('handleInfoResult', res.result);
+        await Promise.all([
+          dispatch('loadGALCXToALCXMultiplier'),
+          dispatch('loadWxBTRFLYrealIndex'),
+          dispatch('handleInfoResult', res.result)
+        ]);
 
         commit('setIsLoading', false);
         commit('setIsInitialized', true);
@@ -646,6 +653,31 @@ const actions: ActionFuncs<
     } catch (error) {
       console.error('failed to get WxBTRFLY realindex', error);
       Sentry.captureException(error);
+    }
+  },
+  async loadGALCXToALCXMultiplier({ commit, rootState }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error(
+        'Account state is not ready. Failed to load gALCXToALCXMultiplier'
+      );
+    }
+
+    try {
+      const multiplier = await getGALCXToALCXMultiplier(
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3,
+        rootState.account.currentAddress
+      );
+      commit('setGALCXToALCXMultiplier', multiplier);
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.store.loadGALCXToALCXMultiplier',
+        message: 'Failed to load gALCXToALCXMultiplier',
+        data: {
+          error
+        }
+      });
     }
   }
 };
