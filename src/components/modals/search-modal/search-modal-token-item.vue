@@ -38,6 +38,7 @@ import { mapState } from 'vuex';
 
 import BigNumber from 'bignumber.js';
 
+import { isBaseAsset } from '@/utils/address';
 import { isTokenWithBalance, Token, TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureSourceDescriptor } from '@/components/html5';
@@ -82,7 +83,7 @@ export default Vue.extend({
       return '0';
     },
     hasInfoButton(): boolean {
-      return this.item.symbol !== 'ETH';
+      return !isBaseAsset(this.item.address, this.networkInfo.network);
     },
     infoButtonSrc(): string {
       return `${this.networkInfo.explorer}/token/${this.item.address}`;

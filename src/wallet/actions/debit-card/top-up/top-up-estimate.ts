@@ -5,7 +5,7 @@ import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   convertStringToHexWithPrefix,
   getPureBaseAssetAddress
@@ -308,7 +308,7 @@ export const estimateTopUp = async (
     });
 
     let inputCurrencyAddress = inputAsset.address;
-    if (inputAsset.address === 'eth') {
+    if (isBaseAsset(inputAsset.address, network)) {
       inputCurrencyAddress = getPureBaseAssetAddress();
     }
 

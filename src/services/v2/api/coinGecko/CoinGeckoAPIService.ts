@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry';
 import Web3 from 'web3';
 
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
-import { MultiChainAPIService } from '@/services/v2/api';
+import { APIService } from '@/services/v2/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import { chunkArray, toArray } from '@/utils/arrays';
@@ -19,19 +19,14 @@ import {
   PriceRecord
 } from './types';
 
-export class CoinGeckoAPIService extends MultiChainAPIService {
-  protected readonly baseURL: string;
+export class CoinGeckoAPIService extends APIService {
+  protected readonly baseURL = 'https://api.coingecko.com/api/v3';
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'coinGecko.api.service';
   protected static readonly MaxChunkSize = 100;
 
-  constructor(
-    currentAddress: string,
-    networks: Array<Network>,
-    currentNetwork: Network
-  ) {
-    super(currentAddress, currentNetwork);
-    this.baseURL = this.lookupBaseURL();
+  constructor(currentAddress: string) {
+    super(currentAddress);
     this.client = axios.create({
       baseURL: this.baseURL,
       headers: {

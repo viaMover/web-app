@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
+import { isBaseAsset } from '@/utils/address';
 import { fromWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { BALANCE_CHECKER_ABI, lookupAddress } from '@/wallet/references/data';
@@ -15,7 +16,7 @@ export const getWalletTokens = async (
   network: Network
 ): Promise<Array<TokenWithBalance>> => {
   const AddressesToCheck = tokensToCheck.map((t) =>
-    t.address === 'eth' ? ETH_ADDRESS : t.address
+    isBaseAsset(t.address, network) ? ETH_ADDRESS : t.address
   );
 
   const contractAddress = lookupAddress(network, 'BALANCE_CHECKER_ADDRESS');

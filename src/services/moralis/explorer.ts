@@ -490,6 +490,7 @@ export class MoralisExplorer implements Explorer {
     network: Network
   ): Promise<Transaction[]> => {
     const baseAssetData = getBaseAssetData(network);
+    const chainId = getNetwork(network)?.chainId;
 
     const allTransactionsHashes = [
       ...erc20Transactions.map((t) => t.transaction_hash),

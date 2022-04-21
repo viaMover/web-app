@@ -73,7 +73,7 @@ import * as Sentry from '@sentry/vue';
 
 import { getTransferData, TransferData } from '@/services/0x/api';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import { divide, fromWei, isZero, multiply, toWei } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
@@ -308,7 +308,9 @@ export default Vue.extend({
         return false;
       }
 
-      if (this.inputAsset?.address === 'eth') {
+      if (
+        isBaseAsset(this.inputAsset?.address ?? '', this.networkInfo.network)
+      ) {
         console.info('Subsidizing for deposit ETH denied');
         return false;
       }

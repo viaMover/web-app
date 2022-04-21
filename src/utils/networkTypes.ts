@@ -53,10 +53,10 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://ropsten.etherscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'ropeth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'ROPETH',
+      name: 'Ropsten Ethereum',
       network: Network.ropsten,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
@@ -70,10 +70,10 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://rinkeby.etherscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'rineth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'RINETH',
+      name: 'Rinkeby Ethereum',
       network: Network.rinkeby,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
@@ -87,10 +87,10 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://kovan.etherscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'koveth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'KOVETH',
+      name: 'Kovan Ethereum',
       network: Network.kovan,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
@@ -121,10 +121,10 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://bscscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'bsc',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'BSC',
+      name: 'Binance Smart Chain',
       network: Network.binance,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
@@ -138,10 +138,10 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://testnet.bscscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'bsct',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'BSCT',
+      name: 'Binance Smart Chain Test',
       network: Network.binanceTest,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
@@ -155,7 +155,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://snowtrace.io/',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'avax',
       decimals: 9,
       symbol: 'AVAX',
       name: 'Avalanche X-Chain',
@@ -172,7 +172,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://arbiscan.io/',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'areth',
       decimals: 18,
       symbol: 'ARETH',
       name: 'Arbitrum',
@@ -189,7 +189,7 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://ftmscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'ftm',
       decimals: 18,
       symbol: 'FTM',
       name: 'Fantom',

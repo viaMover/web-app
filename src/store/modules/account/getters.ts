@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 import { GettersFuncs } from '@/store/types';
+import { isBaseAsset } from '@/utils/address';
 import { add, multiply } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { Network } from '@/utils/networkTypes';
@@ -13,7 +14,6 @@ import {
   Transaction
 } from '@/wallet/types';
 
-import { networks } from './../../../utils/networkTypes';
 import {
   AccountStoreState,
   nativeCurrencyFormatters,
@@ -194,7 +194,7 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
         return 0;
       }
 
-      if (address === 'eth') {
+      if (isBaseAsset(address, network)) {
         return Number.MAX_SAFE_INTEGER;
       }
 
@@ -218,7 +218,6 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       }
       const searcher = state.allTokensSearcher[network];
       if (searcher !== undefined) {
-        console.log(searcher.search(searchTerm, { limit: 100 }));
         return searcher
           .search(searchTerm, { limit: 100 })
           .map((res) => res.item);

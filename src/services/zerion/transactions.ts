@@ -162,6 +162,7 @@ const parseTradeTransaction = (
       .map((c, ind) => {
         if (ind === 0) {
           return {
+            network: network,
             asset: {
               address: c.asset.asset_code,
               decimals: c.asset.decimals,
@@ -187,6 +188,7 @@ const parseTradeTransaction = (
           };
         } else {
           return {
+            network: network,
             asset: {
               address: c.asset.asset_code,
               decimals: c.asset.decimals,
@@ -219,6 +221,7 @@ const parseTradeTransaction = (
     const c = tx.changes[0];
     return [
       {
+        network: network,
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
@@ -255,6 +258,7 @@ const parseReceiveTransaction = (
 ): Transaction[] | undefined => {
   if (tx.type === 'receive') {
     return tx.changes.map((c, ind) => ({
+      network: network,
       asset: {
         address: c.asset.asset_code,
         decimals: c.asset.decimals,
@@ -291,6 +295,7 @@ const parseAuthorizeTransaction = (
   if (tx.type === 'authorize') {
     return [
       {
+        network: network,
         asset: {
           address: tx.meta.asset.asset_code,
           decimals: tx.meta.asset.decimals,
@@ -324,6 +329,7 @@ const parseSendTransaction = (
     const c = tx.changes[0];
     return [
       {
+        network: network,
         asset: {
           address: c.asset.asset_code,
           decimals: c.asset.decimals,
@@ -363,6 +369,7 @@ const tryToParseToUnknown = (
     tx.changes.length > 0
   ) {
     return tx.changes.map((c, ind) => ({
+      network: network,
       asset: {
         address: c.asset.asset_code,
         decimals: c.asset.decimals,
@@ -389,6 +396,7 @@ const tryToParseToUnknown = (
 
   return [
     {
+      network: network,
       asset: undefined,
       blockNumber: String(tx.block_number),
       hash: tx.hash,

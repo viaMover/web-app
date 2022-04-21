@@ -331,6 +331,7 @@ export class SwapOnChainService extends MoverOnChainService {
       );
 
     const tx: Transaction = {
+      network: this.network,
       blockNumber: '0',
       fee: {
         ethPrice: this.ethPriceGetterHandler?.() ?? '0',

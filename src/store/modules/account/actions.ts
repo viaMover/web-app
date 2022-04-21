@@ -65,7 +65,6 @@ import {
   Transaction
 } from '@/wallet/types';
 
-import { availableNetworks } from './../../../wallet/allTokens';
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
@@ -511,13 +510,7 @@ const actions: ActionFuncs<
       throw new Error('account store is not initialized');
     }
 
-    const coinGeckoAPIService = new CoinGeckoAPIService(
-      state.currentAddress,
-      isFeatureEnabled('isMultichainTokensEnabled', state.networkInfo.network)
-        ? state.availableNetworks
-        : [state.networkInfo.network],
-      state.networkInfo.network
-    );
+    const coinGeckoAPIService = new CoinGeckoAPIService(state.currentAddress);
     commit('setCoinGeckoAPIService', coinGeckoAPIService);
 
     const theGraphAPIService = new TheGraphAPIService(

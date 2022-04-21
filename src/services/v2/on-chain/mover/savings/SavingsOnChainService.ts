@@ -511,6 +511,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
 
     const tx: Transaction = {
+      network: this.network,
       blockNumber: '0',
       fee: {
         ethPrice: this.ethPriceGetterHandler?.() ?? '0',
@@ -597,6 +598,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
 
     const tx: Transaction = {
+      network: this.network,
       blockNumber: '0',
       fee: {
         ethPrice: this.ethPriceGetterHandler?.() ?? '0',

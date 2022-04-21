@@ -135,7 +135,7 @@ import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -356,7 +356,10 @@ export default Vue.extend({
       if (this.input.asset === undefined) {
         return '0';
       }
-      if (this.input.asset.address === 'eth' && !this.useSubsidized) {
+      if (
+        isBaseAsset(this.input.asset.address, this.networkInfo.network) &&
+        !this.useSubsidized
+      ) {
         const txnPriceInWeth = multiply(
           this.allGasLimit,
           this.selectedGasPriceInWEI
@@ -430,11 +433,12 @@ export default Vue.extend({
       this.approveGasLimit = '0';
 
       if (newVal.swapType === 'getMove') {
-        const eth = this.currentNetworkWalletTokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.currentNetworkWalletTokens.find(
+          (t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo.network)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -460,11 +464,12 @@ export default Vue.extend({
           this.output.nativeAmount = '';
         }
       } else {
-        const eth = this.currentNetworkWalletTokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.currentNetworkWalletTokens.find(
+          (t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo.network)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -964,7 +969,9 @@ export default Vue.extend({
         return;
       }
 
-      if (this.input.asset?.address === 'eth') {
+      if (
+        isBaseAsset(this.input.asset?.address ?? '', this.networkInfo.network)
+      ) {
         this.subsidizedAvailable = false;
         return;
       }
