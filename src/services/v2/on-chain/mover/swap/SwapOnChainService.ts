@@ -317,8 +317,8 @@ export class SwapOnChainService extends MoverOnChainService {
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
     const preparedAction = await this.prepareSubsidizedSwapAction(
-      inputAsset.address,
-      outputAsset.address,
+      this.substituteAssetAddressIfNeeded(inputAsset.address),
+      this.substituteAssetAddressIfNeeded(outputAsset.address),
       toWei(inputAmount, inputAsset.decimals),
       this.mapTransferDataToExpectedMinimumAmount(transferData)
     );

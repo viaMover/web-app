@@ -8,11 +8,13 @@ import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
 import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import ERC721_ABI from './abi/erc721-abi.json';
+import GALCX_ABI from './abi/galcx-abi.json';
 import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
+import NFT_BASELEDGER_STAKING_OG_ABI from './abi/nft-baseledger-staking-og.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
 import NFT_NIBBLE_SHOP_ABI from './abi/nft-nibble-shop.json';
 import NFT_OLYMPUS_ABI from './abi/nft-olympus.json';
@@ -77,7 +79,12 @@ export type AddressMapKey =
   | 'APE_TOKEN_ADDRESS'
   | 'UBT_TOKEN_ADDRESS'
   | 'STAKING_UBT_CONTRACT_ADDRESS'
-  | 'CONCAVE_TOKEN_ADDRESS';
+  | 'CONCAVE_TOKEN_ADDRESS'
+  | 'NFT_BASELEDGER_STAKING_OG'
+  | 'ALCX_TOKEN_ADDRESS'
+  | 'GALCX_TOKEN_ADDRESS'
+  | 'AL_USD_TOKEN_ADDRESS'
+  | 'AL_ETH_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -134,7 +141,11 @@ const addresses = {
     UBT_TOKEN_ADDRESS: '0x8400d94a5cb0fa0d041a3788e395285d61c9ee5e',
     NFT_ORDER_OF_LIBERTY: '0xebFB3B9f34307De7a72eDdA8696c1E14e0f41d8b',
     STAKING_UBT_CONTRACT_ADDRESS: '0x1f15F293C1Cd3d05d58d3EdeAf0C72c5A2dfeaFf',
-    CONCAVE_TOKEN_ADDRESS: '0x000000007a58f5f58E697e51Ab0357BC9e260A04'
+    CONCAVE_TOKEN_ADDRESS: '0x000000007a58f5f58E697e51Ab0357BC9e260A04',
+    AL_ETH_TOKEN_ADDRESS: '0x0100546F2cD4C9D97f798fFC9755E47865FF7Ee6',
+    AL_USD_TOKEN_ADDRESS: '0xBC6DA0FE9aD5f3b0d58160288917AA56653660E9',
+    ALCX_TOKEN_ADDRESS: '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF',
+    GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -170,7 +181,8 @@ const addresses = {
     BALANCE_CHECKER_ADDRESS: '0x9eC70CEa6Ae472a2cdacD5d4A580eC43548c9Afb',
     NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
     HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
-    UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62'
+    UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62',
+    NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -331,6 +343,16 @@ const getBTRFLYAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const getALCXAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
+    decimals: 18,
+    symbol: 'ALCX',
+    iconURL:
+      'https://assets.coingecko.com/coins/images/14113/small/Alchemix.png'
+  };
+};
+
 const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
   return {
     address: lookupAddress(network, 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'),
@@ -457,7 +479,11 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'TOKE_TOKEN_ADDRESS'),
     lookupAddress(network, 'APE_TOKEN_ADDRESS'),
     lookupAddress(network, 'UBT_TOKEN_ADDRESS'),
-    lookupAddress(network, 'CONCAVE_TOKEN_ADDRESS')
+    lookupAddress(network, 'CONCAVE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AL_ETH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AL_USD_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GALCX_TOKEN_ADDRESS')
   ];
 };
 
@@ -473,6 +499,7 @@ export {
   isTokenValidForTreasuryDeposit,
   getEURSAssetData,
   getUBTAssetData,
+  getALCXAssetData,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
@@ -496,5 +523,7 @@ export {
   WX_BTRFLY_ABI,
   NFT_ORDER_OF_LIBERTY_ABI,
   UBT_STAKING_CONTRACT_ABI,
+  NFT_BASELEDGER_STAKING_OG_ABI,
+  GALCX_ABI,
   validTopUpAssets
 };

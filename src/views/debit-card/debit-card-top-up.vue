@@ -93,6 +93,7 @@ import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import { CompoundEstimateWithUnwrapResponse } from '@/wallet/actions/types';
 import {
+  getALCXAssetData,
   getBTRFLYAssetData,
   getEURSAssetData,
   getUSDCAssetData,
@@ -192,7 +193,8 @@ export default Vue.extend({
       'provider'
     ]),
     ...mapState('debitCard', {
-      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex'
+      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
+      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
     }),
     ...mapGetters('account', [
       'treasuryBonusNative',
@@ -467,6 +469,24 @@ export default Vue.extend({
                 toWei(newInputInTokens, referenceToken.decimals)
               );
             }
+
+            // gALCX unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
+              )
+            ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
+              );
+              referenceToken = getALCXAssetData(this.networkInfo.network);
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
+
             if (isZero(referenceAmount) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
@@ -594,6 +614,24 @@ export default Vue.extend({
                 toWei(newInputInTokens, referenceToken.decimals)
               );
             }
+
+            // gALCX unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
+              )
+            ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
+              );
+              referenceToken = getALCXAssetData(this.networkInfo.network);
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
+
             this.transferData = await getTransferData(
               this.usdcAsset.address,
               referenceToken.address,
@@ -629,6 +667,23 @@ export default Vue.extend({
                 fromWei(this.wxBTRFLYrealIndex, 9)
               );
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
+
+            // gALCX unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
+              )
+            ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
+              );
+              referenceToken = getALCXAssetData(this.networkInfo.network);
               inputInWei = getInteger(
                 toWei(newInputInTokens, referenceToken.decimals)
               );

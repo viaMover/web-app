@@ -26,6 +26,7 @@ type Mutations = {
   setOrderState: void;
   setKycLink: void;
   setWxBTRFLYrealIndex: void;
+  setGALCXToALCXMultiplier: void;
 };
 
 const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
@@ -79,6 +80,9 @@ const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
   },
   setWxBTRFLYrealIndex(state, realIndex: string): void {
     state.wxBTRFLYrealIndex = realIndex;
+  },
+  setGALCXToALCXMultiplier(state, multiplier: string): void {
+    state.gALCXToALCXMultiplier = multiplier;
   }
 };
 

@@ -499,7 +499,7 @@ export class SavingsOnChainService extends MoverOnChainService {
 
     const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
       lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-      inputAsset.address,
+      this.substituteAssetAddressIfNeeded(inputAsset.address),
       inputAmountInWEI
     );
 

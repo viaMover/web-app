@@ -297,7 +297,8 @@ export default Vue.extend({
       return this.forceTokenArray.filter(
         (t) =>
           t.symbol.toLowerCase().includes(searchTermLower) ||
-          t.name.toLowerCase().includes(searchTermLower)
+          t.name.toLowerCase().includes(searchTermLower) ||
+          t.address.toLowerCase().includes(searchTermLower)
       );
     },
     filterTokens<T extends TokenWithBalance | Token>(

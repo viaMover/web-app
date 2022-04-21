@@ -680,6 +680,10 @@ const actions: ActionFuncs<
       console.error(error);
       Sentry.captureException("Can't close cached provider");
     }
+    Object.entries(localStorage)
+      .map((x) => x[0])
+      .filter((x) => x.startsWith('-walletlink'))
+      .forEach((x) => localStorage.removeItem(x));
     clearOffchainExplorer();
     commit('clearWalletData');
     disconnectIntercomSession();

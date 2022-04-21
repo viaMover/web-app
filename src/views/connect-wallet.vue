@@ -153,6 +153,10 @@ export default Vue.extend({
           }
         });
         this.web3Modal.clearCachedProvider();
+        Object.entries(localStorage)
+          .map((x) => x[0])
+          .filter((x) => x.startsWith('-walletlink'))
+          .forEach((x) => localStorage.removeItem(x));
         sendGlobalTopMessageEvent(
           this.$t('errors.default', {
             code: CommonErrors.WC_PROVIDER_INIT_ERROR

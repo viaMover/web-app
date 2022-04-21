@@ -28,6 +28,7 @@ export type DebitCardStoreState = {
   orderState: OrderState | undefined;
   kycLink: string | undefined;
   wxBTRFLYrealIndex: string;
+  gALCXToALCXMultiplier: string;
 };
 
 export type CardInfo = {
