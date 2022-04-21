@@ -349,7 +349,8 @@ const getALCXAssetData = (network: Network): SmallTokenInfoWithIcon => {
     decimals: 18,
     symbol: 'ALCX',
     iconURL:
-      'https://assets.coingecko.com/coins/images/14113/small/Alchemix.png'
+      'https://assets.coingecko.com/coins/images/14113/small/Alchemix.png',
+    network
   };
 };
 

@@ -192,7 +192,7 @@ export const InitZerionExplorer = (
     hasInfiniteLoader: (): boolean => {
       return false;
     },
-    async loadMoreTransactions(nativeOnly: boolean): Promise<boolean> {
+    async loadMoreTransactions(): Promise<boolean> {
       return false;
     }
   };

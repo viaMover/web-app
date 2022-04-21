@@ -90,6 +90,7 @@ export type TransactionCommonData = {
   isOffchain: boolean;
   subsidizedQueueId?: string;
   moverType: TransactionMoveType;
+  network: Network;
 };
 
 export type TransactionSwapERC20 = TransactionCommonData & {

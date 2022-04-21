@@ -15,7 +15,7 @@ export interface Explorer {
   ) => void;
   refreshWalletData: () => void;
   hasInfiniteLoader: () => boolean;
-  loadMoreTransactions(nativeOnly: boolean): Promise<boolean>;
+  loadMoreTransactions(): Promise<boolean>;
 }
 
 export const BuildExplorer = async (

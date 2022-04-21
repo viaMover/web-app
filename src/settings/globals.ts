@@ -67,7 +67,7 @@ const values: Globals = {
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
   isSwapEnabled: [Network.mainnet, Network.fantom, Network.polygon],
-  isMultichainTokensEnabled: false,
+  isMultichainTokensEnabled: true,
   isExplorerEnabled: [
     Network.mainnet,
     Network.binance,

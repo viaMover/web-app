@@ -96,15 +96,17 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     return Object.values(groupsByDay).reverse();
   },
   displayableWalletTokens(state): Array<DisplayableToken> {
-    return state.tokens.map((t: TokenWithBalance) => ({
-      address: t.address,
-      balanceFormatted: formatToDecimals(t.balance, 4),
-      symbol: t.symbol,
-      name: t.name,
-      logo: t.logo,
-      balanceNativeFormatted: formatToNative(multiply(t.balance, t.priceUSD)),
-      network: t.network
-    }));
+    return state.tokens
+      .map((t: TokenWithBalance) => ({
+        address: t.address,
+        balanceFormatted: formatToDecimals(t.balance, 4),
+        symbol: t.symbol,
+        name: t.name,
+        logo: t.logo,
+        balanceNativeFormatted: formatToNative(multiply(t.balance, t.priceUSD)),
+        network: t.network
+      }))
+      .sort((t) => (t.network === state.networkInfo?.network ? -1 : +1));
   },
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;
