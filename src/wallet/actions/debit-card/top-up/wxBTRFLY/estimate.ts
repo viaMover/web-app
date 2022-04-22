@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { OnChainServiceError } from '@/services/v2/on-chain';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { floorDivide, toWei } from '@/utils/bigmath';
 import { multiply } from '@/utils/bigmath';
@@ -70,8 +71,6 @@ export const estimateWXBTRFLYUnwrap = async (
       });
 
       return { error: false, gasLimit: gasLimitWithBuffer };
-    } else {
-      throw new Error('empty gas limit');
     }
   } catch (error) {
     addSentryBreadcrumb({
@@ -82,11 +81,13 @@ export const estimateWXBTRFLYUnwrap = async (
         error
       }
     });
-    console.error("can't estimate WxBtrflyUnwrap", error);
 
-    return {
-      error: true,
-      gasLimit: '0'
-    };
+    throw new OnChainServiceError('Failed to estimate WXBTRFLY unwrap').wrap(
+      error
+    );
   }
+
+  throw new OnChainServiceError(
+    'Failed to estimate WXBTRFLY unwrap: empty gas limit'
+  );
 };
