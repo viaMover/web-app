@@ -47,7 +47,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
@@ -114,14 +114,15 @@ export default Vue.extend({
     ...mapState('account', {
       networkInfo: 'networkInfo',
       nativeCurrency: 'nativeCurrency',
-      tokens: 'tokens',
-      gasPrices: 'gasPrices',
-      ethPrice: 'ethPrice'
+      gasPrices: 'gasPrices'
     }),
     ...mapState('earnings/olympus', {
       olympusBalance: 'olympusBalance',
       olympusAPY: 'olympusAPY',
       ohmNativePrice: 'ohmNativePrice'
+    }),
+    ...mapGetters('account', {
+      currentNetworkBaseTokenPrice: 'currentNetworkBaseTokenPrice'
     }),
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
@@ -140,7 +141,8 @@ export default Vue.extend({
         priceUSD: this.ohmNativePrice,
         logo: this.ohmAssetData.iconURL,
         balance: this.olympusBalance,
-        marketCap: Number.MAX_SAFE_INTEGER
+        marketCap: Number.MAX_SAFE_INTEGER,
+        network: this.ohmAssetData.network
       };
     },
     ohmAssetData(): SmallTokenInfoWithIcon {
@@ -160,7 +162,10 @@ export default Vue.extend({
         return `~ $${formatToNative(0)}`;
       }
 
-      const usdcNative = multiply(this.ohmNativePrice, this.ethPrice);
+      const usdcNative = multiply(
+        this.ohmNativePrice,
+        this.currentNetworkBaseTokenPrice
+      );
       const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
       let apyNative = multiply(divide(this.olympusAPY, 100), usdcAmountNative);
 

@@ -388,7 +388,7 @@ const actions: ActionFuncs<
         });
 
         console.info('getting all tokens...');
-        const allTokens = getAllTokens(state.networkInfo.network);
+        const allTokens = getAllTokens(state.availableNetworks);
         commit('setAllTokens', allTokens);
       }
 
@@ -410,6 +410,7 @@ const actions: ActionFuncs<
             state.currentAddress,
             state.nativeCurrency,
             state.networkInfo.network,
+            state.availableNetworks,
             (txns: Array<Transaction>) => {
               commit('setWalletTransactions', txns);
             },
@@ -437,10 +438,11 @@ const actions: ActionFuncs<
             (val: boolean) => {
               commit('setIsTokensListLoaded', val);
             },
-            (addresses, nativeCurrency) =>
+            (addresses, nativeCurrency, network) =>
               dispatch('fetchTokensPriceByContractAddresses', {
                 contractAddresses: addresses,
-                currencies: nativeCurrency
+                currencies: nativeCurrency,
+                network: network
               } as FetchTokenPricesByContractAddressesPayload),
             state.allTokens
           );
@@ -508,10 +510,7 @@ const actions: ActionFuncs<
       throw new Error('account store is not initialized');
     }
 
-    const coinGeckoAPIService = new CoinGeckoAPIService(
-      state.currentAddress,
-      state.networkInfo.network
-    );
+    const coinGeckoAPIService = new CoinGeckoAPIService(state.currentAddress);
     commit('setCoinGeckoAPIService', coinGeckoAPIService);
 
     const theGraphAPIService = new TheGraphAPIService(
@@ -552,7 +551,7 @@ const actions: ActionFuncs<
       )
         .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
         .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
-        .setEthPriceGetterHandler(() => getters.ethPrice);
+        .setEthPriceGetterHandler(() => getters.currentNetworkBaseTokenPrice);
       dispatch('savings/setOnChainService', savingsOnChainService, {
         root: true
       });
@@ -578,7 +577,7 @@ const actions: ActionFuncs<
       )
         .setSmartTreasuryBonusBalanceExecutor(smartTreasuryBonusBalanceExecutor)
         .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
-        .setEthPriceGetterHandler(() => getters.ethPrice);
+        .setEthPriceGetterHandler(() => getters.currentNetworkBaseTokenPrice);
       commit('setSwapOnChainService', swapOnChainService);
     }
 
@@ -751,8 +750,8 @@ const actions: ActionFuncs<
     }
 
     try {
-      const getEthPriceInUsdPromise = getBaseTokenPrice(
-        state.networkInfo.network
+      const getBaseTokensPricesInUsdPromise = getBaseTokenPrice(
+        state.availableNetworks
       );
 
       const getMovePriceInWethPromise = getMOVEPriceInWETH(
@@ -786,15 +785,19 @@ const actions: ActionFuncs<
         state.provider.web3
       );
 
-      const [ethInUsdPrice, slpInWethPrice, usdcInWethPrice, eursInWethPrice] =
-        await Promise.all([
-          getEthPriceInUsdPromise,
-          slpPriceInWETHPromise,
-          getUSDCPriceInWETHPromise,
-          getEURSPriceInWETHPromise,
-          getMovePriceInWethPromise
-        ]);
-      commit('setEthPrice', ethInUsdPrice);
+      const [
+        baseTokensPricesInUsd,
+        slpInWethPrice,
+        usdcInWethPrice,
+        eursInWethPrice
+      ] = await Promise.all([
+        getBaseTokensPricesInUsdPromise,
+        slpPriceInWETHPromise,
+        getUSDCPriceInWETHPromise,
+        getEURSPriceInWETHPromise,
+        getMovePriceInWethPromise
+      ]);
+      commit('setBaseTokenPrices', baseTokensPricesInUsd);
       commit('setSLPPriceInWETH', slpInWethPrice);
       commit('setUsdcPriceInWeth', usdcInWethPrice);
       commit('setEursPriceInWeth', eursInWethPrice);
@@ -810,7 +813,8 @@ const actions: ActionFuncs<
     { state },
     {
       contractAddresses,
-      currencies
+      currencies,
+      network
     }: FetchTokenPricesByContractAddressesPayload
   ): Promise<PriceRecord> {
     let res: PriceRecord = {};
@@ -823,7 +827,8 @@ const actions: ActionFuncs<
 
       res = await state.coinGeckoAPIService.getPricesByContractAddress(
         contractAddresses,
-        currencies
+        currencies,
+        network
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -885,7 +890,8 @@ const actions: ActionFuncs<
       'fetchTokensPriceByContractAddresses',
       {
         contractAddresses: token.address,
-        currencies: state.nativeCurrency
+        currencies: state.nativeCurrency,
+        network: token.network
       } as FetchTokenPricesByContractAddressesPayload
     )) as PriceRecord;
 

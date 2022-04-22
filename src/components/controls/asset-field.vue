@@ -7,6 +7,7 @@
       <token-image
         :address="asset ? asset.address : ''"
         class="small"
+        :network="asset ? asset.network : undefined"
         :src="iconSrc"
         :symbol="asset ? asset.symbol : ''"
       />
@@ -169,7 +170,7 @@ export default Vue.extend({
       if (this.asset === undefined) {
         return undefined;
       }
-      return this.getTokenColor(this.asset.address);
+      return this.getTokenColor(this.asset.network, this.asset.address);
     },
     buttonStyle(): Properties {
       if (this.assetColor === undefined) {

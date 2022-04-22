@@ -135,7 +135,7 @@ import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -213,8 +213,6 @@ export default Vue.extend({
       'currentAddress',
       'provider',
       'gasPrices',
-      'tokens',
-      'ethPrice',
       'allTokens',
       'swapAPIService',
       'swapOnChainService',
@@ -223,7 +221,12 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
-    ...mapGetters('account', ['getTokenColor', 'moveNativePrice']),
+    ...mapGetters('account', [
+      'getTokenColor',
+      'moveNativePrice',
+      'currentNetworkBaseTokenPrice',
+      'currentNetworkWalletTokens'
+    ]),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
     }),
@@ -338,7 +341,10 @@ export default Vue.extend({
       );
 
       const swapPriceInEth = Web3.utils.fromWei(swapPriceInWEI, 'ether');
-      const swapPriceNative = multiply(swapPriceInEth, this.ethPrice);
+      const swapPriceNative = multiply(
+        swapPriceInEth,
+        this.currentNetworkBaseTokenPrice
+      );
 
       if (this.useSubsidized) {
         return `$${formatToNative(swapPriceNative)}`;
@@ -350,7 +356,10 @@ export default Vue.extend({
       if (this.input.asset === undefined) {
         return '0';
       }
-      if (this.input.asset.address === 'eth' && !this.useSubsidized) {
+      if (
+        isBaseAsset(this.input.asset.address, this.networkInfo.network) &&
+        !this.useSubsidized
+      ) {
         const txnPriceInWeth = multiply(
           this.allGasLimit,
           this.selectedGasPriceInWEI
@@ -384,7 +393,10 @@ export default Vue.extend({
       if (this.output.asset === undefined) {
         return undefined;
       }
-      return this.getTokenColor(this.output.asset.address);
+      return this.getTokenColor(
+        this.output.asset.network,
+        this.output.asset.address
+      );
     },
     actionButtonStyle(): CssProperties {
       if (this.actionAvailable) {
@@ -421,11 +433,12 @@ export default Vue.extend({
       this.approveGasLimit = '0';
 
       if (newVal.swapType === 'getMove') {
-        const eth = this.tokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.currentNetworkWalletTokens.find(
+          (t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo.network)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -451,11 +464,12 @@ export default Vue.extend({
           this.output.nativeAmount = '';
         }
       } else {
-        const eth = this.tokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.currentNetworkWalletTokens.find(
+          (t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo.network)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -545,9 +559,10 @@ export default Vue.extend({
           this.input.amount = '';
           this.input.nativeAmount = '';
 
-          const assetInWallet: TokenWithBalance | undefined = this.tokens.find(
-            (t: TokenWithBalance) => sameAddress(t.address, outputAsset.address)
-          );
+          const assetInWallet: TokenWithBalance | undefined =
+            this.currentNetworkWalletTokens.find((t: TokenWithBalance) =>
+              sameAddress(t.address, outputAsset.address)
+            );
 
           if (assetInWallet !== undefined) {
             this.input.asset.balance = assetInWallet.balance;
@@ -945,13 +960,18 @@ export default Vue.extend({
     },
     async checkSubsidizedAvailability(): Promise<void> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(this.actionGasLimit) || isZero(ethPrice)) {
+      if (
+        isZero(gasPrice) ||
+        isZero(this.actionGasLimit) ||
+        isZero(this.currentNetworkBaseTokenPrice)
+      ) {
         this.subsidizedAvailable = false;
         return;
       }
 
-      if (this.input.asset?.address === 'eth') {
+      if (
+        isBaseAsset(this.input.asset?.address ?? '', this.networkInfo.network)
+      ) {
         this.subsidizedAvailable = false;
         return;
       }
@@ -962,7 +982,7 @@ export default Vue.extend({
         ).isSubsidizedTransactionAllowed(
           gasPrice,
           this.actionGasLimit,
-          this.ethPrice
+          this.currentNetworkBaseTokenPrice
         );
       } catch (error) {
         Sentry.captureException(error);

@@ -66,7 +66,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
@@ -146,11 +146,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'usdcPriceInWeth',
-      'ethPrice',
-      'tokens'
+    ...mapState('account', ['networkInfo', 'usdcPriceInWeth']),
+    ...mapGetters('account', [
+      'currentNetworkBaseTokenPrice',
+      'currentNetworkWalletTokens'
     ]),
     showBackButton(): boolean {
       return this.currentStep !== 'loader';
@@ -192,7 +191,10 @@ export default Vue.extend({
         return `${formatToNative(this.inputAmount)} ETH`;
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
+      const usdcNative = multiply(
+        this.usdcPriceInWeth,
+        this.currentNetworkBaseTokenPrice
+      );
       const eth = new BigNumber(this.inputAmount)
         .multipliedBy(this.inputAsset.priceUSD)
         .dividedBy(usdcNative); // (input * asset.Price) / USDcPrice
@@ -207,7 +209,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    tokens: {
+    currentNetworkWalletTokens: {
       handler(newVal: Array<TokenWithBalance>) {
         if (this.isTokenSelectedByUser) {
           return;

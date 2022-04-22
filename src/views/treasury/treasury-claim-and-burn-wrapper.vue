@@ -52,6 +52,7 @@
       <template v-slot:second-token-image>
         <token-image
           :address="inputAsset.address"
+          :network="inputAsset.network"
           :src="inputAsset.logo"
           :symbol="inputAsset.symbol"
           wrapper-class="item-coin"
@@ -156,14 +157,13 @@ export default Vue.extend({
   computed: {
     ...mapState('account', {
       networkInfo: 'networkInfo',
-      tokens: 'tokens',
       currentAddress: 'currentAddress',
       provider: 'provider',
       nativeCurrency: 'nativeCurrency'
     }),
     ...mapGetters('account', {
-      getTokenColor: 'getTokenColor',
-      moveNativePrice: 'moveNativePrice'
+      moveNativePrice: 'moveNativePrice',
+      currentNetworkWalletTokens: 'currentNetworkWalletTokens'
     }),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
@@ -201,7 +201,7 @@ export default Vue.extend({
     availableTokens(): Array<TokenWithBalance> {
       const move = getMoveAssetData(this.networkInfo.network);
       const moveWalletBalance =
-        this.tokens.find((t: TokenWithBalance) =>
+        this.currentNetworkWalletTokens.find((t: TokenWithBalance) =>
           sameAddress(t.address, move.address)
         )?.balance ?? '0';
 
@@ -214,13 +214,14 @@ export default Vue.extend({
           priceUSD: this.moveNativePrice,
           logo: move.iconURL,
           balance: moveWalletBalance,
-          marketCap: Number.MAX_SAFE_INTEGER
+          marketCap: Number.MAX_SAFE_INTEGER,
+          network: move.network
         }
       ];
     }
   },
   watch: {
-    tokens: {
+    currentNetworkWalletTokens: {
       immediate: true,
       async handler(newVal: Array<TokenWithBalance>) {
         this.isLoading = true;

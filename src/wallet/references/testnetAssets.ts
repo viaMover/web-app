@@ -13,7 +13,8 @@ const assets = {
       logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png',
       isFavorite: true,
       isVerified: true,
-      marketCap: 999999999999999999
+      marketCap: 999999999999999999,
+      network: Network.kovan
     },
     {
       address: 'eth',
@@ -24,7 +25,8 @@ const assets = {
       logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
       isFavorite: false,
       isVerified: true,
-      marketCap: 999999999999999999
+      marketCap: 999999999999999999,
+      network: Network.kovan
     },
     {
       address: '0x75B0622Cec14130172EaE9Cf166B92E5C112FaFF',
@@ -35,7 +37,8 @@ const assets = {
       logo: 'https://s3.amazonaws.com/icons.assets/USDC_mcd.png',
       isFavorite: false,
       isVerified: true,
-      marketCap: 999999999999999999
+      marketCap: 999999999999999999,
+      network: Network.kovan
     },
     {
       address: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
@@ -46,7 +49,8 @@ const assets = {
       logo: 'https://s3.amazonaws.com/icons.assets/DAI_mcd.png',
       isFavorite: false,
       isVerified: true,
-      marketCap: 999999999999999999
+      marketCap: 999999999999999999,
+      network: Network.kovan
     }
   ],
   binance: [],
@@ -67,7 +71,8 @@ const assets = {
       logo: 'https://s3.amazonaws.com/icons.assets/USDC_mcd.png',
       isFavorite: false,
       isVerified: true,
-      marketCap: 999999999999999999
+      marketCap: 999999999999999999,
+      network: Network.rinkeby
     }
   ],
   celo: [],

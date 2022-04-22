@@ -40,6 +40,7 @@ export const mapZerionTokens = (
         symbol: assetSymbol,
         priceUSD: t.asset.price?.value ? String(t.asset.price?.value) : '0',
         marketCap: store.getters['account/getTokenMarketCap'](
+          network,
           t.asset.asset_code
         )
       } as TokenWithBalance;

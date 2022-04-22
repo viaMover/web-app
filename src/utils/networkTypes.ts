@@ -40,6 +40,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ETH',
       name: 'Ethereum',
+      network: Network.mainnet,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -52,10 +53,11 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://ropsten.etherscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'ropeth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'ROPETH',
+      name: 'Ropsten Ethereum',
+      network: Network.ropsten,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -68,10 +70,11 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://rinkeby.etherscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'rineth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'RINETH',
+      name: 'Rinkeby Ethereum',
+      network: Network.rinkeby,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -84,10 +87,11 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://kovan.etherscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'koveth',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'KOVETH',
+      name: 'Kovan Ethereum',
+      network: Network.kovan,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -100,10 +104,11 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://polygonscan.com/',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'mtc',
       decimals: 18,
       symbol: 'MATIC',
       name: 'Matic',
+      network: Network.polygon,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/info/logo.png'
     },
@@ -116,10 +121,11 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://bscscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'bsc',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'BSC',
+      name: 'Binance Smart Chain',
+      network: Network.binance,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -132,10 +138,11 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://testnet.bscscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'bsct',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'BSCT',
+      name: 'Binance Smart Chain Test',
+      network: Network.binanceTest,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
@@ -152,6 +159,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 9,
       symbol: 'AVAX',
       name: 'Avalanche X-Chain',
+      network: Network.avalanche,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchex/info/logo.png'
     },
@@ -168,6 +176,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'ARETH',
       name: 'Arbitrum',
+      network: Network.arbitrum,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/arbitrum/info/logo.png'
     },
@@ -184,6 +193,7 @@ export const networks = new Array<NetworkInfo>(
       decimals: 18,
       symbol: 'FTM',
       name: 'Fantom',
+      network: Network.fantom,
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/fantom/info/logo.png'
     },

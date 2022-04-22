@@ -1,10 +1,13 @@
 import { TransactionMoveType } from '@/services/mover/transactions/types';
+import { Network } from '@/utils/networkTypes';
+
 export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
 
 export type SmallTokenInfo = {
   address: string;
   decimals: number;
   symbol: string;
+  network: Network;
 };
 
 export type Token = {
@@ -19,13 +22,15 @@ export type Token = {
   color?: string;
 
   marketCap: number;
+  network: Network;
 };
 
 export const tokenToSmallTokenInfo = (t: Token): SmallTokenInfoWithIcon => ({
   address: t.address,
   decimals: t.decimals,
   symbol: t.symbol,
-  iconURL: t.logo
+  iconURL: t.logo,
+  network: t.network
 });
 
 export type TokenWithBalance = Token & {
@@ -45,6 +50,7 @@ export type DisplayableToken = {
   balanceNativeFormatted: string;
   balanceFormatted: string;
   logo: string;
+  network: Network;
 };
 
 export enum TransactionTypes {
@@ -84,6 +90,7 @@ export type TransactionCommonData = {
   isOffchain: boolean;
   subsidizedQueueId?: string;
   moverType: TransactionMoveType;
+  network: Network;
 };
 
 export type TransactionSwapERC20 = TransactionCommonData & {

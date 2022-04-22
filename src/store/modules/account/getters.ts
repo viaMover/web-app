@@ -1,8 +1,10 @@
 import dayjs from 'dayjs';
 
 import { GettersFuncs } from '@/store/types';
+import { isBaseAsset } from '@/utils/address';
 import { add, multiply } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import {
@@ -28,16 +30,24 @@ type Getters = {
   isWalletConnected: boolean;
   isWalletReady: boolean;
   entireBalance: string;
-  ethPrice: string;
-  baseTokenPrice: string;
+  currentNetworkBaseTokenPrice: string;
+  baseTokenPrice: (network: Network) => string;
   moveNativePrice: string;
   usdcNativePrice: string;
   slpNativePrice: string;
-  getTokenColor: (address?: string) => string | undefined;
-  getTokenMarketCap: (address?: string) => number;
-  searchInAllTokens: (searchTerm: string, offset?: number) => Array<Token>;
-  allTokensSortedByMarketCap: Array<Token>;
-  searchInWalletTokens: (searchTerm: string) => Array<TokenWithBalance>;
+  getTokenColor: (network: Network, address?: string) => string | undefined;
+  getTokenMarketCap: (network: Network, address?: string) => number;
+  searchInAllTokens: (
+    network: Network,
+    searchTerm: string,
+    offset?: number
+  ) => Array<Token>;
+  allTokensSortedByMarketCap: Record<Network, Array<Token>>;
+  currentNetworkWalletTokens: Array<TokenWithBalance>;
+  searchInWalletTokens: (
+    searchTerm: string,
+    network: Network
+  ) => Array<TokenWithBalance>;
   getOffchainExplorerHanlder: OffchainExplorerHanler | undefined;
   getCurrentAddresses: string[];
   nativeCurrencyFormatter: (value: number | string) => string;
@@ -86,14 +96,17 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     return Object.values(groupsByDay).reverse();
   },
   displayableWalletTokens(state): Array<DisplayableToken> {
-    return state.tokens.map((t: TokenWithBalance) => ({
-      address: t.address,
-      balanceFormatted: formatToDecimals(t.balance, 4),
-      symbol: t.symbol,
-      name: t.name,
-      logo: t.logo,
-      balanceNativeFormatted: formatToNative(multiply(t.balance, t.priceUSD))
-    }));
+    return state.tokens
+      .map((t: TokenWithBalance) => ({
+        address: t.address,
+        balanceFormatted: formatToDecimals(t.balance, 4),
+        symbol: t.symbol,
+        name: t.name,
+        logo: t.logo,
+        balanceNativeFormatted: formatToNative(multiply(t.balance, t.priceUSD)),
+        network: t.network
+      }))
+      .sort((t) => (t.network === state.networkInfo?.network ? -1 : +1));
   },
   isWalletConnected(state): boolean {
     return state.currentAddress !== undefined;
@@ -119,32 +132,43 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
 
     return balance;
   },
-  ethPrice(state): string {
-    return state.ethPrice ?? '0';
-  },
-  baseTokenPrice(state): string {
-    return state.ethPrice ?? '0';
-  },
-  moveNativePrice(state): string {
-    if (state.movePriceInWeth === undefined || state.ethPrice === undefined) {
+  currentNetworkBaseTokenPrice(state): string {
+    if (state.networkInfo?.network === undefined) {
       return '0';
     }
-    return multiply(state.movePriceInWeth, state.ethPrice);
+    return state.baseTokensPrices?.get(state.networkInfo.network) ?? '0';
   },
-  usdcNativePrice(state): string {
-    if (state.usdcPriceInWeth === undefined || state.ethPrice === undefined) {
+  baseTokenPrice(state): (network: Network) => string {
+    return (network: Network) => state.baseTokensPrices?.get(network) ?? '0';
+  },
+  moveNativePrice(state, getters): string {
+    if (state.movePriceInWeth === undefined) {
       return '0';
     }
-    return multiply(state.usdcPriceInWeth, state.ethPrice);
+    return multiply(
+      state.movePriceInWeth,
+      getters.currentNetworkBaseTokenPrice
+    );
   },
-  slpNativePrice(state): string {
-    if (state.slpPriceInWeth === undefined || state.ethPrice === undefined) {
+  usdcNativePrice(state, getters): string {
+    if (state.usdcPriceInWeth === undefined) {
       return '0';
     }
-    return multiply(state.slpPriceInWeth, state.ethPrice);
+    return multiply(
+      state.usdcPriceInWeth,
+      getters.currentNetworkBaseTokenPrice
+    );
   },
-  getTokenColor(state): (address?: string) => string | undefined {
-    return (address?: string) => {
+  slpNativePrice(state, getters): string {
+    if (state.slpPriceInWeth === undefined) {
+      return '0';
+    }
+    return multiply(state.slpPriceInWeth, getters.currentNetworkBaseTokenPrice);
+  },
+  getTokenColor(
+    state
+  ): (network: Network, address?: string) => string | undefined {
+    return (network: Network, address?: string) => {
       if (state.tokenInfoMap === undefined) {
         return '';
       }
@@ -157,11 +181,11 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
         return '#687ee3';
       }
 
-      return state.tokenInfoMap[address.toLowerCase()]?.color;
+      return state.tokenInfoMap?.[network]?.[address.toLowerCase()]?.color;
     };
   },
-  getTokenMarketCap(state): (address?: string) => number {
-    return (address?: string) => {
+  getTokenMarketCap(state): (network: Network, address?: string) => number {
+    return (network: Network, address?: string) => {
       if (state.tokenInfoMap === undefined) {
         return 0;
       }
@@ -170,85 +194,93 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
         return 0;
       }
 
-      if (address === 'eth') {
+      if (isBaseAsset(address, network)) {
         return Number.MAX_SAFE_INTEGER;
       }
 
-      return state.tokenInfoMap[address.toLowerCase()]?.marketCap ?? 0;
+      return (
+        state.tokenInfoMap?.[network]?.[address.toLowerCase()]?.marketCap ?? 0
+      );
     };
+  },
+  currentNetworkWalletTokens(state): Array<TokenWithBalance> {
+    return state.tokens.filter((t) => t.network === state.networkInfo?.network);
   },
   searchInAllTokens(
     state,
     getters
-  ): (searchTerm: string, offset?: number) => Array<Token> {
-    return (searchTerm: string, offset?: number) => {
+  ): (network: Network, searchTerm: string, offset?: number) => Array<Token> {
+    return (network: Network, searchTerm: string, offset?: number) => {
       const of = offset ?? 0;
       const searchTermProcessed = searchTerm.trim().toLowerCase();
       if (searchTermProcessed === '') {
-        return getters.allTokensSortedByMarketCap.slice(of, of + 100);
+        return getters.allTokensSortedByMarketCap[network].slice(of, of + 100);
+      }
+      const searcher = state.allTokensSearcher[network];
+      if (searcher !== undefined) {
+        return searcher
+          .search(searchTerm, { limit: 100 })
+          .map((res) => res.item);
       }
 
-      if (state.allTokensSearcher === undefined) {
-        return getters.allTokensSortedByMarketCap
-          .filter(
-            (t: Token) =>
-              t.symbol.toLowerCase().includes(searchTermProcessed) ||
-              t.name.toLowerCase().includes(searchTermProcessed) ||
-              t.address.toLowerCase().includes(searchTermProcessed)
-          )
-          .slice(of, of + 100);
-      }
-
-      return state.allTokensSearcher
-        .search(searchTerm, { limit: 100 })
-        .map((res) => res.item);
-    };
-  },
-  allTokensSortedByMarketCap(state): Array<Token> {
-    return [...state.allTokens].sort((a: Token, b: Token) => {
-      if (
-        a.marketCap > MarketCapSortLimit &&
-        b.marketCap > MarketCapSortLimit
-      ) {
-        if (a.marketCap > b.marketCap) {
-          return -1;
-        }
-        if (a.marketCap < b.marketCap) {
-          return 1;
-        }
-      } else if (a.marketCap > MarketCapSortLimit) {
-        return -1;
-      } else if (b.marketCap > MarketCapSortLimit) {
-        return 1;
-      }
-
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
-  },
-  searchInWalletTokens(state): (searchTerm: string) => Array<TokenWithBalance> {
-    return (searchTerm: string) => {
-      const searchTermProcessed = searchTerm.trim().toLowerCase();
-
-      if (searchTermProcessed === '') {
-        return state.tokens;
-      }
-
-      if (state.tokensSearcher === undefined) {
-        return state.tokens.filter(
-          (t) =>
+      return getters.allTokensSortedByMarketCap[network]
+        .filter(
+          (t: Token) =>
             t.symbol.toLowerCase().includes(searchTermProcessed) ||
             t.name.toLowerCase().includes(searchTermProcessed) ||
             t.address.toLowerCase().includes(searchTermProcessed)
-        );
+        )
+        .slice(of, of + 100);
+    };
+  },
+  allTokensSortedByMarketCap(state): Record<Network, Array<Token>> {
+    const sortedAllTokens = {} as Record<Network, Array<Token>>;
+    Object.entries(state.allTokens).forEach(([n, tokens]) => {
+      sortedAllTokens[n as Network] = tokens.sort((a: Token, b: Token) => {
+        if (
+          a.marketCap > MarketCapSortLimit &&
+          b.marketCap > MarketCapSortLimit
+        ) {
+          if (a.marketCap > b.marketCap) {
+            return -1;
+          }
+          if (a.marketCap < b.marketCap) {
+            return 1;
+          }
+        } else if (a.marketCap > MarketCapSortLimit) {
+          return -1;
+        } else if (b.marketCap > MarketCapSortLimit) {
+          return 1;
+        }
+
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
+    });
+    return sortedAllTokens;
+  },
+  searchInWalletTokens(
+    state
+  ): (searchTerm: string, network: Network) => Array<TokenWithBalance> {
+    return (searchTerm: string, network: Network) => {
+      const searchTermProcessed = searchTerm.trim().toLowerCase();
+
+      if (searchTermProcessed === '') {
+        return state.tokens.filter((t) => t.network === network);
       }
 
-      return state.tokensSearcher.search(searchTerm).map((res) => res.item);
+      return state.tokens.filter(
+        (t) =>
+          t.network === network &&
+          (t.symbol.toLowerCase().includes(searchTermProcessed) ||
+            t.name.toLowerCase().includes(searchTermProcessed) ||
+            t.address.toLowerCase().includes(searchTermProcessed))
+      );
     };
   },
   getOffchainExplorerHanlder(state): OffchainExplorerHanler | undefined {

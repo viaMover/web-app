@@ -19,10 +19,11 @@ import { sortAndDeduplicateTokens } from '@/store/modules/account/utils/tokens';
 import { sortAndDeduplicateTransactions } from '@/store/modules/account/utils/transactions';
 import { MutationFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
-import { getNetworkByChainId } from '@/utils/networkTypes';
+import { getNetworkByChainId, Network } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
+import assetListEthereum from '@/../../data/assets/assetList-ethereum.json';
 type Mutations = {
   addTransaction: void;
   setIsTransactionsListLoaded: void;
@@ -32,7 +33,7 @@ type Mutations = {
   toggleIsDebitCardSectionVisible: void;
   toggleIsDepositCardSectionVisible: void;
   toggleIsOrderOfLibertySectionVisible: void;
-  setEthPrice: void;
+  setBaseTokenPrices: void;
   setMovePriceInWeth: void;
   setUsdcPriceInWeth: void;
   setSLPPriceInWETH: void;
@@ -96,8 +97,8 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   toggleIsDepositCardSectionVisible(state): void {
     state.isDepositCardSectionVisible = !state.isDepositCardSectionVisible;
   },
-  setEthPrice(state, ethPrice: string): void {
-    state.ethPrice = ethPrice;
+  setBaseTokenPrices(state, baseTokensPrices: Map<Network, string>): void {
+    state.baseTokensPrices = baseTokensPrices;
   },
   setMovePriceInWeth(state, movePriceInWeth: string): void {
     state.movePriceInWeth = movePriceInWeth;
@@ -128,7 +129,6 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setWalletTokens(state, tokens: Array<TokenWithBalance>): void {
     state.tokens = sortAndDeduplicateTokens(tokens);
-    state.tokensSearcher = undefined;
   },
   updateWalletTokens(state, newTokens: Array<TokenWithBalance>): void {
     const allTokens = [...newTokens, ...state.tokens];
@@ -139,8 +139,7 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
       (t: TokenWithBalance) => !removeHashes.includes(t.address)
     );
   },
-  setAllTokens(state, tokens: Array<Token>): void {
-    state.allTokens = tokens;
+  setAllTokens(state, tokens: Map<Network, Array<Token>>): void {
     const searchOptions = {
       keys: [
         {
@@ -156,17 +155,23 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
       threshold: 0,
       shouldSort: true
     };
-    const index = Fuse.createIndex(searchOptions.keys, state.allTokens);
 
-    state.allTokensSearcher = new Fuse(state.allTokens, searchOptions, index);
+    tokens.forEach((tokens, network) => {
+      state.allTokens[network] = tokens;
+      const aggregateObject: Record<string, Token> = {};
+      for (let i = 0; i < tokens.length; i++) {
+        aggregateObject[tokens[i].address.toLowerCase()] = tokens[i];
+      }
+      state.tokenInfoMap[network] = aggregateObject;
 
-    const aggregateObject: Record<string, Token> = {};
-    for (let i = 0; i < state.allTokens.length; i++) {
-      aggregateObject[state.allTokens[i].address.toLowerCase()] =
-        state.allTokens[i];
-    }
-
-    state.tokenInfoMap = aggregateObject;
+      // We should use plain arrays for Fuse
+      const index = Fuse.createIndex(searchOptions.keys, Array.from(tokens));
+      state.allTokensSearcher[network] = new Fuse(
+        Array.from(tokens),
+        searchOptions,
+        index
+      );
+    });
   },
   setRefreshError(state, error): void {
     state.refreshError = error;

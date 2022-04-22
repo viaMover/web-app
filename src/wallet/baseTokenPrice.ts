@@ -1,63 +1,68 @@
-import { getNetworkBaseTokenPrice } from '@/services/coingecko/tokens';
+import { getBaseTokenPrices } from '@/services/coingecko/tokens';
+import { mapToObj, ObjToMap } from '@/utils/map';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 
 const localStorageEthereumKey = 'USD_PRICE';
 
 type BaseTokenPriceData = {
-  network: Network;
-  usdPrice: string;
+  prices: Record<string, string>;
   updateAt: number;
 };
 
-export const getBaseTokenPrice = async (network: Network): Promise<string> => {
+export const getBaseTokenPrice = async (
+  networks: Array<Network>
+): Promise<Map<Network, string>> => {
   console.info(
-    `Trying to get base token price from local storage (${network})... `
+    `Trying to get base token prices from local storage (${networks})... `
   );
-  const data = localStorage.getItem(storageKey(network));
+  const data = localStorage.getItem(localStorageEthereumKey);
   if (data !== null) {
     const baseTokenData = JSON.parse(data) as BaseTokenPriceData;
-    if (
-      baseTokenData.updateAt > currentTimestamp() - 60 * 60 * 2 &&
-      baseTokenData.network === network
-    ) {
+    const savedNetworks = Object.keys(baseTokenData.prices);
+    const notSavedNetwork = networks.find((n) => !savedNetworks.includes(n));
+    if (notSavedNetwork === undefined) {
+      if (baseTokenData.updateAt > currentTimestamp() - 60 * 60 * 2) {
+        console.info(
+          `Get base tokens (${networks}) price from local storage:`,
+          baseTokenData.prices
+        );
+
+        return ObjToMap(baseTokenData.prices, networks);
+      }
+      console.info(`Base tokens (${networks}) prices in local storage expired`);
+    } else {
       console.info(
-        `Base token (${network}) price from local storage:`,
-        baseTokenData.usdPrice
+        `There is no base token (${notSavedNetwork}) price in local storage`
       );
-
-      return baseTokenData.usdPrice;
     }
-    console.info(`Base token (${network}) price in local storage expired`);
-  }
-  console.info(`There is no base token (${network}) price in local storage`);
-
-  const baseTokenPriceInUSDCoingeckoResult = await getNetworkBaseTokenPrice(
-    network
-  );
-  if (baseTokenPriceInUSDCoingeckoResult.isError) {
+  } else {
     console.info(
-      `Can't get base token price from coingecko: ${baseTokenPriceInUSDCoingeckoResult.error}`
+      `There is no base tokens (${networks}) prices in local storage`
+    );
+  }
+
+  const baseTokensPricesInUSDCoingeckoResult = await getBaseTokenPrices(
+    networks
+  );
+  if (baseTokensPricesInUSDCoingeckoResult.isError) {
+    console.info(
+      `Can't get base tokens prices from coingecko: ${baseTokensPricesInUSDCoingeckoResult.error}`
     );
     throw new Error(
-      `Can't get base token price: ${baseTokenPriceInUSDCoingeckoResult.isError}`
+      `Can't get base tokens prices: ${baseTokensPricesInUSDCoingeckoResult.isError}`
     );
   }
   console.log(
-    'Base token price from Coingecko: ',
-    baseTokenPriceInUSDCoingeckoResult.result
+    'Base tokens prices from Coingecko: ',
+    baseTokensPricesInUSDCoingeckoResult.result
   );
   localStorage.setItem(
-    storageKey(network),
+    localStorageEthereumKey,
     JSON.stringify({
-      usdPrice: baseTokenPriceInUSDCoingeckoResult.result,
-      updateAt: currentTimestamp(),
-      network: network
+      prices: mapToObj(baseTokensPricesInUSDCoingeckoResult.result),
+      updateAt: currentTimestamp()
     } as BaseTokenPriceData)
   );
-  return baseTokenPriceInUSDCoingeckoResult.result;
-};
-
-const storageKey = (network: Network): string => {
-  return `${network}_${localStorageEthereumKey}`;
+  return baseTokensPricesInUSDCoingeckoResult.result;
 };

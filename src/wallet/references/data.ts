@@ -230,7 +230,8 @@ const getBaseAssetData = (
       symbol: 'ETH',
       name: 'Ethereum',
       iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png',
+      network: Network.mainnet
     }
   );
 };
@@ -315,7 +316,8 @@ const getMoveAssetData = (
     symbol: 'MOVE',
     name: 'Mover',
     iconURL:
-      'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png'
+      'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/assets/0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C/logo.png',
+    network: network
   };
 };
 
@@ -329,7 +331,8 @@ const getMoboAssetData = (
     decimals: 6,
     symbol: 'MOBO',
     name: 'Mover Bonus Token',
-    iconURL: ''
+    iconURL: '',
+    network
   };
 };
 
@@ -339,7 +342,8 @@ const getBTRFLYAssetData = (network: Network): SmallTokenInfoWithIcon => {
     decimals: 9,
     symbol: 'BTRFLY',
     iconURL:
-      'https://assets.coingecko.com/coins/images/21718/small/3.png?1640248507'
+      'https://assets.coingecko.com/coins/images/21718/small/3.png?1640248507',
+    network
   };
 };
 
@@ -349,7 +353,8 @@ const getALCXAssetData = (network: Network): SmallTokenInfoWithIcon => {
     decimals: 18,
     symbol: 'ALCX',
     iconURL:
-      'https://assets.coingecko.com/coins/images/14113/small/Alchemix.png'
+      'https://assets.coingecko.com/coins/images/14113/small/Alchemix.png',
+    network
   };
 };
 
@@ -357,7 +362,8 @@ const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
   return {
     address: lookupAddress(network, 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'),
     decimals: 18,
-    symbol: 'SLP'
+    symbol: 'SLP',
+    network
   };
 };
 
@@ -367,7 +373,8 @@ const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
     symbol: 'OHM',
     decimals: 9,
     iconURL:
-      'https://assets.coingecko.com/coins/images/14483/large/token_OHM_%281%29.png?1628311611'
+      'https://assets.coingecko.com/coins/images/14483/large/token_OHM_%281%29.png?1628311611',
+    network
   };
 };
 
@@ -377,7 +384,8 @@ const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
     decimals: 6,
     symbol: 'USDC',
     iconURL:
-      'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
+      'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png',
+    network
   };
 };
 
@@ -387,7 +395,8 @@ const getEURSAssetData = (network: Network): SmallTokenInfoWithIcon => {
     decimals: 2,
     symbol: 'EURS',
     iconURL:
-      'https://token-icons.s3.amazonaws.com/0xdb25f211ab05b1c97d595516f45794528a807ad8.png'
+      'https://token-icons.s3.amazonaws.com/0xdb25f211ab05b1c97d595516f45794528a807ad8.png',
+    network
   };
 };
 
@@ -400,7 +409,8 @@ const getUBTAssetData = (
     symbol: 'UBT',
     name: 'Unibright',
     iconURL:
-      'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png'
+      'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png',
+    network
   };
 };
 
@@ -419,7 +429,8 @@ const getAssetsForTreasury = (
       name: move.name,
       priceUSD: moveNativePrice,
       logo: move.iconURL,
-      marketCap: Number.MAX_SAFE_INTEGER
+      marketCap: Number.MAX_SAFE_INTEGER,
+      network
     },
     {
       address: slp.address,
@@ -428,7 +439,8 @@ const getAssetsForTreasury = (
       name: 'Sushi MOVE-ETH LP',
       priceUSD: slpNativePrice,
       logo: 'https://protocol-icons.s3.amazonaws.com/sushi-exchange.png',
-      marketCap: Number.MAX_SAFE_INTEGER
+      marketCap: Number.MAX_SAFE_INTEGER,
+      network
     }
   ];
 };

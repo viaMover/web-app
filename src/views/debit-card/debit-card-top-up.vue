@@ -186,8 +186,6 @@ export default Vue.extend({
       'currentAddress',
       'nativeCurrency',
       'gasPrices',
-      'ethPrice',
-      'tokens',
       'savingsAPY',
       'usdcPriceInWeth',
       'eursPriceInWeth',
@@ -198,7 +196,11 @@ export default Vue.extend({
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
       gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
     }),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapGetters('account', [
+      'treasuryBonusNative',
+      'currentNetworkBaseTokenPrice',
+      'currentNetworkWalletTokens'
+    ]),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
     }),
@@ -275,13 +277,13 @@ export default Vue.extend({
         this.networkInfo.network
       ).map((address: string) => address.toLowerCase());
 
-      return this.tokens.filter((token: TokenWithBalance) =>
+      return this.currentNetworkWalletTokens.filter((token: TokenWithBalance) =>
         validAssetAddresses.includes(token.address.toLowerCase())
       );
     }
   },
   watch: {
-    tokens: {
+    currentNetworkWalletTokens: {
       immediate: true,
       handler(newVal: Array<TokenWithBalance>) {
         try {
@@ -354,14 +356,17 @@ export default Vue.extend({
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
-      const ethPrice = this.ethPrice ?? '0';
-      if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+      if (
+        isZero(gasPrice) ||
+        isZero(actionGasLimit) ||
+        isZero(this.currentNetworkBaseTokenPrice)
+      ) {
         return undefined;
       }
       return calcTransactionFastNativePrice(
         gasPrice,
         actionGasLimit,
-        this.ethPrice
+        this.currentNetworkBaseTokenPrice
       );
     },
     async estimateAction(

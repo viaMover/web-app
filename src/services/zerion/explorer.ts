@@ -30,7 +30,8 @@ export const InitZerionExplorer = (
   setChartData: (chartData: Record<string, Array<[number, number]>>) => void,
   fetchTokensPriceByContractAddresses: (
     addresses: Array<string>,
-    nativeCurrency: NativeCurrency
+    nativeCurrency: NativeCurrency,
+    network: Network
   ) => Promise<PriceRecord>
 ): Explorer => {
   const io_options = {
@@ -105,7 +106,8 @@ export const InitZerionExplorer = (
       if (missingPriceAssetAddresses.length > 0) {
         const missingPrices = await fetchTokensPriceByContractAddresses(
           missingPriceAssetAddresses,
-          nativeCurrency
+          nativeCurrency,
+          network
         );
         for (const token of tokens) {
           if (
@@ -190,7 +192,7 @@ export const InitZerionExplorer = (
     hasInfiniteLoader: (): boolean => {
       return false;
     },
-    async loadMoreTransactions(nativeOnly: boolean): Promise<boolean> {
+    async loadMoreTransactions(): Promise<boolean> {
       return false;
     }
   };

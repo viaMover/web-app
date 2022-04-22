@@ -64,10 +64,9 @@ export type AccountStoreState = {
 
   tokens: Array<TokenWithBalance>;
   isTokensListLoaded: boolean;
-  tokensSearcher: Fuse<TokenWithBalance> | undefined;
-  allTokens: Array<Token>;
-  allTokensSearcher: Fuse<Token> | undefined;
-  tokenInfoMap: Record<string, Token> | undefined;
+  allTokens: Record<Network, Array<Token>>;
+  allTokensSearcher: Record<Network, Fuse<Token> | undefined>;
+  tokenInfoMap: Record<Network, Record<string, Token> | undefined>;
   provider: ProviderData | undefined;
   isDetecting: boolean;
   isWalletLoading: boolean;
@@ -75,7 +74,8 @@ export type AccountStoreState = {
 
   nativeCurrency: NativeCurrency;
   // main prices in native currency
-  ethPrice: undefined | string;
+  baseTokensPrices: undefined | Map<Network, string>;
+
   movePriceInWeth: undefined | string;
   usdcPriceInWeth: undefined | string;
   slpPriceInWeth: undefined | string;
@@ -185,4 +185,5 @@ export type PriceRecord = {
 export type FetchTokenPricesByContractAddressesPayload = {
   contractAddresses: Array<string> | string;
   currencies: Array<NativeCurrency> | NativeCurrency;
+  network: Network;
 };

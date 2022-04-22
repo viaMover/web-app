@@ -132,33 +132,34 @@ export default Vue.extend({
       }
 
       return this.filterTokens(
-        this.searchInWalletTokens(this.searchTermDebounced).sort(
-          (a: Token, b: Token) => {
-            if (
-              a.marketCap > this.marketCapSortLimit &&
-              b.marketCap > this.marketCapSortLimit
-            ) {
-              if (a.marketCap > b.marketCap) {
-                return -1;
-              }
-              if (a.marketCap < b.marketCap) {
-                return 1;
-              }
-            } else if (a.marketCap > this.marketCapSortLimit) {
-              return -1;
-            } else if (b.marketCap > this.marketCapSortLimit) {
-              return 1;
-            }
-
-            if (a.name < b.name) {
+        this.searchInWalletTokens(
+          this.searchTermDebounced,
+          this.networkInfo.network
+        ).sort((a: Token, b: Token) => {
+          if (
+            a.marketCap > this.marketCapSortLimit &&
+            b.marketCap > this.marketCapSortLimit
+          ) {
+            if (a.marketCap > b.marketCap) {
               return -1;
             }
-            if (a.name > b.name) {
+            if (a.marketCap < b.marketCap) {
               return 1;
             }
-            return 0;
+          } else if (a.marketCap > this.marketCapSortLimit) {
+            return -1;
+          } else if (b.marketCap > this.marketCapSortLimit) {
+            return 1;
           }
-        )
+
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        })
       );
     },
     showGlobalTokens(): boolean {
@@ -220,6 +221,7 @@ export default Vue.extend({
         this.globalsTokensDataOffset = 0;
         this.globalTokensData = this.filterTokens(
           this.searchInAllTokens(
+            this.networkInfo.network,
             this.searchTermDebounced,
             this.globalsTokensDataOffset
           )
@@ -246,6 +248,7 @@ export default Vue.extend({
 
       this.globalTokensData = this.filterTokens(
         this.searchInAllTokens(
+          this.networkInfo.network,
           this.searchTermDebounced,
           this.globalsTokensDataOffset
         )
@@ -271,6 +274,7 @@ export default Vue.extend({
       }
       const newData = this.filterTokens(
         this.searchInAllTokens(
+          this.networkInfo.network,
           this.searchTermDebounced,
           this.globalsTokensDataOffset + 100
         )

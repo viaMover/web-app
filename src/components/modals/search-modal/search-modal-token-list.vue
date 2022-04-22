@@ -11,7 +11,7 @@
     </div>
     <search-modal-token-item
       v-for="item in items"
-      :key="item.address"
+      :key="key(item)"
       :item="item"
       :show-balance="showBalances"
       @select="handleSelect"
@@ -79,6 +79,9 @@ export default Vue.extend({
     },
     infiniteHandler($state: StateChanger): void {
       this.$emit('load-more', $state);
+    },
+    key(token: Token | TokenWithBalance): string {
+      return `${token.network}_${token.address}`;
     }
   }
 });

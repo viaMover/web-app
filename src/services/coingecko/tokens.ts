@@ -57,17 +57,26 @@ export const GetAllTokens = async (): Promise<
   }
 };
 
-export const getNetworkBaseTokenPrice = async (
-  network: Network
-): Promise<Result<string, string>> => {
-  const resp = await getPrice(getBaseTokenAlias(network), 'usd');
+export const getBaseTokenPrices = async (
+  networks: Array<Network>
+): Promise<Result<Map<Network, string>, string>> => {
+  const resp = await getPrice(
+    networks.map((n) => getBaseTokenAlias(n)),
+    'usd'
+  );
   if (resp.isError) {
     return resp;
   }
 
+  const result = new Map<Network, string>();
+
+  networks.forEach((n) => {
+    result.set(n, String(resp.result?.[getBaseTokenAlias(n)]?.['usd']) ?? '0');
+  });
+
   return {
     isError: false,
-    result: String(resp.result?.[getBaseTokenAlias(network)]?.['usd'] ?? '0')
+    result: result
   };
 };
 

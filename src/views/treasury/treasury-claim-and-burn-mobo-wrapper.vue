@@ -51,6 +51,7 @@
       <template v-slot:second-token-image>
         <token-image
           :address="usdcTokenInfo.address"
+          :network="usdcTokenInfo.network"
           :src="usdcTokenInfo.iconURL"
           :symbol="usdcTokenInfo.symbol"
           wrapper-class="item-coin"
@@ -141,15 +142,13 @@ export default Vue.extend({
   computed: {
     ...mapState('account', {
       networkInfo: 'networkInfo',
-      tokens: 'tokens',
       currentAddress: 'currentAddress',
       provider: 'provider',
       nativeCurrency: 'nativeCurrency',
       treasuryBonus: 'treasuryBonus'
     }),
     ...mapGetters('account', {
-      usdcNativePrice: 'usdcNativePrice',
-      getTokenColor: 'getTokenColor'
+      usdcNativePrice: 'usdcNativePrice'
     }),
     ...mapGetters('treasury', {
       treasuryBonusNative: 'treasuryBonusNative'
@@ -166,7 +165,8 @@ export default Vue.extend({
         priceUSD: this.usdcNativePrice,
         logo: this.moboTokenInfo.iconURL,
         balance: this.treasuryBonus ?? '0',
-        marketCap: Number.MAX_SAFE_INTEGER
+        marketCap: Number.MAX_SAFE_INTEGER,
+        network: this.moboTokenInfo.network
       };
     },
     hasBackButton(): boolean {

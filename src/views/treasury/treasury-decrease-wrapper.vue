@@ -144,17 +144,15 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('account', {
-      getTokenColor: 'getTokenColor',
       moveNativePrice: 'moveNativePrice',
       slpNativePrice: 'slpNativePrice',
-      treasuryBoost: 'treasuryBoost'
+      treasuryBoost: 'treasuryBoost',
+      currentNetworkWalletTokens: 'currentNetworkWalletTokens'
     }),
     ...mapState('account', {
       networkInfo: 'networkInfo',
-      tokens: 'tokens',
       currentAddress: 'currentAddress',
       provider: 'provider',
-      ethPrice: 'ethPrice',
       gasPrices: 'gasPrices',
       nativeCurrency: 'nativeCurrency'
     }),
@@ -220,12 +218,12 @@ export default Vue.extend({
       const slp = getMoveWethLPAssetData(this.networkInfo.network);
 
       let walletBalanceMove =
-        this.tokens.find((t: TokenWithBalance) =>
+        this.currentNetworkWalletTokens.find((t: TokenWithBalance) =>
           sameAddress(t.address, move.address)
         )?.balance ?? '0';
 
       let walletBalanceLP =
-        this.tokens.find((t: TokenWithBalance) =>
+        this.currentNetworkWalletTokens.find((t: TokenWithBalance) =>
           sameAddress(t.address, slp.address)
         )?.balance ?? '0';
 

@@ -36,30 +36,41 @@ const getAssetList = (network: Network): Array<AssetListType> => {
       return [];
   }
 };
-export const getAllTokens = (network: Network): Array<Token> => {
-  let assets: Array<Token>;
-  if (availableNetworks.includes(network)) {
-    assets = getAssetList(network).map(
-      (asset) =>
-        ({
-          address: asset.id,
-          decimals: asset.decimals,
-          symbol: asset.symbol,
-          name: asset.name.slice(0, MAX_ASSET_NAME),
-          logo: asset.imageUrl ?? getTokenLogo(asset.id, network),
-          color: asset.color,
-          marketCap: asset.marketCap ?? 0,
-          priceUSD: '0'
-        } as Token)
+export const getAllTokens = (
+  networks: Array<Network>
+): Map<Network, Array<Token>> => {
+  const res = new Map<Network, Array<Token>>();
+
+  networks.forEach((network) => {
+    let assets: Array<Token>;
+    if (availableNetworks.includes(network)) {
+      assets = getAssetList(network).map(
+        (asset) =>
+          ({
+            address: asset.id,
+            decimals: asset.decimals,
+            symbol: asset.symbol,
+            name: asset.name.slice(0, MAX_ASSET_NAME),
+            logo: asset.imageUrl ?? getTokenLogo(asset.id, network),
+            color: asset.color,
+            marketCap: asset.marketCap ?? 0,
+            priceUSD: '0'
+          } as Token)
+      );
+    } else {
+      assets = getTestnetAssets(network);
+    }
+    res.set(
+      network,
+      deduplicateByAddress(
+        assets.sort((a, b) => {
+          return a.name.localeCompare(b.name);
+        })
+      )
     );
-  } else {
-    assets = getTestnetAssets(network);
-  }
-  return deduplicateByAddress(
-    assets.sort((a, b) => {
-      return a.name.localeCompare(b.name);
-    })
-  );
+  });
+
+  return res;
 };
 
 const deduplicateByAddress = (tokens: Array<Token>): Array<Token> => {

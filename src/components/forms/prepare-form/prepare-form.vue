@@ -24,6 +24,7 @@
             v-else
             :address="asset ? asset.address : ''"
             class="smallest"
+            :network="asset ? asset.network : undefined"
             :src="asset ? asset.logo : ''"
             :symbol="asset ? asset.symbol : ''"
           />
@@ -266,7 +267,10 @@ export default Vue.extend({
           boxShadow: '0 0 8px var(--color-shadow)'
         };
       }
-      const assetColor = this.getTokenColor(this.asset.address);
+      const assetColor = this.getTokenColor(
+        this.asset.network,
+        this.asset.address
+      );
       return {
         backgroundColor: assetColor,
         boxShadow: `0 0 8px ${assetColor}`

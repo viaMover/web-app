@@ -90,14 +90,14 @@ const getters: GettersFuncs<Getters, EarningsOlympusStoreState> = {
       }, new Array<OlympusMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
   },
-  ohmNativePrice(state, getters, rootState): string {
-    if (
-      state.olympusPriceInWeth === undefined ||
-      rootState.account?.ethPrice === undefined
-    ) {
+  ohmNativePrice(state, getters, rootState, rootGetters): string {
+    if (state.olympusPriceInWeth === undefined) {
       return '0';
     }
-    return multiply(state.olympusPriceInWeth, rootState.account.ethPrice);
+    return multiply(
+      state.olympusPriceInWeth,
+      rootGetters.account.currentNetworkBaseTokenPrice
+    );
   },
   usdcNativePrice(state, getters, _, rootGetters): string {
     return rootGetters['account/usdcNativePrice'];

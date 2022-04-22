@@ -511,6 +511,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
 
     const tx: Transaction = {
+      network: this.network,
       blockNumber: '0',
       fee: {
         ethPrice: this.ethPriceGetterHandler?.() ?? '0',
@@ -530,7 +531,8 @@ export class SavingsOnChainService extends MoverOnChainService {
         direction: 'out',
         iconURL: '',
         price: '0',
-        symbol: inputAsset.symbol
+        symbol: inputAsset.symbol,
+        network: this.network
       },
       from: this.currentAddress,
       to: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
@@ -596,6 +598,7 @@ export class SavingsOnChainService extends MoverOnChainService {
       );
 
     const tx: Transaction = {
+      network: this.network,
       blockNumber: '0',
       fee: {
         ethPrice: this.ethPriceGetterHandler?.() ?? '0',
@@ -615,7 +618,8 @@ export class SavingsOnChainService extends MoverOnChainService {
         direction: 'in',
         iconURL: '',
         price: '0',
-        symbol: outputAsset.symbol
+        symbol: outputAsset.symbol,
+        network: this.network
       },
       from: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
       to: this.currentAddress,

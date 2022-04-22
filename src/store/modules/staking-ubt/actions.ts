@@ -112,7 +112,8 @@ const actions: ActionFuncs<
           'account/fetchTokensPriceByContractAddresses',
           {
             contractAddresses: ubtAssetData.address,
-            currencies: rootState.account.nativeCurrency
+            currencies: rootState.account.nativeCurrency,
+            network: rootState.account.networkInfo.network
           } as FetchTokenPricesByContractAddressesPayload,
           { root: true }
         )) as PriceRecord;
