@@ -4,6 +4,8 @@ import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
@@ -36,6 +38,15 @@ export type Avatar = {
   | { type: 'image'; imageSrc: string; imageAlt: string }
 );
 
+export enum NativeCurrency {
+  Bitcoin = 'btc',
+  Ether = 'eth',
+  USD = 'usd',
+  EUR = 'eur',
+  GBP = 'gbp',
+  RUB = 'rub'
+}
+
 export type AccountStoreState = {
   web3Modal: any;
 
@@ -62,7 +73,7 @@ export type AccountStoreState = {
   isWalletLoading: boolean;
   refreshError: undefined | string;
 
-  nativeCurrency: 'usd';
+  nativeCurrency: NativeCurrency;
   // main prices in native currency
   ethPrice: undefined | string;
   movePriceInWeth: undefined | string;
@@ -86,6 +97,9 @@ export type AccountStoreState = {
 
   swapAPIService: ZeroXAPIService | undefined;
   swapOnChainService: SwapOnChainService | undefined;
+
+  coinGeckoAPIService: CoinGeckoAPIService | undefined;
+  theGraphAPIService: TheGraphAPIService | undefined;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {
@@ -127,4 +141,48 @@ export type InitWalletPayload = {
   provider: provider;
   injected: boolean;
   providerBeforeCloseCb: () => void;
+};
+
+export const nativeCurrencyFormatters = {
+  [NativeCurrency.USD]: {
+    sign: '$',
+    currency: 'USD',
+    position: 'prefix'
+  },
+  [NativeCurrency.GBP]: {
+    sign: '£',
+    currency: 'GBP',
+    position: 'prefix'
+  },
+  [NativeCurrency.EUR]: {
+    sign: '€',
+    currency: 'EUR',
+    position: 'prefix'
+  },
+  [NativeCurrency.RUB]: {
+    sign: '₽',
+    currency: 'RUB',
+    position: 'postfix'
+  },
+  [NativeCurrency.Ether]: {
+    sign: 'Ξ',
+    currency: 'ETH',
+    position: 'prefix'
+  },
+  [NativeCurrency.Bitcoin]: {
+    sign: '₿',
+    currency: 'BTC',
+    position: 'prefix'
+  }
+};
+
+export type PriceRecord = {
+  [address: string]: {
+    [currency: string]: string;
+  };
+};
+
+export type FetchTokenPricesByContractAddressesPayload = {
+  contractAddresses: Array<string> | string;
+  currencies: Array<NativeCurrency> | NativeCurrency;
 };

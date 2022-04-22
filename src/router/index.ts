@@ -50,10 +50,6 @@ const routes: Array<RouteConfig> = [
           isFeatureEnabled(
             'isNftDropsEnabled',
             store.state?.account?.networkInfo?.network
-          ) ||
-          isFeatureEnabled(
-            'isOrderOfLibertyNFTEnabled',
-            store.state?.account?.networkInfo?.network
           )
         );
       }
@@ -437,21 +433,23 @@ const routes: Array<RouteConfig> = [
             import(
               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
             )
+        },
+        {
+          path: 'view/baseledger-staking-og',
+          name: 'baseledger-staking-og',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-baseledger-staking-og.vue'
+            )
         }
       ]
     },
     {
       customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;
-        return (
-          isFeatureEnabled(
-            'isNftDropsEnabled',
-            store.state?.account?.networkInfo?.network
-          ) ||
-          isFeatureEnabled(
-            'isOrderOfLibertyNFTEnabled',
-            store.state?.account?.networkInfo?.network
-          )
+        return isFeatureEnabled(
+          'isNftDropsEnabled',
+          store.state?.account?.networkInfo?.network
         );
       }
     }
@@ -474,20 +472,31 @@ const routes: Array<RouteConfig> = [
           /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
         ),
       children: [
-        {
-          path: 'top-up/step/:step',
-          name: 'debit-card-top-up',
-          component: () =>
-            import(
-              /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
-            ),
-          props: (to) => ({
-            step: to.params.step
-          }),
-          beforeEnter: (to, from, next) => {
-            formStepsGuard('debit-card-top-up')(to, from, next);
+        wrapWithMeta(
+          {
+            path: 'top-up/step/:step',
+            name: 'debit-card-top-up',
+            component: () =>
+              import(
+                /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
+              ),
+            props: (to) => ({
+              step: to.params.step
+            }),
+            beforeEnter: (to, from, next) => {
+              formStepsGuard('debit-card-top-up')(to, from, next);
+            }
+          },
+          {
+            customCondition: (store?: Store<RootStoreState>): boolean => {
+              if (store === undefined) return false;
+              return (
+                store.state.debitCard?.emailHash !== undefined &&
+                store.state.debitCard?.emailSignature !== undefined
+              );
+            }
           }
-        },
+        ),
         {
           path: 'change-skin',
           name: 'debit-card-change-skin',

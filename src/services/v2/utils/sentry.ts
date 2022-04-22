@@ -3,10 +3,10 @@ import {
   captureException as originalCaptureException
 } from '@sentry/vue';
 
-import { isProduction } from '@/settings';
+import { isConsoleEnabled } from '@/settings';
 
 export let addSentryBreadcrumb = originalAddSentryBreadcrumb;
-if (!isProduction()) {
+if (isConsoleEnabled()) {
   addSentryBreadcrumb = (breadcrumb) => {
     switch (breadcrumb.type) {
       case 'error':
@@ -25,7 +25,7 @@ if (!isProduction()) {
 }
 
 export let captureSentryException = originalCaptureException;
-if (!isProduction()) {
+if (isConsoleEnabled()) {
   captureSentryException = (exception, captureContext) => {
     console.error(exception, { captureContext });
     return originalCaptureException(exception, captureContext);

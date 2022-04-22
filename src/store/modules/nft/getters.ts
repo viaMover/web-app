@@ -19,33 +19,37 @@ const getters: GettersFuncs<Getters, NFTStoreState> = {
     return greaterThan(state.movingWithOlympus.balance, '0');
   },
   nfts(state, getters, rootState): Array<BaseNftAsset> {
-    let res: Array<BaseNftAsset> = [];
-    if (
-      isFeatureEnabled(
-        'isNftDropsEnabled',
-        rootState.account?.networkInfo?.network
-      )
-    ) {
-      res = [
-        state.dice,
-        state.movingWithOlympus,
-        state.sweetAndSour,
-        state.unexpectedMove,
-        state.vaults
-      ];
+    const res: Array<BaseNftAsset> = [];
+    const network = rootState.account?.networkInfo?.network;
+    if (network === undefined) {
+      return res;
+    }
+    if (isFeatureEnabled('isNftDropsEnabled', network)) {
+      if (state.dice.networks.includes(network)) {
+        res.push(state.dice);
+      }
+      if (state.movingWithOlympus.networks.includes(network)) {
+        res.push(state.movingWithOlympus);
+      }
+      if (state.sweetAndSour.networks.includes(network)) {
+        res.push(state.sweetAndSour);
+      }
+      if (state.unexpectedMove.networks.includes(network)) {
+        res.push(state.unexpectedMove);
+      }
+      if (state.vaults.networks.includes(network)) {
+        res.push(state.vaults);
+      }
+      if (state.baseledgerStakingOG.networks.includes(network)) {
+        res.push(state.baseledgerStakingOG);
+      }
+      if (state.orderOfLiberty.networks.includes(network)) {
+        res.push(state.orderOfLiberty);
+      }
 
       if (state.swapPassport !== undefined) {
         res.push(state.swapPassport);
       }
-    }
-
-    if (
-      isFeatureEnabled(
-        'isOrderOfLibertyNFTEnabled',
-        rootState.account?.networkInfo?.network
-      )
-    ) {
-      res = [state.orderOfLiberty, ...res];
     }
 
     return res;

@@ -1,13 +1,16 @@
-import { getCoingeckoPlatform } from '@/services/coingecko/mapper';
-import { getPriceByAddress } from '@/services/coingecko/tokens';
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
+import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import {
   addSentryBreadcrumb,
   captureSentryException
 } from '@/services/v2/utils/sentry';
 import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
-import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
+import {
+  ensureAccountStateIsSafe,
+  FetchTokenPricesByContractAddressesPayload,
+  PriceRecord
+} from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 import { isZero } from '@/utils/bigmath';
 import { getUBTAssetData } from '@/wallet/references/data';
@@ -95,7 +98,7 @@ const actions: ActionFuncs<
       getInfoPromise
     ]);
   },
-  async getMinimalInfo({ state, commit, rootState }): Promise<void> {
+  async getMinimalInfo({ state, commit, dispatch, rootState }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       console.warn('Account state is not ready');
       return;
@@ -105,18 +108,22 @@ const actions: ActionFuncs<
 
     if (state.ubtNativePrice === undefined || isZero(state.ubtNativePrice)) {
       try {
-        const ubtNativePrice = await getPriceByAddress(
-          getCoingeckoPlatform(rootState.account.networkInfo.network),
-          [ubtAssetData.address],
-          [rootState.account.nativeCurrency]
+        const priceRecord = (await dispatch(
+          'account/fetchTokensPriceByContractAddresses',
+          {
+            contractAddresses: ubtAssetData.address,
+            currencies: rootState.account.nativeCurrency
+          } as FetchTokenPricesByContractAddressesPayload,
+          { root: true }
+        )) as PriceRecord;
+
+        const ubtNativePrice = getAssetPriceFromPriceRecord(
+          priceRecord,
+          ubtAssetData.address,
+          rootState.account.nativeCurrency
         );
-        if (!ubtNativePrice.isError) {
-          commit(
-            'setUbtNativePrice',
-            ubtNativePrice.result[ubtAssetData.address]?.[
-              rootState.account.nativeCurrency
-            ]
-          );
+        if (ubtNativePrice !== undefined) {
+          commit('setUbtNativePrice', ubtNativePrice);
         }
       } catch (error) {
         addSentryBreadcrumb({

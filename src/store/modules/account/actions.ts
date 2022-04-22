@@ -16,17 +16,25 @@ import {
 } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
+import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { SavingsPlusMoverAPIService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
+import {
+  CurrencyNotSupportedError,
+  TheGraphAPIService
+} from '@/services/v2/api/theGraph';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
+import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
@@ -35,10 +43,13 @@ import {
   setIsOlympusAvatarKnownToPersist
 } from '@/settings';
 import {
+  getFromPersistStore,
   removeAccountBoundPersistItemsFromLocalStorage,
-  removeExpiredPersistItemsFromLocalStorage
+  removeExpiredPersistItemsFromLocalStorage,
+  setToPersistStore
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
+import { toArray } from '@/utils/arrays';
 import { CommonErrors, errorToString } from '@/utils/errors';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
@@ -49,7 +60,12 @@ import {
   initOffchainExplorer
 } from '@/wallet/offchainExplorer';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
-import { TokenWithBalance, Transaction } from '@/wallet/types';
+import {
+  SmallTokenInfo,
+  Token,
+  TokenWithBalance,
+  Transaction
+} from '@/wallet/types';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
@@ -59,7 +75,10 @@ import {
   Avatar,
   EmitChartRequestPayload,
   ensureAccountStateIsSafe,
+  FetchTokenPricesByContractAddressesPayload,
   InitWalletPayload,
+  NativeCurrency,
+  PriceRecord,
   ProviderData,
   RefreshWalletPayload
 } from './types';
@@ -89,6 +108,10 @@ type Actions = {
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
   switchEthereumChain: Promise<void>;
+  fetchTokensPriceByContractAddresses: Promise<PriceRecord>;
+  recoverTokenPriceIfNeeded: Promise<SmallTokenInfo>;
+  restoreNativeCurrency: Promise<void>;
+  changeNativeCurrency: Promise<void>;
 };
 
 const actions: ActionFuncs<
@@ -350,7 +373,7 @@ const actions: ActionFuncs<
       }
 
       await dispatch('initServices');
-
+      await dispatch('restoreNativeCurrency');
       await dispatch('getBasicPrices');
 
       Sentry.setContext('crypto_person', {
@@ -415,7 +438,13 @@ const actions: ActionFuncs<
             },
             (val: boolean) => {
               commit('setIsTokensListLoaded', val);
-            }
+            },
+            (addresses, nativeCurrency) =>
+              dispatch('fetchTokensPriceByContractAddresses', {
+                contractAddresses: addresses,
+                currencies: nativeCurrency
+              } as FetchTokenPricesByContractAddressesPayload),
+            state.allTokens
           );
 
           explorerInitPromise
@@ -480,6 +509,18 @@ const actions: ActionFuncs<
     if (!ensureAccountStateIsSafe(state)) {
       throw new Error('account store is not initialized');
     }
+
+    const coinGeckoAPIService = new CoinGeckoAPIService(
+      state.currentAddress,
+      state.networkInfo.network
+    );
+    commit('setCoinGeckoAPIService', coinGeckoAPIService);
+
+    const theGraphAPIService = new TheGraphAPIService(
+      state.currentAddress,
+      state.networkInfo.network
+    );
+    commit('setTheGraphAPIService', theGraphAPIService);
 
     let smartTreasuryBonusBalanceExecutor:
       | ISmartTreasuryBonusBalanceExecutor
@@ -654,6 +695,10 @@ const actions: ActionFuncs<
       console.error(error);
       Sentry.captureException("Can't close cached provider");
     }
+    Object.entries(localStorage)
+      .map((x) => x[0])
+      .filter((x) => x.startsWith('-walletlink'))
+      .forEach((x) => localStorage.removeItem(x));
     clearOffchainExplorer();
     commit('clearWalletData');
     disconnectIntercomSession();
@@ -781,6 +826,147 @@ const actions: ActionFuncs<
   },
   toggleIsOrderOfLibertySectionVisible({ commit }): void {
     commit('toggleIsOrderOfLibertySectionVisible');
+  },
+  async fetchTokensPriceByContractAddresses(
+    { state },
+    {
+      contractAddresses,
+      currencies
+    }: FetchTokenPricesByContractAddressesPayload
+  ): Promise<PriceRecord> {
+    let res: PriceRecord = {};
+    const addresses = toArray(contractAddresses);
+
+    try {
+      if (state.coinGeckoAPIService === undefined) {
+        throw new Error('CoinGecko API service is missing');
+      }
+
+      res = await state.coinGeckoAPIService.getPricesByContractAddress(
+        contractAddresses,
+        currencies
+      );
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'fetchTokensPriceByContractAddresses.actions.account.store',
+        message: 'Failed to get token prices from CoinGecko',
+        data: {
+          error
+        }
+      });
+    }
+
+    if (!ensureAccountStateIsSafe(state)) {
+      return res;
+    }
+
+    const contractAddressesOfStillMissingPrices = addresses.filter(
+      (address) => res[address] === undefined
+    );
+    if (contractAddressesOfStillMissingPrices.length > 0) {
+      try {
+        if (state.theGraphAPIService === undefined) {
+          throw new Error('TheGraph API service is missing');
+        }
+
+        const theGraphResult =
+          await state.theGraphAPIService.getPricesByContractAddress(
+            contractAddressesOfStillMissingPrices,
+            currencies
+          );
+        res = { ...res, ...theGraphResult };
+      } catch (error) {
+        addSentryBreadcrumb({
+          type:
+            error instanceof NetworkFeatureNotSupportedError ||
+            error instanceof CurrencyNotSupportedError
+              ? 'debug'
+              : 'error',
+          category: 'fetchTokensPriceByContractAddresses.actions.account.store',
+          message: 'Failed to get token prices from TheGraph',
+          data: {
+            error
+          }
+        });
+      }
+    }
+
+    return res;
+  },
+  async recoverTokenPriceIfNeeded(
+    { state, commit, dispatch },
+    token: Token | TokenWithBalance
+  ): Promise<Token> {
+    if (token.priceUSD !== undefined && token.priceUSD !== '0') {
+      return token;
+    }
+
+    const tokenPriceRecord = (await dispatch(
+      'fetchTokensPriceByContractAddresses',
+      {
+        contractAddresses: token.address,
+        currencies: state.nativeCurrency
+      } as FetchTokenPricesByContractAddressesPayload
+    )) as PriceRecord;
+
+    const retrievedPrice = getAssetPriceFromPriceRecord(
+      tokenPriceRecord,
+      token.address,
+      state.nativeCurrency
+    );
+    if (retrievedPrice !== undefined) {
+      commit('setTokenNativePrice', {
+        address: token.address,
+        price: retrievedPrice
+      });
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: 'recoverTokenPrice.actions.account.store',
+        message: 'Recovered token price (allTokens)',
+        data: {
+          address: token.address,
+          price: retrievedPrice
+        }
+      });
+
+      return {
+        ...token,
+        priceUSD: retrievedPrice
+      };
+    }
+
+    return token;
+  },
+  async restoreNativeCurrency({ commit, state, dispatch }): Promise<void> {
+    if (!ensureAccountStateIsSafe(state)) {
+      return;
+    }
+
+    const storedData = await getFromPersistStore<NativeCurrency>(
+      state.currentAddress,
+      state.networkInfo.network,
+      'nativeCurrency'
+    );
+    if (storedData !== undefined) {
+      commit('setNativeCurrency', storedData);
+      return;
+    }
+
+    await dispatch('changeNativeCurrency', state.nativeCurrency);
+  },
+  async changeNativeCurrency({ state, commit }, nativeCurrency): Promise<void> {
+    commit('setNativeCurrency', nativeCurrency);
+    if (!ensureAccountStateIsSafe(state)) {
+      return;
+    }
+
+    await setToPersistStore(
+      state.currentAddress,
+      state.networkInfo.network,
+      'nativeCurrency',
+      nativeCurrency
+    );
   }
 };
 

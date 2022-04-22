@@ -64,7 +64,11 @@ export const removeExpiredPersistItemsFromLocalStorage = (): void => {
 
       const value = JSON.parse(persistedValue);
 
-      if (isMoverEntryType(value) && value.expDate < Date.now()) {
+      if (
+        isMoverEntryType(value) &&
+        value.expDate !== -1 &&
+        value.expDate < Date.now()
+      ) {
         localStorage.removeItem(key);
       }
     } catch (error) {
@@ -137,7 +141,27 @@ export const getFromPersistStore = async <T>(
       return;
     }
 
-    resolve(JSON.parse(rawItem));
+    let item;
+    try {
+      item = JSON.parse(rawItem) as DataStoreWrapper<T>;
+    } catch (e) {
+      //remove bad item
+      window.localStorage.removeItem(
+        buildPersistKey(currentAddress, prefix, key)
+      );
+      resolve(undefined);
+      return;
+    }
+
+    const val = unwrapCacheItem(item, true);
+    if (val !== undefined) {
+      resolve(val);
+    } else {
+      window.localStorage.removeItem(
+        buildPersistKey(currentAddress, prefix, key)
+      );
+      resolve(undefined);
+    }
   });
 };
 
@@ -146,13 +170,17 @@ export const setToPersistStore = async <T>(
   prefix: string,
   key: string,
   val: T,
-  expTime: number
+  expTime?: number
 ): Promise<void> => {
   return new Promise((resolve) => {
     try {
+      const item =
+        expTime === undefined
+          ? wrapCacheItem(val, null)
+          : wrapCacheItem(val, expTime);
       window.localStorage.setItem(
         buildPersistKey(currentAddress, prefix, key),
-        JSON.stringify(wrapCacheItem(val, expTime))
+        JSON.stringify(item)
       );
     } finally {
       resolve();
