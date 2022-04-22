@@ -466,7 +466,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Deposit',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -578,7 +578,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Withdraw',
-        outputAsset
+        { outputAsset }
       );
     }
 
@@ -1241,7 +1241,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Deposit',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -1296,7 +1296,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Withdraw',
-        outputAsset
+        { outputAsset }
       );
     }
 

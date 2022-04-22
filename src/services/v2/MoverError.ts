@@ -3,12 +3,12 @@ import { CustomError } from 'ts-custom-error';
 
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 
-export class MoverError<T = void> extends CustomError {
-  protected payload?: T;
+export class MoverError extends CustomError {
+  protected payload?: Record<string, unknown>;
   protected wrappedError?: Error;
   protected originalMessage: string;
 
-  constructor(message: string, payload?: T) {
+  constructor(message: string, payload?: Record<string, unknown>) {
     super(message);
     this.originalMessage = message;
     this.payload = payload;
@@ -32,18 +32,26 @@ export class MoverError<T = void> extends CustomError {
     return `${baseString}: ${wrappedErrorString}`;
   }
 
-  public wrap(error: Error): this {
+  public wrap(error: unknown): this {
+    if (!(error instanceof Error)) {
+      this.setPayload({
+        previousPayload: this.payload,
+        wrapped: error
+      });
+      return this;
+    }
+
     this.message = this.formatMessage(error);
     this.wrappedError = error;
     return this;
   }
 
-  public setPayload(payload: T): this {
+  public setPayload(payload: Record<string, unknown>): this {
     this.payload = payload;
     return this;
   }
 
-  public getPayload(): T | undefined {
+  public getPayload(): Record<string, unknown> | undefined {
     return this.payload;
   }
 
