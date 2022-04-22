@@ -129,12 +129,14 @@ export default Vue.extend({
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
     async handleActivateCard(): Promise<void> {
-      const estimation = await (
-        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
-      ).estimateStakePowercardCompound();
-
-      if (estimation.error) {
-        Sentry.captureException("Can't estimate stake");
+      let estimation;
+      try {
+        estimation = await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).estimateStakePowercardCompound();
+      } catch (error) {
+        console.error('Failed to estimate powercard stake', error);
+        Sentry.captureException(error);
         this.actionError = this.$t('estimationError') as string;
         return;
       }
