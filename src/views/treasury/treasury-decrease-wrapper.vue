@@ -57,7 +57,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 
-import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
@@ -77,7 +76,6 @@ import {
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
 import {
-  SmallToken,
   SmallTokenInfo,
   SmallTokenInfoWithIcon,
   TokenWithBalance
@@ -313,18 +311,6 @@ export default Vue.extend({
       }
       return '0';
     },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
-      const resp = await (
-        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
-      ).estimateWithdrawCompound(inputAsset, inputAmount);
-      if (resp.error) {
-        throw new Error("Can't estimate action");
-      }
-      return resp;
-    },
     async handleTxReview(): Promise<void> {
       if (this.inputAsset === undefined) {
         return;
@@ -332,22 +318,20 @@ export default Vue.extend({
 
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
-          this.inputAsset
-        );
+        const gasLimits = await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).estimateWithdrawCompound(this.inputAsset, this.inputAmount);
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
+
+        this.step = 'review';
       } catch (error) {
-        this.isProcessing = false;
         console.warn('Failed to estimate withdraw', error);
         Sentry.captureException(error);
-        return;
+      } finally {
+        this.isProcessing = false;
       }
-
-      this.isProcessing = false;
-      this.step = 'review';
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
