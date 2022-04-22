@@ -40,7 +40,7 @@ export class SwapOnChainService extends MoverOnChainService {
     outputAsset: SmallToken,
     inputAmount: string,
     transferData: TransferData,
-    swapGasLimit: string,
+    actionGasLimit: string,
     approveGasLimit: string,
     gasPriceInGwei: string,
     useSubsidized: boolean,
@@ -51,29 +51,37 @@ export class SwapOnChainService extends MoverOnChainService {
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
-        async () => {
+        (newGasLimit) => {
           if (useSubsidized) {
-            return await this.swapSubsidized(
+            return this.swapSubsidized(
               inputAsset,
               outputAsset,
               inputAmount,
               transferData,
-              changeStepToProcess
-            );
-          } else {
-            return await this.swap(
-              inputAsset,
-              outputAsset,
-              inputAmount,
-              transferData,
-              swapGasLimit,
-              gasPriceInGwei,
               changeStepToProcess
             );
           }
+
+          return this.swap(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData,
+            newGasLimit,
+            gasPriceInGwei,
+            changeStepToProcess
+          );
         },
+        () =>
+          this.estimateSwapCompound(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData
+          ),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
@@ -89,7 +97,7 @@ export class SwapOnChainService extends MoverOnChainService {
             outputAsset,
             inputAmount,
             transferData,
-            swapGasLimit,
+            swapGasLimit: actionGasLimit,
             approveGasLimit,
             gasPriceInGwei,
             useSubsidized
@@ -108,7 +116,7 @@ export class SwapOnChainService extends MoverOnChainService {
           outputAsset,
           inputAmount,
           transferData,
-          swapGasLimit,
+          swapGasLimit: actionGasLimit,
           approveGasLimit,
           gasPriceInGwei,
           useSubsidized,
@@ -146,11 +154,9 @@ export class SwapOnChainService extends MoverOnChainService {
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate deposit: failed "needsApprove" check'
+      ).wrap(error);
     }
 
     if (isApproveNeeded) {
@@ -185,11 +191,9 @@ export class SwapOnChainService extends MoverOnChainService {
           }
         });
 
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
+        throw new OnChainServiceError(
+          'Failed to estimate swap: failed "approve" estimation'
+        ).wrap(error);
       }
     }
 
@@ -218,24 +222,6 @@ export class SwapOnChainService extends MoverOnChainService {
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate swap: empty gas limit',
-        data: {
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData
-        }
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       console.error('failed to estimate swap', error);
 
@@ -252,12 +238,22 @@ export class SwapOnChainService extends MoverOnChainService {
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate swap').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate swap: empty gas limit',
+      data: {
+        inputAsset,
+        outputAsset,
+        inputAmount,
+        transferData
+      }
+    });
+
+    throw new OnChainServiceError('Failed to estimate swap: empty gas limit');
   }
 
   protected async swap(
