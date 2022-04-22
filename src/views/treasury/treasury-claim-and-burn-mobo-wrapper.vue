@@ -68,7 +68,6 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { convertNativeAmountFromAmount, notZero } from '@/utils/bigmath';
@@ -232,16 +231,6 @@ export default Vue.extend({
         });
       }
     },
-    async estimateAction(): Promise<CompoundEstimateResponse> {
-      const estimation = await (
-        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
-      ).estimateClaimAndBurnMOBO();
-      if (estimation.error) {
-        this.transferError = this.$t('estimationError') as string;
-        throw new Error('Failed to estimate action');
-      }
-      return estimation;
-    },
     handleToggleInputMode(): void {
       if (this.inputMode === 'NATIVE') {
         this.inputMode = 'TOKEN';
@@ -252,23 +241,19 @@ export default Vue.extend({
     async handleTxReview(): Promise<void> {
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction();
+        const gasLimits = await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).estimateClaimAndBurnMOBO();
 
         this.actionGasLimit = gasLimits.actionGasLimit;
-
-        console.info(
-          'Claim and burn MOBO action gaslimit:',
-          this.actionGasLimit
-        );
-      } catch (err) {
+        this.step = 'review';
+      } catch (error) {
+        this.transferError = this.$t('estimationError') as string;
+        console.error('failed to handle transaction review', error);
+        Sentry.captureException(error);
+      } finally {
         this.isProcessing = false;
-        console.error('failed to handle transaction review', err);
-        Sentry.captureException("can't estimate claim and burn MOBO for subs");
-        return;
       }
-
-      this.isProcessing = false;
-      this.step = 'review';
     },
     async handleTxStart(): Promise<void> {
       if (this.inputAmount === '') {
