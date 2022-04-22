@@ -47,17 +47,12 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { divide, isZero, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -196,20 +191,6 @@ export default Vue.extend({
         this.$router.back();
       }
     },
-    async estimateAction(
-      amount: string,
-      asset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
-      const estimation = await (
-        this.savingsOnChainService as SavingsOnChainService
-      ).estimateWithdrawCompound(asset, amount);
-
-      if (estimation.error) {
-        throw new Error('Failed to estimate withdraw');
-      }
-
-      return estimation;
-    },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
@@ -256,10 +237,9 @@ export default Vue.extend({
       this.actionGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmountNative,
-          this.inputAsset
-        );
+        const gasLimits = await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).estimateWithdrawCompound(this.inputAsset, this.inputAmountNative);
 
         this.actionGasLimit = gasLimits.actionGasLimit;
 
@@ -271,6 +251,8 @@ export default Vue.extend({
             this.actionGasLimit
           );
         }
+
+        this.step = 'review';
       } catch (error) {
         this.isSubsidizedEnabled = false;
         console.warn('Failed to estimate transaction', error);
@@ -278,8 +260,6 @@ export default Vue.extend({
       } finally {
         this.isProcessing = false;
       }
-
-      this.step = 'review';
     },
     handleSelectMaxAmount(): void {
       this.inputAmountNative = this.inputAsset.balance;
