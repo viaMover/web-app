@@ -143,19 +143,19 @@ export abstract class OnChainService {
       return false;
     }
 
-    try {
-      const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
-        token.address,
-        ERC20_ABI as AbiItem[]
+    const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+      token.address,
+      ERC20_ABI as AbiItem[]
+    );
+
+    if (tokenContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        `ERC20 Contract on ${contractAddress}`,
+        this.network
       );
+    }
 
-      if (tokenContract === undefined) {
-        throw new NetworkFeatureNotSupportedError(
-          `ERC20 Contract on ${contractAddress}`,
-          this.network
-        );
-      }
-
+    try {
       const allowance = await tokenContract.methods
         .allowance(this.currentAddress, contractAddress)
         .call({
@@ -190,19 +190,19 @@ export abstract class OnChainService {
     tokenAddress: string,
     spenderAddress: string
   ): Promise<string | never> {
-    try {
-      const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
-        tokenAddress,
-        ERC20_ABI as AbiItem[]
+    const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+      tokenAddress,
+      ERC20_ABI as AbiItem[]
+    );
+
+    if (tokenContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        `ERC20 Contract on ${tokenAddress}`,
+        this.network
       );
+    }
 
-      if (tokenContract === undefined) {
-        throw new NetworkFeatureNotSupportedError(
-          `ERC20 Contract on ${tokenAddress}`,
-          this.network
-        );
-      }
-
+    try {
       const gasLimit = await tokenContract.methods
         .approve(spenderAddress, MAXUINT256)
         .estimateGas({
@@ -212,8 +212,6 @@ export abstract class OnChainService {
       if (gasLimit) {
         return this.addGasBuffer(gasLimit.toString());
       }
-
-      throw new Error(`empty gas limit`);
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -230,6 +228,10 @@ export abstract class OnChainService {
         `Failed to estimate approve for ${tokenAddress}`
       ).wrap(error);
     }
+
+    throw new OnChainServiceError(
+      `Failed to estimate approve for ${tokenAddress}: empty gas limit`
+    );
   }
 
   protected async approve(
@@ -239,20 +241,19 @@ export abstract class OnChainService {
     gasLimit: string
   ): Promise<TransactionReceipt> {
     return new Promise((resolve, reject) => {
+      const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+        tokenAddress,
+        ERC20_ABI as AbiItem[]
+      );
+
+      if (tokenContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          `ERC20 Contract on ${tokenAddress}`,
+          this.network
+        );
+      }
+
       try {
-        const tokenContract =
-          this.createArbitraryContract<ERC20ContractMethods>(
-            tokenAddress,
-            ERC20_ABI as AbiItem[]
-          );
-
-        if (tokenContract === undefined) {
-          throw new NetworkFeatureNotSupportedError(
-            `ERC20 Contract on ${tokenAddress}`,
-            this.network
-          );
-        }
-
         this.wrapWithSendMethodCallbacks(
           tokenContract.methods
             .approve(spenderAddress, MAXUINT256)
