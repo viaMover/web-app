@@ -84,7 +84,7 @@ export class TheGraphAPIService extends MultiChainAPIService {
         }
       });
       if (res.errors !== undefined) {
-        throw new MoverError('Failed to execute query', res.errors);
+        throw new MoverError('Failed to execute query', { errors: res.errors });
       }
       const ethPriceUSD = res.data.bundle.ethPrice;
 
