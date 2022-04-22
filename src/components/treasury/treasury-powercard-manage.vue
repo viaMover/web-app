@@ -154,12 +154,14 @@ export default Vue.extend({
       });
     },
     async handleRemoveCard(): Promise<void> {
-      const estimation = await (
-        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
-      ).estimateUnstakePowercardCompound();
-
-      if (estimation.error) {
-        Sentry.captureException("Can't estimate swap");
+      let estimation;
+      try {
+        estimation = await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).estimateUnstakePowercardCompound();
+      } catch (error) {
+        console.error('Failed to estimate powercard unstake', error);
+        Sentry.captureException(error);
         this.actionError = this.$t('estimationError') as string;
         return;
       }
