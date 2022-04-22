@@ -69,15 +69,17 @@ export class StakingUbtOnChainService extends MoverOnChainService {
         inputAsset,
         lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS'),
         inputAmount,
-        () =>
+        (newGasLimit) =>
           this.deposit(
             inputAsset,
             inputAmount,
             changeStepToProcess,
-            actionGasLimit
+            newGasLimit
           ),
+        () => this.estimateDepositCompound(inputAsset, inputAmount),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -176,11 +178,13 @@ export class StakingUbtOnChainService extends MoverOnChainService {
         .deposit(toWei(inputAmount, inputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
-      return {
-        error: false,
-        approveGasLimit: '0',
-        actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
-      };
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -195,6 +199,10 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
       throw new OnChainServiceError('Failed to estimate deposit').wrap(error);
     }
+
+    throw new OnChainServiceError(
+      'Failed to estimate deposit: empty gas limit'
+    );
   }
 
   public async withdrawCompound(
