@@ -135,7 +135,7 @@ import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -951,7 +951,12 @@ export default Vue.extend({
         return;
       }
 
-      if (this.input.asset?.address === 'eth') {
+      if (
+        isBaseAsset(
+          this.input.asset?.address ?? 'missing_address',
+          this.networkInfo?.network
+        )
+      ) {
         this.subsidizedAvailable = false;
         return;
       }

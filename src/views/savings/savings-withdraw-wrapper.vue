@@ -48,6 +48,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
+import { isBaseAsset } from '@/utils/address';
 import { divide, isZero, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
@@ -211,6 +212,15 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        return false;
+      }
+
+      if (
+        isBaseAsset(
+          this.inputAsset?.address ?? 'missing_address',
+          this.networkInfo?.network
+        )
+      ) {
         return false;
       }
 

@@ -74,7 +74,7 @@ import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -369,7 +369,12 @@ export default Vue.extend({
         return false;
       }
 
-      if (this.inputAsset?.address === 'eth') {
+      if (
+        isBaseAsset(
+          this.inputAsset?.address ?? 'missing_address',
+          this.networkInfo?.network
+        )
+      ) {
         return false;
       }
 
