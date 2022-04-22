@@ -125,72 +125,18 @@ export class SwapOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData
   ): Promise<CompoundEstimateResponse> {
-    let isApproveNeeded = true;
-    try {
-      isApproveNeeded = await this.needsApprove(
-        inputAsset,
-        inputAmount,
-        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-      );
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: failed "needsApprove" check',
-        data: {
-          error,
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData
-        }
-      });
+    const approveGasLimit = await this.estimateApproveIfNeeded(
+      inputAsset,
+      inputAmount,
+      lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+    );
 
+    if (approveGasLimit !== undefined) {
       return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
+        error: false,
+        approveGasLimit: approveGasLimit,
+        actionGasLimit: ethDefaults.basic_holy_savings_plus_deposit
       };
-    }
-
-    if (isApproveNeeded) {
-      addSentryBreadcrumb({
-        type: 'debug',
-        category: this.sentryCategoryPrefix,
-        message: 'Needs approve'
-      });
-
-      try {
-        const approveGasLimit = await this.estimateApprove(
-          inputAsset.address,
-          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-        );
-
-        return {
-          error: false,
-          actionGasLimit: ethDefaults.basic_holy_swap,
-          approveGasLimit: approveGasLimit
-        };
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to estimate swap: failed "approve" estimation',
-          data: {
-            error,
-            inputAsset,
-            outputAsset,
-            inputAmount,
-            transferData
-          }
-        });
-
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
-      }
     }
 
     if (this.holyHandContract === undefined) {
