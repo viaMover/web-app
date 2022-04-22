@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['ethereum', 'fantom', 'polygon'];
+const networks = ['ethereum'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -152,7 +152,13 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'gALCX',
       name: 'governanceALCX'
-    } // gALCX
+    }, // gALCX
+    {
+      id: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
+      decimals: 18,
+      symbol: 'CULT',
+      name: 'Cult DAO'
+    } // CULT
   ],
   fantom: [],
   polygon: []

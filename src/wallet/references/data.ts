@@ -84,7 +84,9 @@ export type AddressMapKey =
   | 'ALCX_TOKEN_ADDRESS'
   | 'GALCX_TOKEN_ADDRESS'
   | 'AL_USD_TOKEN_ADDRESS'
-  | 'AL_ETH_TOKEN_ADDRESS';
+  | 'AL_ETH_TOKEN_ADDRESS'
+  | 'GTC_TOKEN_ADDRESS'
+  | 'CULT_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -145,7 +147,9 @@ const addresses = {
     AL_ETH_TOKEN_ADDRESS: '0x0100546F2cD4C9D97f798fFC9755E47865FF7Ee6',
     AL_USD_TOKEN_ADDRESS: '0xBC6DA0FE9aD5f3b0d58160288917AA56653660E9',
     ALCX_TOKEN_ADDRESS: '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF',
-    GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35'
+    GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35',
+    GTC_TOKEN_ADDRESS: '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F',
+    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -472,7 +476,9 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'AL_ETH_TOKEN_ADDRESS'),
     lookupAddress(network, 'AL_USD_TOKEN_ADDRESS'),
     lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
-    lookupAddress(network, 'GALCX_TOKEN_ADDRESS')
+    lookupAddress(network, 'GALCX_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'CULT_TOKEN_ADDRESS')
   ];
 };
 

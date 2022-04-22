@@ -8,5 +8,5 @@ export default {
   basic_holy_treasury_withdraw: '450000',
   basic_move_card_top_up: '450000',
   basic_holy_send: '700000',
-  basic_holy_swap: '500000'
+  basic_holy_swap: '750000'
 };
