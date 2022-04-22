@@ -396,12 +396,37 @@ export abstract class OnChainService {
   }
 
   protected async executeTransactionWithApproveExt(
-    action: () => Promise<TransactionReceipt>,
+    action: (newGasLimit?: string) => Promise<TransactionReceipt>,
     checkApprove: () => Promise<boolean>,
-    approve: () => Promise<TransactionReceipt>
+    approve: () => Promise<TransactionReceipt>,
+    estimateHandler: () => Promise<CompoundEstimateResponse>
   ): Promise<TransactionReceipt | never> {
     if (!(await checkApprove())) {
-      await approve();
+      const approveTxReceipt = await approve();
+
+      let estimation;
+      try {
+        // estimate transaction once more to get exact gas limit
+        // and prevent expensive transactions and out of gas
+        // reverts
+        estimation = await estimateHandler();
+
+        addSentryBreadcrumb({
+          type: 'debug',
+          message: 'Estimated transaction after approve',
+          data: {
+            newGasLimit: estimation.actionGasLimit,
+            approveTxHash: approveTxReceipt.transactionHash
+          }
+        });
+      } catch (error) {
+        throw new OnChainServiceError(
+          'Failed to estimate transaction after approve',
+          { approveTxReceipt }
+        ).wrap(error);
+      }
+
+      return action(estimation.actionGasLimit);
     }
 
     return action();

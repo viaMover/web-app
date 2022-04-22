@@ -896,14 +896,19 @@ export class SmartTreasuryOnChainService
   ): Promise<TransactionReceipt> {
     try {
       return await this.executeTransactionWithApproveExt(
-        async () => this.stakePowercard(actionGasLimit, changeStepToProcess),
-        async () => this.isPowercardApproved(),
-        async () =>
+        (newGasLimit) =>
+          this.stakePowercard(
+            newGasLimit ?? actionGasLimit,
+            changeStepToProcess
+          ),
+        () => this.isPowercardApproved(),
+        () =>
           this.approvePowercard(
             approveGasLimit,
             lookupAddress(this.network, 'POWERCARD_STAKER'),
             changeStepToProcess
-          )
+          ),
+        () => this.estimateStakePowercardCompound()
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -1019,15 +1024,20 @@ export class SmartTreasuryOnChainService
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
     try {
-      return this.executeTransactionWithApproveExt(
-        async () => this.unstakePowercard(actionGasLimit, changeStepToProcess),
-        async () => this.isPowercardApproved(),
-        async () =>
+      return await this.executeTransactionWithApproveExt(
+        (newGasLimit) =>
+          this.unstakePowercard(
+            newGasLimit ?? actionGasLimit,
+            changeStepToProcess
+          ),
+        () => this.isPowercardApproved(),
+        () =>
           this.approvePowercard(
             approveGasLimit,
             lookupAddress(this.network, 'POWERCARD_STAKER'),
             changeStepToProcess
-          )
+          ),
+        () => this.estimateUnstakePowercardCompound()
       );
     } catch (error) {
       addSentryBreadcrumb({
