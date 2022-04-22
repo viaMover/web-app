@@ -5,6 +5,7 @@ import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
+import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
 import {
   AnyFn,
   CustomContractType,
@@ -209,7 +210,7 @@ export abstract class OnChainService {
         });
 
       if (gasLimit) {
-        return gasLimit.toString();
+        return this.addGasBuffer(gasLimit.toString());
       }
 
       throw new Error(`empty gas limit`);
@@ -352,20 +353,46 @@ export abstract class OnChainService {
     token: SmallTokenInfo,
     contractAddress: string,
     amount: string,
-    action: () => Promise<TransactionReceipt>,
+    action: (newGasLimit: string) => Promise<TransactionReceipt>,
+    estimateHandler: () => Promise<CompoundEstimateResponse>,
     changeStepToProcess: () => Promise<void>,
-    gasLimit: string
+    approveGasLimit: string,
+    actionGasLimit: string
   ): Promise<TransactionReceipt | never> {
     if (await this.needsApprove(token, amount, contractAddress)) {
-      await this.approve(
+      const approveTxReceipt = await this.approve(
         token.address,
         contractAddress,
         changeStepToProcess,
-        gasLimit
+        approveGasLimit
       );
+
+      try {
+        // estimate transaction once more to get exact gas limit
+        // and prevent expensive transactions and out of gas
+        // reverts
+        const estimation = await estimateHandler();
+
+        addSentryBreadcrumb({
+          type: 'debug',
+          message: 'Estimated transaction after approve',
+          data: {
+            oldGasLimit: actionGasLimit,
+            newGasLimit: estimation.actionGasLimit,
+            approveTxHash: approveTxReceipt.transactionHash
+          }
+        });
+
+        actionGasLimit = estimation.actionGasLimit;
+      } catch (error) {
+        throw new OnChainServiceError(
+          'Failed to estimate transaction after approve',
+          { approveTxReceipt }
+        ).wrap(error);
+      }
     }
 
-    return action();
+    return action(actionGasLimit);
   }
 
   protected async executeTransactionWithApproveExt(
