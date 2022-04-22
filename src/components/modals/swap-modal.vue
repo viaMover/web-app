@@ -923,25 +923,25 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await (
-        this.swapOnChainService as SwapOnChainService
-      ).estimateSwapCompound(
-        inputAsset,
-        outputAsset,
-        inputAmount,
-        transferData
-      );
+      try {
+        const resp = await (
+          this.swapOnChainService as SwapOnChainService
+        ).estimateSwapCompound(
+          inputAsset,
+          outputAsset,
+          inputAmount,
+          transferData
+        );
 
-      if (resp.error) {
-        Sentry.captureException("Can't estimate swap");
+        this.actionGasLimit = resp.actionGasLimit;
+        this.approveGasLimit = resp.approveGasLimit;
+
+        return this.checkSubsidizedAvailability();
+      } catch (error) {
+        console.error('Failed to estimate swap', error);
+        Sentry.captureException(error);
         this.transferError = this.$t('estimationError') as string;
-        return;
       }
-
-      this.actionGasLimit = resp.actionGasLimit;
-      this.approveGasLimit = resp.approveGasLimit;
-
-      this.checkSubsidizedAvailability();
     },
     async checkSubsidizedAvailability(): Promise<void> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
