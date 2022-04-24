@@ -56,6 +56,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
@@ -356,7 +357,10 @@ export default Vue.extend({
 
         this.step = 'review';
       } catch (error) {
-        this.isProcessing = false;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.warn('Failed to estimate transaction', error);
         Sentry.captureException(error);
       } finally {

@@ -47,6 +47,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { isBaseAsset } from '@/utils/address';
 import { divide, isZero, multiply } from '@/utils/bigmath';
@@ -265,6 +266,10 @@ export default Vue.extend({
         this.step = 'review';
       } catch (error) {
         this.isSubsidizedEnabled = false;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.warn('Failed to estimate transaction', error);
         Sentry.captureException(error);
       } finally {

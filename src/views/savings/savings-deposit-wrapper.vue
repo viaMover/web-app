@@ -70,6 +70,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
@@ -336,7 +337,10 @@ export default Vue.extend({
 
         this.step = 'review';
       } catch (error) {
-        this.transferError = this.$t('estimationError') as string;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.warn('Failed to estimate transaction', error);
         Sentry.captureException(error);
         this.isSubsidizedEnabled = false;

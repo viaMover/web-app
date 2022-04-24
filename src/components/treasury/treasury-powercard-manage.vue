@@ -30,9 +30,6 @@
         :text="$t('treasury.powercard.btnRemoveThePowercard')"
         @button-click="handleRemoveCard"
       />
-      <div v-if="actionError !== undefined" class="action-error-message">
-        {{ actionError }}
-      </div>
     </template>
     <loader-form v-else :step="transactionStep" />
   </secondary-page>
@@ -45,6 +42,7 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 
@@ -75,7 +73,6 @@ export default Vue.extend({
   mixins: [GasListenerMixin],
   data() {
     return {
-      actionError: undefined as string | undefined,
       transactionStep: undefined as LoaderStep | undefined,
       powercard: {
         alt: this.$t('treasury.lblSmartTreasury'),
@@ -160,9 +157,12 @@ export default Vue.extend({
           this.smartTreasuryOnChainService as SmartTreasuryOnChainService
         ).estimateUnstakePowercardCompound();
       } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.error('Failed to estimate powercard unstake', error);
         Sentry.captureException(error);
-        this.actionError = this.$t('estimationError') as string;
         return;
       }
 
