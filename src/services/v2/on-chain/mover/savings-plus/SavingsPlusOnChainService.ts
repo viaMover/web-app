@@ -1,30 +1,39 @@
+import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 
-import { NetworkFeatureNotSupportedError } from '@/services/v2';
+import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { TransferData } from '@/services/v2/api/0x';
 import {
+  DepositOnlyTransactionData,
   DepositTransactionData,
-  isDepositWithBridgeTransactionData
+  DepositWithBridgeTransactionData,
+  isDepositWithBridgeTransactionData,
+  isWithdrawComplexTransactionData,
+  WithdrawOnlyTransactionData,
+  WithdrawTransactionData
 } from '@/services/v2/api/mover/savings-plus';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import {
   CompoundEstimateResponse,
   MoverOnChainService
 } from '@/services/v2/on-chain/mover';
+import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized';
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
-import { Network } from '@/utils/networkTypes';
+import { getNetwork, Network } from '@/utils/networkTypes';
+import { currentTimestamp } from '@/utils/time';
+import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
   getUSDCAssetData,
   HOLY_HAND_ABI,
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
-import { SmallTokenInfo } from '@/wallet/types';
+import { SmallTokenInfo, Transaction, TransactionTypes } from '@/wallet/types';
 
 export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'savings-plus.on-chain.service';
@@ -136,6 +145,20 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     actionGasLimit: string,
     approveGasLimit: string
   ): Promise<TransactionReceipt> {
+    if (
+      !this.isValidUSDCishToken(inputAsset.address) &&
+      !this.isValidUSDCishToken(outputAsset.address)
+    ) {
+      throw new OnChainServiceError(
+        'Wrong tokens supplied to depositCompound(). ' +
+          'Neither inputAsset nor outputAsset is USDC-ish',
+        {
+          inputAsset,
+          outputAsset
+        }
+      );
+    }
+
     if (depositData === undefined) {
       throw new OnChainServiceError('Failed to deposit: missing depositData');
     }
@@ -199,6 +222,205 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     }
   }
 
+  public async estimateWithdrawCompound(
+    outputAsset: SmallTokenInfo,
+    outputAmount: string,
+    withdrawToNetwork: Network,
+    withdrawData?: WithdrawTransactionData
+  ): Promise<CompoundEstimateResponse> {
+    if (!this.isValidUSDCishToken(outputAsset.address)) {
+      throw new OnChainServiceError(
+        'Wrong token supplied to estimateWithdrawCompound(). Output asset must be USDC-ish',
+        {
+          outputAsset
+        }
+      );
+    }
+
+    if (withdrawData === undefined) {
+      throw new OnChainServiceError('Failed to withdraw: missing withdrawData');
+    }
+
+    if (
+      this.network !== withdrawToNetwork ||
+      isWithdrawComplexTransactionData(withdrawData)
+    ) {
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Execution is planned in another network. No need to estimate',
+        data: {
+          fromNetwork: this.network,
+          toNetwork: withdrawToNetwork,
+          transactionData: withdrawData
+        }
+      });
+      return { error: false, approveGasLimit: '0', actionGasLimit: '0' };
+    }
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message: 'Execution is planned in current network',
+      data: {
+        transactionData: withdrawData
+      }
+    });
+
+    if (this.centralTransferProxyContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Savings Plus withdraw',
+        this.network
+      );
+    }
+
+    try {
+      const gasLimit = await this.centralTransferProxyContract.methods
+        .withdrawFromPool(
+          withdrawData.withdrawPoolAddress,
+          toWei(outputAmount, outputAsset.decimals)
+        )
+        .estimateGas({ from: this.currentAddress });
+
+      return {
+        error: false,
+        approveGasLimit: '0',
+        actionGasLimit: this.addGasBuffer(gasLimit)
+      };
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to estimate withdraw',
+        data: {
+          error,
+          outputAsset,
+          outputAmount,
+          withdrawData
+        }
+      });
+
+      throw new OnChainServiceError('Failed to estimate withdraw').wrap(error);
+    }
+  }
+
+  public async withdrawCompound(
+    outputAsset: SmallTokenInfo,
+    outputAmount: string,
+    withdrawToNetwork: Network,
+    changeStepToProcess: () => Promise<void>,
+    withdrawData?: WithdrawTransactionData,
+    gasLimit?: string
+  ): Promise<TransactionReceipt> {
+    if (!this.isValidUSDCishToken(outputAsset.address)) {
+      throw new OnChainServiceError(
+        'Wrong token supplied to withdrawCompound(). Output asset must be USDC-ish',
+        {
+          outputAsset
+        }
+      );
+    }
+
+    if (withdrawData === undefined) {
+      throw new OnChainServiceError('Failed to withdraw: missing withdrawData');
+    }
+
+    if (isWithdrawComplexTransactionData(withdrawData)) {
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Execution is planned in another network',
+        data: {
+          fromNetwork: this.network,
+          toNetwork: withdrawToNetwork,
+          transactionData: withdrawData
+        }
+      });
+
+      try {
+        return await this.withdrawComplex(
+          outputAsset,
+          outputAmount,
+          withdrawToNetwork,
+          changeStepToProcess
+        );
+      } catch (error) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: this.sentryCategoryPrefix,
+          message: 'Failed to withdraw (backend execution failed)',
+          data: {
+            error,
+            outputAsset,
+            outputAmount,
+            withdrawToNetwork,
+            withdrawData,
+            gasLimit
+          }
+        });
+
+        throw new OnChainServiceError('Failed to withdraw').wrap(error);
+      }
+    }
+
+    if (this.network !== withdrawToNetwork) {
+      throw new OnChainServiceError(
+        'Failed to withdraw: Wrong state. Expected transaction to be of complex type, got simple',
+        {
+          fromNetwork: this.network,
+          toNetwork: withdrawToNetwork
+        }
+      );
+    }
+
+    if (gasLimit === undefined) {
+      throw new OnChainServiceError(
+        'Failed to withdraw: Transaction should be executed in the same bridge but no gasLimit provided',
+        {
+          network: this.network
+        }
+      );
+    }
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message: 'Execution is planned in current network',
+      data: {
+        outputAsset,
+        outputAmount,
+        gasLimit,
+        transactionData: withdrawData
+      }
+    });
+
+    try {
+      return await this.withdraw(
+        outputAsset,
+        outputAmount,
+        withdrawData,
+        changeStepToProcess,
+        gasLimit
+      );
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to withdraw (same network tx execution failed)',
+        data: {
+          error,
+          outputAsset,
+          outputAmount,
+          withdrawToNetwork,
+          withdrawData,
+          gasLimit
+        }
+      });
+
+      throw new OnChainServiceError('Failed to withdraw').wrap(error);
+    }
+  }
+
   protected async estimateDeposit(
     inputAsset: SmallTokenInfo,
     outputAsset: SmallTokenInfo,
@@ -245,7 +467,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData | undefined,
-    depositData: DepositTransactionData
+    depositData: DepositWithBridgeTransactionData
   ): Promise<CompoundEstimateResponse> {
     if (this.centralTransferProxyContract === undefined) {
       throw new NetworkFeatureNotSupportedError(
@@ -279,7 +501,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData,
-    depositData: DepositTransactionData,
+    depositData: DepositOnlyTransactionData,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
@@ -288,15 +510,6 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         throw new NetworkFeatureNotSupportedError(
           'Savings Plus deposit',
           this.network
-        );
-      }
-
-      if (isDepositWithBridgeTransactionData(depositData)) {
-        throw new OnChainServiceError(
-          'Wrong transaction data passed to the deposit()',
-          {
-            depositData
-          }
         );
       }
 
@@ -327,7 +540,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData,
-    depositData: DepositTransactionData,
+    depositData: DepositWithBridgeTransactionData,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
@@ -362,11 +575,110 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     });
   }
 
+  // todo: rework
+  protected async withdrawComplex(
+    outputAsset: SmallTokenInfo,
+    outputAmount: string,
+    withdrawToNetwork: Network,
+    changeStepToProcess: () => Promise<void>
+  ): Promise<TransactionReceipt> {
+    const chainId = getNetwork(withdrawToNetwork)?.chainId;
+    if (chainId === undefined) {
+      throw new MoverError(
+        `Failed to get chainId of network ${withdrawToNetwork}`
+      );
+    }
+
+    const preparedAction = await this.prepareSavingsPlusComplexWithdrawAction(
+      toWei(outputAmount, outputAsset.decimals),
+      chainId
+    );
+
+    const subsidizedResponse =
+      await this.subsidizedAPIService.executeSavingsPlusWithdrawTransaction(
+        preparedAction.actionString,
+        preparedAction.signature,
+        changeStepToProcess
+      );
+
+    const tx: Transaction = {
+      blockNumber: '0',
+      fee: {
+        ethPrice: this.ethPriceGetterHandler?.() ?? '0',
+        feeInWEI: '0'
+      },
+      hash: subsidizedResponse.txID ?? '',
+      isOffchain: true,
+      nonce: '0',
+      status: 'pending',
+      timestamp: currentTimestamp(),
+      type: TransactionTypes.transferERC20,
+      uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+      asset: {
+        address: outputAsset.address,
+        change: toWei(outputAmount, outputAsset.decimals),
+        decimals: outputAsset.decimals,
+        direction: 'in',
+        iconURL: '',
+        price: '0',
+        symbol: outputAsset.symbol
+      },
+      from: lookupAddress(withdrawToNetwork, 'HOLY_HAND_ADDRESS'),
+      to: this.currentAddress,
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'subsidized_withdraw'
+    };
+    await this.addTransactionToStoreHandler?.(tx);
+
+    return waitOffchainTransactionReceipt(
+      subsidizedResponse.queueID,
+      subsidizedResponse.txID,
+      this.web3Client
+    );
+  }
+
+  protected async withdraw(
+    outputAsset: SmallTokenInfo,
+    outputAmount: string,
+    withdrawData: WithdrawOnlyTransactionData,
+    changeStepToProcess: () => Promise<void>,
+    gasLimit: string
+  ): Promise<TransactionReceipt | never> {
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      if (this.centralTransferProxyContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Savings Plus withdraw',
+          this.network
+        );
+      }
+
+      this.wrapWithSendMethodCallbacks(
+        this.centralTransferProxyContract.methods
+          .withdrawFromPool(
+            withdrawData.withdrawPoolAddress,
+            toWei(outputAmount, outputAsset.decimals)
+          )
+          .send(this.getDefaultTransactionsParams(gasLimit)),
+        resolve,
+        reject,
+        changeStepToProcess,
+        {
+          outputAsset,
+          outputAmount,
+          withdrawData,
+          gasLimit
+        }
+      );
+    });
+  }
+
   protected isValidUSDCishToken(address: string): boolean {
     return sameAddress(address, this.usdcAssetData.address);
   }
 
-  protected mapDepositDataToBytes(data?: DepositTransactionData): number[] {
+  protected mapDepositDataToBytes(
+    data?: DepositWithBridgeTransactionData
+  ): number[] {
     return SavingsPlusOnChainService.mapDepositDataToBytes(
       this.web3Client,
       data
@@ -375,15 +687,26 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
   protected static mapDepositDataToBytes(
     web3Client: Web3,
-    data?: DepositTransactionData
+    data?: DepositWithBridgeTransactionData
   ): number[] {
-    if (data === undefined || !isDepositWithBridgeTransactionData(data)) {
+    if (data === undefined) {
       return [];
     }
 
     return Array.prototype.concat(
       web3Client.utils.hexToBytes(data.bridgeTxAddress),
       web3Client.utils.hexToBytes(data.bridgeTxData)
+    );
+  }
+
+  protected async prepareSavingsPlusComplexWithdrawAction(
+    amount: string,
+    chainId: number
+  ): Promise<PreparedAction> {
+    return this.prepareSubsidizedAction(
+      `ON BEHALF ${
+        this.currentAddress
+      } TIMESTAMP ${dayjs().unix()} EXECUTE WITHDRAW FROM SAVINGSPLUS AMOUNT_TOKEN ${amount} TO NETWORK ${chainId}`
     );
   }
 }
