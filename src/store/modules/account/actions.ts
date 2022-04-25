@@ -20,7 +20,7 @@ import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
-import { SavingsPlusMoverAPIService } from '@/services/v2/api/mover/savings-plus';
+import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
 import {
@@ -602,7 +602,7 @@ const actions: ActionFuncs<
     }
 
     if (isFeatureEnabled('isSavingsPlusEnabled', state.networkInfo.network)) {
-      const savingsPlusAPIService = new SavingsPlusMoverAPIService(
+      const savingsPlusAPIService = new MoverAPISavingsPlusService(
         state.currentAddress,
         state.networkInfo.network
       );

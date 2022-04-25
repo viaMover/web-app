@@ -19,7 +19,7 @@ import {
   WithdrawTransactionData
 } from './types';
 
-export class SavingsPlusMoverAPIService extends MoverAPIService {
+export class MoverAPISavingsPlusService extends MoverAPIService {
   protected baseURL: string;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'savings-plus.api.service';
@@ -46,7 +46,7 @@ export class SavingsPlusMoverAPIService extends MoverAPIService {
       >(`/info/${this.currentAddress}`)
     ).data.payload;
 
-    return SavingsPlusMoverAPIService.mapInfo(data);
+    return MoverAPISavingsPlusService.mapInfo(data);
   }
 
   public async getDepositTransactionData(
@@ -90,7 +90,7 @@ export class SavingsPlusMoverAPIService extends MoverAPIService {
 
   protected static mapInfo(data: SavingsPlusInfoAPIResponse): SavingsPlusInfo {
     return {
-      actionHistory: SavingsPlusMoverAPIService.isFieldsReducerEnabled
+      actionHistory: MoverAPISavingsPlusService.isFieldsReducerEnabled
         ? undefined
         : data.actionHistory.map((item): SavingsPlusActionHistoryItem => {
             return {

@@ -13,4 +13,4 @@ export {
   isDepositWithBridgeTransactionData,
   isWithdrawComplexTransactionData
 } from './types';
-export { SavingsPlusMoverAPIService } from './SavingsPlusMoverAPIService';
+export { MoverAPISavingsPlusService } from './MoverAPISavingsPlusService';
