@@ -1,4 +1,4 @@
-type DepositWithBridgeTransactionData = {
+export type DepositWithBridgeTransactionData = {
   bridgeTxAddress: string;
   bridgeTxData: string;
   estimatedReceived: string;
@@ -12,7 +12,7 @@ export const isDepositWithBridgeTransactionData = (
   return data !== undefined && 'bridgeFee' in data;
 };
 
-type DepositOnlyTransactionData = {
+export type DepositOnlyTransactionData = {
   depositPoolAddress: string;
   depositFee: string;
 };
@@ -29,7 +29,7 @@ export enum WithdrawReasonCode {
   PoolInAnotherChain = 'POOL_IN_ANOTHER_CHAIN'
 }
 
-type WithdrawWithBridgeTransactionData = {
+export type WithdrawComplexTransactionData = {
   execution: WithdrawExecution;
   reasonCode: WithdrawReasonCode;
   estimatedReceived: string;
@@ -37,13 +37,19 @@ type WithdrawWithBridgeTransactionData = {
   bridgeFee: string;
 };
 
-type WithdrawOnlyTransactionData = {
+export const isWithdrawComplexTransactionData = (
+  data?: WithdrawTransactionData
+): data is WithdrawComplexTransactionData => {
+  return data !== undefined && 'estimatedReceived' in data;
+};
+
+export type WithdrawOnlyTransactionData = {
   withdrawPoolAddress: string;
   withdrawFee: string;
 };
 
 export type WithdrawTransactionData =
-  | WithdrawWithBridgeTransactionData
+  | WithdrawComplexTransactionData
   | WithdrawOnlyTransactionData;
 
 export type SavingsPlusMonthBalanceItem = {
