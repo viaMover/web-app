@@ -90,7 +90,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
 
   public async checkTransactionStatus(
     queueId: string
-  ): Promise<CheckTransactionStatusReturn | undefined> {
+  ): Promise<CheckTransactionStatusReturn> {
     if (this.baseURL === MoverAPISubsidizedService.NoBaseURLForNetwork) {
       throw new NetworkFeatureNotSupportedError(
         'Subsidized request',
