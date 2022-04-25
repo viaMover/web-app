@@ -200,7 +200,8 @@ const addresses = {
   },
   [Network.fantom]: {
     NFT_ORDER_OF_LIBERTY: '0x568F6DC40B2520522dC4745D881c990e57672d94',
-    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B'
+    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B',
+    USDC_TOKEN_ADDRESS: '0x04068da6c83afcfa0e13ba15a6696662335d5b75'
   },
   [Network.arbitrum]: {},
   [Network.avalanche]: {}
