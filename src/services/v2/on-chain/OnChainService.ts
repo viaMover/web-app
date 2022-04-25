@@ -520,11 +520,11 @@ export abstract class OnChainService {
     return gasPriceInWei;
   }
 
-  protected addGasBuffer(gas: string, buffer = '120'): string {
+  protected addGasBuffer(gas: string | number, buffer = '120'): string {
     return OnChainService.addGasBuffer(gas, buffer);
   }
 
-  protected static addGasBuffer(gas: string, buffer = '120'): string {
+  protected static addGasBuffer(gas: string | number, buffer = '120'): string {
     return floorDivide(multiply(gas, buffer), '100');
   }
 }
