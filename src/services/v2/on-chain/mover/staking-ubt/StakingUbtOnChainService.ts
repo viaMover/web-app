@@ -60,7 +60,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     if (!sameAddress(inputAsset.address, this.UBTAssetData.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to depositCompound()',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -104,7 +104,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     if (!sameAddress(inputAsset.address, this.UBTAssetData.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to estimateDepositCompound()',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -164,7 +164,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     if (!sameAddress(outputAsset.address, this.UBTAssetData.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to withdrawCompound()',
-        outputAsset
+        { outputAsset }
       );
     }
 

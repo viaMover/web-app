@@ -152,7 +152,13 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'gALCX',
       name: 'governanceALCX'
-    } // gALCX
+    }, // gALCX
+    {
+      id: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
+      decimals: 18,
+      symbol: 'CULT',
+      name: 'Cult DAO'
+    } // CULT
   ],
   fantom: [],
   polygon: []

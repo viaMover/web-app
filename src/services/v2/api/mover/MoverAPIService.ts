@@ -121,7 +121,10 @@ export abstract class MoverAPIService extends MultiChainAPIService {
     });
 
     instance.interceptors.response.use(
-      <T, E>(
+      <
+        T extends Record<string, unknown> | undefined,
+        E extends Record<string, unknown> | undefined
+      >(
         response: AxiosResponse<MoverAPIResponse<T, E>>
       ):
         | AxiosResponse<MoverAPISuccessfulResponse<T>>
@@ -139,10 +142,16 @@ export abstract class MoverAPIService extends MultiChainAPIService {
             }
           });
 
+          const errorPayload =
+            typeof response.data.payload === 'object' &&
+            !Array.isArray(response.data.payload)
+              ? response.data.payload
+              : { responsePayload: response.data.payload };
+
           const error = new MoverAPIError(
             response.data.error,
             response.data.errorCode,
-            response.data.payload
+            errorPayload
           );
           this.formatError(error);
         }
