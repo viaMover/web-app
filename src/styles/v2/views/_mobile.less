@@ -1,0 +1,43 @@
+.mobile {
+  .logo {
+    position: absolute;
+    top: @button-page-inset;
+    left: @button-page-inset;
+  }
+
+  .gif {
+    margin-top: 40px;
+    max-height: 50vh;
+    min-height: 150px;
+    display: flex;
+    justify-content: center;
+
+    video {
+      max-width: 80vw;
+      object-fit: scale-down;
+    }
+  }
+
+  .description {
+    margin-top: 33px;
+
+    h1 {
+     font-size: 32px;
+     line-height: 48px;
+     color: @text-primary;
+     @font-bold();
+    }
+
+    p {
+     font-size: 14px;
+     line-height: 22px;
+     color: @text-muted;
+     margin-top: 16px;
+     @font-medium();
+    }
+
+    a {
+     margin-top: 40px;
+    }
+  }
+}

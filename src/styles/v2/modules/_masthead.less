@@ -1,0 +1,27 @@
+.masthead {
+  display: flex;
+  width: 100%;
+  min-height: 80px;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 80px;
+
+  .tab {
+    display: flex;
+    height: 64px;
+    width: $height;
+    align-items: center;
+    justify-content: center;
+    background: var(--main-item);
+    border-radius: 50%;
+    font-size: 32px;
+    line-height: 40px;
+    @emoji();
+
+    &.router-link-exact-active {
+      height: 80px;
+      width: $height;
+    }
+  }
+}

@@ -1,0 +1,69 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  text-decoration: none;
+  box-shadow: none;
+  color: var(--primary-text);
+  font-size: 14px;
+  line-height: 22px;
+  user-select: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--background) var(--main-item);
+  @font-medium();
+}
+
+html {
+  background-color: var(--background);
+
+  &.no-scroll {
+    .page .dashboard .page-content {
+      overflow-y: hidden;
+    }
+  }
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.1s;
+}
+
+h1,
+h2 {
+  @font-bold();
+}
+
+h1 {
+  font-size: 40px;
+  line-height: 54px;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 40px;
+}
+
+button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+span.pu-skeleton {
+  line-height: normal;
+}
+
+::-webkit-scrollbar {
+  width: calc(4px + .25em);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--main-item);
+  border-radius: 20px;
+}

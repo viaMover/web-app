@@ -1,0 +1,150 @@
+.page {
+  .top-message-wrapper {
+    z-index: 100;
+    position: fixed;
+    top: -500px;
+    left: calc(50% - 264px);
+    width: 528px;
+    height: auto;
+    overflow-y: hidden;
+    padding: 18px;
+    background: var(--main-item);
+    border-radius: 16px;
+    @drop-shadow();
+
+    -webkit-transition: top 1.5s;
+    transition: top 1.5s;
+
+    &.slide-top-in {
+      top: 54px;
+    }
+
+    .top-message-container {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-direction: row;
+      flex-direction: row;
+
+      .close {
+        cursor: pointer;
+      }
+
+      .text {
+        flex: 1 1 auto;
+        @font-medium();
+      }
+    }
+
+    &.info > .top-message-container > .text {
+      color: var(--primary-text);
+    }
+  }
+
+  .dashboard {
+    display: flex;
+    min-height: 100vh;
+    flex-flow: row nowrap;
+
+    .page-content {
+      background-color: var(--background);
+      height: 100vh;
+      position: relative;
+      flex: 1 1 100%;
+      scrollbar-width: thin;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      &.two-sided {
+        .page-back-button.fixed {
+          position: fixed;
+          top: @button-page-inset;
+          left: @button-page-inset;
+
+          @media screen and (max-width: 1279px) {
+            left: @button-page-inset;
+          }
+        }
+
+        .wrapper {
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-flow: row nowrap;
+          height: 100%;
+        }
+
+        .side {
+          &.left,
+          &.right {
+            width: 50%;
+          }
+
+          &.left {
+            padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+            overflow-y: auto;
+          }
+
+          &.right {
+            padding: 0;
+          }
+
+          @media screen and (max-width: 1279px) {
+            &.left {
+              width: 100%;
+            }
+
+            &.right {
+              display: none;
+            }
+          }
+        }
+      }
+
+      .wrapper {
+        clear: none;
+        padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+        max-width: @page-max-width;
+        margin: auto;
+      }
+
+      .page-close-button {
+        position: sticky;
+        float: right;
+        top: @button-page-inset;
+        right: @button-page-inset;
+        z-index: 10;
+        @drop-shadow();
+
+        & > * {
+          border-radius: initial;
+        }
+
+        &.fixed {
+          position: fixed;
+        }
+      }
+
+      .page-back-button {
+        position: sticky;
+        float: left;
+        top: @button-page-inset;
+        left: @button-page-inset;
+        z-index: 10;
+        @drop-shadow();
+
+        & > * {
+          border-radius: initial;
+        }
+
+        &.fixed {
+          position: fixed;
+          top: @button-page-inset;
+          left: @button-page-inset;
+        }
+      }
+    }
+  }
+}

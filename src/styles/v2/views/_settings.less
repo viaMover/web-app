@@ -1,0 +1,73 @@
+.settings {
+  .address.input input {
+    min-width: ~"min(100%, 42ch)";
+    max-width: 100%;
+  }
+
+  .theme {
+    .group {
+      display: flex;
+      flex-flow: row wrap;
+      gap: 40px;
+      max-width: 360px + 2 * 40px;
+
+      .selector {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 16px;
+
+        height: 80px;
+        flex: 1 1 120px;
+        background-color: var(--main-item);
+        color: var(--primary-text);
+        border-radius: 8px;
+
+        i {
+          font-size: 24px;
+          justify-self: flex-end;
+          align-self: flex-start;
+        }
+
+        &.active {
+          background-color: var(--accent);
+          color: var(--text-inverse)
+        }
+      }
+    }
+  }
+
+ .currency {
+   .dropdown {
+     .vs__dropdown-option {
+       display: flex;
+
+       .currency {
+         flex: 1 0 auto;
+       }
+     }
+
+     .flag {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 32px;
+       height: $width;
+       margin-right: 24px;
+       font-size: 16px;
+       line-height: 20px;
+     }
+
+     .currency {
+       display: flex;
+       align-items: center;
+       @font-bold();
+     }
+   }
+
+   .description {
+     margin-top: 16px;
+     color: var(--secondary-text);
+   }
+ }
+}

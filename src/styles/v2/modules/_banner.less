@@ -1,0 +1,71 @@
+.banner {
+  @banner-padding: 24px;
+
+  position: relative;
+  padding: @banner-padding;
+  background-color: var(--card);
+  border-radius: 12px;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 40px;
+  @drop-shadow();
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .info {
+    flex: 1 0 50%;
+
+    .text {
+      margin-bottom: 24px;
+
+      .description {
+        font-size: 14px;
+        line-height: 22px;
+        color: var(--secondary-text);
+        @font-medium();
+      }
+    }
+
+    .buttons {
+      display: flex;
+      flex-flow: row nowrap;
+      column-gap: 24px;
+    }
+  }
+
+  .image {
+    flex: 0 1 auto;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &.savings-plus {
+    @badge-max-width: 200px;
+    @badge-inset-right: 50px;
+
+    @media screen and (min-width: @page-max-width + @badge-inset-right + @page-inset-right) {
+      .info {
+        padding-right: @badge-max-width - @badge-inset-right - @banner-padding + 8px;
+      }
+
+      .image.badge-multichain {
+        position: absolute;
+        top: -40px;
+        right: -@badge-inset-right;
+        z-index: 2;
+        max-width: @badge-max-width;
+      }
+    }
+
+    .info .buttons .button.cta, .button.close {
+      background-color: var(--main-item);
+      color: var(--primary-text);
+    }
+  }
+}

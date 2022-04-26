@@ -1,0 +1,71 @@
+.dropdown {
+  &.v-select {
+    background: var(--main-item);
+    border-radius: 8px;
+    width: fit-content;
+  }
+
+  &.vs--single.vs--open {
+    .vs__selected {
+      position: initial;
+    }
+  }
+}
+
+.dropdown,
+.dropdown > * {
+  --vs-colors--light: rgba(60, 60, 60, 0.5);
+  --vs-colors--dark: var(--primary-text);
+
+  /* Font */
+  --vs-font-size: 16px;
+  --vs-line-height: 1.5;
+
+  /* Disabled State */
+  --vs-state-disabled-bg: var(--background);
+  --vs-state-disabled-color: var(--vs-colors--light);
+  --vs-state-disabled-cursor: not-allowed;
+
+  /* Borders */
+  --vs-border-color: transparent;
+
+  /* Actions: house the component controls */
+  --vs-actions-padding: 4px 6px 0 3px;
+
+  /* Component Controls: Clear, Open Indicator */
+  --vs-controls-color: var(--vs-colors--light);
+  --vs-controls-size: 1;
+  --vs-controls--deselect-text-shadow: 0 1px 0 #fff;
+
+  /* Selected */
+  --vs-selected-bg: var(--main-item);
+  --vs-selected-color: var(--vs-colors--dark);
+  --vs-selected-border-color: var(--vs-border-color);
+  --vs-selected-border-style: var(--vs-border-style);
+  --vs-selected-border-width: var(--vs-border-width);
+
+  /* Dropdown */
+  --vs-dropdown-bg: var(--main-item);
+  --vs-dropdown-color: var(--primary-text);
+  --vs-dropdown-z-index: 1000;
+  --vs-dropdown-min-width: fit-content;
+  --vs-dropdown-max-height: 350px;
+  --vs-dropdown-box-shadow: none;
+
+  /* Options */
+  --vs-dropdown-option-bg: var(--main-item);
+  --vs-dropdown-option-color: var(--vs-dropdown-color);
+  --vs-dropdown-option-padding: 3px 20px;
+
+  /* Active State */
+  --vs-dropdown-option--active-bg: var(--background);
+  --vs-dropdown-option--active-color: var(--primary-text);
+
+  /* Deselect State */
+  --vs-dropdown-option--deselect-bg: #fb5858;
+  --vs-dropdown-option--deselect-color: #fff;
+
+  /* Transitions */
+  --vs-transition-timing-function: cubic-bezier(1, -0.115, 0.975, 0.855);
+  --vs-transition-duration: 150ms;
+}

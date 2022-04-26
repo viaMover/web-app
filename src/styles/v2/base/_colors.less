@@ -1,0 +1,56 @@
+:root {
+  // by default we apply light theme colors
+  @light-theme-colors();
+
+  // and if user has dark color scheme preferred, then the
+  // default for them would be overridden unless exact theme is specified
+  @media screen and (prefers-color-scheme: dark) {
+    @dark-theme-colors();
+  }
+
+  &.light {
+    @light-theme-colors();
+  }
+
+  &.dark {
+    @dark-theme-colors();
+  }
+}
+
+@light-theme-colors: {
+  --background: #FAFAFC;
+  --primary-text: #333333;
+  --secondary-text: #A1A1A1;
+  --main-item: #F1F1F1;
+  --shadow: rgba(0, 0, 0, 0.12);
+  --modal-overlay: rgba(0, 0, 0, 0.2);
+  --card: #FFFFFF;
+  --accent: #FFFFFF;
+  --text-inverse: #333333;
+  --product-mover: linear-gradient(90deg, #D3FA69 0%, #C6F872 100%);
+  --governance-default: var(--accent);
+  --governance-accepted: #30be16;
+  --governance-defeated: #ff585f;
+  --savings: #FF930F;
+  --savings-plus: #FC4000;
+  --smart-treasury: #F4A4B4;
+  --staking: #8EC52C;
+  --chart-default: #A1A1A1;
+  --switch-border: #D8D8D8;
+  --switch-active: #333333;
+}
+
+@dark-theme-colors: {
+  --background: #1F1F1F;
+  --primary-text: #FFFFFFE5;
+  --secondary-text: #999999;
+  --main-item: #404040;
+  --shadow: rgba(0, 0, 0, 0.12);
+  --modal-overlay: rgba(0, 0, 0, 0.75);
+  --card: #333333;
+  --accent: rgba(255, 255, 255, 0.90);
+  --text-inverse: #333333;
+  --chart-default: #999999;
+  --switch-border: #999999;
+  --switch-active: #FFFFFF;
+}

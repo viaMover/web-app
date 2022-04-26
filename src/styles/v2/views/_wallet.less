@@ -1,0 +1,68 @@
+&.wallet {
+  .heading {
+    .title {
+      color: var(--secondary-text);
+    }
+  }
+
+  .list {
+    .group {
+      margin-top: 40px;
+
+      .header {
+        margin-bottom: 24px;
+      }
+
+      &.tokens {
+        .items {
+          .item {
+            min-height: 40px;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+
+            &:hover {
+              text-decoration: unset;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .description {
+              flex: 2 1 50%;
+              margin-right: 8px;
+
+              .title {
+                font-size: 14px;
+                line-height: 22px;
+                color: var(--primary-text);
+                @font-medium();
+              }
+
+              .value {
+                font-size: 12px;
+                line-height: 16px;
+                color: var(--secondary-text);
+                @font-regular();
+              }
+            }
+
+            .outcome,
+            .balance {
+              flex: 1 0 30%;
+              align-self: flex-start;
+              font-size: 14px;
+              line-height: 22px;
+              text-align: right;
+              color: var(--primary-text);
+              @font-regular();
+            }
+          }
+        }
+      }
+    }
+  }
+}

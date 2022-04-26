@@ -1,0 +1,151 @@
+.home {
+  .links {
+    width: fit-content;
+
+    .link + .link {
+      margin-top: 16px;
+    }
+  }
+
+  .banners {
+    margin-top: 40px;
+  }
+
+  .navigation-wrapper {
+    margin-top: 40px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 64px;
+
+    .group {
+      margin-bottom: 40px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .items {
+        .item {
+          display: flex;
+          flex-flow: row nowrap;
+          justify-content: space-between;
+          align-items: center;
+          border-radius: 8px;
+
+          .icon {
+            flex-grow: 0;
+            flex-shrink: 0;
+            align-self: center;
+            margin-right: 16px;
+          }
+
+          .info {
+            flex: auto;
+            color: var(--primary-text);
+          }
+
+          &.emoji {
+            margin-bottom: 24px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .icon {
+              font-size: 16px;
+              line-height: 24px;
+              width: 24px;
+              height: 24px;
+              display: flex;
+              align-self: flex-start;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+
+              i[class*="icon-"]:before{
+                line-height: 24px;
+                font-size: 24px;
+              }
+
+              img,
+              .pu-skeleton {
+                width: 24px;
+                height: 24px;
+              }
+            }
+
+            .info {
+              font-size: 16px;
+              line-height: 24px;
+              @font-medium();
+            }
+          }
+
+          &.picture {
+            margin-bottom: 32px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .icon,
+            picture {
+              display: block;
+              flex-grow: 0;
+              flex-shrink: 0;
+              align-self: flex-start;
+              margin-top: 4px;
+              margin-right: 16px;
+              height: 40px;
+              max-width: 56px;
+
+              img,
+              .pu-skeleton {
+                height: 40px;
+                max-width: 56px;
+                @drop-shadow-filter();
+              }
+
+              .pu-skeleton {
+                width: 56px;
+              }
+            }
+
+            .info {
+              .title {
+                font-size: 14px;
+                line-height: 22px;
+                margin-bottom: 4px;
+                @font-bold();
+
+                &.muted {
+                  color: var(--secondary-text);
+                }
+
+                &.medium {
+                  @font-medium();
+                }
+              }
+
+              .description {
+                font-size: 14px;
+                line-height: 22px;
+                color: var(--secondary-text);
+                @font-medium();
+
+                &.bold {
+                  @font-bold();
+                }
+
+                &.emphasize {
+                  color: var(--primary-text);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
