@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/vue';
 import { NativeCurrencyFormatterMixin } from '@/utils/native-currency-formatter-mixin';
 import { NetworkDataMixin } from '@/utils/network-data-mixin';
 
-import '@/styles/styles.less';
+import '@/styles/v2/styles.less';
 
 import App from './app.vue';
 import * as bignumber from './bignumber';
