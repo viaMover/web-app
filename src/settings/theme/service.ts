@@ -1,4 +1,5 @@
 import {
+  clearCurrentThemePersistItem,
   getCurrentThemeFromPersist,
   setCurrentThemeToPersist
 } from '@/settings/persist/theme';
@@ -9,20 +10,28 @@ export const getSavedTheme = async (): Promise<Theme | undefined> => {
   return await getCurrentThemeFromPersist();
 };
 
-export const getPreferredTheme = async (): Promise<Theme> => {
-  return window?.matchMedia?.('prefers-color-scheme: light').matches
-    ? Theme.Light
-    : Theme.Dark;
+export const getPreferredTheme = (): Theme => {
+  return window?.matchMedia?.('(prefers-color-scheme: dark)').matches
+    ? Theme.Dark
+    : Theme.Light;
 };
 
-export const applyTheme = (theme: Theme): void => {
+export const queryMediaTheme = window?.matchMedia?.(
+  '(prefers-color-scheme: dark)'
+);
+
+export const applyTheme = (theme: Theme, persist = true): void => {
   const htmlElement = window.document.documentElement;
   const appliedThemes = availableThemes.filter(
     (t) => htmlElement.classList.contains(t) && t !== theme
   ) as Array<string>;
   htmlElement.classList.remove(...appliedThemes);
   htmlElement.classList.add(theme);
-  setCurrentThemeToPersist(theme);
+  if (!persist) {
+    clearCurrentThemePersistItem();
+  } else {
+    setCurrentThemeToPersist(theme);
+  }
 };
 
 export const getThemeColors = (theme: Theme): Record<string, string> => {
@@ -35,11 +44,11 @@ export const getThemeColors = (theme: Theme): Record<string, string> => {
 };
 
 const isCustomColorName = (name: string): boolean => {
-  return name.startsWith('--color');
+  return name.startsWith('--');
 };
 
 const sanitizeCustomColorName = (name: string): string => {
-  return name.replace(/^--color-/, '').trim();
+  return name.replace(/^--/, '').trim();
 };
 
 const isSameDomain = (styleSheet: CSSStyleSheet) => {

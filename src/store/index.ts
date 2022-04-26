@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { Theme } from '@/settings/theme';
+import { getPreferredTheme, Theme } from '@/settings/theme';
 
 import actions from './actions';
 import account from './modules/account';
@@ -23,7 +23,8 @@ const store = new Vuex.Store<RootStoreState>({
   state: {
     i18n: null,
     isThemeInitialized: false,
-    theme: Theme.Light,
+    preferredTheme: Theme.System,
+    theme: getPreferredTheme(),
     colors: {}
   },
   actions: actions,

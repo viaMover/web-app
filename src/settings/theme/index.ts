@@ -1,5 +1,6 @@
 export {
   getSavedTheme,
+  queryMediaTheme,
   getPreferredTheme,
   applyTheme,
   getThemeColors

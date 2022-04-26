@@ -1,0 +1,8 @@
+{
+  "dates": {
+    "sameDay": "[Сегодня]",
+    "lastDay": "[Вчера]"
+  },
+  "whatIs": "Что такое {term}?",
+  "learnMoreAbout": "Узнай больше о {term}"
+}

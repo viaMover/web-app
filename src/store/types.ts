@@ -18,6 +18,7 @@ import { EarningsStoreState } from './modules/earnings/types';
 export interface RootStoreState {
   i18n: IVueI18n | null;
   isThemeInitialized: boolean;
+  preferredTheme: Theme;
   theme: Theme;
   colors: Record<string, string>;
 
