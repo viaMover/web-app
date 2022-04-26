@@ -2,7 +2,7 @@
   <transition name="fade">
     <home-transactions-list-skeleton v-if="showSkeleton" />
     <div v-else-if="transactionGroups.length === 0" class="empty-state">
-      {{ $t('lblNewToMover') }}
+      {{ $t('newToMover') }}
     </div>
     <div v-else>
       <transition-group class="list" name="list-transition" tag="div">
@@ -22,10 +22,10 @@
           />
         </template>
         <template v-slot:no-more>
-          {{ $t('lblNoMoreTransactions') }}
+          {{ $t('noMoreTransactions') }}
         </template>
         <template v-slot:no-results>
-          {{ $t('lblNoMoreTransactions') }}
+          {{ $t('noMoreTransactions') }}
         </template>
       </infinite-loading>
     </div>

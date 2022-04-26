@@ -21,7 +21,7 @@ import { DisplayableToken } from '@/wallet/types';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
-  name: 'HomeWalletTokenItem',
+  name: 'TokenListItemWrapper',
   components: {
     TokenImage
   },

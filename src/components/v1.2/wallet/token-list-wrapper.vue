@@ -24,7 +24,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'HomeWalletTokensWrapper',
+  name: 'TokenListWrapper',
   props: {
     isLoading: {
       type: Boolean,

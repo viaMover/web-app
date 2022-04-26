@@ -11,6 +11,7 @@
       <bar-chart
         :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
+        :default-color="chartDefaultColor"
         :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
         @item-selected="handleItemSelected"
       />
@@ -135,8 +136,11 @@ export default Vue.extend({
         )
       );
     },
+    chartDefaultColor(): string {
+      return this.colors['chart-default'];
+    },
     chartAccentColor(): string {
-      return this.colors['product-savings'];
+      return this.colors['savings'];
     }
   },
   methods: {

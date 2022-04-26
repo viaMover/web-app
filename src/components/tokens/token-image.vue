@@ -2,7 +2,7 @@
   <div v-if="displayOriginalImage" class="icon token-icon">
     <img
       v-fallback="imageFallbackOpts"
-      :alt="$t('asset.txtAlt', { name: symbol })"
+      :alt="$t('imageAlt', { name: symbol })"
       :src="src"
       :style="shadowStyles"
     />
@@ -57,9 +57,7 @@ export default Vue.extend({
       return this.src !== '' && !this.loadingFailed;
     },
     color(): string | undefined {
-      return (
-        this.getTokenColor(this.address) ?? 'var(--color-token-image-shadow)'
-      );
+      return this.getTokenColor(this.address) ?? 'var(--shadow)';
     },
     imageFallbackOpts(): IImageFallbackOpts {
       return {

@@ -223,7 +223,7 @@ export default Vue.extend({
                 },
                 color: (ctx: ScriptableScaleContext) => {
                   if (this.disableSelecting) {
-                    return this.tickColor;
+                    return this.defaultColor;
                   }
                   const selectedItemIdx =
                     ctx.chart.data.datasets[0].data.findIndex(
@@ -239,7 +239,7 @@ export default Vue.extend({
 
                   return ctx.index === selectedItemIdx
                     ? this.accentColor
-                    : this.tickColor;
+                    : this.defaultColor;
                 },
                 maxRotation: 0,
                 minRotation: 0,

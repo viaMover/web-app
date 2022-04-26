@@ -1,27 +1,21 @@
 <template>
   <action-button class="round" @button-click="handleClick">
-    <img
-      v-if="isBlack"
-      :alt="$t('icon.txtCloseIconAlt')"
-      src="@/assets/images/back_cross.svg"
-    />
-    <img
-      v-else
-      :alt="$t('icon.txtCloseIconAlt')"
-      src="@/assets/images/cross.svg"
-    />
+    <base-icon v-once icon-class="icon-close" />
   </action-button>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
+import { BaseIcon } from '@/components/v1.2';
+
 import ActionButton from './action-button.vue';
 
 export default Vue.extend({
   name: 'CloseButton',
   components: {
-    ActionButton
+    ActionButton,
+    BaseIcon
   },
   props: {
     isBlack: {
