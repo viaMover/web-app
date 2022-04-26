@@ -1,10 +1,12 @@
 import dayjs from 'dayjs';
 
 import { GettersFuncs } from '@/store/types';
+import { sameAddress } from '@/utils/address';
 import { add, multiply } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
+import { lookupAddress } from '@/wallet/references/data';
 import {
   DisplayableToken,
   Token,
@@ -14,6 +16,7 @@ import {
 
 import {
   AccountStoreState,
+  ensureAccountStateIsSafe,
   nativeCurrencyFormatters,
   TransactionGroup
 } from './types';
@@ -41,6 +44,7 @@ type Getters = {
   getOffchainExplorerHanlder: OffchainExplorerHanler | undefined;
   getCurrentAddresses: string[];
   nativeCurrencyFormatter: (value: number | string) => string;
+  walletBalanceMove: string;
 };
 
 const getters: GettersFuncs<Getters, AccountStoreState> = {
@@ -85,14 +89,16 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     );
     return Object.values(groupsByDay).reverse();
   },
-  displayableWalletTokens(state): Array<DisplayableToken> {
+  displayableWalletTokens(state, getters): Array<DisplayableToken> {
     return state.tokens.map((t: TokenWithBalance) => ({
       address: t.address,
       balanceFormatted: formatToDecimals(t.balance, 4),
       symbol: t.symbol,
       name: t.name,
       logo: t.logo,
-      balanceNativeFormatted: formatToNative(multiply(t.balance, t.priceUSD))
+      balanceNativeFormatted: getters.nativeCurrencyFormatter(
+        multiply(t.balance, t.priceUSD)
+      )
     }));
   },
   isWalletConnected(state): boolean {
@@ -270,6 +276,20 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       default:
         return (value) => `${formatter.sign}${formatToNative(value)}`;
     }
+  },
+  walletBalanceMove(state, getters, rootState): string {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return '0';
+    }
+
+    const moveAddress = lookupAddress(
+      rootState.account.networkInfo.network,
+      'MOVE_ADDRESS'
+    );
+    return (
+      rootState.account.tokens.find((t) => sameAddress(moveAddress, t.address))
+        ?.balance ?? '0'
+    );
   }
 };
 

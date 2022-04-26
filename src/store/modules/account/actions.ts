@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/vue';
-import sample from 'lodash-es/sample';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
@@ -33,13 +32,7 @@ import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-u
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
-import {
-  getAvatarFromPersist,
-  getIsOlympusAvatarKnownFromPersist,
-  isFeatureEnabled,
-  setAvatarToPersist,
-  setIsOlympusAvatarKnownToPersist
-} from '@/settings';
+import { isFeatureEnabled } from '@/settings';
 import {
   getFromPersistStore,
   removeAccountBoundPersistItemsFromLocalStorage,
@@ -70,7 +63,6 @@ import { MutationType } from './mutations';
 import {
   AccountData,
   AccountStoreState,
-  Avatar,
   EmitChartRequestPayload,
   ensureAccountStateIsSafe,
   FetchTokenPricesByContractAddressesPayload,
@@ -80,8 +72,6 @@ import {
   ProviderData,
   RefreshWalletPayload
 } from './types';
-import allAvatars from '@/../data/avatars.json';
-import { getOlympusAvatar, isOlympusAvatar } from '@/../data/olympus-avatar';
 
 const GAS_UPDATE_INTERVAL = 60000; // 60s
 const GAS_INITIAL_DELAY = 500; // 500ms to reduce the chance to reach the  rate limit of etherscan in case of page reload
@@ -96,8 +86,6 @@ type Actions = {
   toggleIsOrderOfLibertySectionVisible: void;
   setCurrentWallet: Promise<void>;
   setIsDetecting: void;
-  loadAvatar: Promise<void>;
-  toggleAvatar: Promise<void>;
   initWallet: Promise<void>;
   initServices: void;
   refreshWallet: Promise<void>;
@@ -194,106 +182,6 @@ const actions: ActionFuncs<
   setIsDetecting({ commit }, isDetecting: boolean): void {
     commit('setIsDetecting', isDetecting);
   },
-  async loadAvatar({ commit, state, rootState, rootGetters }): Promise<void> {
-    const avatars: Array<Avatar> = allAvatars as Array<Avatar>;
-
-    const olympusAvatar = getOlympusAvatar(rootState.i18n);
-    const hasOlympusNft = rootGetters['nft/hasOlympus'];
-    if (hasOlympusNft) {
-      avatars.push(olympusAvatar);
-    }
-
-    commit('setAvatars', avatars);
-
-    if (state.currentAddress === undefined) {
-      commit('setAvatar', sample<Avatar>(state.avatars));
-      return;
-    }
-
-    // if the user has seen olympus avatar at least once
-    const isOlympusAvatarKnown = await getIsOlympusAvatarKnownFromPersist(
-      state.currentAddress
-    );
-
-    // if they have never seen olympus avatar but have it
-    // then force set the olympus avatar instead of the old one
-    if (hasOlympusNft && !isOlympusAvatarKnown) {
-      commit('setAvatar', olympusAvatar);
-      await setAvatarToPersist(state.currentAddress, olympusAvatar);
-      await setIsOlympusAvatarKnownToPersist(state.currentAddress, true);
-      return;
-    }
-
-    const persistedValue = await getAvatarFromPersist(state.currentAddress);
-
-    // if one have seen an avatar but don't have it anymore
-    // then set avatar as never seen
-    if (!hasOlympusNft && isOlympusAvatarKnown) {
-      await setIsOlympusAvatarKnownToPersist(state.currentAddress, false);
-    }
-
-    // if they have seen an avatar therefore it's currently persisted
-    // but don't have it anymore then revoke
-    if (!hasOlympusNft && isOlympusAvatar(persistedValue)) {
-      const newAvatar = sample<Avatar>(state.avatars);
-      if (newAvatar === undefined) {
-        return;
-      }
-
-      commit('setAvatar', newAvatar);
-      await setAvatarToPersist(state.currentAddress, newAvatar);
-      return;
-    }
-
-    if (persistedValue !== undefined) {
-      commit('setAvatar', persistedValue);
-      return;
-    }
-
-    const newAvatar = sample<Avatar>(state.avatars);
-    if (newAvatar === undefined) {
-      return;
-    }
-
-    commit('setAvatar', newAvatar);
-    await setAvatarToPersist(state.currentAddress, newAvatar);
-  },
-  async toggleAvatar({ commit, state }): Promise<void> {
-    if (
-      isOlympusAvatar(state.avatar) &&
-      state.currentAddress !== undefined &&
-      !(await getIsOlympusAvatarKnownFromPersist(state.currentAddress))
-    ) {
-      await setIsOlympusAvatarKnownToPersist(state.currentAddress, true);
-    }
-
-    const prevIdx =
-      state.avatars.findIndex((av) => {
-        if (av.type === 'symbol') {
-          return (
-            state.avatar?.type === 'symbol' &&
-            av.symbol === state.avatar?.symbol
-          );
-        }
-
-        return (
-          state.avatar?.type === 'image' &&
-          av.imageSrc === state.avatar?.imageSrc
-        );
-      }) ?? -1;
-
-    const newAvatar = state.avatars[(prevIdx + 1) % state.avatars.length];
-    if (newAvatar === undefined) {
-      return;
-    }
-
-    commit('setAvatar', newAvatar);
-    if (state.currentAddress === undefined) {
-      return;
-    }
-
-    await setAvatarToPersist(state.currentAddress, newAvatar);
-  },
   async initWallet(
     { commit, dispatch, rootState },
     payload: InitWalletPayload
@@ -339,12 +227,7 @@ const actions: ActionFuncs<
       }
 
       console.info('getting accounts...');
-      let accounts;
-      if (payload.injected) {
-        accounts = await state.provider.web3.eth.requestAccounts();
-      } else {
-        accounts = await state.provider.web3.eth.getAccounts();
-      }
+      const accounts = await state.provider.web3.eth.getAccounts();
       console.info('accounts: ', accounts);
 
       let balance = '';
@@ -468,34 +351,6 @@ const actions: ActionFuncs<
         commit('setWalletTokens', tokensWithAmount);
         commit('setIsTokensListLoaded', true);
         commit('setIsTransactionsListLoaded', true);
-      }
-
-      if (isFeatureEnabled('isTreasuryEnabled', state.networkInfo.network)) {
-        dispatch('treasury/loadMinimalInfo', undefined, {
-          root: true
-        });
-      }
-
-      dispatch('nft/loadNFTInfo', undefined, {
-        root: true
-      }).then(() => dispatch('loadAvatar'));
-
-      if (isFeatureEnabled('isSavingsEnabled', state.networkInfo.network)) {
-        dispatch('savings/loadMinimalInfo', undefined, {
-          root: true
-        });
-      }
-
-      if (isFeatureEnabled('isNibbleShopEnabled', state.networkInfo.network)) {
-        dispatch('shop/refreshAssetsInfoList', undefined, {
-          root: true
-        });
-      }
-
-      if (isFeatureEnabled('isVaultsRaceEnabled', state.networkInfo.network)) {
-        dispatch('games/init', undefined, {
-          root: true
-        });
       }
 
       console.info('Wallet refreshed');
@@ -934,7 +789,10 @@ const actions: ActionFuncs<
 
     await dispatch('changeNativeCurrency', state.nativeCurrency);
   },
-  async changeNativeCurrency({ state, commit }, nativeCurrency): Promise<void> {
+  async changeNativeCurrency(
+    { state, dispatch, commit },
+    nativeCurrency
+  ): Promise<void> {
     commit('setNativeCurrency', nativeCurrency);
     if (!ensureAccountStateIsSafe(state)) {
       return;
@@ -946,6 +804,11 @@ const actions: ActionFuncs<
       'nativeCurrency',
       nativeCurrency
     );
+
+    await dispatch('refreshWallet', {
+      injected: false,
+      init: true
+    } as RefreshWalletPayload);
   }
 };
 

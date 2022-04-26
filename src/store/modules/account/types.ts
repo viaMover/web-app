@@ -7,6 +7,7 @@ import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
+import { mapCountryCodeToEmoji } from '@/utils/emoji';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -147,32 +148,38 @@ export const nativeCurrencyFormatters = {
   [NativeCurrency.USD]: {
     sign: '$',
     currency: 'USD',
-    position: 'prefix'
+    position: 'prefix',
+    flag: mapCountryCodeToEmoji('us')
   },
   [NativeCurrency.GBP]: {
     sign: '£',
     currency: 'GBP',
-    position: 'prefix'
+    position: 'prefix',
+    flag: mapCountryCodeToEmoji('GB')
   },
   [NativeCurrency.EUR]: {
     sign: '€',
     currency: 'EUR',
-    position: 'prefix'
+    position: 'prefix',
+    flag: mapCountryCodeToEmoji('EU')
   },
   [NativeCurrency.RUB]: {
     sign: '₽',
     currency: 'RUB',
-    position: 'postfix'
+    position: 'postfix',
+    flag: mapCountryCodeToEmoji('RU')
   },
   [NativeCurrency.Ether]: {
     sign: 'Ξ',
     currency: 'ETH',
-    position: 'prefix'
+    position: 'prefix',
+    flag: undefined
   },
   [NativeCurrency.Bitcoin]: {
     sign: '₿',
     currency: 'BTC',
-    position: 'prefix'
+    position: 'prefix',
+    flag: undefined
   }
 };
 

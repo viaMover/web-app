@@ -35,11 +35,7 @@ const getters: GettersFuncs<Getters, DebitCardStoreState> = {
 
     return mapSkin(rootState)(state.currentSkin);
   },
-  cardStateText(state, getters, rootState): string {
-    if (rootState.i18n?.te(`debitCard.state.${state.cardState}`)) {
-      return rootState.i18n.t(`debitCard.state.${state.cardState}`) as string;
-    }
-
+  cardStateText(state): string {
     return state.cardState;
   },
   searchInAvailableSkins(state, getters): (searchTerm: string) => Array<Skin> {
