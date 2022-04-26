@@ -66,6 +66,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import {
   getTransferData,
   TransferData,
@@ -346,7 +347,10 @@ export default Vue.extend({
         this.unwrapGasLimit = gasLimits.unwrapGasLimit;
         this.changeStep('review');
       } catch (error) {
-        this.transferError = this.$t('estimationError') as string;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxReview',
