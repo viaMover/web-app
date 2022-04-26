@@ -1,32 +1,19 @@
 <template>
-  <div id="app">
-    <pu-skeleton-theme
-      :color="skeletonColor"
-      :highlight="skeletonHighlightColor"
-    >
-      <div class="page">
-        <web3-modal-vue
-          ref="web3modal"
-          cache-provider
-          :provider-options="providerOptions"
-          :theme="theme"
-        />
-        <top-message-modal />
-        <transition mode="out-in" name="fade">
-          <template v-if="showPreload">
-            <router-view
-              v-if="$route.meta.hasOwnPreload"
-              key="preload-custom"
-              name="preload"
-            />
-            <preload-default v-else key="preload-default" />
-          </template>
-          <router-view v-else key="viewport" />
-        </transition>
-        <mobile />
-      </div>
-    </pu-skeleton-theme>
-  </div>
+  <pu-skeleton-theme
+    class="page"
+    :color="skeletonColor"
+    :highlight="skeletonHighlightColor"
+    tag="div"
+  >
+    <web3-modal-vue
+      ref="web3modal"
+      cache-provider
+      :provider-options="providerOptions"
+    />
+    <top-message-modal />
+    <preload-default v-if="showPreload" key="preload-default" />
+    <router-view v-else key="viewport" />
+  </pu-skeleton-theme>
 </template>
 
 <script lang="ts">
@@ -40,7 +27,6 @@ import Web3ModalVue from 'web3modal-vue';
 
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import Mobile from '@/views/mobile.vue';
 import PreloadDefault from '@/views/preload/preload-default.vue';
 
 import { TopMessageModal } from './components/modals';
@@ -55,7 +41,6 @@ export default Vue.extend({
   name: 'App',
   components: {
     PreloadDefault,
-    Mobile,
     Web3ModalVue,
     TopMessageModal
   },
@@ -89,8 +74,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapState({
-      colors: 'colors',
-      theme: 'theme'
+      colors: 'colors'
     }),
     ...mapGetters('account', {
       isWalletReady: 'isWalletReady',
@@ -110,13 +94,10 @@ export default Vue.extend({
       }
     },
     skeletonColor(): string {
-      return this.colors['skeleton-color'] ?? 'var(--color-skeleton-color)';
+      return 'var(--main-item)';
     },
     skeletonHighlightColor(): string {
-      return (
-        this.colors['skeleton-highlight-color'] ??
-        'var(--color-skeleton-highlight-color)'
-      );
+      return 'var(--accent)';
     }
   },
   watch: {
@@ -128,8 +109,11 @@ export default Vue.extend({
       this.setPageTitle(newVal);
     }
   },
-  async mounted() {
+  async created() {
     this.setI18n(this.$i18n);
+    await Promise.allSettled([this.initTheme(), this.restoreLanguage()]);
+  },
+  async mounted() {
     this.setPageTitle(this.pageTitle);
     this.setIsDetecting(true);
     this.$nextTick(async () => {
@@ -168,12 +152,12 @@ export default Vue.extend({
       }
       this.setIsDetecting(false);
     });
-    await this.initTheme();
   },
   methods: {
     ...mapActions({
       setI18n: 'setI18n',
-      initTheme: 'initTheme'
+      initTheme: 'initTheme',
+      restoreLanguage: 'restoreLanguage'
     }),
     ...mapMutations('account', {
       setWeb3Modal: 'setWeb3Modal',
