@@ -3,7 +3,7 @@ export type {
   CompoundEstimateWithUnwrapResponse,
   EstimateResponse
 } from './types';
-export { ISmartTreasuryBonusBalanceExecutor } from './ISmartTreasuryBonusBalanceExecutor';
+export type { ISmartTreasuryBonusBalanceExecutor } from './ISmartTreasuryBonusBalanceExecutor';
 export { MoverOnChainService } from './MoverOnChainService';
 
 export * as Savings from './savings';
