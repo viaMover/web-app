@@ -1311,7 +1311,7 @@ const messages: VueI18n.LocaleMessageObject = {
     txtDeposit: 'Simple staking in friendly protocols',
     lblWithdraw: 'Withdraw from Staking',
     txtWithdraw: 'Remove your assets from staking fully or partially',
-    lblBalance: 'Staking Balance',
+    lblBalanceIn: 'Staking Balance in',
     lblStakingStatements: 'Staking Statements',
     btnView: 'View',
     lblInProgress: 'In progress',
