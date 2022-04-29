@@ -135,7 +135,7 @@ import {
   Modal as ModalTypes,
   TModalPayload
 } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -923,25 +923,25 @@ export default Vue.extend({
       outputAsset: Token,
       transferData: TransferData
     ): Promise<void> {
-      const resp = await (
-        this.swapOnChainService as SwapOnChainService
-      ).estimateSwapCompound(
-        inputAsset,
-        outputAsset,
-        inputAmount,
-        transferData
-      );
+      try {
+        const resp = await (
+          this.swapOnChainService as SwapOnChainService
+        ).estimateSwapCompound(
+          inputAsset,
+          outputAsset,
+          inputAmount,
+          transferData
+        );
 
-      if (resp.error) {
-        Sentry.captureException("Can't estimate swap");
+        this.actionGasLimit = resp.actionGasLimit;
+        this.approveGasLimit = resp.approveGasLimit;
+
+        return this.checkSubsidizedAvailability();
+      } catch (error) {
+        console.error('Failed to estimate swap', error);
+        Sentry.captureException(error);
         this.transferError = this.$t('estimationError') as string;
-        return;
       }
-
-      this.actionGasLimit = resp.actionGasLimit;
-      this.approveGasLimit = resp.approveGasLimit;
-
-      this.checkSubsidizedAvailability();
     },
     async checkSubsidizedAvailability(): Promise<void> {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
@@ -951,7 +951,12 @@ export default Vue.extend({
         return;
       }
 
-      if (this.input.asset?.address === 'eth') {
+      if (
+        isBaseAsset(
+          this.input.asset?.address ?? 'missing_address',
+          this.networkInfo?.network
+        )
+      ) {
         this.subsidizedAvailable = false;
         return;
       }

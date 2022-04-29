@@ -46,6 +46,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { captureSentryException } from '@/services/v2/utils/sentry';
 import {
@@ -220,7 +221,10 @@ export default Vue.extend({
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.step = 'review';
       } catch (error) {
-        this.error = this.$t('estimationError') as string;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         captureSentryException(error);
       } finally {
         this.isProcessing = false;
