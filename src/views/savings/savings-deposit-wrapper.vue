@@ -70,11 +70,12 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
@@ -87,13 +88,8 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -318,9 +314,12 @@ export default Vue.extend({
       this.approveGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
+        const gasLimits = await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).estimateDepositCompound(
           this.inputAsset,
+          this.outputUSDCAsset,
+          this.inputAmount,
           this.transferData
         );
 
@@ -335,16 +334,19 @@ export default Vue.extend({
             this.actionGasLimit
           );
         }
+
+        this.step = 'review';
       } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.warn('Failed to estimate transaction', error);
         Sentry.captureException(error);
         this.isSubsidizedEnabled = false;
-        return;
       } finally {
         this.isProcessing = false;
       }
-
-      this.step = 'review';
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
@@ -371,7 +373,12 @@ export default Vue.extend({
         return false;
       }
 
-      if (this.inputAsset?.address === 'eth') {
+      if (
+        isBaseAsset(
+          this.inputAsset?.address ?? 'missing_address',
+          this.networkInfo?.network
+        )
+      ) {
         return false;
       }
 
@@ -386,31 +393,6 @@ export default Vue.extend({
         );
         Sentry.captureException(error);
         return false;
-      }
-    },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken,
-      transferData: TransferData | undefined
-    ): Promise<CompoundEstimateResponse> {
-      try {
-        const estimation = await (
-          this.savingsOnChainService as SavingsOnChainService
-        ).estimateDepositCompound(
-          inputAsset,
-          this.outputUSDCAsset,
-          inputAmount,
-          transferData
-        );
-
-        if (estimation.error) {
-          throw new Error('Failed to estimate action');
-        }
-
-        return estimation;
-      } catch (error) {
-        this.transferError = this.$t('estimationError') as string;
-        throw error;
       }
     },
     async handleUpdateAmount(val: string): Promise<void> {

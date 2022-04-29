@@ -41,9 +41,6 @@
           :text="$t('treasury.powercard.btnActivateThePowercard')"
           @button-click="handleActivateCard"
         />
-        <div v-if="actionError !== undefined" class="action-error-message">
-          {{ actionError }}
-        </div>
       </div>
     </template>
     <loader-form v-else :step="txStep" />
@@ -56,6 +53,7 @@ import { mapActions, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { greaterThan } from '@/utils/bigmath';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
@@ -85,7 +83,6 @@ export default Vue.extend({
   data() {
     return {
       txStep: undefined as LoaderStep | undefined,
-      actionError: undefined as string | undefined,
       powercard: {
         alt: this.$t('treasury.lblSmartTreasury'),
         src: require('@/assets/images/Powercard@1x.png'),
@@ -129,13 +126,18 @@ export default Vue.extend({
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
     async handleActivateCard(): Promise<void> {
-      const estimation = await (
-        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
-      ).estimateStakePowercardCompound();
-
-      if (estimation.error) {
-        Sentry.captureException("Can't estimate stake");
-        this.actionError = this.$t('estimationError') as string;
+      let estimation;
+      try {
+        estimation = await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).estimateStakePowercardCompound();
+      } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
+        console.error('Failed to estimate powercard stake', error);
+        Sentry.captureException(error);
         return;
       }
 
