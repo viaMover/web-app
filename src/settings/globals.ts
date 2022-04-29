@@ -87,7 +87,7 @@ const values: Globals = {
   isVaultsRaceEnabled: false,
   isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
-  isSavingsPlusEnabled: false,
+  isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
