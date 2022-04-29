@@ -193,7 +193,8 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
           .filter(
             (t: Token) =>
               t.symbol.toLowerCase().includes(searchTermProcessed) ||
-              t.name.toLowerCase().includes(searchTermProcessed)
+              t.name.toLowerCase().includes(searchTermProcessed) ||
+              t.address.toLowerCase().includes(searchTermProcessed)
           )
           .slice(of, of + 100);
       }
@@ -242,7 +243,8 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
         return state.tokens.filter(
           (t) =>
             t.symbol.toLowerCase().includes(searchTermProcessed) ||
-            t.name.toLowerCase().includes(searchTermProcessed)
+            t.name.toLowerCase().includes(searchTermProcessed) ||
+            t.address.toLowerCase().includes(searchTermProcessed)
         );
       }
 

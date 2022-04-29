@@ -15,7 +15,9 @@ import {
 import { fromWei, multiply, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
+import { unstake } from '@/wallet/actions/debit-card/top-up/gALCX/top-up';
 import {
+  getALCXAssetData,
   getBTRFLYAssetData,
   getUSDCAssetData,
   HOLY_HAND_ABI,
@@ -119,15 +121,6 @@ export const topUpCompound = async (
         accountAddress
       );
 
-      if (resp.error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.unwrap.extimation',
-          message: 'failed estimate after the unwarp'
-        });
-        throw new Error("Can't estimate topup after unwrap");
-      }
-
       topupActionGasLimit = resp.actionGasLimit;
       topupApproveGasLimit = resp.approveGasLimit;
     } catch (err) {
@@ -135,6 +128,88 @@ export const topUpCompound = async (
         type: 'error',
         category: 'debit-card.top-up.unwrap',
         message: 'failed to unwrap for top up',
+        data: {
+          error: err
+        }
+      });
+      throw err;
+    }
+  }
+
+  if (
+    sameAddress(
+      inputAsset.address,
+      lookupAddress(network, 'GALCX_TOKEN_ADDRESS')
+    )
+  ) {
+    try {
+      addSentryBreadcrumb({
+        type: 'info',
+        category: 'debit-card.top-up.topUpCompound',
+        message: 'Input asset is gALCX. Unstake is needed',
+        data: {
+          inputAsset: inputAsset
+        }
+      });
+
+      topupInputAsset = getALCXAssetData(network);
+
+      const balanceBeforeUnstake = await currentBalance(
+        web3,
+        accountAddress,
+        topupInputAsset.address
+      );
+
+      await unstake(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress,
+        changeStepToProcess,
+        unwrapGasLimit
+      );
+
+      const balanceAfterUnstake = await currentBalance(
+        web3,
+        accountAddress,
+        topupInputAsset.address
+      );
+
+      const topupInputAmountInWei = sub(
+        balanceAfterUnstake,
+        balanceBeforeUnstake
+      );
+      topupInputAmount = fromWei(
+        topupInputAmountInWei,
+        topupInputAsset.decimals
+      );
+      topupTransferData = await getTransferData(
+        getUSDCAssetData(network).address,
+        topupInputAsset.address,
+        topupInputAmountInWei,
+        true,
+        '10',
+        network
+      );
+
+      const resp = await estimateTopUpCompound(
+        topupInputAsset,
+        outputAsset,
+        topupInputAmount,
+        topupTransferData,
+        network,
+        web3,
+        accountAddress
+      );
+
+      topupActionGasLimit = resp.actionGasLimit;
+      topupApproveGasLimit = resp.approveGasLimit;
+    } catch (err) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.unstake',
+        message: 'Failed to unstake for top up',
         data: {
           error: err
         }
@@ -152,8 +227,8 @@ export const topUpCompound = async (
       topupInputAmount,
       accountAddress,
       web3,
-      async () => {
-        await topUp(
+      async (newGasLimit) =>
+        topUp(
           topupInputAsset,
           outputAsset,
           topupInputAmount,
@@ -162,12 +237,22 @@ export const topUpCompound = async (
           web3,
           accountAddress,
           changeStepToProcess,
-          topupActionGasLimit,
+          newGasLimit,
           gasPriceInGwei
-        );
-      },
+        ),
+      () =>
+        estimateTopUpCompound(
+          inputAsset,
+          outputAsset,
+          inputAmount,
+          transferData,
+          network,
+          web3,
+          accountAddress
+        ),
       () => changeStepToProcess('Process'),
       topupApproveGasLimit,
+      topupActionGasLimit,
       gasPriceInGwei
     );
   } catch (err) {

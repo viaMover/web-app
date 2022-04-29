@@ -62,6 +62,9 @@ export default Vue.extend({
     ...mapState('account', {
       networkInfo: 'networkInfo'
     }),
+    ...mapState('nft', {
+      orderOfLiberty: 'orderOfLiberty'
+    }),
     isDebitCardEnabled(): boolean {
       return isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network);
     },
@@ -72,10 +75,7 @@ export default Vue.extend({
       );
     },
     isOrderOfLibertyNFTEnabled(): boolean {
-      return isFeatureEnabled(
-        'isOrderOfLibertyNFTEnabled',
-        this.networkInfo?.network
-      );
+      return this.orderOfLiberty.networks.includes(this.networkInfo?.network);
     },
     isSavingsEnabled(): boolean {
       return isFeatureEnabled('isSavingsEnabled', this.networkInfo?.network);

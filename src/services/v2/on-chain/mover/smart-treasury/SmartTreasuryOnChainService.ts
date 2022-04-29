@@ -356,15 +356,17 @@ export class SmartTreasuryOnChainService
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
-        async () =>
+        (newGasLimit) =>
           this.deposit(
             inputAsset,
             inputAmount,
-            actionGasLimit,
+            newGasLimit,
             changeStepToProcess
           ),
+        () => this.estimateDepositCompound(inputAsset, inputAmount),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -406,11 +408,9 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate deposit: failed "needsApprove" check'
+      ).wrap(error);
     }
 
     if (isApproveNeeded) {
@@ -443,11 +443,9 @@ export class SmartTreasuryOnChainService
           }
         });
 
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
+        throw new OnChainServiceError(
+          'Failed to estimate deposit: failed "approve" estimation'
+        ).wrap(error);
       }
     }
 
@@ -466,7 +464,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Deposit',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -497,24 +495,6 @@ export class SmartTreasuryOnChainService
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: empty gas limit',
-        data: {
-          inputAsset,
-          inputAmount,
-          moveAmount,
-          moveEthAmount
-        }
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -528,12 +508,25 @@ export class SmartTreasuryOnChainService
           moveEthAmount
         }
       });
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+
+      throw new OnChainServiceError('Failed to estimate deposit').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate deposit: empty gas limit',
+      data: {
+        inputAsset,
+        inputAmount,
+        moveAmount,
+        moveEthAmount
+      }
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate deposit: empty gas limit'
+    );
   }
 
   public async withdrawCompound(
@@ -578,7 +571,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Withdraw',
-        outputAsset
+        { outputAsset }
       );
     }
 
@@ -616,24 +609,6 @@ export class SmartTreasuryOnChainService
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate withdraw: empty gas limit',
-        data: {
-          outputAsset,
-          inputAmount,
-          moveAmount,
-          moveEthAmount
-        }
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -646,12 +621,25 @@ export class SmartTreasuryOnChainService
           moveEthAmount
         }
       });
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+
+      throw new OnChainServiceError('Failed to estimate withdraw').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate withdraw: empty gas limit',
+      data: {
+        outputAsset,
+        inputAmount,
+        moveAmount,
+        moveEthAmount
+      }
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate withdraw: empty gas limit'
+    );
   }
 
   public async claimAndBurnCompound(
@@ -666,15 +654,17 @@ export class SmartTreasuryOnChainService
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
-        async () =>
+        (newGasLimit) =>
           this.claimAndBurn(
             inputAsset,
             inputAmount,
-            actionGasLimit,
+            newGasLimit,
             changeStepToProcess
           ),
+        () => this.estimateClaimAndBurnCompound(inputAsset, inputAmount),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -717,11 +707,9 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate claim & burn: failed "needsApprove" check'
+      ).wrap(error);
     }
 
     if (isApproveNeeded) {
@@ -755,11 +743,9 @@ export class SmartTreasuryOnChainService
           }
         });
 
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
+        throw new OnChainServiceError(
+          'Failed to estimate claim & burn: failed "approve" estimation'
+        );
       }
     }
 
@@ -788,18 +774,6 @@ export class SmartTreasuryOnChainService
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate claim & burn: empty gas limit',
-        data: {
-          inputAsset,
-          inputAmount
-        }
-      });
-
-      return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -812,12 +786,24 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate claim & burn').wrap(
+        error
+      );
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate claim & burn: empty gas limit',
+      data: {
+        inputAsset,
+        inputAmount
+      }
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate claim & burn: empty gas limit'
+    );
   }
 
   public async claimAndBurnMOBO(
@@ -880,21 +866,27 @@ export class SmartTreasuryOnChainService
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
+    } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
         category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate claim & burn MOBO: empty gas limit'
+        message: 'Failed to estimate claim & burn MOBO'
       });
 
-      return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
-    } catch (error) {
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate claim & burn MOBO'
+      ).wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate claim & burn MOBO: empty gas limit'
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate claim & burn MOBO: empty gas limit'
+    );
   }
 
   public async stakePowercardCompound(
@@ -904,14 +896,19 @@ export class SmartTreasuryOnChainService
   ): Promise<TransactionReceipt> {
     try {
       return await this.executeTransactionWithApproveExt(
-        async () => this.stakePowercard(actionGasLimit, changeStepToProcess),
-        async () => this.isPowercardApproved(),
-        async () =>
+        (newGasLimit) =>
+          this.stakePowercard(
+            newGasLimit ?? actionGasLimit,
+            changeStepToProcess
+          ),
+        () => this.isPowercardApproved(),
+        () =>
           this.approvePowercard(
             approveGasLimit,
             lookupAddress(this.network, 'POWERCARD_STAKER'),
             changeStepToProcess
-          )
+          ),
+        () => this.estimateStakePowercardCompound()
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -942,11 +939,9 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate stake: failed "isPowercardApproved" check'
+      ).wrap(error);
     }
 
     if (!isApproved) {
@@ -976,22 +971,20 @@ export class SmartTreasuryOnChainService
           }
         });
 
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
+        throw new OnChainServiceError(
+          'Failed to estimate stake: failed "approve" estimation'
+        ).wrap(error);
       }
     }
 
-    try {
-      if (this.powercardStakerContract === undefined) {
-        throw new NetworkFeatureNotSupportedError(
-          'Powercard stake',
-          this.network
-        );
-      }
+    if (this.powercardStakerContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Powercard stake',
+        this.network
+      );
+    }
 
+    try {
       const gasLimitObj = await this.powercardStakerContract.methods
         .stakePowercard()
         .estimateGas({ from: this.currentAddress });
@@ -1003,18 +996,6 @@ export class SmartTreasuryOnChainService
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate stake: empty gas limit'
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -1025,12 +1006,16 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate stake').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate stake: empty gas limit'
+    });
+
+    throw new OnChainServiceError('Failed to estimate stake: empty gas limit');
   }
 
   public async unstakePowercardCompound(
@@ -1039,15 +1024,20 @@ export class SmartTreasuryOnChainService
     changeStepToProcess: () => Promise<void>
   ): Promise<TransactionReceipt> {
     try {
-      return this.executeTransactionWithApproveExt(
-        async () => this.unstakePowercard(actionGasLimit, changeStepToProcess),
-        async () => this.isPowercardApproved(),
-        async () =>
+      return await this.executeTransactionWithApproveExt(
+        (newGasLimit) =>
+          this.unstakePowercard(
+            newGasLimit ?? actionGasLimit,
+            changeStepToProcess
+          ),
+        () => this.isPowercardApproved(),
+        () =>
           this.approvePowercard(
             approveGasLimit,
             lookupAddress(this.network, 'POWERCARD_STAKER'),
             changeStepToProcess
-          )
+          ),
+        () => this.estimateUnstakePowercardCompound()
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -1078,11 +1068,9 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate unstake: failed "isPowercardApproved" check'
+      ).wrap(error);
     }
 
     if (!isApproved) {
@@ -1112,22 +1100,20 @@ export class SmartTreasuryOnChainService
           }
         });
 
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
+        throw new OnChainServiceError(
+          'Failed to estimate unstake: failed "approve" estimation'
+        ).wrap(error);
       }
     }
 
-    try {
-      if (this.powercardStakerContract === undefined) {
-        throw new NetworkFeatureNotSupportedError(
-          'Powercard unstake',
-          this.network
-        );
-      }
+    if (this.powercardStakerContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        'Powercard unstake',
+        this.network
+      );
+    }
 
+    try {
       const gasLimitObj = await this.powercardStakerContract.methods
         .unstakePowercard()
         .estimateGas({ from: this.currentAddress });
@@ -1139,18 +1125,6 @@ export class SmartTreasuryOnChainService
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate unstake: empty gas limit'
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -1161,12 +1135,18 @@ export class SmartTreasuryOnChainService
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate unstake').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate unstake: empty gas limit'
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate unstake: empty gas limit'
+    );
   }
 
   public calculateTreasuryBoost(
@@ -1241,7 +1221,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Deposit',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -1296,7 +1276,7 @@ export class SmartTreasuryOnChainService
     ) {
       throw new OnChainServiceError(
         'Wrong token used for Smart Treasury Withdraw',
-        outputAsset
+        { outputAsset }
       );
     }
 
@@ -1485,8 +1465,6 @@ export class SmartTreasuryOnChainService
       if (gasLimit) {
         return gasLimit.toString();
       }
-
-      throw new Error(`empty gas limit`);
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -1502,5 +1480,9 @@ export class SmartTreasuryOnChainService
         `Failed to estimate approve for powercard`
       ).wrap(error);
     }
+
+    throw new OnChainServiceError(
+      `Failed to estimate approve for powercard: empty gas limit`
+    );
   }
 }

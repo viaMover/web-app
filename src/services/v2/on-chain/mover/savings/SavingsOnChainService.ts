@@ -100,26 +100,34 @@ export class SavingsOnChainService extends MoverOnChainService {
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
-        async () => {
+        (newGasLimit) => {
           if (useSubsidized) {
-            return await this.depositSubsidized(
+            return this.depositSubsidized(
               inputAsset,
               inputAmount,
               changeStepToProcess
             );
           }
 
-          return await this.deposit(
+          return this.deposit(
             inputAsset,
             outputAsset,
             inputAmount,
             transferData,
             changeStepToProcess,
-            actionGasLimit
+            newGasLimit
           );
         },
+        () =>
+          this.estimateDepositCompound(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData
+          ),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
@@ -135,9 +143,7 @@ export class SavingsOnChainService extends MoverOnChainService {
             outputAsset,
             inputAmount,
             transferData,
-            useSubsidized,
-            actionGasLimit,
-            approveGasLimit
+            useSubsidized
           }
         });
 
@@ -154,7 +160,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           inputAmount,
           transferData,
           useSubsidized,
-          actionGasLimit,
+          actionGasLimit, // may be old, check previous logs to be sure
           approveGasLimit,
           error
         }
@@ -190,11 +196,9 @@ export class SavingsOnChainService extends MoverOnChainService {
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate deposit: failed "needsApprove" check'
+      ).wrap(error);
     }
 
     if (isApproveNeeded) {
@@ -229,11 +233,9 @@ export class SavingsOnChainService extends MoverOnChainService {
           }
         });
 
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
+        throw new OnChainServiceError(
+          'Failed to estimate deposit: failed "approve" estimation'
+        ).wrap(error);
       }
     }
 
@@ -274,24 +276,6 @@ export class SavingsOnChainService extends MoverOnChainService {
           approveGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: empty gas limit',
-        data: {
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData
-        }
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -306,12 +290,24 @@ export class SavingsOnChainService extends MoverOnChainService {
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate deposit').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate deposit: empty gas limit',
+      data: {
+        inputAsset,
+        outputAsset,
+        inputAmount,
+        transferData
+      }
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate deposit: empty gas limit'
+    );
   }
 
   public async withdrawCompound(
@@ -352,7 +348,6 @@ export class SavingsOnChainService extends MoverOnChainService {
             useSubsidized
           }
         });
-
         throw error;
       }
 
@@ -399,18 +394,6 @@ export class SavingsOnChainService extends MoverOnChainService {
           approveGasLimit: '0',
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
-      } else {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to estimate withdraw: empty gas limit',
-          data: {
-            outputAsset,
-            inputAmount
-          }
-        });
-
-        return { error: true, approveGasLimit: '0', actionGasLimit: '0' };
       }
     } catch (error) {
       addSentryBreadcrumb({
@@ -424,12 +407,22 @@ export class SavingsOnChainService extends MoverOnChainService {
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate withdraw').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate withdraw: empty gas limit',
+      data: {
+        outputAsset,
+        inputAmount
+      }
+    });
+
+    throw new OnChainServiceError(
+      'Failed to estimate withdraw: empty gas limit'
+    );
   }
 
   protected async deposit(
@@ -499,7 +492,7 @@ export class SavingsOnChainService extends MoverOnChainService {
 
     const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
       lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
-      inputAsset.address,
+      this.substituteAssetAddressIfNeeded(inputAsset.address),
       inputAmountInWEI
     );
 

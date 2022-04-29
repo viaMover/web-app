@@ -56,7 +56,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
@@ -75,11 +75,7 @@ import {
   getMoveAssetData,
   getMoveWethLPAssetData
 } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -345,18 +341,6 @@ export default Vue.extend({
         this.ethPrice
       );
     },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
-      const estimation = await (
-        this.smartTreasuryOnChainService as SmartTreasuryOnChainService
-      ).estimateDepositCompound(inputAsset, inputAmount);
-      if (estimation.error) {
-        throw new Error('Failed to estimate action');
-      }
-      return estimation;
-    },
     async handleTxReview(): Promise<void> {
       if (this.inputAsset === undefined) {
         return;
@@ -364,22 +348,24 @@ export default Vue.extend({
 
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
-          this.inputAsset
-        );
+        const gasLimits = await (
+          this.smartTreasuryOnChainService as SmartTreasuryOnChainService
+        ).estimateDepositCompound(this.inputAsset, this.inputAmount);
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
+
+        this.step = 'review';
       } catch (error) {
-        this.isProcessing = false;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.warn('Failed to estimate transaction', error);
         Sentry.captureException(error);
-        return;
+      } finally {
+        this.isProcessing = false;
       }
-
-      this.isProcessing = false;
-      this.step = 'review';
     },
     async handleTxStart(): Promise<void> {
       if (this.inputAsset === undefined) {

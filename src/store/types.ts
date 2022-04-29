@@ -2,6 +2,7 @@ import { IVueI18n } from 'vue-i18n';
 import { ActionContext, Module, ModuleTree } from 'vuex';
 
 import { Theme } from '@/settings/theme';
+import { DebitCardStoreState } from '@/store/modules/debit-card/types';
 import { GamesStoreState } from '@/store/modules/games/types';
 import { GovernanceStoreState } from '@/store/modules/governance/types';
 import { ModalsStoreState } from '@/store/modules/modals/types';
@@ -33,6 +34,7 @@ export interface RootStoreState {
   earnings?: EarningsStoreState;
   savings?: SavingsStoreState;
   treasury?: TreasuryStoreState;
+  debitCard?: DebitCardStoreState;
   savingsPlus?: SavingsPlusStoreState;
   // rootState members end
 }

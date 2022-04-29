@@ -154,6 +154,10 @@ export default Vue.extend({
             }
           });
           web3modal.clearCachedProvider();
+          Object.entries(localStorage)
+            .map((x) => x[0])
+            .filter((x) => x.startsWith('-walletlink'))
+            .forEach((x) => localStorage.removeItem(x));
           sendGlobalTopMessageEvent(
             this.$t('errors.default', {
               code: CommonErrors.CACHED_PROVIDER_CONNECT_ERROR

@@ -1,5 +1,5 @@
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
 
-export class MoverAPISubsidizedRequestError<T = void> extends MoverAPIError<T> {
+export class MoverAPISubsidizedRequestError extends MoverAPIError {
   // TODO: some additional data?
 }

@@ -1,5 +1,6 @@
 import { isFeatureEnabled, isProduction } from '@/settings';
 import { AugmentedModule } from '@/store/types';
+import { Network } from '@/utils/networkTypes';
 
 import actions, { ActionType } from './actions';
 import getters, { GetterType } from './getters';
@@ -14,6 +15,7 @@ export default {
 
     orderOfLiberty: {
       id: NftAssetId.OrderOfLiberty,
+      networks: [Network.mainnet, Network.polygon, Network.fantom],
       balance: '0',
       name: 'The Order of Liberty',
       meta: {
@@ -58,6 +60,7 @@ export default {
     },
     movingWithOlympus: {
       id: NftAssetId.MovingWithOlympus,
+      networks: [Network.mainnet],
       balance: '0',
       name: 'Moving With Olympus',
       meta: {
@@ -100,6 +103,7 @@ export default {
     },
     unexpectedMove: {
       id: NftAssetId.UnexpectedMove,
+      networks: [Network.mainnet],
       balance: '0',
       name: 'Unexpected Move',
       picture: {
@@ -142,6 +146,7 @@ export default {
     },
     sweetAndSour: {
       id: NftAssetId.SweetAndSour,
+      networks: [Network.mainnet],
       balance: '0',
       name: 'Sweet & Sour',
       meta: {
@@ -183,6 +188,7 @@ export default {
     },
     vaults: {
       id: NftAssetId.Vaults,
+      networks: [Network.mainnet],
       balance: '0',
       name: 'Vaults',
       meta: {
@@ -224,6 +230,7 @@ export default {
     },
     dice: {
       id: NftAssetId.Dice,
+      networks: [Network.mainnet],
       balance: '0',
       name: 'Dice Project',
       meta: {
@@ -260,6 +267,33 @@ export default {
             src: require('@/assets/images/Dice_Project@2x.webp')
           }
         ]
+      }
+    },
+    baseledgerStakingOG: {
+      id: NftAssetId.BaseledgerStakingOG,
+      networks: [Network.polygon],
+      balance: '0',
+      name: '👨🐝☕️',
+      picture: {
+        src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@1x.png'),
+        sources: [
+          {
+            variant: '2x',
+            src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@2x.png')
+          }
+        ]
+      },
+      bigPicture: {
+        src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Big@1x.png'),
+        sources: [
+          {
+            variant: '2x',
+            src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Big@2x.png')
+          }
+        ]
+      },
+      meta: {
+        totalSupply: '0'
       }
     },
     swapPassport: isFeatureEnabled('isSwapPassportEnabled')

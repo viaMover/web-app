@@ -66,6 +66,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import {
   getTransferData,
   TransferData,
@@ -91,8 +92,8 @@ import { formatToNative } from '@/utils/format';
 import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
-import { CompoundEstimateWithUnwrapResponse } from '@/wallet/actions/types';
 import {
+  getALCXAssetData,
   getBTRFLYAssetData,
   getEURSAssetData,
   getUSDCAssetData,
@@ -100,7 +101,6 @@ import {
   validTopUpAssets
 } from '@/wallet/references/data';
 import {
-  SmallToken,
   SmallTokenInfo,
   SmallTokenInfoWithIcon,
   tokenToSmallTokenInfo,
@@ -194,7 +194,8 @@ export default Vue.extend({
       'provider'
     ]),
     ...mapState('debitCard', {
-      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex'
+      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
+      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
     }),
     ...mapGetters('account', ['treasuryBonusNative']),
     ...mapGetters('debitCard', {
@@ -331,21 +332,35 @@ export default Vue.extend({
       this.unwrapGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
+        const gasLimits = await estimateTopUpCompound(
           this.inputAsset,
-          this.transferData
+          this.usdcAsset,
+          this.inputAmount,
+          this.transferData,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
         this.unwrapGasLimit = gasLimits.unwrapGasLimit;
-        if (!gasLimits.error) {
-          this.changeStep('review');
-        }
-      } catch (err) {
-        Sentry.captureException(err);
-        return;
+        this.changeStep('review');
+      } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxReview',
+          message: 'Failed to estimate top-up',
+          data: {
+            error
+          }
+        });
+        console.error('Failed to estimate transaction', error);
+        Sentry.captureException(error);
       } finally {
         this.isProcessing = false;
       }
@@ -361,34 +376,6 @@ export default Vue.extend({
         actionGasLimit,
         this.ethPrice
       );
-    },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken,
-      transferData: TransferData | undefined
-    ): Promise<CompoundEstimateWithUnwrapResponse> {
-      const resp = await estimateTopUpCompound(
-        inputAsset,
-        this.usdcAsset,
-        inputAmount,
-        transferData,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
-        this.transferError = this.$t('estimationError') as string;
-        addSentryBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.estimateAction',
-          message: 'failed to estimate top-up',
-          data: {
-            estimateError: resp.error
-          }
-        });
-        Sentry.captureException("can't estimate top-up");
-      }
-      return resp;
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
@@ -462,6 +449,24 @@ export default Vue.extend({
                 toWei(newInputInTokens, referenceToken.decimals)
               );
             }
+
+            // gALCX unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
+              )
+            ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
+              );
+              referenceToken = getALCXAssetData(this.networkInfo.network);
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
+
             if (isZero(referenceAmount) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
@@ -589,6 +594,24 @@ export default Vue.extend({
                 toWei(newInputInTokens, referenceToken.decimals)
               );
             }
+
+            // gALCX unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
+              )
+            ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
+              );
+              referenceToken = getALCXAssetData(this.networkInfo.network);
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
+
             this.transferData = await getTransferData(
               this.usdcAsset.address,
               referenceToken.address,
@@ -624,6 +647,23 @@ export default Vue.extend({
                 fromWei(this.wxBTRFLYrealIndex, 9)
               );
               referenceToken = getBTRFLYAssetData(this.networkInfo.network);
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
+
+            // gALCX unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
+              )
+            ) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                fromWei(this.gALCXToALCXMultiplier, 18)
+              );
+              referenceToken = getALCXAssetData(this.networkInfo.network);
               inputInWei = getInteger(
                 toWei(newInputInTokens, referenceToken.decimals)
               );
