@@ -117,60 +117,18 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       );
     }
 
-    let isApproveNeeded = true;
-    try {
-      isApproveNeeded = await this.needsApprove(
-        inputAsset,
-        inputAmount,
-        lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
-      );
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: failed "needsApprove" check',
-        data: {
-          error,
-          inputAsset,
-          inputAmount
-        }
-      });
+    const approveGasLimit = await this.estimateApproveIfNeeded(
+      inputAsset,
+      inputAmount,
+      lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
+    );
 
-      throw new OnChainServiceError('Failed needsApprove check').wrap(error);
-    }
-
-    if (isApproveNeeded) {
-      addSentryBreadcrumb({
-        type: 'debug',
-        category: this.sentryCategoryPrefix,
-        message: 'Needs approve'
-      });
-
-      try {
-        const approveGasLimit = await this.estimateApprove(
-          inputAsset.address,
-          lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
-        );
-
-        return {
-          error: false,
-          actionGasLimit: ethDefaults.basic_holy_staking_deposit_ubt,
-          approveGasLimit: approveGasLimit
-        };
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to estimate deposit: failed "approve" estimation',
-          data: {
-            error,
-            inputAsset,
-            inputAmount
-          }
-        });
-
-        throw new OnChainServiceError('Failed approve estimation').wrap(error);
-      }
+    if (approveGasLimit !== undefined) {
+      return {
+        error: false,
+        approveGasLimit: approveGasLimit,
+        actionGasLimit: ethDefaults.basic_holy_savings_plus_deposit
+      };
     }
 
     try {

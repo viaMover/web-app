@@ -127,13 +127,76 @@ export abstract class OnChainService {
   }
 
   /**
-   * Checks whether an `approve` is required for `token` to be spent / processed by `contractAddress`
+   * Estimates `approve` gasLimit of given token if needed, otherwise returns `undefined`
    * @param token token info
    * @param amountToApprove amount to approve that is needed by transaction to execute successfully
    * @param contractAddress spender Smart Contract address
    * @protected
    */
-  protected async needsApprove(
+  protected async estimateApproveIfNeeded(
+    token: SmallTokenInfo,
+    amountToApprove: string,
+    contractAddress: string
+  ): Promise<string | undefined> {
+    try {
+      const needsApprove = await this.needsApprove(
+        token,
+        amountToApprove,
+        contractAddress
+      );
+
+      if (!needsApprove) {
+        return undefined;
+      }
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to "needsApprove" check',
+        data: {
+          error,
+          token,
+          amountToApprove,
+          contractAddress
+        }
+      });
+
+      throw new OnChainServiceError('Failed "needsApprove" check').wrap(error);
+    }
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message: 'Needs approve'
+    });
+
+    try {
+      return await this.estimateApprove(token.address, contractAddress);
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed "approve" estimation',
+        data: {
+          error,
+          token,
+          amountToApprove,
+          contractAddress
+        }
+      });
+
+      throw new OnChainServiceError('Failed approve estimation').wrap(error);
+    }
+  }
+
+  /**
+   * Checks whether an `approve` is required for `token` to be spent / processed by `contractAddress`
+   * @param token token info
+   * @param amountToApprove amount to approve that is needed by transaction to execute successfully
+   * @param contractAddress spender Smart Contract address
+   * @private
+   */
+  private async needsApprove(
     token: SmallTokenInfo,
     amountToApprove: string,
     contractAddress: string
@@ -186,7 +249,7 @@ export abstract class OnChainService {
     }
   }
 
-  protected async estimateApprove(
+  private async estimateApprove(
     tokenAddress: string,
     spenderAddress: string
   ): Promise<string | never> {
@@ -510,11 +573,11 @@ export abstract class OnChainService {
     return gasPriceInWei;
   }
 
-  protected addGasBuffer(gas: string, buffer = '120'): string {
+  protected addGasBuffer(gas: string | number, buffer = '120'): string {
     return OnChainService.addGasBuffer(gas, buffer);
   }
 
-  protected static addGasBuffer(gas: string, buffer = '120'): string {
+  protected static addGasBuffer(gas: string | number, buffer = '120'): string {
     return floorDivide(multiply(gas, buffer), '100');
   }
 }

@@ -35,6 +35,7 @@ export interface Globals {
   isHomeSwapModalEnabled: GlobalSettings;
   isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
+  isMoverAPISavingsPlusServiceFieldsReducerEnabled: GlobalSettings;
   isGasListenerEnabled: GlobalSettings;
   isStakingUbtEnabled: GlobalSettings;
   isStakingUbtFieldReducerEnabled: GlobalSettings;
@@ -95,6 +96,7 @@ const values: Globals = {
   isHomeSwapModalEnabled: true,
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
+  isMoverAPISavingsPlusServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],
   isStakingUbtFieldReducerEnabled: true
