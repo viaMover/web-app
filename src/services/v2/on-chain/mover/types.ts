@@ -39,13 +39,20 @@ export type HolyHandContract = CustomContractType<{
     _expectedMinimumReceived: string,
     _convertData: number[]
   ): ContractMethod;
+  bridgeAsset(
+    _token: string,
+    _amount: string,
+    _bridgeTxData: number[],
+    _relayTarget: string
+  ): ContractMethod;
   swapBridgeAsset(
     _tokenFrom: string,
     _tokenTo: string,
     _amountFrom: string,
     _expectedMinimumReceived: string,
     _convertData: number[],
-    _bridgeTxData: number[]
+    _bridgeTxData: number[],
+    _relayTarget: string
   ): ContractMethod;
 }>;
 
