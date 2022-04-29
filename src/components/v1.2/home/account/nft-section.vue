@@ -28,7 +28,7 @@ import { mapGetters } from 'vuex';
 
 import { BaseNftAsset } from '@/store/modules/nft/types';
 
-import { NftAssetCardMini } from '@/components/v1.2/nft';
+import NftAssetCardMini from '@/components/v1.2/nft/nft-asset-card-mini.vue';
 
 import BaseSection from './base-section.vue';
 

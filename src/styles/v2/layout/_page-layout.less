@@ -1,4 +1,6 @@
-.page {
+.app {
+  background-color: var(--background);
+
   .top-message-wrapper {
     z-index: 100;
     position: fixed;
@@ -42,109 +44,108 @@
     }
   }
 
-  .dashboard {
-    display: flex;
-    min-height: 100vh;
-    flex-flow: row nowrap;
+  //.dashboard {
+  //  display: flex;
+  //  min-height: 100vh;
+  //  flex-flow: row nowrap;
+  //
+  //  .page-content {
+  //    height: 100vh;
+  //    position: relative;
+  //    flex: 1 1 100%;
+  //    scrollbar-width: thin;
+  //    overflow-x: hidden;
+  //    overflow-y: auto;
+  //  }
+  //}
 
-    .page-content {
-      background-color: var(--background);
-      height: 100vh;
-      position: relative;
-      flex: 1 1 100%;
-      scrollbar-width: thin;
-      overflow-x: hidden;
-      overflow-y: auto;
+  .wrapper {
+    clear: none;
+    padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+    max-width: @page-max-width;
+    margin: auto;
 
-      &.two-sided {
-        .page-back-button.fixed {
-          position: fixed;
-          top: @button-page-inset;
+    &.two-sided {
+      .page-back-button.fixed {
+        position: fixed;
+        top: @button-page-inset;
+        left: @button-page-inset;
+
+        @media screen and (max-width: 1279px) {
           left: @button-page-inset;
-
-          @media screen and (max-width: 1279px) {
-            left: @button-page-inset;
-          }
-        }
-
-        .wrapper {
-          max-width: 100%;
-          margin: 0;
-          padding: 0;
-          display: flex;
-          flex-flow: row nowrap;
-          height: 100%;
-        }
-
-        .side {
-          &.left,
-          &.right {
-            width: 50%;
-          }
-
-          &.left {
-            padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
-            overflow-y: auto;
-          }
-
-          &.right {
-            padding: 0;
-          }
-
-          @media screen and (max-width: 1279px) {
-            &.left {
-              width: 100%;
-            }
-
-            &.right {
-              display: none;
-            }
-          }
         }
       }
 
       .wrapper {
-        clear: none;
-        padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
-        max-width: @page-max-width;
-        margin: auto;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-flow: row nowrap;
+        height: 100%;
       }
 
-      .page-close-button {
-        position: sticky;
-        float: right;
-        top: @button-page-inset;
-        right: @button-page-inset;
-        z-index: 10;
-        @drop-shadow();
-
-        & > * {
-          border-radius: initial;
+      .side {
+        &.left,
+        &.right {
+          width: 50%;
         }
 
-        &.fixed {
-          position: fixed;
-        }
-      }
-
-      .page-back-button {
-        position: sticky;
-        float: left;
-        top: @button-page-inset;
-        left: @button-page-inset;
-        z-index: 10;
-        @drop-shadow();
-
-        & > * {
-          border-radius: initial;
+        &.left {
+          padding: @page-inset-top @page-inset-right @page-inset-bottom @page-inset-left;
+          overflow-y: auto;
         }
 
-        &.fixed {
-          position: fixed;
-          top: @button-page-inset;
-          left: @button-page-inset;
+        &.right {
+          padding: 0;
+        }
+
+        @media screen and (max-width: 1279px) {
+          &.left {
+            width: 100%;
+          }
+
+          &.right {
+            display: none;
+          }
         }
       }
+    }
+  }
+
+  .page-close-button {
+    position: sticky;
+    float: right;
+    top: @button-page-inset;
+    right: @button-page-inset;
+    z-index: 10;
+    @drop-shadow();
+
+    & > * {
+      border-radius: initial;
+    }
+
+    &.fixed {
+      position: fixed;
+    }
+  }
+
+  .page-back-button {
+    position: sticky;
+    float: left;
+    top: @button-page-inset;
+    left: @button-page-inset;
+    z-index: 10;
+    @drop-shadow();
+
+    & > * {
+      border-radius: initial;
+    }
+
+    &.fixed {
+      position: fixed;
+      top: @button-page-inset;
+      left: @button-page-inset;
     }
   }
 }

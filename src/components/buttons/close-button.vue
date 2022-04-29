@@ -1,5 +1,5 @@
 <template>
-  <action-button class="round" @button-click="handleClick">
+  <action-button class="round button-close" @button-click="handleClick">
     <base-icon v-once icon-class="icon-close" />
   </action-button>
 </template>

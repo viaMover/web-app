@@ -1,5 +1,5 @@
 <template>
-  <content-wrapper class="wallet" has-close-button @close="handleClose">
+  <page class="wallet" has-close-button @close="handleClose">
     <div class="heading">
       <p class="title">{{ $t('walletBalance') }}</p>
       <h1 class="value">{{ formattedWalletBalanceNative }}</h1>
@@ -46,7 +46,7 @@
         />
       </home-wallet-collectibles-wrapper>
     </div>
-  </content-wrapper>
+  </page>
 </template>
 
 <script lang="ts">
@@ -58,13 +58,13 @@ import { greaterThan } from '@/utils/bigmath';
 import HomeWalletCollectiblesWrapper from '@/components/home/home-wallet/home-wallet-collectibles-wrapper.vue';
 import HomeWalletTokenItem from '@/components/home/home-wallet/home-wallet-token-item.vue';
 import HomeWalletTokensWrapper from '@/components/home/home-wallet/home-wallet-tokens-wrapper.vue';
-import { ContentWrapper } from '@/components/layout';
 import { NftAssetCardMini } from '@/components/nft';
 import { NibbleShopProductMini } from '@/components/nibble-shop';
+import Page from '@/components/v1.2/layout/page.vue';
 
 export default Vue.extend({
   components: {
-    ContentWrapper,
+    Page,
     HomeWalletTokensWrapper,
     HomeWalletTokenItem,
     HomeWalletCollectiblesWrapper,

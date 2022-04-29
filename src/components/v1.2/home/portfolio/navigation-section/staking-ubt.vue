@@ -2,7 +2,7 @@
   <base-item-image
     :description="stakingUBTBalance"
     description-class="bold emphasize"
-    navigate-to="staking-ubt-manage"
+    navigate-to="staking-ubt-about"
     :title="$t('staking')"
     title-class="medium muted"
   >

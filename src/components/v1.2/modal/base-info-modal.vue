@@ -40,7 +40,7 @@ import Vue, { PropType } from 'vue';
 import ActionButton from '@/components/buttons/action-button.vue';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
-import BaseModal from '@/components/v1.2/base-modal.vue';
+import BaseModal from '@/components/v1.2/modal/base-modal.vue';
 
 export default Vue.extend({
   name: 'BaseInfoModal',

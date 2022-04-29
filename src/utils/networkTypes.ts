@@ -26,6 +26,7 @@ export type NetworkInfo = {
     name: string;
   };
   rpcUrl: string;
+  fullDisplayedName?: string;
 };
 
 export const networks = new Array<NetworkInfo>(
@@ -43,7 +44,8 @@ export const networks = new Array<NetworkInfo>(
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
     },
-    rpcUrl: `https://mainnet.infura.io/v3/${APIKeys.INFURA_PROJECT_ID}`
+    rpcUrl: `https://mainnet.infura.io/v3/${APIKeys.INFURA_PROJECT_ID}`,
+    fullDisplayedName: 'Ethereum Mainnet'
   },
   {
     chainId: 3,
@@ -187,7 +189,8 @@ export const networks = new Array<NetworkInfo>(
       iconURL:
         'https://github.com/trustwallet/assets/raw/master/blockchains/fantom/info/logo.png'
     },
-    rpcUrl: 'https://rpc.ftm.tools/'
+    rpcUrl: 'https://rpc.ftm.tools/',
+    fullDisplayedName: 'Fantom Opera'
   }
 );
 

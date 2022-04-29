@@ -4,5 +4,6 @@
     "lastDay": "[Вчера]"
   },
   "whatIs": "Что такое {term}?",
-  "learnMoreAbout": "Узнай больше о {term}"
+  "learnMoreAbout": "Узнай больше о {term}",
+  "moduleBalance": "Баланс {moduleName}"
 }

@@ -1,27 +1,33 @@
 <template>
-  <secondary-page class="settings">
+  <div class="settings">
     <h1>{{ $t('settings') }}</h1>
 
     <div class="items">
-      <div class="address input">
-        <label for="wallet_address">
+      <div class="mb-40">
+        <label class="form-label" for="wallet_address">
           {{ $t('yourCurrentWallet') }}
         </label>
-        <input
-          id="wallet_address"
-          class="icon disabled"
-          disabled
-          size="42"
-          :value="currentAddress"
-        />
-        <button class="icon-container" type="button">
-          <base-icon icon-class="icon-log-out" />
-        </button>
+        <div class="input-group address">
+          <input
+            id="wallet_address"
+            class="form-control"
+            disabled
+            size="42"
+            :value="currentAddress"
+          />
+          <button
+            class="input-group-text"
+            type="button"
+            @click="disconnectWallet"
+          >
+            <base-icon icon-class="icon-log-out" />
+          </button>
+        </div>
       </div>
 
-      <div class="theme input-like">
-        <h3 class="label">{{ $t('themeSettings') }}</h3>
-        <div class="group">
+      <div class="theme mb-40">
+        <h3 class="form-label">{{ $t('themeSettings') }}</h3>
+        <div class="input-group group">
           <button
             v-for="button in themeButtons"
             :key="button.theme"
@@ -36,8 +42,10 @@
         </div>
       </div>
 
-      <div class="currency input-like">
-        <label for="native_currency">{{ $t('baseCurrency') }}</label>
+      <div class="currency mb-40">
+        <label class="form-label" for="native_currency">{{
+          $t('baseCurrency')
+        }}</label>
         <base-dropdown
           has-custom-option
           has-custom-selected-option
@@ -57,11 +65,11 @@
             <span class="currency">{{ currency }}</span>
           </template>
         </base-dropdown>
-        <p class="description">{{ $t('baseCurrencyDescription') }}</p>
+        <p class="form-text">{{ $t('baseCurrencyDescription') }}</p>
       </div>
 
-      <div class="language input-like">
-        <label for="language">{{ $t('language') }}</label>
+      <div class="language">
+        <label class="form-label" for="language">{{ $t('language') }}</label>
         <base-dropdown
           input-id="language"
           label="name"
@@ -71,7 +79,7 @@
         />
       </div>
     </div>
-  </secondary-page>
+  </div>
 </template>
 
 <script lang="ts">
@@ -82,7 +90,6 @@ import { availableLanguages, LanguageEntryItem } from '@/i18n';
 import { availableThemes, Theme } from '@/settings/theme';
 import { nativeCurrencyFormatters } from '@/store/modules/account/types';
 
-import { SecondaryPage } from '@/components/layout';
 import { BaseIcon } from '@/components/v1.2';
 import BaseDropdown from '@/components/v1.2/base-dropdown.vue';
 
@@ -98,7 +105,7 @@ type CurrencyItem = {
 };
 
 export default Vue.extend({
-  components: { BaseDropdown, SecondaryPage, BaseIcon },
+  components: { BaseDropdown, BaseIcon },
   data() {
     return {
       availableThemes,
@@ -153,13 +160,18 @@ export default Vue.extend({
       setLanguage: 'setLanguage'
     }),
     ...mapActions('account', {
-      changeNativeCurrency: 'changeNativeCurrency'
+      changeNativeCurrency: 'changeNativeCurrency',
+      clearWalletState: 'disconnectWallet'
     }),
     async handleChangeNativeCurrency(selected: CurrencyItem): Promise<void> {
       await this.changeNativeCurrency(selected.id);
     },
     async handleChangeLanguage(selected: LanguageEntryItem): Promise<void> {
       await this.setLanguage(selected.code);
+    },
+    async disconnectWallet(): Promise<void> {
+      await this.clearWalletState();
+      window.location.reload();
     }
   }
 });

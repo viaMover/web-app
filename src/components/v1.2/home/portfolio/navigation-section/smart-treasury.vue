@@ -3,7 +3,7 @@
     class="no-hover"
     :description="treasuryBalance"
     description-class="bold emphasize"
-    navigate-to="treasury-manage"
+    navigate-to="treasury-about"
     :title="$t('smartTreasury')"
     title-class="medium muted"
   >

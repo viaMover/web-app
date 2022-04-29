@@ -5,6 +5,30 @@
     width: fit-content;
   }
 
+  .vs__dropdown-toggle {
+    border: none;
+    padding: 0;
+  }
+
+  .vs__selected {
+    border: none;
+    margin: 0;
+    padding: 12px 16px;
+  }
+
+  &.vs--unsearchable {
+    .vs__search {
+      padding: 0;
+      margin: 0;
+    }
+  }
+
+  .vs__actions {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-right: 16px;
+  }
+
   &.vs--single.vs--open {
     .vs__selected {
       position: initial;
@@ -19,7 +43,7 @@
 
   /* Font */
   --vs-font-size: 16px;
-  --vs-line-height: 1.5;
+  --vs-line-height: 24px;
 
   /* Disabled State */
   --vs-state-disabled-bg: var(--background);

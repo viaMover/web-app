@@ -1,5 +1,5 @@
 <template>
-  <content-wrapper class="transactions" has-close-button @close="handleClose">
+  <page class="transactions" has-close-button @close="handleClose">
     <transition name="fade">
       <transactions-list-skeleton v-if="showSkeleton" />
       <div v-else-if="transactionGroups.length === 0" class="empty-state">
@@ -31,7 +31,7 @@
         </infinite-loading>
       </div>
     </transition>
-  </content-wrapper>
+  </page>
 </template>
 
 <script lang="ts">
@@ -39,13 +39,13 @@ import Vue from 'vue';
 import InfiniteLoading, { StateChanger } from 'vue-infinite-loading';
 import { mapGetters, mapState } from 'vuex';
 
-import { ContentWrapper } from '@/components/layout';
+import Page from '@/components/v1.2/layout/page.vue';
 import TransactionsListGroup from '@/components/v1.2/transactions/transactions-list-group.vue';
 import TransactionsListSkeleton from '@/components/v1.2/transactions/transactions-list-skeleton.vue';
 
 export default Vue.extend({
   components: {
-    ContentWrapper,
+    Page,
     TransactionsListGroup,
     TransactionsListSkeleton,
     InfiniteLoading

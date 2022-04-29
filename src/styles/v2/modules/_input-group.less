@@ -1,0 +1,55 @@
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+
+  > .form-control,
+  > .form-select {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+  }
+
+  > .form-control:focus,
+  > .form-select:focus {
+    z-index: 3;
+  }
+
+  .btn {
+    position: relative;
+    z-index: 2;
+
+    &:focus {
+      z-index: 3;
+    }
+  }
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+  text-align: center;
+  white-space: nowrap;
+  background-color: var(--main-item);
+  border-radius: 8px;
+
+  i[class*="icon"] {
+    font-size: inherit;
+  }
+}
+
+.input-group {
+  > :not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  > :not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}

@@ -1,0 +1,160 @@
+.module {
+  .links {
+    .items .item {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+
+      .info {
+        flex: auto;
+        color: var(--primary-text);
+      }
+
+      margin-bottom: 24px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .icon {
+        font-size: 16px;
+        line-height: 24px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-self: flex-start;
+        align-items: center;
+        text-align: center;
+        flex-grow: 0;
+        flex-shrink: 0;
+        margin-right: 16px;
+
+        i[class*="icon-"]:before {
+          line-height: 24px;
+          font-size: 24px;
+        }
+
+        img,
+        .pu-skeleton {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      &.active {
+        .info {
+          @font-bold();
+        }
+      }
+
+      .info {
+        font-size: 16px;
+        line-height: 24px;
+        @font-medium();
+      }
+    }
+  }
+
+  &.about {
+    .heading {
+      margin-bottom: 80px;
+
+      .title {
+        color: var(--secondary-text);
+        margin-bottom: 8px;
+      }
+    }
+
+    .container {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-around;
+      row-gap: 24px;
+      column-gap: 120px;
+
+      .links {
+        flex: 1 1 auto;
+      }
+
+      .info {
+        flex: 2 0 auto;
+
+        .image {
+          width: 100%;
+          height: 100vh; // fixme: replace stub
+          max-width: 400px;
+          max-height: 240px;
+          margin-bottom: 40px;
+          background: var(--savings);
+        }
+
+        .analytics-list {
+          .title,
+          .description {
+            font-size: 16px;
+            line-height: 24px;
+          }
+
+          > .title {
+            margin-bottom: 24px;
+            color: var(--primary-text);
+            @font-bold();
+          }
+
+          .items {
+            .item {
+              display: block;
+              margin-bottom: 24px;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+
+              .title {
+                color: var(--secondary-text);
+              }
+
+              .description {
+                margin-top: 8px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.manage {
+    margin-top: 40px; // another 40px are page default padding
+
+    .links {
+      display: flex;
+      flex-flow: row nowrap;
+      gap: 24px;
+
+      .button-back,
+      .button-close {
+        flex: 0 0 auto;
+      }
+
+      .button-close {
+        justify-self: flex-end;
+      }
+
+      .items {
+        flex: 1 1 auto;
+        align-items: center;
+        display: flex;
+        flex-flow: row wrap;
+        column-gap: 40px;
+        row-gap: 24px;
+
+        .item {
+          margin-bottom: initial;
+        }
+      }
+    }
+  }
+}

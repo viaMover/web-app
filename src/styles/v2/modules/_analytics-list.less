@@ -6,10 +6,7 @@
   }
 
   & > .title {
-    font-size: 24px;
-    line-height: 32px;
     margin-bottom: 24px;
-    color: @text-primary;
     @font-bold();
   }
 
@@ -33,7 +30,7 @@
         font-size: 16px;
         line-height: 24px;
         margin-top: 8px;
-        color: @text-muted;
+        color: var(--secondary-text);
       }
 
       &.progress {
@@ -51,7 +48,7 @@
         .icon {
           display: flex;
           align-items: center;
-          background: linear-gradient(0deg, @background, @background);
+          background: var(--main-item);
           border-radius: 50%;
           width: 30px;
           height: 30px;
@@ -87,7 +84,7 @@
             margin-top: revert;
             font-size: 12px;
             line-height: 16px;
-            color: @text-muted;
+            color: var(--secondary-text);
             @font-regular();
           }
         }

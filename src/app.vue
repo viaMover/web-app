@@ -1,6 +1,6 @@
 <template>
   <pu-skeleton-theme
-    class="page"
+    class="app"
     :color="skeletonColor"
     :highlight="skeletonHighlightColor"
     tag="div"

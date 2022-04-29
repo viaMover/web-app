@@ -1,7 +1,7 @@
 .settings {
-  .address.input input {
-    min-width: ~"min(100%, 42ch)";
-    max-width: 100%;
+  .address input {
+    max-width: calc(42ch + 48px);
+    min-width: ~"min(42ch, 100%)";
   }
 
   .theme {
@@ -37,37 +37,37 @@
     }
   }
 
- .currency {
-   .dropdown {
-     .vs__dropdown-option {
-       display: flex;
+  .currency {
+    .dropdown {
+      .vs__dropdown-option {
+        display: flex;
 
-       .currency {
-         flex: 1 0 auto;
-       }
-     }
+        .currency {
+          flex: 1 0 auto;
+        }
+      }
 
-     .flag {
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       width: 32px;
-       height: $width;
-       margin-right: 24px;
-       font-size: 16px;
-       line-height: 20px;
-     }
+      .vs__selected,
+      .vs__actions{
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
 
-     .currency {
-       display: flex;
-       align-items: center;
-       @font-bold();
-     }
-   }
+      .flag {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: $width;
+        margin-right: 24px;
+        font-size: 20px;
+        line-height: 32px;
+      }
 
-   .description {
-     margin-top: 16px;
-     color: var(--secondary-text);
-   }
- }
+      .currency {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
 }

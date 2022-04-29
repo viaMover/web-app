@@ -5,5 +5,6 @@
   },
   "whatIs": "What is {term}?",
   "learnMoreAbout": "Learn more about {term}",
-  "whatIsMoveText": "Move (pronounced as /mOOv/) is the native token of the Mover ecosystem. It fuels the products and provides additional perks and benefits to the holders.{br}{br}For example, if you reserve (time-lock) your moves in the Smart Treasury, you will start accumulating rewards. You will get additional moves, rewards from the Mover DAO, and ecosystem rewards you can exchange for free gasless transactions! Many benefits — good move.{br}{br}Move is also used in the ecosystem governance, and allows you to participate in the critical decisions of the ecosystem and express your voice in the governance voting."
+  "whatIsMoveText": "Move (pronounced as /mOOv/) is the native token of the Mover ecosystem. It fuels the products and provides additional perks and benefits to the holders.{br}{br}For example, if you reserve (time-lock) your moves in the Smart Treasury, you will start accumulating rewards. You will get additional moves, rewards from the Mover DAO, and ecosystem rewards you can exchange for free gasless transactions! Many benefits — good move.{br}{br}Move is also used in the ecosystem governance, and allows you to participate in the critical decisions of the ecosystem and express your voice in the governance voting.",
+  "moduleBalance": "{moduleName} Balance"
 }

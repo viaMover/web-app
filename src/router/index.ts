@@ -613,60 +613,57 @@ const newRoutes: Array<RouteConfig> = [
         /* webpackChunkName: "transactions" */ '@/views/v1.2/transactions.vue'
       )
   },
-  wrapWithCustomPreloadView(
+  wrapWithMeta(
     {
       path: '/savings',
       component: () =>
         import(
-          /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
+          /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-root.vue'
         ),
       children: [
         {
           path: '',
-          name: 'savings-manage',
+          name: 'savings-about',
           component: () =>
             import(
-              /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
+              /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-about.vue'
             )
         },
         {
-          path: 'deposit',
-          name: 'savings-deposit',
+          path: 'manage',
           component: () =>
             import(
-              /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit-wrapper.vue'
-            )
-        },
-        {
-          path: 'withdraw',
-          name: 'savings-withdraw',
-          component: () =>
-            import(
-              /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw-wrapper.vue'
-            )
-        },
-        {
-          path: 'analytics',
-          name: 'savings-global-analytics',
-          component: () =>
-            import(
-              /* webpackChunkName: "savings"*/ '@/views/savings/savings-global-analytics.vue'
-            )
-        },
-        {
-          path: 'month-statistics/:year/:month',
-          name: 'savings-month-stats',
-          component: () =>
-            import(
-              /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
-            )
+              /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-manage.vue'
+            ),
+          children: [
+            {
+              path: 'deposit',
+              name: 'savings-deposit',
+              component: () =>
+                import(
+                  /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-deposit.vue'
+                )
+            },
+            {
+              path: 'withdraw',
+              name: 'savings-withdraw',
+              component: () =>
+                import(
+                  /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-withdraw.vue'
+                )
+            },
+            {
+              path: 'analytics',
+              name: 'savings-analytics',
+              component: () =>
+                import(
+                  /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-analytics.vue'
+                )
+            }
+          ]
         }
       ]
     },
-    () =>
-      import(
-        /* webpackChunkName: "savings" */ '@/views/preload/preload-product/preload-product.vue'
-      ),
     {
       customCondition: (store?: Store<RootStoreState>): boolean => {
         if (store === undefined) return false;

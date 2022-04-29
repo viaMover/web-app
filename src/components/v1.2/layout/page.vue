@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="page">
     <back-button
       v-if="hasBackButton"
       class="page-back-button"

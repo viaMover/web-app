@@ -2,7 +2,7 @@
   <base-item-image
     :description="savingsPlusBalance"
     description-class="bold emphasize"
-    navigate-to="savings-plus-manage"
+    navigate-to="savings-plus-about"
     :title="$t('savingsPlus.lblSavingsPlus')"
     title-class="medium muted"
   >

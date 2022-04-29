@@ -1,13 +1,8 @@
 <template>
   <div class="action prepare">
     <secondary-page-header
-      class="max-width"
       :description="headerDescription"
       :title="headerTitle"
-    />
-    <secondary-page-info
-      :description="operationDescription"
-      :title="operationTitle"
     />
 
     <form class="action form prepare" @submit.prevent="handleReviewTx">
@@ -117,10 +112,7 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 import { ActionButton } from '@/components/buttons';
 import { ArrowDownIcon, DynamicInput } from '@/components/controls';
 import { InputMode } from '@/components/forms/prepare-form/types';
-import {
-  SecondaryPageHeader,
-  SecondaryPageInfo
-} from '@/components/layout/secondary-page';
+import { SecondaryPageHeader } from '@/components/layout/secondary-page';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
@@ -128,7 +120,6 @@ export default Vue.extend({
   components: {
     TokenImage,
     SecondaryPageHeader,
-    SecondaryPageInfo,
     ActionButton,
     ArrowDownIcon,
     DynamicInput
@@ -159,14 +150,6 @@ export default Vue.extend({
       default: ''
     },
     headerDescription: {
-      type: String,
-      default: ''
-    },
-    operationTitle: {
-      type: String,
-      default: ''
-    },
-    operationDescription: {
       type: String,
       default: ''
     },

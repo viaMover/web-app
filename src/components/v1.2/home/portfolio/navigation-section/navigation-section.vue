@@ -25,7 +25,7 @@
           <base-item-icon
             v-if="isSavingsEnabled"
             icon-class="icon-about-savings"
-            navigate-to="savings"
+            navigate-to="savings-deposit"
             :text="$t('manageSavings')"
           />
 
@@ -39,7 +39,7 @@
           <base-item-icon
             v-if="isTreasuryEnabled"
             icon-class="icon-about-smart-treasury"
-            navigate-to="treasury"
+            navigate-to="treasury-increase-boost"
             :text="$t('manageSmartTreasury')"
           />
 

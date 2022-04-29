@@ -1,8 +1,8 @@
 <template>
   <div class="analytics-list">
-    <h1 class="title">
+    <component :is="headerComponent" class="title">
       <slot name="title">{{ title }}</slot>
-    </h1>
+    </component>
     <div class="description">
       <slot name="description">{{ description }}</slot>
     </div>
@@ -13,11 +13,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
   name: 'AnalyticsList',
   props: {
+    headerComponent: {
+      type: String as PropType<'h1' | 'h2'>,
+      default: 'h1'
+    },
     wrapperClass: {
       type: String,
       default: undefined
