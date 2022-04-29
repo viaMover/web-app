@@ -34,7 +34,10 @@ import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
-import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import {
   getAvatarFromPersist,
   getIsOlympusAvatarKnownFromPersist,
@@ -50,6 +53,7 @@ import {
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
 import { toArray } from '@/utils/arrays';
+import { toWei } from '@/utils/bigmath';
 import { CommonErrors, errorToString } from '@/utils/errors';
 import { NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
@@ -59,6 +63,7 @@ import {
   clearOffchainExplorer,
   initOffchainExplorer
 } from '@/wallet/offchainExplorer';
+import { getBaseAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import {
   SmallTokenInfo,
@@ -618,6 +623,74 @@ const actions: ActionFuncs<
       dispatch('savingsPlus/setOnChainService', savingsPlusOnChainService, {
         root: true
       });
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window.sendDepositTx = async (tokenName: string, amount: string) => {
+        try {
+          const baseAssetData = getBaseAssetData(state.networkInfo.network);
+          const usdcAssetData = getUSDCAssetData(state.networkInfo.network);
+
+          let transferData;
+          let inputAssetData;
+          switch (tokenName) {
+            case 'base':
+              inputAssetData = baseAssetData;
+              transferData = await state.swapAPIService?.getTransferData(
+                usdcAssetData.address,
+                inputAssetData.address,
+                toWei(amount, inputAssetData.decimals),
+                true,
+                '10'
+              );
+
+              console.debug('Received 0x transfer data:', transferData);
+              break;
+            default:
+              inputAssetData = usdcAssetData;
+          }
+
+          const depositTxData =
+            await savingsPlusAPIService.getDepositTransactionData(
+              toWei(amount, inputAssetData.decimals)
+            );
+          console.debug('Received tx explanation', depositTxData);
+
+          const estimation =
+            await savingsPlusOnChainService.estimateDepositCompound(
+              inputAssetData,
+              usdcAssetData,
+              amount,
+              transferData,
+              depositTxData
+            );
+          console.debug('Received estimation', estimation);
+
+          await savingsPlusOnChainService.depositCompound(
+            inputAssetData,
+            usdcAssetData,
+            amount,
+            transferData,
+            depositTxData,
+            async () => console.info('In process'),
+            estimation.actionGasLimit,
+            estimation.approveGasLimit
+          );
+        } catch (error) {
+          captureSentryException(error);
+        }
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window.getInfo = async () => {
+        try {
+          const info = await savingsPlusAPIService.getInfo();
+          console.debug('Received info', info);
+        } catch (error) {
+          captureSentryException(error);
+        }
+      };
     }
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {
