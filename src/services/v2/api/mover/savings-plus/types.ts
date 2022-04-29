@@ -1,18 +1,26 @@
+export enum DepositExecution {
+  Direct = 'direct',
+  Bridged = 'bridged'
+}
+
 export type DepositWithBridgeTransactionData = {
+  execution: DepositExecution.Bridged;
   bridgeTxAddress: string;
   bridgeTxData: string;
   estimatedReceived: string;
   depositFee: string;
   bridgeFee: string;
+  targetChainRelay: string;
 };
 
 export const isDepositWithBridgeTransactionData = (
   data?: DepositTransactionData
 ): data is DepositWithBridgeTransactionData => {
-  return data !== undefined && 'bridgeFee' in data;
+  return data !== undefined && data.execution === DepositExecution.Bridged;
 };
 
 export type DepositOnlyTransactionData = {
+  execution: DepositExecution.Direct;
   depositPoolAddress: string;
   depositFee: string;
 };
@@ -22,6 +30,7 @@ export type DepositTransactionData =
   | DepositOnlyTransactionData;
 
 export enum WithdrawExecution {
+  Wallet = 'wallet',
   Backend = 'backend'
 }
 
@@ -30,7 +39,7 @@ export enum WithdrawReasonCode {
 }
 
 export type WithdrawComplexTransactionData = {
-  execution: WithdrawExecution;
+  execution: WithdrawExecution.Backend;
   reasonCode: WithdrawReasonCode;
   estimatedReceived: string;
   withdrawFee: string;
@@ -40,10 +49,11 @@ export type WithdrawComplexTransactionData = {
 export const isWithdrawComplexTransactionData = (
   data?: WithdrawTransactionData
 ): data is WithdrawComplexTransactionData => {
-  return data !== undefined && 'estimatedReceived' in data;
+  return data !== undefined && data.execution === WithdrawExecution.Backend;
 };
 
 export type WithdrawOnlyTransactionData = {
+  execution: WithdrawExecution.Wallet;
   withdrawPoolAddress: string;
   withdrawFee: string;
 };

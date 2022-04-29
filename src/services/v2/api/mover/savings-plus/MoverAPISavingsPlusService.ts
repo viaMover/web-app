@@ -11,11 +11,13 @@ import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfo } from '@/wallet/types';
 
 import {
+  DepositExecution,
   DepositTransactionData,
   SavingsPlusActionHistoryItem,
   SavingsPlusInfo,
   SavingsPlusInfoAPIResponse,
   SavingsPlusMonthBalanceItem,
+  WithdrawExecution,
   WithdrawTransactionData
 } from './types';
 
@@ -57,7 +59,7 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
       throw new MoverError(`Failed to get chainId of network ${this.network}`);
     }
 
-    return (
+    const data = (
       await this.client.post<
         MoverAPISuccessfulResponse<DepositTransactionData>
       >('/depositTx', {
@@ -66,6 +68,21 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
         address: this.currentAddress
       })
     ).data.payload;
+
+    if (
+      ![DepositExecution.Direct, DepositExecution.Bridged].includes(
+        data.execution
+      )
+    ) {
+      throw new MoverError(
+        'Received invalid deposit transaction data. Validation failed',
+        {
+          data
+        }
+      );
+    }
+
+    return data;
   }
 
   public async getWithdrawTransactionData(
@@ -77,7 +94,7 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
       throw new MoverError(`Failed to get chainId of network ${this.network}`);
     }
 
-    return (
+    const data = (
       await this.client.post<
         MoverAPISuccessfulResponse<WithdrawTransactionData>
       >('/withdrawTx', {
@@ -86,6 +103,21 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
         address: this.currentAddress
       })
     ).data.payload;
+
+    if (
+      ![WithdrawExecution.Wallet, WithdrawExecution.Backend].includes(
+        data.execution
+      )
+    ) {
+      throw new MoverError(
+        'Received invalid withdraw transaction data. Validation failed',
+        {
+          data
+        }
+      );
+    }
+
+    return data;
   }
 
   protected static mapInfo(data: SavingsPlusInfoAPIResponse): SavingsPlusInfo {
