@@ -57,13 +57,10 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     transferData: TransferData | undefined,
     depositData: DepositTransactionData | undefined
   ): Promise<CompoundEstimateResponse> {
-    if (
-      !this.isValidUSDCishToken(inputAsset.address) &&
-      !this.isValidUSDCishToken(outputAsset.address)
-    ) {
+    if (!this.isValidUSDCishToken(outputAsset.address)) {
       throw new OnChainServiceError(
-        'Wrong tokens supplied to estimateDepositCompound(). ' +
-          'Neither inputAsset nor outputAsset is USDC-ish',
+        'Wrong token supplied to estimateDepositCompound(). ' +
+          'outputAsset is not USDC-ish',
         {
           inputAsset,
           outputAsset
@@ -102,6 +99,18 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
     try {
       if (isDepositWithBridgeTransactionData(depositData)) {
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: this.sentryCategoryPrefix,
+          message: 'Needs bridge. Will estimateDepositWithBridge',
+          data: {
+            inputAsset,
+            outputAsset,
+            transferData,
+            depositData
+          }
+        });
+
         return await this.estimateDepositWithBridge(
           inputAsset,
           outputAsset,
@@ -110,6 +119,18 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
           depositData
         );
       }
+
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message: 'Does not need bridge. Will estimateDeposit',
+        data: {
+          inputAsset,
+          outputAsset,
+          transferData,
+          depositData
+        }
+      });
 
       return await this.estimateDeposit(
         inputAsset,
@@ -137,21 +158,18 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
   public async depositCompound(
     inputAsset: SmallTokenInfo,
-    inputAmount: string,
     outputAsset: SmallTokenInfo,
-    transferData: TransferData,
+    inputAmount: string,
+    transferData: TransferData | undefined,
     depositData: DepositTransactionData,
     changeStepToProcess: () => Promise<void>,
     actionGasLimit: string,
     approveGasLimit: string
   ): Promise<TransactionReceipt> {
-    if (
-      !this.isValidUSDCishToken(inputAsset.address) &&
-      !this.isValidUSDCishToken(outputAsset.address)
-    ) {
+    if (!this.isValidUSDCishToken(outputAsset.address)) {
       throw new OnChainServiceError(
-        'Wrong tokens supplied to depositCompound(). ' +
-          'Neither inputAsset nor outputAsset is USDC-ish',
+        'Wrong token supplied to depositCompound(). ' +
+          'outputAsset is not USDC-ish',
         {
           inputAsset,
           outputAsset
@@ -177,6 +195,18 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         inputAmount,
         (newGasLimit) => {
           if (isDepositWithBridgeTransactionData(depositData)) {
+            addSentryBreadcrumb({
+              type: 'debug',
+              category: this.sentryCategoryPrefix,
+              message: 'Needs bridge. Will depositWithBridge',
+              data: {
+                inputAsset,
+                outputAsset,
+                transferData,
+                depositData
+              }
+            });
+
             return this.depositWithBridge(
               inputAsset,
               outputAsset,
@@ -187,6 +217,18 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
               newGasLimit
             );
           }
+
+          addSentryBreadcrumb({
+            type: 'debug',
+            category: this.sentryCategoryPrefix,
+            message: 'Does not need bridge. Will deposit',
+            data: {
+              inputAsset,
+              outputAsset,
+              transferData,
+              depositData
+            }
+          });
 
           return this.deposit(
             inputAsset,
@@ -527,20 +569,57 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       }
     });
 
+    const methodParams = {
+      _tokenFrom: this.substituteAssetAddressIfNeeded(inputAsset.address),
+      _tokenTo: outputAsset.address,
+      _amountFrom: toWei(inputAmount, inputAsset.decimals),
+      _expectedMinimumReceived:
+        this.mapTransferDataToExpectedMinimumAmount(transferData),
+      _convertData: this.mapTransferDataToBytes(transferData),
+      _bridgeTxData: this.mapDepositDataToBytes(depositData),
+      _targetChainRelay: depositData.targetChainRelay
+    };
+    const estimateGasParams = {
+      from: this.currentAddress,
+      value: this.mapTransferDataToValue(transferData)
+    };
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message: 'About to swapBridgeAsset',
+      data: {
+        methodParams,
+        estimateGasParams
+      }
+    });
+
     const gasLimitObj = await this.centralTransferProxyContract.methods
       .swapBridgeAsset(
-        this.substituteAssetAddressIfNeeded(inputAsset.address),
-        outputAsset.address,
-        toWei(inputAmount, inputAsset.decimals),
-        this.mapTransferDataToExpectedMinimumAmount(transferData),
-        this.mapTransferDataToBytes(transferData),
-        this.mapDepositDataToBytes(depositData),
-        depositData.targetChainRelay
+        methodParams._tokenFrom,
+        methodParams._tokenTo,
+        methodParams._amountFrom,
+        methodParams._expectedMinimumReceived,
+        methodParams._convertData,
+        methodParams._bridgeTxData,
+        methodParams._targetChainRelay
       )
-      .estimateGas({
-        from: this.currentAddress,
-        value: this.mapTransferDataToValue(transferData)
-      });
+      .estimateGas(estimateGasParams);
+
+    // const gasLimitObj = await this.centralTransferProxyContract.methods
+    //   .swapBridgeAsset(
+    //     this.substituteAssetAddressIfNeeded(inputAsset.address),
+    //     outputAsset.address,
+    //     toWei(inputAmount, inputAsset.decimals),
+    //     this.mapTransferDataToExpectedMinimumAmount(transferData),
+    //     this.mapTransferDataToBytes(transferData),
+    //     this.mapDepositDataToBytes(depositData),
+    //     depositData.targetChainRelay
+    //   )
+    //   .estimateGas({
+    //     from: this.currentAddress,
+    //     value: this.mapTransferDataToValue(transferData)
+    //   });
 
     return {
       error: false,
@@ -552,7 +631,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
   protected async deposit(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
-    transferData: TransferData,
+    transferData: TransferData | undefined,
     depositData: DepositOnlyTransactionData,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string

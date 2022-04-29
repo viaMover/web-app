@@ -24,6 +24,7 @@ import {
 export class MoverAPISavingsPlusService extends MoverAPIService {
   protected baseURL: string;
   protected readonly client: AxiosInstance;
+  protected readonly apiviewClient: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'savings-plus.api.service';
   protected readonly usdcAssetData: SmallTokenInfo;
   protected static readonly isFieldsReducerEnabled = isFeatureEnabled(
@@ -38,12 +39,17 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
         baseURL: this.baseURL
       })
     );
+    this.apiviewClient = this.applyAxiosInterceptors(
+      axios.create({
+        baseURL: 'https://apiview.viamover.com/api/v1/savingsplus'
+      })
+    );
     this.usdcAssetData = getUSDCAssetData(network);
   }
 
   public async getInfo(): Promise<SavingsPlusInfo> {
     const data = (
-      await this.client.get<
+      await this.apiviewClient.get<
         MoverAPISuccessfulResponse<SavingsPlusInfoAPIResponse>
       >(`/info/${this.currentAddress}`)
     ).data.payload;
@@ -52,7 +58,7 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
   }
 
   public async getDepositTransactionData(
-    inputAmountInUSDC: string
+    inputAmountInUSDCWei: string
   ): Promise<DepositTransactionData> {
     const chainId = getNetwork(this.network)?.chainId;
     if (chainId === undefined) {
@@ -64,7 +70,7 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
         MoverAPISuccessfulResponse<DepositTransactionData>
       >('/depositTx', {
         from: chainId,
-        amount: inputAmountInUSDC,
+        amount: inputAmountInUSDCWei,
         address: this.currentAddress
       })
     ).data.payload;
