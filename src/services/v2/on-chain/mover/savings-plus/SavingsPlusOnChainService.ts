@@ -171,12 +171,11 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     }
 
     try {
-      // todo revisit once https://github.com/viaMover/web-app/pull/336 is merged to develop
       return this.executeTransactionWithApprove(
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
-        () => {
+        (newGasLimit) => {
           if (isDepositWithBridgeTransactionData(depositData)) {
             return this.depositWithBridge(
               inputAsset,
@@ -185,7 +184,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
               transferData,
               depositData,
               changeStepToProcess,
-              actionGasLimit
+              newGasLimit
             );
           }
 
@@ -195,11 +194,20 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
             transferData,
             depositData,
             changeStepToProcess,
-            actionGasLimit
+            newGasLimit
           );
         },
+        () =>
+          this.estimateDepositCompound(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData,
+            depositData
+          ),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -476,6 +484,49 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       );
     }
 
+    if (transferData === undefined) {
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message:
+          'transferData is undefined. Estimate bridgeAsset instead of swapBridgeAsset',
+        data: {
+          inputAsset,
+          outputAsset,
+          transferData,
+          depositData
+        }
+      });
+
+      const gasLimitObj = await this.centralTransferProxyContract.methods
+        .bridgeAsset(
+          this.substituteAssetAddressIfNeeded(outputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          this.mapDepositDataToBytes(depositData),
+          depositData.targetChainRelay
+        )
+        .estimateGas({ from: this.currentAddress });
+
+      return {
+        error: false,
+        approveGasLimit: '0',
+        actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+      };
+    }
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message:
+        'transferData is not undefined so additional swap is needed. Estimate swapBridgeAsset instead of bridgeAsset',
+      data: {
+        inputAsset,
+        outputAsset,
+        transferData,
+        depositData
+      }
+    });
+
     const gasLimitObj = await this.centralTransferProxyContract.methods
       .swapBridgeAsset(
         this.substituteAssetAddressIfNeeded(inputAsset.address),
@@ -483,7 +534,8 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         toWei(inputAmount, inputAsset.decimals),
         this.mapTransferDataToExpectedMinimumAmount(transferData),
         this.mapTransferDataToBytes(transferData),
-        this.mapDepositDataToBytes(depositData)
+        this.mapDepositDataToBytes(depositData),
+        depositData.targetChainRelay
       )
       .estimateGas({
         from: this.currentAddress,
@@ -539,7 +591,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     inputAsset: SmallTokenInfo,
     outputAsset: SmallTokenInfo,
     inputAmount: string,
-    transferData: TransferData,
+    transferData: TransferData | undefined,
     depositData: DepositWithBridgeTransactionData,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
@@ -552,6 +604,50 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         );
       }
 
+      if (transferData === undefined) {
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: this.sentryCategoryPrefix,
+          message:
+            'transferData is undefined. Execute bridgeAsset instead of swapBridgeAsset',
+          data: {
+            inputAsset,
+            outputAsset,
+            transferData,
+            depositData
+          }
+        });
+
+        this.wrapWithSendMethodCallbacks(
+          this.centralTransferProxyContract.methods
+            .bridgeAsset(
+              this.substituteAssetAddressIfNeeded(outputAsset.address),
+              toWei(inputAmount, inputAsset.decimals),
+              this.mapDepositDataToBytes(depositData),
+              depositData.targetChainRelay
+            )
+            .send(this.getDefaultTransactionsParams(gasLimit)),
+          resolve,
+          reject,
+          changeStepToProcess
+        );
+
+        return;
+      }
+
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message:
+          'transferData is not undefined so additional swap is needed. Execute swapBridgeAsset instead of bridgeAsset',
+        data: {
+          inputAsset,
+          outputAsset,
+          transferData,
+          depositData
+        }
+      });
+
       this.wrapWithSendMethodCallbacks(
         this.centralTransferProxyContract.methods
           .swapBridgeAsset(
@@ -560,7 +656,8 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
             toWei(inputAmount, inputAsset.decimals),
             this.mapTransferDataToExpectedMinimumAmount(transferData),
             this.mapTransferDataToBytes(transferData),
-            this.mapDepositDataToBytes(depositData)
+            this.mapDepositDataToBytes(depositData),
+            depositData.targetChainRelay
           )
           .send(
             this.getDefaultTransactionsParams(
