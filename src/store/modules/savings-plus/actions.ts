@@ -5,10 +5,7 @@ import {
   SavingsPlusInfo
 } from '@/services/v2/api/mover/savings-plus';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
-import {
-  getFromPersistStoreWithExpire,
-  setToPersistStore
-} from '@/settings/persist/utils';
+import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
@@ -18,7 +15,6 @@ import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
   ensureAPIServiceExists,
-  ensureOnChainServiceExists,
   SavingsPlusStoreState,
   SetSavingsPlusReceiptPayload
 } from './types';
@@ -137,15 +133,15 @@ const actions: ActionFuncs<
         );
       }
 
-      if (ensureAccountStateIsSafe(rootState.account)) {
-        setToPersistStore(
-          rootState.account.currentAddress,
-          'savingsPlus',
-          'info',
-          info,
-          INFO_TIME_EXPIRE
-        );
-      }
+      // if (ensureAccountStateIsSafe(rootState.account)) {
+      //   setToPersistStore(
+      //     rootState.account.currentAddress,
+      //     'savingsPlus',
+      //     'info',
+      //     info,
+      //     INFO_TIME_EXPIRE
+      //   );
+      // }
     } catch (error) {
       console.error('Failed to fetch Savings info', error);
       Sentry.captureException(error);
