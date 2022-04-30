@@ -25,7 +25,10 @@ import {
 } from '@/services/v2/api/theGraph';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
-import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
+import {
+  InvalidNetworkForOperationError,
+  SavingsPlusOnChainService
+} from '@/services/v2/on-chain/mover/savings-plus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
@@ -48,10 +51,11 @@ import {
   setToPersistStore
 } from '@/settings/persist/utils';
 import { ActionFuncs } from '@/store/types';
+import { sameAddress } from '@/utils/address';
 import { toArray } from '@/utils/arrays';
-import { toWei } from '@/utils/bigmath';
+import { fromWei, greaterThan, toWei } from '@/utils/bigmath';
 import { CommonErrors, errorToString } from '@/utils/errors';
-import { NetworkInfo } from '@/utils/networkTypes';
+import { getNetwork, Network, NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import { getGasPrices } from '@/wallet/gas';
@@ -59,7 +63,7 @@ import {
   clearOffchainExplorer,
   initOffchainExplorer
 } from '@/wallet/offchainExplorer';
-import { getBaseAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import { getUSDCAssetData } from '@/wallet/references/data';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import {
   SmallTokenInfo,
@@ -631,48 +635,59 @@ const actions: ActionFuncs<
       // @ts-ignore
       window.sendDepositTx = async (tokenName: string, amount: string) => {
         try {
-          const baseAssetData = getBaseAssetData(state.networkInfo.network);
           const usdcAssetData = getUSDCAssetData(state.networkInfo.network);
 
-          let transferData;
-          let inputAssetData;
-          switch (tokenName) {
-            case 'base':
-              inputAssetData = baseAssetData;
-              transferData = await state.swapAPIService?.getTransferData(
-                usdcAssetData.address,
-                inputAssetData.address,
-                toWei(amount, inputAssetData.decimals),
-                true,
-                '10'
-              );
-
-              console.debug('Received 0x transfer data:', transferData);
-              break;
-            default:
-              inputAssetData = usdcAssetData;
+          const walletTokens = state.tokens;
+          const requestedToken = walletTokens.find(
+            (t) =>
+              t.name.toLowerCase() === tokenName.toLowerCase() ||
+              t.symbol.toLowerCase() === tokenName.toLowerCase()
+          );
+          if (requestedToken === undefined) {
+            console.warn('Could not find such token', tokenName);
+            return;
           }
+
+          let transferData;
+          if (!sameAddress(requestedToken.address, usdcAssetData.address)) {
+            transferData = await state.swapAPIService?.getTransferData(
+              usdcAssetData.address,
+              requestedToken.address,
+              toWei(amount, requestedToken.decimals),
+              true,
+              '10'
+            );
+
+            console.debug('Received 0x transfer data:', transferData);
+          }
+
+          const inputAmountInUSDCWei =
+            transferData?.buyAmount ?? toWei(amount, requestedToken.decimals);
+          const inputAmountInUSDC = fromWei(
+            inputAmountInUSDCWei,
+            usdcAssetData.decimals
+          );
 
           const depositTxData =
             await savingsPlusAPIService.getDepositTransactionData(
-              toWei(amount, inputAssetData.decimals)
+              inputAmountInUSDCWei
             );
           console.debug('Received tx explanation', depositTxData);
 
           const estimation =
             await savingsPlusOnChainService.estimateDepositCompound(
-              inputAssetData,
+              requestedToken,
               usdcAssetData,
-              amount,
+              inputAmountInUSDC,
               transferData,
               depositTxData
             );
           console.debug('Received estimation', estimation);
 
           await savingsPlusOnChainService.depositCompound(
-            inputAssetData,
+            requestedToken,
             usdcAssetData,
-            amount,
+            inputAmountInUSDC,
             transferData,
             depositTxData,
             async () => console.info('In process'),
@@ -686,10 +701,67 @@ const actions: ActionFuncs<
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
+      window.sendWithdrawTx = async (amount: string) => {
+        try {
+          const usdcAssetData = getUSDCAssetData(state.networkInfo.network);
+          const info = await savingsPlusAPIService.getInfo();
+          const depositedBalance = fromWei(
+            info.currentBalance,
+            usdcAssetData.decimals
+          );
+
+          if (greaterThan(amount, depositedBalance)) {
+            console.warn(
+              'Amount exceeds deposited balance',
+              amount,
+              depositedBalance
+            );
+            return;
+          }
+
+          const transactionData =
+            await savingsPlusAPIService.getWithdrawTransactionData(
+              state.networkInfo.network,
+              toWei(amount, usdcAssetData.decimals)
+            );
+          console.debug('Received transaction data', transactionData);
+
+          const estimation =
+            await savingsPlusOnChainService.estimateWithdrawCompound(
+              usdcAssetData,
+              amount,
+              Network.polygon,
+              transactionData
+            );
+          console.debug('Received an estimation', estimation);
+
+          const transactionReceipt =
+            await savingsPlusOnChainService.withdrawCompound(
+              usdcAssetData,
+              amount,
+              Network.polygon,
+              async () => console.info('In process'),
+              transactionData,
+              estimation.actionGasLimit
+            );
+          console.debug('Received a transaction receipt', transactionReceipt);
+        } catch (error) {
+          if (error instanceof InvalidNetworkForOperationError) {
+            const networkInfo = getNetwork(error.getNetworkTo());
+            return dispatch('switchEthereumChain', networkInfo);
+          }
+
+          captureSentryException(error);
+        }
+      };
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       window.getInfo = async () => {
         try {
           const info = await savingsPlusAPIService.getInfo();
           console.debug('Received info', info);
+          return info;
         } catch (error) {
           captureSentryException(error);
         }
