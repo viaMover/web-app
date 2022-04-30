@@ -1,14 +1,11 @@
 import * as Sentry from '@sentry/vue';
 
-import {
-  MoverAPISavingsPlusService,
-  SavingsPlusInfo
-} from '@/services/v2/api/mover/savings-plus';
+import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
-import { divide, fromWei, multiply } from '@/utils/bigmath';
+import { divide, fromWei } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { GetterType } from './getters';
@@ -20,7 +17,6 @@ import {
 } from './types';
 
 type Actions = {
-  restoreInfo: Promise<void>;
   restoreReceipts: Promise<void>;
   loadInfo: Promise<void>;
   fetchSavingsInfo: Promise<void>;
@@ -29,7 +25,6 @@ type Actions = {
 };
 
 export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
-export const INFO_TIME_EXPIRE = 1 * 60 * 1000; // 5 min
 
 const actions: ActionFuncs<
   Actions,
@@ -37,35 +32,6 @@ const actions: ActionFuncs<
   MutationType,
   GetterType
 > = {
-  async restoreInfo({ commit, rootState }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
-    }
-
-    const info = await getFromPersistStoreWithExpire<SavingsPlusInfo>(
-      rootState.account.currentAddress,
-      'savingsPlus',
-      'info'
-    );
-    if (info !== undefined) {
-      commit('setSavingsInfo', info);
-
-      const dpy = divide(info.avg30DaysAPY, 30);
-
-      commit('setSavingsInfo', info);
-      commit('setSavingsAPY', multiply(dpy, 365));
-      commit('setSavingsDPY', dpy);
-      if (rootState.account?.networkInfo !== undefined) {
-        commit(
-          'setSavingsBalance',
-          fromWei(
-            info.currentBalance,
-            getUSDCAssetData(rootState.account.networkInfo.network).decimals
-          )
-        );
-      }
-    }
-  },
   async restoreReceipts({ commit, rootState }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       return;
@@ -94,7 +60,6 @@ const actions: ActionFuncs<
   },
   async loadInfo({ dispatch }): Promise<void> {
     await dispatch('restoreReceipts');
-    await dispatch('restoreInfo');
     try {
       await dispatch('fetchSavingsInfo');
     } catch (err) {
@@ -118,11 +83,9 @@ const actions: ActionFuncs<
 
       const info = await state.apiService.getInfo();
 
-      const dpy = divide(info.avg30DaysAPY, 30);
-
       commit('setSavingsInfo', info);
-      commit('setSavingsAPY', multiply(dpy, 365));
-      commit('setSavingsDPY', dpy);
+      commit('setSavingsAPY', info.avg30DaysAPY);
+      commit('setSavingsDPY', divide(info.avg30DaysAPY, 365));
       if (rootState.account?.networkInfo !== undefined) {
         commit(
           'setSavingsBalance',
@@ -132,16 +95,6 @@ const actions: ActionFuncs<
           )
         );
       }
-
-      // if (ensureAccountStateIsSafe(rootState.account)) {
-      //   setToPersistStore(
-      //     rootState.account.currentAddress,
-      //     'savingsPlus',
-      //     'info',
-      //     info,
-      //     INFO_TIME_EXPIRE
-      //   );
-      // }
     } catch (error) {
       console.error('Failed to fetch Savings info', error);
       Sentry.captureException(error);
