@@ -133,14 +133,10 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     return multiply(state.movePriceInWeth, state.ethPrice);
   },
   usdcNativePrice(state): string {
-    if (state.usdcPriceInWeth === undefined || state.ethPrice === undefined) {
+    if (state.usdcPriceInNative === undefined) {
       return '0';
     }
-    // TODO: calculate USDC price for all chains
-    if (state.networkInfo?.network !== Network.mainnet) {
-      return '1';
-    }
-    return multiply(state.usdcPriceInWeth, state.ethPrice);
+    return state.usdcPriceInNative;
   },
   slpNativePrice(state): string {
     if (state.slpPriceInWeth === undefined || state.ethPrice === undefined) {

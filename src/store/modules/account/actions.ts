@@ -9,11 +9,7 @@ import {
   disconnectIntercomSession
 } from '@/router/intercom-utils';
 import { getWalletTokens } from '@/services/balancer';
-import {
-  getMOVEPriceInWETH,
-  getSLPPriceInWETH,
-  getUSDCPriceInWETH
-} from '@/services/chain';
+import { getMOVEPriceInWETH, getSLPPriceInWETH } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
@@ -112,6 +108,7 @@ type Actions = {
   waitWallet: Promise<boolean>;
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
+  getTokenPrice: Promise<string>;
   switchEthereumChain: Promise<void>;
   fetchTokensPriceByContractAddresses: Promise<PriceRecord>;
   recoverTokenPriceIfNeeded: Promise<SmallTokenInfo>;
@@ -849,7 +846,7 @@ const actions: ActionFuncs<
       }
     }
   },
-  async getBasicPrices({ state, commit }): Promise<void> {
+  async getBasicPrices({ state, commit, dispatch }): Promise<void> {
     if (!ensureAccountStateIsSafe(state)) {
       throw new Error('account state is not ready');
     }
@@ -878,10 +875,10 @@ const actions: ActionFuncs<
           )
       );
 
-      const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
+      const usdcAssetData = getUSDCAssetData(state.networkInfo.network);
+      const getUSDCPriceInNativePromise = dispatch(
+        'getTokenPrice',
+        usdcAssetData
       );
 
       const getEURSPriceInWETHPromise = getEURSPriceInWETH(
@@ -890,17 +887,21 @@ const actions: ActionFuncs<
         state.provider.web3
       );
 
-      const [ethInUsdPrice, slpInWethPrice, usdcInWethPrice, eursInWethPrice] =
-        await Promise.all([
-          getEthPriceInUsdPromise,
-          slpPriceInWETHPromise,
-          getUSDCPriceInWETHPromise,
-          getEURSPriceInWETHPromise,
-          getMovePriceInWethPromise
-        ]);
+      const [
+        ethInUsdPrice,
+        slpInWethPrice,
+        usdcInNativePrice,
+        eursInWethPrice
+      ] = await Promise.all([
+        getEthPriceInUsdPromise,
+        slpPriceInWETHPromise,
+        getUSDCPriceInNativePromise,
+        getEURSPriceInWETHPromise,
+        getMovePriceInWethPromise
+      ]);
       commit('setEthPrice', ethInUsdPrice);
       commit('setSLPPriceInWETH', slpInWethPrice);
-      commit('setUsdcPriceInWeth', usdcInWethPrice);
+      commit('setUsdcPriceInNative', usdcInNativePrice);
       commit('setEursPriceInWeth', eursInWethPrice);
     } catch (e) {
       Sentry.captureException(e);
@@ -909,6 +910,42 @@ const actions: ActionFuncs<
   },
   toggleIsOrderOfLibertySectionVisible({ commit }): void {
     commit('toggleIsOrderOfLibertySectionVisible');
+  },
+  async getTokenPrice(
+    { state, commit, dispatch },
+    token: SmallTokenInfo
+  ): Promise<string> {
+    try {
+      const priceRecord = (await dispatch(
+        'account/fetchTokensPriceByContractAddresses',
+        {
+          contractAddresses: token.address,
+          currencies: state.nativeCurrency
+        } as FetchTokenPricesByContractAddressesPayload,
+        { root: true }
+      )) as PriceRecord;
+
+      const nativePrice = getAssetPriceFromPriceRecord(
+        priceRecord,
+        token.address,
+        state.nativeCurrency
+      );
+      if (nativePrice !== undefined) {
+        return nativePrice;
+      }
+      return '0';
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'store.account.getTokenPrice',
+        message: 'Failed to get native price for token',
+        data: {
+          error,
+          token
+        }
+      });
+      throw error;
+    }
   },
   async fetchTokensPriceByContractAddresses(
     { state },
