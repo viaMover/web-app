@@ -1370,6 +1370,10 @@ const messages: VueI18n.LocaleMessageObject = {
       view: 'View',
       withdrawFromSP: 'Withdraw from Savings Plus'
     },
+    errors: {
+      needChainSwitch:
+        'You have to switch the network for this action to {network}'
+    },
     empty: {
       lblUpTo: 'up to {value}',
       lblMultichainZaps: 'Multichain Zaps',

@@ -41,14 +41,14 @@
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
-      <template v-slot:additional-items>
-        <div class="item">
-          <h2>
-            {{ $t('savingsPlus.withdraw.lblIncludingAccumulatedInterest') }}
-          </h2>
-          <span>{{ includingAccumulatedInterest }}</span>
-        </div>
-      </template>
+      <!--<template v-slot:additional-items>
+              <div class="item">
+                <h2>
+                  {{ $t('savingsPlus.withdraw.lblIncludingAccumulatedInterest') }}
+                </h2>
+                <span>{{ includingAccumulatedInterest }}</span>
+              </div>
+            </template>-->
     </review-form>
     <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
   </secondary-page>
@@ -66,10 +66,14 @@ import {
   MoverAPISavingsPlusService,
   WithdrawTransactionData
 } from '@/services/v2/api/mover/savings-plus';
-import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
+import {
+  InvalidNetworkForOperationError,
+  SavingsPlusOnChainService
+} from '@/services/v2/on-chain/mover/savings-plus';
 import { divide, multiply, toWei } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
+import { getNetwork } from '@/utils/networkTypes';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { TokenWithBalance } from '@/wallet/types';
 
@@ -192,7 +196,8 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('account', {
-      updateWalletAfterTxn: 'updateWalletAfterTxn'
+      updateWalletAfterTxn: 'updateWalletAfterTxn',
+      switchEthereumChain: 'switchEthereumChain'
     }),
     handleBack(): void {
       if (this.step === 'review') {
@@ -229,6 +234,29 @@ export default Vue.extend({
         );
         this.step = 'review';
       } catch (error) {
+        if (error instanceof InvalidNetworkForOperationError) {
+          const networkInfo = getNetwork(error.getNetworkTo());
+          if (networkInfo === undefined) {
+            sendGlobalTopMessageEvent(
+              this.$t('errors.default') as string,
+              'error'
+            );
+            console.warn(
+              'Empty target network while InvalidNetworkForOperationError',
+              error
+            );
+            Sentry.captureException(error);
+            return;
+          }
+          sendGlobalTopMessageEvent(
+            this.$t('savingsPlus.errors.needChainSwitch', {
+              network: networkInfo.name
+            }) as string,
+            'error'
+          );
+          return await this.switchEthereumChain(networkInfo);
+        }
+
         sendGlobalTopMessageEvent(
           this.$t('errors.estimationFailed') as string,
           'error'
@@ -287,6 +315,29 @@ export default Vue.extend({
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
       } catch (error) {
+        if (error instanceof InvalidNetworkForOperationError) {
+          const networkInfo = getNetwork(error.getNetworkTo());
+          if (networkInfo === undefined) {
+            sendGlobalTopMessageEvent(
+              this.$t('errors.default') as string,
+              'error'
+            );
+            console.warn(
+              'Empty target network while InvalidNetworkForOperationError',
+              error
+            );
+            Sentry.captureException(error);
+            return;
+          }
+          sendGlobalTopMessageEvent(
+            this.$t('savingsPlus.errors.needChainSwitch', {
+              network: networkInfo.name
+            }) as string,
+            'error'
+          );
+          return await this.switchEthereumChain(networkInfo);
+        }
+
         this.transactionStep = 'Reverted';
         console.log('Failed to withdraw', error);
         Sentry.captureException(error);
