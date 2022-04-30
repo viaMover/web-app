@@ -133,7 +133,6 @@ export default Vue.extend({
     ...mapState('account', {
       networkInfo: 'networkInfo',
       currentAddress: 'currentAddress',
-      usdcPriceInWeth: 'usdcPriceInWeth',
       provider: 'provider',
       ethPrice: 'ethPrice',
       gasPrices: 'gasPrices',
@@ -144,7 +143,9 @@ export default Vue.extend({
       balance: 'balance'
     }),
     ...mapGetters('treasury', {
-      treasuryBonusNative: 'treasuryBonusNative',
+      treasuryBonusNative: 'treasuryBonusNative'
+    }),
+    ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice'
     }),
     includingAccumulatedInterest(): string {
@@ -189,8 +190,10 @@ export default Vue.extend({
         possibleSavingsBalance = this.balance;
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
+      const usdcAmountNative = multiply(
+        possibleSavingsBalance,
+        this.usdcNativePrice
+      );
       let apyNative = multiply(divide(this.APY, 100), usdcAmountNative);
 
       return `~ $${formatToNative(apyNative)}`;

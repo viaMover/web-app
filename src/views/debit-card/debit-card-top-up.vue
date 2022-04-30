@@ -188,7 +188,6 @@ export default Vue.extend({
       'ethPrice',
       'tokens',
       'savingsAPY',
-      'usdcPriceInWeth',
       'eursPriceInWeth',
       'savingsBalance',
       'provider'
@@ -197,7 +196,7 @@ export default Vue.extend({
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
       gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
     }),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
     }),
@@ -498,15 +497,15 @@ export default Vue.extend({
 
             if (
               this.inputAmountNative === '' ||
-              this.usdcPriceInWeth === undefined ||
+              this.usdcNativePrice === undefined ||
               this.eursPriceInWeth === undefined
             ) {
               return;
             }
 
             const eursPerUsdc = divide(
-              this.eursPriceInWeth,
-              this.usdcPriceInWeth
+              multiply(this.eursPriceInWeth, this.ethPrice ?? '0'),
+              this.usdcNativePrice
             );
             // if no transfer data is available or some conditions
             // are not met then we use a fallback to give user
