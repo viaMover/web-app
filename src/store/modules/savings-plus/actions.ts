@@ -1,18 +1,32 @@
 import * as Sentry from '@sentry/vue';
 
-import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
+import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
+import {
+  getFromPersistStoreWithExpire,
+  setToPersistStore
+} from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
+import { divide, fromWei, multiply } from '@/utils/bigmath';
+import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
-import { SavingsPlusStoreState, SetSavingsPlusReceiptPayload } from './types';
+import {
+  ensureAPIServiceExists,
+  ensureOnChainServiceExists,
+  SavingsPlusStoreState,
+  SetSavingsPlusReceiptPayload
+} from './types';
 
 type Actions = {
   restoreInfo: Promise<void>;
   restoreReceipts: Promise<void>;
-  loadMinimalInfo: Promise<void>;
   loadInfo: Promise<void>;
+  fetchSavingsInfo: Promise<void>;
+  setOnChainService: void;
+  setAPIService: void;
 };
 
 export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
@@ -64,17 +78,71 @@ const actions: ActionFuncs<
       }
     }
   },
-  async loadMinimalInfo({ dispatch }): Promise<void> {
-    try {
-      await dispatch('fetchSavingsFreshData');
-    } catch (error) {
-      console.warn('failed to load savings minimal info', error);
-      Sentry.captureException(error);
-    }
-  },
   async loadInfo({ dispatch }): Promise<void> {
     await dispatch('restoreReceipts');
     await dispatch('restoreInfo');
+    try {
+      await dispatch('fetchSavingsInfo');
+    } catch (err) {
+      console.warn('Failed to load savings info', err);
+      Sentry.captureException(err);
+    }
+  },
+  async fetchSavingsInfo({ commit, rootState, state, getters }): Promise<void> {
+    try {
+      if (!ensureAPIServiceExists(state)) {
+        console.warn('API service does not exist in store');
+        return;
+      }
+
+      if (getters.info !== undefined) {
+        return;
+      }
+
+      commit('setIsSavingsInfoLoading', true);
+      commit('setSavingsInfo', undefined);
+
+      const info = await state.apiService.getInfo();
+
+      const dpy = divide(info.avg30DaysAPY, 30);
+
+      commit('setSavingsInfo', info);
+      commit('setSavingsAPY', multiply(dpy, 365));
+      commit('setSavingsDPY', dpy);
+      if (rootState.account?.networkInfo !== undefined) {
+        commit(
+          'setSavingsBalance',
+          fromWei(
+            info.currentBalance,
+            getUSDCAssetData(rootState.account.networkInfo.network).decimals
+          )
+        );
+      }
+
+      if (ensureAccountStateIsSafe(rootState.account)) {
+        setToPersistStore(
+          rootState.account.currentAddress,
+          'savingsPlus',
+          'info',
+          info,
+          INFO_TIME_EXPIRE
+        );
+      }
+    } catch (error) {
+      console.error('Failed to fetch Savings info', error);
+      Sentry.captureException(error);
+      commit('setSavingsAPY', '0');
+      commit('setSavingsDPY', '0');
+      commit('setSavingsBalance', '0');
+    } finally {
+      commit('setIsSavingsInfoLoading', false);
+    }
+  },
+  setOnChainService({ commit }, service: SavingsPlusOnChainService): void {
+    commit('setOnChainService', service);
+  },
+  setAPIService({ commit }, service: MoverAPISavingsPlusService): void {
+    commit('setAPIService', service);
   }
 };
 

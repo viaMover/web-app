@@ -276,7 +276,7 @@ export default Vue.extend({
     this.isLoading = false;
   },
   methods: {
-    ...mapActions('savings', { fetchSavingsReceipt: 'fetchSavingsReceipt' })
+    ...mapActions('savingsPlus', { fetchSavingsReceipt: 'fetchSavingsReceipt' })
   }
 });
 </script>

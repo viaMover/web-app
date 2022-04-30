@@ -11,7 +11,7 @@
       <bar-chart
         :accent-color="chartAccentColor"
         :chart-data-source="chartDataSource"
-        :is-loading="isSavingsInfoLoading || savingsInfo === undefined"
+        :is-loading="isInfoLoading || info === undefined"
         @item-selected="handleItemSelected"
       />
       <div class="bottom-text">
@@ -74,7 +74,8 @@ export default Vue.extend({
       monthStatsOptions: 'monthStatsOptions',
       infoBalanceNative: 'infoBalanceNative',
       infoEarnedThisMonthNative: 'infoEarnedThisMonthNative',
-      usdcNativePrice: 'usdcNativePrice'
+      usdcNativePrice: 'usdcNativePrice',
+      savingsMonthStatsOptions: 'savingsMonthStatsOptions'
     }),
     savingsBalance(): string {
       return `$${formatToNative(this.infoBalanceNative)}`;

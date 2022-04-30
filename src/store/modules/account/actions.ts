@@ -493,6 +493,12 @@ const actions: ActionFuncs<
         });
       }
 
+      if (isFeatureEnabled('isSavingsPlusEnabled', state.networkInfo.network)) {
+        dispatch('savingsPlus/loadInfo', undefined, {
+          root: true
+        });
+      }
+
       if (isFeatureEnabled('isNibbleShopEnabled', state.networkInfo.network)) {
         dispatch('shop/refreshAssetsInfoList', undefined, {
           root: true

@@ -1,12 +1,13 @@
+import {
+  MoverAPISavingsPlusService,
+  SavingsPlusInfo
+} from '@/services/v2/api/mover/savings-plus';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { RECEIPT_TIME_EXPIRE } from '@/store/modules/savings/actions';
 import { INFO_TIME_EXPIRE } from '@/store/modules/treasury/actions';
 import { MutationFuncs } from '@/store/types';
 
-import {
-  SavingsPlusInfo,
-  SavingsPlusStoreState,
-  SetSavingsPlusReceiptPayload
-} from './types';
+import { SavingsPlusStoreState, SetSavingsPlusReceiptPayload } from './types';
 
 type Mutations = {
   setSavingsAPY: void;
@@ -15,6 +16,8 @@ type Mutations = {
   setIsSavingsInfoLoading: void;
   setSavingsInfo: void;
   setSavingsReceipt: void;
+  setOnChainService: void;
+  setAPIService: void;
 };
 
 const mutations: MutationFuncs<Mutations, SavingsPlusStoreState> = {
@@ -48,6 +51,12 @@ const mutations: MutationFuncs<Mutations, SavingsPlusStoreState> = {
         expDate: Date.now() + RECEIPT_TIME_EXPIRE
       });
     }
+  },
+  setOnChainService(state, service: SavingsPlusOnChainService): void {
+    state.onChainService = service;
+  },
+  setAPIService(state, service: MoverAPISavingsPlusService): void {
+    state.apiService = service;
   }
 };
 

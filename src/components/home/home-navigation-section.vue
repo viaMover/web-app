@@ -284,6 +284,9 @@ export default Vue.extend({
     ...mapGetters('savings', {
       savingsInfoBalanceNative: 'savingsInfoBalanceNative'
     }),
+    ...mapGetters('savingsPlus', {
+      savingsPlusInfoBalanceNative: 'infoBalanceNative'
+    }),
     ...mapGetters('treasury', [
       'treasuryBonusNative',
       'treasuryStakedBalanceNative'
@@ -410,7 +413,7 @@ export default Vue.extend({
       };
     },
     savingsPlusBalance(): string {
-      return `$${formatToNative(0)}`;
+      return `$${formatToNative(this.savingsPlusInfoBalanceNative)}`;
     }
   },
   async mounted() {

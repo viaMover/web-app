@@ -1,3 +1,8 @@
+import {
+  MoverAPISavingsPlusService,
+  SavingsPlusInfo
+} from '@/services/v2/api/mover/savings-plus';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { DataStore, DataStoreWrapper } from '@/store/types';
 
 export type SavingsPlusStoreState = {
@@ -9,6 +14,8 @@ export type SavingsPlusStoreState = {
   balance: string | undefined;
   APY: string | undefined;
   DPY: string | undefined;
+  onChainService: SavingsPlusOnChainService | undefined;
+  apiService: MoverAPISavingsPlusService | undefined;
 };
 
 export type SavingsPlusGetReceiptPayload = {
@@ -26,9 +33,18 @@ export type SavingsPlusReceipt = {
   //TODO
 };
 
-export type SavingsPlusInfo = {
-  currentBalance: number;
-  earnedTotal: number;
-  last12MonthsBalances: Array<{ balance: number }>;
-  //TODO
+export const ensureOnChainServiceExists = (
+  state: SavingsPlusStoreState
+): state is SavingsPlusStoreState & {
+  onChainService: SavingsPlusOnChainService;
+} => {
+  return state.onChainService !== undefined;
+};
+
+export const ensureAPIServiceExists = (
+  state: SavingsPlusStoreState
+): state is SavingsPlusStoreState & {
+  apiService: MoverAPISavingsPlusService;
+} => {
+  return state.apiService !== undefined;
 };

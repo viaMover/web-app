@@ -17,7 +17,9 @@ export default {
 
     balance: undefined,
     APY: undefined,
-    DPY: undefined
+    DPY: undefined,
+    apiService: undefined,
+    onChainService: undefined
   },
   actions,
   getters,
