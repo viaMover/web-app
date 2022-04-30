@@ -4,7 +4,7 @@ import {
 } from '@/services/v2/api/mover/savings-plus';
 import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
-import { fromWei, greaterThan, multiply } from '@/utils/bigmath';
+import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { SavingsPlusStoreState } from './types';
@@ -18,6 +18,11 @@ type Getters = {
   infoEarnedThisMonthNative: string;
   savingsMonthStatsOptions: Array<SavingsPlusMonthBalanceItem>;
   infoBalanceNative: string;
+  infoEarnedTotalNative: string;
+  infoTotalPoolBalanceNative: string;
+  estimatedEarningsTomorrowNative: string;
+  estimatedEarningsNextMonthNative: string;
+  estimatedEarningsAnnuallyNative: string;
 };
 
 const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
@@ -108,6 +113,67 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
   },
   infoBalanceNative(state, getters): string {
     return multiply(getters.infoBalanceUSDC, getters.usdcNativePrice);
+  },
+  infoEarnedTotalNative(state, getters, rootState): string {
+    if (
+      getters.info === undefined ||
+      state.isInfoLoading ||
+      rootState.account?.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    return fromWei(
+      getters.info.earnedTotal,
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
+    );
+  },
+  infoTotalPoolBalanceNative(state, getters, rootState): string {
+    if (
+      getters.info === undefined ||
+      state.isInfoLoading ||
+      rootState.account?.networkInfo === undefined
+    ) {
+      return '0';
+    }
+
+    const balanceUSDC = fromWei(
+      getters.info.currentPoolBalance,
+      getUSDCAssetData(rootState.account.networkInfo.network).decimals
+    );
+    return multiply(balanceUSDC, getters.usdcNativePrice);
+  },
+  estimatedEarningsTomorrowNative(state, getters): string {
+    if (
+      getters.info === undefined ||
+      state.isInfoLoading ||
+      state.DPY === undefined
+    ) {
+      return '0';
+    }
+
+    const multiplier = divide(state.DPY, 100);
+    return multiply(getters.balanceNative, multiplier);
+  },
+  estimatedEarningsNextMonthNative(state, getters): string {
+    if (
+      state.info === undefined ||
+      state.isInfoLoading ||
+      state.DPY === undefined
+    ) {
+      return '0';
+    }
+
+    const multiplier = divide(multiply(state.DPY, 30), 100);
+    return multiply(getters.balanceNative, multiplier);
+  },
+  estimatedEarningsAnnuallyNative(state, getters): string {
+    if (state.APY === undefined) {
+      return '0';
+    }
+
+    const multiplier = divide(state.APY, 100);
+    return multiply(getters.balanceNative, multiplier);
   }
 };
 
