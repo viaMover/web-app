@@ -52,7 +52,7 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
       }
     }
 
-    return true;
+    return false;
   },
   balanceNative(state, getters): string {
     if (state.balance === undefined) {
