@@ -217,7 +217,7 @@ export default Vue.extend({
         ).estimateWithdrawCompound(
           this.inputAsset,
           this.inputAmount,
-          this.networkInfo.networkInfo,
+          this.networkInfo.network,
           this.withdrawTxData
         );
 

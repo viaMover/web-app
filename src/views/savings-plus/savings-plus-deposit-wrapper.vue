@@ -341,12 +341,6 @@ export default Vue.extend({
       this.isProcessing = true;
 
       try {
-        this.depositTxData = await (
-          this.savingsPlusApiService as MoverAPISavingsPlusService
-        ).getDepositTransactionData(
-          toWei(this.inputAmount, this.inputAsset.decimals)
-        );
-
         let receiveAmount = '0';
         if (this.transferData !== undefined) {
           receiveAmount = this.transferData?.buyAmount;
@@ -358,7 +352,16 @@ export default Vue.extend({
           );
           Sentry.captureException(error);
           receiveAmount = '0';
+          sendGlobalTopMessageEvent(
+            this.$t('errors.default') as string,
+            'error'
+          );
+          return;
         }
+
+        this.depositTxData = await (
+          this.savingsPlusApiService as MoverAPISavingsPlusService
+        ).getDepositTransactionData(receiveAmount);
 
         if (isDepositWithBridgeTransactionData(this.depositTxData)) {
           receiveAmount = this.depositTxData.estimatedReceived;
