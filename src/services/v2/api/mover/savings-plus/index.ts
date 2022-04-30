@@ -11,6 +11,7 @@ export type {
 } from './types';
 export {
   isDepositWithBridgeTransactionData,
-  isWithdrawComplexTransactionData
+  isWithdrawComplexTransactionData,
+  WithdrawAPIErrorCode
 } from './types';
 export { MoverAPISavingsPlusService } from './MoverAPISavingsPlusService';

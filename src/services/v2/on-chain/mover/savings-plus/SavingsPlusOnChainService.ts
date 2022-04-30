@@ -19,6 +19,7 @@ import {
   CompoundEstimateResponse,
   MoverOnChainService
 } from '@/services/v2/on-chain/mover';
+import { InvalidNetworkForOperationError } from '@/services/v2/on-chain/mover/savings-plus/InvalidNetworkForOperationError';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized';
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
@@ -293,10 +294,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       throw new OnChainServiceError('Failed to withdraw: missing withdrawData');
     }
 
-    if (
-      this.network !== withdrawToNetwork ||
-      isWithdrawComplexTransactionData(withdrawData)
-    ) {
+    if (isWithdrawComplexTransactionData(withdrawData)) {
       addSentryBreadcrumb({
         type: 'debug',
         category: this.sentryCategoryPrefix,
@@ -308,6 +306,16 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         }
       });
       return { error: false, approveGasLimit: '0', actionGasLimit: '0' };
+    }
+
+    // if the withdrawToNetwork is the one where S+ exists,
+    // and it is expected to be on-chain TX but current network
+    // is not the target network
+    if (this.network !== withdrawToNetwork) {
+      throw new InvalidNetworkForOperationError(
+        this.network,
+        withdrawToNetwork
+      );
     }
 
     addSentryBreadcrumb({
@@ -416,12 +424,9 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     }
 
     if (this.network !== withdrawToNetwork) {
-      throw new OnChainServiceError(
-        'Failed to withdraw: Wrong state. Expected transaction to be of complex type, got simple',
-        {
-          fromNetwork: this.network,
-          toNetwork: withdrawToNetwork
-        }
+      throw new InvalidNetworkForOperationError(
+        this.network,
+        withdrawToNetwork
       );
     }
 

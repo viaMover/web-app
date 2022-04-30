@@ -2,9 +2,11 @@ import axios, { AxiosInstance } from 'axios';
 
 import { MoverError } from '@/services/v2';
 import {
+  MoverAPIError,
   MoverAPIService,
   MoverAPISuccessfulResponse
 } from '@/services/v2/api/mover';
+import { InvalidNetworkForOperationError } from '@/services/v2/on-chain/mover/savings-plus';
 import { isFeatureEnabled } from '@/settings';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -17,6 +19,7 @@ import {
   SavingsPlusInfo,
   SavingsPlusInfoAPIResponse,
   SavingsPlusMonthBalanceItem,
+  WithdrawAPIErrorCode,
   WithdrawExecution,
   WithdrawTransactionData
 } from './types';
@@ -92,26 +95,46 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
   }
 
   public async getWithdrawTransactionData(
-    network: Network,
-    outputAmountInUSDC: string
+    withdrawToNetwork: Network,
+    outputAmountInUSDCWei: string
   ): Promise<WithdrawTransactionData> {
-    const chainId = getNetwork(this.network)?.chainId;
+    const chainId = getNetwork(withdrawToNetwork)?.chainId;
     if (chainId === undefined) {
-      throw new MoverError(`Failed to get chainId of network ${this.network}`);
+      throw new MoverError(
+        `Failed to get chainId of network ${withdrawToNetwork}`
+      );
     }
 
-    const data = (
-      await this.client.post<
-        MoverAPISuccessfulResponse<WithdrawTransactionData>
-      >('/withdrawTx', {
-        to: chainId,
-        amount: outputAmountInUSDC,
-        address: this.currentAddress
-      })
-    ).data.payload;
+    let data;
+    try {
+      data = (
+        await this.client.post<
+          MoverAPISuccessfulResponse<WithdrawTransactionData>
+        >('/withdrawTx', {
+          to: chainId,
+          amount: outputAmountInUSDCWei,
+          address: this.currentAddress
+        })
+      ).data.payload;
+    } catch (error) {
+      if (!(error instanceof MoverAPIError)) {
+        throw error;
+      }
+
+      // re-wrap the error to be distinctive
+      // and allow UI to handle the error as needed
+      if (error.shortMessage === WithdrawAPIErrorCode.UnsupportedChain) {
+        throw new InvalidNetworkForOperationError(
+          this.network,
+          Network.polygon
+        );
+      }
+
+      throw error;
+    }
 
     if (
-      ![WithdrawExecution.Wallet, WithdrawExecution.Backend].includes(
+      ![WithdrawExecution.Direct, WithdrawExecution.Backend].includes(
         data.execution
       )
     ) {

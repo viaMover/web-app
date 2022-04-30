@@ -30,7 +30,7 @@ export type DepositTransactionData =
   | DepositOnlyTransactionData;
 
 export enum WithdrawExecution {
-  Wallet = 'wallet',
+  Direct = 'direct',
   Backend = 'backend'
 }
 
@@ -53,10 +53,14 @@ export const isWithdrawComplexTransactionData = (
 };
 
 export type WithdrawOnlyTransactionData = {
-  execution: WithdrawExecution.Wallet;
+  execution: WithdrawExecution.Direct;
   withdrawPoolAddress: string;
   withdrawFee: string;
 };
+
+export enum WithdrawAPIErrorCode {
+  UnsupportedChain = 'UNSUPPORTED_CHAIN'
+}
 
 export type WithdrawTransactionData =
   | WithdrawComplexTransactionData
