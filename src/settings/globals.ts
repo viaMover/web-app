@@ -1,8 +1,7 @@
 import { Network } from '@/utils/networkTypes';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfoWithIcon } from '@/wallet/types';
 
 export type GlobalSettings = Array<Network> | boolean;
+
 export interface Globals {
   isSavingsOverviewSomeFieldsEnabled: GlobalSettings;
   isSavingsPlusOverviewSomeFieldsEnabled: GlobalSettings;
@@ -114,29 +113,4 @@ export const isFeatureEnabled = <T extends keyof Globals>(
     return true;
   }
   return settings.includes(network);
-};
-
-export const stableCoinForNetwork = (
-  network: Network
-): SmallTokenInfoWithIcon | undefined => {
-  return networkStableCoinMap[network];
-};
-
-type NetworkStableCoinMap<T> = {
-  [K in keyof T]: SmallTokenInfoWithIcon | undefined;
-};
-
-const networkStableCoinMap: NetworkStableCoinMap<typeof Network> = {
-  [Network.mainnet]: getUSDCAssetData(Network.mainnet),
-  [Network.polygon]: getUSDCAssetData(Network.polygon),
-  [Network.fantom]: getUSDCAssetData(Network.fantom),
-  [Network.binance]: undefined,
-  [Network.binanceTest]: undefined,
-  [Network.kovan]: undefined,
-  [Network.rinkeby]: undefined,
-  [Network.ropsten]: undefined,
-  [Network.avalanche]: undefined,
-  [Network.arbitrum]: undefined,
-  [Network.celo]: undefined,
-  [Network.optimism]: undefined
 };

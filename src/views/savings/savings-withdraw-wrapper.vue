@@ -17,7 +17,7 @@
       :is-processing="isProcessing"
       :operation-description="$t('savings.withdraw.txtIfYouKeepSavings')"
       :operation-title="estimatedAnnualEarnings"
-      :output-asset-heading-text="$t('savings.withdraw.lblAmountWeDepositIn')"
+      :output-asset-heading-text="$t('savings.withdraw.lblAmountWeWithdrawIn')"
       :selected-token-description="$t('savings.txtUSDCCoinIsAStable')"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"

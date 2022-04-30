@@ -1410,6 +1410,7 @@ const messages: VueI18n.LocaleMessageObject = {
       lblEstimatedVariableAPY: 'Estimated variable APY',
       lblBridgingFee: 'Bridging fee',
       lblDepositingFrom: 'Depositing from',
+      lblNotEnough: 'Not enough for bridging fee',
       txtDepositDescription:
         'Savings Plus is multichain savings. Your input token will be swapped, and deposited to earn yield across various network'
     },

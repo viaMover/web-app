@@ -9,8 +9,8 @@
       :asset="inputAsset"
       :header-description="$t('savingsPlus.withdraw.txtWithdrawDescription')"
       :header-title="$t('savingsPlus.withdraw.lblWithdrawFromSP')"
-      :input-amount="inputAmountNative"
-      :input-amount-native="inputAmountNative"
+      :input-amount="inputAmount"
+      :input-amount-native="inputAmount"
       :input-asset-heading="$t('savingsPlus.withdraw.lblWhatDoWeWithdraw')"
       :input-mode="inputMode"
       :is-loading="isLoading"
@@ -31,7 +31,7 @@
     />
     <review-form
       v-else-if="step === 'review'"
-      :amount="inputAmountNative"
+      :amount="inputAmount"
       :button-text="$t('savingsPlus.btn.withdrawFromSP')"
       :header-title="$t('savingsPlus.withdraw.lblReviewYourWithdraw')"
       :image="savings"
@@ -60,17 +60,18 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { TransferData } from '@/services/0x/api';
-import { stableCoinForNetwork } from '@/settings';
-import { divide, multiply } from '@/utils/bigmath';
+import {
+  MoverAPISavingsPlusService,
+  WithdrawTransactionData
+} from '@/services/v2/api/mover/savings-plus';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
+import { divide, multiply, toWei } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { getUSDCAssetData } from '@/wallet/references/data';
+import { TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -121,9 +122,10 @@ export default Vue.extend({
       isLoading: false,
       isProcessing: false,
       inputMode: 'TOKEN' as InputMode,
-      inputAmountNative: '',
+      inputAmount: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
+      withdrawTxData: undefined as WithdrawTransactionData | undefined,
 
       //to tx
       actionGasLimit: undefined as string | undefined
@@ -134,16 +136,15 @@ export default Vue.extend({
       networkInfo: 'networkInfo',
       currentAddress: 'currentAddress',
       provider: 'provider',
-      ethPrice: 'ethPrice',
-      gasPrices: 'gasPrices',
       nativeCurrency: 'nativeCurrency'
     }),
     ...mapState('savingsPlus', {
       APY: 'APY',
-      balance: 'balance'
+      savingsPlusOnChainService: 'onChainService',
+      savingsPlusApiService: 'apiService'
     }),
-    ...mapGetters('treasury', {
-      treasuryBonusNative: 'treasuryBonusNative'
+    ...mapGetters('savingsPlus', {
+      balance: 'infoBalanceUSDC'
     }),
     ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice'
@@ -158,28 +159,18 @@ export default Vue.extend({
       return this.nativeCurrency.toUpperCase();
     },
     formattedNativeAmount(): string {
-      return `${formatToNative(this.inputAmountNative)} ${
-        this.nativeCurrencySymbol
-      }`;
-    },
-    stableCoinAsset(): SmallTokenInfoWithIcon {
-      const token = stableCoinForNetwork(this.networkInfo.network);
-      if (token === undefined) {
-        //never case
-        return { address: '0x1', decimals: 0, iconURL: '', symbol: 'Token' };
-      }
-
-      return token;
+      return `${formatToNative(this.inputAmount)} ${this.nativeCurrencySymbol}`;
     },
     inputAsset(): TokenWithBalance {
+      const usdcAsset = getUSDCAssetData(this.networkInfo.network);
       return {
-        address: this.stableCoinAsset.address,
-        decimals: this.stableCoinAsset.decimals,
-        symbol: this.stableCoinAsset.symbol,
+        address: usdcAsset.address,
+        decimals: usdcAsset.decimals,
+        symbol: usdcAsset.symbol,
         name: 'USD Coin',
         priceUSD: this.usdcNativePrice,
-        logo: this.stableCoinAsset.iconURL,
-        balance: '120',
+        logo: usdcAsset.iconURL,
+        balance: this.balance,
         marketCap: Number.MAX_SAFE_INTEGER
       };
     },
@@ -210,19 +201,24 @@ export default Vue.extend({
         this.$router.back();
       }
     },
-    async estimateAction(
-      amount: string,
-      asset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
-      return { error: false, actionGasLimit: '0', approveGasLimit: '0' };
-    },
     async handleTxReview(): Promise<void> {
       this.actionGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmountNative,
-          this.inputAsset
+        this.withdrawTxData = await (
+          this.savingsPlusApiService as MoverAPISavingsPlusService
+        ).getWithdrawTransactionData(
+          this.networkInfo.network,
+          toWei(this.inputAmount, this.inputAsset.decimals)
+        );
+
+        const gasLimits = await (
+          this.savingsPlusOnChainService as SavingsPlusOnChainService
+        ).estimateWithdrawCompound(
+          this.inputAsset,
+          this.inputAmount,
+          this.networkInfo.networkInfo,
+          this.withdrawTxData
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
@@ -231,56 +227,69 @@ export default Vue.extend({
           'Savings Plus withdraw action gaslimit:',
           this.actionGasLimit
         );
-      } catch (err) {
-        console.error(err);
-        Sentry.captureException(err);
-        // Sentry.captureException("can't estimate savings deposit for subs");
+        this.step = 'review';
+      } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
+        console.warn(
+          'Failed to estimate savings plus deposit transaction',
+          error
+        );
+        Sentry.captureException(error);
       } finally {
         this.isProcessing = false;
       }
-
-      this.step = 'review';
     },
     handleSelectMaxAmount(): void {
-      this.inputAmountNative = this.inputAsset.balance;
+      this.inputAmount = this.inputAsset.balance;
     },
     handleUpdateAmount(val: string): void {
-      this.inputAmountNative = val;
+      this.inputAmount = val;
     },
     async handleTxStart(): Promise<void> {
-      if (this.inputAmountNative === '') {
+      if (this.inputAmount === '') {
         console.error('inputAmount is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings withdraw TX");
+        Sentry.captureException("can't start savings plus withdraw TX");
         return;
       }
 
       if (this.actionGasLimit === undefined) {
         console.error('action gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings withdraw TX");
+        Sentry.captureException("can't start savings plus withdraw TX");
+        return;
+      }
+
+      if (this.withdrawTxData === undefined) {
+        console.error(
+          'withdraw tx data is empty during `handleTxStart` when it is needed'
+        );
+        Sentry.captureException("can't start savings plus withdraw TX");
         return;
       }
 
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        // await withdrawCompound(
-        //   this.inputAsset,
-        //   this.inputAmountNative,
-        //   this.networkInfo.network,
-        //   this.provider.web3,
-        //   this.currentAddress,
-        //   this.actionGasLimit,
-        //   args.isSmartTreasury,
-        //   async () => {
-        //     this.transactionStep = 'Process';
-        //   }
-        // );
+        await (
+          this.savingsPlusOnChainService as SavingsPlusOnChainService
+        ).withdrawCompound(
+          this.inputAsset,
+          this.inputAmount,
+          this.networkInfo.network,
+          async () => {
+            this.transactionStep = 'Process';
+          },
+          this.withdrawTxData,
+          this.actionGasLimit
+        );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.log('Savings withdraw swap reverted');
-        Sentry.captureException(err);
+        console.log('Failed to withdraw', error);
+        Sentry.captureException(error);
       }
     }
   }

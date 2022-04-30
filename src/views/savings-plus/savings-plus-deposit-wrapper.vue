@@ -63,7 +63,7 @@
           <h2>{{ $t('savingsPlus.deposit.lblDepositingFrom') }}</h2>
           <span> {{ formattedNetworkInfo }}</span>
         </div>
-        <div v-if="bridgingFee !== ''" class="item">
+        <div class="item">
           <h2>{{ $t('savingsPlus.deposit.lblBridgingFee') }}</h2>
           <span> {{ bridgingFee }}</span>
         </div>
@@ -94,19 +94,19 @@ import {
 } from '@/services/v2/api/mover/savings-plus';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { Modal as ModalType } from '@/store/modules/modals/types';
-import { sameAddress } from '@/utils/address';
+import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
   add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
   divide,
   fromWei,
-  greaterThan,
+  lessThanOrEqual,
   multiply,
   sub,
   toWei
 } from '@/utils/bigmath';
-import { formatToNative } from '@/utils/format';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
@@ -211,9 +211,12 @@ export default Vue.extend({
     },
     bridgingFee(): string {
       if (isDepositWithBridgeTransactionData(this.depositTxData)) {
-        return this.depositTxData.bridgeFee;
+        return `${formatToDecimals(
+          fromWei(this.depositTxData.bridgeFee, this.outputUSDCAsset.decimals),
+          4
+        )} ${this.outputUSDCAsset.symbol}`;
       }
-      return '';
+      return `0 ${this.outputUSDCAsset.symbol}`;
     },
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
@@ -304,9 +307,11 @@ export default Vue.extend({
           if (this.isTokenSelectedByUser) {
             return;
           }
-          const eth = newVal.find((t: TokenWithBalance) => t.address === 'eth');
-          if (eth) {
-            this.inputAsset = eth;
+          const baseAsset = newVal.find((t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo.network)
+          );
+          if (baseAsset) {
+            this.inputAsset = baseAsset;
           }
         } finally {
           this.isLoading = false;
@@ -342,6 +347,35 @@ export default Vue.extend({
           toWei(this.inputAmount, this.inputAsset.decimals)
         );
 
+        let receiveAmount = '0';
+        if (this.transferData !== undefined) {
+          receiveAmount = this.transferData?.buyAmount;
+        } else if (!this.isSwapNeeded) {
+          receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
+        } else {
+          const error = new Error(
+            "can't calculate receiveAmountNative for savings plus deposit"
+          );
+          Sentry.captureException(error);
+          receiveAmount = '0';
+        }
+
+        if (isDepositWithBridgeTransactionData(this.depositTxData)) {
+          receiveAmount = this.depositTxData.estimatedReceived;
+        } else {
+          receiveAmount = sub(receiveAmount, this.depositTxData.depositFee);
+        }
+
+        console.log('receiveAmount', receiveAmount);
+
+        if (lessThanOrEqual(receiveAmount, '0')) {
+          sendGlobalTopMessageEvent(
+            this.$t('savingsPlus.deposit.lblNotEnough') as string,
+            'error'
+          );
+          return;
+        }
+
         const gasLimits = await (
           this.savingsPlusOnChainService as SavingsPlusOnChainService
         ).estimateDepositCompound(
@@ -364,25 +398,6 @@ export default Vue.extend({
           this.approveGasLimit
         );
 
-        let receiveAmount = '0';
-        if (this.transferData !== undefined) {
-          receiveAmount = this.transferData?.buyAmount;
-        } else if (!this.isSwapNeeded) {
-          receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
-        } else {
-          const error = new Error(
-            "can't calculate receiveAmountNative for savings plus deposit"
-          );
-          Sentry.captureException(error);
-          receiveAmount = '0';
-        }
-
-        if (isDepositWithBridgeTransactionData(this.depositTxData)) {
-          receiveAmount = sub(receiveAmount, this.depositTxData.bridgeTxData);
-        }
-
-        receiveAmount = sub(receiveAmount, this.depositTxData.depositFee);
-
         const nativeReceiveAmount = multiply(
           fromWei(receiveAmount, this.outputUSDCAsset.decimals),
           this.usdcNativePrice
@@ -401,7 +416,6 @@ export default Vue.extend({
           error
         );
         Sentry.captureException(error);
-        return;
       } finally {
         this.isProcessing = false;
       }
