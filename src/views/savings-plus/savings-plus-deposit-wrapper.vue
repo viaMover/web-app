@@ -54,7 +54,7 @@
       :image="savings"
       :input-amount-native-title="$t('savingsPlus.deposit.lblTotalGoesInSP')"
       :input-amount-title="$t('savingsPlus.deposit.lblYourDepositIn')"
-      :native-amount="formattedNativeAmount"
+      :native-amount="receiveAmountNative"
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
@@ -63,14 +63,14 @@
           <h2>{{ $t('savingsPlus.deposit.lblDepositingFrom') }}</h2>
           <span> {{ formattedNetworkInfo }}</span>
         </div>
-        <div class="item">
+        <div v-if="bridgingFee !== ''" class="item">
           <h2>{{ $t('savingsPlus.deposit.lblBridgingFee') }}</h2>
           <span> {{ bridgingFee }}</span>
         </div>
-        <div class="item">
-          <h2>{{ $t('savingsPlus.deposit.lblEstimatedVariableAPY') }}</h2>
-          <span>{{ estimatedVariableAPY }}</span>
-        </div>
+        <!--<div class="item">
+                  <h2>{{ $t('savingsPlus.deposit.lblEstimatedVariableAPY') }}</h2>
+                  <span>{{ estimatedVariableAPY }}</span>
+                </div>-->
       </template>
     </review-form>
     <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
@@ -84,12 +84,15 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
+import { MoverError } from '@/services/v2';
+import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import {
-  getTransferData,
-  TransferData,
-  ZeroXSwapError
-} from '@/services/0x/api';
-import { mapError } from '@/services/0x/errors';
+  DepositTransactionData,
+  isDepositWithBridgeTransactionData,
+  MoverAPISavingsPlusService
+} from '@/services/v2/api/mover/savings-plus';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import {
@@ -98,18 +101,15 @@ import {
   convertNativeAmountFromAmount,
   divide,
   fromWei,
+  greaterThan,
   multiply,
+  sub,
   toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -139,7 +139,7 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       savings: {
-        alt: this.$t('savingsPlus.lblSavings'),
+        alt: this.$t('savingsPlus.lblSP'),
         src: require('@/assets/images/SavingsPlus@1x.png'),
         sources: [
           { src: require('@/assets/images/SavingsPlus@1x.png') },
@@ -176,6 +176,10 @@ export default Vue.extend({
       inputAmountNative: '',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
+      depositTxData: undefined as DepositTransactionData | undefined,
+
+      //review
+      receiveAmountNative: '0',
 
       //to tx
       actionGasLimit: undefined as string | undefined,
@@ -187,36 +191,35 @@ export default Vue.extend({
       networkInfo: 'networkInfo',
       currentAddress: 'currentAddress',
       nativeCurrency: 'nativeCurrency',
-      gasPrices: 'gasPrices',
-      ethPrice: 'ethPrice',
       tokens: 'tokens',
-      usdcPriceInWeth: 'usdcPriceInWeth',
-      provider: 'provider'
+      provider: 'provider',
+      swapService: 'swapAPIService'
     }),
-    ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
     ...mapState('savingsPlus', {
       APY: 'APY',
-      balance: 'balance'
+      savingsPlusOnChainService: 'onChainService',
+      savingsPlusApiService: 'apiService'
+    }),
+    ...mapGetters('savingsPlus', {
+      balance: 'infoBalanceUSDC'
+    }),
+    ...mapGetters('account', {
+      usdcNativePrice: 'usdcNativePrice'
     }),
     formattedNetworkInfo(): string {
       return `${this.networkInfo.name}`;
     },
     bridgingFee(): string {
-      return '84.19 USDc';
-    },
-    estimatedVariableAPY(): string {
-      return '29.4 %';
+      if (isDepositWithBridgeTransactionData(this.depositTxData)) {
+        return this.depositTxData.bridgeFee;
+      }
+      return '';
     },
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
-    },
-    formattedNativeAmount(): string {
-      return `${formatToNative(this.inputAmountNative)} ${
-        this.nativeCurrencySymbol
-      }`;
     },
     isSwapNeeded(): boolean {
       if (this.inputAsset === undefined) {
@@ -256,9 +259,10 @@ export default Vue.extend({
         possibleSavingsBalance = add(this.balance, possibleSavingsBalance);
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
-      const apyNative = multiply(divide(this.APY, 100), usdcAmountNative);
+      const apyNative = multiply(
+        divide(this.APY, 100),
+        multiply(possibleSavingsBalance, this.usdcNativePrice)
+      );
 
       return `~ $${formatToNative(apyNative)}`;
     },
@@ -330,11 +334,22 @@ export default Vue.extend({
       this.actionGasLimit = '0';
       this.approveGasLimit = '0';
       this.isProcessing = true;
+
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
+        this.depositTxData = await (
+          this.savingsPlusApiService as MoverAPISavingsPlusService
+        ).getDepositTransactionData(
+          toWei(this.inputAmount, this.inputAsset.decimals)
+        );
+
+        const gasLimits = await (
+          this.savingsPlusOnChainService as SavingsPlusOnChainService
+        ).estimateDepositCompound(
           this.inputAsset,
-          this.transferData
+          this.outputUSDCAsset,
+          this.inputAmount,
+          this.transferData,
+          this.depositTxData
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
@@ -348,23 +363,48 @@ export default Vue.extend({
           'SavingsPlus deposit approve gaslimit:',
           this.approveGasLimit
         );
-      } catch (err) {
-        console.error(err);
-        Sentry.captureException(err);
-        // Sentry.captureException("can't estimate savings-plus deposit for subs");
+
+        let receiveAmount = '0';
+        if (this.transferData !== undefined) {
+          receiveAmount = this.transferData?.buyAmount;
+        } else if (!this.isSwapNeeded) {
+          receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
+        } else {
+          const error = new Error(
+            "can't calculate receiveAmountNative for savings plus deposit"
+          );
+          Sentry.captureException(error);
+          receiveAmount = '0';
+        }
+
+        if (isDepositWithBridgeTransactionData(this.depositTxData)) {
+          receiveAmount = sub(receiveAmount, this.depositTxData.bridgeTxData);
+        }
+
+        receiveAmount = sub(receiveAmount, this.depositTxData.depositFee);
+
+        const nativeReceiveAmount = multiply(
+          fromWei(receiveAmount, this.outputUSDCAsset.decimals),
+          this.usdcNativePrice
+        );
+
+        this.receiveAmountNative = `$${formatToNative(nativeReceiveAmount)}`;
+
+        this.step = 'review';
+      } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
+        console.warn(
+          'Failed to estimate savings plus deposit transaction',
+          error
+        );
+        Sentry.captureException(error);
         return;
       } finally {
         this.isProcessing = false;
       }
-
-      this.step = 'review';
-    },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken,
-      transferData: TransferData | undefined
-    ): Promise<CompoundEstimateResponse> {
-      return { error: false, actionGasLimit: '0', approveGasLimit: '0' };
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
@@ -401,13 +441,14 @@ export default Vue.extend({
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
             const inputInWei = toWei(value, this.inputAsset.decimals);
-            this.transferData = await getTransferData(
+            this.transferData = await (
+              this.swapService as ZeroXAPIService
+            ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
-              '0.01',
-              this.networkInfo.network
+              '10'
             );
             this.transferError = undefined;
           } else {
@@ -420,13 +461,14 @@ export default Vue.extend({
               ),
               this.inputAsset.decimals
             );
-            this.transferData = await getTransferData(
+            this.transferData = await (
+              this.swapService as ZeroXAPIService
+            ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
               inputInWei,
               true,
-              '0.01',
-              this.networkInfo.network
+              '10'
             );
             this.transferError = undefined;
             this.inputAmount = fromWei(
@@ -435,23 +477,26 @@ export default Vue.extend({
             );
           }
         }
-      } catch (err) {
-        if (err instanceof ZeroXSwapError) {
-          this.transferError = mapError(err.publicMessage);
+      } catch (error) {
+        if (error instanceof MoverError) {
+          this.transferError = (
+            this.swapService as ZeroXAPIService
+          ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
-          Sentry.captureException(err);
         }
-        console.error(`transfer error:`, err);
+
+        Sentry.captureException(error);
+        console.error(`transfer error:`, error);
         this.transferData = undefined;
         if (mode === 'TOKEN') {
           this.inputAmountNative = '0';
         } else {
           this.inputAmount = '0';
         }
-      } finally {
-        this.isLoading = false;
       }
+
+      this.isLoading = false;
     },
     async handleOpenSelectModal(): Promise<void> {
       const token = await this.setModalIsDisplayed({
@@ -469,6 +514,7 @@ export default Vue.extend({
       this.inputAsset = token;
       this.transferData = undefined;
       this.transferError = undefined;
+      this.depositTxData = undefined;
       this.inputAmount = '';
       this.inputAmountNative = '';
     },
@@ -497,25 +543,25 @@ export default Vue.extend({
     async handleTxStart(): Promise<void> {
       if (this.inputAsset === undefined) {
         console.error('inputAsset is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.captureException("can't start savings plus deposit TX");
         return;
       }
 
       if (this.inputAmount === '') {
         console.error('inputAmount is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.captureException("can't start savings plus  deposit TX");
         return;
       }
 
       if (this.actionGasLimit === undefined) {
         console.error('action gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.captureException("can't start savings plus deposit TX");
         return;
       }
 
       if (this.approveGasLimit === undefined) {
         console.error('approve gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.captureException("can't start savings plus deposit TX");
         return;
       }
 
@@ -523,34 +569,41 @@ export default Vue.extend({
         console.error(
           'transfer data is empty during `handleTxStart` when it is needed'
         );
-        Sentry.captureException("can't start savings deposit TX");
+        Sentry.captureException("can't start savings plus deposit TX");
+        return;
+      }
+
+      if (this.depositTxData === undefined) {
+        console.error(
+          'deposit tx data is empty during `handleTxStart` when it is needed'
+        );
+        Sentry.captureException("can't start savings plus deposit TX");
         return;
       }
 
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
-        // await depositCompound(
-        //   this.inputAsset,
-        //   this.outputUSDCAsset,
-        //   this.inputAmount,
-        //   this.transferData,
-        //   this.networkInfo.network,
-        //   this.provider.web3,
-        //   this.currentAddress,
-        //   args.isSmartTreasury,
-        //   async () => {
-        //     this.transactionStep = 'Process';
-        //   },
-        //   this.actionGasLimit,
-        //   this.approveGasLimit
-        // );
+        await (
+          this.savingsPlusOnChainService as SavingsPlusOnChainService
+        ).depositCompound(
+          this.inputAsset,
+          this.outputUSDCAsset,
+          this.inputAmount,
+          this.transferData,
+          this.depositTxData,
+          async () => {
+            this.transactionStep = 'Process';
+          },
+          this.actionGasLimit,
+          this.approveGasLimit
+        );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
-      } catch (err) {
+      } catch (error) {
         this.transactionStep = 'Reverted';
-        console.log('Savings deposit swap reverted');
-        Sentry.captureException(err);
+        console.error('Failed to deposit', error);
+        Sentry.captureException(error);
       }
     }
   }

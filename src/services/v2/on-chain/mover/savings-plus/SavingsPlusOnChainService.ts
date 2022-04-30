@@ -148,7 +148,9 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
           error,
           inputAsset,
           outputAsset,
-          inputAmount
+          inputAmount,
+          transferData,
+          depositData
         }
       });
 

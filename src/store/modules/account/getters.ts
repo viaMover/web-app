@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { GettersFuncs } from '@/store/types';
 import { add, multiply } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import {
@@ -134,6 +135,10 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
   usdcNativePrice(state): string {
     if (state.usdcPriceInWeth === undefined || state.ethPrice === undefined) {
       return '0';
+    }
+    // TODO: calculate USDC price for all chains
+    if (state.networkInfo?.network !== Network.mainnet) {
+      return '1';
     }
     return multiply(state.usdcPriceInWeth, state.ethPrice);
   },

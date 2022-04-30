@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/vue';
 
-import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
+import {
+  MoverAPISavingsPlusService,
+  SavingsPlusInfo
+} from '@/services/v2/api/mover/savings-plus';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import {
   getFromPersistStoreWithExpire,
@@ -30,7 +33,7 @@ type Actions = {
 };
 
 export const RECEIPT_TIME_EXPIRE = 10 * 60 * 1000; // 10 min
-export const INFO_TIME_EXPIRE = 5 * 60 * 1000; // 5 min
+export const INFO_TIME_EXPIRE = 1 * 60 * 1000; // 5 min
 
 const actions: ActionFuncs<
   Actions,
@@ -43,13 +46,28 @@ const actions: ActionFuncs<
       return;
     }
 
-    const info = await getFromPersistStoreWithExpire(
+    const info = await getFromPersistStoreWithExpire<SavingsPlusInfo>(
       rootState.account.currentAddress,
       'savingsPlus',
       'info'
     );
     if (info !== undefined) {
       commit('setSavingsInfo', info);
+
+      const dpy = divide(info.avg30DaysAPY, 30);
+
+      commit('setSavingsInfo', info);
+      commit('setSavingsAPY', multiply(dpy, 365));
+      commit('setSavingsDPY', dpy);
+      if (rootState.account?.networkInfo !== undefined) {
+        commit(
+          'setSavingsBalance',
+          fromWei(
+            info.currentBalance,
+            getUSDCAssetData(rootState.account.networkInfo.network).decimals
+          )
+        );
+      }
     }
   },
   async restoreReceipts({ commit, rootState }): Promise<void> {
