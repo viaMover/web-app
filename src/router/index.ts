@@ -131,7 +131,7 @@ const routes: Array<RouteConfig> = [
   ),
   wrapWithCustomPreloadView(
     {
-      path: '/savingsPlus',
+      path: '/savings-plus',
       component: () =>
         import(
           /* webpackChunkName: "savings-plus" */ '@/views/savings-plus/savings-plus-root.vue'

@@ -706,6 +706,9 @@ const actions: ActionFuncs<
     const savingsInfoPromise = dispatch('savings/loadMinimalInfo', undefined, {
       root: true
     });
+    const savingsPlusInfoPromise = dispatch('savingsPlus/loadInfo', undefined, {
+      root: true
+    });
     const treasuryInfoPromise = dispatch(
       'treasury/loadMinimalInfo',
       undefined,
@@ -722,6 +725,7 @@ const actions: ActionFuncs<
 
     const promisesResults = await Promise.allSettled([
       savingsInfoPromise,
+      savingsPlusInfoPromise,
       treasuryInfoPromise,
       nftInfoPromise,
       debitCardAvailableSkinsPromise
