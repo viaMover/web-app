@@ -580,7 +580,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       .swapBridgeAsset(
         this.substituteAssetAddressIfNeeded(inputAsset.address),
         outputAsset.address,
-        transferData.buyAmount,
+        toWei(inputAmount, inputAsset.decimals),
         this.mapTransferDataToExpectedMinimumAmount(transferData),
         this.mapTransferDataToBytes(transferData),
         this.mapDepositDataToBytes(depositData),
@@ -702,7 +702,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
           .swapBridgeAsset(
             this.substituteAssetAddressIfNeeded(inputAsset.address),
             this.substituteAssetAddressIfNeeded(outputAsset.address),
-            transferData.buyAmount,
+            toWei(inputAmount, inputAsset.decimals),
             this.mapTransferDataToExpectedMinimumAmount(transferData),
             this.mapTransferDataToBytes(transferData),
             this.mapDepositDataToBytes(depositData),
