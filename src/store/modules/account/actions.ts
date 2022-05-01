@@ -9,17 +9,14 @@ import {
   disconnectIntercomSession
 } from '@/router/intercom-utils';
 import { getWalletTokens } from '@/services/balancer';
-import {
-  getMOVEPriceInWETH,
-  getSLPPriceInWETH,
-  getUSDCPriceInWETH
-} from '@/services/chain';
+import { getMOVEPriceInWETH, getSLPPriceInWETH } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
+import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
 import {
@@ -28,6 +25,7 @@ import {
 } from '@/services/v2/api/theGraph';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
+import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { SmartTreasuryOnChainService } from '@/services/v2/on-chain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
@@ -57,6 +55,7 @@ import {
   clearOffchainExplorer,
   initOffchainExplorer
 } from '@/wallet/offchainExplorer';
+import { getUSDCAssetData } from '@/wallet/references/data';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import {
   SmallTokenInfo,
@@ -105,6 +104,7 @@ type Actions = {
   waitWallet: Promise<boolean>;
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
+  getTokenPrice: Promise<string>;
   switchEthereumChain: Promise<void>;
   fetchTokensPriceByContractAddresses: Promise<PriceRecord>;
   recoverTokenPriceIfNeeded: Promise<SmallTokenInfo>;
@@ -486,6 +486,12 @@ const actions: ActionFuncs<
         });
       }
 
+      if (isFeatureEnabled('isSavingsPlusEnabled', state.networkInfo.network)) {
+        dispatch('savingsPlus/loadInfo', undefined, {
+          root: true
+        });
+      }
+
       if (isFeatureEnabled('isNibbleShopEnabled', state.networkInfo.network)) {
         dispatch('shop/refreshAssetsInfoList', undefined, {
           root: true
@@ -598,12 +604,36 @@ const actions: ActionFuncs<
         root: true
       });
     }
+
+    if (isFeatureEnabled('isSavingsPlusEnabled', state.networkInfo.network)) {
+      const savingsPlusAPIService = new MoverAPISavingsPlusService(
+        state.currentAddress,
+        state.networkInfo.network
+      );
+      dispatch('savingsPlus/setAPIService', savingsPlusAPIService, {
+        root: true
+      });
+
+      const savingsPlusOnChainService = new SavingsPlusOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      )
+        .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
+        .setEthPriceGetterHandler(() => getters.ethPrice);
+      dispatch('savingsPlus/setOnChainService', savingsPlusOnChainService, {
+        root: true
+      });
+    }
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
       root: true
     });
     const savingsInfoPromise = dispatch('savings/loadMinimalInfo', undefined, {
+      root: true
+    });
+    const savingsPlusInfoPromise = dispatch('savingsPlus/loadInfo', undefined, {
       root: true
     });
     const treasuryInfoPromise = dispatch(
@@ -622,6 +652,7 @@ const actions: ActionFuncs<
 
     const promisesResults = await Promise.allSettled([
       savingsInfoPromise,
+      savingsPlusInfoPromise,
       treasuryInfoPromise,
       nftInfoPromise,
       debitCardAvailableSkinsPromise
@@ -745,7 +776,7 @@ const actions: ActionFuncs<
       }
     }
   },
-  async getBasicPrices({ state, commit }): Promise<void> {
+  async getBasicPrices({ state, commit, dispatch }): Promise<void> {
     if (!ensureAccountStateIsSafe(state)) {
       throw new Error('account state is not ready');
     }
@@ -774,10 +805,10 @@ const actions: ActionFuncs<
           )
       );
 
-      const getUSDCPriceInWETHPromise = getUSDCPriceInWETH(
-        state.currentAddress,
-        state.networkInfo.network,
-        state.provider.web3
+      const usdcAssetData = getUSDCAssetData(state.networkInfo.network);
+      const getUSDCPriceInNativePromise = dispatch(
+        'getTokenPrice',
+        usdcAssetData
       );
 
       const getEURSPriceInWETHPromise = getEURSPriceInWETH(
@@ -786,17 +817,21 @@ const actions: ActionFuncs<
         state.provider.web3
       );
 
-      const [ethInUsdPrice, slpInWethPrice, usdcInWethPrice, eursInWethPrice] =
-        await Promise.all([
-          getEthPriceInUsdPromise,
-          slpPriceInWETHPromise,
-          getUSDCPriceInWETHPromise,
-          getEURSPriceInWETHPromise,
-          getMovePriceInWethPromise
-        ]);
+      const [
+        ethInUsdPrice,
+        slpInWethPrice,
+        usdcInNativePrice,
+        eursInWethPrice
+      ] = await Promise.all([
+        getEthPriceInUsdPromise,
+        slpPriceInWETHPromise,
+        getUSDCPriceInNativePromise,
+        getEURSPriceInWETHPromise,
+        getMovePriceInWethPromise
+      ]);
       commit('setEthPrice', ethInUsdPrice);
       commit('setSLPPriceInWETH', slpInWethPrice);
-      commit('setUsdcPriceInWeth', usdcInWethPrice);
+      commit('setUsdcPriceInNative', usdcInNativePrice);
       commit('setEursPriceInWeth', eursInWethPrice);
     } catch (e) {
       Sentry.captureException(e);
@@ -805,6 +840,42 @@ const actions: ActionFuncs<
   },
   toggleIsOrderOfLibertySectionVisible({ commit }): void {
     commit('toggleIsOrderOfLibertySectionVisible');
+  },
+  async getTokenPrice(
+    { state, dispatch },
+    token: SmallTokenInfo
+  ): Promise<string> {
+    try {
+      const priceRecord = (await dispatch(
+        'account/fetchTokensPriceByContractAddresses',
+        {
+          contractAddresses: token.address,
+          currencies: state.nativeCurrency
+        } as FetchTokenPricesByContractAddressesPayload,
+        { root: true }
+      )) as PriceRecord;
+
+      const nativePrice = getAssetPriceFromPriceRecord(
+        priceRecord,
+        token.address,
+        state.nativeCurrency
+      );
+      if (nativePrice !== undefined) {
+        return nativePrice;
+      }
+      return '0';
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'store.account.getTokenPrice',
+        message: 'Failed to get native price for token',
+        data: {
+          error,
+          token
+        }
+      });
+      throw error;
+    }
   },
   async fetchTokensPriceByContractAddresses(
     { state },

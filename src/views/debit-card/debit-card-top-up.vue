@@ -66,6 +66,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import {
   getTransferData,
   TransferData,
@@ -91,7 +92,6 @@ import { formatToNative } from '@/utils/format';
 import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
 import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
-import { CompoundEstimateWithUnwrapResponse } from '@/wallet/actions/types';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
@@ -101,7 +101,6 @@ import {
   validTopUpAssets
 } from '@/wallet/references/data';
 import {
-  SmallToken,
   SmallTokenInfo,
   SmallTokenInfoWithIcon,
   tokenToSmallTokenInfo,
@@ -189,7 +188,6 @@ export default Vue.extend({
       'ethPrice',
       'tokens',
       'savingsAPY',
-      'usdcPriceInWeth',
       'eursPriceInWeth',
       'savingsBalance',
       'provider'
@@ -198,7 +196,7 @@ export default Vue.extend({
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
       gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
     }),
-    ...mapGetters('account', ['treasuryBonusNative']),
+    ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     ...mapGetters('debitCard', {
       currentSkin: 'currentSkin'
     }),
@@ -333,21 +331,35 @@ export default Vue.extend({
       this.unwrapGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmount,
+        const gasLimits = await estimateTopUpCompound(
           this.inputAsset,
-          this.transferData
+          this.usdcAsset,
+          this.inputAmount,
+          this.transferData,
+          this.networkInfo.network,
+          this.provider.web3,
+          this.currentAddress
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
         this.approveGasLimit = gasLimits.approveGasLimit;
         this.unwrapGasLimit = gasLimits.unwrapGasLimit;
-        if (!gasLimits.error) {
-          this.changeStep('review');
-        }
-      } catch (err) {
-        Sentry.captureException(err);
-        return;
+        this.changeStep('review');
+      } catch (error) {
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.handleTxReview',
+          message: 'Failed to estimate top-up',
+          data: {
+            error
+          }
+        });
+        console.error('Failed to estimate transaction', error);
+        Sentry.captureException(error);
       } finally {
         this.isProcessing = false;
       }
@@ -363,34 +375,6 @@ export default Vue.extend({
         actionGasLimit,
         this.ethPrice
       );
-    },
-    async estimateAction(
-      inputAmount: string,
-      inputAsset: SmallToken,
-      transferData: TransferData | undefined
-    ): Promise<CompoundEstimateWithUnwrapResponse> {
-      const resp = await estimateTopUpCompound(
-        inputAsset,
-        this.usdcAsset,
-        inputAmount,
-        transferData,
-        this.networkInfo.network,
-        this.provider.web3,
-        this.currentAddress
-      );
-      if (resp.error) {
-        this.transferError = this.$t('estimationError') as string;
-        addSentryBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.estimateAction',
-          message: 'failed to estimate top-up',
-          data: {
-            estimateError: resp.error
-          }
-        });
-        Sentry.captureException("can't estimate top-up");
-      }
-      return resp;
     },
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
@@ -513,15 +497,15 @@ export default Vue.extend({
 
             if (
               this.inputAmountNative === '' ||
-              this.usdcPriceInWeth === undefined ||
+              this.usdcNativePrice === undefined ||
               this.eursPriceInWeth === undefined
             ) {
               return;
             }
 
             const eursPerUsdc = divide(
-              this.eursPriceInWeth,
-              this.usdcPriceInWeth
+              multiply(this.eursPriceInWeth, this.ethPrice ?? '0'),
+              this.usdcNativePrice
             );
             // if no transfer data is available or some conditions
             // are not met then we use a fallback to give user

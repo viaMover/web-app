@@ -121,15 +121,6 @@ export const topUpCompound = async (
         accountAddress
       );
 
-      if (resp.error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.unwrap.extimation',
-          message: 'failed estimate after the unwarp'
-        });
-        throw new Error("Can't estimate topup after unwrap");
-      }
-
       topupActionGasLimit = resp.actionGasLimit;
       topupApproveGasLimit = resp.approveGasLimit;
     } catch (err) {
@@ -212,15 +203,6 @@ export const topUpCompound = async (
         accountAddress
       );
 
-      if (resp.error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.unstake.estimation',
-          message: 'Failed to estimate top up after unstake'
-        });
-        throw new Error("Can't estimate top up after unstake");
-      }
-
       topupActionGasLimit = resp.actionGasLimit;
       topupApproveGasLimit = resp.approveGasLimit;
     } catch (err) {
@@ -245,8 +227,8 @@ export const topUpCompound = async (
       topupInputAmount,
       accountAddress,
       web3,
-      async () => {
-        await topUp(
+      async (newGasLimit) =>
+        topUp(
           topupInputAsset,
           outputAsset,
           topupInputAmount,
@@ -255,12 +237,22 @@ export const topUpCompound = async (
           web3,
           accountAddress,
           changeStepToProcess,
-          topupActionGasLimit,
+          newGasLimit,
           gasPriceInGwei
-        );
-      },
+        ),
+      () =>
+        estimateTopUpCompound(
+          inputAsset,
+          outputAsset,
+          inputAmount,
+          transferData,
+          network,
+          web3,
+          accountAddress
+        ),
       () => changeStepToProcess('Process'),
       topupApproveGasLimit,
+      topupActionGasLimit,
       gasPriceInGwei
     );
   } catch (err) {

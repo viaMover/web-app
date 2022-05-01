@@ -17,7 +17,7 @@
       :is-processing="isProcessing"
       :operation-description="$t('savings.withdraw.txtIfYouKeepSavings')"
       :operation-title="estimatedAnnualEarnings"
-      :output-asset-heading-text="$t('savings.deposit.lblAmountWeDepositIn')"
+      :output-asset-heading-text="$t('savings.withdraw.lblAmountWeWithdrawIn')"
       :selected-token-description="$t('savings.txtUSDCCoinIsAStable')"
       @review-tx="handleTxReview"
       @select-max-amount="handleSelectMaxAmount"
@@ -47,17 +47,14 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
+import { isBaseAsset } from '@/utils/address';
 import { divide, isZero, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { getUSDCAssetData } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
   InputMode,
@@ -130,7 +127,6 @@ export default Vue.extend({
     ...mapState('account', {
       networkInfo: 'networkInfo',
       currentAddress: 'currentAddress',
-      usdcPriceInWeth: 'usdcPriceInWeth',
       provider: 'provider',
       ethPrice: 'ethPrice',
       gasPrices: 'gasPrices',
@@ -142,7 +138,9 @@ export default Vue.extend({
       savingsOnChainService: 'onChainService'
     }),
     ...mapGetters('treasury', {
-      treasuryBonusNative: 'treasuryBonusNative',
+      treasuryBonusNative: 'treasuryBonusNative'
+    }),
+    ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice'
     }),
     hasBackButton(): boolean {
@@ -178,8 +176,10 @@ export default Vue.extend({
         possibleSavingsBalance = this.savingsBalance;
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
+      const usdcAmountNative = multiply(
+        possibleSavingsBalance,
+        this.usdcNativePrice
+      );
       let apyNative = multiply(divide(this.savingsAPY, 100), usdcAmountNative);
 
       return `~ $${formatToNative(apyNative)}`;
@@ -195,20 +195,6 @@ export default Vue.extend({
       } else {
         this.$router.back();
       }
-    },
-    async estimateAction(
-      amount: string,
-      asset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
-      const estimation = await (
-        this.savingsOnChainService as SavingsOnChainService
-      ).estimateWithdrawCompound(asset, amount);
-
-      if (estimation.error) {
-        throw new Error('Failed to estimate withdraw');
-      }
-
-      return estimation;
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
@@ -230,6 +216,15 @@ export default Vue.extend({
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
       const ethPrice = this.ethPrice ?? '0';
       if (isZero(gasPrice) || isZero(actionGasLimit) || isZero(ethPrice)) {
+        return false;
+      }
+
+      if (
+        isBaseAsset(
+          this.inputAsset?.address ?? 'missing_address',
+          this.networkInfo?.network
+        )
+      ) {
         return false;
       }
 
@@ -256,10 +251,9 @@ export default Vue.extend({
       this.actionGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmountNative,
-          this.inputAsset
-        );
+        const gasLimits = await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).estimateWithdrawCompound(this.inputAsset, this.inputAmountNative);
 
         this.actionGasLimit = gasLimits.actionGasLimit;
 
@@ -271,15 +265,19 @@ export default Vue.extend({
             this.actionGasLimit
           );
         }
+
+        this.step = 'review';
       } catch (error) {
         this.isSubsidizedEnabled = false;
+        sendGlobalTopMessageEvent(
+          this.$t('errors.estimationFailed') as string,
+          'error'
+        );
         console.warn('Failed to estimate transaction', error);
         Sentry.captureException(error);
       } finally {
         this.isProcessing = false;
       }
-
-      this.step = 'review';
     },
     handleSelectMaxAmount(): void {
       this.inputAmountNative = this.inputAsset.balance;

@@ -7,9 +7,9 @@
         <slot name="first-token-image">
           <token-image
             :address="token.address"
+            class="no-margin item-coin"
             :src="token.logo"
             :symbol="token.symbol"
-            wrapper-class="item-coin"
           />
         </slot>
       </div>
@@ -41,6 +41,7 @@
         <h2>{{ inputAmountNativeTitle }}</h2>
         <span>{{ nativeAmount }}</span>
       </div>
+      <slot name="additional-items" />
       <template v-if="isSubsidizedEnabled">
         <custom-switch v-model="isSmartTreasury">{{
           $t('forms.lblUseSmartTreasury')
