@@ -25,7 +25,7 @@
       :icon="$t('savingsPlus.icon')"
       :in-progress-text="$t('savingsPlus.lblInProgress')"
       :items="savingsMonthStatsOptions"
-      navigate-to-name="savings-month-stats"
+      navigate-to-name="savings-plus-month-stats"
       :title="$t('savingsPlus.lblSPStatements')"
     />
   </secondary-page>

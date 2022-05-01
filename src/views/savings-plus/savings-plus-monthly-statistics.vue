@@ -4,7 +4,7 @@
       <secondary-page-header :description="pageSubtitle" :title="pageTitle" />
     </template>
 
-    <savings-plus-monthly-statistics :page-date="pageDate" />
+    <savings-plus-monthly-statement :page-date="pageDate" />
   </secondary-page>
 </template>
 
@@ -17,12 +17,14 @@ import dayjs from 'dayjs';
 import { dateFromExplicitPair } from '@/utils/time';
 
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
+import { SavingsPlusMonthlyStatement } from '@/components/savings-plus';
 
 export default Vue.extend({
   name: 'SavingsPlusMonthlyStatistics',
   components: {
     SecondaryPageHeader,
-    SecondaryPage
+    SecondaryPage,
+    SavingsPlusMonthlyStatement
   },
   computed: {
     ...mapState('account', { networkInfo: 'networkInfo' }),
