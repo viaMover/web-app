@@ -1400,7 +1400,7 @@ const messages: VueI18n.LocaleMessageObject = {
     },
     deposit: {
       txtUSDCCoinIsAStable:
-        'USD Coin is a stable asset and the easiest way to grow your savings Plus. Your returns will also be in USDC.',
+        'USD Coin is a stable asset and the easiest way to grow your savings. Your returns will also be in USDC.',
       txtAssetWillBeConverted:
         'This token will be automatically swapped for USDC, and deposited in the savings position. Your return will also be in USDC (USD Coin).',
       lblWhatDoWeDeposit: 'What do we deposit',
