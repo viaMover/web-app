@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import dayjs from 'dayjs';
 
 import { MoverError } from '@/services/v2';
 import {
@@ -56,6 +57,22 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
         MoverAPISuccessfulResponse<SavingsPlusInfoAPIResponse>
       >(`/info/${this.currentAddress}`)
     ).data.payload;
+
+    if (data.last12MonthsBalances.length === 0) {
+      const last12MonthsBalances = new Array<SavingsPlusMonthBalanceItem>(12);
+      const startOfCurrentMonth = dayjs().startOf('month');
+      for (let i = 0; i < 12; i++) {
+        last12MonthsBalances[i] = {
+          type: 'savings_plus_month_balance_item',
+          year: startOfCurrentMonth.subtract(i, 'month').year(),
+          month: startOfCurrentMonth.subtract(i, 'month').month() + 1,
+          earned: 0,
+          balance: 0,
+          snapshotTimestamp: startOfCurrentMonth.subtract(i, 'month').unix()
+        };
+      }
+      data.last12MonthsBalances = last12MonthsBalances;
+    }
 
     return MoverAPISavingsPlusService.mapInfo(data);
   }
