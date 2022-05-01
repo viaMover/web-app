@@ -1,5 +1,5 @@
 <template>
-  <div class="secondary-page-header" @click="$emit('click')">
+  <div class="secondary-page-header">
     <h1 v-if="title" class="title">{{ title }}</h1>
     <slot name="title"></slot>
     <div v-if="description" class="description">{{ description }}</div>

@@ -5,7 +5,7 @@
         <template v-slot:description>
           {{ $t('stakingUBT.lblBalanceIn') }}
           <span class="selector button-like" @click="handleToggleBalanceMode">
-            {{ currenBalanceSymbol }}
+            {{ currentBalanceSymbol }}
           </span>
         </template>
       </secondary-page-header>
@@ -90,7 +90,7 @@ export default Vue.extend({
       earnedThisMonthNative: 'earnedThisMonthNative',
       ubtNativePrice: 'ubtNativePrice'
     }),
-    currenBalanceSymbol(): string {
+    currentBalanceSymbol(): string {
       if (this.balanceMode === 'TOKEN') {
         return this.ubtAssetData.symbol;
       } else {
@@ -102,9 +102,9 @@ export default Vue.extend({
     },
     displayBalance(): string {
       if (this.balanceMode === 'TOKEN') {
-        return `${formatToDecimals(this.balance, 4, BigNumber.ROUND_DOWN)}`;
+        return formatToDecimals(this.balance, 4, BigNumber.ROUND_DOWN);
       }
-      return `$${formatToNative(this.balanceNative)}`;
+      return this.formatAsNativeCurrency(this.balanceNative);
     },
     chartDataSource(): Array<StakingUbtMonthBalanceItem> {
       return this.info !== undefined ? this.info.last12MonthsBalances : [];
