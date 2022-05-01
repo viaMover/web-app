@@ -198,7 +198,7 @@ export default Vue.extend({
       infoBalanceNative: 'infoBalanceNative'
     }),
     formattedAPY(): string {
-      return formatPercents(this.apy);
+      return `${formatPercents(this.apy)}%`;
     },
     savingsBalance(): string {
       return `$${formatToNative(this.infoBalanceNative)}`;

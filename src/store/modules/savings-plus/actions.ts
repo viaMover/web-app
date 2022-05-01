@@ -5,7 +5,7 @@ import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-
 import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
-import { divide, fromWei } from '@/utils/bigmath';
+import { divide, fromWei, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { GetterType } from './getters';
@@ -84,8 +84,8 @@ const actions: ActionFuncs<
       const info = await state.apiService.getInfo();
 
       commit('setSavingsInfo', info);
-      commit('setSavingsAPY', info.avg30DaysAPY);
-      commit('setSavingsDPY', divide(info.avg30DaysAPY, 365));
+      commit('setSavingsAPY', multiply(info.avg30DaysAPY, 100));
+      commit('setSavingsDPY', multiply(divide(info.avg30DaysAPY, 365), 100));
       if (rootState.account?.networkInfo !== undefined) {
         commit(
           'setSavingsBalance',
