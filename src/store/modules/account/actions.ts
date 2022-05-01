@@ -618,7 +618,9 @@ const actions: ActionFuncs<
         state.currentAddress,
         state.networkInfo.network,
         state.provider.web3
-      );
+      )
+        .setAddTransactionToStoreHandler((tx) => dispatch('addTransaction', tx))
+        .setEthPriceGetterHandler(() => getters.ethPrice);
       dispatch('savingsPlus/setOnChainService', savingsPlusOnChainService, {
         root: true
       });
