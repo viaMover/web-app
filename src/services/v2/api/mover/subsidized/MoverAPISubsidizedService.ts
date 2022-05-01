@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { MoverAPISuccessfulResponse } from '@/services/v2/api/mover';
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
 import { MoverAPIService } from '@/services/v2/api/mover/MoverAPIService';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
@@ -115,14 +114,11 @@ export class MoverAPISubsidizedService extends MoverAPIService {
 
     try {
       const response = (
-        await client.post<MoverAPISuccessfulResponse<TxExecuteResponse>>(
-          '/savingsplus/executeWithdraw',
-          {
-            action: action,
-            signature: signature
-          } as TxExecuteRequest
-        )
-      ).data.payload;
+        await client.post<TxExecuteResponse>('/savingsplus/executeWithdraw', {
+          action: action,
+          signature: signature
+        } as TxExecuteRequest)
+      ).data;
 
       if (response.txID === undefined && response.queueID === undefined) {
         throw new MoverAPISubsidizedRequestError(
