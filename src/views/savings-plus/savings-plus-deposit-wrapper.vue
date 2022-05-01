@@ -242,7 +242,7 @@ export default Vue.extend({
       return isDepositWithBridgeTransactionData(this.depositTxData);
     },
     successTxSubtitle(): string | undefined {
-      if (this.isBridgingNeeded) {
+      if (this.isBridgingNeeded && this.transactionStep === 'Success') {
         return this.$t('savingsPlus.lblTxAdditionalBridgeInfo') as string;
       }
       return undefined;
