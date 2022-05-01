@@ -371,7 +371,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     changeStepToProcess: () => Promise<void>,
     withdrawData?: WithdrawTransactionData,
     gasLimit?: string
-  ): Promise<TransactionReceipt> {
+  ): Promise<TransactionReceipt | undefined> {
     if (!this.isValidUSDCishToken(outputAsset.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to withdrawCompound(). Output asset must be USDC-ish',
@@ -727,7 +727,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     outputAmount: string,
     withdrawToNetwork: Network,
     changeStepToProcess: () => Promise<void>
-  ): Promise<TransactionReceipt> {
+  ): Promise<TransactionReceipt | undefined> {
     const chainId = getNetwork(withdrawToNetwork)?.chainId;
     if (chainId === undefined) {
       throw new MoverError(
@@ -747,40 +747,42 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         changeStepToProcess
       );
 
-    const tx: Transaction = {
-      blockNumber: '0',
-      fee: {
-        ethPrice: this.ethPriceGetterHandler?.() ?? '0',
-        feeInWEI: '0'
-      },
-      hash: subsidizedResponse.txID ?? '',
-      isOffchain: true,
-      nonce: '0',
-      status: 'pending',
-      timestamp: currentTimestamp(),
-      type: TransactionTypes.transferERC20,
-      uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
-      asset: {
-        address: outputAsset.address,
-        change: toWei(outputAmount, outputAsset.decimals),
-        decimals: outputAsset.decimals,
-        direction: 'in',
-        iconURL: '',
-        price: '0',
-        symbol: outputAsset.symbol
-      },
-      from: lookupAddress(withdrawToNetwork, 'HOLY_HAND_ADDRESS'),
-      to: this.currentAddress,
-      subsidizedQueueId: subsidizedResponse.queueID,
-      moverType: 'subsidized_withdraw'
-    };
-    await this.addTransactionToStoreHandler?.(tx);
+    if (this.network === withdrawToNetwork) {
+      const tx: Transaction = {
+        blockNumber: '0',
+        fee: {
+          ethPrice: this.ethPriceGetterHandler?.() ?? '0',
+          feeInWEI: '0'
+        },
+        hash: subsidizedResponse.txID ?? '',
+        isOffchain: true,
+        nonce: '0',
+        status: 'pending',
+        timestamp: currentTimestamp(),
+        type: TransactionTypes.transferERC20,
+        uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+        asset: {
+          address: outputAsset.address,
+          change: toWei(outputAmount, outputAsset.decimals),
+          decimals: outputAsset.decimals,
+          direction: 'in',
+          iconURL: '',
+          price: '0',
+          symbol: outputAsset.symbol
+        },
+        from: lookupAddress(withdrawToNetwork, 'HOLY_HAND_ADDRESS'),
+        to: this.currentAddress,
+        subsidizedQueueId: subsidizedResponse.queueID,
+        moverType: 'subsidized_withdraw'
+      };
+      await this.addTransactionToStoreHandler?.(tx);
 
-    return waitOffchainTransactionReceipt(
-      subsidizedResponse.queueID,
-      subsidizedResponse.txID,
-      this.web3Client
-    );
+      return waitOffchainTransactionReceipt(
+        subsidizedResponse.queueID,
+        subsidizedResponse.txID,
+        this.web3Client
+      );
+    }
   }
 
   protected async withdraw(
