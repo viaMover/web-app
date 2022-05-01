@@ -842,7 +842,7 @@ const actions: ActionFuncs<
     commit('toggleIsOrderOfLibertySectionVisible');
   },
   async getTokenPrice(
-    { state, commit, dispatch },
+    { state, dispatch },
     token: SmallTokenInfo
   ): Promise<string> {
     try {
