@@ -170,22 +170,27 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
     return {
       actionHistory: MoverAPISavingsPlusService.isFieldsReducerEnabled
         ? undefined
-        : data.actionHistory.map((item): SavingsPlusActionHistoryItem => {
-            return {
-              amount: item.amount,
-              block: item.block,
-              timestamp: item.timestamp,
-              txId: item.txId,
-              type: item.type
-            };
-          }),
+        : data.actionHistory
+            .slice()
+            .sort((a, b) => a.timestamp - b.timestamp)
+            .map((item): SavingsPlusActionHistoryItem => {
+              return {
+                amount: item.amount,
+                block: item.block,
+                timestamp: item.timestamp,
+                txId: item.txId,
+                type: item.type
+              };
+            }),
       avg30DaysAPY: data.avg30DaysAPY,
       currentBalance: data.currentBalance,
       currentPoolBalance: data.currentPoolBalance,
       earnedThisMonth: data.earnedThisMonth,
       earnedTotal: data.earnedTotal,
-      last12MonthsBalances: data.last12MonthsBalances.map(
-        (item): SavingsPlusMonthBalanceItem => {
+      last12MonthsBalances: data.last12MonthsBalances
+        .slice()
+        .sort((a, b) => a.snapshotTimestamp - b.snapshotTimestamp)
+        .map((item): SavingsPlusMonthBalanceItem => {
           return {
             balance: item.balance,
             earned: item.earned,
@@ -194,8 +199,7 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
             type: 'savings_plus_month_balance_item',
             year: item.year
           };
-        }
-      )
+        })
     };
   }
 

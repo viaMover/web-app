@@ -79,12 +79,12 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
     );
   },
   savingsMonthStatsOptions(state, getters): Array<SavingsPlusMonthBalanceItem> {
-    if (state.isInfoLoading || getters.info === undefined) {
+    if (getters.info === undefined) {
       return [];
     }
 
     let hasTrimmedLeft = false;
-    return getters.info.last12MonthsBalances
+    const result = getters.info.last12MonthsBalances
       .reduce((acc, item) => {
         if (item.balance === 0 && !hasTrimmedLeft) {
           return acc;
@@ -94,6 +94,16 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
         return [...acc, item];
       }, new Array<SavingsPlusMonthBalanceItem>())
       .sort((a, b) => b.snapshotTimestamp - a.snapshotTimestamp);
+
+    if (result.length === 0 && getters.info.last12MonthsBalances.length > 0) {
+      return [
+        getters.info.last12MonthsBalances[
+          getters.info.last12MonthsBalances.length - 1
+        ]
+      ];
+    }
+
+    return result;
   },
   infoEarnedThisMonthNative(state, getters, rootState): string {
     if (
