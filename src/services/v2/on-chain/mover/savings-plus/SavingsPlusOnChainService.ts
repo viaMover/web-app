@@ -747,7 +747,10 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         changeStepToProcess
       );
 
-    if (this.network === withdrawToNetwork) {
+    // todo: remove `Network.polygon` literal from here
+    // and use an API service to check TX status
+    // in a cross-chain manner
+    if (this.network === Network.polygon) {
       const tx: Transaction = {
         blockNumber: '0',
         fee: {
@@ -773,7 +776,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         from: lookupAddress(withdrawToNetwork, 'HOLY_HAND_ADDRESS'),
         to: this.currentAddress,
         subsidizedQueueId: subsidizedResponse.queueID,
-        moverType: 'subsidized_withdraw'
+        moverType: 'withdraw_savings_plus_direct'
       };
       await this.addTransactionToStoreHandler?.(tx);
 
@@ -783,6 +786,35 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         this.web3Client
       );
     }
+
+    const tx: Transaction = {
+      blockNumber: '0',
+      fee: {
+        ethPrice: this.ethPriceGetterHandler?.() ?? '0',
+        feeInWEI: '0'
+      },
+      hash: '',
+      isOffchain: true,
+      nonce: '0',
+      status: 'pending',
+      timestamp: currentTimestamp(),
+      type: TransactionTypes.transferERC20,
+      uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+      asset: {
+        address: outputAsset.address,
+        change: toWei(outputAmount, outputAsset.decimals),
+        decimals: outputAsset.decimals,
+        direction: 'in',
+        iconURL: '',
+        price: '0',
+        symbol: outputAsset.symbol
+      },
+      from: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+      to: this.currentAddress,
+      subsidizedQueueId: subsidizedResponse.queueID,
+      moverType: 'withdraw_savings_plus_bridged'
+    };
+    await this.addTransactionToStoreHandler?.(tx);
   }
 
   protected async withdraw(
