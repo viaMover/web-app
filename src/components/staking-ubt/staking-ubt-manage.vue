@@ -1,10 +1,16 @@
 <template>
   <secondary-page class="manage">
     <template v-slot:title>
-      <secondary-page-header
-        :description="$t('stakingUBT.lblBalance')"
-        :title="balance"
-      />
+      <secondary-page-header :title="displayBalance">
+        <template v-slot:description>
+          <div class="description">
+            {{ $t('stakingUBT.lblBalanceIn') }}
+            <span class="selector button-like" @click="handleToggleBalanceMode">
+              {{ currentBalanceSymbol }}
+            </span>
+          </div>
+        </template>
+      </secondary-page-header>
     </template>
 
     <div class="chart-wrapper">
@@ -35,16 +41,22 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
+import { BigNumber } from 'bignumber.js';
 import dayjs from 'dayjs';
 
 import { StakingUbtMonthBalanceItem } from '@/services/v2/api/mover/staking-ubt';
 import { fromWei, multiply } from '@/utils/bigmath';
-import { formatToNative, getSignIfNeeded } from '@/utils/format';
+import {
+  formatToDecimals,
+  formatToNative,
+  getSignIfNeeded
+} from '@/utils/format';
 import { dateFromExplicitPair } from '@/utils/time';
 import { getUBTAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon } from '@/wallet/types';
 
 import { BarChart } from '@/components/charts';
+import { InputMode } from '@/components/forms';
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
 import { StatementsNavList } from '@/components/statements-nav-list';
 
@@ -59,13 +71,15 @@ export default Vue.extend({
   data() {
     return {
       monthName: dayjs().format('MMMM'),
-      selectedItem: undefined as StakingUbtMonthBalanceItem | undefined
+      selectedItem: undefined as StakingUbtMonthBalanceItem | undefined,
+      balanceMode: 'NATIVE' as InputMode
     };
   },
   computed: {
     ...mapState({ colors: 'colors' }),
     ...mapState('account', {
-      networkInfo: 'networkInfo'
+      networkInfo: 'networkInfo',
+      nativeCurrency: 'nativeCurrency'
     }),
     ...mapState('stakingUBT', {
       isInfoLoading: 'isInfoLoading'
@@ -74,11 +88,25 @@ export default Vue.extend({
       info: 'info',
       monthStatsOptions: 'monthStatsOptions',
       balanceNative: 'balanceNative',
+      balance: 'balance',
       earnedThisMonthNative: 'earnedThisMonthNative',
       ubtNativePrice: 'ubtNativePrice'
     }),
-    balance(): string {
-      return `$${formatToNative(this.balanceNative)}`;
+    currentBalanceSymbol(): string {
+      if (this.balanceMode === 'TOKEN') {
+        return this.ubtAssetData.symbol;
+      } else {
+        return this.nativeCurrencySymbol;
+      }
+    },
+    nativeCurrencySymbol(): string {
+      return this.nativeCurrency.toUpperCase();
+    },
+    displayBalance(): string {
+      if (this.balanceMode === 'TOKEN') {
+        return formatToDecimals(this.balance, 4, BigNumber.ROUND_DOWN);
+      }
+      return this.formatAsNativeCurrency(this.balanceNative);
     },
     chartDataSource(): Array<StakingUbtMonthBalanceItem> {
       return this.info !== undefined ? this.info.last12MonthsBalances : [];
@@ -136,6 +164,13 @@ export default Vue.extend({
     },
     formatSelectedItemValue(value: string | number): string {
       return `${getSignIfNeeded(value, '+')}$${formatToNative(value)}`;
+    },
+    handleToggleBalanceMode(): void {
+      if (this.balanceMode === 'NATIVE') {
+        this.balanceMode = 'TOKEN';
+        return;
+      }
+      this.balanceMode = 'NATIVE';
     }
   }
 });
