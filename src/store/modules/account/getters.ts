@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { GettersFuncs } from '@/store/types';
 import { add, multiply } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import {
@@ -132,10 +133,10 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     return multiply(state.movePriceInWeth, state.ethPrice);
   },
   usdcNativePrice(state): string {
-    if (state.usdcPriceInWeth === undefined || state.ethPrice === undefined) {
+    if (state.usdcPriceInNative === undefined) {
       return '0';
     }
-    return multiply(state.usdcPriceInWeth, state.ethPrice);
+    return state.usdcPriceInNative;
   },
   slpNativePrice(state): string {
     if (state.slpPriceInWeth === undefined || state.ethPrice === undefined) {

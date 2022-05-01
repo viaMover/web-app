@@ -44,7 +44,7 @@ export default {
 
     ethPrice: undefined,
     movePriceInWeth: undefined,
-    usdcPriceInWeth: undefined,
+    usdcPriceInNative: undefined,
     slpPriceInWeth: undefined,
     eursPriceInWeth: undefined,
 
@@ -56,7 +56,8 @@ export default {
     chartData: undefined,
 
     // eslint-disable-next-line
-    providerBeforeClose: () => {},
+    providerBeforeClose: () => {
+    },
     allTokens: [],
     allTokensSearcher: undefined,
     refreshError: undefined,

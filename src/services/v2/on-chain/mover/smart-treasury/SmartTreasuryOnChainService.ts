@@ -389,64 +389,18 @@ export class SmartTreasuryOnChainService
     inputAsset: SmallTokenInfo,
     inputAmount: string
   ): Promise<CompoundEstimateResponse> {
-    let isApproveNeeded = true;
-    try {
-      isApproveNeeded = await this.needsApprove(
-        inputAsset,
-        inputAmount,
-        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-      );
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: failed "needsApprove" check',
-        data: {
-          error,
-          inputAsset,
-          inputAmount
-        }
-      });
+    const approveGasLimit = await this.estimateApproveIfNeeded(
+      inputAsset,
+      inputAmount,
+      lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+    );
 
-      throw new OnChainServiceError(
-        'Failed to estimate deposit: failed "needsApprove" check'
-      ).wrap(error);
-    }
-
-    if (isApproveNeeded) {
-      addSentryBreadcrumb({
-        type: 'debug',
-        category: this.sentryCategoryPrefix,
-        message: 'Needs approve'
-      });
-
-      try {
-        const approveGasLimit = await this.estimateApprove(
-          inputAsset.address,
-          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-        );
-
-        return {
-          error: false,
-          actionGasLimit: ethDefaults.basic_holy_treasury_deposit,
-          approveGasLimit: approveGasLimit
-        };
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to estimate deposit: failed "approve" estimation',
-          data: {
-            error,
-            inputAsset,
-            inputAmount
-          }
-        });
-
-        throw new OnChainServiceError(
-          'Failed to estimate deposit: failed "approve" estimation'
-        ).wrap(error);
-      }
+    if (approveGasLimit !== undefined) {
+      return {
+        error: false,
+        approveGasLimit: approveGasLimit,
+        actionGasLimit: ethDefaults.basic_holy_savings_plus_deposit
+      };
     }
 
     if (this.holyHandContract === undefined) {
@@ -688,65 +642,18 @@ export class SmartTreasuryOnChainService
     inputAsset: SmallToken,
     inputAmount: string
   ): Promise<CompoundEstimateResponse> {
-    let isApproveNeeded = true;
-    try {
-      isApproveNeeded = await this.needsApprove(
-        inputAsset,
-        inputAmount,
-        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-      );
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate claim & burn: failed "needsApprove" check',
-        data: {
-          error,
-          inputAsset,
-          inputAmount
-        }
-      });
+    const approveGasLimit = await this.estimateApproveIfNeeded(
+      inputAsset,
+      inputAmount,
+      lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+    );
 
-      throw new OnChainServiceError(
-        'Failed to estimate claim & burn: failed "needsApprove" check'
-      ).wrap(error);
-    }
-
-    if (isApproveNeeded) {
-      addSentryBreadcrumb({
-        type: 'debug',
-        category: this.sentryCategoryPrefix,
-        message: 'Needs approve'
-      });
-
-      try {
-        const approveGasLimit = await this.estimateApprove(
-          inputAsset.address,
-          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-        );
-
-        return {
-          error: false,
-          actionGasLimit: ethDefaults.basic_holy_treasury_burn,
-          approveGasLimit: approveGasLimit
-        };
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message:
-            'Failed to estimate claim & burn: failed "approve" estimation',
-          data: {
-            error,
-            inputAsset,
-            inputAmount
-          }
-        });
-
-        throw new OnChainServiceError(
-          'Failed to estimate claim & burn: failed "approve" estimation'
-        );
-      }
+    if (approveGasLimit !== undefined) {
+      return {
+        error: false,
+        approveGasLimit: approveGasLimit,
+        actionGasLimit: ethDefaults.basic_holy_savings_plus_deposit
+      };
     }
 
     if (!sameAddress(inputAsset.address, this.moveAssetData.address)) {

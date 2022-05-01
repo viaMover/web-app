@@ -54,6 +54,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblUseSmartTreasury: 'Use Smart Treasury rewards to cover gas',
     lblEstimatedGasCost: 'Estimated gas cost',
     lblAvailable: 'Available',
+    lblOn: 'on',
     lblSwappingFor: 'Swapping for',
     lblChooseToken: 'Choose Token',
     lblChooseAmount: 'Choose amount',
@@ -1301,9 +1302,6 @@ const messages: VueI18n.LocaleMessageObject = {
       lblOHMTokenAlt: 'Olympus token image'
     }
   },
-  savingsPlus: {
-    lblSavingsPlus: 'Savings Plus'
-  },
   stakingUBT: {
     lblMain: 'My Staking',
     lblStaking: 'Staking',
@@ -1356,6 +1354,103 @@ const messages: VueI18n.LocaleMessageObject = {
     lblWhatDoWeWithdraw: 'What we do withdraw',
     btnWithdrawFromStaking: 'Withdraw from Staking',
     lblReviewYourWithdraw: 'Review your withdraw'
+  },
+  savingsPlus: {
+    icon: '➕',
+    lblSP: 'Saving Plus',
+    txtLeveragedDeposits:
+      'Leveraged deposits introduce higher risk, but higher returns',
+    lblAutomaticLeverage: 'Automatic leverage',
+    lblMultichainZaps: 'Multichain Zaps',
+    lblMoreChainsMoreTokens: 'More chains, more tokens',
+    lblSPStatements: 'Savings Plus Statements',
+    lblSPBalance: 'Savings Plus Balance',
+    lblInProgress: 'In progress',
+    btn: {
+      view: 'View',
+      withdrawFromSP: 'Withdraw from Savings Plus'
+    },
+    errors: {
+      needChainSwitch:
+        'You have to switch the network for this action to {network}'
+    },
+    empty: {
+      lblUpTo: 'up to {value}',
+      lblMultichainZaps: 'Multichain Zaps',
+      lblZapsFromChain: 'Zap from any supported chain',
+      lblTokenZaps: 'Token Zaps',
+      lblZapsIntoUSDC: 'Zaps into USDC from any token',
+      lblStartSaving: 'Start saving',
+      lblAPYOnAllSavings: 'APY on all savings',
+      txtLeveragedDeposit:
+        'Leveraged deposits introduce higher risk, but higher returns',
+      txtYouCouldApproximately:
+        'You could approximately earn in a year if you stake $10,000 now.'
+    },
+    leftRail: {
+      lblMySP: 'My Savings Plus',
+      lblManageSP: 'Manage Savings Plus',
+      lblDepositInSP: 'Deposit in Savings Plus',
+      lblDepositInSPDescription: 'Get up to {value} on multichain savings',
+      lblWithdrawFromSP: 'Withdraw from Savings Plus',
+      lblWithdrawFromSPDescription:
+        'Remove your assets from savings fully or partially',
+      lblGlobalAnalytics: 'Global analytics',
+      lblGlobalAnalyticsDescription: 'All information about Savings Plus'
+    },
+    deposit: {
+      txtUSDCCoinIsAStable:
+        'USD Coin is a stable asset and the easiest way to grow your savings. Your returns will also be in USDC.',
+      txtAssetWillBeConverted:
+        'This token will be automatically swapped for USDC, and deposited in the savings position. Your return will also be in USDC (USD Coin).',
+      lblWhatDoWeDeposit: 'What do we deposit',
+      txtYouCouldEarnInYear:
+        'You could earn in a year. Considering all changes.',
+      lblAmountWeDepositIn: 'Amount we deposit in',
+      lblYourDepositIn: 'Your deposit in',
+      lblReviewYourDeposit: 'Review your deposit',
+      lblTotalGoesInSP: 'The total that goes in Savings Plus',
+      lblDepositInSP: 'Deposit in Savings Plus',
+      lblEstimatedVariableAPY: 'Estimated variable APY',
+      lblBridgingFee: 'Bridging fee',
+      lblDepositingFrom: 'Depositing from',
+      lblNotEnough: 'Not enough for bridging fee',
+      txtDepositDescription:
+        'Savings Plus is multichain savings. Your input token will be swapped, and deposited to earn yield across various network'
+    },
+    withdraw: {
+      txtWithdrawDescription:
+        'You can withdraw the entire or partial balance. Available balance consists of principal amount you deposited together with the accumulated yield.',
+      lblWithdrawFromSP: 'Withdraw',
+      lblWhatDoWeWithdraw: 'What do we withdraw',
+      txtIfYouKeepSavings:
+        'If you keep your deposit, you could earn in a year.',
+      lblAmountWeWithdrawIn: 'Amount we withdraw in',
+      txtTokenDescription:
+        'You will receive your original deposit together with the earned interest.',
+      lblReviewTransaction: 'Review transaction',
+      lblReviewYourWithdraw: 'Review your withdrawal',
+      lblTotalAmountBack: 'The total amount you receive back',
+      lblIncludingAccumulatedInterest: 'Including accumulated interest',
+      lblNotEnough: 'Not enough for bridging fee'
+    },
+    overview: {
+      lblSPOverview: 'Savings Plus Overview',
+      lblSPOverviewDescription:
+        'Savings Plus is a non-custodial and permissionless product. Check the global statistics across the board.',
+      lblDepositedAssets: 'My total deposited assets value',
+      lblCurrentVariableAPY: 'Current variable APY',
+      lbl30DayAverageAPY: '30-day average APY',
+      lblTotalAssetsUnderManagement: 'Total assets under management',
+      lblSPStats: 'Savings Plus Stats',
+      lblEarnedToday: 'Earned today',
+      lblEarnedThisMonth: 'Earned this month',
+      lblEarnedInTotal: 'Earned in total',
+      lblSPEstimation: 'Savings Plus Estimation',
+      lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
+      lblEstimatedEarningsNextMonth: 'Estimated earnings this month',
+      lblEstimatedEarningsAnnually: 'Estimated earnings annually'
+    }
   }
 };
 

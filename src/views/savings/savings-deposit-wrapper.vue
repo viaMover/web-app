@@ -8,9 +8,7 @@
       v-if="step === 'prepare'"
       :asset="inputAsset"
       has-select-modal
-      :header-description="
-        $t('treasury.decreaseBoost.txtDecreaseBoostPageDescription')
-      "
+      :header-description="$t('savings.deposit.txtDepositDescription')"
       :header-title="$t('savings.deposit.lblDepositInSavings')"
       :input-amount="inputAmount"
       :input-amount-native="inputAmountNative"
@@ -172,7 +170,6 @@ export default Vue.extend({
       gasPrices: 'gasPrices',
       ethPrice: 'ethPrice',
       tokens: 'tokens',
-      usdcPriceInWeth: 'usdcPriceInWeth',
       provider: 'provider',
       swapService: 'swapAPIService'
     }),
@@ -181,6 +178,9 @@ export default Vue.extend({
       savingsAPY: 'savingsAPY',
       savingsBalance: 'savingsBalance',
       savingsOnChainService: 'onChainService'
+    }),
+    ...mapGetters('account', {
+      usdcNativePrice: 'usdcNativePrice'
     }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
@@ -234,8 +234,10 @@ export default Vue.extend({
         );
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
+      const usdcAmountNative = multiply(
+        possibleSavingsBalance,
+        this.usdcNativePrice
+      );
       const apyNative = multiply(
         divide(this.savingsAPY, 100),
         usdcAmountNative
