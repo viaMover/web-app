@@ -1366,6 +1366,8 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSPStatements: 'Savings Plus Statements',
     lblSPBalance: 'Savings Plus Balance',
     lblInProgress: 'In progress',
+    lblTxAdditionalBridgeInfo:
+      'Please note, your transaction may take some time to complete, as the assets are being bridged.',
     btn: {
       view: 'View',
       withdrawFromSP: 'Withdraw from Savings Plus'
