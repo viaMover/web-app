@@ -37,7 +37,7 @@
       :image="savings"
       :input-amount-native-title="$t('savingsPlus.withdraw.lblTotalAmountBack')"
       :input-amount-title="$t('savingsPlus.withdraw.lblAmountWeWithdrawIn')"
-      :native-amount="formattedNativeAmount"
+      :native-amount="formattedReceiveAmount"
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
@@ -59,10 +59,12 @@ import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
+import { BigNumber } from 'bignumber.js';
 
 import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { TransferData } from '@/services/0x/api';
 import {
+  isWithdrawComplexTransactionData,
   MoverAPISavingsPlusService,
   WithdrawTransactionData
 } from '@/services/v2/api/mover/savings-plus';
@@ -70,8 +72,15 @@ import {
   InvalidNetworkForOperationError,
   SavingsPlusOnChainService
 } from '@/services/v2/on-chain/mover/savings-plus';
-import { divide, multiply, toWei } from '@/utils/bigmath';
-import { formatToNative } from '@/utils/format';
+import {
+  divide,
+  fromWei,
+  lessThanOrEqual,
+  multiply,
+  sub,
+  toWei
+} from '@/utils/bigmath';
+import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { getNetwork } from '@/utils/networkTypes';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -153,17 +162,31 @@ export default Vue.extend({
     ...mapGetters('account', {
       usdcNativePrice: 'usdcNativePrice'
     }),
-    includingAccumulatedInterest(): string {
-      return `1.21 USDc`;
-    },
     hasBackButton(): boolean {
       return this.step !== 'loader';
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
     },
-    formattedNativeAmount(): string {
-      return `${formatToNative(this.inputAmount)} ${this.nativeCurrencySymbol}`;
+    formattedReceiveAmount(): string {
+      if (this.withdrawTxData === undefined) {
+        return '0';
+      }
+      let receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
+      if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
+        receiveAmount = this.withdrawTxData.estimatedReceived;
+      } else {
+        receiveAmount = sub(receiveAmount, this.withdrawTxData.withdrawFee);
+      }
+      const receiveNativeAmount = multiply(
+        fromWei(receiveAmount, this.inputAsset.decimals),
+        this.usdcNativePrice
+      );
+      return `${formatToDecimals(
+        receiveNativeAmount,
+        2,
+        BigNumber.ROUND_DOWN
+      )} ${this.nativeCurrencySymbol}`;
     },
     inputAsset(): TokenWithBalance {
       const usdcAsset = getUSDCAssetData(this.networkInfo.network);
@@ -216,6 +239,23 @@ export default Vue.extend({
           this.networkInfo.network,
           toWei(this.inputAmount, this.inputAsset.decimals)
         );
+
+        let receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
+        if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
+          receiveAmount = this.withdrawTxData.estimatedReceived;
+        } else {
+          receiveAmount = sub(receiveAmount, this.withdrawTxData.withdrawFee);
+        }
+
+        console.log('receiveAmount', receiveAmount);
+
+        if (lessThanOrEqual(receiveAmount, '0')) {
+          sendGlobalTopMessageEvent(
+            this.$t('savingsPlus.withdraw.lblNotEnough') as string,
+            'error'
+          );
+          return;
+        }
 
         const gasLimits = await (
           this.savingsPlusOnChainService as SavingsPlusOnChainService

@@ -1431,7 +1431,8 @@ const messages: VueI18n.LocaleMessageObject = {
       lblReviewTransaction: 'Review transaction',
       lblReviewYourWithdraw: 'Review your withdrawal',
       lblTotalAmountBack: 'The total amount you receive back',
-      lblIncludingAccumulatedInterest: 'Including accumulated interest'
+      lblIncludingAccumulatedInterest: 'Including accumulated interest',
+      lblNotEnough: 'Not enough for bridging fee'
     },
     overview: {
       lblSPOverview: 'Savings Plus Overview',
