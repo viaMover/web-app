@@ -3,10 +3,12 @@
     <template v-slot:title>
       <secondary-page-header :title="displayBalance">
         <template v-slot:description>
-          {{ $t('stakingUBT.lblBalanceIn') }}
-          <span class="selector button-like" @click="handleToggleBalanceMode">
-            {{ currentBalanceSymbol }}
-          </span>
+          <div class="description">
+            {{ $t('stakingUBT.lblBalanceIn') }}
+            <span class="selector button-like" @click="handleToggleBalanceMode">
+              {{ currentBalanceSymbol }}
+            </span>
+          </div>
         </template>
       </secondary-page-header>
     </template>
