@@ -31,7 +31,7 @@ export type DepositTransactionData =
 
 export enum WithdrawExecution {
   Direct = 'direct',
-  Backend = 'backend'
+  Bridged = 'bridged'
 }
 
 export enum WithdrawReasonCode {
@@ -39,7 +39,7 @@ export enum WithdrawReasonCode {
 }
 
 export type WithdrawComplexTransactionData = {
-  execution: WithdrawExecution.Backend;
+  execution: WithdrawExecution.Bridged;
   reasonCode: WithdrawReasonCode;
   estimatedReceived: string;
   withdrawFee: string;
@@ -49,7 +49,7 @@ export type WithdrawComplexTransactionData = {
 export const isWithdrawComplexTransactionData = (
   data?: WithdrawTransactionData
 ): data is WithdrawComplexTransactionData => {
-  return data !== undefined && data.execution === WithdrawExecution.Backend;
+  return data !== undefined && data.execution === WithdrawExecution.Bridged;
 };
 
 export type WithdrawOnlyTransactionData = {

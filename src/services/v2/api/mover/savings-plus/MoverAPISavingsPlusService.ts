@@ -151,7 +151,7 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
     }
 
     if (
-      ![WithdrawExecution.Direct, WithdrawExecution.Backend].includes(
+      ![WithdrawExecution.Direct, WithdrawExecution.Bridged].includes(
         data.execution
       )
     ) {
