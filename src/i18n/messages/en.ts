@@ -1366,6 +1366,8 @@ const messages: VueI18n.LocaleMessageObject = {
     lblSPStatements: 'Savings Plus Statements',
     lblSPBalance: 'Savings Plus Balance',
     lblInProgress: 'In progress',
+    lblTxAdditionalBridgeInfo:
+      'Please note, your transaction may take some time to complete, as the assets are being bridged.',
     btn: {
       view: 'View',
       withdrawFromSP: 'Withdraw from Savings Plus'
@@ -1414,7 +1416,8 @@ const messages: VueI18n.LocaleMessageObject = {
       lblEstimatedVariableAPY: 'Estimated variable APY',
       lblBridgingFee: 'Bridging fee',
       lblDepositingFrom: 'Depositing from',
-      lblNotEnough: 'Not enough for bridging fee',
+      lblNotEnough:
+        'Deposited value is smaller than bridging fee. Increase the amount',
       txtDepositDescription:
         'Savings Plus is multichain savings. Your input token will be swapped, and deposited to earn yield across various network'
     },
@@ -1432,7 +1435,8 @@ const messages: VueI18n.LocaleMessageObject = {
       lblReviewYourWithdraw: 'Review your withdrawal',
       lblTotalAmountBack: 'The total amount you receive back',
       lblIncludingAccumulatedInterest: 'Including accumulated interest',
-      lblNotEnough: 'Not enough for bridging fee'
+      lblNotEnough:
+        'Deposited value is smaller than bridging fee. Increase the amount'
     },
     overview: {
       lblSPOverview: 'Savings Plus Overview',

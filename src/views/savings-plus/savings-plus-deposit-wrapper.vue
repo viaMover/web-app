@@ -73,7 +73,21 @@
                 </div>-->
       </template>
     </review-form>
-    <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
+    <loader-form
+      v-else-if="step === 'loader'"
+      :additional-subtitle="successTxSubtitle"
+      :step="transactionStep"
+    >
+      <template
+        v-if="successTxSubtitle !== undefined"
+        v-slot:additionalSubtitle
+      >
+        <div class="description">
+          <span class="icon">👀</span>
+          {{ successTxSubtitle }}
+        </div>
+      </template>
+    </loader-form>
   </secondary-page>
 </template>
 
@@ -223,6 +237,15 @@ export default Vue.extend({
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
+    },
+    isBridgingNeeded(): boolean {
+      return isDepositWithBridgeTransactionData(this.depositTxData);
+    },
+    successTxSubtitle(): string | undefined {
+      if (this.isBridgingNeeded && this.transactionStep === 'Success') {
+        return this.$t('savingsPlus.lblTxAdditionalBridgeInfo') as string;
+      }
+      return undefined;
     },
     isSwapNeeded(): boolean {
       if (this.inputAsset === undefined) {

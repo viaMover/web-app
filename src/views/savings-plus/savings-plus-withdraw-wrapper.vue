@@ -41,6 +41,12 @@
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
+      <template v-slot:additional-items>
+        <div v-if="isBridgingNeeded" class="item">
+          <h2>{{ $t('savingsPlus.deposit.lblBridgingFee') }}</h2>
+          <span> {{ bridgingFee }}</span>
+        </div>
+      </template>
       <!--<template v-slot:additional-items>
               <div class="item">
                 <h2>
@@ -50,7 +56,21 @@
               </div>
             </template>-->
     </review-form>
-    <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
+    <loader-form
+      v-else-if="step === 'loader'"
+      :additional-subtitle="successTxSubtitle"
+      :step="transactionStep"
+    >
+      <template
+        v-if="successTxSubtitle !== undefined"
+        v-slot:additionalSubtitle
+      >
+        <div class="description">
+          <span class="icon">👀</span>
+          {{ successTxSubtitle }}
+        </div>
+      </template>
+    </loader-form>
   </secondary-page>
 </template>
 
@@ -168,6 +188,15 @@ export default Vue.extend({
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
     },
+    isBridgingNeeded(): boolean {
+      return isWithdrawComplexTransactionData(this.withdrawTxData);
+    },
+    successTxSubtitle(): string | undefined {
+      if (this.isBridgingNeeded && this.transactionStep === 'Success') {
+        return this.$t('savingsPlus.lblTxAdditionalBridgeInfo') as string;
+      }
+      return undefined;
+    },
     formattedReceiveAmount(): string {
       if (this.withdrawTxData === undefined) {
         return '0';
@@ -215,6 +244,15 @@ export default Vue.extend({
       let apyNative = multiply(divide(this.APY, 100), usdcAmountNative);
 
       return `~ $${formatToNative(apyNative)}`;
+    },
+    bridgingFee(): string {
+      if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
+        return `${formatToDecimals(
+          fromWei(this.withdrawTxData.bridgeFee, this.inputAsset.decimals),
+          4
+        )} ${this.inputAsset.symbol}`;
+      }
+      return `0 ${this.inputAsset.symbol}`;
     }
   },
   methods: {

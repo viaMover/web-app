@@ -45,6 +45,7 @@ export type HolyHandContract = CustomContractType<{
     _bridgeTxData: number[],
     _relayTarget: string
   ): ContractMethod;
+  // l2 variant
   swapBridgeAsset(
     _tokenFrom: string,
     _tokenTo: string,
@@ -53,6 +54,20 @@ export type HolyHandContract = CustomContractType<{
     _convertData: number[],
     _bridgeTxData: number[],
     _relayTarget: string
+  ): ContractMethod;
+  // mainnet variant
+  swapBridgeAsset(
+    _tokenFrom: string,
+    _tokenTo: string,
+    _amountFrom: string,
+    _expectedMinimumReceived: string,
+    _convertData: number[],
+    _bridgeTxData: number[],
+    _relayTarget: string,
+    // difference between stable and bridged amounts as a lower bound
+    _minToMint: string,
+    // minimum amount after bridge
+    _minDy: string
   ): ContractMethod;
 }>;
 

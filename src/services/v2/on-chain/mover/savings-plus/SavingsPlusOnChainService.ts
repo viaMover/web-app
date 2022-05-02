@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
 
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { TransferData } from '@/services/v2/api/0x';
@@ -24,13 +23,13 @@ import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized';
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { toWei } from '@/utils/bigmath';
+import { getInteger, multiply, sub, toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
+  getCentralTransferProxyAbi,
   getUSDCAssetData,
-  HOLY_HAND_ABI,
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
@@ -40,13 +39,15 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'savings-plus.on-chain.service';
   protected readonly centralTransferProxyContract: HolyHandContract | undefined;
   protected readonly usdcAssetData: SmallTokenInfo;
+  protected static MintMultiplier = 0.995;
+  protected static DyMultiplier = 0.98;
 
   constructor(currentAddress: string, network: Network, web3Client: Web3) {
     super(currentAddress, network, web3Client);
 
     this.centralTransferProxyContract = this.createContract(
       'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+      getCentralTransferProxyAbi(network)
     );
     this.usdcAssetData = getUSDCAssetData(network);
   }
@@ -576,6 +577,44 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       }
     });
 
+    if (this.network === Network.mainnet) {
+      const additionalParams = this.mapAdditionalSwapBridgeParams(
+        transferData,
+        depositData
+      );
+
+      addSentryBreadcrumb({
+        type: 'debug',
+        category: this.sentryCategoryPrefix,
+        message:
+          'Using different signature with minToMint and minDy as current network is mainnet',
+        data: additionalParams
+      });
+
+      const gasLimitObj = await this.centralTransferProxyContract.methods
+        .swapBridgeAsset(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          outputAsset.address,
+          toWei(inputAmount, inputAsset.decimals),
+          additionalParams._expectedMinimumReceived,
+          this.mapTransferDataToBytes(transferData),
+          this.mapDepositDataToBytes(depositData),
+          depositData.targetChainRelay,
+          additionalParams._minToMint,
+          additionalParams._minDy
+        )
+        .estimateGas({
+          from: this.currentAddress,
+          value: this.mapTransferDataToValue(transferData)
+        });
+
+      return {
+        error: false,
+        approveGasLimit: '0',
+        actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+      };
+    }
+
     const gasLimitObj = await this.centralTransferProxyContract.methods
       .swapBridgeAsset(
         this.substituteAssetAddressIfNeeded(inputAsset.address),
@@ -696,6 +735,46 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
           depositData
         }
       });
+
+      if (this.network === Network.mainnet) {
+        const additionalParams = this.mapAdditionalSwapBridgeParams(
+          transferData,
+          depositData
+        );
+
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: this.sentryCategoryPrefix,
+          message:
+            'Using different signature with minToMint and minDy as current network is mainnet',
+          data: additionalParams
+        });
+
+        this.wrapWithSendMethodCallbacks(
+          this.centralTransferProxyContract.methods
+            .swapBridgeAsset(
+              this.substituteAssetAddressIfNeeded(inputAsset.address),
+              this.substituteAssetAddressIfNeeded(outputAsset.address),
+              toWei(inputAmount, inputAsset.decimals),
+              additionalParams._expectedMinimumReceived,
+              this.mapTransferDataToBytes(transferData),
+              this.mapDepositDataToBytes(depositData),
+              depositData.targetChainRelay,
+              additionalParams._minToMint,
+              additionalParams._minDy
+            )
+            .send(
+              this.getDefaultTransactionsParams(
+                gasLimit,
+                this.mapTransferDataToValue(transferData)
+              )
+            ),
+          resolve,
+          reject,
+          changeStepToProcess
+        );
+        return;
+      }
 
       this.wrapWithSendMethodCallbacks(
         this.centralTransferProxyContract.methods
@@ -888,5 +967,27 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         this.currentAddress
       } TIMESTAMP ${dayjs().unix()} EXECUTE WITHDRAW FROM SAVINGSPLUS AMOUNT_TOKEN ${amount} TO NETWORK ${chainId}`
     );
+  }
+
+  protected mapAdditionalSwapBridgeParams(
+    transferData: TransferData,
+    depositData: DepositWithBridgeTransactionData
+  ): { _expectedMinimumReceived: string; _minToMint: string; _minDy: string } {
+    const _expectedMinimumReceived =
+      this.mapTransferDataToExpectedMinimumAmount(transferData);
+    const _minToMint = getInteger(
+      multiply(
+        _expectedMinimumReceived,
+        SavingsPlusOnChainService.MintMultiplier
+      )
+    );
+    const _minDy = getInteger(
+      multiply(
+        sub(_minToMint, depositData.bridgeFee),
+        SavingsPlusOnChainService.DyMultiplier
+      )
+    );
+
+    return { _expectedMinimumReceived, _minToMint, _minDy };
   }
 }

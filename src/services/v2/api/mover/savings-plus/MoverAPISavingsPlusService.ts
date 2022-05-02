@@ -74,6 +74,10 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
       data.last12MonthsBalances = last12MonthsBalances;
     }
 
+    if (data.avg30DaysAPY === 0) {
+      data.avg30DaysAPY = 0.12;
+    }
+
     return MoverAPISavingsPlusService.mapInfo(data);
   }
 

@@ -3,6 +3,7 @@
     <div class="status">
       <h1 class="title">{{ selectedStepData.title }}</h1>
       <div class="description">{{ selectedStepData.subtitle }}</div>
+      <slot name="additionalSubtitle"></slot>
     </div>
     <div class="gif">
       <video

@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { TransferData } from '@/services/v2/api/0x';
@@ -18,7 +17,10 @@ import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
-import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
+import {
+  getCentralTransferProxyAbi,
+  lookupAddress
+} from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, Transaction, TransactionTypes } from '@/wallet/types';
 
@@ -31,7 +33,7 @@ export class SwapOnChainService extends MoverOnChainService {
 
     this.holyHandContract = this.createContract(
       'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+      getCentralTransferProxyAbi(network)
     );
   }
 

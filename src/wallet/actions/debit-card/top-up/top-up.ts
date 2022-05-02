@@ -19,8 +19,8 @@ import { unstake } from '@/wallet/actions/debit-card/top-up/gALCX/top-up';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
+  getCentralTransferProxyAbi,
   getUSDCAssetData,
-  HOLY_HAND_ABI,
   lookupAddress
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
@@ -288,7 +288,7 @@ export const topUp = async (
   }
 
   const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
-  const contractABI = HOLY_HAND_ABI;
+  const contractABI = getCentralTransferProxyAbi(network);
 
   const holyHand = new web3.eth.Contract(
     contractABI as AbiItem[],
