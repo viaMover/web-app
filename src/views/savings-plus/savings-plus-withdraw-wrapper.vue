@@ -41,6 +41,12 @@
       :token="inputAsset"
       @tx-start="handleTxStart"
     >
+      <template v-slot:additional-items>
+        <div v-if="isBridgingNeeded" class="item">
+          <h2>{{ $t('savingsPlus.deposit.lblBridgingFee') }}</h2>
+          <span> {{ bridgingFee }}</span>
+        </div>
+      </template>
       <!--<template v-slot:additional-items>
               <div class="item">
                 <h2>
@@ -238,6 +244,15 @@ export default Vue.extend({
       let apyNative = multiply(divide(this.APY, 100), usdcAmountNative);
 
       return `~ $${formatToNative(apyNative)}`;
+    },
+    bridgingFee(): string {
+      if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
+        return `${formatToDecimals(
+          fromWei(this.withdrawTxData.bridgeFee, this.inputAsset.decimals),
+          4
+        )} ${this.inputAsset.symbol}`;
+      }
+      return `0 ${this.inputAsset.symbol}`;
     }
   },
   methods: {
