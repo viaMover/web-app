@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import { GettersFuncs } from '@/store/types';
 import { add, multiply } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
-import { Network } from '@/utils/networkTypes';
 import { MarketCapSortLimit } from '@/wallet/constants';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import {
@@ -117,6 +116,10 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
     balance = add(balance, rootGetters['treasury/treasuryStakedBalanceNative']);
 
     balance = add(balance, rootGetters['treasury/treasuryBonusNative']);
+
+    balance = add(balance, rootGetters['stakingUBT/balanceNative']);
+
+    balance = add(balance, rootGetters['savingsPlus/balanceNative']);
 
     return balance;
   },
