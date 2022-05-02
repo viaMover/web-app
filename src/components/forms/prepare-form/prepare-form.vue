@@ -48,9 +48,19 @@
 
         <div class="available">
           {{ $t('forms.lblAvailable') }}
-          <span class="selector button-like" @click="handleSelectMaxAmount">{{
-            formattedMaxAmount
-          }}</span>
+          <span class="selector button-like" @click="handleSelectMaxAmount">
+            {{ formattedMaxAmount }}
+          </span>
+          <div v-if="isMultichain" class="multichain">
+            {{ $t('forms.lblOn') }}
+            <token-image
+              :address="networkInfo ? networkInfo.baseAsset.address : ''"
+              class="inline"
+              :src="networkInfo ? networkInfo.baseAsset.iconURL : ''"
+              :symbol="networkInfo ? networkInfo.baseAsset.symbol : ''"
+            />
+            {{ networkInfo.name }}
+          </div>
         </div>
 
         <div class="description">
@@ -142,6 +152,10 @@ export default Vue.extend({
       type: Boolean,
       required: true
     },
+    isMultichain: {
+      type: Boolean,
+      default: false
+    },
     allowZeroAmount: {
       type: Boolean,
       default: false
@@ -200,8 +214,11 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapState('account', ['networkInfo', 'nativeCurrency']),
-    ...mapGetters('account', ['getTokenColor']),
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      nativeCurrency: 'nativeCurrency'
+    }),
+    ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
     },

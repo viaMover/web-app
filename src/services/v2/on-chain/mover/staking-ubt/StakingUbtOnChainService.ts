@@ -60,7 +60,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     if (!sameAddress(inputAsset.address, this.UBTAssetData.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to depositCompound()',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -69,15 +69,17 @@ export class StakingUbtOnChainService extends MoverOnChainService {
         inputAsset,
         lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS'),
         inputAmount,
-        () =>
+        (newGasLimit) =>
           this.deposit(
             inputAsset,
             inputAmount,
             changeStepToProcess,
-            actionGasLimit
+            newGasLimit
           ),
+        () => this.estimateDepositCompound(inputAsset, inputAmount),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -104,7 +106,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     if (!sameAddress(inputAsset.address, this.UBTAssetData.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to estimateDepositCompound()',
-        inputAsset
+        { inputAsset }
       );
     }
 
@@ -115,60 +117,18 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       );
     }
 
-    let isApproveNeeded = true;
-    try {
-      isApproveNeeded = await this.needsApprove(
-        inputAsset,
-        inputAmount,
-        lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
-      );
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: failed "needsApprove" check',
-        data: {
-          error,
-          inputAsset,
-          inputAmount
-        }
-      });
+    const approveGasLimit = await this.estimateApproveIfNeeded(
+      inputAsset,
+      inputAmount,
+      lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
+    );
 
-      throw new OnChainServiceError('Failed needsApprove check').wrap(error);
-    }
-
-    if (isApproveNeeded) {
-      addSentryBreadcrumb({
-        type: 'debug',
-        category: this.sentryCategoryPrefix,
-        message: 'Needs approve'
-      });
-
-      try {
-        const approveGasLimit = await this.estimateApprove(
-          inputAsset.address,
-          lookupAddress(this.network, 'STAKING_UBT_CONTRACT_ADDRESS')
-        );
-
-        return {
-          error: false,
-          actionGasLimit: ethDefaults.basic_holy_staking_deposit_ubt,
-          approveGasLimit: approveGasLimit
-        };
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to estimate deposit: failed "approve" estimation',
-          data: {
-            error,
-            inputAsset,
-            inputAmount
-          }
-        });
-
-        throw new OnChainServiceError('Failed approve estimation').wrap(error);
-      }
+    if (approveGasLimit !== undefined) {
+      return {
+        error: false,
+        approveGasLimit: approveGasLimit,
+        actionGasLimit: ethDefaults.basic_holy_savings_plus_deposit
+      };
     }
 
     try {
@@ -176,11 +136,13 @@ export class StakingUbtOnChainService extends MoverOnChainService {
         .deposit(toWei(inputAmount, inputAsset.decimals))
         .estimateGas({ from: this.currentAddress });
 
-      return {
-        error: false,
-        approveGasLimit: '0',
-        actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
-      };
+      if (gasLimitObj) {
+        return {
+          error: false,
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
+        };
+      }
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -195,6 +157,10 @@ export class StakingUbtOnChainService extends MoverOnChainService {
 
       throw new OnChainServiceError('Failed to estimate deposit').wrap(error);
     }
+
+    throw new OnChainServiceError(
+      'Failed to estimate deposit: empty gas limit'
+    );
   }
 
   public async withdrawCompound(
@@ -206,7 +172,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
     if (!sameAddress(outputAsset.address, this.UBTAssetData.address)) {
       throw new OnChainServiceError(
         'Wrong token supplied to withdrawCompound()',
-        outputAsset
+        { outputAsset }
       );
     }
 

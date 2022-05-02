@@ -131,6 +131,70 @@ const routes: Array<RouteConfig> = [
   ),
   wrapWithCustomPreloadView(
     {
+      path: '/savings-plus',
+      component: () =>
+        import(
+          /* webpackChunkName: "savings-plus" */ '@/views/savings-plus/savings-plus-root.vue'
+        ),
+      children: [
+        {
+          path: '',
+          name: 'savings-plus-manage',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-manage-wrapper.vue'
+            )
+        },
+        {
+          path: 'deposit',
+          name: 'savings-plus-deposit',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-deposit-wrapper.vue'
+            )
+        },
+        {
+          path: 'withdraw',
+          name: 'savings-plus-withdraw',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-withdraw-wrapper.vue'
+            )
+        },
+        {
+          path: 'analytics',
+          name: 'savings-plus-global-analytics',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-global-analytics.vue'
+            )
+        },
+        {
+          path: 'month-statistics/:year/:month',
+          name: 'savings-plus-month-stats',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings-plus" */ '@/views/savings-plus/savings-plus-monthly-statistics.vue'
+            )
+        }
+      ]
+    },
+    () =>
+      import(
+        /* webpackChunkName: "savings-plus" */ '@/views/preload/preload-product/preload-product.vue'
+      ),
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+        return isFeatureEnabled(
+          'isSavingsPlusEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
+  ),
+  wrapWithCustomPreloadView(
+    {
       path: '/treasury',
       component: () =>
         import(

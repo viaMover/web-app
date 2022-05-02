@@ -5,6 +5,7 @@ import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
+import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
 import {
   AnyFn,
   CustomContractType,
@@ -126,13 +127,76 @@ export abstract class OnChainService {
   }
 
   /**
-   * Checks whether an `approve` is required for `token` to be spent / processed by `contractAddress`
+   * Estimates `approve` gasLimit of given token if needed, otherwise returns `undefined`
    * @param token token info
    * @param amountToApprove amount to approve that is needed by transaction to execute successfully
    * @param contractAddress spender Smart Contract address
    * @protected
    */
-  protected async needsApprove(
+  protected async estimateApproveIfNeeded(
+    token: SmallTokenInfo,
+    amountToApprove: string,
+    contractAddress: string
+  ): Promise<string | undefined> {
+    try {
+      const needsApprove = await this.needsApprove(
+        token,
+        amountToApprove,
+        contractAddress
+      );
+
+      if (!needsApprove) {
+        return undefined;
+      }
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to "needsApprove" check',
+        data: {
+          error,
+          token,
+          amountToApprove,
+          contractAddress
+        }
+      });
+
+      throw new OnChainServiceError('Failed "needsApprove" check').wrap(error);
+    }
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message: 'Needs approve'
+    });
+
+    try {
+      return await this.estimateApprove(token.address, contractAddress);
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed "approve" estimation',
+        data: {
+          error,
+          token,
+          amountToApprove,
+          contractAddress
+        }
+      });
+
+      throw new OnChainServiceError('Failed approve estimation').wrap(error);
+    }
+  }
+
+  /**
+   * Checks whether an `approve` is required for `token` to be spent / processed by `contractAddress`
+   * @param token token info
+   * @param amountToApprove amount to approve that is needed by transaction to execute successfully
+   * @param contractAddress spender Smart Contract address
+   * @private
+   */
+  private async needsApprove(
     token: SmallTokenInfo,
     amountToApprove: string,
     contractAddress: string
@@ -142,19 +206,19 @@ export abstract class OnChainService {
       return false;
     }
 
-    try {
-      const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
-        token.address,
-        ERC20_ABI as AbiItem[]
+    const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+      token.address,
+      ERC20_ABI as AbiItem[]
+    );
+
+    if (tokenContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        `ERC20 Contract on ${contractAddress}`,
+        this.network
       );
+    }
 
-      if (tokenContract === undefined) {
-        throw new NetworkFeatureNotSupportedError(
-          `ERC20 Contract on ${contractAddress}`,
-          this.network
-        );
-      }
-
+    try {
       const allowance = await tokenContract.methods
         .allowance(this.currentAddress, contractAddress)
         .call({
@@ -185,23 +249,23 @@ export abstract class OnChainService {
     }
   }
 
-  protected async estimateApprove(
+  private async estimateApprove(
     tokenAddress: string,
     spenderAddress: string
   ): Promise<string | never> {
-    try {
-      const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
-        tokenAddress,
-        ERC20_ABI as AbiItem[]
+    const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+      tokenAddress,
+      ERC20_ABI as AbiItem[]
+    );
+
+    if (tokenContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        `ERC20 Contract on ${tokenAddress}`,
+        this.network
       );
+    }
 
-      if (tokenContract === undefined) {
-        throw new NetworkFeatureNotSupportedError(
-          `ERC20 Contract on ${tokenAddress}`,
-          this.network
-        );
-      }
-
+    try {
       const gasLimit = await tokenContract.methods
         .approve(spenderAddress, MAXUINT256)
         .estimateGas({
@@ -209,10 +273,8 @@ export abstract class OnChainService {
         });
 
       if (gasLimit) {
-        return gasLimit.toString();
+        return this.addGasBuffer(gasLimit.toString());
       }
-
-      throw new Error(`empty gas limit`);
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -229,6 +291,10 @@ export abstract class OnChainService {
         `Failed to estimate approve for ${tokenAddress}`
       ).wrap(error);
     }
+
+    throw new OnChainServiceError(
+      `Failed to estimate approve for ${tokenAddress}: empty gas limit`
+    );
   }
 
   protected async approve(
@@ -238,20 +304,19 @@ export abstract class OnChainService {
     gasLimit: string
   ): Promise<TransactionReceipt> {
     return new Promise((resolve, reject) => {
+      const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+        tokenAddress,
+        ERC20_ABI as AbiItem[]
+      );
+
+      if (tokenContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          `ERC20 Contract on ${tokenAddress}`,
+          this.network
+        );
+      }
+
       try {
-        const tokenContract =
-          this.createArbitraryContract<ERC20ContractMethods>(
-            tokenAddress,
-            ERC20_ABI as AbiItem[]
-          );
-
-        if (tokenContract === undefined) {
-          throw new NetworkFeatureNotSupportedError(
-            `ERC20 Contract on ${tokenAddress}`,
-            this.network
-          );
-        }
-
         this.wrapWithSendMethodCallbacks(
           tokenContract.methods
             .approve(spenderAddress, MAXUINT256)
@@ -352,29 +417,80 @@ export abstract class OnChainService {
     token: SmallTokenInfo,
     contractAddress: string,
     amount: string,
-    action: () => Promise<TransactionReceipt>,
+    action: (newGasLimit: string) => Promise<TransactionReceipt>,
+    estimateHandler: () => Promise<CompoundEstimateResponse>,
     changeStepToProcess: () => Promise<void>,
-    gasLimit: string
+    approveGasLimit: string,
+    actionGasLimit: string
   ): Promise<TransactionReceipt | never> {
     if (await this.needsApprove(token, amount, contractAddress)) {
-      await this.approve(
+      const approveTxReceipt = await this.approve(
         token.address,
         contractAddress,
         changeStepToProcess,
-        gasLimit
+        approveGasLimit
       );
+
+      try {
+        // estimate transaction once more to get exact gas limit
+        // and prevent expensive transactions and out of gas
+        // reverts
+        const estimation = await estimateHandler();
+
+        addSentryBreadcrumb({
+          type: 'debug',
+          message: 'Estimated transaction after approve',
+          data: {
+            oldGasLimit: actionGasLimit,
+            newGasLimit: estimation.actionGasLimit,
+            approveTxHash: approveTxReceipt.transactionHash
+          }
+        });
+
+        actionGasLimit = estimation.actionGasLimit;
+      } catch (error) {
+        throw new OnChainServiceError(
+          'Failed to estimate transaction after approve',
+          { approveTxReceipt }
+        ).wrap(error);
+      }
     }
 
-    return action();
+    return action(actionGasLimit);
   }
 
   protected async executeTransactionWithApproveExt(
-    action: () => Promise<TransactionReceipt>,
+    action: (newGasLimit?: string) => Promise<TransactionReceipt>,
     checkApprove: () => Promise<boolean>,
-    approve: () => Promise<TransactionReceipt>
+    approve: () => Promise<TransactionReceipt>,
+    estimateHandler: () => Promise<CompoundEstimateResponse>
   ): Promise<TransactionReceipt | never> {
     if (!(await checkApprove())) {
-      await approve();
+      const approveTxReceipt = await approve();
+
+      let estimation;
+      try {
+        // estimate transaction once more to get exact gas limit
+        // and prevent expensive transactions and out of gas
+        // reverts
+        estimation = await estimateHandler();
+
+        addSentryBreadcrumb({
+          type: 'debug',
+          message: 'Estimated transaction after approve',
+          data: {
+            newGasLimit: estimation.actionGasLimit,
+            approveTxHash: approveTxReceipt.transactionHash
+          }
+        });
+      } catch (error) {
+        throw new OnChainServiceError(
+          'Failed to estimate transaction after approve',
+          { approveTxReceipt }
+        ).wrap(error);
+      }
+
+      return action(estimation.actionGasLimit);
     }
 
     return action();
@@ -457,11 +573,11 @@ export abstract class OnChainService {
     return gasPriceInWei;
   }
 
-  protected addGasBuffer(gas: string, buffer = '120'): string {
+  protected addGasBuffer(gas: string | number, buffer = '120'): string {
     return OnChainService.addGasBuffer(gas, buffer);
   }
 
-  protected static addGasBuffer(gas: string, buffer = '120'): string {
+  protected static addGasBuffer(gas: string | number, buffer = '120'): string {
     return floorDivide(multiply(gas, buffer), '100');
   }
 }

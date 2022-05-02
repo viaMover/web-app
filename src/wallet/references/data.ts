@@ -4,12 +4,12 @@ import { getNetwork, Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import { getCentralTransferProxyAbi } from './abi/central-transfer-proxy';
 import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
 import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import ERC721_ABI from './abi/erc721-abi.json';
 import GALCX_ABI from './abi/galcx-abi.json';
-import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
@@ -200,7 +200,8 @@ const addresses = {
   },
   [Network.fantom]: {
     NFT_ORDER_OF_LIBERTY: '0x568F6DC40B2520522dC4745D881c990e57672d94',
-    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B'
+    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B',
+    USDC_TOKEN_ADDRESS: '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75'
   },
   [Network.arbitrum]: {},
   [Network.avalanche]: {}
@@ -498,7 +499,7 @@ export {
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
-  HOLY_HAND_ABI,
+  getCentralTransferProxyAbi,
   SMART_TREASURY_ABI,
   BALANCE_CHECKER_ABI,
   ERC20_ABI,

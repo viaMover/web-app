@@ -66,7 +66,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
@@ -146,12 +146,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('account', [
-      'networkInfo',
-      'usdcPriceInWeth',
-      'ethPrice',
-      'tokens'
-    ]),
+    ...mapState('account', ['networkInfo', 'ethPrice', 'tokens']),
+    ...mapGetters('account', {
+      usdcNativePrice: 'usdcNativePrice'
+    }),
     showBackButton(): boolean {
       return this.currentStep !== 'loader';
     },
@@ -192,10 +190,9 @@ export default Vue.extend({
         return `${formatToNative(this.inputAmount)} ETH`;
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
       const eth = new BigNumber(this.inputAmount)
         .multipliedBy(this.inputAsset.priceUSD)
-        .dividedBy(usdcNative); // (input * asset.Price) / USDcPrice
+        .dividedBy(this.usdcNativePrice); // (input * asset.Price) / USDcPrice
       return `${formatToNative(eth)} ETH`;
     },
     isSwapNeeded(): boolean {

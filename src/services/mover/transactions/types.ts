@@ -9,7 +9,13 @@ export type TransactionMoveType =
   | 'subsidized_withdraw'
   | 'withdraw_savings'
   | 'withdraw_treasury'
-  | 'card_topup';
+  | 'card_topup'
+  | 'deposit_ubt'
+  | 'withdraw_ubt'
+  | 'deposit_savings_plus_direct'
+  | 'deposit_savings_plus_bridged'
+  | 'withdraw_savings_plus_direct'
+  | 'withdraw_savings_plus_bridged';
 
 export type TransactionMoveTypeData = {
   txID: string;

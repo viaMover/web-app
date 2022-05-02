@@ -22,13 +22,14 @@ import {
 } from '@/global-event-bus';
 
 import { TopMessageType } from '.';
+
 export default Vue.extend({
   name: 'TopMessageModal',
   components: {},
   props: {
     showDuration: {
       type: Number,
-      default: 3000
+      default: 5000
     }
   },
   data() {

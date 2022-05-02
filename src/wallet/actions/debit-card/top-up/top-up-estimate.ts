@@ -4,6 +4,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { TransferData } from '@/services/0x/api';
+import { OnChainServiceError } from '@/services/v2/on-chain';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import {
@@ -20,7 +21,10 @@ import {
   CompoundEstimateWithUnwrapResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
+import {
+  getCentralTransferProxyAbi,
+  lookupAddress
+} from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -51,26 +55,27 @@ export const estimateTopUpCompound = async (
         inputAsset: inputAsset
       }
     });
-    const estimation = await estimateWXBTRFLYUnwrap(
-      inputAsset,
-      inputAmount,
-      network,
-      web3,
-      accountAddress
-    );
-    if (estimation.error) {
+
+    let estimation;
+    try {
+      estimation = await estimateWXBTRFLYUnwrap(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress
+      );
+    } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
         category: 'debit-card.top-up.estimateTopUpCompound',
-        message: 'failed to estimate unwrap'
+        message: 'failed to estimate unwrap',
+        data: {
+          error
+        }
       });
-      console.error("can't estimate unwrap");
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0',
-        unwrapGasLimit: '0'
-      };
+
+      throw new OnChainServiceError('Failed to estimate top up').wrap(error);
     }
 
     return {
@@ -96,27 +101,26 @@ export const estimateTopUpCompound = async (
       }
     });
 
-    const estimation = await estimateGALCXUnstake(
-      inputAsset,
-      inputAmount,
-      network,
-      web3,
-      accountAddress
-    );
-    if (estimation.error) {
+    let estimation;
+    try {
+      estimation = await estimateGALCXUnstake(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress
+      );
+    } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
         category: 'debit-card.top-up.estimateTopUpCompound',
-        message: 'failed to estimate unstake'
+        message: 'failed to estimate unstake',
+        data: {
+          error
+        }
       });
 
-      console.error("can't estimate unstake");
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0',
-        unwrapGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate top up').wrap(error);
     }
 
     return {
@@ -145,13 +149,10 @@ export const estimateTopUpCompound = async (
         error: err
       }
     });
-    console.error("can't estimate approve", err);
-    return {
-      error: true,
-      approveGasLimit: '0',
-      actionGasLimit: '0',
-      unwrapGasLimit: '0'
-    };
+
+    throw new OnChainServiceError(
+      'Failed to estimate top up: failed "needApprove" check'
+    ).wrap(err);
   }
 
   if (isApproveNeeded) {
@@ -185,13 +186,9 @@ export const estimateTopUpCompound = async (
         }
       });
 
-      console.error("can't estimate approve", error);
-      return {
-        error: true,
-        actionGasLimit: '0',
-        approveGasLimit: '0',
-        unwrapGasLimit: '0'
-      };
+      throw new OnChainServiceError(
+        'Failed to estimate top up: failed "estimateApprove"'
+      ).wrap(error);
     }
   } else {
     const estimation = await estimateTopUp(
@@ -229,7 +226,7 @@ export const estimateTopUp = async (
   }
 
   const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
-  const contractABI = HOLY_HAND_ABI;
+  const contractABI = getCentralTransferProxyAbi(network);
 
   try {
     const holyHand = new web3.eth.Contract(
@@ -347,8 +344,6 @@ export const estimateTopUp = async (
       });
 
       return { error: false, gasLimit: gasLimitWithBuffer };
-    } else {
-      throw new Error('empty gas limit');
     }
   } catch (error) {
     addSentryBreadcrumb({
@@ -359,11 +354,9 @@ export const estimateTopUp = async (
         error
       }
     });
-    console.error("can't estimate top up", error);
 
-    return {
-      error: true,
-      gasLimit: '0'
-    };
+    throw new OnChainServiceError('Failed to estimate top up').wrap(error);
   }
+
+  throw new OnChainServiceError('Failed to estimate top up: empty gas limit');
 };
