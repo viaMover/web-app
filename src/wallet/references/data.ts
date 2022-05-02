@@ -4,12 +4,12 @@ import { getNetwork, Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import { getCentralTransferProxyAbi } from './abi/central-transfer-proxy';
 import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
 import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import ERC721_ABI from './abi/erc721-abi.json';
 import GALCX_ABI from './abi/galcx-abi.json';
-import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
@@ -499,7 +499,7 @@ export {
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
-  HOLY_HAND_ABI,
+  getCentralTransferProxyAbi,
   SMART_TREASURY_ABI,
   BALANCE_CHECKER_ABI,
   ERC20_ABI,

@@ -47,7 +47,7 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import { SavingsMonthBalanceItem } from '@/services/mover';
+import { SavingsPlusMonthBalanceItem } from '@/services/v2/api/mover/savings-plus';
 import { divide, multiply } from '@/utils/bigmath';
 import { formatPercents, formatToNative } from '@/utils/format';
 
@@ -76,9 +76,9 @@ export default Vue.extend({
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
     },
-    chartDataSource(): Array<SavingsMonthBalanceItem> {
+    chartDataSource(): Array<SavingsPlusMonthBalanceItem> {
       return Array.from(Array(10).keys()).map((n) => ({
-        type: 'savings_month_balance_item',
+        type: 'savings_plus_month_balance_item',
         balance: 100,
         earned: n,
         snapshotTimestamp: n,
@@ -87,7 +87,7 @@ export default Vue.extend({
       }));
     },
     chartAccentColor(): string {
-      return this.colors['product-savings'];
+      return this.colors['product-savings-plus'];
     }
   },
   methods: {
