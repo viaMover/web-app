@@ -16,8 +16,8 @@ import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
+  getCentralTransferProxyAbi,
   getUSDCAssetData,
-  HOLY_HAND_ABI,
   HOLY_POOL_ABI,
   lookupAddress
 } from '@/wallet/references/data';
@@ -43,7 +43,7 @@ export class SavingsOnChainService extends MoverOnChainService {
     );
     this.holyHandContract = this.createContract(
       'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+      getCentralTransferProxyAbi(network)
     );
     this.usdcAssetData = getUSDCAssetData(network);
   }
@@ -160,7 +160,7 @@ export class SavingsOnChainService extends MoverOnChainService {
           inputAmount,
           transferData,
           useSubsidized,
-          actionGasLimit, // may be old, check previous logs to be sure
+          actionGasLimit,
           approveGasLimit,
           error
         }

@@ -21,7 +21,10 @@ import {
   CompoundEstimateWithUnwrapResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
-import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
+import {
+  getCentralTransferProxyAbi,
+  lookupAddress
+} from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
@@ -223,7 +226,7 @@ export const estimateTopUp = async (
   }
 
   const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
-  const contractABI = HOLY_HAND_ABI;
+  const contractABI = getCentralTransferProxyAbi(network);
 
   try {
     const holyHand = new web3.eth.Contract(

@@ -25,11 +25,11 @@ import {
 } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
+  getCentralTransferProxyAbi,
   getMoboAssetData,
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUSDCAssetData,
-  HOLY_HAND_ABI,
   lookupAddress,
   lookupConstant,
   NFT_RARI_ABI,
@@ -72,7 +72,7 @@ export class SmartTreasuryOnChainService
 
     this.holyHandContract = this.createContract(
       'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+      getCentralTransferProxyAbi(network)
     );
     this.smartTreasuryContract = this.createContract(
       'SMART_TREASURY_ADDRESS',

@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
 
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { TransferData } from '@/services/v2/api/0x';
@@ -29,8 +28,8 @@ import { getNetwork, Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
+  getCentralTransferProxyAbi,
   getUSDCAssetData,
-  HOLY_HAND_ABI,
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
@@ -46,7 +45,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
     this.centralTransferProxyContract = this.createContract(
       'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+      getCentralTransferProxyAbi(network)
     );
     this.usdcAssetData = getUSDCAssetData(network);
   }
