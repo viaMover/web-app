@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 
+import { CompoundEstimateResponse } from '@/wallet/actions/types';
 import { SmallToken } from '@/wallet/types';
 
 import { approve } from './approve/approve';
@@ -11,29 +12,29 @@ export const executeTransactionWithApprove = async (
   amount: string,
   accountAddress: string,
   web3: Web3,
-  action: () => Promise<void>,
+  action: (newGasLimit: string) => Promise<void>,
+  estimateHandler: () => Promise<CompoundEstimateResponse>,
   changeStepToProcess: () => Promise<void>,
-  gasLimit: string,
+  approveGasLimit: string,
+  actionGasLimit: string,
   gasPriceInGwei?: string
 ): Promise<void | never> => {
-  try {
-    if (
-      await needApprove(accountAddress, token, amount, contractAddress, web3)
-    ) {
-      await approve(
-        accountAddress,
-        token.address,
-        contractAddress,
-        web3,
-        changeStepToProcess,
-        gasLimit,
-        gasPriceInGwei
-      );
-    }
-  } catch (err) {
-    throw new Error(`can't approve due to: ${err}`);
+  if (await needApprove(accountAddress, token, amount, contractAddress, web3)) {
+    await approve(
+      accountAddress,
+      token.address,
+      contractAddress,
+      web3,
+      changeStepToProcess,
+      approveGasLimit,
+      gasPriceInGwei
+    );
+
+    const estimation = await estimateHandler();
+    actionGasLimit = estimation.actionGasLimit;
   }
-  await action();
+
+  await action(actionGasLimit);
 };
 export const executeTransactionWithApproveExt = async (
   actionFunc: () => Promise<void>,

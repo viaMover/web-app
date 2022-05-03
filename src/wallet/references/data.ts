@@ -4,12 +4,12 @@ import { getNetwork, Network } from '@/utils/networkTypes';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
+import { getCentralTransferProxyAbi } from './abi/central-transfer-proxy';
 import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
 import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
 import ERC721_ABI from './abi/erc721-abi.json';
 import GALCX_ABI from './abi/galcx-abi.json';
-import HOLY_HAND_ABI from './abi/holy-hand.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
@@ -84,7 +84,9 @@ export type AddressMapKey =
   | 'ALCX_TOKEN_ADDRESS'
   | 'GALCX_TOKEN_ADDRESS'
   | 'AL_USD_TOKEN_ADDRESS'
-  | 'AL_ETH_TOKEN_ADDRESS';
+  | 'AL_ETH_TOKEN_ADDRESS'
+  | 'GTC_TOKEN_ADDRESS'
+  | 'CULT_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -145,7 +147,9 @@ const addresses = {
     AL_ETH_TOKEN_ADDRESS: '0x0100546F2cD4C9D97f798fFC9755E47865FF7Ee6',
     AL_USD_TOKEN_ADDRESS: '0xBC6DA0FE9aD5f3b0d58160288917AA56653660E9',
     ALCX_TOKEN_ADDRESS: '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF',
-    GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35'
+    GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35',
+    GTC_TOKEN_ADDRESS: '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F',
+    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -196,7 +200,8 @@ const addresses = {
   },
   [Network.fantom]: {
     NFT_ORDER_OF_LIBERTY: '0x568F6DC40B2520522dC4745D881c990e57672d94',
-    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B'
+    HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B',
+    USDC_TOKEN_ADDRESS: '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75'
   },
   [Network.arbitrum]: {},
   [Network.avalanche]: {}
@@ -472,7 +477,9 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'AL_ETH_TOKEN_ADDRESS'),
     lookupAddress(network, 'AL_USD_TOKEN_ADDRESS'),
     lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
-    lookupAddress(network, 'GALCX_TOKEN_ADDRESS')
+    lookupAddress(network, 'GALCX_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'CULT_TOKEN_ADDRESS')
   ];
 };
 
@@ -492,7 +499,7 @@ export {
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
-  HOLY_HAND_ABI,
+  getCentralTransferProxyAbi,
   SMART_TREASURY_ABI,
   BALANCE_CHECKER_ABI,
   ERC20_ABI,

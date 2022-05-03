@@ -3,6 +3,7 @@ import {
   SavingsMonthBalanceItem,
   SavingsReceipt
 } from '@/services/mover';
+import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -29,15 +30,7 @@ type Getters = {
 
 const getters: GettersFuncs<Getters, SavingsStoreState> = {
   savingsInfo(state): SavingsInfo | undefined {
-    if (state.savingsInfo === undefined) {
-      return undefined;
-    }
-
-    if (state.savingsInfo.expDate > Date.now()) {
-      return state.savingsInfo.data;
-    }
-
-    return undefined;
+    return unwrapCacheItem(state.savingsInfo);
   },
   savingsBalanceNative(state, getters): string {
     if (state.savingsBalance === undefined) {
@@ -46,7 +39,10 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
     return multiply(state.savingsBalance, getters.usdcNativePrice);
   },
   savingsInfoBalanceUSDC(state, getters, rootState): string {
-    if (state.savingsBalance !== undefined) {
+    if (
+      state.savingsBalance !== undefined &&
+      greaterThan(state.savingsBalance, '0')
+    ) {
       return state.savingsBalance;
     }
 

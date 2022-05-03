@@ -86,12 +86,12 @@
           :description="savingsPlusBalance"
           description-class="bold emphasize"
           navigate-to="savings-plus-manage"
-          :title="$t('savingsPlus.lblSavingsPlus')"
+          :title="$t('savingsPlus.lblSP')"
           title-class="medium muted"
         >
           <template v-slot:picture>
             <custom-picture
-              :alt="$t('savingsPlus.lblSavingsPlus')"
+              :alt="$t('savingsPlus.lblSP')"
               :sources="savingsPlusPicture.sources"
               :src="savingsPlusPicture.src"
               :webp-sources="savingsPlusPicture.webpSources"
@@ -250,9 +250,16 @@ export default Vue.extend({
         ]
       } as PictureDescriptor,
       savingsPlusPicture: {
-        src: require('@/assets/images/savings-plus@1x.png'),
+        src: require('@/assets/images/SavingsPlus@1x.png'),
         sources: [
-          { src: require('@/assets/images/savings-plus@2x.png'), variant: '2x' }
+          { src: require('@/assets/images/SavingsPlus@2x.png'), variant: '2x' }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/SavingsPlus@1x.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/SavingsPlus@2x.webp')
+          }
         ]
       } as PictureDescriptor,
       stakingUBTPicture: {
@@ -276,6 +283,9 @@ export default Vue.extend({
   computed: {
     ...mapGetters('savings', {
       savingsInfoBalanceNative: 'savingsInfoBalanceNative'
+    }),
+    ...mapGetters('savingsPlus', {
+      savingsPlusInfoBalanceNative: 'infoBalanceNative'
     }),
     ...mapGetters('treasury', [
       'treasuryBonusNative',
@@ -403,7 +413,7 @@ export default Vue.extend({
       };
     },
     savingsPlusBalance(): string {
-      return `$${formatToNative(0)}`;
+      return `$${formatToNative(this.savingsPlusInfoBalanceNative)}`;
     }
   },
   async mounted() {

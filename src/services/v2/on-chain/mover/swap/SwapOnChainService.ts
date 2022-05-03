@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { TransferData } from '@/services/v2/api/0x';
@@ -18,7 +17,10 @@ import { toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
-import { HOLY_HAND_ABI, lookupAddress } from '@/wallet/references/data';
+import {
+  getCentralTransferProxyAbi,
+  lookupAddress
+} from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, Transaction, TransactionTypes } from '@/wallet/types';
 
@@ -31,7 +33,7 @@ export class SwapOnChainService extends MoverOnChainService {
 
     this.holyHandContract = this.createContract(
       'HOLY_HAND_ADDRESS',
-      HOLY_HAND_ABI as AbiItem[]
+      getCentralTransferProxyAbi(network)
     );
   }
 
@@ -40,7 +42,7 @@ export class SwapOnChainService extends MoverOnChainService {
     outputAsset: SmallToken,
     inputAmount: string,
     transferData: TransferData,
-    swapGasLimit: string,
+    actionGasLimit: string,
     approveGasLimit: string,
     gasPriceInGwei: string,
     useSubsidized: boolean,
@@ -51,29 +53,37 @@ export class SwapOnChainService extends MoverOnChainService {
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
-        async () => {
+        (newGasLimit) => {
           if (useSubsidized) {
-            return await this.swapSubsidized(
+            return this.swapSubsidized(
               inputAsset,
               outputAsset,
               inputAmount,
               transferData,
-              changeStepToProcess
-            );
-          } else {
-            return await this.swap(
-              inputAsset,
-              outputAsset,
-              inputAmount,
-              transferData,
-              swapGasLimit,
-              gasPriceInGwei,
               changeStepToProcess
             );
           }
+
+          return this.swap(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData,
+            newGasLimit,
+            gasPriceInGwei,
+            changeStepToProcess
+          );
         },
+        () =>
+          this.estimateSwapCompound(
+            inputAsset,
+            outputAsset,
+            inputAmount,
+            transferData
+          ),
         changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        actionGasLimit
       );
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
@@ -89,7 +99,7 @@ export class SwapOnChainService extends MoverOnChainService {
             outputAsset,
             inputAmount,
             transferData,
-            swapGasLimit,
+            swapGasLimit: actionGasLimit,
             approveGasLimit,
             gasPriceInGwei,
             useSubsidized
@@ -108,7 +118,7 @@ export class SwapOnChainService extends MoverOnChainService {
           outputAsset,
           inputAmount,
           transferData,
-          swapGasLimit,
+          swapGasLimit: actionGasLimit,
           approveGasLimit,
           gasPriceInGwei,
           useSubsidized,
@@ -125,72 +135,18 @@ export class SwapOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData
   ): Promise<CompoundEstimateResponse> {
-    let isApproveNeeded = true;
-    try {
-      isApproveNeeded = await this.needsApprove(
-        inputAsset,
-        inputAmount,
-        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-      );
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate deposit: failed "needsApprove" check',
-        data: {
-          error,
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData
-        }
-      });
+    const approveGasLimit = await this.estimateApproveIfNeeded(
+      inputAsset,
+      inputAmount,
+      lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+    );
 
+    if (approveGasLimit !== undefined) {
       return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
+        error: false,
+        approveGasLimit: approveGasLimit,
+        actionGasLimit: ethDefaults.basic_holy_savings_plus_deposit
       };
-    }
-
-    if (isApproveNeeded) {
-      addSentryBreadcrumb({
-        type: 'debug',
-        category: this.sentryCategoryPrefix,
-        message: 'Needs approve'
-      });
-
-      try {
-        const approveGasLimit = await this.estimateApprove(
-          inputAsset.address,
-          lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
-        );
-
-        return {
-          error: false,
-          actionGasLimit: ethDefaults.basic_holy_swap,
-          approveGasLimit: approveGasLimit
-        };
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to estimate swap: failed "approve" estimation',
-          data: {
-            error,
-            inputAsset,
-            outputAsset,
-            inputAmount,
-            transferData
-          }
-        });
-
-        return {
-          error: true,
-          actionGasLimit: '0',
-          approveGasLimit: '0'
-        };
-      }
     }
 
     if (this.holyHandContract === undefined) {
@@ -218,24 +174,6 @@ export class SwapOnChainService extends MoverOnChainService {
           actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
-
-      addSentryBreadcrumb({
-        type: 'error',
-        category: this.sentryCategoryPrefix,
-        message: 'Failed to estimate swap: empty gas limit',
-        data: {
-          inputAsset,
-          outputAsset,
-          inputAmount,
-          transferData
-        }
-      });
-
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
     } catch (error) {
       console.error('failed to estimate swap', error);
 
@@ -252,12 +190,22 @@ export class SwapOnChainService extends MoverOnChainService {
         }
       });
 
-      return {
-        error: true,
-        approveGasLimit: '0',
-        actionGasLimit: '0'
-      };
+      throw new OnChainServiceError('Failed to estimate swap').wrap(error);
     }
+
+    addSentryBreadcrumb({
+      type: 'error',
+      category: this.sentryCategoryPrefix,
+      message: 'Failed to estimate swap: empty gas limit',
+      data: {
+        inputAsset,
+        outputAsset,
+        inputAmount,
+        transferData
+      }
+    });
+
+    throw new OnChainServiceError('Failed to estimate swap: empty gas limit');
   }
 
   protected async swap(

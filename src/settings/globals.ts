@@ -1,8 +1,10 @@
 import { Network } from '@/utils/networkTypes';
 
 export type GlobalSettings = Array<Network> | boolean;
+
 export interface Globals {
   isSavingsOverviewSomeFieldsEnabled: GlobalSettings;
+  isSavingsPlusOverviewSomeFieldsEnabled: GlobalSettings;
   isSwapPassportEnabled: GlobalSettings;
   isReleaseRadarEnabled: GlobalSettings;
   isDebitCardEnabled: GlobalSettings;
@@ -32,6 +34,7 @@ export interface Globals {
   isHomeSwapModalEnabled: GlobalSettings;
   isMoverAPISavingsServiceFieldsReducerEnabled: GlobalSettings;
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: GlobalSettings;
+  isMoverAPISavingsPlusServiceFieldsReducerEnabled: GlobalSettings;
   isGasListenerEnabled: GlobalSettings;
   isStakingUbtEnabled: GlobalSettings;
   isStakingUbtFieldReducerEnabled: GlobalSettings;
@@ -52,6 +55,7 @@ export const isConsoleEnabled = (): boolean => {
 
 const values: Globals = {
   isSavingsOverviewSomeFieldsEnabled: false,
+  isSavingsPlusOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
   isDebitCardEnabled: [Network.mainnet],
@@ -86,11 +90,12 @@ const values: Globals = {
   isVaultsRaceEnabled: false,
   isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
-  isSavingsPlusEnabled: false,
+  isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
   isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
+  isMoverAPISavingsPlusServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],
   isStakingUbtFieldReducerEnabled: true

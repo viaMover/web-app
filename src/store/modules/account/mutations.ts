@@ -34,7 +34,7 @@ type Mutations = {
   toggleIsOrderOfLibertySectionVisible: void;
   setEthPrice: void;
   setMovePriceInWeth: void;
-  setUsdcPriceInWeth: void;
+  setUsdcPriceInNative: void;
   setSLPPriceInWETH: void;
   setEursPriceInWeth: void;
   setExplorer: void;
@@ -102,8 +102,8 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   setMovePriceInWeth(state, movePriceInWeth: string): void {
     state.movePriceInWeth = movePriceInWeth;
   },
-  setUsdcPriceInWeth(state, usdcPriceInWeth: string): void {
-    state.usdcPriceInWeth = usdcPriceInWeth;
+  setUsdcPriceInNative(state, usdcNativePrice: string): void {
+    state.usdcPriceInNative = usdcNativePrice;
   },
   setSLPPriceInWETH(state, slpPriceInWeth: string): void {
     state.slpPriceInWeth = slpPriceInWeth;

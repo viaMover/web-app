@@ -9,6 +9,7 @@ import { ModalsStoreState } from '@/store/modules/modals/types';
 import { NFTStoreState } from '@/store/modules/nft/types';
 import { RadarStoreState } from '@/store/modules/radar/types';
 import { SavingsStoreState } from '@/store/modules/savings/types';
+import { SavingsPlusStoreState } from '@/store/modules/savings-plus/types';
 import { ShopStoreState } from '@/store/modules/shop/types';
 import { TreasuryStoreState } from '@/store/modules/treasury/types';
 
@@ -35,6 +36,7 @@ export interface RootStoreState {
   savings?: SavingsStoreState;
   treasury?: TreasuryStoreState;
   debitCard?: DebitCardStoreState;
+  savingsPlus?: SavingsPlusStoreState;
   // rootState members end
 }
 

@@ -65,8 +65,7 @@ export default Vue.extend({
   computed: {
     ...mapState({ colors: 'colors' }),
     ...mapState('savings', {
-      isSavingsInfoLoading: 'isSavingsInfoLoading',
-      networkInfo: 'networkInfo'
+      isSavingsInfoLoading: 'isSavingsInfoLoading'
     }),
     ...mapState('account', {
       networkInfo: 'networkInfo'

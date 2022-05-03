@@ -88,9 +88,61 @@ export class MoverAPISubsidizedService extends MoverAPIService {
     }
   }
 
+  public async executeSavingsPlusWithdrawTransaction(
+    action: string,
+    signature: string,
+    changeStepToProcess?: () => Promise<void>
+  ): Promise<ExecuteTransactionReturn> {
+    const client = this.applyAxiosInterceptors(
+      axios.create({
+        baseURL: 'https://api.viamover.com/api/v1'
+      })
+    );
+
+    addSentryBreadcrumb({
+      type: 'debug',
+      category: this.sentryCategoryPrefix,
+      message: 'About to send subsidized request',
+      data: {
+        action,
+        accountAddress: this.currentAddress,
+        signature
+      }
+    });
+
+    changeStepToProcess?.();
+
+    try {
+      const response = (
+        await client.post<TxExecuteResponse>('/savingsplus/executeWithdraw', {
+          action: action,
+          signature: signature
+        } as TxExecuteRequest)
+      ).data;
+
+      if (response.txID === undefined && response.queueID === undefined) {
+        throw new MoverAPISubsidizedRequestError(
+          'Subsidized request did not return execution status',
+          'Subsidized request failed',
+          response
+        );
+      }
+
+      return {
+        queueID: response.queueID,
+        txID: response.txID
+      };
+    } catch (error) {
+      throw new MoverAPISubsidizedRequestError(
+        `Failed to send subsidized request: ${error}`,
+        'Failed to send subsidized request'
+      ).wrap(error);
+    }
+  }
+
   public async checkTransactionStatus(
     queueId: string
-  ): Promise<CheckTransactionStatusReturn | undefined> {
+  ): Promise<CheckTransactionStatusReturn> {
     if (this.baseURL === MoverAPISubsidizedService.NoBaseURLForNetwork) {
       throw new NetworkFeatureNotSupportedError(
         'Subsidized request',

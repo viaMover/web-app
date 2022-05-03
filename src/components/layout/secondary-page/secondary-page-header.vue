@@ -1,7 +1,9 @@
 <template>
   <div class="secondary-page-header">
     <h1 v-if="title" class="title">{{ title }}</h1>
+    <slot name="title"></slot>
     <div v-if="description" class="description">{{ description }}</div>
+    <slot name="description"></slot>
   </div>
 </template>
 

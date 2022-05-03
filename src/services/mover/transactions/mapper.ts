@@ -17,6 +17,16 @@ export const getTransactionHumanType = (
     case 'withdraw_savings':
     case 'subsidized_withdraw':
       return 'Withdraw from Savings';
+    case 'deposit_savings_plus_direct':
+    case 'deposit_savings_plus_bridged':
+      return 'Deposit in Savings Plus';
+    case 'withdraw_savings_plus_direct':
+    case 'withdraw_savings_plus_bridged':
+      return 'Withdraw from Savings Plus';
+    case 'deposit_ubt':
+      return 'Stake UBT';
+    case 'withdraw_ubt':
+      return 'Unstake UBT';
     case 'deposit_treasury':
       if (
         (t.type === TransactionTypes.transferERC20 ||

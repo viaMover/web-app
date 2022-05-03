@@ -55,10 +55,20 @@
           line-height: 16px;
           margin-bottom: 16px;
           color: @text-muted;
+          display: flex;
           @font-regular();
 
           .selector {
             margin-left: 8px;
+          }
+
+          .multichain {
+            margin-left: 8px;
+            font-size: 12px;
+            line-height: 16px;
+            display: flex;
+            color: @text-muted;
+            @font-regular();
           }
         }
 
@@ -96,7 +106,7 @@
 
       .swap-message {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         margin-top: 8px;
         @font-regular();
 
@@ -160,11 +170,6 @@
           }
         }
 
-        .item-image {
-          width: 54px;
-          height: 40px;
-        }
-
         .item-arrow {
           -webkit-transform: rotate(-90deg);
           -ms-transform: rotate(-90deg);
@@ -218,6 +223,12 @@
           .shadow {
             filter: drop-shadow(0 4px 16px #ccc);
           }
+        }
+
+        .item-image {
+          margin-left: 54px;
+          width: 54px;
+          height: 40px;
         }
 
         .item:first-child {
