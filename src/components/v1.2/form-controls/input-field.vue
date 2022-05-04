@@ -8,7 +8,7 @@
         :id="inputId"
         ref="input"
         class="form-control"
-        placeholder="0.00"
+        :placeholder="placeholder"
         :type="type"
         :value="value"
         @input="handleInput"
@@ -47,6 +47,10 @@ export default Vue.extend({
         'text' | 'number' | 'date' | 'email' | 'search' | 'tel'
       >,
       default: 'text'
+    },
+    placeholder: {
+      type: String,
+      default: undefined
     }
   },
   methods: {
