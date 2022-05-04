@@ -1,0 +1,391 @@
+@font-face {
+  font-family: 'icomoon';
+  src: url('fonts/icomoon.eot?1jxmro');
+  src:
+    url('fonts/icomoon.eot?1jxmro#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?1jxmro') format('truetype'),
+    url('fonts/icomoon.woff?1jxmro') format('woff'),
+    url('fonts/icomoon.svg?1jxmro#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"],
+ [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-about-card-dark-theme::before {
+  content: "\e900";
+  color: #fff;
+}
+
+.icon-about-card-light-theme::before {
+  content: "\e901";
+}
+
+.icon-about-savings-dark-theme::before {
+  content: "\e902";
+  color: #fff;
+}
+
+.icon-about-savings-light-theme::before {
+  content: "\e903";
+}
+
+.icon-about-savings-plus-dark-theme::before {
+  content: "\e904";
+  color: #fff;
+}
+
+.icon-about-savings-plus-light-theme::before {
+  content: "\e905";
+}
+
+.icon-about-smart-treasury-dark-theme::before {
+  content: "\e906";
+  color: #fff;
+}
+
+.icon-about-smart-treasury-light-theme::before {
+  content: "\e907";
+}
+
+.icon-about-staking-dark-theme::before {
+  content: "\e908";
+  color: #fff;
+}
+
+.icon-about-staking-light-theme::before {
+  content: "\e909";
+}
+
+.icon-all-proposals-dark-theme::before {
+  content: "\e90a";
+  color: #fff;
+}
+
+.icon-all-proposals-light-theme::before {
+  content: "\e90b";
+}
+
+.icon-analytics-dark-theme::before {
+  content: "\e90c";
+  color: #fff;
+}
+
+.icon-analytics-light-theme::before {
+  content: "\e90d";
+}
+
+.icon-back-dark-theme::before {
+  content: "\e90e";
+  color: #fff;
+}
+
+.icon-back-light-theme::before {
+  content: "\e90f";
+}
+
+.icon-card-details-dark-theme::before {
+  content: "\e910";
+  color: #fff;
+}
+
+.icon-card-details-light-theme::before {
+  content: "\e911";
+}
+
+.icon-card-top-up-dark-theme::before {
+  content: "\e912";
+  color: #fff;
+}
+
+.icon-card-top-up-light-theme::before {
+  content: "\e913";
+}
+
+.icon-change-access-wallet-dark-theme::before {
+  content: "\e914";
+  color: #fff;
+}
+
+.icon-change-access-wallet-light-theme::before {
+  content: "\e915";
+}
+
+.icon-change-phone-number-dark-theme::before {
+  content: "\e916";
+  color: #fff;
+}
+
+.icon-change-phone-number-light-theme::before {
+  content: "\e917";
+}
+
+.icon-change-photo-dark-theme::before {
+  content: "\e918";
+  color: #fff;
+}
+
+.icon-change-photo-light-theme::before {
+  content: "\e919";
+}
+
+.icon-claim-and-burn-dark-theme::before {
+  content: "\e91a";
+  color: #fff;
+}
+
+.icon-claim-and-burn-light-theme::before {
+  content: "\e91b";
+}
+
+.icon-close-dark-theme::before {
+  content: "\e91c";
+  color: #fff;
+}
+
+.icon-close-light-theme::before {
+  content: "\e91d";
+}
+
+.icon-create-proposal-dark-theme::before {
+  content: "\e91e";
+  color: #fff;
+}
+
+.icon-create-proposal-light-theme::before {
+  content: "\e91f";
+}
+
+.icon-credit-line-dark-theme::before {
+  content: "\e920";
+  color: #fff;
+}
+
+.icon-credit-line-light-theme::before {
+  content: "\e921";
+}
+
+.icon-dark-mode-off-dark-theme::before {
+  content: "\e922";
+}
+
+.icon-dark-mode-off-light-theme::before {
+  content: "\e923";
+  color: #a1a1a1;
+}
+
+.icon-dark-mode-on-dark-theme::before {
+  content: "\e924";
+}
+
+.icon-dark-mode-on-light-theme::before {
+  content: "\e925";
+}
+
+.icon-deposit-dark-theme::before {
+  content: "\e926";
+  color: #fff;
+}
+
+.icon-deposit-light-theme::before {
+  content: "\e927";
+}
+
+.icon-edit-text-dark-theme .path1::before {
+  content: "\e928";
+  color: rgb(64, 64, 64);
+}
+
+.icon-edit-text-dark-theme .path2::before {
+  content: "\e929";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+  opacity: 0.9;
+}
+
+.icon-edit-text-light-theme .path1::before {
+  content: "\e92a";
+  color: rgb(241, 241, 241);
+}
+
+.icon-edit-text-light-theme .path2::before {
+  content: "\e92b";
+  margin-left: -1em;
+  color: rgb(161, 161, 161);
+}
+
+.icon-expand-section-dark-theme::before {
+  content: "\e92c";
+  color: #fff;
+}
+
+.icon-expand-section-light-theme::before {
+  content: "\e92d";
+}
+
+.icon-external-link-dark-theme::before {
+  content: "\e92e";
+  color: #fff;
+}
+
+.icon-external-link-light-theme::before {
+  content: "\e92f";
+}
+
+.icon-light-mode-off-dark-theme::before {
+  content: "\e930";
+}
+
+.icon-light-mode-off-light-theme::before {
+  content: "\e931";
+  color: #a1a1a1;
+}
+
+.icon-light-mode-on-dark-theme::before {
+  content: "\e932";
+}
+
+.icon-light-mode-on-light-theme::before {
+  content: "\e933";
+}
+
+.icon-log-out-dark-theme::before {
+  content: "\e934";
+  color: #fff;
+}
+
+.icon-log-out-light-theme::before {
+  content: "\e935";
+}
+
+.icon-paste-dark-theme::before {
+  content: "\e936";
+  color: #fff;
+}
+
+.icon-paste-light-theme::before {
+  content: "\e937";
+}
+
+.icon-powercard-dark-theme::before {
+  content: "\e938";
+  color: #fff;
+}
+
+.icon-powercard-light-theme::before {
+  content: "\e939";
+}
+
+.icon-proposal-details-dark-theme::before {
+  content: "\e93a";
+  color: #fff;
+}
+
+.icon-proposal-details-light-theme::before {
+  content: "\e93b";
+}
+
+.icon-redeem-item-dark-theme::before {
+  content: "\e93c";
+  color: #fff;
+}
+
+.icon-redeem-item-light-theme::before {
+  content: "\e93d";
+}
+
+.icon-search-dark-theme::before {
+  content: "\e93e";
+  color: #999;
+}
+
+.icon-search-light-theme::before {
+  content: "\e93f";
+  color: #a1a1a1;
+}
+
+.icon-select-option-dark-theme::before {
+  content: "\e940";
+  color: #fff;
+}
+
+.icon-select-option-light-theme::before {
+  content: "\e941";
+}
+
+.icon-swap-tokens-dark-theme::before {
+  content: "\e942";
+  color: #fff;
+}
+
+.icon-swap-tokens-light-theme::before {
+  content: "\e943";
+}
+
+.icon-system-mode-off-dark-theme::before {
+  content: "\e944";
+}
+
+.icon-system-mode-off-light-theme::before {
+  content: "\e945";
+  color: #a1a1a1;
+}
+
+.icon-system-mode-on-dark-theme::before {
+  content: "\e946";
+}
+
+.icon-system-mode-on-light-theme::before {
+  content: "\e947";
+}
+
+.icon-transaction-history-dark-theme::before {
+  content: "\e948";
+  color: #fff;
+}
+
+.icon-transaction-history-light-theme::before {
+  content: "\e949";
+}
+
+.icon-vote-against-dark-theme::before {
+  content: "\e94a";
+  color: #fff;
+}
+
+.icon-vote-against-light-theme::before {
+  content: "\e94b";
+}
+
+.icon-vote-for-dark-theme::before {
+  content: "\e94c";
+  color: #fff;
+}
+
+.icon-vote-for-light-theme::before {
+  content: "\e94d";
+}
+
+.icon-withdraw-dark-theme::before {
+  content: "\e94e";
+  color: #fff;
+}
+
+.icon-withdraw-light-theme::before {
+  content: "\e94f";
+}
