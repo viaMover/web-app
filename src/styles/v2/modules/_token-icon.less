@@ -11,10 +11,12 @@
     height: $width;
   }
 
-  img,
-  &.fallback,
-  &.skeleton {
-    @drop-shadow();
+  &:not(.hide-shadow) {
+    img,
+    &.fallback,
+    &.skeleton {
+      @drop-shadow();
+    }
   }
 
   @media screen and (max-width: 1279px) {
