@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import savingsPlusPicture from '@/assets/images/sections/savings-plus';
 
@@ -39,16 +39,19 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapGetters('savingsPlus', {
+      balanceNative: 'balanceNative'
+    }),
     savingsPlusBalance(): string {
-      return this.formatAsNativeCurrency(0);
+      return this.formatAsNativeCurrency(this.balanceNative);
     }
   },
   mounted() {
     this.loadMinimalInfo();
   },
   methods: {
-    ...mapActions('savings-plus', {
-      loadMinimalInfo: 'loadMinimalInfo'
+    ...mapActions('savingsPlus', {
+      loadMinimalInfo: 'loadInfo'
     })
   }
 });
