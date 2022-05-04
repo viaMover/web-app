@@ -1,5 +1,9 @@
 <template>
-  <div v-if="displayOriginalImage" class="icon token-icon">
+  <div
+    v-if="displayOriginalImage"
+    class="icon token-icon"
+    :class="{ 'hide-shadow': hideShadow }"
+  >
     <img
       v-fallback="imageFallbackOpts"
       :alt="$t('imageAlt', { name: symbol })"
@@ -38,6 +42,10 @@ export default Vue.extend({
     fallbackSrcList: {
       type: Array as PropType<Array<string>>,
       default: undefined
+    },
+    hideShadow: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -70,6 +78,10 @@ export default Vue.extend({
       };
     },
     shadowStyles(): Properties {
+      if (this.hideShadow) {
+        return {};
+      }
+
       return {
         boxShadow: `0 0 16px 0 ${this.color}`
       };
