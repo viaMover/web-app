@@ -1,7 +1,11 @@
 <template>
   <div v-if="isOpened" class="modal-wrapper">
     <close-button class="close" @close="handleClose" />
-    <div v-on-clickaway="handleClose" class="modal">
+    <div
+      v-on-clickaway="handleClickAway"
+      class="modal"
+      :class="{ 'add-hr': addHr }"
+    >
       <div v-if="!hideHeading" class="heading">
         <slot name="heading" />
       </div>
@@ -34,11 +38,28 @@ export default Vue.extend({
     lockBody: {
       type: Boolean,
       default: true
+    },
+    addHr: {
+      type: Boolean,
+      default: true
     }
+  },
+  data() {
+    return {
+      allowClickAwayDirective: false
+    };
   },
   watch: {
     isOpened: {
       handler(isOpened: boolean) {
+        if (isOpened) {
+          window.setTimeout(() => {
+            // debounce directive firing by shifting the
+            // allowClickAwayDirective set/reset in time
+            this.allowClickAwayDirective = true;
+          }, 100);
+        }
+
         if (isOpened && this.lockBody) {
           this.applyNoScrollToHtml(true);
           return;
@@ -46,6 +67,7 @@ export default Vue.extend({
 
         if (!isOpened) {
           this.applyNoScrollToHtml(false);
+          this.allowClickAwayDirective = false;
         }
       },
       immediate: true
@@ -57,6 +79,11 @@ export default Vue.extend({
     }
   },
   methods: {
+    handleClickAway(): void {
+      if (this.allowClickAwayDirective) {
+        this.handleClose();
+      }
+    },
     handleClose(): void {
       this.$emit('close');
     },

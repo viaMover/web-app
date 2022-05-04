@@ -1,15 +1,19 @@
 <template>
-  <base-modal class="search-token">
+  <base-modal
+    class="search-token"
+    :is-opened="isDisplayed"
+    @close="handleSelect(undefined)"
+  >
     <template #heading>
       <h1 class="title">{{ $t('selectAToken') }}</h1>
 
       <form class="form search" @submit.prevent.stop="">
-        <div class="input-group search">
+        <div class="input-group">
           <input
             v-model.trim="searchTerm"
-            class="icon left"
+            class="form-control"
             :placeholder="$t('searchAnyToken')"
-            type="search"
+            type="text"
           />
           <button class="input-group-text" type="button">
             <base-icon icon-class="icon-search" />
@@ -17,6 +21,40 @@
         </div>
       </form>
     </template>
+
+    <div ref="resultsTop" class="results">
+      <template v-if="totalResultsLength > 0">
+        <search-modal-token-list
+          v-if="forceTokenArray.length > 0"
+          :items="forcedTokens"
+          show-balances
+          @select="handleSelect"
+        />
+        <template v-else>
+          <search-modal-token-list
+            :header-text="$t('search.lblTokensInTheWallet')"
+            :items="walletTokens"
+            show-balances
+            :show-header="walletTokens.length > 0"
+            @select="handleSelect"
+          />
+          <search-modal-token-list
+            v-if="showGlobalTokens"
+            :header-text="$t('search.lblGlobalSearch')"
+            infinity-load
+            :items="globalTokensData"
+            :show-header="showGlobalTokens"
+            @load-more="handleGlobalLoadMore"
+            @select="handleSelect"
+          />
+        </template>
+      </template>
+      <div v-else class="no-tokens">
+        <span class="icon">👻</span>
+        <h4>{{ $t('lblOhSnap') }}</h4>
+        <p>{{ $t('txtCouldNotFindToken') }}</p>
+      </div>
+    </div>
   </base-modal>
 </template>
 
@@ -34,17 +72,17 @@ import {
 import { isTokenValidForTreasuryDeposit } from '@/wallet/references/data';
 import { Token, TokenWithBalance } from '@/wallet/types';
 
-import SearchModalTokenList from '@/components/modals/search-modal/search-modal-token-list.vue';
 import BaseIcon from '@/components/v1.2/base-icon.vue';
 
-import BaseModal from './base-modal.vue';
+import BaseModal from '../base-modal.vue';
+import SearchModalTokenList from './search-modal-token-list.vue';
 
 export default Vue.extend({
   name: 'SearchTokenModal',
   components: {
     BaseModal,
-    BaseIcon
-    // SearchModalTokenList
+    BaseIcon,
+    SearchModalTokenList
   },
   data() {
     return {
@@ -71,6 +109,9 @@ export default Vue.extend({
     ...mapState('modals', {
       state: 'state'
     }),
+    isDisplayed(): boolean {
+      return this.state[this.modalId].isDisplayed;
+    },
     modalPayload(): boolean {
       return this.state[this.modalId].payload;
     },
@@ -125,10 +166,7 @@ export default Vue.extend({
       );
     },
     showGlobalTokens(): boolean {
-      if (this.useWalletTokens || this.forceTokenArray.length > 0) {
-        return false;
-      }
-      return true;
+      return !(this.useWalletTokens || this.forceTokenArray.length > 0);
     },
     forcedTokens(): Array<Token> {
       if (this.forceTokenArray.length === 0) {
