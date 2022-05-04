@@ -5,6 +5,9 @@
     class="dropdown"
     :clearable="clearable"
     :filterable="filterable"
+    :input-id="inputId"
+    :label="label"
+    :no-drop="disabled"
     :options="options"
     :searchable="searchable"
     :value="value"
@@ -19,7 +22,7 @@
     </template>
 
     <template
-      v-if="hasCustomSelectedOption"
+      v-if="hasCustomSelectedOption && value !== undefined"
       v-slot:selected-option="selectedOption"
     >
       <slot v-bind="selectedOption" name="selected-option" />
@@ -59,7 +62,7 @@ export default Vue.extend({
     },
     value: {
       type: [String, Number, Object],
-      required: true
+      default: undefined
     },
     options: {
       type: Array,
@@ -68,6 +71,18 @@ export default Vue.extend({
     autocomplete: {
       type: String,
       default: 'off'
+    },
+    inputId: {
+      type: String,
+      default: undefined
+    },
+    label: {
+      type: String,
+      default: undefined
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   }
 });
