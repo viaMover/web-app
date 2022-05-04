@@ -35,7 +35,6 @@ export async function setDayjsLocale(locale: Language): Promise<boolean> {
     );
     return true;
   } catch (error) {
-    console.error(error);
     dayjs.locale(locale);
     return false;
   }
