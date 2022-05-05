@@ -457,7 +457,11 @@ const getSlippage = (
   defaultValue?: string
 ): string => {
   const customSlippages = lookupConstant(network, 'CUSTOM_TOKEN_SLIPPAGE');
-  return customSlippages?.get(tokenAddress) ?? defaultValue ?? defaultSlippage;
+  return (
+    customSlippages?.get(tokenAddress.toLowerCase()) ??
+    defaultValue ??
+    defaultSlippage
+  );
 };
 
 const validTopUpAssets = (network: Network): Array<string> => {
