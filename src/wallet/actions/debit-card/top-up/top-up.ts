@@ -20,6 +20,7 @@ import {
   getALCXAssetData,
   getBTRFLYAssetData,
   getCentralTransferProxyAbi,
+  getSlippage,
   getUSDCAssetData,
   lookupAddress
 } from '@/wallet/references/data';
@@ -107,7 +108,7 @@ export const topUpCompound = async (
         topupInputAsset.address,
         topupInputAmountInWei,
         true,
-        '10',
+        getSlippage(topupInputAsset.address, network),
         network
       );
 
@@ -189,7 +190,7 @@ export const topUpCompound = async (
         topupInputAsset.address,
         topupInputAmountInWei,
         true,
-        '10',
+        getSlippage(topupInputAsset.address, network),
         network
       );
 

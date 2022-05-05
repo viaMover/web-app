@@ -86,7 +86,7 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { getSlippage, getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
@@ -438,7 +438,7 @@ export default Vue.extend({
               this.inputAsset.address,
               inputInWei,
               true,
-              '10'
+              getSlippage(this.inputAsset.address, this.networkInfo.network)
             );
             this.transferError = undefined;
           } else {
@@ -458,7 +458,7 @@ export default Vue.extend({
               this.inputAsset.address,
               inputInWei,
               true,
-              '10'
+              getSlippage(this.inputAsset.address, this.networkInfo.network)
             );
             this.transferError = undefined;
             this.inputAmount = fromWei(
