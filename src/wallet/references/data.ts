@@ -207,6 +207,7 @@ const addresses = {
   [Network.avalanche]: {}
 } as AddressMap;
 
+const defaultSlippage = '10'; // 10%
 const defaultAddress = '0x1';
 export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   network: N,
@@ -242,6 +243,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_DEFAULT_PRICE: string;
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
+  CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -261,7 +263,10 @@ const constants = {
       '0x213793865Aca451B28fB15bf940b2b7E3aDd34a5',
       '0x70Fb7f7840bD33635a7e33792F2bBeBDCde19889',
       '0xdAc8619CD25a6FEDA197e354235c3bBA7d847b90'
-    ]
+    ],
+    CUSTOM_TOKEN_SLIPPAGE: new Map<string, string>([
+      ['0xf0f9d895aca5c8678f706fb8216fa22957685a13', '25']
+    ])
   },
   [Network.fantom]: {
     ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
@@ -446,6 +451,15 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
+const getSlippage = (
+  tokenAddress: string,
+  network: Network,
+  defaultValue?: string
+): string => {
+  const customSlippages = lookupConstant(network, 'CUSTOM_TOKEN_SLIPPAGE');
+  return customSlippages?.get(tokenAddress) ?? defaultValue ?? defaultSlippage;
+};
+
 const validTopUpAssets = (network: Network): Array<string> => {
   return [
     'eth',
@@ -521,5 +535,6 @@ export {
   UBT_STAKING_CONTRACT_ABI,
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
-  validTopUpAssets
+  validTopUpAssets,
+  getSlippage
 };

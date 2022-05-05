@@ -151,7 +151,7 @@ import {
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { Network } from '@/utils/networkTypes';
-import { getMoveAssetData } from '@/wallet/references/data';
+import { getMoveAssetData, getSlippage } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { GasData, SmallToken, Token, TokenWithBalance } from '@/wallet/types';
 
@@ -597,7 +597,11 @@ export default Vue.extend({
           this.output.asset,
           this.input.amount,
           true,
-          this.slippage
+          getSlippage(
+            this.input.asset.address,
+            this.networkInfo.network,
+            this.slippage
+          )
         );
 
         this.output.amount = fromWei(
@@ -661,7 +665,11 @@ export default Vue.extend({
           this.output.asset,
           this.input.amount,
           true,
-          this.slippage
+          getSlippage(
+            this.input.asset.address,
+            this.networkInfo.network,
+            this.slippage
+          )
         );
 
         this.output.amount = fromWei(
@@ -725,7 +733,11 @@ export default Vue.extend({
           this.output.asset,
           this.output.amount,
           false,
-          this.slippage
+          getSlippage(
+            this.input.asset.address,
+            this.networkInfo.network,
+            this.slippage
+          )
         );
 
         this.input.amount = fromWei(
@@ -789,7 +801,11 @@ export default Vue.extend({
           this.output.asset,
           this.output.amount,
           false,
-          this.slippage
+          getSlippage(
+            this.input.asset.address,
+            this.networkInfo.network,
+            this.slippage
+          )
         );
 
         this.input.amount = fromWei(
@@ -856,7 +872,11 @@ export default Vue.extend({
           this.output.asset,
           this.input.amount,
           true,
-          this.slippage
+          getSlippage(
+            this.input.asset.address,
+            this.networkInfo.network,
+            this.slippage
+          )
         );
 
         this.output.amount = fromWei(

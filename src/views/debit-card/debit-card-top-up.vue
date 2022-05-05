@@ -96,6 +96,7 @@ import {
   getALCXAssetData,
   getBTRFLYAssetData,
   getEURSAssetData,
+  getSlippage,
   getUSDCAssetData,
   lookupAddress,
   validTopUpAssets
@@ -479,7 +480,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '10',
+              getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
 
@@ -616,7 +617,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '10',
+              getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
           } else {
@@ -673,7 +674,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '10',
+              getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
             this.inputAmount = fromWei(
