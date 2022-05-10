@@ -135,6 +135,10 @@ workflows:
   version: 2
   deploy_stg_for_test:
     jobs:
+      - build_stg:
+          filters:
+            tags:
+              only: /^staging-test.*/
       - deploy_stg:
           filters:
             tags:
