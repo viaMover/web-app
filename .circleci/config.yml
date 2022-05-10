@@ -135,7 +135,6 @@ workflows:
   version: 2
   deploy_stg_for_test:
     jobs:
-      - build_stg
       - deploy_stg:
           filters:
             tags:
