@@ -133,22 +133,6 @@ jobs:
 
 workflows:
   version: 2
-  deploy_stg_for_test:
-    jobs:
-      - build_stg:
-          filters:
-            tags:
-              only: /^staging-test.*/
-            branches:
-              ignore: /.*/
-      - deploy_stg:
-          filters:
-            tags:
-              only: /^staging-test.*/
-            branches:
-              ignore: /.*/
-          requires:
-            - build_stg
   commit:
     jobs:
       - build_stg:
@@ -161,6 +145,14 @@ workflows:
             branches:
               only:
                 - staging
+          requires:
+            - build_stg
+      - deploy_stg:
+          type: approval
+          filters:
+            branches:
+              ignore:
+                - release
           requires:
             - build_stg
       - build_prod:
