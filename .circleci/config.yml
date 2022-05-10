@@ -139,10 +139,14 @@ workflows:
           filters:
             tags:
               only: /^staging-test.*/
+            branches:
+              ignore: /.*/
       - deploy_stg:
           filters:
             tags:
               only: /^staging-test.*/
+            branches:
+              ignore: /.*/
           requires:
             - build_stg
   commit:
