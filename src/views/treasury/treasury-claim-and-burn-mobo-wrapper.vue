@@ -155,7 +155,6 @@ export default Vue.extend({
       smartTreasuryOnChainService: 'onChainService'
     }),
     inputAsset(): TokenWithBalance {
-      console.log('this.treasuryBonus', this.treasuryBonus);
       return {
         address: this.moboTokenInfo.address,
         decimals: this.moboTokenInfo.decimals,
