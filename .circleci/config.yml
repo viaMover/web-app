@@ -19,7 +19,7 @@ jobs:
           name: Build web app
           command: yarn && yarn build-stage
       - persist_to_workspace:
-          root:  /tmp/workspace
+          root: /tmp/workspace
           paths: [ '*' ]
 
   build_prod:
@@ -40,7 +40,7 @@ jobs:
           name: Build web app
           command: yarn && yarn build-prod
       - persist_to_workspace:
-          root:  /tmp/workspace
+          root: /tmp/workspace
           paths: [ '*' ]
 
   deploy_stg:
@@ -76,7 +76,7 @@ jobs:
             cp deploy/moverwebapp-stg.yaml dist/
             cd dist
             /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-stg.yaml --promote
-      - run: 
+      - run:
           name: Create release and notify Sentry of deploy
           command: |
             curl -sL https://sentry.io/get-cli/ | bash
@@ -133,6 +133,15 @@ jobs:
 
 workflows:
   version: 2
+  deploy_stg_for_test:
+    jobs:
+      - build_stg
+      - deploy_stg:
+          filters:
+            tags:
+              only: /^staging-test.*/
+          requires:
+            - build_stg
   commit:
     jobs:
       - build_stg:
