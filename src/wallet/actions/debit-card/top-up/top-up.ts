@@ -15,11 +15,13 @@ import {
 import { fromWei, multiply, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
-import { unstake } from '@/wallet/actions/debit-card/top-up/gALCX/top-up';
+import { unstake as unstakeDCULT } from '@/wallet/actions/debit-card/top-up/dCULT/top-up';
+import { unstake as unstakeGALCX } from '@/wallet/actions/debit-card/top-up/gALCX/top-up';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
   getCentralTransferProxyAbi,
+  getCULTAssetData,
   getSlippage,
   getUSDCAssetData,
   lookupAddress
@@ -161,7 +163,89 @@ export const topUpCompound = async (
         topupInputAsset.address
       );
 
-      await unstake(
+      await unstakeGALCX(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress,
+        changeStepToProcess,
+        unwrapGasLimit
+      );
+
+      const balanceAfterUnstake = await currentBalance(
+        web3,
+        accountAddress,
+        topupInputAsset.address
+      );
+
+      const topupInputAmountInWei = sub(
+        balanceAfterUnstake,
+        balanceBeforeUnstake
+      );
+      topupInputAmount = fromWei(
+        topupInputAmountInWei,
+        topupInputAsset.decimals
+      );
+      topupTransferData = await getTransferData(
+        getUSDCAssetData(network).address,
+        topupInputAsset.address,
+        topupInputAmountInWei,
+        true,
+        getSlippage(topupInputAsset.address, network),
+        network
+      );
+
+      const resp = await estimateTopUpCompound(
+        topupInputAsset,
+        outputAsset,
+        topupInputAmount,
+        topupTransferData,
+        network,
+        web3,
+        accountAddress
+      );
+
+      topupActionGasLimit = resp.actionGasLimit;
+      topupApproveGasLimit = resp.approveGasLimit;
+    } catch (err) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.unstake',
+        message: 'Failed to unstake for top up',
+        data: {
+          error: err
+        }
+      });
+      throw err;
+    }
+  }
+
+  if (
+    sameAddress(
+      inputAsset.address,
+      lookupAddress(network, 'DCULT_TOKEN_ADDRESS')
+    )
+  ) {
+    try {
+      addSentryBreadcrumb({
+        type: 'info',
+        category: 'debit-card.top-up.topUpCompound',
+        message: 'Input asset is dCULT. Unstake is needed',
+        data: {
+          inputAsset: inputAsset
+        }
+      });
+
+      topupInputAsset = getCULTAssetData(network);
+
+      const balanceBeforeUnstake = await currentBalance(
+        web3,
+        accountAddress,
+        topupInputAsset.address
+      );
+
+      await unstakeDCULT(
         inputAsset,
         inputAmount,
         network,
