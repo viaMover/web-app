@@ -86,7 +86,8 @@ export type AddressMapKey =
   | 'AL_USD_TOKEN_ADDRESS'
   | 'AL_ETH_TOKEN_ADDRESS'
   | 'GTC_TOKEN_ADDRESS'
-  | 'CULT_TOKEN_ADDRESS';
+  | 'CULT_TOKEN_ADDRESS'
+  | 'DOLA_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -149,7 +150,8 @@ const addresses = {
     ALCX_TOKEN_ADDRESS: '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF',
     GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35',
     GTC_TOKEN_ADDRESS: '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F',
-    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13'
+    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
+    DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -207,6 +209,7 @@ const addresses = {
   [Network.avalanche]: {}
 } as AddressMap;
 
+const defaultSlippage = '10'; // 10%
 const defaultAddress = '0x1';
 export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   network: N,
@@ -242,6 +245,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_DEFAULT_PRICE: string;
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
+  CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -261,7 +265,10 @@ const constants = {
       '0x213793865Aca451B28fB15bf940b2b7E3aDd34a5',
       '0x70Fb7f7840bD33635a7e33792F2bBeBDCde19889',
       '0xdAc8619CD25a6FEDA197e354235c3bBA7d847b90'
-    ]
+    ],
+    CUSTOM_TOKEN_SLIPPAGE: new Map<string, string>([
+      ['0xf0f9d895aca5c8678f706fb8216fa22957685a13', '25']
+    ])
   },
   [Network.fantom]: {
     ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
@@ -446,6 +453,19 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
+const getSlippage = (
+  tokenAddress: string,
+  network: Network,
+  defaultValue?: string
+): string => {
+  const customSlippages = lookupConstant(network, 'CUSTOM_TOKEN_SLIPPAGE');
+  return (
+    customSlippages?.get(tokenAddress.toLowerCase()) ??
+    defaultValue ??
+    defaultSlippage
+  );
+};
+
 const validTopUpAssets = (network: Network): Array<string> => {
   return [
     'eth',
@@ -479,7 +499,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
     lookupAddress(network, 'GALCX_TOKEN_ADDRESS'),
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
-    lookupAddress(network, 'CULT_TOKEN_ADDRESS')
+    lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'DOLA_TOKEN_ADDRESS')
   ];
 };
 
@@ -521,5 +542,6 @@ export {
   UBT_STAKING_CONTRACT_ABI,
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
-  validTopUpAssets
+  validTopUpAssets,
+  getSlippage
 };
