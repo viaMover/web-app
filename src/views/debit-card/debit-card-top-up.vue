@@ -95,6 +95,7 @@ import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
+  getCULTAssetData,
   getEURSAssetData,
   getSlippage,
   getUSDCAssetData,
@@ -465,6 +466,17 @@ export default Vue.extend({
               inputInWei = getInteger(
                 toWei(newInputInTokens, referenceToken.decimals)
               );
+            }
+
+            // dCULT unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'DCULT_TOKEN_ADDRESS')
+              )
+            ) {
+              // keep the same input in WEI coz it's 1:1
+              referenceToken = getCULTAssetData(this.networkInfo.network);
             }
 
             if (isZero(referenceAmount) || referenceAmount === '') {

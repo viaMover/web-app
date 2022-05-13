@@ -16,6 +16,7 @@ import { multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
 import { needApprove } from '@/wallet/actions/approve/needApprove';
+import { estimateDCULTUnstake } from '@/wallet/actions/debit-card/top-up/dCULT/estimate';
 import { estimateGALCXUnstake } from '@/wallet/actions/debit-card/top-up/gALCX/estimate';
 import {
   CompoundEstimateWithUnwrapResponse,
@@ -104,6 +105,51 @@ export const estimateTopUpCompound = async (
     let estimation;
     try {
       estimation = await estimateGALCXUnstake(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress
+      );
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.estimateTopUpCompound',
+        message: 'failed to estimate unstake',
+        data: {
+          error
+        }
+      });
+
+      throw new OnChainServiceError('Failed to estimate top up').wrap(error);
+    }
+
+    return {
+      error: false,
+      actionGasLimit: ethDefaults.basic_move_card_top_up,
+      approveGasLimit: ethDefaults.basic_approval,
+      unwrapGasLimit: estimation.gasLimit
+    };
+  }
+
+  if (
+    sameAddress(
+      inputAsset.address,
+      lookupAddress(network, 'DCULT_TOKEN_ADDRESS')
+    )
+  ) {
+    addSentryBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.topUpCompound',
+      message: 'Input asset is dCULT. Unstake is needed',
+      data: {
+        inputAsset: inputAsset
+      }
+    });
+
+    let estimation;
+    try {
+      estimation = await estimateDCULTUnstake(
         inputAsset,
         inputAmount,
         network,
