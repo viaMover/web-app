@@ -25,3 +25,4 @@ pnpm-debug.log*
 #assets script
 /tw
 deploy/keys-stg.*
+/tools/token_list/tw/
