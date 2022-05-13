@@ -475,7 +475,7 @@ export default Vue.extend({
                 lookupAddress(this.networkInfo.network, 'DCULT_TOKEN_ADDRESS')
               )
             ) {
-              // keep the same input in WHEI coz it's 1:1
+              // keep the same input in WEI coz it's 1:1
               referenceToken = getCULTAssetData(this.networkInfo.network);
             }
 
