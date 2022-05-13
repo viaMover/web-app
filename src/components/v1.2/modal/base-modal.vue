@@ -1,6 +1,6 @@
 <template>
   <div v-if="isOpened" class="modal-wrapper">
-    <close-button class="close" @close="handleClose" />
+    <close-button class="close" @click="handleClose" />
     <div
       v-on-clickaway="handleClickAway"
       class="modal"
@@ -20,7 +20,7 @@
 import Vue from 'vue';
 import { mixin as ClickAwayMixin } from 'vue-clickaway';
 
-import CloseButton from '@/components/buttons/close-button.vue';
+import CloseButton from '@/components/v1.2/buttons/close-button.vue';
 
 export default Vue.extend({
   name: 'BaseModal',
@@ -41,7 +41,7 @@ export default Vue.extend({
     },
     addHr: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data() {

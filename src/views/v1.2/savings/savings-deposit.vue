@@ -1,30 +1,103 @@
 <template>
-  <div class="deposit">
-    <div class="heading">
-      <h1>{{ $t('depositIn', { term: 'Savings' }) }}</h1>
-    </div>
+  <secondary-page
+    class="deposit"
+    :has-back-button="hasBackButton"
+    @back="handleBack"
+  >
+    <form
+      v-if="step === 'prepare'"
+      class="form"
+      @submit.prevent="handleTxReview"
+    >
+      <secondary-page-header :title="$t('depositInSavings')" />
 
-    <form class="form">
-      <div>
-        <label class="form-label" for="input-asset">{{
-          $t('whatDoWe', { action: $t('deposit') })
-        }}</label>
-        <base-dropdown
-          has-custom-option
-          has-custom-selected-option
-          input-id="input-asset"
-          :options="[]"
-          :value="outputUSDCAsset"
-          @click.capture.prevent.stop="handleOpenSelectModal"
-        >
-          <template v-slot:selected-option="{ currency, flag }">
-            <span class="emoji flag">{{ flag }}</span>
-            <span class="currency">{{ currency }}</span>
-          </template>
-        </base-dropdown>
-      </div>
+      <token-selector
+        class="mb-16"
+        :current-asset="inputAsset"
+        :description-text="description"
+        input-id="input-asset"
+        :label-text="$t('whatDoWeDeposit')"
+        @select="handleOpenSelectModal"
+      />
+
+      <custom-switch v-model="useAllBalance" class="mb-40">
+        {{
+          $t('depositAll', { amount: `${inputValue} ${currentInputSymbol}` })
+        }}
+      </custom-switch>
+
+      <amount-field
+        :amount="inputValue"
+        :asset-symbol="currentInputSymbol"
+        class="mb-40"
+        input-id="input-amount"
+        @input="handleUpdateAmount"
+        @mode-changed="handleToggleInputMode"
+      >
+        <template v-slot:label>
+          {{ $t('amountWeDepositIn') }}
+          <span class="selector button-like" @click="handleToggleInputMode">
+            {{ currentInputSymbol }}
+          </span>
+        </template>
+      </amount-field>
+
+      <submit-button
+        :disabled="transferError !== undefined"
+        :error="transferError"
+        :loading="isLoading || isProcessing"
+      >
+        {{ $t('reviewDeposit') }}
+      </submit-button>
     </form>
-  </div>
+    <form
+      v-else-if="step === 'review'"
+      class="form"
+      @submit.prevent="handleTxStart"
+    >
+      <secondary-page-header :title="$t('reviewYourDeposit')" />
+
+      <form-direction-pair :left="inputAsset" :right="savingsPicture" />
+
+      <div class="section review-statements">
+        <div class="item">
+          <h2>
+            {{
+              $t('amountWeDepositIn', {
+                symbol: inputAsset ? inputAsset.symbol : ''
+              })
+            }}
+          </h2>
+          <span>{{ inputAmount }}</span>
+        </div>
+        <div class="item">
+          <h2>{{ $t('totalDepositedIntoSavings') }}</h2>
+          <span>{{ formatAsNativeCurrency(inputAmountNative) }}</span>
+        </div>
+        <slot name="additional-items" />
+        <template v-if="isSubsidizedEnabled">
+          <custom-switch v-model="useSmartTreasury">
+            {{ $t('useSmartTreasury') }}
+          </custom-switch>
+
+          <div v-if="useSmartTreasury && estimatedGasCost" class="item">
+            <h2>{{ $t('forms.lblEstimatedGasCost') }}</h2>
+            <span>{{ estimatedGasCost }}</span>
+          </div>
+        </template>
+      </div>
+
+      <submit-button
+        :disabled="transferError !== undefined"
+        :error="transferError"
+        :loading="isLoading || isProcessing"
+      >
+        {{ $t('depositInSavings') }}
+      </submit-button>
+    </form>
+    <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
+    <search-token-modal />
+  </secondary-page>
 </template>
 
 <script lang="ts">
@@ -34,6 +107,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
+import savingsPicture from '@/assets/images/sections/savings';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
@@ -59,37 +133,36 @@ import {
 } from '@/wallet/types';
 
 import { InputMode, LoaderStep } from '@/components/forms';
+import LoaderForm from '@/components/forms/loader-form/loader-form.vue';
 import { PictureDescriptor } from '@/components/html5';
-import BaseDropdown from '@/components/v1.2/base-dropdown.vue';
+import SecondaryPage from '@/components/layout/secondary-page/secondary-page.vue';
+import SecondaryPageHeader from '@/components/layout/secondary-page/secondary-page-header.vue';
+import AmountField from '@/components/v1.2/form-controls/amount-field.vue';
+import FormDirectionPair from '@/components/v1.2/form-controls/form-direction-pair.vue';
+import SubmitButton from '@/components/v1.2/form-controls/submit-button.vue';
+import CustomSwitch from '@/components/v1.2/form-controls/switch-field.vue';
+import TokenSelector from '@/components/v1.2/form-controls/token-selector.vue';
+import SearchTokenModal from '@/components/v1.2/modal/search-token-modal/search-token-modal.vue';
 
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   components: {
-    BaseDropdown
+    SubmitButton,
+    FormDirectionPair,
+    SecondaryPage,
+    SecondaryPageHeader,
+    SearchTokenModal,
+    AmountField,
+    CustomSwitch,
+    TokenSelector,
+    LoaderForm
   },
   data() {
     return {
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
-      savings: {
-        alt: this.$t('savings.lblSavings'),
-        src: require('@/assets/images/Savings@1x.png'),
-        sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
-          }
-        ]
-      } as PictureDescriptor,
+      savingsPicture,
       usdcPicture: {
         src: require('@/assets/images/USDC.png'),
         sources: [
@@ -106,10 +179,12 @@ export default Vue.extend({
       isTokenSelectedByUser: false,
       inputMode: 'TOKEN' as InputMode,
       inputAsset: undefined as TokenWithBalance | undefined,
-      inputAmount: '',
-      inputAmountNative: '',
+      inputAmount: '0',
+      inputAmountNative: '0',
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
+      useAllBalance: false,
+      useSmartTreasury: true,
 
       //to tx
       isSubsidizedEnabled: false,
@@ -130,11 +205,41 @@ export default Vue.extend({
       provider: 'provider',
       swapService: 'swapAPIService'
     }),
+    ...mapState('savings', {
+      savingsAPY: 'savingsAPY',
+      savingsBalance: 'savingsBalance',
+      savingsOnChainService: 'onChainService'
+    }),
+    inputValue(): string {
+      return this.inputMode === 'TOKEN'
+        ? this.inputAmount
+        : this.inputAmountNative;
+    },
+    currentInputSymbol(): string {
+      if (this.inputMode === 'TOKEN') {
+        return this.inputAsset?.symbol ?? '';
+      } else {
+        return this.nativeCurrencySymbol;
+      }
+    },
+    ...mapState('account', {
+      networkInfo: 'networkInfo',
+      currentAddress: 'currentAddress',
+      nativeCurrency: 'nativeCurrency',
+      gasPrices: 'gasPrices',
+      ethPrice: 'ethPrice',
+      tokens: 'tokens',
+      provider: 'provider',
+      swapService: 'swapAPIService'
+    }),
     ...mapGetters('treasury', { treasuryBonusNative: 'treasuryBonusNative' }),
     ...mapState('savings', {
       savingsAPY: 'savingsAPY',
       savingsBalance: 'savingsBalance',
       savingsOnChainService: 'onChainService'
+    }),
+    ...mapGetters('account', {
+      usdcNativePrice: 'usdcNativePrice'
     }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
       return getUSDCAssetData(this.networkInfo.network);
@@ -143,7 +248,9 @@ export default Vue.extend({
       return this.nativeCurrency.toUpperCase();
     },
     formattedNativeAmount(): string {
-      return this.formatAsNativeCurrency(this.inputAmountNative);
+      return `${formatToNative(this.inputAmountNative)} ${
+        this.nativeCurrencySymbol
+      }`;
     },
     isSwapNeeded(): boolean {
       if (this.inputAsset === undefined) {
@@ -163,7 +270,7 @@ export default Vue.extend({
       ) as string;
     },
     hasBackButton(): boolean {
-      return this.step === 'review';
+      return this.step !== 'loader';
     },
     estimatedAnnualEarning(): string {
       let possibleSavingsBalance = '0';
@@ -186,8 +293,10 @@ export default Vue.extend({
         );
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
+      const usdcAmountNative = multiply(
+        possibleSavingsBalance,
+        this.usdcNativePrice
+      );
       const apyNative = multiply(
         divide(this.savingsAPY, 100),
         usdcAmountNative
@@ -241,6 +350,13 @@ export default Vue.extend({
           this.isLoading = false;
         }
       }
+    },
+    useAllBalance(newValue: boolean) {
+      if (!newValue) {
+        return;
+      }
+
+      this.handleSelectMaxAmount();
     }
   },
   methods: {
@@ -370,6 +486,7 @@ export default Vue.extend({
       }
 
       this.isLoading = true;
+      this.useAllBalance = false;
 
       try {
         if (!this.isSwapNeeded) {

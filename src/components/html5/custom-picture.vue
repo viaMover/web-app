@@ -48,7 +48,7 @@ export default Vue.extend({
     },
     pictureClass: {
       type: String,
-      default: ''
+      default: undefined
     }
   },
   computed: {

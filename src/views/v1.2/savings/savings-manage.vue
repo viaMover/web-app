@@ -1,6 +1,6 @@
 <template>
   <module-manage>
-    <template #navigation>
+    <template v-slot:navigation>
       <base-item-icon
         icon-class="icon-deposit"
         navigate-to="savings-deposit"

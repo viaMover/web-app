@@ -3,36 +3,22 @@
     class="button"
     :class="{ disabled: disabled }"
     :disabled="disabled"
-    :style="customStyle"
     :type="type"
     @click="handleClick"
   >
-    <template v-if="text">
-      {{ text }}
-    </template>
-    <slot v-else></slot>
+    <slot />
   </button>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
-
-import { Properties as CssProperties } from 'csstype';
+import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'ActionButton',
+  name: 'BaseButton',
   props: {
-    text: {
-      type: String,
-      default: ''
-    },
     disabled: {
       type: Boolean,
       default: false
-    },
-    customStyle: {
-      type: Object as PropType<CssProperties>,
-      default: undefined
     },
     type: {
       type: String,
@@ -49,12 +35,7 @@ export default Vue.extend({
         event.preventDefault();
         event.stopPropagation();
       }
-
-      if (this.disabled) {
-        return;
-      }
-
-      this.$emit('button-click');
+      this.$emit('click');
     }
   }
 });
