@@ -39,7 +39,13 @@ export class MoverAPIStakingUbtService extends MoverAPIService {
   }
 
   public async getInfo(): Promise<StakingUbtInfo | never> {
-    if (this.useSyntheticData) {
+    const data = (
+      await this.client.get<
+        MoverAPISuccessfulResponse<StakingUbtInfoAPIResponse>
+      >(`/info/${this.currentAddress}`)
+    ).data.payload;
+
+    if (data.last12MonthsBalances.length === 0) {
       const last12MonthsBalances = new Array<StakingUbtMonthBalanceItem>(12);
       const startOfCurrentMonth = dayjs().startOf('month');
       for (let i = 0; i < 12; i++) {
@@ -52,26 +58,8 @@ export class MoverAPIStakingUbtService extends MoverAPIService {
           snapshotTimestamp: startOfCurrentMonth.subtract(i, 'month').unix()
         };
       }
-
-      return MoverAPIStakingUbtService.mapInfo(
-        {
-          actionHistory: [],
-          last12MonthsBalances: last12MonthsBalances,
-          avg30DaysAPY: 0,
-          currentPoolBalance: 0,
-          earnedThisMonth: 0,
-          currentBalance: 0,
-          earnedTotal: 0
-        },
-        this.isFieldsReducerEnabled
-      );
+      data.last12MonthsBalances = last12MonthsBalances;
     }
-
-    const data = (
-      await this.client.get<
-        MoverAPISuccessfulResponse<StakingUbtInfoAPIResponse>
-      >(`/info/${this.currentAddress}`)
-    ).data.payload;
 
     return MoverAPIStakingUbtService.mapInfo(data, this.isFieldsReducerEnabled);
   }
@@ -80,23 +68,6 @@ export class MoverAPIStakingUbtService extends MoverAPIService {
     year: number,
     month: number
   ): Promise<StakingUbtReceipt | never> {
-    if (this.useSyntheticData) {
-      return MoverAPIStakingUbtService.mapReceipt(
-        {
-          avgDailyEarnings: 0,
-          earnedThisMonth: 0,
-          hourlyBalances: [],
-          endOfMonthBalance: 0,
-          paidToTreasury: 0,
-          savedFees: 0,
-          totalDeposits: 0,
-          monthActionHistory: [],
-          totalWithdrawals: 0
-        },
-        this.isFieldsReducerEnabled
-      );
-    }
-
     const data = (
       await this.client.get<
         MoverAPISuccessfulResponse<StakingUbtReceiptAPIResponse>

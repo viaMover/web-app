@@ -1312,6 +1312,8 @@ const messages: VueI18n.LocaleMessageObject = {
     txtWithdraw: 'Remove your assets from staking fully or partially',
     lblBalanceIn: 'Staking Balance in',
     lblStakingStatements: 'Staking Statements',
+    lblGlobalAnalytics: 'Global analytics',
+    txtGlobalAnalytics: 'All information about UBT',
     btnView: 'View',
     lblInProgress: 'In progress',
     txtYieldEarnedIn: 'Yield earned in {month}',

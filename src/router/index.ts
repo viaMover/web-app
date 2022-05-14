@@ -621,6 +621,14 @@ const routes: Array<RouteConfig> = [
             import(
               /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-withdraw-wrapper.vue'
             )
+        },
+        {
+          path: 'analytics',
+          name: 'staking-ubt-global-analytics',
+          component: () =>
+            import(
+              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-global-analytics.vue'
+            )
         }
       ]
     },

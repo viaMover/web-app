@@ -24,6 +24,8 @@ type Getters = {
   ubtNativePrice: string;
   earnedThisMonth: string;
   earnedThisMonthNative: string;
+  earnedTotal: string;
+  earnedTotalNative: string;
 };
 
 const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
@@ -157,6 +159,23 @@ const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
   },
   earnedThisMonthNative(state, getters): string {
     return multiply(getters.earnedThisMonth, getters.ubtNativePrice);
+  },
+  earnedTotal(state, getters, rootState): string {
+    if (
+      getters.info === undefined ||
+      state.isInfoLoading ||
+      !ensureAccountStateIsSafe(rootState.account)
+    ) {
+      return '0';
+    }
+
+    return fromWei(
+      getters.info.earnedTotal,
+      getUBTAssetData(rootState.account.networkInfo.network).decimals
+    );
+  },
+  earnedTotalNative(state, getters): string {
+    return multiply(getters.earnedTotal, getters.ubtNativePrice);
   }
 };
 

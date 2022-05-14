@@ -16,6 +16,8 @@ type Mutations = {
   setAPIService: void;
   setOnChainService: void;
   setUbtNativePrice: void;
+  setAPY: void;
+  setDPY: void;
   setContractUbtBalance: void;
 };
 
@@ -53,6 +55,12 @@ const mutations: MutationFuncs<Mutations, StakingUbtStoreState> = {
   },
   setContractUbtBalance(state, balance: string): void {
     state.contractUbtBalance = balance;
+  },
+  setAPY(state, apy: string): void {
+    state.apy = apy;
+  },
+  setDPY(state, dpy: string): void {
+    state.dpy = dpy;
   }
 };
 
