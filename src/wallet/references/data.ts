@@ -516,7 +516,6 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
     lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
-    lookupAddress(network, 'DCULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'LUSD_TOKEN_ADDRESS')
   ];
 };
