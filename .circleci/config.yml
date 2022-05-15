@@ -140,21 +140,13 @@ workflows:
             branches:
               ignore:
                 - release
-      - deploy_stg:
-          filters:
-            branches:
-              only:
-                - staging
-          requires:
-            - build_stg
-      - deploy_stg:
+      - approveDeploy:
           type: approval
-          filters:
-            branches:
-              ignore:
-                - release
           requires:
             - build_stg
+      - deploy_stg:
+          requires:
+            - approveDeploy
       - build_prod:
           filters:
             branches:

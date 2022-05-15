@@ -1376,6 +1376,7 @@ const messages: VueI18n.LocaleMessageObject = {
       needChainSwitch:
         'You have to switch the network for this action to {network}'
     },
+    warningBridgeFeeIsHigh: 'Please mind the bridging fee costs',
     empty: {
       lblUpTo: 'up to {value}',
       lblMultichainZaps: 'Multichain Zaps',
