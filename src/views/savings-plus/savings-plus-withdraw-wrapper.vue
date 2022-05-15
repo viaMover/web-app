@@ -39,6 +39,7 @@
       :input-amount-title="$t('savingsPlus.withdraw.lblAmountWeWithdrawIn')"
       :native-amount="formattedReceiveAmount"
       :token="inputAsset"
+      :warning-message="warningMessage"
       @tx-start="handleTxStart"
     >
       <template v-slot:additional-items>
@@ -95,6 +96,7 @@ import {
 import {
   divide,
   fromWei,
+  greaterThan,
   lessThanOrEqual,
   multiply,
   sub,
@@ -129,6 +131,7 @@ export default Vue.extend({
   mixins: [GasListenerMixin],
   data() {
     return {
+      warningBridgeLimitNative: '30',
       //current
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
@@ -161,7 +164,8 @@ export default Vue.extend({
       withdrawTxData: undefined as WithdrawTransactionData | undefined,
 
       //to tx
-      actionGasLimit: undefined as string | undefined
+      actionGasLimit: undefined as string | undefined,
+      warningMessage: undefined as string | undefined
     };
   },
   computed: {
@@ -281,8 +285,31 @@ export default Vue.extend({
         let receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
         if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
           receiveAmount = this.withdrawTxData.estimatedReceived;
+          if (
+            greaterThan(
+              this.withdrawTxData.bridgeFee,
+              divide(toWei(this.inputAmount, this.inputAsset.decimals), '10')
+            ) ||
+            greaterThan(
+              multiply(
+                fromWei(
+                  this.withdrawTxData.bridgeFee,
+                  this.inputAsset.decimals
+                ),
+                this.usdcNativePrice
+              ),
+              this.warningBridgeLimitNative
+            )
+          ) {
+            this.warningMessage = this.$t(
+              'savingsPlus.warningBridgeFeeIsHigh'
+            ) as string;
+          } else {
+            this.warningMessage = undefined;
+          }
         } else {
           receiveAmount = sub(receiveAmount, this.withdrawTxData.withdrawFee);
+          this.warningMessage = undefined;
         }
 
         console.log('receiveAmount', receiveAmount);
