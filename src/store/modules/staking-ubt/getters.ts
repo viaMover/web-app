@@ -1,3 +1,4 @@
+import { SavingsMonthBalanceItem } from '@/services/mover';
 import {
   StakingUbtInfo,
   StakingUbtMonthBalanceItem,
@@ -7,7 +8,7 @@ import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
-import { fromWei, greaterThan, multiply } from '@/utils/bigmath';
+import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUBTAssetData } from '@/wallet/references/data';
 
 import { StakingUbtStoreState } from './types';
@@ -22,10 +23,14 @@ type Getters = {
   hasActiveStaking: boolean;
   receipt: (y: number, m: number) => Promise<StakingUbtReceipt> | undefined;
   ubtNativePrice: string;
+  avg30DaysAPY: string;
   earnedThisMonth: string;
   earnedThisMonthNative: string;
   earnedTotal: string;
   earnedTotalNative: string;
+  estimatedEarningsTomorrowNative: string;
+  estimatedEarningsNextMonthNative: string;
+  estimatedEarningsAnnuallyNative: string;
 };
 
 const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
@@ -144,6 +149,13 @@ const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
       return unwrapCacheItem(item);
     };
   },
+  avg30DaysAPY(state, getters): string {
+    if (getters.info === undefined || state.isInfoLoading) {
+      return '0';
+    }
+
+    return multiply(getters.info.avg30DaysAPY, 100);
+  },
   earnedThisMonth(state, getters, rootState): string {
     if (
       getters.info !== undefined &&
@@ -176,6 +188,30 @@ const getters: GettersFuncs<Getters, StakingUbtStoreState> = {
   },
   earnedTotalNative(state, getters): string {
     return multiply(getters.earnedTotal, getters.ubtNativePrice);
+  },
+  estimatedEarningsTomorrowNative(state, getters): string {
+    if (state.dpy === undefined) {
+      return '0';
+    }
+
+    const multiplier = divide(state.dpy, 100);
+    return multiply(getters.balanceNative, multiplier);
+  },
+  estimatedEarningsNextMonthNative(state, getters): string {
+    if (state.dpy === undefined) {
+      return '0';
+    }
+
+    const multiplier = divide(multiply(state.dpy, 30), 100);
+    return multiply(getters.balanceNative, multiplier);
+  },
+  estimatedEarningsAnnuallyNative(state, getters): string {
+    if (state.apy === undefined) {
+      return '0';
+    }
+
+    const multiplier = divide(state.apy, 100);
+    return multiply(getters.balanceNative, multiplier);
   }
 };
 

@@ -102,13 +102,13 @@ export default Vue.extend({
       dpy: 'dpy'
     }),
     ...mapGetters('stakingUBT', {
-      infoEarnedThisMonthNative: 'infoEarnedThisMonthNative',
-      infoEarnedTotalNative: 'infoEarnedTotalNative',
-      estimatedEarningsTomorrowNative: 'estimatedEarningsTomorrowNative',
+      earnedThisMonthNative: 'earnedThisMonthNative',
+      earnedTotalNative: 'earnedTotalNative',
       balance: 'balance',
       infoTotalPoolBalanceNative: 'infoTotalPoolBalanceNative',
       avg30DaysAPY: 'avg30DaysAPY',
       infoBalanceNative: 'infoBalanceNative',
+      estimatedEarningsTomorrowNative: 'estimatedEarningsTomorrowNative',
       estimatedEarningsNextMonthNative: 'estimatedEarningsNextMonthNative',
       estimatedEarningsAnnuallyNative: 'estimatedEarningsAnnuallyNative'
     }),
@@ -144,11 +144,11 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedThisMonth(): string {
-      const value = formatToNative(this.infoEarnedThisMonthNative);
+      const value = formatToNative(this.earnedTotalNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedTotal(): string {
-      const value = formatToNative(this.infoEarnedTotalNative);
+      const value = formatToNative(this.earnedTotalNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },

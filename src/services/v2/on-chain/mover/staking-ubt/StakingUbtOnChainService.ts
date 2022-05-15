@@ -47,10 +47,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
         .getDailyAPY()
         .call({ from: this.currentAddress });
 
-      console.log('DAILY API', dpyInWEI);
-
-      const dpy = fromWei(dpyInWEI, this.UBTAssetData.decimals);
-      console.log('DAILY API 2', dpy);
+      const dpy = fromWei(dpyInWEI, '18');
 
       const apy = multiply(dpy, 365);
       return {
