@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['ethereum', 'fantom', 'polygon'];
+const networks = ['ethereum', 'fantom', 'polygon', 'avalanche'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -46,6 +46,17 @@ const getCoingeckoPlatform = (network) => {
       return 'fantom';
     case 'polygon':
       return 'polygon-pos';
+    case 'avalanche':
+      return 'avalanche';
+  }
+};
+
+const getTrustWalletBlockchainName = (network) => {
+  switch (network) {
+    case 'avalanche':
+      return 'avalanchec';
+    default:
+      return network;
   }
 };
 
@@ -173,7 +184,8 @@ const alsoIncludedTokens = {
     } // DOLA
   ],
   fantom: [],
-  polygon: []
+  polygon: [],
+  avalanche: []
 };
 
 const isDirEmpty = (dir) => {
@@ -210,11 +222,14 @@ const iterateOverAssets = async (network) => {
   let assetsAddresses = [];
   try {
     const files = await promises.readdir(
-      `${repDIR}/blockchains/${network}/assets`
+      `${repDIR}/blockchains/${getTrustWalletBlockchainName(network)}/assets`
     );
     let assetCount = 0;
     for (const file of files) {
-      const fromPath = join(`${repDIR}/blockchains/${network}/assets`, file);
+      const fromPath = join(
+        `${repDIR}/blockchains/${getTrustWalletBlockchainName(network)}/assets`,
+        file
+      );
       const stat = await promises.stat(fromPath);
 
       if (stat.isDirectory()) {
@@ -284,7 +299,9 @@ const enrichWithTWdata = async (assetAddresses, network) => {
   return assetAddresses.reduce(async (acc, address) => {
     try {
       const buf = readFileSync(
-        `${repDIR}/blockchains/${network}/assets/${address}/info.json`,
+        `${repDIR}/blockchains/${getTrustWalletBlockchainName(
+          network
+        )}/assets/${address}/info.json`,
         'utf8'
       );
       const info = JSON.parse(buf);
@@ -294,7 +311,9 @@ const enrichWithTWdata = async (assetAddresses, network) => {
 
       logger.info(`Add token: ${address}`);
 
-      const imgPath = `${`${repDIR}/blockchains/${network}/assets`}/${address}/logo.png`;
+      const imgPath = `${`${repDIR}/blockchains/${getTrustWalletBlockchainName(
+        network
+      )}/assets`}/${address}/logo.png`;
       if (existsSync(imgPath)) {
         const buffer = Buffer.from(readFileSync(imgPath));
         info.color = await getAssetImageColor(buffer, address);
@@ -509,6 +528,9 @@ const getWeb3 = (network) => {
       break;
     case 'polygon':
       rpcUrl = 'https://polygon-rpc.com/';
+      break;
+    case 'avalanche':
+      rpcUrl = 'https://api.avax.network/ext/bc/C/rpc';
       break;
     default:
       throw new Error(`There is no RPC link for network: ${network}`);
