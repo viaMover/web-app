@@ -153,7 +153,7 @@ export const networks = new Array<NetworkInfo>(
       symbol: 'AVAX',
       name: 'Avalanche C-Chain',
       iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanche/info/logo.png'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchec/info/logo.png'
     },
     rpcUrl: 'https://api.avax.network/ext/bc/C/rpc'
   },
