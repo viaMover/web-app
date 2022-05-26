@@ -1,6 +1,7 @@
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
+import { simpleYearnVaultToken } from '@/wallet/references/yearnVaultsData';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
@@ -29,6 +30,7 @@ import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
+import YEARN_SIMPLE_VAULT_ABI from './abi/yearn/simple_vault_token.json';
 
 export type AddressMapKey =
   | 'MOVE_ADDRESS'
@@ -90,7 +92,9 @@ export type AddressMapKey =
   | 'CULT_TOKEN_ADDRESS'
   | 'DOLA_TOKEN_ADDRESS'
   | 'DCULT_TOKEN_ADDRESS'
-  | 'LUSD_TOKEN_ADDRESS';
+  | 'LUSD_TOKEN_ADDRESS'
+  | 'YV_USDC_TOKEN_ADDRESS'
+  | 'YV_DAI_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -156,7 +160,9 @@ const addresses = {
     CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
     DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
     DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
-    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
+    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
+    YV_USDC_TOKEN_ADDRESS: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
+    YV_DAI_TOKEN_ADDRESS: '0xdA816459F1AB5631232FE5e97a05BBBb94970c95'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -516,7 +522,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
     lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
-    lookupAddress(network, 'LUSD_TOKEN_ADDRESS')
+    lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
+    ...simpleYearnVaultToken(network)
   ];
 };
 
@@ -560,6 +567,7 @@ export {
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
   DCULT_ABI,
+  YEARN_SIMPLE_VAULT_ABI,
   validTopUpAssets,
   getSlippage
 };

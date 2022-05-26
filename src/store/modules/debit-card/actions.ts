@@ -5,6 +5,7 @@ import { SHA3 } from 'sha3';
 import { getGALCXToALCXMultiplier } from '@/services/chain/gALCX/multiplier';
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
 import { getRealIndex } from '@/services/chain/wxbtrfly/wxbtrfly';
+import { getYearnVaultMultiplier } from '@/services/chain/yearn-vaults/simple';
 import {
   BaseReturn,
   changePhoneNumber,
@@ -55,6 +56,7 @@ type Actions = {
   changePhoneNumber: Promise<void>;
   loadWxBTRFLYrealIndex: Promise<void>;
   loadGALCXToALCXMultiplier: Promise<void>;
+  getYearnVaultMultiplier: Promise<string>;
 };
 
 const actions: ActionFuncs<
@@ -678,6 +680,37 @@ const actions: ActionFuncs<
           error
         }
       });
+    }
+  },
+  async getYearnVaultMultiplier(
+    { commit, rootState },
+    tokenAddress: string
+  ): Promise<string> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      throw new Error(
+        'Account state is not ready. Failed to load year vault multiplier'
+      );
+    }
+
+    try {
+      const multiplier = await getYearnVaultMultiplier(
+        rootState.account.networkInfo.network,
+        rootState.account.provider.web3,
+        tokenAddress,
+        rootState.account.currentAddress
+      );
+      return multiplier;
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.store.loadGALCXToALCXMultiplier',
+        message: 'Failed to load gALCXToALCXMultiplier',
+        data: {
+          error
+        }
+      });
+
+      throw error;
     }
   }
 };

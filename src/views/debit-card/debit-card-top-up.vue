@@ -172,6 +172,7 @@ export default Vue.extend({
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       usdcPriceInEur: undefined as undefined | string,
+      vaultMultiplier: undefined as undefined | string,
 
       //to tx
       actionGasLimit: undefined as string | undefined,
@@ -196,7 +197,8 @@ export default Vue.extend({
     ]),
     ...mapState('debitCard', {
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
-      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
+      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier',
+      getYearnVaultMultiplier: 'getYearnVaultMultiplier'
     }),
     ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     ...mapGetters('debitCard', {
@@ -726,6 +728,23 @@ export default Vue.extend({
 
       if (token === undefined) {
         return;
+      }
+      this.isLoading = true;
+
+      try {
+        this.vaultMultiplier = await this.getYearnVaultMultiplier(
+          token.address
+        );
+      } catch (err) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.newToken',
+          message: 'can not get vault multiplier`',
+          data: {
+            error: err
+          }
+        });
+        Sentry.captureException("can't get vault multiplier");
       }
       this.isTokenSelectedByUser = true;
       this.inputAsset = token;
