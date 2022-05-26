@@ -31,16 +31,6 @@
       :is-loading="isLoading"
       :title="$t('stakingUBT.statement.lblWithdrawals', { month: monthName })"
     />
-    <analytics-list-item
-      :description="savedFeesNative"
-      :is-loading="isLoading"
-      :title="$t('stakingUBT.statement.lblSavedFees')"
-    />
-    <analytics-list-item
-      :description="payoutsToTreasuryNative"
-      :is-loading="isLoading"
-      :title="$t('stakingUBT.statement.lblPayoutsToTreasury')"
-    />
   </analytics-list>
   <div v-else class="error-message">
     {{ $t('stakingUBT.lblLoadMonthStatError') }}
@@ -57,7 +47,7 @@ import { StakingUbtReceipt } from '@/services/v2/api/mover/staking-ubt';
 import { StakingUbtGetReceiptPayload } from '@/store/modules/staking-ubt/types';
 import { fromWei, multiply } from '@/utils/bigmath';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { getUBTAssetData, getUSDCAssetData } from '@/wallet/references/data';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 
@@ -82,8 +72,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('stakingUBT', {
-      savingsReceipt: 'savingsReceipt',
-      usdcNativePrice: 'usdcNativePrice'
+      ubtReceipt: 'receipt',
+      ubtNativePrice: 'ubtNativePrice'
     }),
     ...mapState('account', { networkInfo: 'networkInfo' }),
     monthName(): string {
@@ -105,11 +95,11 @@ export default Vue.extend({
         getUSDCAssetData(this.networkInfo.network).decimals
       );
 
-      const savingsEndOfMonthBalanceNative = multiply(
+      const endOfMonthBalanceNative = multiply(
         balanceInUSDC,
-        this.usdcNativePrice
+        this.ubtNativePrice
       );
-      return `$${formatToNative(savingsEndOfMonthBalanceNative)}`;
+      return `$${formatToNative(endOfMonthBalanceNative)}`;
     },
     depositsNative(): string {
       if (
@@ -122,16 +112,16 @@ export default Vue.extend({
         return '0';
       }
 
-      const depositsInUSDC = fromWei(
+      const depositsInUBT = fromWei(
         this.receipt.totalDeposits,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
 
-      const savingsMonthTotalDepositsNative = multiply(
-        depositsInUSDC,
-        this.usdcNativePrice
+      const monthTotalDepositsNative = multiply(
+        depositsInUBT,
+        this.ubtNativePrice
       );
-      const value = formatToNative(savingsMonthTotalDepositsNative);
+      const value = formatToNative(monthTotalDepositsNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     withdrawalsNative(): string {
@@ -145,17 +135,17 @@ export default Vue.extend({
         return '0';
       }
 
-      const withdrawalsInUSDC = fromWei(
+      const withdrawalsInUBT = fromWei(
         this.receipt.totalWithdrawals,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
 
-      const savingsMonthTotalWithdrawalsNative = multiply(
-        withdrawalsInUSDC,
-        this.usdcNativePrice
+      const monthTotalWithdrawalsNative = multiply(
+        withdrawalsInUBT,
+        this.ubtNativePrice
       );
 
-      const value = formatToNative(savingsMonthTotalWithdrawalsNative);
+      const value = formatToNative(monthTotalWithdrawalsNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
     savedFeesNative(): string {
@@ -169,16 +159,16 @@ export default Vue.extend({
         return '$0';
       }
 
-      const savingsMonthSavedFees = fromWei(
+      const monthSavedFees = fromWei(
         this.receipt.savedFees,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
 
-      const savingsMonthSavedFeesNative = multiply(
-        savingsMonthSavedFees,
-        this.usdcNativePrice
+      const monthSavedFeesNative = multiply(
+        monthSavedFees,
+        this.ubtNativePrice
       );
-      return `$${formatToNative(savingsMonthSavedFeesNative)}`;
+      return `$${formatToNative(monthSavedFeesNative)}`;
     },
     payoutsToTreasuryNative(): string {
       if (
@@ -191,15 +181,15 @@ export default Vue.extend({
         return '$0';
       }
 
-      const savingsMonthPaidToTreasury = fromWei(
+      const monthPaidToTreasury = fromWei(
         this.receipt.paidToTreasury,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
-      const savingsMonthPaidToTreasuryNative = multiply(
-        savingsMonthPaidToTreasury,
-        this.usdcNativePrice
+      const monthPaidToTreasuryNative = multiply(
+        monthPaidToTreasury,
+        this.ubtNativePrice
       );
-      return `$${formatToNative(savingsMonthPaidToTreasuryNative)}`;
+      return `$${formatToNative(monthPaidToTreasuryNative)}`;
     },
     totalEarned(): string {
       if (
@@ -212,16 +202,13 @@ export default Vue.extend({
         return '0';
       }
 
-      const earnedInUSDC = fromWei(
+      const earnedInUBT = fromWei(
         this.receipt.earnedThisMonth,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
-      const savingsMonthEarnedNative = multiply(
-        earnedInUSDC,
-        this.usdcNativePrice
-      );
+      const monthEarnedNative = multiply(earnedInUBT, this.ubtNativePrice);
 
-      const value = formatToNative(savingsMonthEarnedNative);
+      const value = formatToNative(monthEarnedNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     averageDailyEarnings(): string {
@@ -235,16 +222,16 @@ export default Vue.extend({
         return '0';
       }
 
-      const earnedInUSDC = fromWei(
+      const earnedInUBT = fromWei(
         this.receipt.avgDailyEarnings,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
-      const savingsMonthAverageEarnedNative = multiply(
-        earnedInUSDC,
-        this.usdcNativePrice
+      const monthAverageEarnedNative = multiply(
+        earnedInUBT,
+        this.ubtNativePrice
       );
 
-      const value = formatToNative(savingsMonthAverageEarnedNative);
+      const value = formatToNative(monthAverageEarnedNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },
@@ -262,7 +249,7 @@ export default Vue.extend({
     let receipt: StakingUbtReceipt | undefined;
 
     try {
-      receipt = await this.savingsReceipt(year, month);
+      receipt = await this.ubtReceipt(year, month);
       if (receipt === undefined) {
         throw new Error('receipt is undef');
       }

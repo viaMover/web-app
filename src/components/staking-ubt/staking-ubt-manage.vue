@@ -127,7 +127,7 @@ export default Vue.extend({
         return this.$t('stakingUBT.txtYieldEarnedThisMonth') as string;
       }
 
-      return this.$t('savings.txtYieldEarnedIn', {
+      return this.$t('stakingUBT.txtYieldEarnedIn', {
         date: dateFromExplicitPair(
           this.selectedItem.year,
           this.selectedItem.month

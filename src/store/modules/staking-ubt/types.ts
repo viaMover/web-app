@@ -13,6 +13,8 @@ export type StakingUbtStoreState = {
 
   ubtNativePrice: string | undefined;
   contractUbtBalance: string | undefined;
+  apy: string | undefined;
+  dpy: string | undefined;
   apiService: MoverAPIStakingUbtService | undefined;
   onChainService: StakingUbtOnChainService | undefined;
 };

@@ -143,13 +143,21 @@ const actions: ActionFuncs<
     }
 
     try {
-      const stakedBalance = await state.onChainService.getStakedBalance();
+      const [stakedAPY, stakedBalance] = await Promise.all([
+        state.onChainService.getStakingAPY(),
+        state.onChainService.getStakedBalance()
+      ]);
       commit('setContractUbtBalance', stakedBalance);
+      commit('setAPY', stakedAPY.apy);
+      commit('setDPY', stakedAPY.dpy);
     } catch (error) {
+      commit('setAPY', '0');
+      commit('setDPY', '0');
+      commit('setContractUbtBalance', '0');
       addSentryBreadcrumb({
         type: 'error',
         category: 'getMinimalInfo.staking-ubt.store',
-        message: 'Failed to get staked UBT balance',
+        message: 'Failed to get staked minimal info from chain',
         data: {
           error
         }
