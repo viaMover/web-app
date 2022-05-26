@@ -58,9 +58,9 @@ export default Vue.extend({
   },
   computed: {
     ...mapState({ colors: 'colors' }),
-    apy(): string {
-      return '0.0';
-    },
+    ...mapState('stakingUBT', {
+      apy: 'apy'
+    }),
     balance(): string {
       const annualYield = multiply(divide(this.apy, '100'), '10000');
       return `~ $${formatToNative(annualYield)}`;

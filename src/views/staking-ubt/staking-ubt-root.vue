@@ -68,6 +68,22 @@
                   />
                 </template>
               </navigation-section-item-image>
+
+              <navigation-section-item-image
+                :description="$t('stakingUBT.txtGlobalAnalytics')"
+                description-class="disabled"
+                navigate-to="staking-ubt-global-analytics"
+                :title="$t('stakingUBT.lblGlobalAnalytics')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="global.alt"
+                    :sources="global.sources"
+                    :src="global.src"
+                    :webp-sources="global.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
             </navigation-section>
           </div>
         </div>
@@ -127,6 +143,18 @@ export default Vue.extend({
             src: require('@/assets/images/staking-ubt/Staking_General@2x.webp')
           }
         ]
+      } as PictureDescriptor,
+      global: {
+        alt: 'Global',
+        src: require('@/assets/images/Global@1x.png'),
+        sources: [
+          { src: require('@/assets/images/Global@1x.png') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/Global@2x.png')
+          }
+        ],
+        webpSources: []
       } as PictureDescriptor,
       withdraw: {
         src: require('@/assets/images/staking-ubt/Staking_Withdraw.png'),

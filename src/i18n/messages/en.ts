@@ -1312,6 +1312,8 @@ const messages: VueI18n.LocaleMessageObject = {
     txtWithdraw: 'Remove your assets from staking fully or partially',
     lblBalanceIn: 'Staking Balance in',
     lblStakingStatements: 'Staking Statements',
+    lblGlobalAnalytics: 'Global analytics',
+    txtGlobalAnalytics: 'All information about UBT',
     btnView: 'View',
     lblInProgress: 'In progress',
     txtYieldEarnedIn: 'Yield earned in {month}',
@@ -1332,7 +1334,7 @@ const messages: VueI18n.LocaleMessageObject = {
       'Available balance consists of principal amount you deposited together ' +
       'with the accumulated yield',
     txtKeepEstimation: 'If you keep your Staking, you could earn in a year.',
-    statements: {
+    statement: {
       lblMonthStatisticFallback: 'Month statistic',
       lblBalance: '{month} balance',
       lblDeposits: '{month} deposits',
@@ -1353,7 +1355,24 @@ const messages: VueI18n.LocaleMessageObject = {
     lblAmountWeWithdrawIn: 'Amount we withdraw in',
     lblWhatDoWeWithdraw: 'What we do withdraw',
     btnWithdrawFromStaking: 'Withdraw from Staking',
-    lblReviewYourWithdraw: 'Review your withdraw'
+    lblReviewYourWithdraw: 'Review your withdraw',
+    overview: {
+      lblSPOverview: 'Staking Overview',
+      lblSPOverviewDescription:
+        'Unibright Baseledger provides rewards to stakers. You can provide UBT tokens to earn rewards in a non-custodial managed pool. Deposit and withdraw anytime.',
+      lblDepositedAssets: 'My total deposited assets value',
+      lblCurrentVariableAPY: 'Current variable APY',
+      lbl30DayAverageAPY: '30-day average APY',
+      lblTotalAssetsUnderManagement: 'Total assets under management',
+      lblSPStats: 'Staking Stats',
+      lblEarnedToday: 'Earned today',
+      lblEarnedThisMonth: 'Earned this month',
+      lblEarnedInTotal: 'Earned in total',
+      lblSPEstimation: 'Staking Estimation',
+      lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
+      lblEstimatedEarningsNextMonth: 'Estimated earnings this month',
+      lblEstimatedEarningsAnnually: 'Estimated earnings annually'
+    }
   },
   savingsPlus: {
     icon: '➕',
