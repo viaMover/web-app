@@ -629,6 +629,14 @@ const routes: Array<RouteConfig> = [
             import(
               /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-global-analytics.vue'
             )
+        },
+        {
+          path: 'month-statistics/:year/:month',
+          name: 'staking-ubt-month-stats',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings" */ '@/views/staking-ubt/staking-ubt-monthly-statistics.vue'
+            )
         }
       ]
     },

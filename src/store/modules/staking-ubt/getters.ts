@@ -1,4 +1,3 @@
-import { SavingsMonthBalanceItem } from '@/services/mover';
 import {
   StakingUbtInfo,
   StakingUbtMonthBalanceItem,

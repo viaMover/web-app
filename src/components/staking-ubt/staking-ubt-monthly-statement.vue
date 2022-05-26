@@ -31,16 +31,6 @@
       :is-loading="isLoading"
       :title="$t('stakingUBT.statement.lblWithdrawals', { month: monthName })"
     />
-    <analytics-list-item
-      :description="savedFeesNative"
-      :is-loading="isLoading"
-      :title="$t('stakingUBT.statement.lblSavedFees')"
-    />
-    <analytics-list-item
-      :description="payoutsToTreasuryNative"
-      :is-loading="isLoading"
-      :title="$t('stakingUBT.statement.lblPayoutsToTreasury')"
-    />
   </analytics-list>
   <div v-else class="error-message">
     {{ $t('stakingUBT.lblLoadMonthStatError') }}
@@ -82,7 +72,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('stakingUBT', {
-      receipt: 'receipt',
+      ubtReceipt: 'receipt',
       ubtNativePrice: 'ubtNativePrice'
     }),
     ...mapState('account', { networkInfo: 'networkInfo' }),
@@ -259,7 +249,7 @@ export default Vue.extend({
     let receipt: StakingUbtReceipt | undefined;
 
     try {
-      receipt = await this.receipt(year, month);
+      receipt = await this.ubtReceipt(year, month);
       if (receipt === undefined) {
         throw new Error('receipt is undef');
       }

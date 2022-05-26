@@ -2,8 +2,8 @@
   <secondary-page class="analytics" has-back-button @back="handleBack">
     <template v-slot:title>
       <secondary-page-header
-        :description="$t('savingsPlus.overview.lblSPOverviewDescription')"
-        :title="$t('savingsPlus.overview.lblSPOverview')"
+        :description="$t('stakingUBT.overview.lblSPOverviewDescription')"
+        :title="$t('stakingUBT.overview.lblSPOverview')"
       />
     </template>
 
@@ -11,57 +11,47 @@
       <analytics-list-item
         :description="formattedDepositedAssets"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblDepositedAssets')"
+        :title="$t('stakingUBT.overview.lblDepositedAssets')"
       />
       <analytics-list-item
         :description="currentVariableAPY"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblCurrentVariableAPY')"
-      />
-      <analytics-list-item
-        :description="monthAverageAPY"
-        :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lbl30DayAverageAPY')"
-      />
-      <analytics-list-item
-        :description="totalAssetsUnderManagement"
-        :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblTotalAssetsUnderManagement')"
+        :title="$t('stakingUBT.overview.lblCurrentVariableAPY')"
       />
     </analytics-list>
 
-    <analytics-list :title="$t('savingsPlus.overview.lblSPStats')">
+    <analytics-list :title="$t('stakingUBT.overview.lblSPStats')">
       <analytics-list-item
         :description="earnedToday"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEarnedToday')"
+        :title="$t('stakingUBT.overview.lblEarnedToday')"
       />
       <analytics-list-item
         :description="earnedThisMonth"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEarnedThisMonth')"
+        :title="$t('stakingUBT.overview.lblEarnedThisMonth')"
       />
       <analytics-list-item
         :description="earnedTotal"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEarnedInTotal')"
+        :title="$t('stakingUBT.overview.lblEarnedInTotal')"
       />
     </analytics-list>
-    <analytics-list :title="$t('savingsPlus.overview.lblSPEstimation')">
+    <analytics-list :title="$t('stakingUBT.overview.lblSPEstimation')">
       <analytics-list-item
         :description="formattedEstimatedEarningsTomorrowNative"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEstimatedEarningsTomorrow')"
+        :title="$t('stakingUBT.overview.lblEstimatedEarningsTomorrow')"
       />
       <analytics-list-item
         :description="formattedEstimatedEarningsNextMonthNative"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEstimatedEarningsNextMonth')"
+        :title="$t('stakingUBT.overview.lblEstimatedEarningsNextMonth')"
       />
       <analytics-list-item
         :description="formattedEstimatedEarningsAnnuallyNative"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEstimatedEarningsAnnually')"
+        :title="$t('stakingUBT.overview.lblEstimatedEarningsAnnually')"
       />
     </analytics-list>
   </secondary-page>
@@ -105,9 +95,6 @@ export default Vue.extend({
       earnedThisMonthNative: 'earnedThisMonthNative',
       earnedTotalNative: 'earnedTotalNative',
       balance: 'balance',
-      infoTotalPoolBalanceNative: 'infoTotalPoolBalanceNative',
-      avg30DaysAPY: 'avg30DaysAPY',
-      infoBalanceNative: 'infoBalanceNative',
       estimatedEarningsTomorrowNative: 'estimatedEarningsTomorrowNative',
       estimatedEarningsNextMonthNative: 'estimatedEarningsNextMonthNative',
       estimatedEarningsAnnuallyNative: 'estimatedEarningsAnnuallyNative'
@@ -120,12 +107,6 @@ export default Vue.extend({
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
-    },
-    monthAverageAPY(): string {
-      return `${formatPercents(this.avg30DaysAPY)}%`;
-    },
-    totalAssetsUnderManagement(): string {
-      return `$${formatToNative(this.infoTotalPoolBalanceNative)}`;
     },
     formattedEstimatedEarningsTomorrowNative(): string {
       const value = formatToNative(this.estimatedEarningsTomorrowNative);
