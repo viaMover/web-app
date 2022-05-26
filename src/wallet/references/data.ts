@@ -5,6 +5,7 @@ import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
 import { getCentralTransferProxyAbi } from './abi/central-transfer-proxy';
+import DCULT_ABI from './abi/dcult-abi.json';
 import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
 import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
@@ -86,7 +87,10 @@ export type AddressMapKey =
   | 'AL_USD_TOKEN_ADDRESS'
   | 'AL_ETH_TOKEN_ADDRESS'
   | 'GTC_TOKEN_ADDRESS'
-  | 'CULT_TOKEN_ADDRESS';
+  | 'CULT_TOKEN_ADDRESS'
+  | 'DOLA_TOKEN_ADDRESS'
+  | 'DCULT_TOKEN_ADDRESS'
+  | 'LUSD_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -149,7 +153,10 @@ const addresses = {
     ALCX_TOKEN_ADDRESS: '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF',
     GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35',
     GTC_TOKEN_ADDRESS: '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F',
-    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13'
+    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
+    DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
+    DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
+    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -359,6 +366,16 @@ const getALCXAssetData = (network: Network): SmallTokenInfoWithIcon => {
   };
 };
 
+const getCULTAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
+    decimals: 18,
+    symbol: 'CULT',
+    iconURL:
+      'https://assets.coingecko.com/coins/images/23331/small/quxZPrbC_400x400.jpg'
+  };
+};
+
 const getMoveWethLPAssetData = (network: Network): SmallTokenInfo => {
   return {
     address: lookupAddress(network, 'SUSHISWAP_MOVE_WETH_POOL_ADDRESS'),
@@ -497,7 +514,9 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
     lookupAddress(network, 'GALCX_TOKEN_ADDRESS'),
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
-    lookupAddress(network, 'CULT_TOKEN_ADDRESS')
+    lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LUSD_TOKEN_ADDRESS')
   ];
 };
 
@@ -514,6 +533,7 @@ export {
   getEURSAssetData,
   getUBTAssetData,
   getALCXAssetData,
+  getCULTAssetData,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
@@ -539,6 +559,7 @@ export {
   UBT_STAKING_CONTRACT_ABI,
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
+  DCULT_ABI,
   validTopUpAssets,
   getSlippage
 };
