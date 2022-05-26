@@ -10,7 +10,7 @@ import {
 } from '@/services/v2/on-chain/mover';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { convertToString, toWei } from '@/utils/bigmath';
+import { convertToString, fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   getUBTAssetData,
@@ -20,7 +20,7 @@ import {
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallTokenInfo } from '@/wallet/types';
 
-import { StakingContract } from './types';
+import { GetStakingUbtAPYReturn, StakingContract } from './types';
 
 export class StakingUbtOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'staking-ubt.on-chain.service';
@@ -35,6 +35,26 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       UBT_STAKING_CONTRACT_ABI as AbiItem[]
     );
     this.UBTAssetData = getUBTAssetData(this.network);
+  }
+
+  public async getStakingAPY(): Promise<GetStakingUbtAPYReturn | never> {
+    return this.wrapWithSentryLogger(async () => {
+      if (this.stakingContract === undefined) {
+        throw new NetworkFeatureNotSupportedError('UBT APY', this.network);
+      }
+
+      const dpyInWEI = await this.stakingContract.methods
+        .getDailyAPY()
+        .call({ from: this.currentAddress });
+
+      const dpy = fromWei(dpyInWEI, '18');
+
+      const apy = multiply(dpy, 365);
+      return {
+        apy: apy,
+        dpy: dpy
+      };
+    });
   }
 
   public async getStakedBalance(): Promise<string> {
