@@ -603,7 +603,7 @@ const routes: Array<RouteConfig> = [
           name: 'staking-ubt-manage',
           component: () =>
             import(
-              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-manage-wrapper.vue'
+              /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-manage-wrapper.vue'
             )
         },
         {
@@ -611,7 +611,7 @@ const routes: Array<RouteConfig> = [
           name: 'staking-ubt-deposit',
           component: () =>
             import(
-              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-deposit-wrapper.vue'
+              /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-deposit-wrapper.vue'
             )
         },
         {
@@ -619,7 +619,7 @@ const routes: Array<RouteConfig> = [
           name: 'staking-ubt-withdraw',
           component: () =>
             import(
-              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-withdraw-wrapper.vue'
+              /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-withdraw-wrapper.vue'
             )
         },
         {
@@ -627,7 +627,7 @@ const routes: Array<RouteConfig> = [
           name: 'staking-ubt-global-analytics',
           component: () =>
             import(
-              /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-global-analytics.vue'
+              /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-global-analytics.vue'
             )
         },
         {
@@ -635,7 +635,7 @@ const routes: Array<RouteConfig> = [
           name: 'staking-ubt-month-stats',
           component: () =>
             import(
-              /* webpackChunkName: "savings" */ '@/views/staking-ubt/staking-ubt-monthly-statistics.vue'
+              /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-monthly-statistics.vue'
             )
         }
       ]
