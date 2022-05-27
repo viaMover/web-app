@@ -47,7 +47,7 @@ import { StakingUbtReceipt } from '@/services/v2/api/mover/staking-ubt';
 import { StakingUbtGetReceiptPayload } from '@/store/modules/staking-ubt/types';
 import { fromWei, multiply } from '@/utils/bigmath';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
-import { getUBTAssetData, getUSDCAssetData } from '@/wallet/references/data';
+import { getUBTAssetData } from '@/wallet/references/data';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 
@@ -90,13 +90,13 @@ export default Vue.extend({
         return '$0';
       }
 
-      const balanceInUSDC = fromWei(
+      const balanceInUBT = fromWei(
         this.receipt.endOfMonthBalance,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        getUBTAssetData(this.networkInfo.network).decimals
       );
 
       const endOfMonthBalanceNative = multiply(
-        balanceInUSDC,
+        balanceInUBT,
         this.ubtNativePrice
       );
       return `$${formatToNative(endOfMonthBalanceNative)}`;
