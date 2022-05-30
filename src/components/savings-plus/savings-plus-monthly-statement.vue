@@ -31,16 +31,6 @@
       :is-loading="isLoading"
       :title="$t('savings.statement.lblWithdrawals', { month: monthName })"
     />
-    <analytics-list-item
-      :description="savedFeesNative"
-      :is-loading="isLoading"
-      :title="$t('savings.statement.lblSavedFees')"
-    />
-    <analytics-list-item
-      :description="payoutsToTreasuryNative"
-      :is-loading="isLoading"
-      :title="$t('savings.statement.lblPayoutsToTreasury')"
-    />
   </analytics-list>
   <div v-else class="error-message">
     {{ $t('savings.lblLoadMonthStatError') }}
@@ -54,7 +44,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 import { SavingsReceipt } from '@/services/mover';
-import { SavingsGetReceiptPayload } from '@/store/modules/savings/types';
+import { SavingsPlusGetReceiptPayload } from '@/store/modules/savings-plus/types';
 import { fromWei, multiply } from '@/utils/bigmath';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
 import { getUSDCAssetData } from '@/wallet/references/data';
@@ -82,7 +72,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters('savingsPlus', {
-      savingsReceipt: 'receipt',
+      savingsReceipt: 'savingsReceipt',
       usdcNativePrice: 'usdcNativePrice'
     }),
     ...mapState('account', { networkInfo: 'networkInfo' }),
@@ -158,49 +148,6 @@ export default Vue.extend({
       const value = formatToNative(savingsMonthTotalWithdrawalsNative);
       return `${getSignIfNeeded(value, '-')}$${value}`;
     },
-    savedFeesNative(): string {
-      if (
-        this.receipt === undefined ||
-        this.isLoading ||
-        this.isError ||
-        this.networkInfo === undefined ||
-        this.receipt.savedFees === 0
-      ) {
-        return '$0';
-      }
-
-      const savingsMonthSavedFees = fromWei(
-        this.receipt.savedFees,
-        getUSDCAssetData(this.networkInfo.network).decimals
-      );
-
-      const savingsMonthSavedFeesNative = multiply(
-        savingsMonthSavedFees,
-        this.usdcNativePrice
-      );
-      return `$${formatToNative(savingsMonthSavedFeesNative)}`;
-    },
-    payoutsToTreasuryNative(): string {
-      if (
-        this.receipt === undefined ||
-        this.isLoading ||
-        this.isError ||
-        this.networkInfo === undefined ||
-        this.receipt.paidToTreasury === 0
-      ) {
-        return '$0';
-      }
-
-      const savingsMonthPaidToTreasury = fromWei(
-        this.receipt.paidToTreasury,
-        getUSDCAssetData(this.networkInfo.network).decimals
-      );
-      const savingsMonthPaidToTreasuryNative = multiply(
-        savingsMonthPaidToTreasury,
-        this.usdcNativePrice
-      );
-      return `$${formatToNative(savingsMonthPaidToTreasuryNative)}`;
-    },
     totalEarned(): string {
       if (
         this.receipt === undefined ||
@@ -254,10 +201,10 @@ export default Vue.extend({
     const year = this.pageDate.get('year');
     const month = this.pageDate.get('month') + 1;
 
-    this.fetchSavingsReceipt({
+    this.getReceipt({
       year,
       month
-    } as SavingsGetReceiptPayload);
+    } as SavingsPlusGetReceiptPayload);
 
     let receipt: SavingsReceipt | undefined;
 
@@ -276,7 +223,7 @@ export default Vue.extend({
     this.isLoading = false;
   },
   methods: {
-    ...mapActions('savingsPlus', { fetchSavingsReceipt: 'fetchSavingsReceipt' })
+    ...mapActions('savingsPlus', { getReceipt: 'getReceipt' })
   }
 });
 </script>

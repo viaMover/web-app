@@ -146,12 +146,14 @@ export default Vue.extend({
       } as PictureDescriptor,
       global: {
         alt: 'Global',
-        src: require('@/assets/images/Global@1x.png'),
+        src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png'),
         sources: [
-          { src: require('@/assets/images/Global@1x.png') },
+          {
+            src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png')
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Global@2x.png')
+            src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@2x.png')
           }
         ],
         webpSources: []
