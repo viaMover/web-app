@@ -7,10 +7,14 @@ import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
-import { SavingsPlusStoreState } from './types';
+import { SavingsPlusReceipt, SavingsPlusStoreState } from './types';
 
 type Getters = {
   info: SavingsPlusInfo | undefined;
+  savingsReceipt: (
+    y: number,
+    m: number
+  ) => Promise<SavingsPlusReceipt> | undefined;
   usdcNativePrice: string;
   hasActiveSavingsPlus: boolean;
   balanceNative: string;
@@ -184,6 +188,17 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
 
     const multiplier = divide(state.APY, 100);
     return multiply(getters.balanceNative, multiplier);
+  },
+  savingsReceipt(
+    state
+  ): (year: number, month: number) => Promise<SavingsPlusReceipt> | undefined {
+    return (year, month): Promise<SavingsPlusReceipt> | undefined => {
+      const item = state.receipts.get(`${year}/${month}`);
+      if (item !== undefined && item.expDate > Date.now()) {
+        return item.data;
+      }
+      return undefined;
+    };
   }
 };
 

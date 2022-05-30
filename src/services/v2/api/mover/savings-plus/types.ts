@@ -114,3 +114,50 @@ export type SavingsPlusInfoAPIResponse = {
   }>;
   avg30DaysAPY: number;
 };
+
+export type SavingsPlusHourlyBalancesItem = {
+  type: 'savings_plus_hourly_balance_item';
+  balance: number;
+  snapshotTimestamp: number;
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+};
+
+export type SavingsPlusReceipt = {
+  endOfMonthBalance: number;
+  earnedThisMonth: number;
+  hourlyBalances: Array<SavingsPlusHourlyBalancesItem> | undefined;
+  monthActionHistory: Array<SavingsPlusActionHistoryItem> | undefined;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  avgDailyEarnings: number;
+  paidToTreasury: number;
+  savedFees: number;
+};
+
+export type SavingsPlusReceiptAPIResponse = {
+  endOfMonthBalance: number;
+  earnedThisMonth: number;
+  hourlyBalances: Array<{
+    balance: number;
+    snapshotTimestamp: number;
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+  }>;
+  monthActionHistory: Array<{
+    type: 'deposit' | 'withdraw';
+    amount: number;
+    txId: string;
+    block: number;
+    timestamp: number;
+  }>;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  avgDailyEarnings: number;
+  paidToTreasury: number;
+  savedFees: number;
+};
