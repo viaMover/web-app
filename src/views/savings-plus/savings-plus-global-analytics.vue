@@ -18,18 +18,6 @@
         :is-loading="isLoading"
         :title="$t('savingsPlus.overview.lblCurrentVariableAPY')"
       />
-      <analytics-list-item
-        v-if="isSavingsOverviewSomeFieldsEnabled"
-        :description="monthAverageAPY"
-        :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lbl30DayAverageAPY')"
-      />
-      <analytics-list-item
-        v-if="isSavingsOverviewSomeFieldsEnabled"
-        :description="totalAssetsUnderManagement"
-        :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblTotalAssetsUnderManagement')"
-      />
     </analytics-list>
 
     <analytics-list :title="$t('savingsPlus.overview.lblSPStats')">
@@ -107,25 +95,15 @@ export default Vue.extend({
       estimatedEarningsTomorrowNative: 'estimatedEarningsTomorrowNative',
       infoBalanceUSDC: 'infoBalanceUSDC',
       infoTotalPoolBalanceNative: 'infoTotalPoolBalanceNative',
-      avg30DaysAPY: 'avg30DaysAPY',
       infoBalanceNative: 'infoBalanceNative',
       estimatedEarningsNextMonthNative: 'estimatedEarningsNextMonthNative',
       estimatedEarningsAnnuallyNative: 'estimatedEarningsAnnuallyNative'
     }),
-    isSavingsOverviewSomeFieldsEnabled(): boolean {
-      return isFeatureEnabled(
-        'isSavingsPlusOverviewSomeFieldsEnabled',
-        this.networkInfo?.network
-      );
-    },
     formattedDepositedAssets(): string {
       return `${formatToNative(this.infoBalanceUSDC)} USDC`;
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
-    },
-    monthAverageAPY(): string {
-      return `${formatPercents(this.avg30DaysAPY)}%`;
     },
     totalAssetsUnderManagement(): string {
       return `$${formatToNative(this.infoTotalPoolBalanceNative)}`;
