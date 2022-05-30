@@ -10,8 +10,7 @@
     <home-masthead v-else />
 
     <div class="cards">
-      <home-cards-order-of-liberty v-if="isOrderOfLibertyNFTEnabled" />
-      <home-cards-debit-card v-else-if="isDebitCardEnabled" />
+      <home-cards-debit-card v-if="isDebitCardEnabled" />
       <home-cards-savings-deposit v-else-if="isSavingsEnabled" />
     </div>
 
@@ -34,7 +33,6 @@ import { isFeatureEnabled } from '@/settings';
 
 import {
   HomeCardsDebitCard,
-  HomeCardsOrderOfLiberty,
   HomeCardsSavingsDeposit,
   HomeLeftRail,
   HomeMasthead,
@@ -54,7 +52,6 @@ export default Vue.extend({
     HomeNavigationSection,
     HomeCardsDebitCard,
     HomeCardsSavingsDeposit,
-    HomeCardsOrderOfLiberty,
     SwapModal,
     SearchModal
   },

@@ -12,6 +12,7 @@ import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
   ensureAPIServiceExists,
+  SavingsPlusGetReceiptPayload,
   SavingsPlusStoreState,
   SetSavingsPlusReceiptPayload
 } from './types';
@@ -20,6 +21,7 @@ type Actions = {
   restoreReceipts: Promise<void>;
   loadInfo: Promise<void>;
   fetchSavingsInfo: Promise<void>;
+  getReceipt: Promise<void>;
   setOnChainService: void;
   setAPIService: void;
 };
@@ -56,6 +58,31 @@ const actions: ActionFuncs<
           receipt: Promise.resolve(receipt)
         } as SetSavingsPlusReceiptPayload);
       }
+    }
+  },
+  async getReceipt(
+    { state, commit, getters, rootState },
+    { year, month }: SavingsPlusGetReceiptPayload
+  ): Promise<void> {
+    if (!ensureAPIServiceExists(state)) {
+      console.warn('API service does not exist in store');
+      return;
+    }
+
+    if (getters.savingsReceipt(year, month) !== undefined) {
+      return;
+    }
+
+    const receiptPromise = state.apiService.getReceipt(year, month);
+
+    commit('setSavingsReceipt', {
+      year: year,
+      month: month,
+      receipt: receiptPromise
+    } as SetSavingsPlusReceiptPayload);
+
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      return;
     }
   },
   async loadInfo({ dispatch }): Promise<void> {
