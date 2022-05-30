@@ -1307,7 +1307,8 @@ const messages: VueI18n.LocaleMessageObject = {
     lblStaking: 'Staking',
     lblManage: 'Manage Staking',
     lblDeposit: 'Deposit in Staking',
-    txtDeposit: 'Simple staking in friendly protocols',
+    txtDeposit: 'Get up to {value} on UBT staking',
+
     lblWithdraw: 'Withdraw from Staking',
     txtWithdraw: 'Remove your assets from staking fully or partially',
     lblBalanceIn: 'Staking Balance in',

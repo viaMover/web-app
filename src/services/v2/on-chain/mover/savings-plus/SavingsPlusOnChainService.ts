@@ -1,6 +1,8 @@
+import { BigNumber } from 'bignumber.js';
 import dayjs from 'dayjs';
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
+import { AbiItem } from 'web3-utils';
 
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { TransferData } from '@/services/v2/api/0x';
@@ -19,17 +21,19 @@ import {
   MoverOnChainService
 } from '@/services/v2/on-chain/mover';
 import { InvalidNetworkForOperationError } from '@/services/v2/on-chain/mover/savings-plus/InvalidNetworkForOperationError';
+import { SavingsPlusPoolContract } from '@/services/v2/on-chain/mover/savings-plus/types';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized';
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { getInteger, multiply, sub, toWei } from '@/utils/bigmath';
+import { fromWei, getInteger, multiply, sub, toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
 import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
   getCentralTransferProxyAbi,
   getUSDCAssetData,
+  HOLY_POOL_ABI,
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
@@ -38,12 +42,21 @@ import { SmallTokenInfo, Transaction, TransactionTypes } from '@/wallet/types';
 export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'savings-plus.on-chain.service';
   protected readonly centralTransferProxyContract: HolyHandContract | undefined;
+  protected readonly savingsPlusPoolContract:
+    | SavingsPlusPoolContract
+    | undefined;
+
   protected readonly usdcAssetData: SmallTokenInfo;
   protected static MintMultiplier = 0.995;
   protected static DyMultiplier = 0.98;
 
   constructor(currentAddress: string, network: Network, web3Client: Web3) {
     super(currentAddress, network, web3Client);
+
+    this.savingsPlusPoolContract = this.createContract(
+      'SAVINGS_PLUS_POOL_ADDRESS',
+      HOLY_POOL_ABI as AbiItem[]
+    );
 
     this.centralTransferProxyContract = this.createContract(
       'HOLY_HAND_ADDRESS',
@@ -797,6 +810,24 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         reject,
         changeStepToProcess
       );
+    });
+  }
+
+  public async getSavingsBalance(): Promise<string | never> {
+    return this.wrapWithSentryLogger(async () => {
+      if (this.savingsPlusPoolContract === undefined) {
+        throw new NetworkFeatureNotSupportedError(
+          'Savings Plus Balance',
+          this.network
+        );
+      }
+
+      const savingsResponse = await this.savingsPlusPoolContract.methods
+        .getDepositBalance(this.currentAddress)
+        .call({ from: this.currentAddress });
+
+      const savingsBalanceInWEI = new BigNumber(savingsResponse.toString());
+      return fromWei(savingsBalanceInWEI, this.usdcAssetData.decimals);
     });
   }
 
