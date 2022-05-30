@@ -50,8 +50,10 @@ import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { captureSentryException } from '@/services/v2/utils/sentry';
 import {
+  add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
+  divide,
   multiply
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
@@ -123,7 +125,8 @@ export default Vue.extend({
       getTokenColor: 'getTokenColor'
     }),
     ...mapState('stakingUBT', {
-      stakingOnChainService: 'onChainService'
+      stakingOnChainService: 'onChainService',
+      apy: 'apy'
     }),
     ...mapGetters('stakingUBT', {
       ubtNativePrice: 'ubtNativePrice',
@@ -156,7 +159,18 @@ export default Vue.extend({
       };
     },
     estimatedAnnualEarnings(): string {
-      return '-';
+      let possibleStakingBalance = '0';
+
+      if (this.UBTBalance !== undefined) {
+        possibleStakingBalance = add(this.UBTBalance, possibleStakingBalance);
+      }
+
+      const apyNative = multiply(
+        divide(this.apy, 100),
+        multiply(possibleStakingBalance, this.ubtNativePrice)
+      );
+
+      return `~ $${formatToNative(apyNative)}`;
     }
   },
   methods: {
