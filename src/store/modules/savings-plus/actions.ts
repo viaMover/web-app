@@ -6,14 +6,12 @@ import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
-import { Network } from '@/utils/networkTypes';
 import { getUSDCAssetData } from '@/wallet/references/data';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
 import {
   ensureAPIServiceExists,
-  ensureOnChainServiceExists,
   SavingsPlusGetReceiptPayload,
   SavingsPlusStoreState,
   SetSavingsPlusReceiptPayload
@@ -103,11 +101,6 @@ const actions: ActionFuncs<
         return;
       }
 
-      if (!ensureOnChainServiceExists(state)) {
-        console.warn('On chain service does not exist in store');
-        return;
-      }
-
       if (getters.info !== undefined) {
         return;
       }
@@ -120,10 +113,7 @@ const actions: ActionFuncs<
       commit('setSavingsInfo', info);
       commit('setSavingsAPY', multiply(info.avg30DaysAPY, 100));
       commit('setSavingsDPY', multiply(divide(info.avg30DaysAPY, 365), 100));
-      if (rootState.account?.networkInfo?.network === Network.polygon) {
-        const savingsBalance = await state.onChainService.getSavingsBalance();
-        commit('setSavingsBalance', savingsBalance);
-      } else if (rootState.account?.networkInfo !== undefined) {
+      if (rootState.account?.networkInfo !== undefined) {
         commit(
           'setSavingsBalance',
           fromWei(

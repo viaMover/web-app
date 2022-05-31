@@ -813,6 +813,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     });
   }
 
+  // deprecated
   public async getSavingsBalance(): Promise<string | never> {
     return this.wrapWithSentryLogger(async () => {
       if (this.savingsPlusPoolContract === undefined) {
