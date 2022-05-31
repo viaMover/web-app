@@ -135,7 +135,7 @@ export default Vue.extend({
       );
     },
     chartAccentColor(): string {
-      return this.colors['product-savings-plus'];
+      return this.colors['product-savings'];
     }
   },
   methods: {
