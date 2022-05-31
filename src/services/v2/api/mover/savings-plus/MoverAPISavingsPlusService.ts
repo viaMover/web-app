@@ -17,9 +17,12 @@ import {
   DepositExecution,
   DepositTransactionData,
   SavingsPlusActionHistoryItem,
+  SavingsPlusHourlyBalancesItem,
   SavingsPlusInfo,
   SavingsPlusInfoAPIResponse,
   SavingsPlusMonthBalanceItem,
+  SavingsPlusReceipt,
+  SavingsPlusReceiptAPIResponse,
   WithdrawAPIErrorCode,
   WithdrawExecution,
   WithdrawTransactionData
@@ -115,6 +118,22 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
     return data;
   }
 
+  public async getReceipt(
+    year: number,
+    month: number
+  ): Promise<SavingsPlusReceipt | never> {
+    const data = (
+      await this.apiviewClient.get<
+        MoverAPISuccessfulResponse<SavingsPlusReceiptAPIResponse>
+      >(`/receipt/${this.currentAddress}/${year}/${month}`)
+    ).data.payload;
+
+    return MoverAPISavingsPlusService.mapReceipt(
+      data,
+      MoverAPISavingsPlusService.isFieldsReducerEnabled
+    );
+  }
+
   public async getWithdrawTransactionData(
     withdrawToNetwork: Network,
     outputAmountInUSDCWei: string
@@ -168,6 +187,51 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
     }
 
     return data;
+  }
+
+  protected static mapReceipt(
+    data: SavingsPlusReceiptAPIResponse,
+    isReducerEnabled: boolean
+  ): SavingsPlusReceipt {
+    return {
+      avgDailyEarnings: data.avgDailyEarnings,
+      earnedThisMonth: data.earnedThisMonth,
+      endOfMonthBalance: data.endOfMonthBalance,
+      hourlyBalances: isReducerEnabled
+        ? undefined
+        : data.hourlyBalances
+            .slice()
+            .sort((a, b) => a.snapshotTimestamp - b.snapshotTimestamp)
+            .map((item): SavingsPlusHourlyBalancesItem => {
+              return {
+                balance: item.balance,
+                day: item.day,
+                hour: item.hour,
+                month: item.month,
+                snapshotTimestamp: item.snapshotTimestamp,
+                type: 'savings_plus_hourly_balance_item',
+                year: item.year
+              };
+            }),
+      monthActionHistory: isReducerEnabled
+        ? undefined
+        : data.monthActionHistory
+            .slice()
+            .sort((a, b) => a.timestamp - b.timestamp)
+            .map((item): SavingsPlusActionHistoryItem => {
+              return {
+                amount: item.amount,
+                block: item.block,
+                timestamp: item.timestamp,
+                txId: item.txId,
+                type: item.type
+              };
+            }),
+      paidToTreasury: data.paidToTreasury,
+      savedFees: data.savedFees,
+      totalDeposits: data.totalDeposits,
+      totalWithdrawals: data.totalWithdrawals
+    };
   }
 
   protected static mapInfo(data: SavingsPlusInfoAPIResponse): SavingsPlusInfo {

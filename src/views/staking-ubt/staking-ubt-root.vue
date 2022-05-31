@@ -37,7 +37,11 @@
               :skeleton-components-count="3"
             >
               <navigation-section-item-image
-                :description="$t('stakingUBT.txtDeposit')"
+                :description="
+                  $t('stakingUBT.txtDeposit', {
+                    value: formattedAPY
+                  })
+                "
                 description-class="disabled"
                 navigate-to="staking-ubt-deposit"
                 :title="$t('stakingUBT.lblDeposit')"
@@ -68,6 +72,22 @@
                   />
                 </template>
               </navigation-section-item-image>
+
+              <navigation-section-item-image
+                :description="$t('stakingUBT.txtGlobalAnalytics')"
+                description-class="disabled"
+                navigate-to="staking-ubt-global-analytics"
+                :title="$t('stakingUBT.lblGlobalAnalytics')"
+              >
+                <template v-slot:picture>
+                  <custom-picture
+                    :alt="global.alt"
+                    :sources="global.sources"
+                    :src="global.src"
+                    :webp-sources="global.webpSources"
+                  />
+                </template>
+              </navigation-section-item-image>
             </navigation-section>
           </div>
         </div>
@@ -89,7 +109,7 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { formatToNative } from '@/utils/format';
+import { formatPercents, formatToNative } from '@/utils/format';
 import PreloadProductSecondaryPage from '@/views/preload/preload-product/preload-product-secondary-page.vue';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
@@ -128,6 +148,20 @@ export default Vue.extend({
           }
         ]
       } as PictureDescriptor,
+      global: {
+        alt: 'Global',
+        src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png'),
+        sources: [
+          {
+            src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png')
+          },
+          {
+            variant: '2x',
+            src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@2x.png')
+          }
+        ],
+        webpSources: []
+      } as PictureDescriptor,
       withdraw: {
         src: require('@/assets/images/staking-ubt/Staking_Withdraw.png'),
         sources: [
@@ -148,7 +182,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('stakingUBT', {
-      isStoreLoading: 'isInfoLoading'
+      isStoreLoading: 'isInfoLoading',
+      apy: 'apy'
     }),
     ...mapGetters('stakingUBT', {
       hasActiveStaking: 'hasActiveStaking',
@@ -156,6 +191,9 @@ export default Vue.extend({
     }),
     balance(): string {
       return `$${formatToNative(this.balanceNative)}`;
+    },
+    formattedAPY(): string {
+      return `${formatPercents(this.apy)}%`;
     }
   },
   async mounted() {
