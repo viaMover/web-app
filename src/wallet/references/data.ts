@@ -26,6 +26,7 @@ import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
+import SAVINGS_PLUS_POOL_ABI from './abi/savings-plus-pool-abi.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
@@ -92,9 +93,10 @@ export type AddressMapKey =
   | 'CULT_TOKEN_ADDRESS'
   | 'DOLA_TOKEN_ADDRESS'
   | 'DCULT_TOKEN_ADDRESS'
-  | 'LUSD_TOKEN_ADDRESS'
   | 'YV_USDC_TOKEN_ADDRESS'
-  | 'YV_DAI_TOKEN_ADDRESS';
+  | 'YV_DAI_TOKEN_ADDRESS'
+  | 'LUSD_TOKEN_ADDRESS'
+  | 'SAVINGS_PLUS_POOL_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -199,7 +201,8 @@ const addresses = {
     NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
     HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
     UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62',
-    NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8'
+    NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8',
+    SAVINGS_PLUS_POOL_ADDRESS: '0x77D5333d97A092cA01A783468E53E550C379dc3C'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -568,6 +571,7 @@ export {
   GALCX_ABI,
   DCULT_ABI,
   YEARN_SIMPLE_VAULT_ABI,
+  SAVINGS_PLUS_POOL_ABI,
   validTopUpAssets,
   getSlippage
 };
