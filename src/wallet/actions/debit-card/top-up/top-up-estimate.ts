@@ -18,18 +18,19 @@ import { estimateApprove } from '@/wallet/actions/approve/approveEstimate';
 import { needApprove } from '@/wallet/actions/approve/needApprove';
 import { estimateDCULTUnstake } from '@/wallet/actions/debit-card/top-up/dCULT/estimate';
 import { estimateGALCXUnstake } from '@/wallet/actions/debit-card/top-up/gALCX/estimate';
+import { estimateWXBTRFLYUnwrap } from '@/wallet/actions/debit-card/top-up/wxBTRFLY/estimate';
+import { estimateYearnSimpleUnwrap } from '@/wallet/actions/debit-card/top-up/yearn/estimate';
 import {
   CompoundEstimateWithUnwrapResponse,
   EstimateResponse
 } from '@/wallet/actions/types';
 import {
   getCentralTransferProxyAbi,
+  isSimpleYearnVaultMultiplier,
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
-
-import { estimateWXBTRFLYUnwrap } from './wxBTRFLY/estimate';
 
 export const estimateTopUpCompound = async (
   inputAsset: SmallToken,
@@ -41,6 +42,46 @@ export const estimateTopUpCompound = async (
   accountAddress: string
 ): Promise<CompoundEstimateWithUnwrapResponse> => {
   const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
+
+  if (isSimpleYearnVaultMultiplier(inputAsset.address, network)) {
+    addSentryBreadcrumb({
+      type: 'info',
+      category: 'debit-card.top-up.estimateTopUpCompound',
+      message: 'For simple yearn vault we need to unwrap it',
+      data: {
+        inputAsset: inputAsset
+      }
+    });
+
+    let estimation;
+    try {
+      estimation = await estimateYearnSimpleUnwrap(
+        inputAsset,
+        inputAmount,
+        network,
+        web3,
+        accountAddress
+      );
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'debit-card.top-up.estimateTopUpCompound',
+        message: 'failed to estimate unwrap',
+        data: {
+          error
+        }
+      });
+
+      throw new OnChainServiceError('Failed to estimate top up').wrap(error);
+    }
+
+    return {
+      error: false,
+      actionGasLimit: ethDefaults.basic_move_card_top_up,
+      approveGasLimit: ethDefaults.basic_approval,
+      unwrapGasLimit: estimation.gasLimit
+    };
+  }
 
   if (
     sameAddress(

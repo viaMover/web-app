@@ -97,8 +97,10 @@ import {
   getBTRFLYAssetData,
   getCULTAssetData,
   getEURSAssetData,
+  getSimpleYearnVaultTokenByAddress,
   getSlippage,
   getUSDCAssetData,
+  isSimpleYearnVaultMultiplier,
   lookupAddress,
   validTopUpAssets
 } from '@/wallet/references/data';
@@ -172,7 +174,7 @@ export default Vue.extend({
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       usdcPriceInEur: undefined as undefined | string,
-      vaultMultiplier: undefined as undefined | string,
+      vaultMultiplier: '1' as string,
 
       //to tx
       actionGasLimit: undefined as string | undefined,
@@ -424,8 +426,11 @@ export default Vue.extend({
 
             const referenceAmount =
               mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
-            let referenceToken =
-              mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
+            let referenceToken:
+              | TokenWithBalance
+              | SmallTokenInfoWithIcon
+              | SmallTokenInfo
+              | undefined = mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
             if (referenceToken === undefined) {
               // if reference token is an arbitrary token
               // but is evaluated as undefined, we preserve the last estimated amount
@@ -433,6 +438,22 @@ export default Vue.extend({
             }
 
             let inputInWei = toWei(referenceAmount, referenceToken.decimals);
+
+            const simpleVault = getSimpleYearnVaultTokenByAddress(
+              referenceToken.address,
+              this.networkInfo.network
+            );
+
+            if (simpleVault !== undefined) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                this.vaultMultiplier
+              );
+              referenceToken = simpleVault.commonToken;
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
 
             if (
               sameAddress(
@@ -587,8 +608,25 @@ export default Vue.extend({
             this.inputAmountNative = new BigNumber(
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
-            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            let referenceToken: SmallTokenInfo = tokenToSmallTokenInfo(
+              this.inputAsset
+            );
             let inputInWei = toWei(value, referenceToken.decimals);
+
+            const simpleVault = getSimpleYearnVaultTokenByAddress(
+              referenceToken.address,
+              this.networkInfo.network
+            );
+            if (simpleVault !== undefined) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                this.vaultMultiplier
+              );
+              referenceToken = simpleVault.commonToken;
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
 
             if (
               sameAddress(
@@ -637,7 +675,9 @@ export default Vue.extend({
           } else {
             this.inputAmountNative = value;
 
-            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            let referenceToken: SmallTokenInfo = tokenToSmallTokenInfo(
+              this.inputAsset
+            );
             let inputInWei = toWei(
               convertAmountFromNativeValue(
                 value,
@@ -646,6 +686,21 @@ export default Vue.extend({
               ),
               this.inputAsset.decimals
             );
+
+            const simpleVault = getSimpleYearnVaultTokenByAddress(
+              referenceToken.address,
+              this.networkInfo.network
+            );
+            if (simpleVault !== undefined) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                this.vaultMultiplier
+              );
+              referenceToken = simpleVault.commonToken;
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
 
             if (
               sameAddress(
@@ -732,9 +787,13 @@ export default Vue.extend({
       this.isLoading = true;
 
       try {
-        this.vaultMultiplier = await this.getYearnVaultMultiplier(
-          token.address
-        );
+        if (
+          isSimpleYearnVaultMultiplier(token.address, this.networkInfo.network)
+        ) {
+          this.vaultMultiplier = await this.getYearnVaultMultiplier(
+            token.address
+          );
+        }
       } catch (err) {
         addSentryBreadcrumb({
           type: 'error',

@@ -1,7 +1,11 @@
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
-import { simpleYearnVaultToken } from '@/wallet/references/yearnVaultsData';
+import {
+  getSimpleYearnVaultTokenByAddress,
+  getSimpleYearnVaultTokens,
+  isSimpleYearnVaultMultiplier
+} from '@/wallet/references/yearnVaultsData';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
@@ -93,8 +97,6 @@ export type AddressMapKey =
   | 'CULT_TOKEN_ADDRESS'
   | 'DOLA_TOKEN_ADDRESS'
   | 'DCULT_TOKEN_ADDRESS'
-  | 'YV_USDC_TOKEN_ADDRESS'
-  | 'YV_DAI_TOKEN_ADDRESS'
   | 'LUSD_TOKEN_ADDRESS'
   | 'SAVINGS_PLUS_POOL_ADDRESS';
 
@@ -162,9 +164,7 @@ const addresses = {
     CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
     DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
     DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
-    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
-    YV_USDC_TOKEN_ADDRESS: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
-    YV_DAI_TOKEN_ADDRESS: '0xdA816459F1AB5631232FE5e97a05BBBb94970c95'
+    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -526,7 +526,7 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
     lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
-    ...simpleYearnVaultToken(network)
+    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address)
   ];
 };
 
@@ -572,6 +572,9 @@ export {
   DCULT_ABI,
   YEARN_SIMPLE_VAULT_ABI,
   SAVINGS_PLUS_POOL_ABI,
+  getSimpleYearnVaultTokens,
+  getSimpleYearnVaultTokenByAddress,
+  isSimpleYearnVaultMultiplier,
   validTopUpAssets,
   getSlippage
 };
