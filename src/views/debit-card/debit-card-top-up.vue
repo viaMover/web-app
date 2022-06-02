@@ -100,7 +100,7 @@ import {
   getSimpleYearnVaultTokenByAddress,
   getSlippage,
   getUSDCAssetData,
-  isSimpleYearnVaultMultiplier,
+  isSimpleYearnVault,
   lookupAddress,
   validTopUpAssets
 } from '@/wallet/references/data';
@@ -787,9 +787,7 @@ export default Vue.extend({
       this.isLoading = true;
 
       try {
-        if (
-          isSimpleYearnVaultMultiplier(token.address, this.networkInfo.network)
-        ) {
+        if (isSimpleYearnVault(token.address, this.networkInfo.network)) {
           this.vaultMultiplier = await this.getYearnVaultMultiplier(
             token.address
           );

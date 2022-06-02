@@ -17,6 +17,7 @@ import { Network } from '@/utils/networkTypes';
 import { executeTransactionWithApprove } from '@/wallet/actions/actionWithApprove';
 import { unstake as unstakeDCULT } from '@/wallet/actions/debit-card/top-up/dCULT/top-up';
 import { unstake as unstakeGALCX } from '@/wallet/actions/debit-card/top-up/gALCX/top-up';
+import { unwrapForTopUpCompound } from '@/wallet/actions/debit-card/top-up/yearn/top-up';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
@@ -26,12 +27,19 @@ import {
   getUSDCAssetData,
   lookupAddress
 } from '@/wallet/references/data';
+import { isSimpleYearnVault } from '@/wallet/references/yearnVaultsData';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
 import { LoaderStep } from '@/components/forms/loader-form/types';
 
 import { estimateTopUpCompound } from './top-up-estimate';
 import { unwrap } from './wxBTRFLY/top-up';
+
+export type TopUpData = {
+  inputAsset: SmallToken;
+  inputAmount: string;
+  transferData: TransferData | undefined;
+};
 
 export const topUpCompound = async (
   inputAsset: SmallToken,
@@ -55,6 +63,36 @@ export const topUpCompound = async (
 
   let topupActionGasLimit = actionGasLimit;
   let topupApproveGasLimit = approveGasLimit;
+
+  if (isSimpleYearnVault(topupInputAsset.address, network)) {
+    const res = await unwrapForTopUpCompound(
+      topupInputAsset,
+      topupInputAmount,
+      topupTransferData,
+      network,
+      web3,
+      accountAddress,
+      changeStepToProcess,
+      unwrapGasLimit,
+      gasPriceInGwei
+    );
+    topupInputAsset = res.inputAsset;
+    topupInputAmount = res.inputAmount;
+    topupTransferData = res.transferData;
+
+    const resp = await estimateTopUpCompound(
+      topupInputAsset,
+      outputAsset,
+      topupInputAmount,
+      topupTransferData,
+      network,
+      web3,
+      accountAddress
+    );
+
+    topupActionGasLimit = resp.actionGasLimit;
+    topupApproveGasLimit = resp.approveGasLimit;
+  }
 
   if (
     sameAddress(

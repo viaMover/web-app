@@ -3,12 +3,17 @@ import { TransactionReceipt } from 'web3-eth';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { getTransferData, TransferData } from '@/services/0x/api';
+import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
-import { toWei } from '@/utils/bigmath';
+import { fromWei, lessThanOrEqual, sub, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
+import { TopUpData } from '@/wallet/actions/debit-card/top-up/top-up';
 import {
   getSimpleYearnVaultTokenByAddress,
+  getSlippage,
+  getUSDCAssetData,
   YEARN_SIMPLE_VAULT_ABI
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
@@ -33,8 +38,8 @@ export const unwrap = async (
   if (simpleYearnVault === undefined) {
     addSentryBreadcrumb({
       type: 'error',
-      category: 'debit-card.top-up.unwrap',
-      message: 'failed to unwrap top up: can not find simple yearn vault',
+      category: 'yearn.vault.simple.unwrap',
+      message: 'failed to unwrap: can not find simple yearn vault',
       data: {
         address: inputAsset.address
       }
@@ -66,7 +71,7 @@ export const unwrap = async (
 
   addSentryBreadcrumb({
     type: 'info',
-    category: 'debit-card.top-up.unwrap',
+    category: 'yearn.vault.simple.unwrap',
     message: 'input amount in WEI',
     data: {
       inputAmountInWEI,
@@ -78,7 +83,7 @@ export const unwrap = async (
 
   addSentryBreadcrumb({
     type: 'info',
-    category: 'debit-card.top-up.unwrap',
+    category: 'yearn.vault.simple.unwrap',
     message: 'transaction params',
     data: {
       ...transactionParams
@@ -87,7 +92,7 @@ export const unwrap = async (
 
   addSentryBreadcrumb({
     type: 'info',
-    category: 'debit-card.top-up.unwrap',
+    category: 'yearn.vault.simple.unwrap',
     message: 'currency'
   });
 
@@ -97,28 +102,131 @@ export const unwrap = async (
       .once('transactionHash', (hash: string) => {
         addSentryBreadcrumb({
           type: 'debug',
-          category: 'debit-card.top-up.unwrap',
+          category: 'yearn.vault.simple.unwrap',
           message: 'transaction hash',
           data: {
             hash
           }
         });
 
-        console.log('debug debit card top up unwrap txn hash', hash);
+        console.log('debug yearn.vault.simple.unwrap txn hash', hash);
         changeStepToProcess('Process');
       })
       .once('receipt', (receipt: TransactionReceipt) => {
         addSentryBreadcrumb({
           type: 'debug',
-          category: 'debit-card.top-up.unwrap',
+          category: 'yearn.vault.simple.unwrap',
           message: 'transaction receipt',
           data: {
             receipt
           }
         });
-        console.debug('debit card top up unwrap txn receipt', receipt);
+        console.debug('debit yearn.vault.simple.unwrap txn receipt', receipt);
         resolve();
       })
       .once('error', (error: Error) => reject(error));
   });
+};
+
+export const unwrapForTopUpCompound = async (
+  inputAsset: SmallToken,
+  inputAmount: string,
+  transferData: TransferData | undefined,
+  network: Network,
+  web3: Web3,
+  accountAddress: string,
+  changeStepToProcess: (step: LoaderStep) => Promise<void>,
+  unwrapGasLimit: string,
+  gasPriceInGwei?: string
+): Promise<TopUpData> => {
+  const res: TopUpData = {
+    inputAsset,
+    inputAmount,
+    transferData
+  };
+
+  try {
+    addSentryBreadcrumb({
+      type: 'info',
+      category: 'yearn.vault.simple.preTopUp',
+      message: 'For simple yearn vault we need to unwrap it',
+      data: {
+        inputAsset,
+        inputAmount
+      }
+    });
+
+    const simpleYearnVault = getSimpleYearnVaultTokenByAddress(
+      inputAsset.address,
+      network
+    );
+
+    if (simpleYearnVault === undefined) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'yearn.vault.simple.preTopUp',
+        message: 'failed to unwrap: can not find simple yearn vault',
+        data: {
+          address: inputAsset.address
+        }
+      });
+
+      throw new OnChainServiceError('can not find simple yearn vault');
+    }
+
+    res.inputAsset = simpleYearnVault.commonToken;
+
+    const balanceBeforeUnwrap = await currentBalance(
+      web3,
+      accountAddress,
+      res.inputAsset.address
+    );
+
+    await unwrap(
+      inputAsset,
+      inputAmount,
+      network,
+      web3,
+      accountAddress,
+      changeStepToProcess,
+      unwrapGasLimit,
+      gasPriceInGwei
+    );
+
+    const balanceAfterUnwrap = await currentBalance(
+      web3,
+      accountAddress,
+      res.inputAsset.address
+    );
+
+    const diffAmountInWei = sub(balanceAfterUnwrap, balanceBeforeUnwrap);
+
+    if (lessThanOrEqual(diffAmountInWei, '0')) {
+      throw new OnChainServiceError(
+        'amount after unwrap less than or equal to zero'
+      );
+    }
+
+    res.inputAmount = fromWei(diffAmountInWei, res.inputAsset.decimals);
+    res.transferData = await getTransferData(
+      getUSDCAssetData(network).address,
+      res.inputAsset.address,
+      diffAmountInWei,
+      true,
+      getSlippage(res.inputAsset.address, network),
+      network
+    );
+
+    return res;
+  } catch (err) {
+    addSentryBreadcrumb({
+      type: 'error',
+      category: 'yearn.vault.simple.unwrap',
+      message: 'failed to unwrap for top up',
+      data: {
+        error: err
+      }
+    });
+    throw err;
+  }
 };

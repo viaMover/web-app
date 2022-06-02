@@ -26,7 +26,7 @@ import {
 } from '@/wallet/actions/types';
 import {
   getCentralTransferProxyAbi,
-  isSimpleYearnVaultMultiplier,
+  isSimpleYearnVault,
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
@@ -43,7 +43,7 @@ export const estimateTopUpCompound = async (
 ): Promise<CompoundEstimateWithUnwrapResponse> => {
   const contractAddress = lookupAddress(network, 'HOLY_HAND_ADDRESS');
 
-  if (isSimpleYearnVaultMultiplier(inputAsset.address, network)) {
+  if (isSimpleYearnVault(inputAsset.address, network)) {
     addSentryBreadcrumb({
       type: 'info',
       category: 'debit-card.top-up.estimateTopUpCompound',

@@ -56,7 +56,7 @@ export const getSimpleYearnVaultTokenByAddress = (
   );
 };
 
-export const isSimpleYearnVaultMultiplier = (
+export const isSimpleYearnVault = (
   address: string,
   network: Network
 ): boolean => {

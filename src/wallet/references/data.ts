@@ -4,7 +4,7 @@ import { getNetwork, Network } from '@/utils/networkTypes';
 import {
   getSimpleYearnVaultTokenByAddress,
   getSimpleYearnVaultTokens,
-  isSimpleYearnVaultMultiplier
+  isSimpleYearnVault
 } from '@/wallet/references/yearnVaultsData';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
@@ -574,7 +574,7 @@ export {
   SAVINGS_PLUS_POOL_ABI,
   getSimpleYearnVaultTokens,
   getSimpleYearnVaultTokenByAddress,
-  isSimpleYearnVaultMultiplier,
+  isSimpleYearnVault,
   validTopUpAssets,
   getSlippage
 };
