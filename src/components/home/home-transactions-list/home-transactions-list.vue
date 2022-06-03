@@ -39,6 +39,8 @@ import { mapGetters, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
+import { captureSentryException } from '@/services/v2/utils/sentry';
+
 import HomeTransactionsListGroup from './home-transactions-list-group.vue';
 import HomeTransactionsListSkeleton from './home-transactions-list-skeleton.vue';
 
@@ -90,8 +92,13 @@ export default Vue.extend({
         state.complete();
         return;
       }
-
-      const hasMoreResults = await explorer.loadMoreTransactions();
+      let hasMoreResults = false;
+      try {
+        hasMoreResults = await explorer.loadMoreTransactions();
+      } catch (err: any) {
+        hasMoreResults = false;
+        captureSentryException(err);
+      }
 
       if (hasMoreResults) {
         state.loaded();
