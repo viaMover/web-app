@@ -51,6 +51,11 @@ export default Vue.extend({
     HomeTransactionsListSkeleton,
     InfiniteLoading
   },
+  data() {
+    return {
+      isInitialized: false
+    };
+  },
   computed: {
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
@@ -86,6 +91,8 @@ export default Vue.extend({
         state.complete();
         return;
       }
+
+      this.isInitialized = true;
 
       const explorer = this.explorer;
       if (explorer === undefined) {

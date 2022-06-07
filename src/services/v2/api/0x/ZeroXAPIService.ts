@@ -7,6 +7,7 @@ import axiosRetry from 'axios-retry';
 import { TransferData } from '@/services/0x/api';
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
+import { ResponseHTTPErrorCode } from '@/services/v2/http';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { getPureBaseAssetAddress, isBaseAsset } from '@/utils/address';
 import { greaterThan, multiply } from '@/utils/bigmath';
@@ -14,7 +15,6 @@ import { Network } from '@/utils/networkTypes';
 
 import {
   GeneralErrorCode,
-  ResponseHTTPErrorCode,
   SwapQuoteParams,
   SwapQuoteResponse,
   ZeroXBadRequestResponse
