@@ -9,7 +9,10 @@ import { NetworkAlias, TransactionsResponse } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
 import { AnkrAPIService } from '@/services/v2/api/ankr';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
-import { captureSentryException } from '@/services/v2/utils/sentry';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import store from '@/store/index';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -126,20 +129,12 @@ export class MoralisExplorer implements Explorer {
       this.nativeTransactionsCursor = null;
       this.erc20TransactionsCursor = null;
 
-      let getTokensFunc = this.getErc20Tokens;
-      let enrichTokensWithNative = this.enrichTokensWithNative;
-      let enrichTokensWithPrices = this.enrichTokensWithPrices;
-      if (this.ankrService !== undefined) {
-        getTokensFunc = this.ankrService.getTokens;
-        enrichTokensWithNative = async (tokens) => Promise.resolve(tokens);
-        enrichTokensWithPrices = async (tokens) => Promise.resolve(tokens);
-      }
-      const tokensWithPricePromise = getTokensFunc()
+      const tokensWithPricePromise = this.getErc20Tokens()
         .then((tokens) => this.initialTokenEnrich(tokens))
         .then((tokens) => this.mergeTokensWithLocalTokens(tokens))
         .then((tokens) => this.mapTokensToChecksumAddresses(tokens))
-        .then((tokens) => enrichTokensWithPrices(tokens))
-        .then((tokens) => enrichTokensWithNative(tokens))
+        .then((tokens) => this.enrichTokensWithPrices(tokens))
+        .then((tokens) => this.enrichTokensWithNative(tokens))
         .then((tokensWithNative) => {
           this.setTokens(tokensWithNative);
           // set tokens list loaded as early as possible
@@ -259,7 +254,12 @@ export class MoralisExplorer implements Explorer {
   private enrichTokensWithPrices = async (
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
-    const addresses = tokens.map((t) => t.address);
+    const tokensWithoutPrice = tokens.filter((t) => t.priceUSD === '');
+    if (tokensWithoutPrice.length === 0) {
+      return tokens;
+    }
+
+    const addresses = tokensWithoutPrice.map((t) => t.address);
     const pricesResponse = await this.fetchTokensPriceByContractAddresses(
       addresses,
       this.nativeCurrency
@@ -272,6 +272,7 @@ export class MoralisExplorer implements Explorer {
         this.nativeCurrency
       );
       if (retrievedPrice === undefined) {
+        t.priceUSD = '0';
         return t;
       }
 
@@ -283,6 +284,13 @@ export class MoralisExplorer implements Explorer {
   private enrichTokensWithNative = async (
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
+    const baseAssetData = getBaseAssetData(this.network);
+    if (
+      tokens.find((t) => sameAddress(t.address, baseAssetData.address)) !==
+      undefined
+    ) {
+      return tokens;
+    }
     try {
       const nativeBalance = await this.getNativeBalance();
       const baseAssetData = getBaseAssetData(this.network);
@@ -361,6 +369,25 @@ export class MoralisExplorer implements Explorer {
   };
 
   private getErc20Tokens = async (): Promise<Array<TokenWithBalance>> => {
+    if (this.ankrService !== undefined) {
+      try {
+        return await this.ankrService.getTokens();
+      } catch (err) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'explorer.moralis.error',
+          message: 'ANKR get token error, trying to use Moralis instead'
+        });
+        captureSentryException(err);
+        return await this.getErc20TokensFromMoralis();
+      }
+    }
+    return await this.getErc20TokensFromMoralis();
+  };
+
+  private getErc20TokensFromMoralis = async (): Promise<
+    Array<TokenWithBalance>
+  > => {
     try {
       const res = (
         await this.apiClient.get(
@@ -376,7 +403,7 @@ export class MoralisExplorer implements Explorer {
           logo: '',
           marketCap: 0,
           name: t.name,
-          priceUSD: '0',
+          priceUSD: '',
           symbol: t.symbol
         }));
     } catch (e) {
@@ -404,7 +431,11 @@ export class MoralisExplorer implements Explorer {
         token.logo = localToken.logo;
       }
 
-      if (token.priceUSD == '0') {
+      if (
+        token.priceUSD === '' &&
+        localToken.priceUSD !== '' &&
+        localToken.priceUSD !== '0'
+      ) {
         token.priceUSD = localToken.priceUSD;
       }
 
