@@ -26,3 +26,4 @@ pnpm-debug.log*
 /tw
 deploy/keys-stg.*
 /tools/token_list/tw/
+/certs/

@@ -7,7 +7,12 @@ import Web3 from 'web3';
 import { Explorer } from '@/services/explorer';
 import { NetworkAlias, TransactionsResponse } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
+import { AnkrAPIService } from '@/services/v2/api/ankr';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import store from '@/store/index';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -43,6 +48,8 @@ export class MoralisExplorer implements Explorer {
   private nativeTransactionsCursor: string | null = null;
   private erc20TransactionsCursor: string | null = null;
 
+  private readonly ankrService: AnkrAPIService | undefined = undefined;
+
   private static readonly erc20AbiApprove = [
     {
       constant: false,
@@ -73,6 +80,7 @@ export class MoralisExplorer implements Explorer {
     private readonly accountAddress: string,
     private readonly nativeCurrency: NativeCurrency,
     private readonly network: Network,
+    private readonly availableNetworks: Network[],
     apiKey: string,
     private readonly setTransactions: (txns: Array<Transaction>) => void,
     private readonly updateTransactions: (txns: Array<Transaction>) => void,
@@ -96,23 +104,33 @@ export class MoralisExplorer implements Explorer {
       }
     });
     addABI(MoralisExplorer.erc20AbiApprove);
+    // TODO: use real api key for ANKR
+    try {
+      this.ankrService = new AnkrAPIService(this.accountAddress, '', [
+        this.network
+      ]);
+    } catch (e) {
+      captureSentryException(e);
+    }
   }
 
-  async init(): Promise<void> {
+  public init = async (): Promise<void> => {
     this.setIsTransactionsListLoaded(false);
     await this.refreshWalletData();
-  }
+  };
 
-  public hasInfiniteLoader(): boolean {
+  public hasInfiniteLoader = (): boolean => {
     return true;
-  }
+  };
 
-  public async refreshWalletData(): Promise<void> {
+  public refreshWalletData = async (): Promise<void> => {
     try {
       this.setIsTransactionsListLoaded(false);
       this.nativeTransactionsCursor = null;
       this.erc20TransactionsCursor = null;
+
       const tokensWithPricePromise = this.getErc20Tokens()
+        .then((tokens) => this.initialTokenEnrich(tokens))
         .then((tokens) => this.mergeTokensWithLocalTokens(tokens))
         .then((tokens) => this.mapTokensToChecksumAddresses(tokens))
         .then((tokens) => this.enrichTokensWithPrices(tokens))
@@ -147,9 +165,11 @@ export class MoralisExplorer implements Explorer {
       this.setIsTokensListLoaded(true);
       this.setIsTransactionsListLoaded(true);
     }
-  }
+  };
 
-  public async loadMoreTransactions(nativeOnly = false): Promise<boolean> {
+  public loadMoreTransactions = async (
+    nativeOnly = false
+  ): Promise<boolean> => {
     try {
       this.setIsTransactionsListLoaded(false);
 
@@ -196,7 +216,7 @@ export class MoralisExplorer implements Explorer {
     }
 
     return true;
-  }
+  };
 
   public getChartData = (
     assetCode: string,
@@ -206,7 +226,7 @@ export class MoralisExplorer implements Explorer {
     console.log('Not implemented yet');
   };
 
-  private getNetworkAlias(): NetworkAlias {
+  private getNetworkAlias = (): NetworkAlias => {
     switch (this.network) {
       case Network.mainnet:
         return NetworkAlias.Eth;
@@ -229,12 +249,17 @@ export class MoralisExplorer implements Explorer {
       default:
         throw new Error(`Moralis doesn't have alias for ${this.network}`);
     }
-  }
+  };
 
   private enrichTokensWithPrices = async (
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
-    const addresses = tokens.map((t) => t.address);
+    const tokensWithoutPrice = tokens.filter((t) => t.priceUSD === '');
+    if (tokensWithoutPrice.length === 0) {
+      return tokens;
+    }
+
+    const addresses = tokensWithoutPrice.map((t) => t.address);
     const pricesResponse = await this.fetchTokensPriceByContractAddresses(
       addresses,
       this.nativeCurrency
@@ -247,6 +272,7 @@ export class MoralisExplorer implements Explorer {
         this.nativeCurrency
       );
       if (retrievedPrice === undefined) {
+        t.priceUSD = '0';
         return t;
       }
 
@@ -258,6 +284,13 @@ export class MoralisExplorer implements Explorer {
   private enrichTokensWithNative = async (
     tokens: TokenWithBalance[]
   ): Promise<TokenWithBalance[]> => {
+    const baseAssetData = getBaseAssetData(this.network);
+    if (
+      tokens.find((t) => sameAddress(t.address, baseAssetData.address)) !==
+      undefined
+    ) {
+      return tokens;
+    }
     try {
       const nativeBalance = await this.getNativeBalance();
       const baseAssetData = getBaseAssetData(this.network);
@@ -301,9 +334,61 @@ export class MoralisExplorer implements Explorer {
     }
   };
 
-  private getErc20Tokens = async (): Promise<TokenWithBalance[]> => {
+  private initialTokenEnrich = (
+    tokens: Array<TokenWithBalance>
+  ): Array<TokenWithBalance> => {
+    const moverData = getMoveAssetData(this.network);
+
+    return tokens.map((t) => {
+      let assetName: string;
+      let assetSymbol: string;
+      let assetLogo: string;
+
+      if (sameAddress(t.address, moverData.address)) {
+        assetName = moverData.name;
+        assetSymbol = moverData.symbol;
+        assetLogo = moverData.iconURL;
+      } else {
+        assetName = t.name.slice(0, MAX_ASSET_NAME);
+        assetSymbol = t.symbol;
+        assetLogo = t.logo ?? '';
+      }
+
+      if (assetSymbol === 'mobo') {
+        assetSymbol = 'MOBO';
+      }
+
+      return {
+        ...t,
+        logo: assetLogo,
+        marketCap: store.getters['account/getTokenMarketCap'](t.address),
+        name: assetName,
+        symbol: assetSymbol
+      };
+    });
+  };
+
+  private getErc20Tokens = async (): Promise<Array<TokenWithBalance>> => {
+    if (this.ankrService !== undefined) {
+      try {
+        return await this.ankrService.getTokens();
+      } catch (err) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'explorer.moralis.error',
+          message: 'ANKR get token error, trying to use Moralis instead'
+        });
+        captureSentryException(err);
+        return await this.getErc20TokensFromMoralis();
+      }
+    }
+    return await this.getErc20TokensFromMoralis();
+  };
+
+  private getErc20TokensFromMoralis = async (): Promise<
+    Array<TokenWithBalance>
+  > => {
     try {
-      const moverData = getMoveAssetData(this.network);
       const res = (
         await this.apiClient.get(
           `${this.accountAddress}/erc20?chain=${this.getNetworkAlias()}`
@@ -311,38 +396,16 @@ export class MoralisExplorer implements Explorer {
       ).data as Erc20TokensResponse[];
       return res
         .filter((t) => t.decimals !== null && t.name !== null)
-        .map((t) => {
-          let assetName: string;
-          let assetSymbol: string;
-          let assetLogo: string;
-
-          if (sameAddress(t.token_address, moverData.address)) {
-            assetName = moverData.name;
-            assetSymbol = moverData.symbol;
-            assetLogo = moverData.iconURL;
-          } else {
-            assetName = t.name.slice(0, MAX_ASSET_NAME);
-            assetSymbol = t.symbol;
-            assetLogo = t.logo ?? '';
-          }
-
-          if (assetSymbol === 'mobo') {
-            assetSymbol = 'MOBO';
-          }
-
-          return {
-            address: t.token_address,
-            balance: fromWei(t.balance, t.decimals),
-            decimals: parseInt(t.decimals),
-            logo: assetLogo,
-            marketCap: store.getters['account/getTokenMarketCap'](
-              t.token_address
-            ),
-            name: assetName,
-            priceUSD: '0',
-            symbol: assetSymbol
-          };
-        });
+        .map((t) => ({
+          address: t.token_address,
+          balance: fromWei(t.balance, t.decimals),
+          decimals: parseInt(t.decimals),
+          logo: '',
+          marketCap: 0,
+          name: t.name,
+          priceUSD: '',
+          symbol: t.symbol
+        }));
     } catch (e) {
       if (axios.isAxiosError(e)) {
         throw new Error(
@@ -353,9 +416,9 @@ export class MoralisExplorer implements Explorer {
     }
   };
 
-  private mergeTokensWithLocalTokens<T extends Token>(
+  private mergeTokensWithLocalTokens = <T extends Token>(
     tokens: Array<T>
-  ): Array<T> {
+  ): Array<T> => {
     return tokens.map((token) => {
       const localToken = this.localTokens.find((localToken) =>
         sameAddress(localToken.address, token.address)
@@ -368,17 +431,21 @@ export class MoralisExplorer implements Explorer {
         token.logo = localToken.logo;
       }
 
-      if (token.priceUSD == '0') {
+      if (
+        token.priceUSD === '' &&
+        localToken.priceUSD !== '' &&
+        localToken.priceUSD !== '0'
+      ) {
         token.priceUSD = localToken.priceUSD;
       }
 
       return token;
     });
-  }
+  };
 
-  private mapTokensToChecksumAddresses<T extends Token>(
+  private mapTokensToChecksumAddresses = <T extends Token>(
     tokens: Array<T>
-  ): Array<T> {
+  ): Array<T> => {
     const chainId = getNetwork(this.network)?.chainId;
 
     return tokens.map((token) => {
@@ -389,7 +456,7 @@ export class MoralisExplorer implements Explorer {
         return token;
       }
     });
-  }
+  };
 
   private parseTransactions = async (
     walletTokens: Array<Token>,
