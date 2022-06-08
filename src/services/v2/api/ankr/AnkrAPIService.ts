@@ -96,17 +96,20 @@ export class AnkrAPIService extends APIService {
     return res.result.assets
       .map((t) => {
         let address = t.contractAddress;
+        let logo = t.thumbnail;
         if (t.tokenType === 'NATIVE') {
-          address =
-            getNetwork(this.lookupNetworkById(t.blockchain) ?? Network.mainnet)
-              ?.baseAsset.address ?? '';
+          const net = getNetwork(
+            this.lookupNetworkById(t.blockchain) ?? Network.mainnet
+          );
+          address = net?.baseAsset.address ?? '';
+          logo = net?.baseAsset.iconURL ?? '';
         }
         return {
           address: address,
           decimals: t.tokenDecimals,
           symbol: t.tokenSymbol,
           name: t.tokenName,
-          logo: t.thumbnail,
+          logo: logo,
           priceUSD: t.tokenPrice,
           marketCap: 0,
           balance: t.balance

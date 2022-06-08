@@ -148,6 +148,14 @@
         />
 
         <navigation-section-item-emoji
+          v-if="isSavingsPlusEnabled"
+          class="no-hover"
+          emoji="➕"
+          navigate-to="savings-plus-deposit"
+          :text="$t('menu.lblDepositInSavingsPlus')"
+        />
+
+        <navigation-section-item-emoji
           v-if="isTreasuryEnabled"
           class="no-hover"
           emoji="📈"
@@ -161,14 +169,6 @@
           emoji="💳"
           :navigate-to="debitCardTopUpLocation"
           :text="$t('debitCard.lblCardTopUp')"
-        />
-
-        <navigation-section-item-emoji
-          v-if="isEarningsEnabled"
-          class="no-hover"
-          emoji="➕"
-          navigate-to="savings-plus-deposit"
-          :text="$t('menu.lblDepositInSavingsPlus')"
         />
 
         <navigation-section-item-emoji
