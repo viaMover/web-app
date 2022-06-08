@@ -37,12 +37,14 @@ export const BuildExplorer = async (
     addresses: Array<string>,
     nativeCurrency: NativeCurrency
   ) => Promise<PriceRecord>,
-  localTokens: Array<Token>
+  localTokens: Array<Token>,
+  availableNetworks: Array<Network>
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
     nativeCurrency,
     network,
+    availableNetworks,
     APIKeys.MORALIS_API_KEY,
     setTransactions,
     updateTransactions,

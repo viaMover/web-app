@@ -442,7 +442,8 @@ const actions: ActionFuncs<
                 contractAddresses: addresses,
                 currencies: nativeCurrency
               } as FetchTokenPricesByContractAddressesPayload),
-            state.allTokens
+            state.allTokens,
+            state.availableNetworks
           );
 
           explorerInitPromise
