@@ -86,11 +86,9 @@ export default Vue.extend({
     pageTitle(): string {
       const entireBalance = this.entireBalanceNative;
       if (greaterThan(entireBalance, 0)) {
-        return `$${formatToNative(entireBalance)} • ${this.$t(
-          'lblPageTitleSuffix'
-        )}`;
+        return `$${formatToNative(entireBalance)} • ${this.$t('portfolio')}`;
       } else {
-        return this.$t('lblPageTitleDefault') as string;
+        return this.$t('moverApp') as string;
       }
     },
     skeletonColor(): string {
