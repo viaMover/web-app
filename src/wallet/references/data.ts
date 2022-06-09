@@ -214,7 +214,10 @@ const addresses = {
     USDC_TOKEN_ADDRESS: '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75'
   },
   [Network.arbitrum]: {},
-  [Network.avalanche]: {}
+  [Network.avalanche]: {
+    HOLY_HAND_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
+    USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
+  }
 } as AddressMap;
 
 const defaultSlippage = '10'; // 10%

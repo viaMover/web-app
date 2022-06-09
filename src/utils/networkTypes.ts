@@ -149,11 +149,11 @@ export const networks = new Array<NetworkInfo>(
     subsidizedUrl: undefined,
     baseAsset: {
       address: 'avax',
-      decimals: 9,
+      decimals: 18,
       symbol: 'AVAX',
-      name: 'Avalanche X-Chain',
+      name: 'Avalanche C-Chain',
       iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchex/info/logo.png'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchec/info/logo.png'
     },
     rpcUrl: 'https://api.avax.network/ext/bc/C/rpc'
   },
