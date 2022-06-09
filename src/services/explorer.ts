@@ -7,6 +7,7 @@ import { Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
 import { MoralisExplorer } from './moralis/explorer';
 import { InitZerionExplorer } from './zerion/explorer';
+
 export interface Explorer {
   getChartData: (
     assetCode: string,
@@ -15,6 +16,7 @@ export interface Explorer {
   ) => void;
   refreshWalletData: () => void;
   hasInfiniteLoader: () => boolean;
+
   loadMoreTransactions(nativeOnly: boolean): Promise<boolean>;
 }
 
@@ -35,12 +37,14 @@ export const BuildExplorer = async (
     addresses: Array<string>,
     nativeCurrency: NativeCurrency
   ) => Promise<PriceRecord>,
-  localTokens: Array<Token>
+  localTokens: Array<Token>,
+  availableNetworks: Array<Network>
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
     nativeCurrency,
     network,
+    availableNetworks,
     APIKeys.MORALIS_API_KEY,
     setTransactions,
     updateTransactions,
@@ -64,6 +68,10 @@ export const BuildExplorer = async (
   // For zerion we assume that transactions and tokens are loaded from start
   setIsTransactionsListLoaded(true);
   setIsTokensListLoaded(true);
+
+  if (network !== Network.mainnet) {
+    throw new Error("Can't load zerion for non-mainnet network");
+  }
 
   return InitZerionExplorer(
     accountAddress,

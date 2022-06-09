@@ -95,7 +95,9 @@ import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
+  getCULTAssetData,
   getEURSAssetData,
+  getSlippage,
   getUSDCAssetData,
   lookupAddress,
   validTopUpAssets
@@ -466,6 +468,17 @@ export default Vue.extend({
               );
             }
 
+            // dCULT unstake substitute
+            if (
+              sameAddress(
+                referenceToken.address,
+                lookupAddress(this.networkInfo.network, 'DCULT_TOKEN_ADDRESS')
+              )
+            ) {
+              // keep the same input in WEI coz it's 1:1
+              referenceToken = getCULTAssetData(this.networkInfo.network);
+            }
+
             if (isZero(referenceAmount) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
@@ -479,7 +492,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '10',
+              getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
 
@@ -616,7 +629,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '10',
+              getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
           } else {
@@ -673,7 +686,7 @@ export default Vue.extend({
               referenceToken.address,
               inputInWei,
               true,
-              '10',
+              getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
             this.inputAmount = fromWei(

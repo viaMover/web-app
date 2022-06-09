@@ -43,15 +43,19 @@
       </div>
       <slot name="additional-items" />
       <template v-if="isSubsidizedEnabled">
-        <custom-switch v-model="isSmartTreasury">{{
-          $t('forms.lblUseSmartTreasury')
-        }}</custom-switch>
+        <custom-switch v-model="isSmartTreasury">
+          {{ $t('forms.lblUseSmartTreasury') }}
+        </custom-switch>
 
         <div class="item">
           <h2>{{ $t('forms.lblEstimatedGasCost') }}</h2>
           <span>{{ formattedEstimatedGasCost }}</span>
         </div>
       </template>
+    </div>
+
+    <div class="warning-message">
+      {{ warningMessage }}
     </div>
 
     <div class="actions">
@@ -122,6 +126,10 @@ export default Vue.extend({
       default: false
     },
     estimatedGasCost: {
+      type: String,
+      default: undefined
+    },
+    warningMessage: {
       type: String,
       default: undefined
     }

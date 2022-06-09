@@ -158,7 +158,19 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'CULT',
       name: 'Cult DAO'
-    } // CULT
+    }, // CULT
+    {
+      id: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
+      decimals: 18,
+      symbol: 'dCULT',
+      name: 'dCULT'
+    }, // gCULT
+    {
+      id: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
+      decimals: 18,
+      symbol: 'DOLA',
+      name: 'Dola USD Stablecoin'
+    } // DOLA
   ],
   fantom: [],
   polygon: []

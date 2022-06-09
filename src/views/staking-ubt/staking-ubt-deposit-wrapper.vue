@@ -50,8 +50,10 @@ import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { StakingUbtOnChainService } from '@/services/v2/on-chain/mover/staking-ubt';
 import { captureSentryException } from '@/services/v2/utils/sentry';
 import {
+  add,
   convertAmountFromNativeValue,
   convertNativeAmountFromAmount,
+  divide,
   greaterThan,
   multiply
 } from '@/utils/bigmath';
@@ -122,12 +124,14 @@ export default Vue.extend({
       getTokenColor: 'getTokenColor'
     }),
     ...mapState('stakingUBT', {
+      apy: 'apy',
       isLoadingUBTNativePrice: 'isLoadingUBTNativePrice',
       stakingOnChainService: 'onChainService'
     }),
     ...mapGetters('stakingUBT', {
       walletBalance: 'walletBalance',
-      ubtNativePrice: 'ubtNativePrice'
+      ubtNativePrice: 'ubtNativePrice',
+      balance: 'balance'
     }),
     complexError(): string | undefined {
       if (!greaterThan(this.walletBalance, '0')) {
@@ -151,7 +155,21 @@ export default Vue.extend({
       return this.step !== 'loader';
     },
     estimatedAnnualEarning(): string {
-      return '-';
+      let possibleStakingBalance = '0';
+
+      if (greaterThan(this.inputAmount, '0')) {
+        possibleStakingBalance = this.inputAmount;
+      }
+      if (this.balance !== undefined) {
+        possibleStakingBalance = add(this.balance, possibleStakingBalance);
+      }
+
+      const apyNative = multiply(
+        divide(this.apy, 100),
+        multiply(possibleStakingBalance, this.ubtNativePrice)
+      );
+
+      return `~ $${formatToNative(apyNative)}`;
     },
     inputAsset(): TokenWithBalance {
       const data = getUBTAssetData(this.networkInfo.network);

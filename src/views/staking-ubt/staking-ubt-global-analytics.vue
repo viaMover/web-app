@@ -2,8 +2,8 @@
   <secondary-page class="analytics" has-back-button @back="handleBack">
     <template v-slot:title>
       <secondary-page-header
-        :description="$t('savingsPlus.overview.lblSPOverviewDescription')"
-        :title="$t('savingsPlus.overview.lblSPOverview')"
+        :description="$t('stakingUBT.overview.lblSPOverviewDescription')"
+        :title="$t('stakingUBT.overview.lblSPOverview')"
       />
     </template>
 
@@ -11,47 +11,47 @@
       <analytics-list-item
         :description="formattedDepositedAssets"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblDepositedAssets')"
+        :title="$t('stakingUBT.overview.lblDepositedAssets')"
       />
       <analytics-list-item
         :description="currentVariableAPY"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblCurrentVariableAPY')"
+        :title="$t('stakingUBT.overview.lblCurrentVariableAPY')"
       />
     </analytics-list>
 
-    <analytics-list :title="$t('savingsPlus.overview.lblSPStats')">
+    <analytics-list :title="$t('stakingUBT.overview.lblSPStats')">
       <analytics-list-item
         :description="earnedToday"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEarnedToday')"
+        :title="$t('stakingUBT.overview.lblEarnedToday')"
       />
       <analytics-list-item
         :description="earnedThisMonth"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEarnedThisMonth')"
+        :title="$t('stakingUBT.overview.lblEarnedThisMonth')"
       />
       <analytics-list-item
         :description="earnedTotal"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEarnedInTotal')"
+        :title="$t('stakingUBT.overview.lblEarnedInTotal')"
       />
     </analytics-list>
-    <analytics-list :title="$t('savingsPlus.overview.lblSPEstimation')">
+    <analytics-list :title="$t('stakingUBT.overview.lblSPEstimation')">
       <analytics-list-item
         :description="formattedEstimatedEarningsTomorrowNative"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEstimatedEarningsTomorrow')"
+        :title="$t('stakingUBT.overview.lblEstimatedEarningsTomorrow')"
       />
       <analytics-list-item
         :description="formattedEstimatedEarningsNextMonthNative"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEstimatedEarningsNextMonth')"
+        :title="$t('stakingUBT.overview.lblEstimatedEarningsNextMonth')"
       />
       <analytics-list-item
         :description="formattedEstimatedEarningsAnnuallyNative"
         :is-loading="isLoading"
-        :title="$t('savingsPlus.overview.lblEstimatedEarningsAnnually')"
+        :title="$t('stakingUBT.overview.lblEstimatedEarningsAnnually')"
       />
     </analytics-list>
   </secondary-page>
@@ -67,6 +67,8 @@ import {
   formatToNative,
   getSignIfNeeded
 } from '@/utils/format';
+import { getUBTAssetData } from '@/wallet/references/data';
+import { SmallTokenInfoWithIcon } from '@/wallet/types';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import {
@@ -75,7 +77,7 @@ import {
 } from '@/components/layout/secondary-page';
 
 export default Vue.extend({
-  name: 'SavingsPlusGlobalAnalytics',
+  name: 'StakingUbtGlobalAnalytics',
   components: {
     SecondaryPage,
     SecondaryPageHeader,
@@ -84,29 +86,27 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', { networkInfo: 'networkInfo' }),
-    ...mapState('savingsPlus', {
+    ...mapState('stakingUBT', {
       isLoading: 'isInfoLoading',
-      apy: 'APY',
-      dpy: 'DPY'
+      apy: 'apy',
+      dpy: 'dpy'
     }),
-    ...mapGetters('savingsPlus', {
-      infoEarnedThisMonthNative: 'infoEarnedThisMonthNative',
-      infoEarnedTotalNative: 'infoEarnedTotalNative',
+    ...mapGetters('stakingUBT', {
+      earnedThisMonthNative: 'earnedThisMonthNative',
+      earnedTotalNative: 'earnedTotalNative',
+      balance: 'balance',
       estimatedEarningsTomorrowNative: 'estimatedEarningsTomorrowNative',
-      infoBalanceUSDC: 'infoBalanceUSDC',
-      infoTotalPoolBalanceNative: 'infoTotalPoolBalanceNative',
-      infoBalanceNative: 'infoBalanceNative',
       estimatedEarningsNextMonthNative: 'estimatedEarningsNextMonthNative',
       estimatedEarningsAnnuallyNative: 'estimatedEarningsAnnuallyNative'
     }),
+    UBTAsset(): SmallTokenInfoWithIcon & { name: string } {
+      return getUBTAssetData(this.networkInfo.network);
+    },
     formattedDepositedAssets(): string {
-      return `${formatToNative(this.infoBalanceUSDC)} USDC`;
+      return `${formatToNative(this.balance)} ${this.UBTAsset.symbol}`;
     },
     currentVariableAPY(): string {
       return `${formatPercents(this.apy)}%`;
-    },
-    totalAssetsUnderManagement(): string {
-      return `$${formatToNative(this.infoTotalPoolBalanceNative)}`;
     },
     formattedEstimatedEarningsTomorrowNative(): string {
       const value = formatToNative(this.estimatedEarningsTomorrowNative);
@@ -125,11 +125,11 @@ export default Vue.extend({
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedThisMonth(): string {
-      const value = formatToNative(this.infoEarnedThisMonthNative);
+      const value = formatToNative(this.earnedTotalNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     },
     earnedTotal(): string {
-      const value = formatToNative(this.infoEarnedTotalNative);
+      const value = formatToNative(this.earnedTotalNative);
       return `${getSignIfNeeded(value, '+')}$${value}`;
     }
   },

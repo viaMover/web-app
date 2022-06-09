@@ -38,6 +38,7 @@ import { SmallTokenInfo, Transaction, TransactionTypes } from '@/wallet/types';
 export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'savings-plus.on-chain.service';
   protected readonly centralTransferProxyContract: HolyHandContract | undefined;
+
   protected readonly usdcAssetData: SmallTokenInfo;
   protected static MintMultiplier = 0.995;
   protected static DyMultiplier = 0.98;

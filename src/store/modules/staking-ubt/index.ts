@@ -13,8 +13,13 @@ export default {
     isInfoLoading: true,
     info: undefined,
     receipts: new Map(),
+
     ubtNativePrice: undefined,
+
+    apy: undefined,
+    dpy: undefined,
     contractUbtBalance: undefined,
+
     apiService: undefined,
     onChainService: undefined
   },

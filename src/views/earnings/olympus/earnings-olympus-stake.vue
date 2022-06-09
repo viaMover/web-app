@@ -76,7 +76,7 @@ import { sameAddress } from '@/utils/address';
 import { divide, fromWei, isZero, multiply, toWei } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { isSubsidizedAllowed } from '@/wallet/actions/subsidized';
-import { getOhmAssetData } from '@/wallet/references/data';
+import { getOhmAssetData, getSlippage } from '@/wallet/references/data';
 import {
   SmallToken,
   SmallTokenInfoWithIcon,
@@ -244,7 +244,7 @@ export default Vue.extend({
         inputAsset.address,
         inputInWei,
         true,
-        '10',
+        getSlippage(inputAsset.address, this.networkInfo.network),
         this.networkInfo.network
       );
     },

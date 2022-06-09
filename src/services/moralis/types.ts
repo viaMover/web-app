@@ -1,3 +1,8 @@
+import {
+  Erc20Transaction,
+  NativeTransaction
+} from '@/services/moralis/responses';
+
 export enum NetworkAlias {
   Eth = 'eth',
   Ropsten = 'ropsten',
@@ -11,3 +16,10 @@ export enum NetworkAlias {
   Avalanche = 'avalanche',
   Fantom = 'fantom'
 }
+
+export type TransactionsResponse<
+  T extends Array<NativeTransaction> | Array<Erc20Transaction>
+> = {
+  transactions: T;
+  hasMore: boolean;
+};

@@ -5,6 +5,7 @@ import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
 import { getCentralTransferProxyAbi } from './abi/central-transfer-proxy';
+import DCULT_ABI from './abi/dcult-abi.json';
 import EARNINGS_ETHEREUM_ABI from './abi/earnings-ethereum-abi.json';
 import EARNINGS_OLYMPUS_ABI from './abi/earnings-olympus-abi.json';
 import ERC20_ABI from './abi/erc20-abi.json';
@@ -24,6 +25,7 @@ import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
+import SAVINGS_PLUS_POOL_ABI from './abi/savings-plus-pool-abi.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
@@ -86,7 +88,11 @@ export type AddressMapKey =
   | 'AL_USD_TOKEN_ADDRESS'
   | 'AL_ETH_TOKEN_ADDRESS'
   | 'GTC_TOKEN_ADDRESS'
-  | 'CULT_TOKEN_ADDRESS';
+  | 'CULT_TOKEN_ADDRESS'
+  | 'DOLA_TOKEN_ADDRESS'
+  | 'DCULT_TOKEN_ADDRESS'
+  | 'LUSD_TOKEN_ADDRESS'
+  | 'SAVINGS_PLUS_POOL_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -149,7 +155,10 @@ const addresses = {
     ALCX_TOKEN_ADDRESS: '0xdBdb4d16EdA451D0503b854CF79D55697F90c8DF',
     GALCX_TOKEN_ADDRESS: '0x93Dede06AE3B5590aF1d4c111BC54C3f717E4b35',
     GTC_TOKEN_ADDRESS: '0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F',
-    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13'
+    CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
+    DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
+    DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
+    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -186,7 +195,8 @@ const addresses = {
     NFT_ORDER_OF_LIBERTY: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
     HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
     UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62',
-    NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8'
+    NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8',
+    SAVINGS_PLUS_POOL_ADDRESS: '0x77D5333d97A092cA01A783468E53E550C379dc3C'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -207,6 +217,7 @@ const addresses = {
   [Network.avalanche]: {}
 } as AddressMap;
 
+const defaultSlippage = '10'; // 10%
 const defaultAddress = '0x1';
 export const lookupAddress = <K extends AddressMapKey, N extends Network>(
   network: N,
@@ -242,6 +253,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_DEFAULT_PRICE: string;
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
+  CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -261,7 +273,10 @@ const constants = {
       '0x213793865Aca451B28fB15bf940b2b7E3aDd34a5',
       '0x70Fb7f7840bD33635a7e33792F2bBeBDCde19889',
       '0xdAc8619CD25a6FEDA197e354235c3bBA7d847b90'
-    ]
+    ],
+    CUSTOM_TOKEN_SLIPPAGE: new Map<string, string>([
+      ['0xf0f9d895aca5c8678f706fb8216fa22957685a13', '25']
+    ])
   },
   [Network.fantom]: {
     ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei(
@@ -351,6 +366,16 @@ const getALCXAssetData = (network: Network): SmallTokenInfoWithIcon => {
     symbol: 'ALCX',
     iconURL:
       'https://assets.coingecko.com/coins/images/14113/small/Alchemix.png'
+  };
+};
+
+const getCULTAssetData = (network: Network): SmallTokenInfoWithIcon => {
+  return {
+    address: lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
+    decimals: 18,
+    symbol: 'CULT',
+    iconURL:
+      'https://assets.coingecko.com/coins/images/23331/small/quxZPrbC_400x400.jpg'
   };
 };
 
@@ -446,6 +471,19 @@ const isTokenValidForTreasuryDeposit = (
   );
 };
 
+const getSlippage = (
+  tokenAddress: string,
+  network: Network,
+  defaultValue?: string
+): string => {
+  const customSlippages = lookupConstant(network, 'CUSTOM_TOKEN_SLIPPAGE');
+  return (
+    customSlippages?.get(tokenAddress.toLowerCase()) ??
+    defaultValue ??
+    defaultSlippage
+  );
+};
+
 const validTopUpAssets = (network: Network): Array<string> => {
   return [
     'eth',
@@ -479,7 +517,9 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'ALCX_TOKEN_ADDRESS'),
     lookupAddress(network, 'GALCX_TOKEN_ADDRESS'),
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
-    lookupAddress(network, 'CULT_TOKEN_ADDRESS')
+    lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LUSD_TOKEN_ADDRESS')
   ];
 };
 
@@ -496,6 +536,7 @@ export {
   getEURSAssetData,
   getUBTAssetData,
   getALCXAssetData,
+  getCULTAssetData,
   HOLY_PASSAGE_ABI,
   HOLY_POOL_ABI,
   HOLY_VISOR_ABI,
@@ -521,5 +562,8 @@ export {
   UBT_STAKING_CONTRACT_ABI,
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
-  validTopUpAssets
+  DCULT_ABI,
+  SAVINGS_PLUS_POOL_ABI,
+  validTopUpAssets,
+  getSlippage
 };

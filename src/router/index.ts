@@ -46,10 +46,6 @@ Vue.use(VueRouter);
 //           isFeatureEnabled(
 //             'isNftDropsEnabled',
 //             store.state?.account?.networkInfo?.network
-//           ) ||
-//           isFeatureEnabled(
-//             'isOrderOfLibertyNFTEnabled',
-//             store.state?.account?.networkInfo?.network
 //           )
 //         );
 //       }
@@ -71,7 +67,7 @@ Vue.use(VueRouter);
 //       component: () =>
 //         import(
 //           /* webpackChunkName: "savings" */ '@/views/savings/savings-root.vue'
-//         ),
+//           ),
 //       children: [
 //         {
 //           path: '',
@@ -79,7 +75,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "savings"*/ '@/views/savings/savings-manage-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'deposit',
@@ -87,7 +83,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "savings"*/ '@/views/savings/savings-deposit-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'withdraw',
@@ -95,7 +91,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "savings"*/ '@/views/savings/savings-withdraw-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'analytics',
@@ -103,7 +99,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "savings"*/ '@/views/savings/savings-global-analytics.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'month-statistics/:year/:month',
@@ -111,14 +107,14 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "savings" */ '@/views/savings/savings-monthly-statistics.vue'
-//             )
+//               )
 //         }
 //       ]
 //     },
 //     () =>
 //       import(
 //         /* webpackChunkName: "savings" */ '@/views/preload/preload-product/preload-product.vue'
-//       ),
+//         ),
 //     {
 //       customCondition: (store?: Store<RootStoreState>): boolean => {
 //         if (store === undefined) return false;
@@ -131,11 +127,75 @@ Vue.use(VueRouter);
 //   ),
 //   wrapWithCustomPreloadView(
 //     {
+//       path: '/savings-plus',
+//       component: () =>
+//         import(
+//           /* webpackChunkName: "savings-plus" */ '@/views/savings-plus/savings-plus-root.vue'
+//           ),
+//       children: [
+//         {
+//           path: '',
+//           name: 'savings-plus-manage',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-manage-wrapper.vue'
+//               )
+//         },
+//         {
+//           path: 'deposit',
+//           name: 'savings-plus-deposit',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-deposit-wrapper.vue'
+//               )
+//         },
+//         {
+//           path: 'withdraw',
+//           name: 'savings-plus-withdraw',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-withdraw-wrapper.vue'
+//               )
+//         },
+//         {
+//           path: 'analytics',
+//           name: 'savings-plus-global-analytics',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "savings-plus"*/ '@/views/savings-plus/savings-plus-global-analytics.vue'
+//               )
+//         },
+//         {
+//           path: 'month-statistics/:year/:month',
+//           name: 'savings-plus-month-stats',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "savings-plus" */ '@/views/savings-plus/savings-plus-monthly-statistics.vue'
+//               )
+//         }
+//       ]
+//     },
+//     () =>
+//       import(
+//         /* webpackChunkName: "savings-plus" */ '@/views/preload/preload-product/preload-product.vue'
+//         ),
+//     {
+//       customCondition: (store?: Store<RootStoreState>): boolean => {
+//         if (store === undefined) return false;
+//         return isFeatureEnabled(
+//           'isSavingsPlusEnabled',
+//           store.state?.account?.networkInfo?.network
+//         );
+//       }
+//     }
+//   ),
+//   wrapWithCustomPreloadView(
+//     {
 //       path: '/treasury',
 //       component: () =>
 //         import(
 //           /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-root.vue'
-//         ),
+//           ),
 //       children: [
 //         {
 //           path: '',
@@ -143,7 +203,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-manage-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'increase',
@@ -151,7 +211,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-increase-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'decrease',
@@ -159,7 +219,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-decrease-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'claim-and-burn',
@@ -167,7 +227,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'claim-and-burn-mobo',
@@ -175,7 +235,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-claim-and-burn-mobo-wrapper.vue'
-//             ),
+//               ),
 //           beforeEnter: checkFeatureFlags(['isTreasuryClaimAndBurnMOBOEnabled'])
 //         },
 //         {
@@ -184,7 +244,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-powercard-wrapper.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'analytics',
@@ -192,7 +252,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury"*/ '@/views/treasury/treasury-global-analytics.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'month-statistics/:year/:month',
@@ -200,14 +260,14 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "treasury" */ '@/views/treasury/treasury-monthly-statistics.vue'
-//             )
+//               )
 //         }
 //       ]
 //     },
 //     () =>
 //       import(
 //         /* webpackChunkName: "treasury" */ '@/views/preload/preload-product/preload-product.vue'
-//       ),
+//         ),
 //     {
 //       customCondition: (store?: Store<RootStoreState>): boolean => {
 //         if (store === undefined) return false;
@@ -224,7 +284,7 @@ Vue.use(VueRouter);
 //       component: () =>
 //         import(
 //           /* webpackChunkName: "governance" */ '@/views/governance/governance-root.vue'
-//         ),
+//           ),
 //       children: [
 //         {
 //           path: 'create',
@@ -233,11 +293,11 @@ Vue.use(VueRouter);
 //             default: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/views/governance/governance-create-proposal.vue'
-//               ),
+//                 ),
 //             leftRail: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
-//               )
+//                 )
 //           }
 //         },
 //         {
@@ -246,11 +306,11 @@ Vue.use(VueRouter);
 //             default: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/views/governance/governance-view-root.vue'
-//               ),
+//                 ),
 //             leftRail: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail-view.vue'
-//               )
+//                 )
 //           },
 //           children: [
 //             {
@@ -259,7 +319,7 @@ Vue.use(VueRouter);
 //               component: () =>
 //                 import(
 //                   /* webpackChunkName: "governance" */ '@/views/governance/governance-view.vue'
-//                 )
+//                   )
 //             },
 //             {
 //               path: 'analytics',
@@ -267,7 +327,7 @@ Vue.use(VueRouter);
 //               component: () =>
 //                 import(
 //                   /* webpackChunkName: "governance" */ '@/views/governance/governance-analytics.vue'
-//                 )
+//                   )
 //             },
 //             {
 //               path: 'vote/:decision',
@@ -275,7 +335,7 @@ Vue.use(VueRouter);
 //               component: () =>
 //                 import(
 //                   /* webpackChunkName: "governance" */ '@/views/governance/governance-vote.vue'
-//                 )
+//                   )
 //             }
 //           ]
 //         },
@@ -286,11 +346,11 @@ Vue.use(VueRouter);
 //             default: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/views/governance/governance-global-analytics.vue'
-//               ),
+//                 ),
 //             leftRail: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
-//               )
+//                 )
 //           }
 //         },
 //         {
@@ -300,11 +360,11 @@ Vue.use(VueRouter);
 //             default: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/views/governance/governance-view-all.vue'
-//               ),
+//                 ),
 //             leftRail: () =>
 //               import(
 //                 /* webpackChunkName: "governance" */ '@/components/governance/governance-left-rail.vue'
-//               )
+//                 )
 //           }
 //         }
 //       ]
@@ -325,7 +385,7 @@ Vue.use(VueRouter);
 //       component: () =>
 //         import(
 //           /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-root.vue'
-//         ),
+//           ),
 //       children: [
 //         {
 //           path: 'view/:id',
@@ -333,7 +393,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: '',
@@ -341,7 +401,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-view-all.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'redeem/:id',
@@ -349,7 +409,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nibble-shop" */ '@/views/nibble-shop/nibble-shop-redeem.vue'
-//             )
+//               )
 //         }
 //       ]
 //     },
@@ -375,7 +435,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-all.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/order-of-liberty',
@@ -384,7 +444,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-order-of-liberty.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/vaults',
@@ -392,7 +452,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-vaults.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/swap-passport',
@@ -400,7 +460,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-swap-passport.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/sweet-and-sour',
@@ -408,7 +468,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-sweet-and-sour.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/unexpected-move',
@@ -416,7 +476,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-unexpected-move.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/moving-with-olympus',
@@ -424,7 +484,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-moving-with-olympus.vue'
-//             )
+//               )
 //         },
 //         {
 //           path: 'view/dice-project',
@@ -432,22 +492,24 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-dice.vue'
-//             )
+//               )
+//         },
+//         {
+//           path: 'view/baseledger-staking-og',
+//           name: 'baseledger-staking-og',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-baseledger-staking-og.vue'
+//               )
 //         }
 //       ]
 //     },
 //     {
 //       customCondition: (store?: Store<RootStoreState>): boolean => {
 //         if (store === undefined) return false;
-//         return (
-//           isFeatureEnabled(
-//             'isNftDropsEnabled',
-//             store.state?.account?.networkInfo?.network
-//           ) ||
-//           isFeatureEnabled(
-//             'isOrderOfLibertyNFTEnabled',
-//             store.state?.account?.networkInfo?.network
-//           )
+//         return isFeatureEnabled(
+//           'isNftDropsEnabled',
+//           store.state?.account?.networkInfo?.network
 //         );
 //       }
 //     }
@@ -468,29 +530,40 @@ Vue.use(VueRouter);
 //       component: () =>
 //         import(
 //           /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-root.vue'
-//         ),
+//           ),
 //       children: [
-//         {
-//           path: 'top-up/step/:step',
-//           name: 'debit-card-top-up',
-//           component: () =>
-//             import(
-//               /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
-//             ),
-//           props: (to) => ({
-//             step: to.params.step
-//           }),
-//           beforeEnter: (to, from, next) => {
-//             formStepsGuard('debit-card-top-up')(to, from, next);
+//         wrapWithMeta(
+//           {
+//             path: 'top-up/step/:step',
+//             name: 'debit-card-top-up',
+//             component: () =>
+//               import(
+//                 /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-top-up.vue'
+//                 ),
+//             props: (to) => ({
+//               step: to.params.step
+//             }),
+//             beforeEnter: (to, from, next) => {
+//               formStepsGuard('debit-card-top-up')(to, from, next);
+//             }
+//           },
+//           {
+//             customCondition: (store?: Store<RootStoreState>): boolean => {
+//               if (store === undefined) return false;
+//               return (
+//                 store.state.debitCard?.emailHash !== undefined &&
+//                 store.state.debitCard?.emailSignature !== undefined
+//               );
+//             }
 //           }
-//         },
+//         ),
 //         {
 //           path: 'change-skin',
 //           name: 'debit-card-change-skin',
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-change-skin.vue'
-//             ),
+//               ),
 //           beforeEnter: checkFeatureFlags(['isDebitCardChangeSkinEnabled'])
 //         },
 //         {
@@ -499,7 +572,7 @@ Vue.use(VueRouter);
 //           component: () =>
 //             import(
 //               /* webpackChunkName: "debit-card" */ '@/views/debit-card/debit-card-manage.vue'
-//             )
+//               )
 //         }
 //       ]
 //     },
@@ -519,38 +592,54 @@ Vue.use(VueRouter);
 //       component: () =>
 //         import(
 //           /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-root.vue'
-//         ),
+//           ),
 //       children: [
 //         {
 //           path: '',
 //           name: 'staking-ubt-manage',
 //           component: () =>
 //             import(
-//               /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-manage-wrapper.vue'
-//             )
+//               /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-manage-wrapper.vue'
+//               )
 //         },
 //         {
 //           path: 'deposit',
 //           name: 'staking-ubt-deposit',
 //           component: () =>
 //             import(
-//               /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-deposit-wrapper.vue'
-//             )
+//               /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-deposit-wrapper.vue'
+//               )
 //         },
 //         {
 //           path: 'withdraw',
 //           name: 'staking-ubt-withdraw',
 //           component: () =>
 //             import(
-//               /* webpackChunkName: "staking-ubt"*/ '@/views/staking-ubt/staking-ubt-withdraw-wrapper.vue'
-//             )
+//               /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-withdraw-wrapper.vue'
+//               )
+//         },
+//         {
+//           path: 'analytics',
+//           name: 'staking-ubt-global-analytics',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-global-analytics.vue'
+//               )
+//         },
+//         {
+//           path: 'month-statistics/:year/:month',
+//           name: 'staking-ubt-month-stats',
+//           component: () =>
+//             import(
+//               /* webpackChunkName: "staking-ubt" */ '@/views/staking-ubt/staking-ubt-monthly-statistics.vue'
+//               )
 //         }
 //       ]
 //     },
 //     () =>
 //       import(
 //         /* webpackChunkName: "staking-ubt" */ '@/views/preload/preload-product/preload-product.vue'
-//       ),
+//         ),
 //     {
 //       customCondition: (store?: Store<RootStoreState>): boolean => {
 //         if (store === undefined) return false;
