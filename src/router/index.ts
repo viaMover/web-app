@@ -1,11 +1,8 @@
 import Vue from 'vue';
-import VueRouter, { NavigationFailureType, RouteConfig } from 'vue-router';
+import VueRouter, { RouteConfig } from 'vue-router';
 import { Store } from 'vuex';
 
-import {
-  wrapWithCustomPreloadView,
-  wrapWithMeta
-} from '@/router/descending-meta-wrapper';
+import { wrapWithMeta } from '@/router/descending-meta-wrapper';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
 import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';
@@ -815,8 +812,14 @@ router.beforeResolve(requireCustomCondition(router));
 
 router.onError((error) => {
   if (
-    VueRouter.isNavigationFailure(error, NavigationFailureType.duplicated) ||
-    VueRouter.isNavigationFailure(error, NavigationFailureType.redirected)
+    VueRouter.isNavigationFailure(
+      error,
+      VueRouter.NavigationFailureType.duplicated
+    ) ||
+    VueRouter.isNavigationFailure(
+      error,
+      VueRouter.NavigationFailureType.redirected
+    )
   ) {
     console.warn(`prevented navigation: ${error.message} (${error.type})`);
     return;
