@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Network } from '@/utils/networkTypes';
 
 import { Result } from '../responses';
-import { CoingeckoPlatform } from './mapper';
 
 export enum TokenAlias {
   Ethereum = 'ethereum',
@@ -83,45 +82,6 @@ export const getUsdcPriceInEur = async (): Promise<Result<string, string>> => {
   };
 };
 
-export const getPriceByAddress = async (
-  platformId: CoingeckoPlatform,
-  addresses: Array<string>,
-  currencies: Array<string>,
-  opts?: GetSimplePriceOptions
-): Promise<Result<SimpleTokenPriceRecord, string>> => {
-  try {
-    const res = await axios.get<SimpleTokenPriceRecord>(
-      `https://api.coingecko.com/api/v3/simple/token_price/${platformId}`,
-      {
-        params: {
-          ...opts,
-          contract_addresses: addresses.join(','),
-          vs_currencies: currencies.join(',')
-        },
-        transformResponse: (
-          data: string | Record<string, unknown> | Array<unknown>
-        ): Record<string, unknown> | Array<unknown> => {
-          if (typeof data === 'string') {
-            return JSON.parse(data);
-          }
-
-          return data;
-        },
-        validateStatus: (status): boolean => {
-          return status === 200;
-        }
-      }
-    );
-
-    return { isError: false, result: res.data };
-  } catch (error) {
-    return {
-      isError: true,
-      error: error instanceof Error ? error.message : String(error)
-    };
-  }
-};
-
 export const getPrice = async (
   ids: string | Array<string>,
   currencies: string | Array<string>,
@@ -160,12 +120,6 @@ export const getPrice = async (
       error: error instanceof Error ? error.message : String(error)
     };
   }
-};
-
-type SimpleTokenPriceRecord = {
-  [address: string]: {
-    [currency: string]: number;
-  };
 };
 
 type SimplePriceRecord = {
