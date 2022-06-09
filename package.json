@@ -4,15 +4,16 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 3000",
-    "serve-https": "vue-cli-service serve --port 3000 --https true",
-    "serve-stage": "vue-cli-service serve --port 3000 --mode stage",
-    "build-prod": "vue-cli-service build",
-    "build-stage": "vue-cli-service build --mode stage --silent",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
+    "build-prod": "vue-cli-service build",
+    "build-stage": "vue-cli-service build --mode stage --silent",
+    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/i18n/messages/**/*.json\"",
     "lint:css": "stylelint src/styles/*.less --syntax less",
-    "spell": "cspell src/**/*.{js,ts,vue}",
     "postinstall": "cd tools/token_list && yarn install --frozen-lockfile",
+    "serve-https": "vue-cli-service serve --port 3000 --https true",
+    "serve-stage": "vue-cli-service serve --port 3000 --mode stage",
+    "spell": "cspell src/**/*.{js,ts,vue}",
     "tokens:list:generate": "node ./tools/token_list/index.js"
   },
   "dependencies": {
@@ -55,7 +56,7 @@
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.7",
     "vue-clickaway": "^2.2.2",
-    "vue-i18n": "^8.24.4",
+    "vue-i18n": "^8.26.3",
     "vue-image-fallback": "^1.0.0",
     "vue-infinite-loading": "^2.4.5",
     "vue-loading-skeleton": "^1.1.9",
@@ -107,6 +108,7 @@
     "simple-git": "^2.39.0",
     "stylelint": "^13.13.1",
     "typescript": "~4.1.5",
+    "vue-cli-plugin-i18n": "~2.3.1",
     "vue-template-compiler": "^2.6.11"
   },
   "gitHooks": {
