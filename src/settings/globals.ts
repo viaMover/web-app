@@ -69,7 +69,12 @@ const values: Globals = {
   isDebitCardChangeSkinEnabled: false,
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
-  isSwapEnabled: [Network.mainnet, Network.fantom, Network.polygon],
+  isSwapEnabled: [
+    Network.mainnet,
+    Network.fantom,
+    Network.polygon,
+    Network.avalanche
+  ],
   isExplorerEnabled: [
     Network.mainnet,
     Network.binance,
@@ -90,7 +95,12 @@ const values: Globals = {
   isVaultsRaceEnabled: false,
   isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
-  isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
+  isSavingsPlusEnabled: [
+    Network.mainnet,
+    Network.polygon,
+    Network.fantom,
+    Network.avalanche
+  ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
   isMoverAPISavingsServiceFieldsReducerEnabled: true,
