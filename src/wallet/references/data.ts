@@ -217,6 +217,10 @@ const addresses = {
   [Network.avalanche]: {
     HOLY_HAND_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
     USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
+  },
+  [Network.binance]: {
+    HOLY_HAND_ADDRESS: '0x', //TODO: fill
+    USDC_TOKEN_ADDRESS: '0x' // TODO: fill
   }
 } as AddressMap;
 

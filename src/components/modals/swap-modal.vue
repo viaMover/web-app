@@ -350,7 +350,10 @@ export default Vue.extend({
       if (this.input.asset === undefined) {
         return '0';
       }
-      if (this.input.asset.address === 'eth' && !this.useSubsidized) {
+      if (
+        isBaseAsset(this.input.asset.address, this.networkInfo?.network) &&
+        !this.useSubsidized
+      ) {
         const txnPriceInWeth = multiply(
           this.allGasLimit,
           this.selectedGasPriceInWEI
@@ -421,11 +424,11 @@ export default Vue.extend({
       this.approveGasLimit = '0';
 
       if (newVal.swapType === 'getMove') {
-        const eth = this.tokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.tokens.find((t: TokenWithBalance) =>
+          isBaseAsset(t.address, this.networkInfo?.netowrk)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -451,11 +454,11 @@ export default Vue.extend({
           this.output.nativeAmount = '';
         }
       } else {
-        const eth = this.tokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.tokens.find((t: TokenWithBalance) =>
+          isBaseAsset(t.address, this.networkInfo?.netowrk)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {

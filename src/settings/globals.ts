@@ -73,7 +73,8 @@ const values: Globals = {
     Network.mainnet,
     Network.fantom,
     Network.polygon,
-    Network.avalanche
+    Network.avalanche,
+    Network.binance
   ],
   isExplorerEnabled: [
     Network.mainnet,
@@ -99,7 +100,8 @@ const values: Globals = {
     Network.mainnet,
     Network.polygon,
     Network.fantom,
-    Network.avalanche
+    Network.avalanche,
+    Network.binance
   ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
