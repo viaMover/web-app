@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 3000",
+    "serve-https": "vue-cli-service serve --port 3000 --https true",
     "serve-stage": "vue-cli-service serve --port 3000 --mode stage",
     "build-prod": "vue-cli-service build",
     "build-stage": "vue-cli-service build --mode stage --silent",
