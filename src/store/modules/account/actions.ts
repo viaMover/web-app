@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
 import { sendGlobalTopMessageEvent } from '@/global-event-bus';
+import i18n from '@/i18n';
 import {
   bootIntercomSession,
   disconnectIntercomSession
@@ -206,9 +207,9 @@ const actions: ActionFuncs<
       console.log("can't init the wallet");
       console.log(err);
       sendGlobalTopMessageEvent(
-        (rootState.i18n?.t('errors.default', {
+        i18n.t('errors.default', {
           code: CommonErrors.INIT_WALLET_ERROR
-        }) as string) ?? 'Oh no. Something went wrong',
+        }) as string,
         'error'
       );
       throw err;
@@ -601,9 +602,9 @@ const actions: ActionFuncs<
           });
         } catch (err: any) {
           sendGlobalTopMessageEvent(
-            (rootState.i18n?.t('errors.default', {
+            i18n.t('errors.default', {
               code: CommonErrors.ADD_ETH_CHAIN_ERROR
-            }) as string) ?? 'Oh no. Something went wrong',
+            }) as string,
             'error'
           );
           console.error(
@@ -613,9 +614,9 @@ const actions: ActionFuncs<
         }
       } else {
         sendGlobalTopMessageEvent(
-          (rootState.i18n?.t('errors.default', {
+          i18n.t('errors.default', {
             code: CommonErrors.SWITCH_ETH_CHAIN_ERROR
-          }) as string) ?? 'Oh no. Something went wrong',
+          }) as string,
           'error'
         );
         console.log(

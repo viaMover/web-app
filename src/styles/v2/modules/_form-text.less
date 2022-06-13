@@ -1,4 +1,35 @@
 .form-text {
   margin-top: 16px;
   color: var(--secondary-text);
+
+  .swap-message {
+    @lineHeight: 16px;
+    font-size: 12px;
+    line-height: @lineHeight;
+    display: flex;
+
+    .icon {
+      margin: 0 4px 0 8px;
+      display: inline-block;
+      width: @lineHeight;
+      height: $width;
+
+      img {
+        width: inherit;
+        height: inherit;
+      }
+    }
+
+    .action,
+    .amount {
+      color: var(--secondary-text);
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    .amount {
+      color: var(--primary-text);
+      @font-bold();
+    }
+  }
 }

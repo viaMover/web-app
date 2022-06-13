@@ -16,25 +16,27 @@ import { GovernanceStoreState } from './types';
 
 const now = dayjs().unix();
 
+export const initialState: GovernanceStoreState = {
+  isLoadingMinimal: false,
+  isLoading: false,
+
+  spaceInfo: { data: undefined, expDate: Date.now() },
+  proposals: new Map(),
+
+  communityVotingPower: { data: '0', expDate: Date.now() },
+  votingPowerSelf: { data: '0', expDate: Date.now() },
+  proposalDurationDays: defaultProposalDurationDays,
+  powerNeededToBecomeAProposer: getDefaultPowerNeededToBecomeAProposer(now),
+  minimumVotingThresholdMultiplier:
+    getDefaultMinimumVotingThresholdMultiplier(now),
+  spaceId: moverSpaceId,
+  blockNumberCached: { data: undefined, expDate: Date.now() }
+};
+
 export default {
   namespaced: true,
   strict: !isProduction(),
-  state: {
-    isLoadingMinimal: false,
-    isLoading: false,
-
-    spaceInfo: { data: undefined, expDate: Date.now() },
-    proposals: new Map(),
-
-    communityVotingPower: { data: '0', expDate: Date.now() },
-    votingPowerSelf: { data: '0', expDate: Date.now() },
-    proposalDurationDays: defaultProposalDurationDays,
-    powerNeededToBecomeAProposer: getDefaultPowerNeededToBecomeAProposer(now),
-    minimumVotingThresholdMultiplier:
-      getDefaultMinimumVotingThresholdMultiplier(now),
-    spaceId: moverSpaceId,
-    blockNumberCached: { data: undefined, expDate: Date.now() }
-  },
+  state: () => initialState,
   actions,
   getters,
   mutations

@@ -11,7 +11,7 @@ module.exports = {
     '@vue/prettier/@typescript-eslint',
     'plugin:@intlify/vue-i18n/recommended'
   ],
-  plugins: ['html', 'simple-import-sort'],
+  plugins: ['html', 'simple-import-sort', '@intlify/vue-i18n'],
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2020

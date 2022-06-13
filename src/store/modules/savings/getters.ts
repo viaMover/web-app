@@ -5,12 +5,16 @@ import {
 } from '@/services/mover';
 import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
+import { sameAddress } from '@/utils/address';
 import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
 import { getUSDCAssetData } from '@/wallet/references/data';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { SavingsStoreState } from './types';
 
 type Getters = {
+  usdcTokenInfo: TokenWithBalance;
   savingsInfo: SavingsInfo | undefined;
   savingsBalanceNative: string;
   savingsInfoBalanceUSDC: string;
@@ -202,6 +206,27 @@ const getters: GettersFuncs<Getters, SavingsStoreState> = {
         return item.data;
       }
       return undefined;
+    };
+  },
+  usdcTokenInfo(state, getters, rootState): TokenWithBalance {
+    const network = rootState.account.networkInfo?.network ?? Network.mainnet;
+    const usdcToken = getUSDCAssetData(network);
+    const walletToken = rootState.account.tokens.find((t) =>
+      sameAddress(t.address, usdcToken.address)
+    );
+    if (walletToken !== undefined) {
+      return walletToken;
+    }
+
+    return {
+      name: 'USD Coin',
+      address: usdcToken.address,
+      decimals: usdcToken.decimals,
+      balance: '0',
+      logo: usdcToken.iconURL,
+      priceUSD: getters.usdcNativePrice,
+      marketCap: Number.MAX_SAFE_INTEGER,
+      symbol: usdcToken.symbol
     };
   }
 };

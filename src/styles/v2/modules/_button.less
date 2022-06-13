@@ -2,8 +2,8 @@
   height: @button-height;
   width: auto;
   padding: 8px 24px;
-  color: var(--primary-text);
-  background-color: var(--main-item);
+  color: var(--button-text-secondary);
+  background-color: var(--button-secondary);
   cursor: pointer;
   border-radius: 20px;
   display: flex;
@@ -79,12 +79,17 @@
   }
 
   &.primary {
-    color: var(--primary-text);
-    background-color: var(--main-item);
+    color: var(--button-text-primary);
+    background-color: var(--button-primary);
   }
 
   &.secondary {
-    color: var(--secondary-text);
+    color: var(--button--text-secondary);
+    background-color: var(--button-secondary);
+  }
+
+  &.page {
+    color: var(--primary-text);
     background-color: var(--main-item);
   }
 

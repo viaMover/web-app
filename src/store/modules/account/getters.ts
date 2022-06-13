@@ -17,6 +17,7 @@ import {
 import {
   AccountStoreState,
   ensureAccountStateIsSafe,
+  Formatter,
   nativeCurrencyFormatters,
   TransactionGroup
 } from './types';
@@ -267,7 +268,18 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
   getCurrentAddresses(state): string[] {
     return state.addresses;
   },
-  nativeCurrencyFormatter(state): (value: number | string) => string {
+  nativeCurrencyFormatter(
+    state
+  ): (value: number | string, forceFullCurrency?: boolean) => string {
+    if (!(state.nativeCurrency in nativeCurrencyFormatters)) {
+      return formatToNative;
+    }
+
+    const defaultFormatter = (value: string | number, formatter?: Formatter) =>
+      `${formatToNative(value)} ${
+        formatter?.currency ?? state.nativeCurrency.toUpperCase()
+      }`;
+
     const formatter = nativeCurrencyFormatters[state.nativeCurrency];
     if (formatter === undefined) {
       return formatToNative;
@@ -275,10 +287,16 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
 
     switch (formatter.position) {
       case 'postfix':
-        return (value) => `${formatToNative(value)}${formatter.sign}`;
+        return (value, forceFullCurrency) =>
+          forceFullCurrency
+            ? defaultFormatter(value, formatter)
+            : `${formatToNative(value)}${formatter.sign}`;
       case 'prefix':
       default:
-        return (value) => `${formatter.sign}${formatToNative(value)}`;
+        return (value, forceFullCurrency) =>
+          forceFullCurrency
+            ? defaultFormatter(value, formatter)
+            : `${formatToNative(value)}${formatter.sign}`;
     }
   },
   walletBalanceMove(state, getters, rootState): string {

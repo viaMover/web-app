@@ -81,12 +81,12 @@ import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import { InputMode } from '@/components/forms';
 import { Step as TransactionStep } from '@/components/forms/form-loader';
-import LoaderForm from '@/components/forms/loader-form/loader-form.vue';
 import PrepareForm from '@/components/forms/prepare-form/prepare-form.vue';
 import ReviewForm from '@/components/forms/review-form.vue';
 import { PictureDescriptor } from '@/components/html5';
 import CustomPicture from '@/components/html5/custom-picture.vue';
-import SecondaryPage from '@/components/layout/secondary-page/secondary-page.vue';
+import LoaderForm from '@/components/v1.2/form-controls/loader-form/loader-form.vue';
+import SecondaryPage from '@/components/v1.2/layout/secondary-page.vue';
 
 type processStep = 'prepare' | 'review' | 'loader';
 

@@ -1,5 +1,9 @@
 <template>
-  <base-button v-bind="$attrs" class="round button-close" v-on="$listeners">
+  <base-button
+    v-bind="$attrs"
+    class="round button-close page"
+    v-on="$listeners"
+  >
     <base-icon icon-class="icon-close" />
   </base-button>
 </template>

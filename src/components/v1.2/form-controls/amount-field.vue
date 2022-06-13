@@ -11,6 +11,7 @@
         :max="assetBalance"
         min="0"
         placeholder="0.00"
+        required
         :step="step"
         type="number"
         :value="amount"
@@ -20,7 +21,9 @@
         {{ assetSymbol }}
       </div>
     </div>
-    <p v-if="descriptionText" class="form-text">{{ descriptionText }}</p>
+    <p class="form-text">
+      <slot name="description">{{ descriptionText }}</slot>
+    </p>
   </div>
 </template>
 

@@ -6,23 +6,25 @@ import getters, { GetterType } from './getters';
 import mutations, { MutationType } from './mutations';
 import { StakingUbtStoreState } from './types';
 
+export const initialState = {
+  isInfoLoading: true,
+  info: undefined,
+  receipts: new Map(),
+
+  ubtNativePrice: undefined,
+
+  apy: undefined,
+  dpy: undefined,
+  contractUbtBalance: undefined,
+
+  apiService: undefined,
+  onChainService: undefined
+};
+
 export default {
   namespaced: true,
   strict: !isProduction(),
-  state: {
-    isInfoLoading: true,
-    info: undefined,
-    receipts: new Map(),
-
-    ubtNativePrice: undefined,
-
-    apy: undefined,
-    dpy: undefined,
-    contractUbtBalance: undefined,
-
-    apiService: undefined,
-    onChainService: undefined
-  },
+  state: () => initialState,
   actions,
   getters,
   mutations

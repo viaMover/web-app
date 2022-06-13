@@ -1,7 +1,7 @@
 <template>
-  <div class="section arrow">
+  <div class="form-section form-direction-pair">
     <div class="item">
-      <slot name="first-token-image">
+      <slot name="left">
         <template v-if="left">
           <custom-picture
             v-if="isLeftPictureDescriptor"
@@ -21,14 +21,12 @@
         </template>
       </slot>
     </div>
-    <div class="item">
-      <div class="item-arrow">
-        <span />
-        <span />
-      </div>
+    <div class="item item-arrow">
+      <span />
+      <span />
     </div>
-    <div class="item item-image">
-      <slot name="second-token-image">
+    <div class="item">
+      <slot name="right">
         <template v-if="right">
           <custom-picture
             v-if="isRightPictureDescriptor"

@@ -2,6 +2,7 @@
   <div class="item">
     <token-image
       :address="token.address"
+      hide-shadow
       :src="token.logo"
       :symbol="token.symbol"
     />

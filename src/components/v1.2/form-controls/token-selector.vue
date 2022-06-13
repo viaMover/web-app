@@ -22,7 +22,9 @@
         {{ token.symbol }}
       </template>
     </base-dropdown>
-    <p v-if="descriptionText" class="form-text">{{ descriptionText }}</p>
+    <p class="form-text">
+      <slot>{{ descriptionText }}</slot>
+    </p>
   </div>
 </template>
 

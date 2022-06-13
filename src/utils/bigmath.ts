@@ -100,6 +100,6 @@ export const convertNativeAmountFromAmount = (
 ): string => {
   if (isZero(priceUnit)) return '0';
   return new BigNumber(
-    new BigNumber(value).times(priceUnit).toFixed(2, BigNumber.ROUND_DOWN)
+    new BigNumber(value).times(priceUnit).toFixed(18, BigNumber.ROUND_DOWN)
   ).toFixed();
 };

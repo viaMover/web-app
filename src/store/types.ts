@@ -11,34 +11,33 @@ import { RadarStoreState } from '@/store/modules/radar/types';
 import { SavingsStoreState } from '@/store/modules/savings/types';
 import { SavingsPlusStoreState } from '@/store/modules/savings-plus/types';
 import { ShopStoreState } from '@/store/modules/shop/types';
+import { StakingUbtStoreState } from '@/store/modules/staking-ubt/types';
 import { TreasuryStoreState } from '@/store/modules/treasury/types';
 
 import { AccountStoreState } from './modules/account/types';
 import { EarningsStoreState } from './modules/earnings/types';
 
-export interface RootStoreState {
+export type RootStoreState = {
   i18n: IVueI18n | null;
   isThemeInitialized: boolean;
   preferredTheme: Theme;
   theme: Theme;
   colors: Record<string, string>;
-
-  // rootState members
-
-  account?: AccountStoreState;
-  shop?: ShopStoreState;
-  nft?: NFTStoreState;
-  governance?: GovernanceStoreState;
-  radar?: RadarStoreState;
-  modals?: ModalsStoreState;
-  games?: GamesStoreState;
-  earnings?: EarningsStoreState;
-  savings?: SavingsStoreState;
-  treasury?: TreasuryStoreState;
-  debitCard?: DebitCardStoreState;
-  savingsPlus?: SavingsPlusStoreState;
-  // rootState members end
-}
+  account: AccountStoreState;
+} & Partial<{
+  shop: ShopStoreState;
+  nft: NFTStoreState;
+  governance: GovernanceStoreState;
+  radar: RadarStoreState;
+  modals: ModalsStoreState;
+  games: GamesStoreState;
+  earnings: EarningsStoreState;
+  savings: SavingsStoreState;
+  treasury: TreasuryStoreState;
+  debitCard: DebitCardStoreState;
+  savingsPlus: SavingsPlusStoreState;
+  stakingUBT: StakingUbtStoreState;
+}>;
 
 export type DataStoreWrapper<T> = {
   expDate: number;

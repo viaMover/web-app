@@ -33,8 +33,6 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
-import BigNumber from 'bignumber.js';
-
 import { isTokenWithBalance, Token, TokenWithBalance } from '@/wallet/types';
 
 import { CustomPicture, PictureSourceDescriptor } from '@/components/html5';
@@ -73,10 +71,11 @@ export default Vue.extend({
       networkInfo: 'networkInfo'
     }),
     assetBalance(): string {
-      if (isTokenWithBalance(this.item)) {
-        return new BigNumber(this.item.balance).decimalPlaces(4).toFormat();
+      if (!isTokenWithBalance(this.item)) {
+        return '';
       }
-      return '0';
+
+      return this.formatAsCrypto(this.item.balance);
     },
     hasInfoButton(): boolean {
       return this.item.symbol !== 'ETH';

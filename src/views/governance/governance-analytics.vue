@@ -66,7 +66,7 @@ import { formatToDecimals } from '@/utils/format';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 import { SecondaryPage } from '@/components/layout';
-import SecondaryPageHeader from '@/components/layout/secondary-page/secondary-page-header.vue';
+import SecondaryPageHeader from '@/components/v1.2/layout/secondary-page-header.vue';
 
 export default Vue.extend({
   name: 'GovernanceAnalytics',

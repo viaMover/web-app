@@ -6,27 +6,29 @@ import getters, { GetterType } from './getters';
 import mutations, { MutationType } from './mutations';
 import { DebitCardStoreState } from './types';
 
+export const initialState: DebitCardStoreState = {
+  availableSkins: undefined,
+  cardInfo: undefined,
+  cardState: 'order_now',
+  currentSkin: undefined,
+  error: undefined,
+  eventHistory: [],
+  isLoading: false,
+  loadingPromise: undefined,
+  isInitialized: false,
+  email: undefined,
+  emailHash: undefined,
+  emailSignature: undefined,
+  orderState: undefined,
+  phoneNumber: undefined,
+  kycLink: undefined,
+  wxBTRFLYrealIndex: toWei(1, 9),
+  gALCXToALCXMultiplier: toWei(1.2, 18)
+};
+
 export default {
   namespaced: true,
-  state: {
-    availableSkins: undefined,
-    cardInfo: undefined,
-    cardState: 'order_now',
-    currentSkin: undefined,
-    error: undefined,
-    eventHistory: [],
-    isLoading: false,
-    loadingPromise: undefined,
-    isInitialized: false,
-    email: undefined,
-    emailHash: undefined,
-    emailSignature: undefined,
-    orderState: undefined,
-    phoneNumber: undefined,
-    kycLink: undefined,
-    wxBTRFLYrealIndex: toWei(1, 9),
-    gALCXToALCXMultiplier: toWei(1.2, 18)
-  },
+  state: () => initialState,
   actions,
   getters,
   mutations

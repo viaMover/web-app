@@ -6,11 +6,12 @@
     target="_blank"
   >
     <picture v-if="isLoading" class="icon token-icon">
-      <img :alt="$t('imageAlt')" src="@/assets/images/ios-spinner.svg" />
+      <img alt="" :src="spinnerPicture.src" />
     </picture>
     <token-image
       v-else
       :address="tokenAddress"
+      hide-shadow
       :src="tokenImageSrc"
       :symbol="tokenSymbol"
     />
@@ -26,11 +27,13 @@
 import Vue, { PropType } from 'vue';
 import { mapState } from 'vuex';
 
+import { getThemedPicture } from '@/assets/images/icons/spinner';
 import { getTransactionHumanType } from '@/services/mover/transactions/mapper';
 import { fromWei, multiply } from '@/utils/bigmath';
 import { formatToDecimals } from '@/utils/format';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 
+import { PictureDescriptor } from '@/components/html5';
 import { TokenImage } from '@/components/tokens';
 
 export default Vue.extend({
@@ -45,7 +48,11 @@ export default Vue.extend({
     }
   },
   computed: {
+    ...mapState(['theme']),
     ...mapState('account', ['networkInfo']),
+    spinnerPicture(): PictureDescriptor {
+      return getThemedPicture(this.theme);
+    },
     head(): string {
       const moverTransactionHeader = getTransactionHumanType(
         this.transaction,

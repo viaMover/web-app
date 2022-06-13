@@ -3,7 +3,7 @@
     <back-button
       v-if="hasBackButton"
       class="page-back-button fixed"
-      @back="handleBack"
+      @click="handleBack"
     />
     <slot name="title" />
     <slot name="info" />
@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import BackButton from '@/components/buttons/back-button.vue';
+import BackButton from '@/components/v1.2/buttons/back-button.vue';
 
 export default Vue.extend({
   name: 'SecondaryPage',

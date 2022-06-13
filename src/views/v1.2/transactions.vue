@@ -19,7 +19,7 @@
           <template v-slot:spinner>
             <img
               :alt="$t('icon.txtPendingIconAlt')"
-              src="@/assets/images/ios-spinner.svg"
+              :src="spinnerPicture.src"
             />
           </template>
           <template v-slot:no-more>
@@ -39,6 +39,9 @@ import Vue from 'vue';
 import InfiniteLoading, { StateChanger } from 'vue-infinite-loading';
 import { mapGetters, mapState } from 'vuex';
 
+import { getThemedPicture } from '@/assets/images/icons/spinner';
+
+import { PictureDescriptor } from '@/components/html5';
 import Page from '@/components/v1.2/layout/page.vue';
 import TransactionsListGroup from '@/components/v1.2/transactions/transactions-list-group.vue';
 import TransactionsListSkeleton from '@/components/v1.2/transactions/transactions-list-skeleton.vue';
@@ -51,6 +54,7 @@ export default Vue.extend({
     InfiniteLoading
   },
   computed: {
+    ...mapState(['theme']),
     ...mapGetters('account', {
       transactionGroups: 'transactionsGroupedByDay'
     }),
@@ -66,6 +70,9 @@ export default Vue.extend({
     },
     hasInfiniteLoader(): boolean {
       return this.explorer?.hasInfiniteLoader() ?? false;
+    },
+    spinnerPicture(): PictureDescriptor {
+      return getThemedPicture(this.theme);
     }
   },
   methods: {

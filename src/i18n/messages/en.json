@@ -16,5 +16,22 @@
   "withdraw": "Withdraw",
   "analytics": "Analytics",
   "portfolio": "Portfolio",
-  "moverApp": "Mover App"
+  "moverApp": "Mover App",
+  "swappingFor": "Swapping for",
+  "savingsNativeAsset": "USD Coin is the base currency of Savings. It is a stable asset and the easiest way to grow your savings. Your returns will also be in USDC.",
+  "savingsNonNativeAsset": "You chose a non USDC asset. It means that it will be converted to USDC at the time of the deposit at the current market rate.",
+  "reviewYourDeposit": "Review your deposit",
+  "totalDepositedIntoSavings": "Total deposited into Savings",
+  "savingsBalanceAfterDeposit": "Savings balance after deposit",
+  "waiting":  "Waiting for confirmation",
+  "waitingDescription": "Confirm this transaction in your wallet",
+  "process":  "Your transaction is processing",
+  "processDescription": "Waiting for transaction to be confirmed",
+  "processed":  "Success!",
+  "processedDescription": "Your transaction was processed!",
+  "reverted":  "Transaction was reverted",
+  "revertedDescription": "Your transaction failed",
+  "chooseToken": "Choose token",
+  "chooseAmount": "Choose amount",
+  "insufficientBalance":  "Insufficient balance"
 }

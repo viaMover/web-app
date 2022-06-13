@@ -6,21 +6,23 @@ import getters, { GetterType } from './getters';
 import mutations, { MutationType } from './mutations';
 import { SavingsPlusStoreState } from './types';
 
+export const initialState: SavingsPlusStoreState = {
+  isInfoLoading: false,
+  info: undefined,
+
+  receipts: new Map(),
+
+  balance: undefined,
+  APY: undefined,
+  DPY: undefined,
+  apiService: undefined,
+  onChainService: undefined
+};
+
 export default {
   namespaced: true,
   strict: !isProduction(),
-  state: {
-    isInfoLoading: false,
-    info: undefined,
-
-    receipts: new Map(),
-
-    balance: undefined,
-    APY: undefined,
-    DPY: undefined,
-    apiService: undefined,
-    onChainService: undefined
-  },
+  state: () => initialState,
   actions,
   getters,
   mutations

@@ -28,7 +28,7 @@ import {
 } from '@/wallet/references/data';
 import { SmallToken, TransactionsParams } from '@/wallet/types';
 
-import { LoaderStep } from '@/components/forms/loader-form/types';
+import { LoaderStep } from '@/components/v1.2/form-controls/loader-form/types';
 
 import { estimateTopUpCompound } from './top-up-estimate';
 import { unwrap } from './wxBTRFLY/top-up';

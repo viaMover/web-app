@@ -21,7 +21,9 @@ type AssetListType = {
 export const availableNetworks = [
   Network.mainnet,
   Network.fantom,
-  Network.polygon
+  Network.polygon,
+  Network.avalanche,
+  Network.binance
 ];
 
 const getAssetList = (network: Network): Array<AssetListType> => {

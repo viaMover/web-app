@@ -3,13 +3,12 @@
     <back-button
       v-if="hasBackButton"
       class="page-back-button"
-      @back="handleBack"
+      @click="handleBack"
     />
     <close-button
       v-if="hasCloseButton"
       class="page-close-button"
-      is-black
-      @close="handleClose"
+      @click="handleClose"
     />
     <main v-if="twoSided" class="wrapper two-sided">
       <div class="side left">
@@ -28,7 +27,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { BackButton, CloseButton } from '@/components/buttons';
+import BackButton from '@/components/v1.2/buttons/back-button.vue';
+import CloseButton from '@/components/v1.2/buttons/close-button.vue';
 
 export default Vue.extend({
   name: 'Page',

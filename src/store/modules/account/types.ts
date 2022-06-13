@@ -57,6 +57,7 @@ export type AccountStoreState = {
   balance: undefined | string;
   networkInfo: undefined | NetworkInfo;
   currentAddress: undefined | string;
+  providerBeforeClose: () => void;
 
   availableNetworks: Array<Network>;
 
@@ -144,7 +145,16 @@ export type InitWalletPayload = {
   providerBeforeCloseCb: () => void;
 };
 
-export const nativeCurrencyFormatters = {
+export type Formatter = {
+  sign: string;
+  currency: string;
+  position: 'prefix' | 'postfix';
+  flag: string;
+};
+
+export const nativeCurrencyFormatters: Partial<
+  Record<NativeCurrency, Formatter>
+> = {
   [NativeCurrency.USD]: {
     sign: '$',
     currency: 'USD',
@@ -168,19 +178,19 @@ export const nativeCurrencyFormatters = {
     currency: 'RUB',
     position: 'postfix',
     flag: mapCountryCodeToEmoji('RU')
-  },
-  [NativeCurrency.Ether]: {
-    sign: 'Ξ',
-    currency: 'ETH',
-    position: 'prefix',
-    flag: undefined
-  },
-  [NativeCurrency.Bitcoin]: {
-    sign: '₿',
-    currency: 'BTC',
-    position: 'prefix',
-    flag: undefined
   }
+  // [NativeCurrency.Ether]: {
+  //   sign: 'Ξ',
+  //   currency: 'ETH',
+  //   position: 'prefix',
+  //   flag: undefined
+  // },
+  // [NativeCurrency.Bitcoin]: {
+  //   sign: '₿',
+  //   currency: 'BTC',
+  //   position: 'prefix',
+  //   flag: undefined
+  // }
 };
 
 export type PriceRecord = {

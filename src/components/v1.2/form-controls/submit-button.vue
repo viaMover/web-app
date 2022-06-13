@@ -1,12 +1,12 @@
 <template>
   <base-button
+    :class="{ 'icon-only': loading }"
     :disabled="disabled || loading || error !== undefined"
+    primary
     propagate-original-event
     type="submit"
   >
-    <div v-if="loading" class="loader-icon">
-      <img alt="" src="@/assets/images/ios-spinner-white.svg" />
-    </div>
+    <img v-if="loading" alt="" :src="spinnerPicture.src" />
     <template v-else-if="error !== undefined">
       {{ error }}
     </template>
@@ -16,7 +16,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
+import { getThemedPicture } from '@/assets/images/icons/spinner';
+
+import { PictureDescriptor } from '@/components/html5';
 import BaseButton from '@/components/v1.2/buttons/base-button.vue';
 
 export default Vue.extend({
@@ -40,6 +44,12 @@ export default Vue.extend({
     text: {
       type: String,
       default: undefined
+    }
+  },
+  computed: {
+    ...mapState(['theme']),
+    spinnerPicture(): PictureDescriptor {
+      return getThemedPicture(this.theme);
     }
   }
 });

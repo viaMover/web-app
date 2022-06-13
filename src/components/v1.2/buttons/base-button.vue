@@ -1,7 +1,7 @@
 <template>
   <button
     class="button"
-    :class="{ disabled: disabled }"
+    :class="{ disabled: disabled, primary: primary }"
     :disabled="disabled"
     :type="type"
     @click="handleClick"
@@ -17,6 +17,10 @@ export default Vue.extend({
   name: 'BaseButton',
   props: {
     disabled: {
+      type: Boolean,
+      default: false
+    },
+    primary: {
       type: Boolean,
       default: false
     },
