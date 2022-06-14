@@ -351,7 +351,7 @@ export default Vue.extend({
         return '0';
       }
       if (
-        isBaseAsset(this.input.asset.address, this.networkInfo?.network) &&
+        isBaseAsset(this.input.asset.address, this.currentNetwork) &&
         !this.useSubsidized
       ) {
         const txnPriceInWeth = multiply(
@@ -425,7 +425,7 @@ export default Vue.extend({
 
       if (newVal.swapType === 'getMove') {
         const baseAsset = this.tokens.find((t: TokenWithBalance) =>
-          isBaseAsset(t.address, this.networkInfo?.netowrk)
+          isBaseAsset(t.address, this.currentNetwork)
         );
         if (baseAsset) {
           this.input.asset = baseAsset;
@@ -455,7 +455,7 @@ export default Vue.extend({
         }
       } else {
         const baseAsset = this.tokens.find((t: TokenWithBalance) =>
-          isBaseAsset(t.address, this.networkInfo?.netowrk)
+          isBaseAsset(t.address, this.currentNetwork)
         );
         if (baseAsset) {
           this.input.asset = baseAsset;
@@ -977,7 +977,7 @@ export default Vue.extend({
       if (
         isBaseAsset(
           this.input.asset?.address ?? 'missing_address',
-          this.networkInfo?.network
+          this.currentNetwork
         )
       ) {
         this.subsidizedAvailable = false;

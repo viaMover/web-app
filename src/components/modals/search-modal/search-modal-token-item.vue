@@ -82,7 +82,7 @@ export default Vue.extend({
       return '0';
     },
     hasInfoButton(): boolean {
-      return !isBaseAsset(this.item.address, this.networkInfo?.network);
+      return !isBaseAsset(this.item.address, this.currentNetwork);
     },
     infoButtonSrc(): string {
       return `${this.networkInfo.explorer}/token/${this.item.address}`;
