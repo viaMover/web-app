@@ -219,8 +219,8 @@ const addresses = {
     USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
   },
   [Network.binance]: {
-    HOLY_HAND_ADDRESS: '0x', //TODO: fill
-    USDC_TOKEN_ADDRESS: '0x' // TODO: fill
+    HOLY_HAND_ADDRESS: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
+    USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
   }
 } as AddressMap;
 
@@ -261,6 +261,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
   CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
+  USDC_SPECIFIC_DECIMALS: number;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -304,6 +305,9 @@ const constants = {
       toWei('100', getBaseAssetData(Network.polygon).decimals),
       toWei('1000', getBaseAssetData(Network.polygon).decimals)
     ]
+  },
+  [Network.binance]: {
+    USDC_SPECIFIC_DECIMALS: 18
   }
 } as ConstantsMap;
 export const lookupConstant = <
@@ -407,7 +411,7 @@ const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
 const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
     address: lookupAddress(network, 'USDC_TOKEN_ADDRESS'),
-    decimals: 6,
+    decimals: lookupConstant(network, 'USDC_SPECIFIC_DECIMALS') ?? 6,
     symbol: 'USDC',
     iconURL:
       'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'

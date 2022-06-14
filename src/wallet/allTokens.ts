@@ -5,10 +5,10 @@ import { Network } from '@/utils/networkTypes';
 import { getTestnetAssets } from './references/testnetAssets';
 import { Token } from './types';
 import assetListAvalanche from '@/../data/assets/assetList-avalanche.json';
+import assetListBinance from '@/../data/assets/assetList-binance.json';
 import assetListEth from '@/../data/assets/assetList-ethereum.json';
 import assetListFantom from '@/../data/assets/assetList-fantom.json';
 import assetListPolygon from '@/../data/assets/assetList-polygon.json';
-import assetListBinance from '@/../data/assets/assetList-polygon.json'; // TODO: change to Binance
 
 type AssetListType = {
   id: string;

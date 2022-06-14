@@ -3,10 +3,10 @@ import { AbiItem } from 'web3-utils';
 import { Network } from '@/utils/networkTypes';
 
 import avalanche from './avalanche.json';
+import binance from './binance.json';
 import fantom from './fantom.json';
 import mainnet from './mainnet.json';
 import polygon from './polygon.json';
-import binance from './polygon.json'; // TODO: change to Binance
 
 const references = {
   [Network.mainnet]: mainnet,
