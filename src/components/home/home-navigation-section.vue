@@ -346,7 +346,7 @@ export default Vue.extend({
     },
     debitCardSkin(): PictureDescriptor {
       if (!isFeatureEnabled('isDebitCardEnabled')) {
-        return mapSkin(this.$store.state)(defaultSkin).previewPicture;
+        return mapSkin(defaultSkin).previewPicture;
       }
 
       return this.debitCardCurrentSkin.previewPicture;

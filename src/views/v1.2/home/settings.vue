@@ -131,11 +131,16 @@ export default Vue.extend({
       });
     },
     availableNativeCurrencies(): Array<CurrencyItem> {
-      return Object.entries(nativeCurrencyFormatters).map(([key, value]) => ({
-        id: key,
-        currency: value.currency,
-        flag: value.flag || value.sign
-      }));
+      return Object.entries(nativeCurrencyFormatters)
+        .map(([key, value]) => ({
+          id: key,
+          currency: value?.currency,
+          flag: value?.flag || value?.sign
+        }))
+        .filter(
+          (item: Record<string, unknown>): item is CurrencyItem =>
+            item.currency !== undefined && item.flag !== undefined
+        );
     },
     selectedNativeCurrency(): CurrencyItem {
       return (
