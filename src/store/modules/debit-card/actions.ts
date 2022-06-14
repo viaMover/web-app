@@ -16,6 +16,7 @@ import {
   sendEmailHash,
   validatePhoneNumber
 } from '@/services/mover/debit-card';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   deleteEmailHashFromPersist,
@@ -57,6 +58,7 @@ type Actions = {
   loadWxBTRFLYrealIndex: Promise<void>;
   loadGALCXToALCXMultiplier: Promise<void>;
   getYearnVaultMultiplier: Promise<string>;
+  setOnChainService: any;
 };
 
 const actions: ActionFuncs<
@@ -703,8 +705,8 @@ const actions: ActionFuncs<
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
-        category: 'debit-card.store.loadGALCXToALCXMultiplier',
-        message: 'Failed to load gALCXToALCXMultiplier',
+        category: 'debit-card.store.getYearnVaultMultiplier',
+        message: 'Failed to load yearn multiplier',
         data: {
           error
         }
@@ -712,6 +714,9 @@ const actions: ActionFuncs<
 
       throw error;
     }
+  },
+  setOnChainService({ commit }, service: DebitCardOnChainService): void {
+    commit('setOnChainService', service);
   }
 };
 

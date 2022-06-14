@@ -74,6 +74,7 @@ import {
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
 import { getUsdcPriceInEur } from '@/services/coingecko/tokens';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isBaseAsset, sameAddress } from '@/utils/address';
@@ -89,8 +90,6 @@ import {
   toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
-import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import {
   getALCXAssetData,
@@ -200,7 +199,7 @@ export default Vue.extend({
     ...mapState('debitCard', {
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
       gALCXToALCXMultiplier: 'gALCXToALCXMultiplier',
-      getYearnVaultMultiplier: 'getYearnVaultMultiplier'
+      debitCardOnChainService: 'onChainService'
     }),
     ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     ...mapGetters('debitCard', {
@@ -314,6 +313,9 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
+    ...mapActions('debitCard', {
+      getYearnVaultMultiplier: 'getYearnVaultMultiplier'
+    }),
     ...mapActions('account', {
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
@@ -337,14 +339,12 @@ export default Vue.extend({
       this.unwrapGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await estimateTopUpCompound(
+        const gasLimits = await (
+          this.debitCardOnChainService as DebitCardOnChainService
+        ).estimateTopUpCompound(
           this.inputAsset,
-          this.usdcAsset,
           this.inputAmount,
-          this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress
+          this.transferData
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
@@ -502,7 +502,7 @@ export default Vue.extend({
               referenceToken = getCULTAssetData(this.networkInfo.network);
             }
 
-            if (isZero(referenceAmount) || referenceAmount === '') {
+            if (isZero(inputInWei) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
               // to the estimated amount
@@ -802,6 +802,8 @@ export default Vue.extend({
           }
         });
         Sentry.captureException("can't get vault multiplier");
+      } finally {
+        this.isLoading = false;
       }
       this.isTokenSelectedByUser = true;
       this.inputAsset = token;
@@ -914,14 +916,12 @@ export default Vue.extend({
       this.changeStep('loader');
       this.transactionStep = 'Confirm';
       try {
-        await topUpCompound(
+        await (
+          this.debitCardOnChainService as DebitCardOnChainService
+        ).topUpCompound(
           this.inputAsset,
-          this.usdcAsset,
           this.inputAmount,
           this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           async (step: LoaderStep) => {
             this.transactionStep = step;
           },

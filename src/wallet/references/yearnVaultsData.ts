@@ -10,7 +10,7 @@ export type YearnVaultData = {
 
 type vaultAddressMap = Readonly<Record<Network, Array<YearnVaultData>>>;
 
-const addresses = {
+export const addresses = {
   [Network.mainnet]: [
     {
       name: 'YV_USDC',
