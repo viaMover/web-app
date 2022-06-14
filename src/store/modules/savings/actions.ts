@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/vue';
 
-import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
+import {
+  MoverAPISavingsService,
+  SavingsReceipt
+} from '@/services/v2/api/mover/savings';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
@@ -27,7 +30,7 @@ type Actions = {
   loadInfo: Promise<void>;
   fetchSavingsFreshData: Promise<void>;
   fetchSavingsInfo: Promise<void>;
-  fetchSavingsReceipt: void;
+  fetchSavingsReceipt: Promise<SavingsReceipt>;
   setOnChainService: void;
   setAPIService: void;
 };
@@ -170,14 +173,14 @@ const actions: ActionFuncs<
   fetchSavingsReceipt(
     { commit, state, rootState, getters },
     { year, month }: SavingsGetReceiptPayload
-  ): void {
+  ): Promise<SavingsReceipt> {
     if (!ensureAPIServiceExists(state)) {
-      console.warn('API service does not exist in store');
-      return;
+      throw new Error('API service does not exist in store');
     }
 
-    if (getters.savingsReceipt(year, month) !== undefined) {
-      return;
+    const getterValue = getters.savingsReceipt(year, month);
+    if (getterValue !== undefined) {
+      return getterValue;
     }
 
     const receiptPromise = state.apiService.getReceipt(year, month);
@@ -189,7 +192,7 @@ const actions: ActionFuncs<
     } as SetSavingsReceiptPayload);
 
     if (!ensureAccountStateIsSafe(rootState.account)) {
-      return;
+      return receiptPromise;
     }
 
     (async () => {
@@ -217,6 +220,8 @@ const actions: ActionFuncs<
         }
       }
     })();
+
+    return receiptPromise;
   },
   setOnChainService({ commit }, service: SavingsOnChainService): void {
     commit('setOnChainService', service);

@@ -93,8 +93,8 @@ const values: Globals = {
   isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
-  isMoverAPISavingsServiceFieldsReducerEnabled: true,
-  isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true,
+  isMoverAPISavingsServiceFieldsReducerEnabled: true, // TODO: use all the data provided
+  isMoverAPISmartTreasuryServiceFieldsReducerEnabled: true, // TODO: use all the data provided
   isMoverAPISavingsPlusServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],

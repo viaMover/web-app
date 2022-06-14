@@ -24,6 +24,12 @@ import {
   ChartOptions,
   ScriptableScaleContext
 } from 'chart.js';
+import {
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale
+} from 'chart.js';
 
 import {
   EthereumMonthBalanceItem,
@@ -38,6 +44,8 @@ import {
   ChartDataItem,
   TItem
 } from '@/store/modules/account/utils/charts';
+
+Chart.register(BarController, BarElement, LinearScale, CategoryScale);
 
 export default Vue.extend({
   name: 'BarChart',
@@ -110,7 +118,9 @@ export default Vue.extend({
 
       this.chartInstance.data.labels = newVal.labels;
       this.chartInstance.data.datasets = newVal.datasets;
-      this.chartInstance.update();
+      this.$nextTick(() => {
+        this.chartInstance.update();
+      });
     }
   },
   mounted() {

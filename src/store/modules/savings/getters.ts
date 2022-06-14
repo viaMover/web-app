@@ -2,7 +2,7 @@ import {
   SavingsInfo,
   SavingsMonthBalanceItem,
   SavingsReceipt
-} from '@/services/mover';
+} from '@/services/v2/api/mover/savings';
 import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';

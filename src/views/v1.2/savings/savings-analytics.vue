@@ -1,165 +1,244 @@
 <template>
   <secondary-page class="analytics">
     <template v-slot:title>
-      <secondary-page-header
-        :description="$t('savings.txtSavingsOverviewDescription')"
-        :title="$t('savings.lblSavingsOverview')"
-      />
+      <secondary-page-header :title="$t('savingsMonthlyStatistics')" />
     </template>
 
-    <analytics-list>
-      <analytics-list-item
-        :description="formattedDepositedAssets"
-        :is-loading="isLoading"
-        :title="$t('savings.lblDepositedAssets')"
+    <div class="chart-wrapper">
+      <bar-chart
+        accent-color="#FF930F"
+        :chart-data-source="chartDataSource"
+        default-color="rgb(216, 216, 216)"
+        :is-loading="isLoading || savingsInfo === undefined"
       />
-      <analytics-list-item
-        :description="currentVariableAPY"
-        :is-loading="isLoading"
-        :title="$t('savings.lblCurrentVariableAPY')"
-      />
-      <analytics-list-item
-        v-if="isSavingsOverviewSomeFieldsEnabled"
-        :description="monthAverageAPY"
-        :is-loading="isLoading"
-        :title="$t('savings.lbl30DayAverageAPY')"
-      />
-      <analytics-list-item
-        v-if="isSavingsOverviewSomeFieldsEnabled"
-        :description="totalAssetsUnderManagement"
-        :is-loading="isLoading"
-        :title="$t('savings.lblTotalAssetsUnderManagement')"
-      />
-    </analytics-list>
+    </div>
 
-    <analytics-list :title="$t('savings.lblSavingsStats')">
-      <analytics-list-item
-        :description="earnedToday"
-        :is-loading="isLoading"
-        :title="$t('savings.lblEarnedToday')"
-      />
-      <analytics-list-item
-        :description="earnedThisMonth"
-        :is-loading="isLoading"
-        :title="$t('savings.lblEarnedThisMonth')"
-      />
-      <analytics-list-item
-        :description="earnedTotal"
-        :is-loading="isLoading"
-        :title="$t('savings.lblEarnedInTotal')"
-      />
-    </analytics-list>
-    <analytics-list :title="$t('savings.lblSavingsEstimation')">
-      <analytics-list-item
-        :description="estimatedEarningsTomorrowNative"
-        :is-loading="isLoading"
-        :title="$t('savings.lblEstimatedEarningsTomorrow')"
-      />
-      <analytics-list-item
-        :description="estimatedEarningsNextMonthNative"
-        :is-loading="isLoading"
-        :title="$t('savings.lblEstimatedEarningsNextMonth')"
-      />
-      <analytics-list-item
-        :description="estimatedEarningsAnnuallyNative"
-        :is-loading="isLoading"
-        :title="$t('savings.lblEstimatedEarningsAnnually')"
-      />
-    </analytics-list>
+    <table class="analytics-table">
+      <tbody>
+        <tr>
+          <td>
+            <div class="analytics-item">
+              <div class="title emphasize">
+                <span class="emoji">💰</span>
+                {{ $t('balance') }}
+              </div>
+              <div class="description">{{ balance }}</div>
+            </div>
+          </td>
+          <td>
+            <div class="analytics-item">
+              <div class="title emphasize">{{ $t('earnedThisMonth') }}</div>
+              <div class="description">{{ earnedThisMonth }}</div>
+            </div>
+          </td>
+          <td>
+            <div class="analytics-item">
+              <div class="title emphasize">{{ $t('balanceChange') }}</div>
+              <div class="description">{{ balanceChange }}</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="analytics-item">
+              <div class="title emphasize">
+                <span class="emoji">🤖</span>
+                {{ $t('currentAPY') }}
+              </div>
+              <div class="description">{{ apy }}%</div>
+            </div>
+          </td>
+          <td>
+            <div class="analytics-item">
+              <div class="title">{{ $t('earnedToday') }}</div>
+              <div class="description">{{ earnedToday }}</div>
+            </div>
+          </td>
+          <td>
+            <div class="analytics-item">
+              <div class="title">{{ $t('deposited') }}</div>
+              <div class="description">{{ deposited }}</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="analytics-item">
+              <div class="title emphasize">
+                <span class="emoji">📜</span>
+                {{ $t('30dayAPY') }}
+              </div>
+              <div class="description">{{ apy30Days }}%</div>
+            </div>
+          </td>
+          <td>
+            <div class="analytics-item">
+              <div class="title">{{ $t('earnedTotal') }}</div>
+              <div class="description">{{ earnedTotal }}</div>
+            </div>
+          </td>
+          <td>
+            <div class="analytics-item">
+              <div class="title">{{ $t('withdrawn') }}</div>
+              <div class="description">{{ withdrawn }}</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <statements-nav-list
+      :button-text="$t('view')"
+      icon="👛"
+      :in-progress-text="$t('inProgress')"
+      :items="savingsMonthStatsOptions"
+      navigate-to-name="savings-month-stats"
+      :title="$t('monthlyStatements')"
+    />
   </secondary-page>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
+import dayjs from 'dayjs';
+
+import { SavingsMonthBalanceItem } from '@/services/mover';
+import { SavingsReceipt } from '@/services/v2/api/mover/savings';
+import { captureSentryException } from '@/services/v2/utils/sentry';
 import { isFeatureEnabled } from '@/settings';
-import {
-  formatPercents,
-  formatToNative,
-  getSignIfNeeded
-} from '@/utils/format';
+import { SavingsGetReceiptPayload } from '@/store/modules/savings/types';
+import { add, fromWei, multiply } from '@/utils/bigmath';
+import { formatPercents } from '@/utils/format';
 
-import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
+import BarChart from '@/components/charts/bar-chart.vue';
 import {
   SecondaryPage,
   SecondaryPageHeader
 } from '@/components/layout/secondary-page';
+import StatementsNavList from '@/components/statements-nav-list/statements-nav-list.vue';
 
 export default Vue.extend({
   components: {
     SecondaryPage,
     SecondaryPageHeader,
-    AnalyticsList,
-    AnalyticsListItem
+    BarChart,
+    StatementsNavList
+  },
+  data() {
+    return {
+      receipt: undefined as SavingsReceipt | undefined
+    };
   },
   computed: {
     ...mapState('account', { networkInfo: 'networkInfo' }),
     ...mapState('savings', {
       isLoading: 'isSavingsInfoLoading',
-      apy: 'savingsAPY',
-      dpy: 'savingsDPY'
+      savingsAPY: 'savingsAPY'
     }),
     ...mapGetters('savings', {
+      usdcTokenInfo: 'usdcTokenInfo',
+      savingsInfo: 'savingsInfo',
+      savingsMonthStatsOptions: 'savingsMonthStatsOptions',
       savingsInfoEarnedThisMonthNative: 'savingsInfoEarnedThisMonthNative',
       savingsInfoEarnedTotalNative: 'savingsInfoEarnedTotalNative',
       savingsEstimatedEarningsTomorrowNative:
         'savingsEstimatedEarningsTomorrowNative',
-      savingsInfoBalanceUSDC: 'savingsInfoBalanceUSDC',
-      savingsInfoTotalPoolBalanceNative: 'savingsInfoTotalPoolBalanceNative',
       savingsAvg30DaysAPY: 'savingsAvg30DaysAPY',
-      savingsInfoBalanceNative: 'savingsInfoBalanceNative',
-      savingsEstimatedEarningsNextMonthNative:
-        'savingsEstimatedEarningsNextMonthNative',
-      savingsEstimatedEarningsAnnuallyNative:
-        'savingsEstimatedEarningsAnnuallyNative'
+      savingsInfoBalanceNative: 'savingsInfoBalanceNative'
     }),
-    isSavingsOverviewSomeFieldsEnabled(): boolean {
-      return isFeatureEnabled(
-        'isSavingsOverviewSomeFieldsEnabled',
-        this.networkInfo?.network
-      );
-    },
-    formattedDepositedAssets(): string {
-      return `${formatToNative(this.savingsInfoBalanceUSDC)} USDC`;
-    },
-    currentVariableAPY(): string {
-      return `${formatPercents(this.apy)}%`;
-    },
-    monthAverageAPY(): string {
-      return `${formatPercents(this.savingsAvg30DaysAPY)}%`;
-    },
-    totalAssetsUnderManagement(): string {
-      return `$${formatToNative(this.savingsInfoTotalPoolBalanceNative)}`;
-    },
-    estimatedEarningsTomorrowNative(): string {
-      const value = formatToNative(this.savingsEstimatedEarningsTomorrowNative);
-      return `${getSignIfNeeded(value, '+')}$${value}`;
-    },
-    estimatedEarningsNextMonthNative(): string {
-      const value = formatToNative(
-        this.savingsEstimatedEarningsNextMonthNative
-      );
-      return `${getSignIfNeeded(value, '+')}$${value}`;
-    },
-    estimatedEarningsAnnuallyNative(): string {
-      const value = formatToNative(this.savingsEstimatedEarningsAnnuallyNative);
-      return `${getSignIfNeeded(value, '+')}$${value}`;
+    chartDataSource(): Array<SavingsMonthBalanceItem> {
+      return this.savingsInfo !== undefined
+        ? this.savingsInfo.last12MonthsBalances
+        : [];
     },
     earnedToday(): string {
-      const value = formatToNative(this.savingsEstimatedEarningsTomorrowNative);
-      return `${getSignIfNeeded(value, '+')}$${value}`;
+      // fixme: controversial thing. Would be better to replace an estimate with the real value
+      return this.formatAsNativeCurrency(
+        this.savingsEstimatedEarningsTomorrowNative
+      );
     },
     earnedThisMonth(): string {
-      const value = formatToNative(this.savingsInfoEarnedThisMonthNative);
-      return `${getSignIfNeeded(value, '+')}$${value}`;
+      if (this.receipt !== undefined) {
+        return this.formatAsNativeCurrency(
+          multiply(
+            fromWei(this.receipt.earnedThisMonth, this.usdcTokenInfo.decimals),
+            this.usdcTokenInfo.priceUSD
+          )
+        );
+      }
+
+      return this.formatAsNativeCurrency(this.savingsInfoEarnedThisMonthNative);
     },
     earnedTotal(): string {
-      const value = formatToNative(this.savingsInfoEarnedTotalNative);
-      return `${getSignIfNeeded(value, '+')}$${value}`;
+      return this.formatAsNativeCurrency(this.savingsInfoEarnedTotalNative);
+    },
+    balance(): string {
+      return this.formatAsNativeCurrency(this.savingsInfoBalanceNative);
+    },
+    apy(): string {
+      return formatPercents(this.savingsAPY);
+    },
+    apy30Days(): string {
+      return formatPercents(this.savingsAvg30DaysAPY);
+    },
+    balanceChange(): string {
+      if (this.receipt === undefined) {
+        return this.formatAsNativeCurrency(0);
+      }
+
+      const usdcAmount = fromWei(
+        add(
+          add(this.receipt.totalDeposits, this.receipt.totalWithdrawals),
+          this.receipt.earnedThisMonth
+        ),
+        this.usdcTokenInfo.decimals
+      );
+      const nativeAmount = multiply(usdcAmount, this.usdcTokenInfo.priceUSD);
+      return this.formatAsNativeCurrency(nativeAmount);
+    },
+    deposited(): string {
+      if (this.receipt === undefined) {
+        return this.formatAsNativeCurrency(0);
+      }
+
+      const usdcAmount = fromWei(
+        this.receipt.totalDeposits,
+        this.usdcTokenInfo.decimals
+      );
+      const nativeAmount = multiply(usdcAmount, this.usdcTokenInfo.priceUSD);
+      return this.formatAsNativeCurrency(nativeAmount);
+    },
+    withdrawn(): string {
+      if (this.receipt === undefined) {
+        return this.formatAsNativeCurrency(0);
+      }
+
+      const usdcAmount = fromWei(
+        this.receipt.totalWithdrawals,
+        this.usdcTokenInfo.decimals
+      );
+      const nativeAmount = multiply(usdcAmount, this.usdcTokenInfo.priceUSD);
+      return this.formatAsNativeCurrency(nativeAmount);
     }
   },
+  async created() {
+    this.loadInfo();
+    const now = dayjs();
+    this.fetchSavingsReceipt({
+      year: now.year(),
+      month: now.month() + 1
+    } as SavingsGetReceiptPayload)
+      .then((receipt) => {
+        this.receipt = receipt;
+      })
+      .catch((error) => {
+        captureSentryException(error);
+      });
+  },
   methods: {
+    ...mapActions('savings', ['loadInfo', 'fetchSavingsReceipt']),
     isFeatureEnabled
   }
 });
