@@ -38,6 +38,7 @@ export interface Globals {
   isGasListenerEnabled: GlobalSettings;
   isStakingUbtEnabled: GlobalSettings;
   isStakingUbtFieldReducerEnabled: GlobalSettings;
+  hideSlippageSelector: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -110,7 +111,8 @@ const values: Globals = {
   isMoverAPISavingsPlusServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],
-  isStakingUbtFieldReducerEnabled: true
+  isStakingUbtFieldReducerEnabled: true,
+  hideSlippageSelector: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

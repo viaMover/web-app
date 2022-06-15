@@ -87,7 +87,7 @@
                 <span>{{ swappingVia }}</span>
               </div>
             </div>
-            <div class="tx-details__content-item">
+            <div v-if="!hideSlippageSelector" class="tx-details__content-item">
               <p class="description">Slippage</p>
               <slippage-selector
                 :slippage="slippage"
@@ -131,6 +131,7 @@ import Web3 from 'web3';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
+import { isFeatureEnabled } from '@/settings';
 import {
   Modal as ModalTypes,
   TModalPayload
@@ -235,6 +236,9 @@ export default Vue.extend({
     },
     modalPayload(): boolean {
       return this.state[this.modalId].payload;
+    },
+    hideSlippageSelector(): boolean {
+      return isFeatureEnabled('hideSlippageSelector', this.currentNetwork);
     },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
