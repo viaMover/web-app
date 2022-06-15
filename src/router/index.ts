@@ -13,6 +13,7 @@ import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';
 import ConnectWallet from '@/views/connect-wallet.vue';
 import Home from '@/views/home.vue';
+import Logout from '@/views/logout.vue';
 import More from '@/views/more.vue';
 import PreloadMore from '@/views/preload/preload-more.vue';
 import View404 from '@/views/view-404.vue';
@@ -60,6 +61,16 @@ const routes: Array<RouteConfig> = [
       path: '/connect-wallet',
       name: 'connect-wallet',
       component: ConnectWallet
+    },
+    {
+      skipPreloadScreen: true
+    }
+  ),
+  wrapWithMeta(
+    {
+      path: '/logout-all',
+      name: 'logout-all',
+      component: Logout
     },
     {
       skipPreloadScreen: true

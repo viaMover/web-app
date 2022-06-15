@@ -48,6 +48,9 @@ const messages: VueI18n.LocaleMessageObject = {
       'Or use another compatible mobile wallet with WalletConnect.',
     lblChooseProvider: 'Choose from Metamask and other popular wallets'
   },
+  logout: {
+    lblLogout: 'Logout'
+  },
   estimationError: 'Estimation error',
   exchangeError: 'Exchange error',
   forms: {
