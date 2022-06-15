@@ -441,6 +441,8 @@ const getUBTAssetData = (
   };
 };
 
+const SavingsPlusUSDCDecimals = 6;
+
 const getAssetsForTreasury = (
   network: Network,
   moveNativePrice: string,
@@ -576,5 +578,6 @@ export {
   DCULT_ABI,
   SAVINGS_PLUS_POOL_ABI,
   validTopUpAssets,
-  getSlippage
+  getSlippage,
+  SavingsPlusUSDCDecimals
 };
