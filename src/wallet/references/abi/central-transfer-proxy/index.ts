@@ -13,7 +13,7 @@ const references = {
   [Network.fantom]: fantom,
   [Network.polygon]: polygon,
   [Network.avalanche]: avalanche,
-  [Network.avalanche]: binance
+  [Network.binance]: binance
 } as Record<Network, Array<AbiItem>>;
 
 export const getCentralTransferProxyAbi = (network: Network): AbiItem[] => {
