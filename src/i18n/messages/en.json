@@ -67,5 +67,12 @@
   "savings": "Savings",
   "manageSavings": "Manage Savings",
   "wallet": "Wallet",
-  "savingsBalance": "Savings balance"
+  "savingsBalance": "Savings balance",
+  "monthBalance": "{month} balance",
+  "monthTotalEarned": "Total earned in {month}",
+  "monthAverageDailyEarned": "Average daily earned in {month}",
+  "monthDeposited": "Deposited in {month}",
+  "monthWithdrawn": "Withdrawn in {month}",
+  "payoutsToTreasury": "Payouts to treasury",
+  "failedToLoadReceipt": "Failed to load statement"
 }

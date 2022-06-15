@@ -716,6 +716,14 @@ const newRoutes: Array<RouteConfig> = [
             )
         },
         {
+          path: 'manage/analytics/:year/:month',
+          name: 'savings-month-stats',
+          component: () =>
+            import(
+              /* webpackChunkName: "savings" */ '@/views/v1.2/savings/savings-month-analytics.vue'
+            )
+        },
+        {
           path: 'manage',
           component: () =>
             import(
