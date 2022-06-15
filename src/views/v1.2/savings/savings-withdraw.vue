@@ -4,39 +4,101 @@
     :has-back-button="hasBackButton"
     @back="handleBack"
   >
-    <prepare-form
+    <form
       v-if="step === 'prepare'"
-      :asset="inputAsset"
-      :header-description="$t('savings.withdraw.txtWithdrawDescription')"
-      :header-title="$t('savings.withdraw.lblWithdrawFromSavings')"
-      :input-amount="inputAmountNative"
-      :input-amount-native="inputAmountNative"
-      :input-asset-heading="$t('savings.withdraw.lblWhatDoWeWithdraw')"
-      :input-mode="inputMode"
-      :is-loading="isLoading"
-      :is-processing="isProcessing"
-      :operation-description="$t('savings.withdraw.txtIfYouKeepSavings')"
-      :operation-title="estimatedAnnualEarnings"
-      :output-asset-heading-text="$t('savings.deposit.lblAmountWeDepositIn')"
-      :selected-token-description="$t('savings.txtUSDCCoinIsAStable')"
-      @review-tx="handleTxReview"
-      @select-max-amount="handleSelectMaxAmount"
-      @update-amount="handleUpdateAmount"
-    />
-    <review-form
+      class="form"
+      @submit.prevent="handleTxReview"
+    >
+      <secondary-page-header :title="$t('withdrawFromSavings')" />
+
+      <token-selector
+        class="mb-16"
+        :current-asset="asset"
+        input-id="asset"
+        :label-text="$t('whatDoWeWithdraw')"
+      >
+        {{ $t('savingsWithdrawNativeAsset') }}
+      </token-selector>
+
+      <form-use-all
+        v-model="useAllBalance"
+        :input-mode="inputMode"
+        :token="asset"
+      >
+        {{ $t('withdrawAll') }}
+      </form-use-all>
+
+      <amount-field
+        :amount="inputValue"
+        :asset-balance="asset.balance"
+        :asset-symbol="currentSymbol"
+        class="mb-40"
+        input-id="amount"
+        @input="handleUpdateAmount"
+        @mode-changed="handleToggleInputMode"
+      >
+        <template #label>
+          {{ $t('amountWeWithdrawIn') }}
+          <span class="selector button-like" @click="handleToggleInputMode">
+            {{ currentSymbol }}
+          </span>
+        </template>
+      </amount-field>
+
+      <submit-button
+        :disabled="error !== undefined"
+        :error="error"
+        :loading="isLoading || isProcessing"
+      >
+        {{ $t('reviewTransaction') }}
+      </submit-button>
+    </form>
+    <form
       v-else-if="step === 'review'"
-      :amount="inputAmountNative"
-      :button-text="$t('savings.withdraw.lblWithdrawFromSavings')"
-      :estimated-gas-cost="estimatedGasCost"
-      :header-title="$t('savings.withdraw.lblReviewYourWithdraw')"
-      :image="savings"
-      :input-amount-native-title="$t('savings.withdraw.lblAndTotalOf')"
-      :input-amount-title="$t('savings.withdraw.lblAmountWeWithdrawIn')"
-      :is-subsidized-enabled="isSubsidizedEnabled"
-      :native-amount="formattedNativeAmount"
-      :token="inputAsset"
-      @tx-start="handleTxStart"
-    />
+      class="form"
+      @submit.prevent="handleTxStart"
+    >
+      <secondary-page-header :title="$t('reviewYourWithdrawal')" />
+
+      <form-direction-pair :left="savingsPicture" :right="asset" />
+
+      <div class="form-section">
+        <review-statement
+          :description="
+            formatAsCryptoWithSymbol(amount, asset.symbol, asset.decimals)
+          "
+        >
+          <template #title>
+            {{ $t('amountWeWithdrawIn') }} {{ asset.symbol }}
+          </template>
+        </review-statement>
+
+        <review-statement
+          :description="totalInterestCollected"
+          :title="$t('totalInterestCollected')"
+        />
+
+        <review-statement
+          :description="balanceAfterWithdrawal"
+          :title="$t('savingsBalanceAfterWithdrawal')"
+        />
+
+        <template v-if="isSubsidizedEnabled">
+          <custom-switch v-model="useSmartTreasury" class="review-statement">
+            {{ $t('useSmartTreasury') }}
+          </custom-switch>
+
+          <review-statement
+            :description="formatAsNativeCurrency(estimatedGasCost)"
+            :title="$t('estimatedGasCost')"
+          />
+        </template>
+      </div>
+
+      <submit-button :loading="isLoading || isProcessing">
+        {{ $t('withdrawFromSavings') }}
+      </submit-button>
+    </form>
     <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
   </secondary-page>
 </template>
@@ -47,141 +109,132 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import savingsPicture from '@/assets/images/sections/savings';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
-import { divide, isZero, multiply } from '@/utils/bigmath';
-import { formatToNative } from '@/utils/format';
+import { captureSentryException } from '@/services/v2/utils/sentry';
+import {
+  convertAmountFromNativeValue,
+  convertNativeAmountFromAmount,
+  greaterThan,
+  isZero,
+  notZero,
+  sub
+} from '@/utils/bigmath';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import {
-  SmallToken,
-  SmallTokenInfoWithIcon,
-  TokenWithBalance
-} from '@/wallet/types';
+import { TokenWithBalance } from '@/wallet/types';
 
-import {
-  InputMode,
-  LoaderForm,
-  LoaderStep,
-  PrepareForm,
-  ReviewForm
-} from '@/components/forms';
-import { PictureDescriptor } from '@/components/html5';
+import CustomSwitch from '@/components/controls/custom-switch.vue';
 import { SecondaryPage } from '@/components/layout/secondary-page';
+import AmountField from '@/components/v1.2/form-controls/amount-field.vue';
+import FormDirectionPair from '@/components/v1.2/form-controls/form-direction-pair.vue';
+import FormUseAll from '@/components/v1.2/form-controls/form-use-all.vue';
+import LoaderForm from '@/components/v1.2/form-controls/loader-form/loader-form.vue';
+import { LoaderStep } from '@/components/v1.2/form-controls/loader-form/types';
+import SubmitButton from '@/components/v1.2/form-controls/submit-button.vue';
+import TokenSelector from '@/components/v1.2/form-controls/token-selector.vue';
+import { InputMode } from '@/components/v1.2/form-controls/types';
+import SecondaryPageHeader from '@/components/v1.2/layout/secondary-page-header.vue';
+import ReviewStatement from '@/components/v1.2/review-statement.vue';
 
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   components: {
-    ReviewForm,
-    PrepareForm,
     LoaderForm,
-    SecondaryPage
+    SecondaryPage,
+    SecondaryPageHeader,
+    FormUseAll,
+    SubmitButton,
+    CustomSwitch,
+    ReviewStatement,
+    TokenSelector,
+    FormDirectionPair,
+    AmountField
   },
   mixins: [GasListenerMixin],
   data() {
     return {
+      savingsPicture,
       //current
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
-      savings: {
-        alt: this.$t('savings.lblSavings'),
-        src: require('@/assets/images/Savings@1x.png'),
-        sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
-          }
-        ],
-        webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
-          {
-            variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
-          }
-        ]
-      } as PictureDescriptor,
-      usdcPicture: {
-        src: require('@/assets/images/USDC.png'),
-        sources: [
-          {
-            src: require('@/assets/images/USDC@2x.png'),
-            variant: '2x'
-          }
-        ]
-      } as PictureDescriptor,
 
       //prepare
       isLoading: false,
       isProcessing: false,
       isTokenSelectedByUser: false,
       inputMode: 'TOKEN' as InputMode,
-      inputAmountNative: '',
+      useAllBalance: false,
+      amount: '0',
+      amountNative: '0',
+      isSubsidizedEnabled: false,
+      useSmartTreasury: true,
 
       //to tx
-      isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined
     };
   },
   computed: {
     ...mapState('account', {
-      networkInfo: 'networkInfo',
-      currentAddress: 'currentAddress',
-      usdcPriceInWeth: 'usdcPriceInWeth',
-      provider: 'provider',
-      ethPrice: 'ethPrice',
+      nativeCurrency: 'nativeCurrency',
       gasPrices: 'gasPrices',
-      nativeCurrency: 'nativeCurrency'
+      ethPrice: 'ethPrice'
     }),
     ...mapState('savings', {
-      savingsAPY: 'savingsAPY',
-      savingsBalance: 'savingsBalance',
       savingsOnChainService: 'onChainService'
     }),
-    ...mapGetters('treasury', {
-      treasuryBonusNative: 'treasuryBonusNative',
-      usdcNativePrice: 'usdcNativePrice'
+    ...mapGetters('savings', {
+      balanceOnContract: 'savingsInfoBalanceUSDC',
+      usdcTokenInfo: 'usdcTokenInfo'
     }),
+    inputValue(): string {
+      return this.inputMode === 'TOKEN' ? this.amount : this.amountNative;
+    },
+    currentSymbol(): string {
+      if (this.inputMode === 'TOKEN') {
+        return this.usdcTokenInfo?.symbol ?? '';
+      } else {
+        return this.nativeCurrency.toUpperCase();
+      }
+    },
+    asset(): TokenWithBalance {
+      return {
+        ...this.usdcTokenInfo,
+        balance: this.balanceOnContract
+      };
+    },
     hasBackButton(): boolean {
       return this.step === 'review';
     },
-    nativeCurrencySymbol(): string {
-      return this.nativeCurrency.toUpperCase();
+    totalInterestCollected(): string {
+      // TODO: missing data to display this
+      return this.formatAsCryptoWithSymbol(-1, this.asset.symbol);
     },
-    formattedNativeAmount(): string {
-      return `${formatToNative(this.inputAmountNative)} ${
-        this.nativeCurrencySymbol
-      }`;
+    balanceAfterWithdrawal(): string {
+      return this.formatAsCryptoWithSymbol(
+        sub(this.balanceOnContract, this.amount),
+        this.asset.symbol
+      );
     },
-    USDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
-    },
-    inputAsset(): TokenWithBalance {
-      return {
-        address: this.USDCAsset.address,
-        decimals: this.USDCAsset.decimals,
-        symbol: this.USDCAsset.symbol,
-        name: 'USD Coin',
-        priceUSD: this.usdcNativePrice,
-        logo: this.USDCAsset.iconURL,
-        balance: this.savingsBalance,
-        marketCap: Number.MAX_SAFE_INTEGER
-      };
-    },
-    estimatedAnnualEarnings(): string {
-      let possibleSavingsBalance = '0';
-
-      if (this.savingsBalance !== undefined) {
-        possibleSavingsBalance = this.savingsBalance;
+    error(): string | undefined {
+      if (!notZero(this.amount)) {
+        return this.$t('chooseAmount') as string;
+      }
+      if (greaterThan(this.amount, this.balanceOnContract)) {
+        return this.$t('insufficientBalance') as string;
       }
 
-      const usdcNative = multiply(this.usdcPriceInWeth, this.ethPrice);
-      const usdcAmountNative = multiply(possibleSavingsBalance, usdcNative);
-      let apyNative = multiply(divide(this.savingsAPY, 100), usdcAmountNative);
+      return undefined;
+    }
+  },
+  watch: {
+    useAllBalance(newValue: boolean) {
+      if (!newValue) {
+        return;
+      }
 
-      return `~ $${formatToNative(apyNative)}`;
+      this.handleSelectMaxAmount();
     }
   },
   methods: {
@@ -194,20 +247,6 @@ export default Vue.extend({
       } else {
         this.$router.back();
       }
-    },
-    async estimateAction(
-      amount: string,
-      asset: SmallToken
-    ): Promise<CompoundEstimateResponse> {
-      const estimation = await (
-        this.savingsOnChainService as SavingsOnChainService
-      ).estimateWithdrawCompound(asset, amount);
-
-      if (estimation.error) {
-        throw new Error('Failed to estimate withdraw');
-      }
-
-      return estimation;
     },
     subsidizedTxNativePrice(actionGasLimit: string): string | undefined {
       const gasPrice = this.gasPrices?.FastGas.price ?? '0';
@@ -255,10 +294,9 @@ export default Vue.extend({
       this.actionGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await this.estimateAction(
-          this.inputAmountNative,
-          this.inputAsset
-        );
+        const gasLimits = await (
+          this.savingsOnChainService as SavingsOnChainService
+        ).estimateWithdrawCompound(this.asset, this.amount);
 
         this.actionGasLimit = gasLimits.actionGasLimit;
 
@@ -270,32 +308,49 @@ export default Vue.extend({
             this.actionGasLimit
           );
         }
+
+        this.step = 'review';
       } catch (error) {
         this.isSubsidizedEnabled = false;
-        console.warn('Failed to estimate transaction', error);
-        Sentry.captureException(error);
+        captureSentryException(error);
       } finally {
         this.isProcessing = false;
       }
-
-      this.step = 'review';
     },
     handleSelectMaxAmount(): void {
-      this.inputAmountNative = this.inputAsset.balance;
+      this.updateAmount(this.balanceOnContract, 'TOKEN');
     },
     handleUpdateAmount(val: string): void {
-      this.inputAmountNative = val;
+      this.useAllBalance = false;
+      this.updateAmount(val, this.inputMode);
+    },
+    updateAmount(val: string, mode: string): void {
+      if (this.isLoading) {
+        return;
+      }
+
+      if (mode === 'TOKEN') {
+        this.amount = val;
+        this.amountNative = convertNativeAmountFromAmount(
+          val,
+          this.asset.priceUSD
+        );
+      } else {
+        this.amount = convertAmountFromNativeValue(
+          val,
+          this.asset.priceUSD,
+          this.asset.decimals
+        );
+        this.amountNative = val;
+      }
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
-      if (this.inputAmountNative === '') {
-        console.error('inputAmount is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings withdraw TX");
+      if (this.error !== undefined) {
         return;
       }
 
       if (this.actionGasLimit === undefined) {
-        console.error('action gas limit is empty during `handleTxStart`');
-        Sentry.captureException("can't start savings withdraw TX");
+        captureSentryException('empty action gas limit');
         return;
       }
 
@@ -305,8 +360,8 @@ export default Vue.extend({
         await (
           this.savingsOnChainService as SavingsOnChainService
         ).withdrawCompound(
-          this.inputAsset,
-          this.inputAmountNative,
+          this.asset,
+          this.amount,
           this.actionGasLimit,
           args.isSmartTreasury,
           async () => {
@@ -317,9 +372,15 @@ export default Vue.extend({
         this.updateWalletAfterTxn();
       } catch (error) {
         this.transactionStep = 'Reverted';
-        console.error('Failed to withdraw', error);
-        Sentry.captureException(error);
+        captureSentryException(error);
       }
+    },
+    handleToggleInputMode(): void {
+      if (this.inputMode === 'NATIVE') {
+        this.inputMode = 'TOKEN';
+        return;
+      }
+      this.inputMode = 'NATIVE';
     }
   }
 });

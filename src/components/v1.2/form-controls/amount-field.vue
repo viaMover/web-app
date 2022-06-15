@@ -8,10 +8,8 @@
         :id="inputId"
         ref="input"
         class="form-control"
-        :max="assetBalance"
         min="0"
         placeholder="0.00"
-        required
         :step="step"
         type="number"
         :value="amount"
@@ -56,10 +54,6 @@ export default Vue.extend({
     assetDecimals: {
       type: Number,
       default: 18
-    },
-    assetBalance: {
-      type: String,
-      default: Number.MAX_SAFE_INTEGER.toString()
     },
     debounceTimeout: {
       type: Number,

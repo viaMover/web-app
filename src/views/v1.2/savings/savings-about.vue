@@ -1,13 +1,13 @@
 <template>
   <module-about
     :description="formattedNativeBalance"
-    :title="$t('moduleBalance', { moduleName: $t('savings') })"
+    :title="$t('savingsBalance')"
   >
     <template #links>
       <base-item-icon
         icon-class="icon-about-savings"
         navigate-to="savings-about"
-        :text="$t('about', { term: 'Savings' })"
+        :text="$t('aboutSavings')"
       />
 
       <base-item-icon
@@ -19,13 +19,13 @@
       <base-item-icon
         icon-class="icon-deposit"
         navigate-to="savings-deposit"
-        :text="$t('depositIn', { term: 'Savings' })"
+        :text="$t('depositInSavings')"
       />
 
       <base-item-icon
         icon-class="icon-withdraw"
         navigate-to="savings-withdraw"
-        :text="$t('withdrawFrom', { term: 'Savings' })"
+        :text="$t('withdrawFromSavings')"
       />
 
       <base-item-icon
@@ -43,7 +43,7 @@
       <analytics-list
         class="compact"
         header-component="h2"
-        :title="$t('infoAbout', { term: 'Savings' })"
+        :title="$t('infoAboutSavings')"
       >
         <analytics-list-item
           :description="variableAPY"
@@ -57,7 +57,7 @@
 
         <analytics-list-item
           :description="totalAmountEarned"
-          :title="$t('totalAmountEarned', { term: 'Savings' })"
+          :title="$t('totalAmountEarnedInSavings')"
         />
 
         <analytics-list-item
@@ -73,7 +73,7 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
-import { formatPercents, formatToDecimals } from '@/utils/format';
+import { formatPercents } from '@/utils/format';
 import { getNetwork, Network } from '@/utils/networkTypes';
 import { getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfo } from '@/wallet/types';
@@ -90,6 +90,7 @@ export default Vue.extend({
       apy: 'savingsAPY'
     }),
     ...mapGetters('savings', {
+      usdcTokenInfo: 'usdcTokenInfo',
       balanceNative: 'savingsInfoBalanceNative',
       balanceUSDC: 'savingsInfoBalanceUSDC',
       totalEarned: 'savingsInfoEarnedTotalNative',
@@ -102,9 +103,10 @@ export default Vue.extend({
       return this.formatAsNativeCurrency(this.balanceNative);
     },
     formattedBaseCurrencyTotalBalance(): string {
-      return `${formatToDecimals(this.balanceUSDC, 2)} ${
-        this.baseCurrency.symbol
-      }`;
+      return this.formatAsCryptoWithSymbol(
+        this.balanceUSDC,
+        this.usdcTokenInfo.symbol
+      );
     },
     variableAPY(): string {
       return `${formatPercents(this.apy ?? this.avg30DaysAPY)}%`;

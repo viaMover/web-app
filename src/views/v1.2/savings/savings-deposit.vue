@@ -34,7 +34,6 @@
 
       <amount-field
         :amount="inputValue"
-        :asset-balance="inputAsset ? inputAsset.balance : undefined"
         :asset-symbol="currentInputSymbol"
         class="mb-40"
         input-id="input-amount"
@@ -49,7 +48,7 @@
         </template>
         <template #description>
           <form-swap-message
-            v-if="isSwapNeeded && inputMode === 'TOKEN' && formattedUSDCTotal"
+            v-if="showSwapMessage"
             :amount="formattedUSDCTotal"
             :target-token="outputAsset"
           />
@@ -61,7 +60,7 @@
         :error="error"
         :loading="isLoading || isProcessing"
       >
-        {{ $t('reviewDeposit') }}
+        {{ $t('reviewTransaction') }}
       </submit-button>
     </form>
     <form
@@ -104,8 +103,7 @@
           </custom-switch>
 
           <review-statement
-            v-if="useSmartTreasury && estimatedGasCost"
-            :description="estimatedGasCost"
+            :description="formatAsNativeCurrency(estimatedGasCost)"
             :title="$t('estimatedGasCost')"
           />
         </template>
@@ -145,6 +143,7 @@ import {
   notZero,
   toWei
 } from '@/utils/bigmath';
+import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { getSlippage } from '@/wallet/references/data';
 import { Token, TokenWithBalance } from '@/wallet/types';
 
@@ -179,6 +178,7 @@ export default Vue.extend({
     LoaderForm,
     FormSwapMessage
   },
+  mixins: [GasListenerMixin],
   data() {
     return {
       step: 'prepare' as ProcessStep,
@@ -196,10 +196,10 @@ export default Vue.extend({
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       useAllBalance: false,
+      isSubsidizedEnabled: false,
       useSmartTreasury: true,
 
       //to tx
-      isSubsidizedEnabled: false,
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
       approveGasLimit: undefined as string | undefined
@@ -207,24 +207,17 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('account', {
-      currentAddress: 'currentAddress',
       nativeCurrency: 'nativeCurrency',
       gasPrices: 'gasPrices',
       ethPrice: 'ethPrice',
       tokens: 'tokens',
-      provider: 'provider',
       swapService: 'swapAPIService'
     }),
     ...mapState('savings', {
-      savingsAPY: 'savingsAPY',
-      savingsBalance: 'savingsBalance',
       savingsOnChainService: 'onChainService'
     }),
     ...mapGetters('savings', {
       usdcTokenInfo: 'usdcTokenInfo'
-    }),
-    ...mapGetters('account', {
-      usdcNativePrice: 'usdcNativePrice'
     }),
     usdcWalletBalance(): string {
       return this.usdcTokenInfo.balance;
@@ -250,33 +243,28 @@ export default Vue.extend({
         !sameAddress(this.inputAsset.address, this.outputAsset.address)
       );
     },
-    description(): string {
-      return (
-        this.isSwapNeeded
-          ? this.$t('savings.deposit.txtAssetWillBeConverted')
-          : this.$t('savings.txtUSDCCoinIsAStable')
-      ) as string;
-    },
     hasBackButton(): boolean {
-      return this.step !== 'loader';
+      return this.step === 'review';
+    },
+    usdcTotal(): string {
+      if (this.inputAsset === undefined || this.transferData === undefined) {
+        return '0';
+      }
+
+      return fromWei(this.transferData.buyAmount, this.outputAsset.decimals);
+    },
+    showSwapMessage(): boolean {
+      return (
+        this.isSwapNeeded &&
+        this.inputMode === 'TOKEN' &&
+        notZero(this.usdcTotal)
+      );
     },
     formattedUSDCTotal(): string {
-      if (this.inputAsset === undefined) {
-        return this.formatAsCryptoWithSymbol(0, this.outputAsset.symbol);
-      }
-
-      if (this.transferData !== undefined) {
-        const boughtUSDC = fromWei(
-          this.transferData.buyAmount,
-          this.outputAsset.decimals
-        );
-        return this.formatAsCryptoWithSymbol(
-          boughtUSDC,
-          this.outputAsset.symbol
-        );
-      }
-
-      return this.formatAsCryptoWithSymbol(0, this.outputAsset.symbol);
+      return this.formatAsCryptoWithSymbol(
+        this.usdcTotal,
+        this.outputAsset.symbol
+      );
     },
     balanceAfterDeposit(): string {
       if (this.isSwapNeeded && this.transferData !== undefined) {
@@ -548,17 +536,8 @@ export default Vue.extend({
       if (this.inputAsset === undefined) {
         return;
       }
-      if (this.inputMode === 'TOKEN') {
-        await this.updateAmount(this.inputAsset.balance, 'TOKEN');
-      } else {
-        await this.updateAmount(
-          convertNativeAmountFromAmount(
-            this.inputAsset.balance,
-            this.inputAsset.priceUSD
-          ),
-          'NATIVE'
-        );
-      }
+
+      await this.updateAmount(this.inputAsset.balance, 'TOKEN');
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
       if (this.error !== undefined) {
