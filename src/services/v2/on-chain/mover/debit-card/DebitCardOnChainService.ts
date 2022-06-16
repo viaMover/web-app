@@ -5,8 +5,10 @@ import { TransferData } from '@/services/0x/api';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { OnChainServiceError } from '@/services/v2/on-chain';
-import { MoverOnChainService } from '@/services/v2/on-chain/mover';
-import { CompoundEstimateWithUnwrapResponse } from '@/services/v2/on-chain/mover/debit-card/types';
+import {
+  CompoundEstimateWithUnwrapResponse,
+  MoverOnChainService
+} from '@/services/v2/on-chain/mover';
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { WrappedTokenDCult } from '@/services/v2/on-chain/wrapped-tokens/dCULT/token';
 import { WrappedTokenGALCX } from '@/services/v2/on-chain/wrapped-tokens/gALCX/token';
@@ -66,11 +68,11 @@ export class DebitCardOnChainService extends MoverOnChainService {
     this.specialTokenHandlers.push(new WrappedTokenGALCX(Network.mainnet));
   }
 
-  public estimateTopUpCompound = async (
+  public async estimateTopUpCompound(
     inputAsset: SmallToken,
     inputAmount: string,
     transferData: TransferData | undefined
-  ): Promise<CompoundEstimateWithUnwrapResponse> => {
+  ): Promise<CompoundEstimateWithUnwrapResponse> {
     if (this.centralTransferProxyContract === undefined) {
       throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
     }
@@ -193,9 +195,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
     });
 
     throw new OnChainServiceError('Failed to estimate top up: empty gas limit');
-  };
+  }
 
-  public topUpCompound = async (
+  public async topUpCompound(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData | undefined,
@@ -203,7 +205,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     actionGasLimit: string,
     approveGasLimit: string,
     unwrapGasLimit: string
-  ): Promise<TransactionReceipt> => {
+  ): Promise<TransactionReceipt> {
     const specialTokenHandler = this.specialTokenHandlers.find((h) =>
       h.canHandle(inputAsset.address, this.network)
     );
@@ -217,25 +219,25 @@ export class DebitCardOnChainService extends MoverOnChainService {
         unwrapGasLimit
       );
       inputAsset = specialTokenHandler.getUnwrappedToken();
-    }
 
-    if (!sameAddress(inputAsset.address, this.usdcAssetData.address)) {
-      transferData = await this.swapService.getTransferData(
-        this.usdcAssetData.address,
-        inputAsset.address,
-        toWei(inputAmount, inputAsset.decimals),
-        true,
-        getSlippage(inputAsset.address, this.network)
-      );
+      if (!sameAddress(inputAsset.address, this.usdcAssetData.address)) {
+        transferData = await this.swapService.getTransferData(
+          this.usdcAssetData.address,
+          inputAsset.address,
+          toWei(inputAmount, inputAsset.decimals),
+          true,
+          getSlippage(inputAsset.address, this.network)
+        );
 
-      const estimation = await this.estimateTopUpCompound(
-        inputAsset,
-        inputAmount,
-        transferData
-      );
+        const estimation = await this.estimateTopUpCompound(
+          inputAsset,
+          inputAmount,
+          transferData
+        );
 
-      actionGasLimit = estimation.actionGasLimit;
-      approveGasLimit = estimation.approveGasLimit;
+        actionGasLimit = estimation.actionGasLimit;
+        approveGasLimit = estimation.approveGasLimit;
+      }
     }
 
     await changeStep('Confirm');
@@ -257,15 +259,15 @@ export class DebitCardOnChainService extends MoverOnChainService {
       approveGasLimit,
       actionGasLimit
     );
-  };
+  }
 
-  topUp = async (
+  protected async topUp(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData | undefined,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
-  ): Promise<TransactionReceipt> => {
+  ): Promise<TransactionReceipt> {
     if (
       !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
       transferData === undefined
@@ -300,5 +302,5 @@ export class DebitCardOnChainService extends MoverOnChainService {
         changeStepToProcess
       );
     });
-  };
+  }
 }
