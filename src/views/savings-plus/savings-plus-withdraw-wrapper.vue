@@ -105,7 +105,10 @@ import {
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
 import { getNetwork } from '@/utils/networkTypes';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import {
+  getUSDCAssetData,
+  SavingsPlusUSDCDecimals
+} from '@/wallet/references/data';
 import { TokenWithBalance } from '@/wallet/types';
 
 import {
@@ -279,7 +282,7 @@ export default Vue.extend({
           this.savingsPlusApiService as MoverAPISavingsPlusService
         ).getWithdrawTransactionData(
           this.networkInfo.network,
-          toWei(this.inputAmount, this.inputAsset.decimals)
+          toWei(this.inputAmount, SavingsPlusUSDCDecimals)
         );
 
         let receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
