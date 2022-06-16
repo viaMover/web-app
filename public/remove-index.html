@@ -29,7 +29,9 @@
         .replace(/=.*/, '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/');
     });
     setTimeout(() => {
-      window.location.replace('https://app.viamover.com');
+      window.location.replace(
+        window.location.protocol + '//' + window.location.host
+      );
     }, 1000);
   });
 </script>
