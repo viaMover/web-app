@@ -99,7 +99,9 @@ export type AddressMapKey =
   | 'DCULT_TOKEN_ADDRESS'
   | 'LUSD_TOKEN_ADDRESS'
   | 'SAVINGS_PLUS_POOL_ADDRESS'
-  | 'AG_EUR_TOKEN_ADDRESS';
+  | 'AG_EUR_TOKEN_ADDRESS'
+  | 'LDO_TOKEN_ADDRESS'
+  | 'ST_ETH_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -166,7 +168,9 @@ const addresses = {
     DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
     DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
     LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
-    AG_EUR_TOKEN_ADDRESS: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8'
+    AG_EUR_TOKEN_ADDRESS: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8',
+    LDO_TOKEN_ADDRESS: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+    ST_ETH_TOKEN_ADDRESS: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -532,7 +536,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
     lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
     lookupAddress(network, 'AG_EUR_TOKEN_ADDRESS'),
-    lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ST_ETH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LDO_TOKEN_ADDRESS'),
     ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address)
   ];
 };

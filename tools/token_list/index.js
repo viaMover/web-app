@@ -187,7 +187,19 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'agEUR',
       name: 'agEUR'
-    } // agEUR
+    }, // agEUR
+    {
+      id: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+      decimals: 18,
+      symbol: 'LDO',
+      name: 'Lido DAO Token'
+    }, // LDO
+    {
+      id: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      decimals: 18,
+      symbol: 'stETH',
+      name: 'Liquid staked Ether 2.0'
+    } // stETH
   ],
   fantom: [],
   polygon: [],
