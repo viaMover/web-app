@@ -664,14 +664,16 @@ export default Vue.extend({
               );
             }
 
-            this.transferData = await getTransferData(
-              this.usdcAsset.address,
-              referenceToken.address,
-              inputInWei,
-              true,
-              getSlippage(referenceToken.address, this.networkInfo.network),
-              this.networkInfo.network
-            );
+            if (!sameAddress(referenceToken.address, this.usdcAsset.address)) {
+              this.transferData = await getTransferData(
+                this.usdcAsset.address,
+                referenceToken.address,
+                inputInWei,
+                true,
+                getSlippage(referenceToken.address, this.networkInfo.network),
+                this.networkInfo.network
+              );
+            }
           } else {
             this.inputAmountNative = value;
 

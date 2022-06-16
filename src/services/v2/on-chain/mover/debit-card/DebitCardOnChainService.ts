@@ -77,15 +77,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
       throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
     }
 
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError(
-        'Failed to estimate top up: missing transferData'
-      );
-    }
-
     const specialTokenHandler = this.specialTokenHandlers.find((h) =>
       h.canHandle(inputAsset.address, this.network)
     );
@@ -128,6 +119,15 @@ export class DebitCardOnChainService extends MoverOnChainService {
         approveGasLimit: ethDefaults.basic_approval,
         unwrapGasLimit: estimation.gasLimit
       };
+    }
+
+    if (
+      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
+      transferData === undefined
+    ) {
+      throw new OnChainServiceError(
+        'Failed to estimate top up: missing transferData'
+      );
     }
 
     const approveGasLimit = await this.estimateApproveIfNeeded(
@@ -229,16 +229,18 @@ export class DebitCardOnChainService extends MoverOnChainService {
           true,
           getSlippage(inputAsset.address, this.network)
         );
-
-        const estimation = await this.estimateTopUpCompound(
-          inputAsset,
-          inputAmount,
-          transferData
-        );
-
-        actionGasLimit = estimation.actionGasLimit;
-        approveGasLimit = estimation.approveGasLimit;
+      } else {
+        transferData = undefined;
       }
+
+      const estimation = await this.estimateTopUpCompound(
+        inputAsset,
+        inputAmount,
+        transferData
+      );
+
+      actionGasLimit = estimation.actionGasLimit;
+      approveGasLimit = estimation.approveGasLimit;
     }
 
     await changeStep('Confirm');
