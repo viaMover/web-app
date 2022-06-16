@@ -208,14 +208,14 @@ export default Vue.extend({
       if (this.withdrawTxData === undefined) {
         return '0';
       }
-      let receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
+      let receiveAmount = toWei(this.inputAmount, SavingsPlusUSDCDecimals);
       if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
         receiveAmount = this.withdrawTxData.estimatedReceived;
       } else {
         receiveAmount = sub(receiveAmount, this.withdrawTxData.withdrawFee);
       }
       const receiveNativeAmount = multiply(
-        fromWei(receiveAmount, this.inputAsset.decimals),
+        fromWei(receiveAmount, SavingsPlusUSDCDecimals),
         this.usdcNativePrice
       );
       return `${formatToDecimals(
@@ -228,7 +228,7 @@ export default Vue.extend({
       const usdcAsset = getUSDCAssetData(this.networkInfo.network);
       return {
         address: usdcAsset.address,
-        decimals: usdcAsset.decimals,
+        decimals: SavingsPlusUSDCDecimals,
         symbol: usdcAsset.symbol,
         name: 'USD Coin',
         priceUSD: this.usdcNativePrice,
@@ -255,7 +255,7 @@ export default Vue.extend({
     bridgingFee(): string {
       if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
         return `${formatToDecimals(
-          fromWei(this.withdrawTxData.bridgeFee, this.inputAsset.decimals),
+          fromWei(this.withdrawTxData.bridgeFee, SavingsPlusUSDCDecimals),
           4
         )} ${this.inputAsset.symbol}`;
       }
@@ -285,13 +285,13 @@ export default Vue.extend({
           toWei(this.inputAmount, SavingsPlusUSDCDecimals)
         );
 
-        let receiveAmount = toWei(this.inputAmount, this.inputAsset.decimals);
+        let receiveAmount = toWei(this.inputAmount, SavingsPlusUSDCDecimals);
         if (isWithdrawComplexTransactionData(this.withdrawTxData)) {
           receiveAmount = this.withdrawTxData.estimatedReceived;
           if (
             greaterThan(
               this.withdrawTxData.bridgeFee,
-              divide(toWei(this.inputAmount, this.inputAsset.decimals), '10')
+              divide(toWei(this.inputAmount, SavingsPlusUSDCDecimals), '10')
             ) ||
             greaterThan(
               multiply(
