@@ -181,7 +181,13 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'DOLA',
       name: 'Dola USD Stablecoin'
-    } // DOLA
+    }, // DOLA
+    {
+      id: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8',
+      decimals: 18,
+      symbol: 'agEUR',
+      name: 'agEUR'
+    } // agEUR
   ],
   fantom: [],
   polygon: [],
