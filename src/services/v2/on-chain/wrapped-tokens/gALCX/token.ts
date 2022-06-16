@@ -6,7 +6,7 @@ import { AbiItem } from 'web3-utils';
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
-import { IWrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
+import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import { floorDivide, multiply, sub, toWei } from '@/utils/bigmath';
@@ -18,35 +18,37 @@ import {
 } from '@/wallet/references/data';
 import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 
-import { LoaderStep } from '@/components/forms';
-
-export class WrappedTokenGALCX implements IWrappedToken {
-  private readonly sentryPrefix: string;
-  public readonly network: Network;
+export class WrappedTokenGALCX extends WrappedToken {
+  readonly sentryCategoryPrefix: string;
   public readonly wrappedTokenAddress: string;
+  public readonly unwrappedTokenAddress: string;
+
   public readonly contractABI = GALCX_ABI;
 
   constructor(network: Network) {
-    this.network = network;
-    this.sentryPrefix = `wrapped-token.galcx`;
+    super(network);
+    this.sentryCategoryPrefix = `wrapped-token.galcx`;
     this.wrappedTokenAddress = lookupAddress(network, 'GALCX_TOKEN_ADDRESS');
+    this.unwrappedTokenAddress = lookupAddress(network, 'ALCX_TOKEN_ADDRESS');
   }
 
-  getUnwrappedToken = (): SmallTokenInfo => getALCXAssetData(this.network);
+  public getUnwrappedToken(): SmallTokenInfo {
+    return getALCXAssetData(this.network);
+  }
 
-  canHandle = (assetAddress: string, network: Network): boolean => {
+  public canHandle(assetAddress: string, network: Network): boolean {
     return (
       network === this.network &&
       sameAddress(this.wrappedTokenAddress, assetAddress)
     );
-  };
+  }
 
-  estimateUnwrap = async (
+  public async estimateUnwrap(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     web3: Web3,
     accountAddress: string
-  ): Promise<EstimateResponse> => {
+  ): Promise<EstimateResponse> {
     try {
       const contract = new web3.eth.Contract(
         this.contractABI as AbiItem[],
@@ -61,7 +63,7 @@ export class WrappedTokenGALCX implements IWrappedToken {
 
       addSentryBreadcrumb({
         type: 'info',
-        category: `${this.sentryPrefix}.estimate-unwrap`,
+        category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'input amount in WEI',
         data: {
           inputAmountInWEI
@@ -70,7 +72,7 @@ export class WrappedTokenGALCX implements IWrappedToken {
 
       addSentryBreadcrumb({
         type: 'info',
-        category: `${this.sentryPrefix}.estimate-unwrap`,
+        category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'transaction params',
         data: {
           ...transactionParams
@@ -90,7 +92,7 @@ export class WrappedTokenGALCX implements IWrappedToken {
 
         addSentryBreadcrumb({
           type: 'info',
-          category: `${this.sentryPrefix}.estimate-unwrap`,
+          category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
           message: 'gas estimations',
           data: {
             gasLimit,
@@ -103,7 +105,7 @@ export class WrappedTokenGALCX implements IWrappedToken {
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
-        category: `${this.sentryPrefix}.estimate-unwrap`,
+        category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'failed to estimate top up',
         data: {
           error
@@ -114,20 +116,20 @@ export class WrappedTokenGALCX implements IWrappedToken {
     }
 
     throw new OnChainServiceError('Failed to estimate unwrap: empty gas limit');
-  };
+  }
 
-  unwrap = async (
+  public async unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     web3: Web3,
     accountAddress: string,
-    changeStepToProcess: (step: LoaderStep) => Promise<void>,
+    changeStepToProcess: () => Promise<void>,
     gasLimit: string
-  ): Promise<string> => {
+  ): Promise<string> {
     const balanceBeforeUnwrap = await currentBalance(
       web3,
       accountAddress,
-      inputAsset.address
+      this.unwrappedTokenAddress
     );
 
     await this._unwrap(
@@ -142,20 +144,20 @@ export class WrappedTokenGALCX implements IWrappedToken {
     const balanceAfterUnwrap = await currentBalance(
       web3,
       accountAddress,
-      inputAsset.address
+      this.unwrappedTokenAddress
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
-  };
+  }
 
-  _unwrap = async (
+  protected async _unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     web3: Web3,
     accountAddress: string,
-    changeStepToProcess: (step: LoaderStep) => Promise<void>,
+    changeStepToProcess: () => Promise<void>,
     gasLimit: string
-  ): Promise<void> => {
+  ): Promise<TransactionReceipt> {
     const contract = new web3.eth.Contract(
       this.contractABI as AbiItem[],
       this.wrappedTokenAddress
@@ -173,7 +175,7 @@ export class WrappedTokenGALCX implements IWrappedToken {
 
     addSentryBreadcrumb({
       type: 'info',
-      category: `${this.sentryPrefix}.execute-unwrap`,
+      category: `${this.sentryCategoryPrefix}.execute-unwrap`,
       message: 'input amount in WEI',
       data: {
         inputAmountInWEI
@@ -182,7 +184,7 @@ export class WrappedTokenGALCX implements IWrappedToken {
 
     addSentryBreadcrumb({
       type: 'info',
-      category: `${this.sentryPrefix}.estimate-unwrap`,
+      category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
       message: 'transaction params',
       data: {
         ...transactionParams
@@ -191,37 +193,21 @@ export class WrappedTokenGALCX implements IWrappedToken {
 
     addSentryBreadcrumb({
       type: 'info',
-      category: `${this.sentryPrefix}.estimate-unwrap`,
+      category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
       message: 'currency'
     });
 
-    await new Promise<void>((resolve, reject) => {
-      (contract.methods.unstake(inputAmountInWEI) as ContractSendMethod)
-        .send(transactionParams)
-        .once('transactionHash', (hash: string) => {
-          addSentryBreadcrumb({
-            type: 'debug',
-            category: `${this.sentryPrefix}.estimate-unwrap`,
-            message: 'transaction hash',
-            data: {
-              hash
-            }
-          });
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      this.wrapWithSendMethodCallbacks(
+        (contract.methods.unstake(inputAmountInWEI) as ContractSendMethod).send(
+          transactionParams
+        ),
+        resolve,
+        reject,
+        changeStepToProcess
+      );
 
-          changeStepToProcess('Process');
-        })
-        .once('receipt', (receipt: TransactionReceipt) => {
-          addSentryBreadcrumb({
-            type: 'debug',
-            category: `${this.sentryPrefix}.estimate-unwrap`,
-            message: 'transaction receipt',
-            data: {
-              receipt
-            }
-          });
-          resolve();
-        })
-        .once('error', (error: Error) => reject(error));
+      return;
     });
-  };
+  }
 }

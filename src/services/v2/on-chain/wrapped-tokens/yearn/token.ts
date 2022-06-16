@@ -6,7 +6,7 @@ import { AbiItem } from 'web3-utils';
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
-import { IWrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
+import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import { floorDivide, multiply, sub, toWei } from '@/utils/bigmath';
@@ -18,14 +18,12 @@ import {
 } from '@/wallet/references/yearnVaultsData';
 import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 
-import { LoaderStep } from '@/components/forms';
-
-export class WrappedTokenYearn implements IWrappedToken {
-  private readonly sentryPrefix: string;
+export class WrappedTokenYearn extends WrappedToken {
+  readonly sentryCategoryPrefix: string;
   private readonly vault: YearnVaultData;
-  public readonly network: Network;
 
   constructor(wrappedAssetAddress: string, network: Network) {
+    super(network);
     const vault = getSimpleYearnVaultTokenByAddress(
       wrappedAssetAddress,
       network
@@ -36,25 +34,24 @@ export class WrappedTokenYearn implements IWrappedToken {
       );
     }
     this.vault = vault;
-    this.network = network;
-    this.sentryPrefix = `wrapped-token.simple-yearn.${this.vault.vaultToken.symbol}`;
+    this.sentryCategoryPrefix = `wrapped-token.simple-yearn.${this.vault.vaultToken.symbol}`;
   }
 
   getUnwrappedToken = (): SmallTokenInfo => this.vault.commonToken;
 
-  canHandle = (assetAddress: string, network: Network): boolean => {
+  canHandle(assetAddress: string, network: Network): boolean {
     return (
       network === this.network &&
       sameAddress(this.vault.vaultToken.address, assetAddress)
     );
-  };
+  }
 
-  estimateUnwrap = async (
+  async estimateUnwrap(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     web3: Web3,
     accountAddress: string
-  ): Promise<EstimateResponse> => {
+  ): Promise<EstimateResponse> {
     const contractABI = YEARN_SIMPLE_VAULT_ABI;
 
     try {
@@ -71,7 +68,7 @@ export class WrappedTokenYearn implements IWrappedToken {
 
       addSentryBreadcrumb({
         type: 'info',
-        category: `${this.sentryPrefix}.estimate-unwrap`,
+        category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'input amount in WEI',
         data: {
           inputAmountInWEI,
@@ -83,7 +80,7 @@ export class WrappedTokenYearn implements IWrappedToken {
 
       addSentryBreadcrumb({
         type: 'info',
-        category: `${this.sentryPrefix}.estimate-unwrap`,
+        category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'transaction params',
         data: {
           ...transactionParams
@@ -105,7 +102,7 @@ export class WrappedTokenYearn implements IWrappedToken {
 
         addSentryBreadcrumb({
           type: 'info',
-          category: `${this.sentryPrefix}.estimate-unwrap`,
+          category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
           message: 'gas estimations',
           data: {
             gasLimit,
@@ -118,7 +115,7 @@ export class WrappedTokenYearn implements IWrappedToken {
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
-        category: `${this.sentryPrefix}.estimate-unwrap`,
+        category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'failed to estimate top up',
         data: {
           error
@@ -133,20 +130,20 @@ export class WrappedTokenYearn implements IWrappedToken {
     throw new OnChainServiceError(
       'Failed to estimate simple yearn vault unwrap: empty gas limit'
     );
-  };
+  }
 
-  unwrap = async (
+  async unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     web3: Web3,
     accountAddress: string,
-    changeStepToProcess: (step: LoaderStep) => Promise<void>,
+    changeStepToProcess: () => Promise<void>,
     gasLimit: string
-  ): Promise<string> => {
+  ): Promise<string> {
     const balanceBeforeUnwrap = await currentBalance(
       web3,
       accountAddress,
-      inputAsset.address
+      this.vault.commonToken.address
     );
 
     await this._unwrap(
@@ -161,20 +158,20 @@ export class WrappedTokenYearn implements IWrappedToken {
     const balanceAfterUnwrap = await currentBalance(
       web3,
       accountAddress,
-      inputAsset.address
+      this.vault.commonToken.address
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
-  };
+  }
 
-  _unwrap = async (
+  private async _unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     web3: Web3,
     accountAddress: string,
-    changeStepToProcess: (step: LoaderStep) => Promise<void>,
+    changeStepToProcess: () => Promise<void>,
     gasLimit: string
-  ): Promise<void> => {
+  ): Promise<TransactionReceipt> {
     const contractABI = YEARN_SIMPLE_VAULT_ABI;
 
     const contract = new web3.eth.Contract(
@@ -194,7 +191,7 @@ export class WrappedTokenYearn implements IWrappedToken {
 
     addSentryBreadcrumb({
       type: 'info',
-      category: `${this.sentryPrefix}.execute-unwrap`,
+      category: `${this.sentryCategoryPrefix}.execute-unwrap`,
       message: 'input amount in WEI',
       data: {
         inputAmountInWEI,
@@ -206,7 +203,7 @@ export class WrappedTokenYearn implements IWrappedToken {
 
     addSentryBreadcrumb({
       type: 'info',
-      category: `${this.sentryPrefix}.estimate-unwrap`,
+      category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
       message: 'transaction params',
       data: {
         ...transactionParams
@@ -215,39 +212,21 @@ export class WrappedTokenYearn implements IWrappedToken {
 
     addSentryBreadcrumb({
       type: 'info',
-      category: `${this.sentryPrefix}.estimate-unwrap`,
+      category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
       message: 'currency'
     });
 
-    await new Promise<void>((resolve, reject) => {
-      (contract.methods.withdraw(inputAmountInWEI) as ContractSendMethod)
-        .send(transactionParams)
-        .once('transactionHash', (hash: string) => {
-          addSentryBreadcrumb({
-            type: 'debug',
-            category: `${this.sentryPrefix}.estimate-unwrap`,
-            message: 'transaction hash',
-            data: {
-              hash
-            }
-          });
+    return new Promise<TransactionReceipt>((resolve, reject) => {
+      this.wrapWithSendMethodCallbacks(
+        (
+          contract.methods.withdraw(inputAmountInWEI) as ContractSendMethod
+        ).send(transactionParams),
+        resolve,
+        reject,
+        changeStepToProcess
+      );
 
-          console.log('debug yearn.vault.simple.unwrap txn hash', hash);
-          changeStepToProcess('Process');
-        })
-        .once('receipt', (receipt: TransactionReceipt) => {
-          addSentryBreadcrumb({
-            type: 'debug',
-            category: `${this.sentryPrefix}.estimate-unwrap`,
-            message: 'transaction receipt',
-            data: {
-              receipt
-            }
-          });
-          console.debug('debit yearn.vault.simple.unwrap txn receipt', receipt);
-          resolve();
-        })
-        .once('error', (error: Error) => reject(error));
+      return;
     });
-  };
+  }
 }

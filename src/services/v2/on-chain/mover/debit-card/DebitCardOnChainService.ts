@@ -12,12 +12,12 @@ import {
 import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
 import { WrappedTokenDCult } from '@/services/v2/on-chain/wrapped-tokens/dCULT/token';
 import { WrappedTokenGALCX } from '@/services/v2/on-chain/wrapped-tokens/gALCX/token';
-import { IWrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
+import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { WrappedTokenWXBTRFLY } from '@/services/v2/on-chain/wrapped-tokens/wxBTRFLY/token';
 import { WrappedTokenYearn } from '@/services/v2/on-chain/wrapped-tokens/yearn/token';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { toWei } from '@/utils/bigmath';
+import { fromWei, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   getCentralTransferProxyAbi,
@@ -34,7 +34,7 @@ import { LoaderStep } from '@/components/forms';
 
 export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'debit-card.on-chain.service';
-  specialTokenHandlers: Array<IWrappedToken> = [];
+  specialTokenHandlers: Array<WrappedToken> = [];
   swapService: ZeroXAPIService;
   protected readonly usdcAssetData: SmallTokenInfo;
   protected readonly eursAssetData: SmallTokenInfo;
@@ -210,7 +210,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       h.canHandle(inputAsset.address, this.network)
     );
     if (specialTokenHandler !== undefined) {
-      inputAmount = await specialTokenHandler.unwrap(
+      const inputAmountInWei = await specialTokenHandler.unwrap(
         inputAsset,
         inputAmount,
         this.web3Client,
@@ -219,12 +219,13 @@ export class DebitCardOnChainService extends MoverOnChainService {
         unwrapGasLimit
       );
       inputAsset = specialTokenHandler.getUnwrappedToken();
+      inputAmount = fromWei(inputAmountInWei, inputAsset.decimals);
 
       if (!sameAddress(inputAsset.address, this.usdcAssetData.address)) {
         transferData = await this.swapService.getTransferData(
           this.usdcAssetData.address,
           inputAsset.address,
-          toWei(inputAmount, inputAsset.decimals),
+          inputAmountInWei,
           true,
           getSlippage(inputAsset.address, this.network)
         );

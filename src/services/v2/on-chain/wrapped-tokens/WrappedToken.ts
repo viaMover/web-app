@@ -4,32 +4,36 @@
 import Web3 from 'web3';
 
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
+import { PromiEventWrapper } from '@/services/v2/on-chain/PromiEventWrapper';
 import { Network } from '@/utils/networkTypes';
 import { SmallToken, SmallTokenInfo } from '@/wallet/types';
 
-import { LoaderStep } from '@/components/forms';
-
-export interface IWrappedToken {
+export abstract class WrappedToken extends PromiEventWrapper {
   readonly network: Network;
+
+  constructor(network: Network) {
+    super();
+    this.network = network;
+  }
 
   /**
    * Returns an unwrapped token version
    */
-  getUnwrappedToken(): SmallTokenInfo;
+  abstract getUnwrappedToken(): SmallTokenInfo;
 
   /**
    * Returns whether the class can handle inputAsset
    * @description This predicate is used in responsibility checks
    * @param assetAddress token address to check
    */
-  canHandle(assetAddress: string, network: Network): boolean;
+  abstract canHandle(assetAddress: string, network: Network): boolean;
 
   /**
    * Estimate unwrap (unstake) operation
    * @param inputAsset wrapped (staked) token to be used
    * @param inputAmount amount of wrapped (staked) token
    */
-  estimateUnwrap(
+  abstract estimateUnwrap(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     web3: Web3,
@@ -44,12 +48,12 @@ export interface IWrappedToken {
    * @param gasLimit max gas amount that can be used during execution
    * @returns amount of unwrapped token received after operation (delta)
    */
-  unwrap(
+  abstract unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     web3: Web3,
     accountAddress: string,
-    changeStepToProcess: (step: LoaderStep) => Promise<void>,
+    changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<string>;
 }
