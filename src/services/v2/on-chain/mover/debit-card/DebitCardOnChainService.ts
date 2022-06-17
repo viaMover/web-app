@@ -68,6 +68,18 @@ export class DebitCardOnChainService extends MoverOnChainService {
     this.specialTokenHandlers.push(new WrappedTokenGALCX(Network.mainnet));
   }
 
+  public getUnwrappedToken(inputAsset: SmallToken): SmallToken | undefined {
+    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
+      h.canHandle(inputAsset.address, this.network)
+    );
+
+    if (specialTokenHandler !== undefined) {
+      return specialTokenHandler.getUnwrappedToken();
+    }
+
+    return undefined;
+  }
+
   public async estimateTopUpCompound(
     inputAsset: SmallToken,
     inputAmount: string,

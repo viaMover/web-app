@@ -266,12 +266,20 @@ export default Vue.extend({
 
       return '';
     },
-    isNeedTransfer(): boolean {
+    topUpTokenAddress(): string | undefined {
       if (this.inputAsset === undefined) {
-        return true;
+        return undefined;
       }
 
-      return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
+      const unwrappedToken = (
+        this.debitCardOnChainService as DebitCardOnChainService
+      ).getUnwrappedToken(this.inputAsset);
+
+      if (unwrappedToken !== undefined) {
+        return unwrappedToken.address;
+      }
+
+      return this.inputAsset.address;
     },
     validTokens(): Array<TokenWithBalance> {
       const validAssetAddresses = validTopUpAssets(
@@ -888,7 +896,10 @@ export default Vue.extend({
         return;
       }
 
-      if (this.isNeedTransfer && this.transferData === undefined) {
+      if (
+        !sameAddress(this.topUpTokenAddress, this.usdcAsset.address) &&
+        this.transferData === undefined
+      ) {
         addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
