@@ -122,7 +122,11 @@ import {
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { getSlippage, getUSDCAssetData } from '@/wallet/references/data';
+import {
+  getSlippage,
+  getUSDCAssetData,
+  SavingsPlusUSDCDecimals
+} from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
 import {
@@ -233,7 +237,10 @@ export default Vue.extend({
       return `0 ${this.outputUSDCAsset.symbol}`;
     },
     outputUSDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
+      return {
+        ...getUSDCAssetData(this.networkInfo.network),
+        decimals: SavingsPlusUSDCDecimals
+      };
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
