@@ -5,6 +5,7 @@ import { Network } from '@/utils/networkTypes';
 import { getTestnetAssets } from './references/testnetAssets';
 import { Token } from './types';
 import assetListAvalanche from '@/../data/assets/assetList-avalanche.json';
+import assetListBinance from '@/../data/assets/assetList-binance.json';
 import assetListEth from '@/../data/assets/assetList-ethereum.json';
 import assetListFantom from '@/../data/assets/assetList-fantom.json';
 import assetListPolygon from '@/../data/assets/assetList-polygon.json';
@@ -23,7 +24,8 @@ export const availableNetworks = [
   Network.mainnet,
   Network.fantom,
   Network.polygon,
-  Network.avalanche
+  Network.avalanche,
+  Network.binance
 ];
 
 const getAssetList = (network: Network): Array<AssetListType> => {
@@ -36,6 +38,8 @@ const getAssetList = (network: Network): Array<AssetListType> => {
       return assetListPolygon;
     case Network.avalanche:
       return assetListAvalanche;
+    case Network.binance:
+      return assetListBinance;
     default:
       return [];
   }

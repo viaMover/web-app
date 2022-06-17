@@ -1,4 +1,14 @@
 import { DiceType } from '@/services/chain';
+import {
+  Attribute as ENSAttribute,
+  ENSAPIService
+} from '@/services/v2/api/ens';
+import {
+  Attribute as UNSAttribute,
+  UNSAPIService
+} from '@/services/v2/api/uns';
+import { ENSOnChainService } from '@/services/v2/on-chain/ens/ENSOnChainService';
+import { UNSOnChainService } from '@/services/v2/on-chain/uns';
 import { Network } from '@/utils/networkTypes';
 
 import { Step } from '@/components/forms/form-loader';
@@ -15,6 +25,13 @@ export type NFTStoreState = {
   dice: NftAsset<NftAssetId.Dice>;
   swapPassport: NftAsset<NftAssetId.SwapPassport> | undefined;
   baseledgerStakingOG: NftAsset<NftAssetId.BaseledgerStakingOG>;
+  ens: NftAsset<NftAssetId.ENS>;
+  uns: NftAsset<NftAssetId.UNS>;
+
+  ensOnChainService: ENSOnChainService | undefined;
+  ensAPIService: ENSAPIService | undefined;
+  unsOnChainService: UNSOnChainService | undefined;
+  unsAPIService: UNSAPIService | undefined;
 };
 
 export enum NftAssetId {
@@ -25,7 +42,9 @@ export enum NftAssetId {
   Dice = 'dice-project',
   SwapPassport = 'swap-passport',
   OrderOfLiberty = 'the-order-of-liberty',
-  BaseledgerStakingOG = 'baseledger-staking-og'
+  BaseledgerStakingOG = 'baseledger-staking-og',
+  ENS = 'ens',
+  UNS = 'uns'
 }
 
 export interface NftAssetsMeta {
@@ -58,6 +77,17 @@ export interface NftAssetsMeta {
   };
   [NftAssetId.BaseledgerStakingOG]: {
     totalSupply: string;
+  };
+  [NftAssetId.ENS]: {
+    description?: string;
+    attributes: Array<ENSAttribute>;
+    url?: string;
+  };
+  [NftAssetId.UNS]: {
+    description?: string;
+    attributes: Array<UNSAttribute>;
+    backgroundColor?: string;
+    externalUrl?: string;
   };
 }
 

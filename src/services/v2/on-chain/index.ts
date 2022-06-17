@@ -13,3 +13,5 @@ export {
 export { ProviderRpcErrorCode, ProviderRpcError } from './ProviderRPCError';
 
 export * as Mover from './mover';
+export * as ENS from './ens';
+export * as UNS from './uns';

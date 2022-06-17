@@ -30,10 +30,12 @@ import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
+import REVERSE_RECORDS_ABI from './abi/reverse-records-abi.json';
 import SAVINGS_PLUS_POOL_ABI from './abi/savings-plus-pool-abi.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
+import UNS_RESOLVER_CONTRACT_ABI from './abi/uns-resolver-contract-abi.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
 import YEARN_SIMPLE_VAULT_ABI from './abi/yearn/simple_vault_token.json';
 
@@ -101,7 +103,10 @@ export type AddressMapKey =
   | 'SAVINGS_PLUS_POOL_ADDRESS'
   | 'AG_EUR_TOKEN_ADDRESS'
   | 'LDO_TOKEN_ADDRESS'
-  | 'ST_ETH_TOKEN_ADDRESS';
+  | 'ST_ETH_TOKEN_ADDRESS'
+  | 'ENS_REVERSE_RECORDS_CONTRACT'
+  | 'ENS_NFT_CONTRACT'
+  | 'UNS_RESOLVER_CONTRACT';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -170,7 +175,10 @@ const addresses = {
     LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
     AG_EUR_TOKEN_ADDRESS: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8',
     LDO_TOKEN_ADDRESS: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
-    ST_ETH_TOKEN_ADDRESS: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84'
+    ST_ETH_TOKEN_ADDRESS: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+    ENS_REVERSE_RECORDS_CONTRACT: '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C',
+    ENS_NFT_CONTRACT: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+    UNS_RESOLVER_CONTRACT: '0x049aba7510f45BA5b64ea9E658E342F904DB358D'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -179,12 +187,16 @@ const addresses = {
     HOLY_VISOR_ADDRESS: '0x5c2508fd52DA2AB53361BD24B374bE35ed8cdCF0',
     USDC_TOKEN_ADDRESS: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     WETH_TOKEN_ADDRESS: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9'
+    BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9',
+    ENS_REVERSE_RECORDS_CONTRACT: '0x72c33B247e62d0f1927E8d325d0358b8f9971C68',
+    ENS_NFT_CONTRACT: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
   },
   [Network.rinkeby]: {
     USDC_TOKEN_ADDRESS: '0xb6c8e5f00117136571d260bfb1baff62ddfd9960',
     BALANCE_CHECKER_ADDRESS: '0xc55386617db7b4021d87750daaed485eb3ab0154',
-    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134'
+    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
+    ENS_REVERSE_RECORDS_CONTRACT: '0x196eC7109e127A353B709a20da25052617295F6f',
+    ENS_NFT_CONTRACT: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -208,7 +220,8 @@ const addresses = {
     HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
     UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62',
     NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8',
-    SAVINGS_PLUS_POOL_ADDRESS: '0x77D5333d97A092cA01A783468E53E550C379dc3C'
+    SAVINGS_PLUS_POOL_ADDRESS: '0x77D5333d97A092cA01A783468E53E550C379dc3C',
+    UNS_RESOLVER_CONTRACT: '0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -229,6 +242,10 @@ const addresses = {
   [Network.avalanche]: {
     HOLY_HAND_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
     USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
+  },
+  [Network.binance]: {
+    HOLY_HAND_ADDRESS: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
+    USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
   }
 } as AddressMap;
 
@@ -269,6 +286,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
   CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
+  USDC_SPECIFIC_DECIMALS: number;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -312,6 +330,9 @@ const constants = {
       toWei('100', getBaseAssetData(Network.polygon).decimals),
       toWei('1000', getBaseAssetData(Network.polygon).decimals)
     ]
+  },
+  [Network.binance]: {
+    USDC_SPECIFIC_DECIMALS: 18
   }
 } as ConstantsMap;
 export const lookupConstant = <
@@ -415,7 +436,7 @@ const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
 const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
     address: lookupAddress(network, 'USDC_TOKEN_ADDRESS'),
-    decimals: 6,
+    decimals: lookupConstant(network, 'USDC_SPECIFIC_DECIMALS') ?? 6,
     symbol: 'USDC',
     iconURL:
       'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
@@ -444,6 +465,8 @@ const getUBTAssetData = (
       'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png'
   };
 };
+
+const SavingsPlusUSDCDecimals = 6;
 
 const getAssetsForTreasury = (
   network: Network,
@@ -588,5 +611,8 @@ export {
   getSimpleYearnVaultTokenByAddress,
   isSimpleYearnVault,
   validTopUpAssets,
-  getSlippage
+  getSlippage,
+  SavingsPlusUSDCDecimals,
+  REVERSE_RECORDS_ABI,
+  UNS_RESOLVER_CONTRACT_ABI
 };

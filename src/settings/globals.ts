@@ -38,6 +38,7 @@ export interface Globals {
   isGasListenerEnabled: GlobalSettings;
   isStakingUbtEnabled: GlobalSettings;
   isStakingUbtFieldReducerEnabled: GlobalSettings;
+  hideSlippageSelector: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -73,7 +74,8 @@ const values: Globals = {
     Network.mainnet,
     Network.fantom,
     Network.polygon,
-    Network.avalanche
+    Network.avalanche,
+    Network.binance
   ],
   isExplorerEnabled: [
     Network.mainnet,
@@ -99,7 +101,8 @@ const values: Globals = {
     Network.mainnet,
     Network.polygon,
     Network.fantom,
-    Network.avalanche
+    Network.avalanche,
+    Network.binance
   ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
@@ -108,7 +111,8 @@ const values: Globals = {
   isMoverAPISavingsPlusServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],
-  isStakingUbtFieldReducerEnabled: true
+  isStakingUbtFieldReducerEnabled: true,
+  hideSlippageSelector: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

@@ -220,7 +220,7 @@ export default Vue.extend({
     }),
     ...mapGetters('account', { getTokenColor: 'getTokenColor' }),
     outputUSDCAsset(): SmallTokenInfoWithIcon {
-      return getUSDCAssetData(this.networkInfo.network);
+      return getUSDCAssetData(this.currentNetwork);
     },
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();

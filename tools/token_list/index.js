@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['ethereum', 'fantom', 'polygon', 'avalanche'];
+const networks = ['ethereum', 'fantom', 'polygon', 'avalanche', 'binance'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -48,6 +48,8 @@ const getCoingeckoPlatform = (network) => {
       return 'polygon-pos';
     case 'avalanche':
       return 'avalanche';
+    case 'binance':
+      return 'binance-smart-chain';
   }
 };
 
@@ -55,6 +57,8 @@ const getTrustWalletBlockchainName = (network) => {
   switch (network) {
     case 'avalanche':
       return 'avalanchec';
+    case 'binance':
+      return 'smartchain';
     default:
       return network;
   }
@@ -203,7 +207,8 @@ const alsoIncludedTokens = {
   ],
   fantom: [],
   polygon: [],
-  avalanche: []
+  avalanche: [],
+  binance: []
 };
 
 const isDirEmpty = (dir) => {
@@ -364,7 +369,7 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
   console.log('Network:', network, 'coingecko list:', coingeckoList.length);
   let newAssets = [];
 
-  if (network !== 'ethereum') {
+  if (network !== 'ethereum' && network !== 'binance') {
     for (let i = 0; i < coingeckoList.length; i++) {
       await new Promise((r) => setTimeout(r, 700));
 
@@ -550,6 +555,9 @@ const getWeb3 = (network) => {
     case 'avalanche':
       rpcUrl = 'https://api.avax.network/ext/bc/C/rpc';
       break;
+    case 'binance':
+      rpcUrl = 'https://bsc-dataseed.binance.org/';
+      break;
     default:
       throw new Error(`There is no RPC link for network: ${network}`);
   }
@@ -569,6 +577,7 @@ const generateNewList = async () => {
     assets = Array.from(
       new Set([...assets, ...alsoIncludedTokens[network].map((a) => a.id)])
     );
+    console.log('enriching...');
     assets = await enrichWithTWdata(assets, network);
     console.log('assets enriched with TW data length: ', assets.length);
     assets = await enrichWithCoingeckoData(assets, network, web3);
