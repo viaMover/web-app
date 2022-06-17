@@ -835,6 +835,9 @@ const messages: VueI18n.LocaleMessageObject = {
     txtIpfsLink: 'Link'
   },
   NFTs: {
+    lblViewOnEns: 'View on ENS',
+    lblViewOnUns: 'View on Unstoppable Domains',
+    lblNFTAttributes: 'NFT attributes',
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
