@@ -92,7 +92,8 @@ export type AddressMapKey =
   | 'DOLA_TOKEN_ADDRESS'
   | 'DCULT_TOKEN_ADDRESS'
   | 'LUSD_TOKEN_ADDRESS'
-  | 'SAVINGS_PLUS_POOL_ADDRESS';
+  | 'SAVINGS_PLUS_POOL_ADDRESS'
+  | 'AG_EUR_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -158,7 +159,8 @@ const addresses = {
     CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
     DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
     DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
-    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
+    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
+    AG_EUR_TOKEN_ADDRESS: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -217,6 +219,10 @@ const addresses = {
   [Network.avalanche]: {
     HOLY_HAND_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
     USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
+  },
+  [Network.binance]: {
+    HOLY_HAND_ADDRESS: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
+    USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
   }
 } as AddressMap;
 
@@ -257,6 +263,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
   CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
+  USDC_SPECIFIC_DECIMALS: number;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -300,6 +307,9 @@ const constants = {
       toWei('100', getBaseAssetData(Network.polygon).decimals),
       toWei('1000', getBaseAssetData(Network.polygon).decimals)
     ]
+  },
+  [Network.binance]: {
+    USDC_SPECIFIC_DECIMALS: 18
   }
 } as ConstantsMap;
 export const lookupConstant = <
@@ -403,7 +413,7 @@ const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
 const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
     address: lookupAddress(network, 'USDC_TOKEN_ADDRESS'),
-    decimals: 6,
+    decimals: lookupConstant(network, 'USDC_SPECIFIC_DECIMALS') ?? 6,
     symbol: 'USDC',
     iconURL:
       'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
@@ -432,6 +442,8 @@ const getUBTAssetData = (
       'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png'
   };
 };
+
+const SavingsPlusUSDCDecimals = 6;
 
 const getAssetsForTreasury = (
   network: Network,
@@ -522,7 +534,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
     lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
-    lookupAddress(network, 'LUSD_TOKEN_ADDRESS')
+    lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AG_EUR_TOKEN_ADDRESS')
   ];
 };
 
@@ -568,5 +581,6 @@ export {
   DCULT_ABI,
   SAVINGS_PLUS_POOL_ABI,
   validTopUpAssets,
-  getSlippage
+  getSlippage,
+  SavingsPlusUSDCDecimals
 };
