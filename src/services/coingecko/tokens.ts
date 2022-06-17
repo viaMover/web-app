@@ -8,7 +8,8 @@ export enum TokenAlias {
   Ethereum = 'ethereum',
   Avalanche = 'avalanche-2',
   Fantom = 'fantom',
-  Polygon = 'matic-network'
+  Polygon = 'matic-network',
+  Binance = 'binancecoin'
 }
 
 export type CoingeckoToken = {
@@ -36,6 +37,8 @@ export const getBaseTokenAlias = (network: Network): TokenAlias => {
       return TokenAlias.Fantom;
     case Network.polygon:
       return TokenAlias.Polygon;
+    case Network.binance:
+      return TokenAlias.Binance;
     default:
       return TokenAlias.Ethereum;
   }

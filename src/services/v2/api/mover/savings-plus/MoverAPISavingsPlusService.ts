@@ -10,8 +10,6 @@ import {
 import { InvalidNetworkForOperationError } from '@/services/v2/on-chain/mover/savings-plus';
 import { isFeatureEnabled } from '@/settings';
 import { getNetwork, Network } from '@/utils/networkTypes';
-import { getUSDCAssetData } from '@/wallet/references/data';
-import { SmallTokenInfo } from '@/wallet/types';
 
 import {
   DepositExecution,
@@ -33,7 +31,6 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
   protected readonly client: AxiosInstance;
   protected readonly apiviewClient: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'savings-plus.api.service';
-  protected readonly usdcAssetData: SmallTokenInfo;
   protected static readonly isFieldsReducerEnabled = isFeatureEnabled(
     'isMoverAPISavingsPlusServiceFieldsReducerEnabled'
   );
@@ -51,7 +48,6 @@ export class MoverAPISavingsPlusService extends MoverAPIService {
         baseURL: 'https://apiview.viamover.com/api/v1/savingsplus'
       })
     );
-    this.usdcAssetData = getUSDCAssetData(network);
   }
 
   public async getInfo(): Promise<SavingsPlusInfo> {
