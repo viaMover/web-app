@@ -6,7 +6,7 @@ import { getFromPersistStoreWithExpire } from '@/settings/persist/utils';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
 import { divide, fromWei, multiply } from '@/utils/bigmath';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { SavingsPlusUSDCDecimals } from '@/wallet/references/data';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
@@ -116,10 +116,7 @@ const actions: ActionFuncs<
       if (rootState.account?.networkInfo !== undefined) {
         commit(
           'setSavingsBalance',
-          fromWei(
-            info.currentBalance,
-            getUSDCAssetData(rootState.account.networkInfo.network).decimals
-          )
+          fromWei(info.currentBalance, SavingsPlusUSDCDecimals)
         );
       }
     } catch (error) {
