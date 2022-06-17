@@ -283,9 +283,11 @@ export default Vue.extend({
           if (this.isTokenSelectedByUser) {
             return;
           }
-          const eth = newVal.find((t: TokenWithBalance) => t.address === 'eth');
-          if (eth) {
-            this.inputAsset = eth;
+          const baseAsset = newVal.find((t: TokenWithBalance) =>
+            isBaseAsset(t.address, this.networkInfo?.network)
+          );
+          if (baseAsset) {
+            this.inputAsset = baseAsset;
           }
         } finally {
           this.isLoading = false;
