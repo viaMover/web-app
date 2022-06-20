@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 import { getNetwork, Network, NetworkInfo } from '@/utils/networkTypes';
 
@@ -81,7 +81,12 @@ export default Vue.extend({
       currentAddress: 'currentAddress',
       availableNetworks: 'availableNetworks'
     }),
+    ...mapGetters('nft', ['resolvedNSName']),
     currentAddressText(): string {
+      if (this.resolvedNSName !== undefined) {
+        return this.resolvedNSName;
+      }
+
       if (this.currentAddress) {
         const val = this.currentAddress as string;
         const cutSize = 4;

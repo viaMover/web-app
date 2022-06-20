@@ -222,8 +222,8 @@ export class SavingsOnChainService extends MoverOnChainService {
       if (gasLimitObj) {
         return {
           error: false,
-          actionGasLimit: '0',
-          approveGasLimit: this.addGasBuffer(gasLimitObj.toString())
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
     } catch (error) {

@@ -23,6 +23,7 @@ import {
   CurrencyNotSupportedError,
   TheGraphAPIService
 } from '@/services/v2/api/theGraph';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
@@ -526,6 +527,19 @@ const actions: ActionFuncs<
       state.networkInfo.network
     );
     commit('setTheGraphAPIService', theGraphAPIService);
+
+    if (
+      isFeatureEnabled('isDebitCardTopUpEnabled', state.networkInfo.network)
+    ) {
+      const debitCardOnChainService = new DebitCardOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      dispatch('debitCard/setOnChainService', debitCardOnChainService, {
+        root: true
+      });
+    }
 
     let smartTreasuryBonusBalanceExecutor:
       | ISmartTreasuryBonusBalanceExecutor
