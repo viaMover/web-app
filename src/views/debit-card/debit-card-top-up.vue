@@ -230,13 +230,13 @@ export default Vue.extend({
         return this.transferError;
       }
       if (lessThan(this.approximateEUREstimationAmount, MINIMUM_AMOUNT)) {
-        this.$t('debitCard.errors.minAmount', {
+        return this.$t('debitCard.errors.minAmount', {
           min: MINIMUM_AMOUNT
         }).toString();
       }
 
       if (greaterThan(this.approximateEUREstimationAmount, MAXIMUM_AMOUNT)) {
-        this.$t('debitCard.errors.minAmount', {
+        return this.$t('debitCard.errors.minAmount', {
           max: MAXIMUM_AMOUNT
         }).toString();
       }
