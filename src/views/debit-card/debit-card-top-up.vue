@@ -84,6 +84,7 @@ import {
   divide,
   fromWei,
   getInteger,
+  greaterThan,
   isZero,
   lessThan,
   multiply,
@@ -123,6 +124,7 @@ import { SecondaryPage } from '@/components/layout/secondary-page';
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 const MINIMUM_AMOUNT = '25';
+const MAXIMUM_AMOUNT = '8000';
 
 export default Vue.extend({
   name: 'DebitCardTopUp',
@@ -199,7 +201,9 @@ export default Vue.extend({
     ...mapState('debitCard', {
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
       gALCXToALCXMultiplier: 'gALCXToALCXMultiplier',
-      debitCardOnChainService: 'onChainService'
+      debitCardOnChainService: 'onChainService',
+      emailHash: 'emailHash',
+      emailSignature: 'emailSignature'
     }),
     ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     ...mapGetters('debitCard', {
@@ -225,11 +229,18 @@ export default Vue.extend({
       if (this.transferError !== undefined) {
         return this.transferError;
       }
-      return lessThan(this.approximateEUREstimationAmount, MINIMUM_AMOUNT)
-        ? this.$t('debitCard.errors.minAmount', {
-            min: MINIMUM_AMOUNT
-          }).toString()
-        : undefined;
+      if (lessThan(this.approximateEUREstimationAmount, MINIMUM_AMOUNT)) {
+        this.$t('debitCard.errors.minAmount', {
+          min: MINIMUM_AMOUNT
+        }).toString();
+      }
+
+      if (greaterThan(this.approximateEUREstimationAmount, MAXIMUM_AMOUNT)) {
+        this.$t('debitCard.errors.minAmount', {
+          max: MAXIMUM_AMOUNT
+        }).toString();
+      }
+      return undefined;
     },
     description(): string {
       return (
@@ -262,6 +273,20 @@ export default Vue.extend({
           this.usdcAsset.decimals
         );
         return `${formatToNative(boughtUSDC)} USDC`;
+      }
+
+      const simpleVault = getSimpleYearnVaultTokenByAddress(
+        this.inputAsset.address,
+        this.networkInfo.network
+      );
+
+      if (simpleVault !== undefined && greaterThan(this.inputAmount, 0)) {
+        const newInputInTokens = multiply(
+          this.inputAmount,
+          this.vaultMultiplier
+        );
+
+        return `${formatToNative(newInputInTokens)} USDC`;
       }
 
       return '';
@@ -319,10 +344,20 @@ export default Vue.extend({
       }
     }
   },
+  async mounted() {
+    await this.loadInfo();
+
+    if (this.emailHash === undefined || this.emailSignature === undefined) {
+      await this.$router.replace({
+        name: 'not-found-route'
+      });
+    }
+  },
   methods: {
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     ...mapActions('debitCard', {
-      getYearnVaultMultiplier: 'getYearnVaultMultiplier'
+      getYearnVaultMultiplier: 'getYearnVaultMultiplier',
+      loadInfo: 'loadInfo'
     }),
     ...mapActions('account', {
       updateWalletAfterTxn: 'updateWalletAfterTxn'
