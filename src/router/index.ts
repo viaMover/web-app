@@ -451,6 +451,22 @@ const routes: Array<RouteConfig> = [
             )
         },
         {
+          path: 'view/ens',
+          name: 'ens',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-ens.vue'
+            )
+        },
+        {
+          path: 'view/uns',
+          name: 'uns',
+          component: () =>
+            import(
+              /* webpackChunkName: "nft-drops" */ '@/views/nft/nft-view-uns.vue'
+            )
+        },
+        {
           path: 'view/vaults',
           name: 'vaults',
           component: () =>
@@ -547,17 +563,11 @@ const routes: Array<RouteConfig> = [
             props: (to) => ({
               step: to.params.step
             }),
-            beforeEnter: (to, from, next) => {
-              formStepsGuard('debit-card-top-up')(to, from, next);
-            }
+            beforeEnter: formStepsGuard('debit-card-top-up')
           },
           {
             customCondition: (store?: Store<RootStoreState>): boolean => {
-              if (store === undefined) return false;
-              return (
-                store.state.debitCard?.emailHash !== undefined &&
-                store.state.debitCard?.emailSignature !== undefined
-              );
+              return store !== undefined;
             }
           }
         ),
