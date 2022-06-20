@@ -25,7 +25,8 @@ export default {
     phoneNumber: undefined,
     kycLink: undefined,
     wxBTRFLYrealIndex: toWei(1, 9),
-    gALCXToALCXMultiplier: toWei(1.2, 18)
+    gALCXToALCXMultiplier: toWei(1.2, 18),
+    onChainService: undefined
   },
   actions,
   getters,

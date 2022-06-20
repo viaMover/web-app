@@ -1,6 +1,11 @@
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
+import {
+  getSimpleYearnVaultTokenByAddress,
+  getSimpleYearnVaultTokens,
+  isSimpleYearnVault
+} from '@/wallet/references/yearnVaultsData';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
@@ -32,6 +37,7 @@ import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
 import UNS_RESOLVER_CONTRACT_ABI from './abi/uns-resolver-contract-abi.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
+import YEARN_SIMPLE_VAULT_ABI from './abi/yearn/simple_vault_token.json';
 
 export type AddressMapKey =
   | 'MOVE_ADDRESS'
@@ -96,6 +102,8 @@ export type AddressMapKey =
   | 'LUSD_TOKEN_ADDRESS'
   | 'SAVINGS_PLUS_POOL_ADDRESS'
   | 'AG_EUR_TOKEN_ADDRESS'
+  | 'LDO_TOKEN_ADDRESS'
+  | 'ST_ETH_TOKEN_ADDRESS'
   | 'ENS_REVERSE_RECORDS_CONTRACT'
   | 'ENS_NFT_CONTRACT'
   | 'UNS_RESOLVER_CONTRACT';
@@ -166,6 +174,8 @@ const addresses = {
     DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
     LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
     AG_EUR_TOKEN_ADDRESS: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8',
+    LDO_TOKEN_ADDRESS: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+    ST_ETH_TOKEN_ADDRESS: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
     ENS_REVERSE_RECORDS_CONTRACT: '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C',
     ENS_NFT_CONTRACT: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
     UNS_RESOLVER_CONTRACT: '0x049aba7510f45BA5b64ea9E658E342F904DB358D'
@@ -548,7 +558,10 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
     lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
-    lookupAddress(network, 'AG_EUR_TOKEN_ADDRESS')
+    lookupAddress(network, 'AG_EUR_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ST_ETH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LDO_TOKEN_ADDRESS'),
+    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address)
   ];
 };
 
@@ -592,7 +605,11 @@ export {
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
   DCULT_ABI,
+  YEARN_SIMPLE_VAULT_ABI,
   SAVINGS_PLUS_POOL_ABI,
+  getSimpleYearnVaultTokens,
+  getSimpleYearnVaultTokenByAddress,
+  isSimpleYearnVault,
   validTopUpAssets,
   getSlippage,
   SavingsPlusUSDCDecimals,

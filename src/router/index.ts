@@ -563,17 +563,11 @@ const routes: Array<RouteConfig> = [
             props: (to) => ({
               step: to.params.step
             }),
-            beforeEnter: (to, from, next) => {
-              formStepsGuard('debit-card-top-up')(to, from, next);
-            }
+            beforeEnter: formStepsGuard('debit-card-top-up')
           },
           {
             customCondition: (store?: Store<RootStoreState>): boolean => {
-              if (store === undefined) return false;
-              return (
-                store.state.debitCard?.emailHash !== undefined &&
-                store.state.debitCard?.emailSignature !== undefined
-              );
+              return store !== undefined;
             }
           }
         ),
