@@ -144,9 +144,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
           commit('setENSAPIService', apiService);
         }
 
-        console.debug('ens name', ensOwnDomainName);
         const tokenId = onChainService.getERC721TokenId(ensOwnDomainName);
-        console.debug('tokenId', tokenId);
         const meta = await apiService.getERC721Meta(tokenId);
         commit('setENSData', meta);
       }
