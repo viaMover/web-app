@@ -5,7 +5,7 @@ import {
 import { unwrapCacheItem } from '@/store/modules/utils';
 import { GettersFuncs } from '@/store/types';
 import { divide, fromWei, greaterThan, multiply } from '@/utils/bigmath';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { SavingsPlusUSDCDecimals } from '@/wallet/references/data';
 
 import { SavingsPlusReceipt, SavingsPlusStoreState } from './types';
 
@@ -77,10 +77,7 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
       return '0';
     }
 
-    return fromWei(
-      getters.info.currentBalance,
-      getUSDCAssetData(rootState.account.networkInfo.network).decimals
-    );
+    return fromWei(getters.info.currentBalance, SavingsPlusUSDCDecimals);
   },
   savingsMonthStatsOptions(state, getters): Array<SavingsPlusMonthBalanceItem> {
     if (getters.info === undefined) {
@@ -120,7 +117,7 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
 
     const valueInUSDC = fromWei(
       getters.info.earnedThisMonth,
-      getUSDCAssetData(rootState.account.networkInfo.network).decimals
+      SavingsPlusUSDCDecimals
     );
 
     return multiply(valueInUSDC, getters.usdcNativePrice);
@@ -137,10 +134,7 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
       return '0';
     }
 
-    return fromWei(
-      getters.info.earnedTotal,
-      getUSDCAssetData(rootState.account.networkInfo.network).decimals
-    );
+    return fromWei(getters.info.earnedTotal, SavingsPlusUSDCDecimals);
   },
   infoTotalPoolBalanceNative(state, getters, rootState): string {
     if (
@@ -153,7 +147,7 @@ const getters: GettersFuncs<Getters, SavingsPlusStoreState> = {
 
     const balanceUSDC = fromWei(
       getters.info.currentPoolBalance,
-      getUSDCAssetData(rootState.account.networkInfo.network).decimals
+      SavingsPlusUSDCDecimals
     );
     return multiply(balanceUSDC, getters.usdcNativePrice);
   },

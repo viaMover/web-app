@@ -47,7 +47,7 @@ import { SavingsReceipt } from '@/services/mover';
 import { SavingsPlusGetReceiptPayload } from '@/store/modules/savings-plus/types';
 import { fromWei, multiply } from '@/utils/bigmath';
 import { formatToNative, getSignIfNeeded } from '@/utils/format';
-import { getUSDCAssetData } from '@/wallet/references/data';
+import { SavingsPlusUSDCDecimals } from '@/wallet/references/data';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
 
@@ -92,7 +92,7 @@ export default Vue.extend({
 
       const balanceInUSDC = fromWei(
         this.receipt.endOfMonthBalance,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        SavingsPlusUSDCDecimals
       );
 
       const savingsEndOfMonthBalanceNative = multiply(
@@ -114,7 +114,7 @@ export default Vue.extend({
 
       const depositsInUSDC = fromWei(
         this.receipt.totalDeposits,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        SavingsPlusUSDCDecimals
       );
 
       const savingsMonthTotalDepositsNative = multiply(
@@ -137,7 +137,7 @@ export default Vue.extend({
 
       const withdrawalsInUSDC = fromWei(
         this.receipt.totalWithdrawals,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        SavingsPlusUSDCDecimals
       );
 
       const savingsMonthTotalWithdrawalsNative = multiply(
@@ -161,7 +161,7 @@ export default Vue.extend({
 
       const earnedInUSDC = fromWei(
         this.receipt.earnedThisMonth,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        SavingsPlusUSDCDecimals
       );
       const savingsMonthEarnedNative = multiply(
         earnedInUSDC,
@@ -184,7 +184,7 @@ export default Vue.extend({
 
       const earnedInUSDC = fromWei(
         this.receipt.avgDailyEarnings,
-        getUSDCAssetData(this.networkInfo.network).decimals
+        SavingsPlusUSDCDecimals
       );
       const savingsMonthAverageEarnedNative = multiply(
         earnedInUSDC,
