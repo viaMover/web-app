@@ -55,6 +55,11 @@ handlers:
   upload: www/intercom-web-init.js
   secure: always
 
+- url: /remove-all
+  static_files: www/remove-index.html
+  upload: www/remove-index.html
+  secure: always
+  expiration: "1m"
 
 - url: /(.*)
   static_files: www/index.html

@@ -41,6 +41,7 @@ import {
   setIsOlympusAvatarKnownToPersist
 } from '@/settings';
 import {
+  clearAllPersistItemsFromLocalStorage,
   getFromPersistStore,
   removeAccountBoundPersistItemsFromLocalStorage,
   removeExpiredPersistItemsFromLocalStorage,
@@ -105,6 +106,7 @@ type Actions = {
   refreshWallet: Promise<void>;
   updateWalletAfterTxn: Promise<void>;
   waitWallet: Promise<boolean>;
+  clearPersistStorage: Promise<void>;
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
   getTokenPrice: Promise<string>;
@@ -722,6 +724,9 @@ const actions: ActionFuncs<
 
       checkWalletConnection();
     });
+  },
+  async clearPersistStorage(): Promise<void> {
+    clearAllPersistItemsFromLocalStorage();
   },
   async disconnectWallet({ commit, state }): Promise<void> {
     if (state.currentAddress) {
