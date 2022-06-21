@@ -81,10 +81,12 @@ export default Vue.extend({
       currentAddress: 'currentAddress',
       availableNetworks: 'availableNetworks'
     }),
-    ...mapGetters('nft', ['resolvedNSName']),
+    ...mapGetters('account', {
+      resolvedDomainName: 'resolvedDomainName'
+    }),
     currentAddressText(): string {
-      if (this.resolvedNSName !== undefined) {
-        return this.resolvedNSName;
+      if (this.resolvedDomainName !== undefined) {
+        return this.resolvedDomainName;
       }
 
       if (this.currentAddress) {

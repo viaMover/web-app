@@ -62,13 +62,14 @@
 import Vue from 'vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
+import UAuthSPA from '@uauth/js';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import QRCode from 'qrcode';
 
 import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { APIKeys } from '@/settings';
-import { InitWalletPayload } from '@/store/modules/account/types';
+import { InitWalletPayload, uauthOptions } from '@/store/modules/account/types';
 import { CommonErrors } from '@/utils/errors';
 import { InitCallbacks } from '@/web3/callbacks';
 
@@ -185,6 +186,16 @@ export default Vue.extend({
           data: {
             error
           }
+        });
+        await new UAuthSPA(uauthOptions).logout(uauthOptions).catch((error) => {
+          addSentryBreadcrumb({
+            type: 'warn',
+            category: 'app',
+            message: 'Failed to log out from Unstoppable Domains client',
+            data: {
+              error
+            }
+          });
         });
         sendGlobalTopMessageEvent(
           this.$t('errors.default', {
