@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/vue';
+import UAuthSPA from '@uauth/js';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
@@ -23,6 +24,7 @@ import {
   CurrencyNotSupportedError,
   TheGraphAPIService
 } from '@/services/v2/api/theGraph';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
@@ -33,6 +35,7 @@ import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { isFeatureEnabled } from '@/settings';
 import {
+  clearAllPersistItemsFromLocalStorage,
   getFromPersistStore,
   removeAccountBoundPersistItemsFromLocalStorage,
   removeExpiredPersistItemsFromLocalStorage,
@@ -70,7 +73,8 @@ import {
   NativeCurrency,
   PriceRecord,
   ProviderData,
-  RefreshWalletPayload
+  RefreshWalletPayload,
+  uauthOptions
 } from './types';
 
 const GAS_UPDATE_INTERVAL = 60000; // 60s
@@ -91,6 +95,7 @@ type Actions = {
   refreshWallet: Promise<void>;
   updateWalletAfterTxn: Promise<void>;
   waitWallet: Promise<boolean>;
+  clearPersistStorage: Promise<void>;
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
   getTokenPrice: Promise<string>;
@@ -245,6 +250,28 @@ const actions: ActionFuncs<
         networkId: chainId
       } as AccountData);
 
+      new UAuthSPA(uauthOptions)
+        .user()
+        .then((userData) => {
+          addSentryBreadcrumb({
+            type: 'debug',
+            message: 'Fetched user data from Unstoppable Domains',
+            category: 'refreshWallet.action.account.store',
+            data: userData
+          });
+
+          commit('setUnstoppableDomainsName', userData.sub);
+        })
+        .catch((error) => {
+          addSentryBreadcrumb({
+            type: 'warn',
+            data: error,
+            category: 'refreshWallet.action.account.store',
+            message:
+              'Failed to fetch user data using Unstoppable Domains client'
+          });
+        });
+
       if (!state.currentAddress || !state.networkInfo) {
         console.info("can't refresh wallet due to empty address");
         return;
@@ -257,6 +284,9 @@ const actions: ActionFuncs<
       await dispatch('initServices');
       await dispatch('restoreNativeCurrency');
       await dispatch('getBasicPrices');
+      dispatch('nft/loadNFTInfo', undefined, {
+        root: true
+      });
 
       Sentry.setContext('crypto_person', {
         address: state.currentAddress,
@@ -376,6 +406,19 @@ const actions: ActionFuncs<
       state.networkInfo.network
     );
     commit('setTheGraphAPIService', theGraphAPIService);
+
+    if (
+      isFeatureEnabled('isDebitCardTopUpEnabled', state.networkInfo.network)
+    ) {
+      const debitCardOnChainService = new DebitCardOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      dispatch('debitCard/setOnChainService', debitCardOnChainService, {
+        root: true
+      });
+    }
 
     let smartTreasuryBonusBalanceExecutor:
       | ISmartTreasuryBonusBalanceExecutor
@@ -535,10 +578,24 @@ const actions: ActionFuncs<
       checkWalletConnection();
     });
   },
+  async clearPersistStorage(): Promise<void> {
+    clearAllPersistItemsFromLocalStorage();
+  },
   async disconnectWallet({ commit, state }): Promise<void> {
     if (state.currentAddress) {
       removeAccountBoundPersistItemsFromLocalStorage(state.currentAddress);
     }
+
+    await state.uauthClient.logout(uauthOptions).catch((error) => {
+      addSentryBreadcrumb({
+        type: 'warn',
+        category: 'disconnectWallet.action.account.store',
+        message: 'Failed to log out from Unstoppable Domains client',
+        data: {
+          error
+        }
+      });
+    });
 
     if (state.provider) {
       state.provider.providerBeforeClose();

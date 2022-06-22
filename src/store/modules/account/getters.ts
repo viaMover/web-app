@@ -46,6 +46,7 @@ type Getters = {
   getCurrentAddresses: string[];
   nativeCurrencyFormatter: (value: number | string) => string;
   walletBalanceMove: string;
+  resolvedDomainName: string | undefined;
 };
 
 const getters: GettersFuncs<Getters, AccountStoreState> = {
@@ -312,6 +313,18 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       rootState.account.tokens.find((t) => sameAddress(moveAddress, t.address))
         ?.balance ?? '0'
     );
+  },
+  resolvedDomainName(
+    state,
+    getters,
+    rootState,
+    rootGetters
+  ): string | undefined {
+    if (state.unstoppableDomainsName) {
+      return state.unstoppableDomainsName;
+    }
+
+    return rootGetters['nft/resolvedNSName'];
   }
 };
 

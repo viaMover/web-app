@@ -118,12 +118,12 @@ export const networks = new Array<NetworkInfo>(
     explorer: 'https://bscscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
-      address: 'eth',
+      address: 'bsc',
       decimals: 18,
-      symbol: 'ETH',
-      name: 'Ethereum',
+      symbol: 'BNB',
+      name: 'BSC Native Token',
       iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/smartchain/info/logo.png'
     },
     rpcUrl: `https://bsc-dataseed.binance.org/`
   },
@@ -151,11 +151,11 @@ export const networks = new Array<NetworkInfo>(
     subsidizedUrl: undefined,
     baseAsset: {
       address: 'avax',
-      decimals: 9,
+      decimals: 18,
       symbol: 'AVAX',
-      name: 'Avalanche X-Chain',
+      name: 'Avalanche C-Chain',
       iconURL:
-        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchex/info/logo.png'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchec/info/logo.png'
     },
     rpcUrl: 'https://api.avax.network/ext/bc/C/rpc'
   },

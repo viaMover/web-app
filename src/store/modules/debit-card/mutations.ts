@@ -1,3 +1,4 @@
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { MutationFuncs } from '@/store/types';
 
 import {
@@ -27,6 +28,7 @@ type Mutations = {
   setKycLink: void;
   setWxBTRFLYrealIndex: void;
   setGALCXToALCXMultiplier: void;
+  setOnChainService: void;
 };
 
 const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
@@ -83,6 +85,9 @@ const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
   },
   setGALCXToALCXMultiplier(state, multiplier: string): void {
     state.gALCXToALCXMultiplier = multiplier;
+  },
+  setOnChainService(state, service: DebitCardOnChainService): void {
+    state.onChainService = service;
   }
 };
 

@@ -1,5 +1,6 @@
 import { logger } from '@sentry/utils';
 import * as Sentry from '@sentry/vue';
+import { captureException } from '@sentry/vue';
 
 import {
   claimAndExchangeUnexpectedMove,
@@ -19,6 +20,12 @@ import {
   getVaultsData
 } from '@/services/chain';
 import { claimVaults } from '@/services/chain/nft/vaults/vaults';
+import { NetworkFeatureNotSupportedError } from '@/services/v2';
+import { ENSAPIService } from '@/services/v2/api/ens';
+import { UNSAPIService } from '@/services/v2/api/uns';
+import { ENSOnChainService } from '@/services/v2/on-chain/ens';
+import { UNSOnChainService } from '@/services/v2/on-chain/uns';
+import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { isFeatureEnabled } from '@/settings';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import {
@@ -54,6 +61,8 @@ type Actions = {
   fetchOrderOfLibertyData: Promise<void>;
   claimOrderOfLiberty: Promise<void>;
   claimBaseledgerStakingOG: Promise<void>;
+  fetchENSData: Promise<void>;
+  fetchUNSData: Promise<void>;
 };
 
 const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
@@ -92,10 +101,113 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
     if (state.baseledgerStakingOG.networks.includes(network)) {
       nftPromises.push(dispatch('fetchBaseledgerStakingOGData'));
     }
+    if (state.ens.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchENSData'));
+    }
+    if (state.uns.networks.includes(network)) {
+      nftPromises.push(dispatch('fetchUNSData'));
+    }
 
     await Promise.allSettled(nftPromises);
 
     commit('setIsLoading', false);
+  },
+  async fetchENSData({ rootState, state, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      addSentryBreadcrumb({
+        type: 'warn',
+        category: 'fetchENSData.action.nft.store',
+        message: 'Account state is not loaded yet'
+      });
+      return;
+    }
+
+    try {
+      let onChainService = state.ensOnChainService;
+      if (onChainService === undefined) {
+        onChainService = new ENSOnChainService(
+          rootState.account.currentAddress,
+          rootState.account.networkInfo.network,
+          rootState.account.provider.web3
+        );
+        commit('setENSOnChainService', onChainService);
+      }
+
+      const ensOwnDomainName = await onChainService.getOwnDomainName();
+      if (ensOwnDomainName !== undefined) {
+        let apiService = state.ensAPIService;
+        if (apiService === undefined) {
+          apiService = new ENSAPIService(
+            rootState.account.currentAddress,
+            rootState.account.networkInfo.network
+          );
+          commit('setENSAPIService', apiService);
+        }
+
+        const tokenId = onChainService.getERC721TokenId(ensOwnDomainName);
+        const meta = await apiService.getERC721Meta(tokenId);
+        commit('setENSData', meta);
+      }
+    } catch (error) {
+      if (error instanceof NetworkFeatureNotSupportedError) {
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: 'fetchENSData.action.nft.store',
+          message: error.message
+        });
+        return;
+      }
+
+      captureException(error);
+    }
+  },
+  async fetchUNSData({ rootState, state, commit }): Promise<void> {
+    if (!ensureAccountStateIsSafe(rootState.account)) {
+      addSentryBreadcrumb({
+        type: 'warn',
+        category: 'fetchUNSData.action.nft.store',
+        message: 'Account state is not loaded yet'
+      });
+      return;
+    }
+
+    try {
+      let onChainService = state.unsOnChainService;
+      if (onChainService === undefined) {
+        onChainService = new UNSOnChainService(
+          rootState.account.currentAddress,
+          rootState.account.networkInfo.network,
+          rootState.account.provider.web3
+        );
+        commit('setUNSOnChainService', onChainService);
+      }
+
+      const balance = await onChainService.balanceOf();
+      if (greaterThan(balance, 0)) {
+        const tokenId = await onChainService.getTokenId();
+        const tokenMetaURI = await onChainService.getTokenURI(tokenId);
+
+        let apiService = state.unsAPIService;
+        if (apiService === undefined) {
+          apiService = new UNSAPIService();
+          commit('setUNSAPIService', apiService);
+        }
+
+        const meta = await apiService.getDomainMetadata(tokenMetaURI);
+        commit('setUNSData', meta);
+      }
+    } catch (error) {
+      if (error instanceof NetworkFeatureNotSupportedError) {
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: 'fetchUNSData.action.nft.store',
+          message: error.message
+        });
+        return;
+      }
+
+      captureException(error);
+    }
   },
   async fetchOlympusData({ rootState, commit }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {

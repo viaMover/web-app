@@ -34,8 +34,8 @@ jobs:
           name: Prepare files to build static web app
           command: |
             cd /tmp/workspace
-            openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-stg.enc -out deploy/keys-stg.dec
-            mv deploy/keys-stg.dec src/settings/keys.ts
+            openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-prod.enc -out deploy/keys-prod.dec
+            mv deploy/keys-prod.dec src/settings/keys.ts
       - run:
           name: Build web app
           command: yarn && yarn build-prod

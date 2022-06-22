@@ -48,6 +48,9 @@ const messages: VueI18n.LocaleMessageObject = {
       'Or use another compatible mobile wallet with WalletConnect.',
     lblChooseProvider: 'Choose from Metamask and other popular wallets'
   },
+  logout: {
+    lblLogout: 'Logout'
+  },
   estimationError: 'Estimation error',
   exchangeError: 'Exchange error',
   forms: {
@@ -242,6 +245,7 @@ const messages: VueI18n.LocaleMessageObject = {
     errors: {
       default: 'Oh no. Something went wrong',
       minAmount: 'Minimum card top-up amount is {min} EUR',
+      maxAmount: 'Maximum allowed card balance is {max} EUR',
       email: {
         required: 'Email is required',
         invalid: 'Enter a valid email address'
@@ -835,6 +839,9 @@ const messages: VueI18n.LocaleMessageObject = {
     txtIpfsLink: 'Link'
   },
   NFTs: {
+    lblViewOnEns: 'View on ENS',
+    lblViewOnUns: 'View on Unstoppable Domains',
+    lblNFTAttributes: 'NFT attributes',
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',

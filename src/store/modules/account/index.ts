@@ -1,7 +1,10 @@
+import UAuthSPA from '@uauth/js';
+
 import { isProduction } from '@/settings';
 import {
   AccountStoreState,
-  NativeCurrency
+  NativeCurrency,
+  uauthOptions
 } from '@/store/modules/account/types';
 import { AugmentedModule } from '@/store/types';
 import { availableNetworks } from '@/wallet/allTokens';
@@ -12,6 +15,8 @@ import mutations, { MutationType } from './mutations';
 
 export const initialState: AccountStoreState = {
   web3Modal: undefined,
+  uauthClient: new UAuthSPA(uauthOptions),
+  unstoppableDomainsName: undefined,
 
   avatar: undefined,
   avatars: [],

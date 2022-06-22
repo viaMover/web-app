@@ -168,6 +168,8 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
         return 'fantom';
       case Network.polygon:
         return 'matic-network';
+      case Network.binance:
+        return 'binancecoin';
       default:
         return undefined;
     }

@@ -87,7 +87,7 @@
                 <span>{{ swappingVia }}</span>
               </div>
             </div>
-            <div class="tx-details__content-item">
+            <div v-if="!hideSlippageSelector" class="tx-details__content-item">
               <p class="description">Slippage</p>
               <slippage-selector
                 :slippage="slippage"
@@ -131,6 +131,7 @@ import Web3 from 'web3';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
+import { isFeatureEnabled } from '@/settings';
 import {
   Modal as ModalTypes,
   TModalPayload
@@ -235,6 +236,9 @@ export default Vue.extend({
     },
     modalPayload(): boolean {
       return this.state[this.modalId].payload;
+    },
+    hideSlippageSelector(): boolean {
+      return isFeatureEnabled('hideSlippageSelector', this.currentNetwork);
     },
     error(): string | undefined {
       if (this.input.asset === undefined || this.output.asset === undefined) {
@@ -350,7 +354,10 @@ export default Vue.extend({
       if (this.input.asset === undefined) {
         return '0';
       }
-      if (this.input.asset.address === 'eth' && !this.useSubsidized) {
+      if (
+        isBaseAsset(this.input.asset.address, this.currentNetwork) &&
+        !this.useSubsidized
+      ) {
         const txnPriceInWeth = multiply(
           this.allGasLimit,
           this.selectedGasPriceInWEI
@@ -421,11 +428,11 @@ export default Vue.extend({
       this.approveGasLimit = '0';
 
       if (newVal.swapType === 'getMove') {
-        const eth = this.tokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.tokens.find((t: TokenWithBalance) =>
+          isBaseAsset(t.address, this.currentNetwork)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -451,11 +458,11 @@ export default Vue.extend({
           this.output.nativeAmount = '';
         }
       } else {
-        const eth = this.tokens.find(
-          (t: TokenWithBalance) => t.address === 'eth'
+        const baseAsset = this.tokens.find((t: TokenWithBalance) =>
+          isBaseAsset(t.address, this.currentNetwork)
         );
-        if (eth) {
-          this.input.asset = eth;
+        if (baseAsset) {
+          this.input.asset = baseAsset;
           this.input.amount = '';
           this.input.nativeAmount = '';
         } else {
@@ -974,7 +981,7 @@ export default Vue.extend({
       if (
         isBaseAsset(
           this.input.asset?.address ?? 'missing_address',
-          this.networkInfo?.network
+          this.currentNetwork
         )
       ) {
         this.subsidizedAvailable = false;

@@ -38,6 +38,8 @@ export interface Globals {
   isGasListenerEnabled: GlobalSettings;
   isStakingUbtEnabled: GlobalSettings;
   isStakingUbtFieldReducerEnabled: GlobalSettings;
+  hideSlippageSelector: GlobalSettings;
+  serveNewRoutes: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -69,7 +71,13 @@ const values: Globals = {
   isDebitCardChangeSkinEnabled: false,
   isTreasuryEnabled: [Network.mainnet],
   isSavingsEnabled: [Network.mainnet],
-  isSwapEnabled: [Network.mainnet, Network.fantom, Network.polygon],
+  isSwapEnabled: [
+    Network.mainnet,
+    Network.fantom,
+    Network.polygon,
+    Network.avalanche,
+    Network.binance
+  ],
   isExplorerEnabled: [
     Network.mainnet,
     Network.binance,
@@ -90,7 +98,13 @@ const values: Globals = {
   isVaultsRaceEnabled: false,
   isTreasuryClaimAndBurnMOBOEnabled: [Network.mainnet],
   isTreasuryClaimAndBurnMOVEEnabled: false,
-  isSavingsPlusEnabled: [Network.mainnet, Network.polygon, Network.fantom],
+  isSavingsPlusEnabled: [
+    Network.mainnet,
+    Network.polygon,
+    Network.fantom,
+    Network.avalanche,
+    Network.binance
+  ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
   isMoverAPISavingsServiceFieldsReducerEnabled: true, // TODO: use all the data provided
@@ -98,7 +112,9 @@ const values: Globals = {
   isMoverAPISavingsPlusServiceFieldsReducerEnabled: true,
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],
-  isStakingUbtFieldReducerEnabled: true
+  isStakingUbtFieldReducerEnabled: true,
+  hideSlippageSelector: true,
+  serveNewRoutes: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

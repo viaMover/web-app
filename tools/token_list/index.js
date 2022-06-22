@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['ethereum', 'fantom', 'polygon'];
+const networks = ['ethereum', 'fantom', 'polygon', 'avalanche', 'binance'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -46,6 +46,21 @@ const getCoingeckoPlatform = (network) => {
       return 'fantom';
     case 'polygon':
       return 'polygon-pos';
+    case 'avalanche':
+      return 'avalanche';
+    case 'binance':
+      return 'binance-smart-chain';
+  }
+};
+
+const getTrustWalletBlockchainName = (network) => {
+  switch (network) {
+    case 'avalanche':
+      return 'avalanchec';
+    case 'binance':
+      return 'smartchain';
+    default:
+      return network;
   }
 };
 
@@ -170,10 +185,288 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'DOLA',
       name: 'Dola USD Stablecoin'
-    } // DOLA
+    }, // DOLA
+    {
+      id: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8',
+      decimals: 18,
+      symbol: 'agEUR',
+      name: 'agEUR'
+    }, // agEUR
+    {
+      id: '0x35872fea6A4843fACBCDbCe99e3B69596A3680b8',
+      decimals: 4,
+      symbol: '1337',
+      name: '1337'
+    }, // 1337
+    {
+      id: '0x9355372396e3F6daF13359B7b607a3374cc638e0',
+      decimals: 4,
+      symbol: 'WHALE',
+      name: 'WHALE'
+    }, // WHALE
+    {
+      id: '0xA392c35EC6900346aDEc720Abe50413F48Ee5143',
+      decimals: 4,
+      symbol: 'GENRE',
+      name: 'GENRE'
+    }, // GENRE
+    {
+      id: '0x1e906717De2E4A4600F13b6909736b0346bDde3E',
+      decimals: 4,
+      symbol: 'PIXEL',
+      name: 'Pixel'
+    },
+    {
+      id: '0xf552b656022c218C26dAd43ad88881Fc04116F76',
+      decimals: 4,
+      symbol: 'MORK',
+      name: 'Mork'
+    },
+    {
+      id: '0xE400013Df86249838B720eaB5a7F816aD82433c0',
+      decimals: 4,
+      symbol: 'GOB',
+      name: 'Game Of Bitcoins'
+    },
+    {
+      id: '0xE5f55a3b74874531a99359b833b92866A6609f6B',
+      decimals: 4,
+      symbol: 'ATS',
+      name: 'All The Smoke'
+    },
+    {
+      id: '0xdc8092AaF83e00Ebf9B01A2e90b7B7eF867ba503',
+      decimals: 4,
+      symbol: 'CALVIN',
+      name: 'Calvin'
+    },
+    {
+      id: '0x8BDfaE0F83a03F5fa98B0bDf339F56df3C9F8BD5',
+      decimals: 18,
+      symbol: 'AIN',
+      name: 'AndjelaNadja'
+    },
+    {
+      id: '0x78a0eE7ad08E2C746518387BeA867BE0199514B8',
+      decimals: 4,
+      symbol: 'MARTE',
+      name: 'Marte'
+    },
+    {
+      id: '0xe6710e0CdA178f3D921f456902707B0d4C4A332B',
+      decimals: 4,
+      symbol: 'JULIEN',
+      name: 'Julien'
+    },
+    {
+      id: '0x27fD686Db10E0aE047fe8FE1DE9830C0e0dC3CFA',
+      decimals: 4,
+      symbol: 'SCOTT',
+      name: 'SCOTT'
+    },
+    {
+      id: '0xA809CeDeE9B61956c768EAa10272dd5E0FD1A985',
+      decimals: 4,
+      symbol: 'CAMI',
+      name: 'CAMI'
+    },
+    {
+      id: '0xFAD44249C2cd1F661BAc5f97C2Ff9f625ce27197',
+      decimals: 4,
+      symbol: 'GREY',
+      name: 'GREY'
+    },
+    {
+      id: '0x56687cf29Ac9751Ce2a4E764680B6aD7E668942e',
+      decimals: 4,
+      symbol: 'JAMM',
+      name: 'FlynnJamm'
+    },
+    {
+      id: '0xBcc66ed2aB491e9aE7Bf8386541Fb17421Fa9d35',
+      decimals: 4,
+      symbol: 'SKULL',
+      name: 'Skull'
+    },
+    {
+      id: '0x6da447a8992eC6580f398C5BAAf5fc5d30ddD08F',
+      decimals: 18,
+      symbol: 'TIDE',
+      name: 'Tide'
+    },
+    {
+      id: '0x7841B2A48D1F6e78ACeC359FEd6D874Eb8a0f63c',
+      decimals: 4,
+      symbol: 'KERMAN',
+      name: 'KERMAN'
+    },
+    {
+      id: '0x3C9Ca73d5309d38c6F2C21b78b9aE1f4b2441188',
+      decimals: 4,
+      symbol: 'RDR',
+      name: 'RADAR'
+    },
+    {
+      id: '0x2Ad128fBEFF2B781D028148DEc82bBe2498Dc08e',
+      decimals: 4,
+      symbol: 'LIFE',
+      name: 'LIFE'
+    },
+    {
+      id: '0x833E4c02c47B7e38f5b9A80b26eb07D23d1961f4',
+      decimals: 4,
+      symbol: 'FAMILY',
+      name: 'The Bitcoin Family'
+    },
+    {
+      id: '0x4317Ea4820F8D9ea6A103553A89Cb261B6Ea7F2a',
+      decimals: 4,
+      symbol: 'ALXO',
+      name: 'Alxocity'
+    },
+    {
+      id: '0xDcfE18bc46f5A0Cd0d3Af0c2155d2bCB5AdE2fc5',
+      decimals: 4,
+      symbol: 'HUE',
+      name: 'Hue'
+    },
+    {
+      id: '0x39Ad22C916F42aF5f67371d6f2Fb0dab42321a89',
+      decimals: 4,
+      symbol: 'OSINA',
+      name: 'Osinachi'
+    },
+    {
+      id: '0x1287c0509df9a475Ef178471aB2132b9dfD312B3',
+      decimals: 4,
+      symbol: 'LADZ',
+      name: 'LADZ'
+    },
+    {
+      id: '0x25859743ED0861665611B81E47682e889b48313B',
+      decimals: 4,
+      symbol: 'YUMI',
+      name: 'Yumi'
+    },
+    {
+      id: '0x81B1bFD6CB9Ad42DB395c2a27F73D4DCf5777e2D',
+      decimals: 4,
+      symbol: 'RARE',
+      name: 'Rare'
+    },
+    {
+      id: '0xAf162491C0B21900C01F4Cc0F7110238AAcdebE7',
+      decimals: 4,
+      symbol: 'BEAR',
+      name: 'arcane bear'
+    },
+    {
+      id: '0xA9248F8e40d4b9c3Ca8ebd8E07E9BCB942C616d8',
+      decimals: 4,
+      symbol: 'ARKE',
+      name: 'ARKE'
+    },
+    {
+      id: '0xa19A40FbD7375431fAB013a4B08F00871B9a2791',
+      decimals: 4,
+      symbol: 'SWAGG',
+      name: 'SWAGG'
+    },
+    {
+      id: '0xd1B183f425F7E6A0C83aB1cd84cFDE2d84Ba049d',
+      decimals: 4,
+      symbol: 'TING',
+      name: 'Tingles'
+    },
+    {
+      id: '0x537A9095b78517597b5f2058EDcd6E1978095909',
+      decimals: 4,
+      symbol: 'DSGN',
+      name: 'Design'
+    },
+    {
+      id: '0x1eCe1739DAE08253aE582C404511B37355B42C84',
+      decimals: 4,
+      symbol: 'PICA',
+      name: 'PICA'
+    },
+    {
+      id: '0x862caA11AbE48c945D5361E80EaF19348C479240',
+      decimals: 4,
+      symbol: 'HERO',
+      name: 'HERO'
+    },
+    {
+      id: '0xC1fB6C015fC535aBD331D3029De76a62e412Fb23',
+      decimals: 4,
+      symbol: 'FORCER',
+      name: 'Forcer'
+    },
+    {
+      id: '0xF21D65979bD89b28f05EF19F3c65dd2A1D02946D',
+      decimals: 4,
+      symbol: 'BPC',
+      name: 'BloodyPercent'
+    },
+    {
+      id: '0x6BFfa07a1B0ceBC474cE6833eAf2bE6326252449',
+      decimals: 4,
+      symbol: 'BAEPAY',
+      name: 'BAEPAY'
+    },
+    {
+      id: '0x219803d17f3067eb53d521ba8948d2734f402f7d',
+      decimals: 4,
+      symbol: 'WGM',
+      name: 'WGM'
+    },
+    {
+      id: '0xbB98Fc1fD1080D2B8bdaD75c51D30B50c6F59b62',
+      decimals: 4,
+      symbol: 'PYGOZ',
+      name: 'PYGOZ'
+    },
+    {
+      id: '0xc53f6C2Ac35D30cc47Ddf3C320874b21dFA38791',
+      decimals: 4,
+      symbol: 'GCASH',
+      name: 'Gcash'
+    },
+    {
+      id: '0x3A75731f9e16244dE01DD431636Db7c07D42A166',
+      decimals: 4,
+      symbol: 'BONES',
+      name: 'Bones'
+    },
+    {
+      id: '0xDB7eB3edE973665b1BB9F3016861E3255062E4ED',
+      decimals: 4,
+      symbol: 'MNFT',
+      name: 'MNFT'
+    },
+    {
+      id: '0x9903A4Cd589DA8e434f264deAFc406836418578E',
+      decimals: 4,
+      symbol: 'FIRST',
+      name: 'Harrison First'
+    },
+    {
+      id: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+      decimals: 18,
+      symbol: 'LDO',
+      name: 'Lido DAO Token'
+    }, // LDO
+    {
+      id: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      decimals: 18,
+      symbol: 'stETH',
+      name: 'Liquid staked Ether 2.0'
+    } // stETH
   ],
   fantom: [],
-  polygon: []
+  polygon: [],
+  avalanche: [],
+  binance: []
 };
 
 const isDirEmpty = (dir) => {
@@ -210,11 +503,14 @@ const iterateOverAssets = async (network) => {
   let assetsAddresses = [];
   try {
     const files = await promises.readdir(
-      `${repDIR}/blockchains/${network}/assets`
+      `${repDIR}/blockchains/${getTrustWalletBlockchainName(network)}/assets`
     );
     let assetCount = 0;
     for (const file of files) {
-      const fromPath = join(`${repDIR}/blockchains/${network}/assets`, file);
+      const fromPath = join(
+        `${repDIR}/blockchains/${getTrustWalletBlockchainName(network)}/assets`,
+        file
+      );
       const stat = await promises.stat(fromPath);
 
       if (stat.isDirectory()) {
@@ -284,7 +580,9 @@ const enrichWithTWdata = async (assetAddresses, network) => {
   return assetAddresses.reduce(async (acc, address) => {
     try {
       const buf = readFileSync(
-        `${repDIR}/blockchains/${network}/assets/${address}/info.json`,
+        `${repDIR}/blockchains/${getTrustWalletBlockchainName(
+          network
+        )}/assets/${address}/info.json`,
         'utf8'
       );
       const info = JSON.parse(buf);
@@ -294,7 +592,9 @@ const enrichWithTWdata = async (assetAddresses, network) => {
 
       logger.info(`Add token: ${address}`);
 
-      const imgPath = `${`${repDIR}/blockchains/${network}/assets`}/${address}/logo.png`;
+      const imgPath = `${`${repDIR}/blockchains/${getTrustWalletBlockchainName(
+        network
+      )}/assets`}/${address}/logo.png`;
       if (existsSync(imgPath)) {
         const buffer = Buffer.from(readFileSync(imgPath));
         info.color = await getAssetImageColor(buffer, address);
@@ -327,7 +627,7 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
   console.log('Network:', network, 'coingecko list:', coingeckoList.length);
   let newAssets = [];
 
-  if (network !== 'ethereum') {
+  if (network !== 'ethereum' && network !== 'binance') {
     for (let i = 0; i < coingeckoList.length; i++) {
       await new Promise((r) => setTimeout(r, 700));
 
@@ -510,6 +810,12 @@ const getWeb3 = (network) => {
     case 'polygon':
       rpcUrl = 'https://polygon-rpc.com/';
       break;
+    case 'avalanche':
+      rpcUrl = 'https://api.avax.network/ext/bc/C/rpc';
+      break;
+    case 'binance':
+      rpcUrl = 'https://bsc-dataseed.binance.org/';
+      break;
     default:
       throw new Error(`There is no RPC link for network: ${network}`);
   }
@@ -529,6 +835,7 @@ const generateNewList = async () => {
     assets = Array.from(
       new Set([...assets, ...alsoIncludedTokens[network].map((a) => a.id)])
     );
+    console.log('enriching...');
     assets = await enrichWithTWdata(assets, network);
     console.log('assets enriched with TW data length: ', assets.length);
     assets = await enrichWithCoingeckoData(assets, network, web3);
