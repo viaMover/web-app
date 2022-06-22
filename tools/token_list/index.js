@@ -461,7 +461,67 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'stETH',
       name: 'Liquid staked Ether 2.0'
-    } // stETH
+    }, // stETH
+    {
+      symbol: 'yvUSDC',
+      id: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
+      decimals: 6,
+      name: 'USDC yVault'
+    },
+    {
+      symbol: 'yvDAI',
+      id: '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
+      decimals: 18,
+      name: 'DAI yVault'
+    },
+    {
+      symbol: 'yvWETH',
+      id: '0xa258C4606Ca8206D8aA700cE2143D7db854D168c',
+      decimals: 18,
+      name: 'WETH yVault'
+    },
+    {
+      symbol: 'yvWBTC',
+      id: '0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E',
+      decimals: 8,
+      name: 'WBTC yVault'
+    },
+    {
+      symbol: 'yvSUSHI',
+      id: '0x6d765CbE5bC922694afE112C140b8878b9FB0390',
+      decimals: 18,
+      name: 'SUSHI yVault'
+    },
+    {
+      symbol: 'yvYFI',
+      id: '0xdb25cA703181E7484a155DD612b06f57E12Be5F0',
+      decimals: 18,
+      name: 'YFI yVault'
+    },
+    {
+      symbol: 'yvLUSD',
+      id: '0x378cb52b00F9D0921cb46dFc099CFf73b42419dC',
+      decimals: 18,
+      name: 'LUSD yVault'
+    },
+    {
+      symbol: 'yvSNX',
+      id: '0xF29AE508698bDeF169B89834F76704C3B205aedf',
+      decimals: 18,
+      name: 'SNX yVault'
+    },
+    {
+      symbol: 'yvAAVE',
+      id: '0xd9788f3931Ede4D5018184E198699dC6d66C1915',
+      decimals: 18,
+      name: 'AAVE yVault'
+    },
+    {
+      symbol: 'yvUNI',
+      id: '0xFBEB78a723b8087fD2ea7Ef1afEc93d35E8Bed42',
+      decimals: 18,
+      name: 'UNI yVault'
+    }
   ],
   fantom: [],
   polygon: [],
@@ -578,6 +638,10 @@ const getAssetImageColor = async (source, address) => {
 
 const enrichWithTWdata = async (assetAddresses, network) => {
   return assetAddresses.reduce(async (acc, address) => {
+    const forceIncludedToken = alsoIncludedTokens[network].find(
+      (t) => t.id.toLowerCase() === address.toLowerCase()
+    );
+
     try {
       const buf = readFileSync(
         `${repDIR}/blockchains/${getTrustWalletBlockchainName(
@@ -586,10 +650,11 @@ const enrichWithTWdata = async (assetAddresses, network) => {
         'utf8'
       );
       const info = JSON.parse(buf);
-      if (info.status !== 'active') {
+      if (info.status !== 'active' && !forceIncludedToken) {
+        console.log(`Not active status (${info.status}) of token ${address}`);
         return await acc;
       }
-
+      info.status = 'active';
       logger.info(`Add token: ${address}`);
 
       const imgPath = `${`${repDIR}/blockchains/${getTrustWalletBlockchainName(
@@ -609,6 +674,11 @@ const enrichWithTWdata = async (assetAddresses, network) => {
         address,
         e
       );
+
+      if (forceIncludedToken) {
+        return [...(await acc), forceIncludedToken];
+      }
+
       const fallbackInfo = {
         isIncomplete: true,
         id: address
