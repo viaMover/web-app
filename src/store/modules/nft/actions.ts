@@ -115,7 +115,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async fetchENSData({ rootState, state, commit }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       addSentryBreadcrumb({
-        type: 'warn',
+        type: 'warning',
         category: 'fetchENSData.action.nft.store',
         message: 'Account state is not loaded yet'
       });
@@ -164,7 +164,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async fetchUNSData({ rootState, state, commit }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       addSentryBreadcrumb({
-        type: 'warn',
+        type: 'warning',
         category: 'fetchUNSData.action.nft.store',
         message: 'Account state is not loaded yet'
       });
