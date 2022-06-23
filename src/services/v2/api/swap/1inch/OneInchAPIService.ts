@@ -10,7 +10,6 @@ import {
   ResponseHTTPErrorCode
 } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
-import { TransferData } from '@/services/v2/api/0x';
 import {
   OneInchBadRequestResponse,
   OneInchToken,
@@ -19,7 +18,8 @@ import {
   SwapParams,
   SwapResponse,
   TokensResponse
-} from '@/services/v2/api/1inch/types';
+} from '@/services/v2/api/swap/1inch/types';
+import { ISwapper } from '@/services/v2/api/swap/ISwapper';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   getPureBaseAssetAddress,
@@ -27,8 +27,14 @@ import {
   sameAddress
 } from '@/utils/address';
 import { getNetwork, Network } from '@/utils/networkTypes';
+import { lookupAddress } from '@/wallet/references/data';
 
-export class OneInchAPIService extends MultiChainAPIService {
+import { TransferData } from '../types';
+
+export class OneInchAPIService
+  extends MultiChainAPIService
+  implements ISwapper
+{
   protected baseURL: string;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = '1inch.api.service';
@@ -60,6 +66,10 @@ export class OneInchAPIService extends MultiChainAPIService {
       paramsSerializer: this.getParamsSerializer,
       validateStatus: (status) => status === 200
     });
+  }
+
+  public canHandle(network: Network): boolean {
+    return OneInchAPIService.supportedNetworks.includes(network);
   }
 
   protected applyAxiosInterceptors(instance: AxiosInstance): AxiosInstance {
@@ -121,6 +131,7 @@ export class OneInchAPIService extends MultiChainAPIService {
     return this.availableTokens;
   }
 
+  // @deprecated use getSwapData()
   public async getTransferData(
     buyTokenAddress: string,
     sellTokenAddress: string,
@@ -137,7 +148,9 @@ export class OneInchAPIService extends MultiChainAPIService {
       fromTokenAddress: sellTokenAddress,
       amount: rawAmount,
       slippage: slippage,
-      fromAddress: this.currentAddress
+      fromAddress: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+      destReceived: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+      disableEstimate: true
     });
 
     return {
@@ -146,9 +159,9 @@ export class OneInchAPIService extends MultiChainAPIService {
       swappingVia: data.protocols[0].name ?? '',
       value: data.tx.value,
       sellAmount: data.fromTokenAmount,
-      allowanceTarget: '',
-      buyTokenToEthRate: '',
-      sellTokenToEthRate: '',
+      allowanceTarget: data.tx.to,
+      buyTokenToEthRate: undefined,
+      sellTokenToEthRate: undefined,
       to: data.tx.to
     };
   }
@@ -403,5 +416,9 @@ export class OneInchAPIService extends MultiChainAPIService {
     }
 
     return address;
+  }
+
+  public getName(): string {
+    return 'OneInchAPIService';
   }
 }

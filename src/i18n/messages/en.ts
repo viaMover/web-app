@@ -1,6 +1,6 @@
 import VueI18n from 'vue-i18n';
 
-import { ValidationErrorReason } from '@/services/v2/api/0x/types';
+import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
