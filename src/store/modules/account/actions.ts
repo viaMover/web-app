@@ -380,7 +380,7 @@ const actions: ActionFuncs<
         })
         .catch((error) => {
           addSentryBreadcrumb({
-            type: 'warn',
+            type: 'warning',
             data: error,
             category: 'refreshWallet.action.account.store',
             message:
@@ -735,7 +735,7 @@ const actions: ActionFuncs<
 
     await state.uauthClient.logout(uauthOptions).catch((error) => {
       addSentryBreadcrumb({
-        type: 'warn',
+        type: 'warning',
         category: 'disconnectWallet.action.account.store',
         message: 'Failed to log out from Unstoppable Domains client',
         data: {
