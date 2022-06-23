@@ -69,6 +69,13 @@ export type HolyHandContract = CustomContractType<{
     // minimum amount after bridge
     _minDy: string
   ): ContractMethod;
+  cardTopUp(
+    _accountAddress: string,
+    _inputCurrencyAddress: string,
+    _inputAmountInWEI: string,
+    _expectedMinimumReceived: string,
+    _bytesData: number[]
+  ): ContractMethod;
 }>;
 
 export type AddTransactionToStoreHandler = (tx: Transaction) => Promise<void>;

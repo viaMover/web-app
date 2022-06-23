@@ -1,11 +1,11 @@
 import Web3 from 'web3';
-import { PromiEvent } from 'web3-core';
 import { TransactionReceipt } from 'web3-eth';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { CompoundEstimateResponse } from '@/services/v2/on-chain/mover';
+import { PromiEventWrapper } from '@/services/v2/on-chain/PromiEventWrapper';
 import {
   AnyFn,
   CustomContractType,
@@ -31,7 +31,7 @@ import { OnChainServiceError } from './OnChainServiceError';
 /**
  * An abstract class representing basic needs of every on-chain service
  */
-export abstract class OnChainService {
+export abstract class OnChainService extends PromiEventWrapper {
   // account address
   protected readonly currentAddress: string;
 
@@ -40,9 +40,6 @@ export abstract class OnChainService {
 
   // web3 client
   protected readonly web3Client: Web3;
-
-  // sentry category prefix (used for `addSentryBreadcrumb({ category: ... })`
-  protected abstract readonly sentryCategoryPrefix: string;
 
   /**
    * Creates a new instance of `OnChainService`
@@ -56,6 +53,7 @@ export abstract class OnChainService {
     network: Network,
     web3Client: Web3
   ) {
+    super();
     this.currentAddress = currentAddress;
     this.network = network;
     this.web3Client = web3Client;
@@ -346,71 +344,6 @@ export abstract class OnChainService {
         );
       }
     });
-  }
-
-  /**
-   * Wraps the call with the default `PromiEvent` chain handles: `transactionHash`, `receipt`, `error`.
-   * Logs service/developer messages to the `console` and `Sentry`
-   * @param promiEvent An event with optional chain of `.on(...)` and `.once(...)` handles
-   * @param resolve A resolver of transaction call / `new Promise((resolve, reject) => {...})`
-   * @param reject A rejecter of transaction call / `new Promise((resolve, reject) => {...})`
-   * @param onTransactionHash A callback of successful transaction handling
-   * @param breadcrumbPayload `addSentryBreadcrumb({data: ...})` payload
-   * @protected
-   */
-  protected wrapWithSendMethodCallbacks<P>(
-    promiEvent: PromiEvent<P>,
-    resolve: (receipt: TransactionReceipt) => void,
-    reject: (error: Error) => void,
-    onTransactionHash?: () => void,
-    breadcrumbPayload?: Record<string, unknown>
-  ): PromiEvent<P> {
-    return promiEvent
-      .once('transactionHash', (hash: string) => {
-        addSentryBreadcrumb({
-          type: 'debug',
-          message: 'Received a transaction hash',
-          data: {
-            hash
-          }
-        });
-        onTransactionHash?.();
-      })
-      .once('receipt', (receipt: TransactionReceipt) => {
-        addSentryBreadcrumb({
-          type: 'debug',
-          message: 'Received a transaction receipt',
-          data: {
-            receipt
-          }
-        });
-        resolve(receipt);
-      })
-      .once('confirmation', (confirmationNumber, receipt, latestBlockHash) => {
-        addSentryBreadcrumb({
-          type: 'debug',
-          category: this.sentryCategoryPrefix,
-          message: 'Transaction is confirmed',
-          data: {
-            confirmationNumber,
-            receipt,
-            latestBlockHash
-          }
-        });
-      })
-      .once('error', (error) => {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'On-chain call failed',
-          data: {
-            ...breadcrumbPayload,
-            error: error
-          }
-        });
-
-        reject(error);
-      });
   }
 
   protected async executeTransactionWithApprove(

@@ -66,6 +66,7 @@ type Mutations = {
   setNativeCurrency: void;
   setCoinGeckoAPIService: void;
   setTheGraphAPIService: void;
+  setUnstoppableDomainsName: void;
 };
 
 const mutations: MutationFuncs<Mutations, AccountStoreState> = {
@@ -284,6 +285,9 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setTheGraphAPIService(state, service: TheGraphAPIService): void {
     state.theGraphAPIService = service;
+  },
+  setUnstoppableDomainsName(state, name: string): void {
+    state.unstoppableDomainsName = name;
   }
 };
 

@@ -1,3 +1,5 @@
+import UAuthSPA from '@uauth/js';
+import { IUAuthOptions } from '@uauth/web3modal';
 import Fuse from 'fuse.js';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
@@ -7,6 +9,7 @@ import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { SwapAPIService } from '@/services/v2/api/swap';
 import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
+import { APIKeys } from '@/settings';
 import { Network, NetworkInfo } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
@@ -49,6 +52,8 @@ export enum NativeCurrency {
 
 export type AccountStoreState = {
   web3Modal: any;
+  uauthClient: UAuthSPA;
+  unstoppableDomainsName: string | undefined;
 
   avatar: Avatar | undefined;
   avatars: Array<Avatar>;
@@ -185,4 +190,10 @@ export type PriceRecord = {
 export type FetchTokenPricesByContractAddressesPayload = {
   contractAddresses: Array<string> | string;
   currencies: Array<NativeCurrency> | NativeCurrency;
+};
+
+export const uauthOptions: IUAuthOptions = {
+  clientID: APIKeys.UNSTOPPABLE_DOMAINS_LOGIN_CLIENT_ID,
+  redirectUri: `${window.location.protocol}//${window.location.host}`,
+  scope: 'openid wallet'
 };

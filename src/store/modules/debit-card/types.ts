@@ -5,6 +5,7 @@ import {
   CardStatus as ServiceState,
   EventHistoryItemMinimal as ServiceHistoryItem
 } from '@/services/mover/debit-card';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 
 import { PictureDescriptor } from '@/components/html5';
 
@@ -29,6 +30,8 @@ export type DebitCardStoreState = {
   kycLink: string | undefined;
   wxBTRFLYrealIndex: string;
   gALCXToALCXMultiplier: string;
+
+  onChainService: DebitCardOnChainService | undefined;
 };
 
 export type CardInfo = {

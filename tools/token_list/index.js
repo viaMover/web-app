@@ -191,7 +191,337 @@ const alsoIncludedTokens = {
       decimals: 18,
       symbol: 'agEUR',
       name: 'agEUR'
-    } // agEUR
+    }, // agEUR
+    {
+      id: '0x35872fea6A4843fACBCDbCe99e3B69596A3680b8',
+      decimals: 4,
+      symbol: '1337',
+      name: '1337'
+    }, // 1337
+    {
+      id: '0x9355372396e3F6daF13359B7b607a3374cc638e0',
+      decimals: 4,
+      symbol: 'WHALE',
+      name: 'WHALE'
+    }, // WHALE
+    {
+      id: '0xA392c35EC6900346aDEc720Abe50413F48Ee5143',
+      decimals: 4,
+      symbol: 'GENRE',
+      name: 'GENRE'
+    }, // GENRE
+    {
+      id: '0x1e906717De2E4A4600F13b6909736b0346bDde3E',
+      decimals: 4,
+      symbol: 'PIXEL',
+      name: 'Pixel'
+    },
+    {
+      id: '0xf552b656022c218C26dAd43ad88881Fc04116F76',
+      decimals: 4,
+      symbol: 'MORK',
+      name: 'Mork'
+    },
+    {
+      id: '0xE400013Df86249838B720eaB5a7F816aD82433c0',
+      decimals: 4,
+      symbol: 'GOB',
+      name: 'Game Of Bitcoins'
+    },
+    {
+      id: '0xE5f55a3b74874531a99359b833b92866A6609f6B',
+      decimals: 4,
+      symbol: 'ATS',
+      name: 'All The Smoke'
+    },
+    {
+      id: '0xdc8092AaF83e00Ebf9B01A2e90b7B7eF867ba503',
+      decimals: 4,
+      symbol: 'CALVIN',
+      name: 'Calvin'
+    },
+    {
+      id: '0x8BDfaE0F83a03F5fa98B0bDf339F56df3C9F8BD5',
+      decimals: 18,
+      symbol: 'AIN',
+      name: 'AndjelaNadja'
+    },
+    {
+      id: '0x78a0eE7ad08E2C746518387BeA867BE0199514B8',
+      decimals: 4,
+      symbol: 'MARTE',
+      name: 'Marte'
+    },
+    {
+      id: '0xe6710e0CdA178f3D921f456902707B0d4C4A332B',
+      decimals: 4,
+      symbol: 'JULIEN',
+      name: 'Julien'
+    },
+    {
+      id: '0x27fD686Db10E0aE047fe8FE1DE9830C0e0dC3CFA',
+      decimals: 4,
+      symbol: 'SCOTT',
+      name: 'SCOTT'
+    },
+    {
+      id: '0xA809CeDeE9B61956c768EAa10272dd5E0FD1A985',
+      decimals: 4,
+      symbol: 'CAMI',
+      name: 'CAMI'
+    },
+    {
+      id: '0xFAD44249C2cd1F661BAc5f97C2Ff9f625ce27197',
+      decimals: 4,
+      symbol: 'GREY',
+      name: 'GREY'
+    },
+    {
+      id: '0x56687cf29Ac9751Ce2a4E764680B6aD7E668942e',
+      decimals: 4,
+      symbol: 'JAMM',
+      name: 'FlynnJamm'
+    },
+    {
+      id: '0xBcc66ed2aB491e9aE7Bf8386541Fb17421Fa9d35',
+      decimals: 4,
+      symbol: 'SKULL',
+      name: 'Skull'
+    },
+    {
+      id: '0x6da447a8992eC6580f398C5BAAf5fc5d30ddD08F',
+      decimals: 18,
+      symbol: 'TIDE',
+      name: 'Tide'
+    },
+    {
+      id: '0x7841B2A48D1F6e78ACeC359FEd6D874Eb8a0f63c',
+      decimals: 4,
+      symbol: 'KERMAN',
+      name: 'KERMAN'
+    },
+    {
+      id: '0x3C9Ca73d5309d38c6F2C21b78b9aE1f4b2441188',
+      decimals: 4,
+      symbol: 'RDR',
+      name: 'RADAR'
+    },
+    {
+      id: '0x2Ad128fBEFF2B781D028148DEc82bBe2498Dc08e',
+      decimals: 4,
+      symbol: 'LIFE',
+      name: 'LIFE'
+    },
+    {
+      id: '0x833E4c02c47B7e38f5b9A80b26eb07D23d1961f4',
+      decimals: 4,
+      symbol: 'FAMILY',
+      name: 'The Bitcoin Family'
+    },
+    {
+      id: '0x4317Ea4820F8D9ea6A103553A89Cb261B6Ea7F2a',
+      decimals: 4,
+      symbol: 'ALXO',
+      name: 'Alxocity'
+    },
+    {
+      id: '0xDcfE18bc46f5A0Cd0d3Af0c2155d2bCB5AdE2fc5',
+      decimals: 4,
+      symbol: 'HUE',
+      name: 'Hue'
+    },
+    {
+      id: '0x39Ad22C916F42aF5f67371d6f2Fb0dab42321a89',
+      decimals: 4,
+      symbol: 'OSINA',
+      name: 'Osinachi'
+    },
+    {
+      id: '0x1287c0509df9a475Ef178471aB2132b9dfD312B3',
+      decimals: 4,
+      symbol: 'LADZ',
+      name: 'LADZ'
+    },
+    {
+      id: '0x25859743ED0861665611B81E47682e889b48313B',
+      decimals: 4,
+      symbol: 'YUMI',
+      name: 'Yumi'
+    },
+    {
+      id: '0x81B1bFD6CB9Ad42DB395c2a27F73D4DCf5777e2D',
+      decimals: 4,
+      symbol: 'RARE',
+      name: 'Rare'
+    },
+    {
+      id: '0xAf162491C0B21900C01F4Cc0F7110238AAcdebE7',
+      decimals: 4,
+      symbol: 'BEAR',
+      name: 'arcane bear'
+    },
+    {
+      id: '0xA9248F8e40d4b9c3Ca8ebd8E07E9BCB942C616d8',
+      decimals: 4,
+      symbol: 'ARKE',
+      name: 'ARKE'
+    },
+    {
+      id: '0xa19A40FbD7375431fAB013a4B08F00871B9a2791',
+      decimals: 4,
+      symbol: 'SWAGG',
+      name: 'SWAGG'
+    },
+    {
+      id: '0xd1B183f425F7E6A0C83aB1cd84cFDE2d84Ba049d',
+      decimals: 4,
+      symbol: 'TING',
+      name: 'Tingles'
+    },
+    {
+      id: '0x537A9095b78517597b5f2058EDcd6E1978095909',
+      decimals: 4,
+      symbol: 'DSGN',
+      name: 'Design'
+    },
+    {
+      id: '0x1eCe1739DAE08253aE582C404511B37355B42C84',
+      decimals: 4,
+      symbol: 'PICA',
+      name: 'PICA'
+    },
+    {
+      id: '0x862caA11AbE48c945D5361E80EaF19348C479240',
+      decimals: 4,
+      symbol: 'HERO',
+      name: 'HERO'
+    },
+    {
+      id: '0xC1fB6C015fC535aBD331D3029De76a62e412Fb23',
+      decimals: 4,
+      symbol: 'FORCER',
+      name: 'Forcer'
+    },
+    {
+      id: '0xF21D65979bD89b28f05EF19F3c65dd2A1D02946D',
+      decimals: 4,
+      symbol: 'BPC',
+      name: 'BloodyPercent'
+    },
+    {
+      id: '0x6BFfa07a1B0ceBC474cE6833eAf2bE6326252449',
+      decimals: 4,
+      symbol: 'BAEPAY',
+      name: 'BAEPAY'
+    },
+    {
+      id: '0x219803d17f3067eb53d521ba8948d2734f402f7d',
+      decimals: 4,
+      symbol: 'WGM',
+      name: 'WGM'
+    },
+    {
+      id: '0xbB98Fc1fD1080D2B8bdaD75c51D30B50c6F59b62',
+      decimals: 4,
+      symbol: 'PYGOZ',
+      name: 'PYGOZ'
+    },
+    {
+      id: '0xc53f6C2Ac35D30cc47Ddf3C320874b21dFA38791',
+      decimals: 4,
+      symbol: 'GCASH',
+      name: 'Gcash'
+    },
+    {
+      id: '0x3A75731f9e16244dE01DD431636Db7c07D42A166',
+      decimals: 4,
+      symbol: 'BONES',
+      name: 'Bones'
+    },
+    {
+      id: '0xDB7eB3edE973665b1BB9F3016861E3255062E4ED',
+      decimals: 4,
+      symbol: 'MNFT',
+      name: 'MNFT'
+    },
+    {
+      id: '0x9903A4Cd589DA8e434f264deAFc406836418578E',
+      decimals: 4,
+      symbol: 'FIRST',
+      name: 'Harrison First'
+    },
+    {
+      id: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+      decimals: 18,
+      symbol: 'LDO',
+      name: 'Lido DAO Token'
+    }, // LDO
+    {
+      id: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      decimals: 18,
+      symbol: 'stETH',
+      name: 'Liquid staked Ether 2.0'
+    }, // stETH
+    {
+      symbol: 'yvUSDC',
+      id: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
+      decimals: 6,
+      name: 'USDC yVault'
+    },
+    {
+      symbol: 'yvDAI',
+      id: '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
+      decimals: 18,
+      name: 'DAI yVault'
+    },
+    {
+      symbol: 'yvWETH',
+      id: '0xa258C4606Ca8206D8aA700cE2143D7db854D168c',
+      decimals: 18,
+      name: 'WETH yVault'
+    },
+    {
+      symbol: 'yvWBTC',
+      id: '0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E',
+      decimals: 8,
+      name: 'WBTC yVault'
+    },
+    {
+      symbol: 'yvSUSHI',
+      id: '0x6d765CbE5bC922694afE112C140b8878b9FB0390',
+      decimals: 18,
+      name: 'SUSHI yVault'
+    },
+    {
+      symbol: 'yvYFI',
+      id: '0xdb25cA703181E7484a155DD612b06f57E12Be5F0',
+      decimals: 18,
+      name: 'YFI yVault'
+    },
+    {
+      symbol: 'yvLUSD',
+      id: '0x378cb52b00F9D0921cb46dFc099CFf73b42419dC',
+      decimals: 18,
+      name: 'LUSD yVault'
+    },
+    {
+      symbol: 'yvSNX',
+      id: '0xF29AE508698bDeF169B89834F76704C3B205aedf',
+      decimals: 18,
+      name: 'SNX yVault'
+    },
+    {
+      symbol: 'yvAAVE',
+      id: '0xd9788f3931Ede4D5018184E198699dC6d66C1915',
+      decimals: 18,
+      name: 'AAVE yVault'
+    },
+    {
+      symbol: 'yvUNI',
+      id: '0xFBEB78a723b8087fD2ea7Ef1afEc93d35E8Bed42',
+      decimals: 18,
+      name: 'UNI yVault'
+    }
   ],
   fantom: [],
   polygon: [],
@@ -308,6 +638,10 @@ const getAssetImageColor = async (source, address) => {
 
 const enrichWithTWdata = async (assetAddresses, network) => {
   return assetAddresses.reduce(async (acc, address) => {
+    const forceIncludedToken = alsoIncludedTokens[network].find(
+      (t) => t.id.toLowerCase() === address.toLowerCase()
+    );
+
     try {
       const buf = readFileSync(
         `${repDIR}/blockchains/${getTrustWalletBlockchainName(
@@ -316,10 +650,11 @@ const enrichWithTWdata = async (assetAddresses, network) => {
         'utf8'
       );
       const info = JSON.parse(buf);
-      if (info.status !== 'active') {
+      if (info.status !== 'active' && !forceIncludedToken) {
+        console.log(`Not active status (${info.status}) of token ${address}`);
         return await acc;
       }
-
+      info.status = 'active';
       logger.info(`Add token: ${address}`);
 
       const imgPath = `${`${repDIR}/blockchains/${getTrustWalletBlockchainName(
@@ -339,6 +674,11 @@ const enrichWithTWdata = async (assetAddresses, network) => {
         address,
         e
       );
+
+      if (forceIncludedToken) {
+        return [...(await acc), forceIncludedToken];
+      }
+
       const fallbackInfo = {
         isIncomplete: true,
         id: address

@@ -13,6 +13,7 @@ import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';
 import ConnectWallet from '@/views/connect-wallet.vue';
 import Home from '@/views/home.vue';
+import Logout from '@/views/logout.vue';
 import More from '@/views/more.vue';
 import PreloadMore from '@/views/preload/preload-more.vue';
 import View404 from '@/views/view-404.vue';
@@ -60,6 +61,16 @@ const routes: Array<RouteConfig> = [
       path: '/connect-wallet',
       name: 'connect-wallet',
       component: ConnectWallet
+    },
+    {
+      skipPreloadScreen: true
+    }
+  ),
+  wrapWithMeta(
+    {
+      path: '/logout-all',
+      name: 'logout-all',
+      component: Logout
     },
     {
       skipPreloadScreen: true
@@ -563,17 +574,11 @@ const routes: Array<RouteConfig> = [
             props: (to) => ({
               step: to.params.step
             }),
-            beforeEnter: (to, from, next) => {
-              formStepsGuard('debit-card-top-up')(to, from, next);
-            }
+            beforeEnter: formStepsGuard('debit-card-top-up')
           },
           {
             customCondition: (store?: Store<RootStoreState>): boolean => {
-              if (store === undefined) return false;
-              return (
-                store.state.debitCard?.emailHash !== undefined &&
-                store.state.debitCard?.emailSignature !== undefined
-              );
+              return store !== undefined;
             }
           }
         ),

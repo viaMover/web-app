@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang=''>
+<head>
+  <meta charset='utf-8' />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+  <meta name='viewport' content='width=device-width,initial-scale=1.0' />
+  <title>Mover App service page</title>
+</head>
+<body>
+<noscript>
+  <strong>
+    We're sorry but that page doesn't work properly without JavaScript enabled. Please
+    enable it to continue.
+  </strong>
+</noscript>
+<div>logout</div>
+<script>
+  window.addEventListener('load', async function () {
+    localStorage.clear();
+    sessionStorage.clear();
+    if (caches) {
+      caches
+        .keys()
+        .then((keyList) => Promise.all(keyList.map((key) => caches.delete(key))));
+    }
+    document.cookie.split(';').forEach(function (c) {
+      document.cookie = c
+        .replace(/^ +/, '')
+        .replace(/=.*/, '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/');
+    });
+    setTimeout(() => {
+      window.location.replace(
+        window.location.protocol + '//' + window.location.host
+      );
+    }, 1000);
+  });
+</script>
+</body>
+</html>

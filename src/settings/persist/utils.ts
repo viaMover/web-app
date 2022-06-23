@@ -40,6 +40,10 @@ export const removeAccountBoundPersistItemsFromLocalStorage = (
   });
 };
 
+export const clearAllPersistItemsFromLocalStorage = (): void => {
+  localStorage.clear();
+};
+
 const isMoverEntryType = (
   value: Record<string, unknown> | null | undefined
 ): value is DataStoreWrapper<unknown> => {

@@ -115,7 +115,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async fetchENSData({ rootState, state, commit }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       addSentryBreadcrumb({
-        type: 'warn',
+        type: 'warning',
         category: 'fetchENSData.action.nft.store',
         message: 'Account state is not loaded yet'
       });
@@ -144,9 +144,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
           commit('setENSAPIService', apiService);
         }
 
-        console.debug('ens name', ensOwnDomainName);
         const tokenId = onChainService.getERC721TokenId(ensOwnDomainName);
-        console.debug('tokenId', tokenId);
         const meta = await apiService.getERC721Meta(tokenId);
         commit('setENSData', meta);
       }
@@ -166,7 +164,7 @@ const actions: ActionFuncs<Actions, NFTStoreState, MutationType, GetterType> = {
   async fetchUNSData({ rootState, state, commit }): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       addSentryBreadcrumb({
-        type: 'warn',
+        type: 'warning',
         category: 'fetchUNSData.action.nft.store',
         message: 'Account state is not loaded yet'
       });
