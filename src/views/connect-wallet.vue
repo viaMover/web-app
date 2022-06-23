@@ -189,7 +189,7 @@ export default Vue.extend({
         });
         await new UAuthSPA(uauthOptions).logout(uauthOptions).catch((error) => {
           addSentryBreadcrumb({
-            type: 'warn',
+            type: 'warning',
             category: 'app',
             message: 'Failed to log out from Unstoppable Domains client',
             data: {

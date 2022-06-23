@@ -15,6 +15,9 @@ if (isConsoleEnabled()) {
       case 'info':
         console.info(breadcrumb.message, breadcrumb);
         break;
+      case 'warning':
+        console.warn(breadcrumb.message, breadcrumb);
+        break;
       case 'debug':
         console.debug(breadcrumb.message, breadcrumb);
         break;
