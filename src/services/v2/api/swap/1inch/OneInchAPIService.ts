@@ -156,7 +156,7 @@ export class OneInchAPIService
     return {
       buyAmount: data.toTokenAmount,
       data: data.tx.data,
-      swappingVia: data.protocols[0].name ?? '',
+      swappingVia: '1inch',
       value: data.tx.value,
       sellAmount: data.fromTokenAmount,
       allowanceTarget: data.tx.to,
