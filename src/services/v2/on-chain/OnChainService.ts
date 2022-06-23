@@ -9,7 +9,8 @@ import { PromiEventWrapper } from '@/services/v2/on-chain/PromiEventWrapper';
 import {
   AnyFn,
   CustomContractType,
-  ERC20ContractMethods
+  ERC20ContractMethods,
+  TransactionResult
 } from '@/services/v2/on-chain/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
@@ -196,9 +197,8 @@ export abstract class OnChainService extends PromiEventWrapper {
    * @param token token info
    * @param amountToApprove amount to approve that is needed by transaction to execute successfully
    * @param contractAddress spender Smart Contract address
-   * @private
    */
-  private async needsApprove(
+  protected async needsApprove(
     token: SmallTokenInfo,
     amountToApprove: string,
     contractAddress: string
@@ -299,15 +299,14 @@ export abstract class OnChainService extends PromiEventWrapper {
     );
   }
 
-  // todo: rework this function to properly wrap the Promise as now it just ignores the error and rejects afterwards
   protected async approve(
     tokenAddress: string,
     spenderAddress: string,
     gasLimit: string,
-    eventBus?: TransactionStateEventBus | undefined,
+    eventBus: TransactionStateEventBus,
     amount = MAXUINT256
   ): Promise<TransactionReceipt> {
-    return new Promise((resolve, reject) => {
+    return new Promise<TransactionReceipt>((resolve, reject) => {
       const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
         tokenAddress,
         ERC20_ABI as AbiItem[]
@@ -320,43 +319,39 @@ export abstract class OnChainService extends PromiEventWrapper {
         );
       }
 
-      try {
-        eventBus?.dispatch(TransactionState.AwaitingForInput, {
-          nextState: TransactionState.Approve
-        });
-        this.wrapWithSendMethodCallbacks(
-          tokenContract.methods
-            .approve(spenderAddress, amount)
-            .send(this.getDefaultTransactionsParams(gasLimit, undefined)),
-          resolve,
-          reject,
-          () =>
-            eventBus?.dispatch(TransactionState.Approve, {
-              tokenAddress,
-              amount
-            }),
-          eventBus,
-          { tokenAddress, spenderAddress, gasLimit }
-        );
-      } catch (error) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: this.sentryCategoryPrefix,
-          message: 'Failed to approve',
-          data: {
+      eventBus.dispatch(TransactionState.AwaitingForInput, {
+        nextState: TransactionState.Approve
+      });
+      this.wrapWithSendMethodCallbacks(
+        tokenContract.methods
+          .approve(spenderAddress, amount)
+          .send(this.getDefaultTransactionsParams(gasLimit, undefined)),
+        resolve,
+        reject,
+        (hash) =>
+          eventBus.dispatch(TransactionState.Approve, {
             tokenAddress,
-            spenderAddress,
-            gasLimit,
-            error
-          }
-        });
+            amount,
+            hash
+          }),
+        { tokenAddress, spenderAddress, gasLimit }
+      );
+    }).catch((error) => {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to approve',
+        data: {
+          tokenAddress,
+          spenderAddress,
+          gasLimit,
+          error
+        }
+      });
 
-        reject(
-          new OnChainServiceError(
-            `Failed to execute approve for ${tokenAddress}`
-          ).wrap(error)
-        );
-      }
+      throw new OnChainServiceError(
+        `Failed to execute approve for ${tokenAddress}`
+      ).wrap(error);
     });
   }
 
@@ -364,12 +359,12 @@ export abstract class OnChainService extends PromiEventWrapper {
     token: SmallTokenInfo,
     contractAddress: string,
     amount: string,
-    action: (newGasLimit: string) => Promise<TransactionReceipt>,
+    action: (newGasLimit: string) => Promise<TransactionResult>,
     estimateHandler: () => Promise<CompoundEstimateResponse>,
     approveGasLimit: string,
     actionGasLimit: string,
-    eventBus?: TransactionStateEventBus
-  ): Promise<TransactionReceipt | never> {
+    eventBus: TransactionStateEventBus
+  ): Promise<TransactionResult> {
     if (await this.needsApprove(token, amount, contractAddress)) {
       const approveTxReceipt = await this.approve(
         token.address,

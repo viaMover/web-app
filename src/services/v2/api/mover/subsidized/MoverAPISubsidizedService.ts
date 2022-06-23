@@ -59,33 +59,34 @@ export class MoverAPISubsidizedService extends MoverAPIService {
 
     onTransaction?.();
 
+    let response;
     try {
       // fixme: has a plain response schema (no .payload entry). Possible v2 endpoint?
-      const response = (
+      response = (
         await this.client.post<TxExecuteResponse>('/tx/executeSubsidized', {
           action: action,
           signature: signature
         } as TxExecuteRequest)
       ).data;
-
-      if (response.txID === undefined && response.queueID === undefined) {
-        throw new MoverAPISubsidizedRequestError(
-          'Subsidized request did not return execution status',
-          'Subsidized request failed',
-          response
-        );
-      }
-
-      return {
-        queueID: response.queueID,
-        txID: response.txID
-      };
     } catch (error) {
       throw new MoverAPISubsidizedRequestError(
         `Failed to send subsidized request: ${error}`,
         'Failed to send subsidized request'
       ).wrap(error);
     }
+
+    if (response.txID === undefined && response.queueID === undefined) {
+      throw new MoverAPISubsidizedRequestError(
+        'Subsidized request did not return execution status',
+        'Subsidized request failed',
+        response
+      );
+    }
+
+    return {
+      queueID: response.queueID,
+      txID: response.txID
+    };
   }
 
   public async executeSavingsPlusWithdrawTransaction(

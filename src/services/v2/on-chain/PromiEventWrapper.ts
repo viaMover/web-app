@@ -24,7 +24,7 @@ export abstract class PromiEventWrapper {
     promiEvent: PromiEvent<P>,
     resolve: (receipt: TransactionReceipt) => void,
     reject: (error: Error) => void,
-    onTransactionHash?: () => void,
+    onTransactionHash?: (hash: string) => void,
     breadcrumbPayload?: Record<string, unknown>
   ): PromiEvent<P> {
     return promiEvent
@@ -36,7 +36,7 @@ export abstract class PromiEventWrapper {
             hash
           }
         });
-        onTransactionHash?.();
+        onTransactionHash?.(hash);
       })
       .once('receipt', (receipt: TransactionReceipt) => {
         addSentryBreadcrumb({

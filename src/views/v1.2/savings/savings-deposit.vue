@@ -117,7 +117,11 @@
         {{ $t('depositInSavings') }}
       </submit-button>
     </form>
-    <loader-form v-else-if="step === 'loader'" :step="transactionStep" />
+    <transaction-state-form
+      v-else-if="step === 'loader'"
+      :event-bus="eventBus"
+      :scenario="transactionScenario"
+    />
     <search-token-modal />
   </secondary-page>
 </template>
@@ -131,6 +135,10 @@ import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { captureSentryException } from '@/services/v2/utils/sentry';
+import {
+  TransactionScenario,
+  TransactionStateEventBus
+} from '@/services/v2/utils/transaction-state-event-bus';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
@@ -156,6 +164,7 @@ import LoaderForm from '@/components/v1.2/form-controls/loader-form/loader-form.
 import SubmitButton from '@/components/v1.2/form-controls/submit-button.vue';
 import CustomSwitch from '@/components/v1.2/form-controls/switch-field.vue';
 import TokenSelector from '@/components/v1.2/form-controls/token-selector.vue';
+import TransactionStateForm from '@/components/v1.2/form-controls/transaction-state-form.vue';
 import SecondaryPage from '@/components/v1.2/layout/secondary-page.vue';
 import SecondaryPageHeader from '@/components/v1.2/layout/secondary-page-header.vue';
 import SearchTokenModal from '@/components/v1.2/modal/search-token-modal/search-token-modal.vue';
@@ -175,7 +184,7 @@ export default Vue.extend({
     AmountField,
     CustomSwitch,
     TokenSelector,
-    LoaderForm,
+    TransactionStateForm,
     FormSwapMessage
   },
   mixins: [GasListenerMixin],
@@ -202,7 +211,9 @@ export default Vue.extend({
       //to tx
       estimatedGasCost: undefined as string | undefined,
       actionGasLimit: undefined as string | undefined,
-      approveGasLimit: undefined as string | undefined
+      approveGasLimit: undefined as string | undefined,
+      eventBus: new TransactionStateEventBus(),
+      transactionScenario: [] as TransactionScenario
     };
   },
   computed: {
@@ -370,6 +381,12 @@ export default Vue.extend({
             this.actionGasLimit
           );
         }
+
+        this.transactionScenario =
+          await this.savingsOnChainService.explainDepositCompound(
+            this.inputAsset,
+            this.inputAmount
+          );
 
         this.step = 'review';
       } catch (error) {
@@ -568,6 +585,8 @@ export default Vue.extend({
         return;
       }
 
+      this.eventBus = new TransactionStateEventBus();
+
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
@@ -580,8 +599,8 @@ export default Vue.extend({
           this.transferData,
           args.isSmartTreasury,
           this.actionGasLimit,
-          this.approveGasLimit
-          // fixme: add event bus
+          this.approveGasLimit,
+          this.eventBus
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();

@@ -1,23 +1,26 @@
-import { TransactionReceipt } from 'web3-eth';
-
+import { TransactionResult } from '@/services/v2/on-chain';
 import { Network } from '@/utils/networkTypes';
 
 export type ListenerParams = {
   [TransactionState.Approve]: {
+    hash?: string;
     tokenAddress: string;
     amount?: string;
   };
   [TransactionState.Swap]: {
+    hash?: string;
     fromTokenAddress: string;
     toTokenAddress: string;
     fromAmount: string;
     toAmount: string;
   };
   [TransactionState.Deposit]: {
+    hash?: string;
     tokenAddress: string;
     amount: string;
   };
   [TransactionState.Withdraw]: {
+    hash?: string;
     tokenAddress: string;
     amount: string;
   };
@@ -28,6 +31,7 @@ export type ListenerParams = {
     toNetwork: Network;
   };
   [TransactionState.TopUp]: {
+    hash?: string;
     tokenAddress: string;
     amount: string;
   };
@@ -39,12 +43,11 @@ export type ListenerParams = {
     error: unknown;
   };
   // @deprecated: unused for now
-  [TransactionState.Confirmed]: {
-    receipt?: TransactionReceipt;
-  };
+  [TransactionState.Confirmed]: TransactionResult;
 };
 
 export enum TransactionState {
+  Started = 'started',
   Approve = 'approve',
   Swap = 'swap',
   Deposit = 'deposit',
@@ -56,4 +59,18 @@ export enum TransactionState {
   Confirmed = 'confirmed'
 }
 
+export type TransactionScenarioState = {
+  type: TransactionState;
+  tokenAddress: string;
+  network: Network;
+};
+export type TransactionScenario = Array<TransactionScenarioState>;
+
 export type StateChangedHandler<P> = (payload: P) => void;
+export type UniversalStateChangedHandler = <
+  Type extends keyof ListenerParams,
+  Payload extends ListenerParams[Type]
+>(
+  type: Type,
+  params: Payload
+) => void;

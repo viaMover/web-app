@@ -7,10 +7,13 @@ import { AbiItem } from 'web3-utils';
 import { TransferData } from '@/services/0x/api';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
-import { OnChainServiceError } from '@/services/v2/on-chain';
+import { OnChainServiceError, TransactionResult } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
+import { SubsidizedTransactionExecutionResult } from '@/services/v2/on-chain/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
+  TransactionScenario,
+  TransactionScenarioState,
   TransactionState,
   TransactionStateEventBus
 } from '@/services/v2/utils/transaction-state-event-bus';
@@ -18,7 +21,6 @@ import { sameAddress } from '@/utils/address';
 import { fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { currentTimestamp } from '@/utils/time';
-import { waitOffchainTransactionReceipt } from '@/wallet/offchainExplorer';
 import {
   getCentralTransferProxyAbi,
   getUSDCAssetData,
@@ -89,6 +91,48 @@ export class SavingsOnChainService extends MoverOnChainService {
     });
   }
 
+  public async explainDepositCompound(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string
+  ): Promise<TransactionScenario> {
+    try {
+      const scenario = new Array<TransactionScenarioState>();
+      const needsApprove = this.needsApprove(
+        inputAsset,
+        inputAmount,
+        lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
+      );
+      if (needsApprove) {
+        scenario.push({
+          type: TransactionState.Approve,
+          tokenAddress: inputAsset.address,
+          network: this.network
+        });
+      }
+
+      scenario.push({
+        type: TransactionState.Deposit,
+        tokenAddress: inputAsset.address,
+        network: this.network
+      });
+
+      return scenario;
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to build transaction scenario',
+        data: {
+          error
+        }
+      });
+
+      throw new OnChainServiceError(
+        'Failed to build transaction scenario'
+      ).wrap(error);
+    }
+  }
+
   public async depositCompound(
     inputAsset: SmallTokenInfo,
     outputAsset: SmallTokenInfo,
@@ -97,10 +141,10 @@ export class SavingsOnChainService extends MoverOnChainService {
     useSubsidized: boolean,
     actionGasLimit: string,
     approveGasLimit: string,
-    eventBus?: TransactionStateEventBus | undefined
-  ): Promise<TransactionReceipt> {
+    eventBus: TransactionStateEventBus
+  ): Promise<TransactionResult> {
     try {
-      const receipt = await this.executeTransactionWithApprove(
+      const result = await this.executeTransactionWithApprove(
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
@@ -130,12 +174,10 @@ export class SavingsOnChainService extends MoverOnChainService {
         eventBus
       );
 
-      eventBus?.dispatch(TransactionState.Confirmed, {
-        receipt,
-        transactionHash: receipt.transactionHash
-      });
-      return receipt;
+      eventBus.dispatch(TransactionState.Confirmed, result);
+      return result;
     } catch (error) {
+      eventBus.dispatch(TransactionState.Rejected, { error });
       if (error instanceof MoverAPISubsidizedRequestError) {
         addSentryBreadcrumb({
           type: 'error',
@@ -266,28 +308,60 @@ export class SavingsOnChainService extends MoverOnChainService {
     );
   }
 
+  public async explainWithdrawCompound(
+    outputAsset: SmallTokenInfo
+  ): Promise<TransactionScenario> {
+    try {
+      return [
+        {
+          type: TransactionState.Withdraw,
+          tokenAddress: outputAsset.address,
+          network: this.network
+        }
+      ];
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to build transaction scenario',
+        data: {
+          error
+        }
+      });
+
+      throw new OnChainServiceError(
+        'Failed to build transaction scenario'
+      ).wrap(error);
+    }
+  }
+
   public async withdrawCompound(
     outputAsset: SmallTokenInfo,
     outputAmount: string,
     actionGasLimit: string,
     useSubsidized: boolean,
-    changeStepToProcess: () => Promise<void>
-  ): Promise<TransactionReceipt> {
+    eventBus: TransactionStateEventBus
+  ): Promise<TransactionResult> {
     try {
       if (useSubsidized) {
-        return await this.withdrawSubsidized(
+        const result = await this.withdrawSubsidized(
           outputAsset,
           outputAmount,
-          changeStepToProcess
+          eventBus
         );
+
+        eventBus.dispatch(TransactionState.Confirmed, result);
+        return result;
       }
 
-      return await this.withdraw(
+      const receipt = await this.withdraw(
         outputAsset,
         outputAmount,
         actionGasLimit,
-        changeStepToProcess
+        eventBus
       );
+      eventBus.dispatch(TransactionState.Confirmed, receipt);
+      return receipt;
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
         addSentryBreadcrumb({
@@ -387,7 +461,7 @@ export class SavingsOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData | undefined,
     gasLimit: string,
-    eventBus?: TransactionStateEventBus
+    eventBus: TransactionStateEventBus
   ): Promise<TransactionReceipt> {
     if (
       !sameAddress(inputAsset.address, outputAsset.address) &&
@@ -424,7 +498,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         resolve,
         reject,
         () =>
-          eventBus?.dispatch(TransactionState.Deposit, {
+          eventBus.dispatch(TransactionState.Deposit, {
             tokenAddress: inputAsset.address,
             amount: inputAmount
           }),
@@ -439,8 +513,8 @@ export class SavingsOnChainService extends MoverOnChainService {
   protected async depositSubsidized(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
-    eventBus?: TransactionStateEventBus
-  ): Promise<TransactionReceipt> {
+    eventBus: TransactionStateEventBus
+  ): Promise<SubsidizedTransactionExecutionResult> {
     if (this.subsidizedOnChainService === undefined) {
       throw new NetworkFeatureNotSupportedError(
         'Subsidized Deposit',
@@ -450,7 +524,7 @@ export class SavingsOnChainService extends MoverOnChainService {
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
-    eventBus?.dispatch(TransactionState.AwaitingForInput, {
+    eventBus.dispatch(TransactionState.AwaitingForInput, {
       nextState: TransactionState.Deposit
     });
     const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
@@ -464,7 +538,7 @@ export class SavingsOnChainService extends MoverOnChainService {
         preparedAction.actionString,
         preparedAction.signature,
         () =>
-          eventBus?.dispatch(TransactionState.Deposit, {
+          eventBus.dispatch(TransactionState.Deposit, {
             tokenAddress: inputAsset.address,
             amount: inputAmount
           })
@@ -498,21 +572,16 @@ export class SavingsOnChainService extends MoverOnChainService {
       moverType: 'subsidized_deposit'
     };
     await this.addTransactionToStoreHandler?.(tx);
-
-    return waitOffchainTransactionReceipt(
-      transactionResult.queueID,
-      transactionResult.txID,
-      this.web3Client
-    );
+    return transactionResult; // TODO: plan execution result fetch
   }
 
   protected async withdraw(
     outputAsset: SmallTokenInfo,
     outputAmount: string,
     gasLimit: string,
-    changeStepToProcess: () => Promise<void>
-  ): Promise<TransactionReceipt | never> {
-    return new Promise<TransactionReceipt>((resolve, reject) => {
+    eventBus: TransactionStateEventBus
+  ): Promise<TransactionReceipt> {
+    return new Promise((resolve, reject) => {
       if (this.holyHandContract === undefined) {
         throw new NetworkFeatureNotSupportedError(
           'Savings withdraw',
@@ -529,7 +598,12 @@ export class SavingsOnChainService extends MoverOnChainService {
           .send(this.getDefaultTransactionsParams(gasLimit)),
         resolve,
         reject,
-        changeStepToProcess,
+        (hash) =>
+          eventBus.dispatch(TransactionState.Withdraw, {
+            tokenAddress: outputAsset.address,
+            amount: outputAmount,
+            hash
+          }),
         {
           poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
           gasLimit
@@ -541,18 +615,25 @@ export class SavingsOnChainService extends MoverOnChainService {
   protected async withdrawSubsidized(
     outputAsset: SmallTokenInfo,
     outputAmount: string,
-    changeStepToProcess: () => Promise<void>
-  ): Promise<TransactionReceipt> {
+    eventBus: TransactionStateEventBus
+  ): Promise<SubsidizedTransactionExecutionResult> {
+    eventBus.dispatch(TransactionState.AwaitingForInput, {
+      nextState: TransactionState.Withdraw
+    });
     const preparedAction = await this.prepareSavingsSubsidizedWithdrawAction(
       lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
       toWei(outputAmount, outputAsset.decimals)
     );
 
-    const subsidizedResponse =
+    const transactionResult =
       await this.subsidizedAPIService.executeTransaction(
         preparedAction.actionString,
         preparedAction.signature,
-        changeStepToProcess
+        () =>
+          eventBus.dispatch(TransactionState.Withdraw, {
+            tokenAddress: outputAsset.address,
+            amount: outputAmount // TODO: what to return here?
+          })
       );
 
     const tx: Transaction = {
@@ -561,13 +642,13 @@ export class SavingsOnChainService extends MoverOnChainService {
         ethPrice: this.ethPriceGetterHandler?.() ?? '0',
         feeInWEI: '0'
       },
-      hash: subsidizedResponse.txID ?? '',
+      hash: transactionResult.txID ?? '',
       isOffchain: true,
       nonce: '0',
       status: 'pending',
       timestamp: currentTimestamp(),
       type: TransactionTypes.transferERC20,
-      uniqHash: subsidizedResponse.txID ? `${subsidizedResponse.txID}-0` : '',
+      uniqHash: transactionResult.txID ? `${transactionResult.txID}-0` : '',
       asset: {
         address: outputAsset.address,
         change: toWei(outputAmount, outputAsset.decimals),
@@ -579,16 +660,11 @@ export class SavingsOnChainService extends MoverOnChainService {
       },
       from: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
       to: this.currentAddress,
-      subsidizedQueueId: subsidizedResponse.queueID,
+      subsidizedQueueId: transactionResult.queueID,
       moverType: 'subsidized_withdraw'
     };
     await this.addTransactionToStoreHandler?.(tx);
-
-    return waitOffchainTransactionReceipt(
-      subsidizedResponse.queueID,
-      subsidizedResponse.txID,
-      this.web3Client
-    );
+    return transactionResult;
   }
 
   protected async prepareSavingsSubsidizedDepositAction(
