@@ -75,7 +75,8 @@ const values: Globals = {
     Network.fantom,
     Network.polygon,
     Network.avalanche,
-    Network.binance
+    Network.binance,
+    Network.arbitrum
   ],
   isExplorerEnabled: [
     Network.mainnet,
@@ -86,7 +87,8 @@ const values: Globals = {
     Network.rinkeby,
     Network.avalanche,
     Network.fantom,
-    Network.polygon
+    Network.polygon,
+    Network.arbitrum
   ],
   isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,
