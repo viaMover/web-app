@@ -369,9 +369,33 @@ export class MoralisExplorer implements Explorer {
   };
 
   private getErc20Tokens = async (): Promise<Array<TokenWithBalance>> => {
+    const baseAssetData = getBaseAssetData(this.network);
+
     if (this.ankrService !== undefined) {
       try {
-        return await this.ankrService.getTokens();
+        const tokens = await this.ankrService.getTokens();
+        if (
+          tokens.find((t) => sameAddress(t.address, baseAssetData.address)) !==
+          undefined
+        ) {
+          return tokens;
+        }
+        return [
+          ...tokens,
+          {
+            address: baseAssetData.address,
+            balance: '0',
+            priceUSD: store.getters['account/baseTokenPrice'],
+            marketCap: store.getters['account/getTokenMarketCap'](
+              baseAssetData.address
+            ),
+            decimals: baseAssetData.decimals,
+            logo: baseAssetData.iconURL,
+            name: baseAssetData.name,
+            symbol: baseAssetData.symbol,
+            color: store.getters['account/getTokenColor'](baseAssetData.address)
+          }
+        ];
       } catch (err) {
         addSentryBreadcrumb({
           type: 'error',
