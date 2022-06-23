@@ -37,7 +37,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
   public async executeTransaction(
     action: string,
     signature: string,
-    changeStepToProcess?: () => Promise<void>
+    onTransaction?: () => void
   ): Promise<ExecuteTransactionReturn> {
     if (this.baseURL === MoverAPISubsidizedService.NoBaseURLForNetwork) {
       throw new NetworkFeatureNotSupportedError(
@@ -57,7 +57,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
       }
     });
 
-    changeStepToProcess?.();
+    onTransaction?.();
 
     try {
       // fixme: has a plain response schema (no .payload entry). Possible v2 endpoint?

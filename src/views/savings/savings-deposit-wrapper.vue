@@ -72,6 +72,10 @@ import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { MoverError } from '@/services/v2';
 import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
+import {
+  TransactionState,
+  TransactionStateEventBus
+} from '@/services/v2/utils/transaction-state-event-bus';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
@@ -564,6 +568,10 @@ export default Vue.extend({
         return;
       }
 
+      // todo: remove this workaround once ported savings to the 1.2
+      const eb = new TransactionStateEventBus();
+      eb.on(TransactionState.Deposit, () => this.transactionStep === 'Process');
+
       this.step = 'loader';
       this.transactionStep = 'Confirm';
       try {
@@ -575,11 +583,9 @@ export default Vue.extend({
           this.inputAmount,
           this.transferData,
           args.isSmartTreasury,
-          async () => {
-            this.transactionStep = 'Process';
-          },
           this.actionGasLimit,
-          this.approveGasLimit
+          this.approveGasLimit,
+          eb
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();

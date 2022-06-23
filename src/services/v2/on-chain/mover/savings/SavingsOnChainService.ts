@@ -10,6 +10,10 @@ import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNot
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import {
+  TransactionState,
+  TransactionStateEventBus
+} from '@/services/v2/utils/transaction-state-event-bus';
 import { sameAddress } from '@/utils/address';
 import { fromWei, multiply, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
@@ -91,22 +95,18 @@ export class SavingsOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData | undefined,
     useSubsidized: boolean,
-    changeStepToProcess: () => Promise<void>,
     actionGasLimit: string,
-    approveGasLimit: string
+    approveGasLimit: string,
+    eventBus?: TransactionStateEventBus | undefined
   ): Promise<TransactionReceipt> {
     try {
-      return await this.executeTransactionWithApprove(
+      const receipt = await this.executeTransactionWithApprove(
         inputAsset,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
         inputAmount,
         (newGasLimit) => {
           if (useSubsidized) {
-            return this.depositSubsidized(
-              inputAsset,
-              inputAmount,
-              changeStepToProcess
-            );
+            return this.depositSubsidized(inputAsset, inputAmount, eventBus);
           }
 
           return this.deposit(
@@ -114,8 +114,8 @@ export class SavingsOnChainService extends MoverOnChainService {
             outputAsset,
             inputAmount,
             transferData,
-            changeStepToProcess,
-            newGasLimit
+            newGasLimit,
+            eventBus
           );
         },
         () =>
@@ -125,10 +125,16 @@ export class SavingsOnChainService extends MoverOnChainService {
             inputAmount,
             transferData
           ),
-        changeStepToProcess,
         approveGasLimit,
-        actionGasLimit
+        actionGasLimit,
+        eventBus
       );
+
+      eventBus?.dispatch(TransactionState.Confirmed, {
+        receipt,
+        transactionHash: receipt.transactionHash
+      });
+      return receipt;
     } catch (error) {
       if (error instanceof MoverAPISubsidizedRequestError) {
         addSentryBreadcrumb({
@@ -380,8 +386,8 @@ export class SavingsOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     inputAmount: string,
     transferData: TransferData | undefined,
-    changeStepToProcess: () => Promise<void>,
-    gasLimit: string
+    gasLimit: string,
+    eventBus?: TransactionStateEventBus
   ): Promise<TransactionReceipt> {
     if (
       !sameAddress(inputAsset.address, outputAsset.address) &&
@@ -417,7 +423,11 @@ export class SavingsOnChainService extends MoverOnChainService {
           ),
         resolve,
         reject,
-        changeStepToProcess,
+        () =>
+          eventBus?.dispatch(TransactionState.Deposit, {
+            tokenAddress: inputAsset.address,
+            amount: inputAmount
+          }),
         {
           poolAddress: lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
           gasLimit
@@ -429,7 +439,7 @@ export class SavingsOnChainService extends MoverOnChainService {
   protected async depositSubsidized(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
-    changeStepToProcess: () => Promise<void>
+    eventBus?: TransactionStateEventBus
   ): Promise<TransactionReceipt> {
     if (this.subsidizedOnChainService === undefined) {
       throw new NetworkFeatureNotSupportedError(
@@ -440,6 +450,9 @@ export class SavingsOnChainService extends MoverOnChainService {
 
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
+    eventBus?.dispatch(TransactionState.AwaitingForInput, {
+      nextState: TransactionState.Deposit
+    });
     const preparedAction = await this.prepareSavingsSubsidizedDepositAction(
       lookupAddress(this.network, 'HOLY_SAVINGS_POOL_ADDRESS'),
       this.substituteAssetAddressIfNeeded(inputAsset.address),
@@ -450,7 +463,11 @@ export class SavingsOnChainService extends MoverOnChainService {
       await this.subsidizedAPIService.executeTransaction(
         preparedAction.actionString,
         preparedAction.signature,
-        changeStepToProcess
+        () =>
+          eventBus?.dispatch(TransactionState.Deposit, {
+            tokenAddress: inputAsset.address,
+            amount: inputAmount
+          })
       );
 
     const tx: Transaction = {

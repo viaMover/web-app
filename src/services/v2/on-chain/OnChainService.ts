@@ -12,6 +12,10 @@ import {
   ERC20ContractMethods
 } from '@/services/v2/on-chain/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import {
+  TransactionState,
+  TransactionStateEventBus
+} from '@/services/v2/utils/transaction-state-event-bus';
 import { isFeatureEnabled } from '@/settings';
 import { getPureBaseAssetAddress, isBaseAsset } from '@/utils/address';
 import {
@@ -295,11 +299,13 @@ export abstract class OnChainService extends PromiEventWrapper {
     );
   }
 
+  // todo: rework this function to properly wrap the Promise as now it just ignores the error and rejects afterwards
   protected async approve(
     tokenAddress: string,
     spenderAddress: string,
-    changeStepToProcess: () => Promise<void>,
-    gasLimit: string
+    gasLimit: string,
+    eventBus?: TransactionStateEventBus | undefined,
+    amount = MAXUINT256
   ): Promise<TransactionReceipt> {
     return new Promise((resolve, reject) => {
       const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
@@ -315,13 +321,21 @@ export abstract class OnChainService extends PromiEventWrapper {
       }
 
       try {
+        eventBus?.dispatch(TransactionState.AwaitingForInput, {
+          nextState: TransactionState.Approve
+        });
         this.wrapWithSendMethodCallbacks(
           tokenContract.methods
-            .approve(spenderAddress, MAXUINT256)
+            .approve(spenderAddress, amount)
             .send(this.getDefaultTransactionsParams(gasLimit, undefined)),
           resolve,
           reject,
-          changeStepToProcess,
+          () =>
+            eventBus?.dispatch(TransactionState.Approve, {
+              tokenAddress,
+              amount
+            }),
+          eventBus,
           { tokenAddress, spenderAddress, gasLimit }
         );
       } catch (error) {
@@ -352,16 +366,16 @@ export abstract class OnChainService extends PromiEventWrapper {
     amount: string,
     action: (newGasLimit: string) => Promise<TransactionReceipt>,
     estimateHandler: () => Promise<CompoundEstimateResponse>,
-    changeStepToProcess: () => Promise<void>,
     approveGasLimit: string,
-    actionGasLimit: string
+    actionGasLimit: string,
+    eventBus?: TransactionStateEventBus
   ): Promise<TransactionReceipt | never> {
     if (await this.needsApprove(token, amount, contractAddress)) {
       const approveTxReceipt = await this.approve(
         token.address,
         contractAddress,
-        changeStepToProcess,
-        approveGasLimit
+        approveGasLimit,
+        eventBus
       );
 
       try {

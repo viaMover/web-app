@@ -579,11 +579,9 @@ export default Vue.extend({
           this.inputAmount,
           this.transferData,
           args.isSmartTreasury,
-          async () => {
-            this.transactionStep = 'Process';
-          },
           this.actionGasLimit,
           this.approveGasLimit
+          // fixme: add event bus
         );
         this.transactionStep = 'Success';
         this.updateWalletAfterTxn();

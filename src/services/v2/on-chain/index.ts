@@ -2,8 +2,10 @@ export type {
   ContractMethod,
   CustomContractType,
   ERC20ContractMethods,
-  AnyFn
+  AnyFn,
+  TransactionResult
 } from './types';
+export { isOnChainTransaction } from './types';
 export { OnChainService } from './OnChainService';
 export { OnChainServiceError } from './OnChainServiceError';
 export {
