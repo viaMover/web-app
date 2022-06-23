@@ -23,9 +23,9 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Use Node.js 14.17.4
-          uses: actions/setup-node@v3
-          with:
-            node-version: 14.17.4
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.17.4
       - name: Install yarn
         run: npm install --global yarn
       - name: Show yarn version
