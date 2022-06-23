@@ -148,8 +148,8 @@ export class OneInchAPIService
       fromTokenAddress: sellTokenAddress,
       amount: rawAmount,
       slippage: slippage,
-      fromAddress: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
-      destReceived: lookupAddress(this.network, 'HOLY_HAND_ADDRESS'),
+      fromAddress: lookupAddress(this.network, 'EXCHANGE_PROXY_ADDRESS'),
+      destReceived: lookupAddress(this.network, 'EXCHANGE_PROXY_ADDRESS'),
       disableEstimate: true
     });
 
