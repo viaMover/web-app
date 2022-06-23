@@ -39,13 +39,13 @@ export class OneInchAPIService
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = '1inch.api.service';
   protected static supportedNetworks: Array<Network> = [
-    Network.mainnet,
-    Network.binance,
-    Network.polygon,
-    Network.optimism,
-    Network.arbitrum,
-    Network.avalanche,
-    Network.fantom
+    // Network.mainnet,
+    // Network.binance,
+    // Network.polygon,
+    // Network.optimism,
+    // Network.avalanche,
+    // Network.fantom,
+    Network.arbitrum
   ];
   protected availableTokens: Map<string, OneInchToken> | undefined;
   protected useAvailableTokens: boolean;
