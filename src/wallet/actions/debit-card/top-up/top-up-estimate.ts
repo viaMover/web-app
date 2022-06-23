@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { TransferData } from '@/services/0x/api';
+import { TransferData } from '@/services/v2/api/swap';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';

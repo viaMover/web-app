@@ -83,12 +83,12 @@ import * as Sentry from '@sentry/vue';
 import { BigNumber } from 'bignumber.js';
 
 import { sendGlobalTopMessageEvent } from '@/global-event-bus';
-import { TransferData } from '@/services/0x/api';
 import {
   isWithdrawComplexTransactionData,
   MoverAPISavingsPlusService,
   WithdrawTransactionData
 } from '@/services/v2/api/mover/savings-plus';
+import { TransferData } from '@/services/v2/api/swap';
 import {
   InvalidNetworkForOperationError,
   SavingsPlusOnChainService

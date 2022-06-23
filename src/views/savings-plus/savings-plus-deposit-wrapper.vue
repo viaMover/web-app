@@ -100,12 +100,12 @@ import BigNumber from 'bignumber.js';
 
 import { sendGlobalTopMessageEvent } from '@/global-event-bus';
 import { MoverError } from '@/services/v2';
-import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
 import {
   DepositTransactionData,
   isDepositWithBridgeTransactionData,
   MoverAPISavingsPlusService
 } from '@/services/v2/api/mover/savings-plus';
+import { SwapAPIService, TransferData } from '@/services/v2/api/swap';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isBaseAsset, sameAddress } from '@/utils/address';
@@ -482,7 +482,7 @@ export default Vue.extend({
             ).toFixed(2);
             const inputInWei = toWei(value, this.inputAsset.decimals);
             this.transferData = await (
-              this.swapService as ZeroXAPIService
+              this.swapService as SwapAPIService
             ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
@@ -502,7 +502,7 @@ export default Vue.extend({
               this.inputAsset.decimals
             );
             this.transferData = await (
-              this.swapService as ZeroXAPIService
+              this.swapService as SwapAPIService
             ).getTransferData(
               this.outputUSDCAsset.address,
               this.inputAsset.address,
@@ -520,7 +520,7 @@ export default Vue.extend({
       } catch (error) {
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapService as ZeroXAPIService
+            this.swapService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;

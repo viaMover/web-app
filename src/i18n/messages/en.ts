@@ -1,6 +1,6 @@
 import VueI18n from 'vue-i18n';
 
-import { ValidationErrorReason } from '@/services/v2/api/0x/types';
+import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
@@ -835,6 +835,9 @@ const messages: VueI18n.LocaleMessageObject = {
     txtIpfsLink: 'Link'
   },
   NFTs: {
+    lblViewOnEns: 'View on ENS',
+    lblViewOnUns: 'View on Unstoppable Domains',
+    lblNFTAttributes: 'NFT attributes',
     lblDiceProject: 'Dice Project',
     lblVaults: 'Vaults',
     lblUnexpectedMove: 'Unexpected Move',
