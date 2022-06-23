@@ -14,6 +14,7 @@ jobs:
     env:
       VUE_APP_IS_DEV: false
       CI_SECRET: ${{ secrets.CI_SECRET }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_ORG: holyheld
       SENTRY_PROJECT: move-web-app
       SENTRY_ENVIRONMENT: development
