@@ -3,6 +3,7 @@
     <span :style="spanStyle">{{ textPrefix }}</span>
     <input
       :id="fieldId"
+      :disabled="disabled"
       :max="maxAmount"
       min="0"
       :placeholder="placeholder"
@@ -16,6 +17,7 @@
     v-else
     :id="fieldId"
     :class="inputClass"
+    :disabled="disabled"
     :max="maxAmount"
     min="0"
     :placeholder="placeholder"
@@ -69,6 +71,10 @@ export default Vue.extend({
     debounceTimeout: {
       type: Number,
       default: 700
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
