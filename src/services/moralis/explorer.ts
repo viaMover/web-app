@@ -143,7 +143,7 @@ export class MoralisExplorer implements Explorer {
           return tokensWithNative;
         });
 
-      if (isFeatureEnabled('isTransactionsListEnabled', this.network)) {
+      if (isFeatureEnabled('isTransactionsListAvailable', this.network)) {
         const erc20TransactionsPromise = this.getErc20Transactions(
           MoralisExplorer.TRANSACTIONS_PER_BATCH
         );

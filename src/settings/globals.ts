@@ -18,7 +18,7 @@ export interface Globals {
   isSavingsEnabled: GlobalSettings;
   isSwapEnabled: GlobalSettings;
   isExplorerEnabled: GlobalSettings;
-  isTransactionsListEnabled: GlobalSettings;
+  isTransactionsListAvailable: GlobalSettings;
   isOffchainExplorerEnabled: GlobalSettings;
   isEarningsEnabled: GlobalSettings;
   isGovernanceEnabled: GlobalSettings;
@@ -91,7 +91,7 @@ const values: Globals = {
     Network.polygon,
     Network.arbitrum
   ],
-  isTransactionsListEnabled: [
+  isTransactionsListAvailable: [
     Network.mainnet,
     Network.binance,
     Network.binanceTest,
