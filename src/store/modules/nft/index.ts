@@ -335,7 +335,44 @@ export default {
             ]
           }
         }
-      : undefined
+      : undefined,
+    ens: {
+      id: NftAssetId.ENS,
+      picture: {
+        src: ''
+      },
+      name: 'ENS',
+      meta: {
+        url: undefined,
+        attributes: []
+      },
+      bigPicture: {
+        src: ''
+      },
+      balance: '0',
+      networks: [Network.mainnet, Network.ropsten, Network.rinkeby]
+    },
+    uns: {
+      id: NftAssetId.UNS,
+      picture: {
+        src: ''
+      },
+      name: 'UNS',
+      meta: {
+        attributes: [],
+        backgroundColor: undefined,
+        externalUrl: undefined
+      },
+      networks: [Network.mainnet, Network.polygon],
+      balance: '0',
+      bigPicture: {
+        src: ''
+      }
+    },
+    ensAPIService: undefined,
+    ensOnChainService: undefined,
+    unsAPIService: undefined,
+    unsOnChainService: undefined
   },
   actions,
   getters,

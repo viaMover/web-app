@@ -74,6 +74,7 @@ import {
 } from '@/services/0x/api';
 import { mapError } from '@/services/0x/errors';
 import { getUsdcPriceInEur } from '@/services/coingecko/tokens';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isBaseAsset, sameAddress } from '@/utils/address';
@@ -83,22 +84,23 @@ import {
   divide,
   fromWei,
   getInteger,
+  greaterThan,
   isZero,
   lessThan,
   multiply,
   toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
-import { topUpCompound } from '@/wallet/actions/debit-card/top-up/top-up';
-import { estimateTopUpCompound } from '@/wallet/actions/debit-card/top-up/top-up-estimate';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import {
   getALCXAssetData,
   getBTRFLYAssetData,
   getCULTAssetData,
   getEURSAssetData,
+  getSimpleYearnVaultTokenByAddress,
   getSlippage,
   getUSDCAssetData,
+  isSimpleYearnVault,
   lookupAddress,
   validTopUpAssets
 } from '@/wallet/references/data';
@@ -122,6 +124,7 @@ import { SecondaryPage } from '@/components/layout/secondary-page';
 type ProcessStep = 'prepare' | 'review' | 'loader';
 
 const MINIMUM_AMOUNT = '25';
+const MAXIMUM_AMOUNT = '8000';
 
 export default Vue.extend({
   name: 'DebitCardTopUp',
@@ -172,6 +175,7 @@ export default Vue.extend({
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       usdcPriceInEur: undefined as undefined | string,
+      vaultMultiplier: '1' as string,
 
       //to tx
       actionGasLimit: undefined as string | undefined,
@@ -196,7 +200,10 @@ export default Vue.extend({
     ]),
     ...mapState('debitCard', {
       wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
-      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier'
+      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier',
+      debitCardOnChainService: 'onChainService',
+      emailHash: 'emailHash',
+      emailSignature: 'emailSignature'
     }),
     ...mapGetters('account', ['treasuryBonusNative', 'usdcNativePrice']),
     ...mapGetters('debitCard', {
@@ -222,11 +229,18 @@ export default Vue.extend({
       if (this.transferError !== undefined) {
         return this.transferError;
       }
-      return lessThan(this.approximateEUREstimationAmount, MINIMUM_AMOUNT)
-        ? this.$t('debitCard.errors.minAmount', {
-            min: MINIMUM_AMOUNT
-          }).toString()
-        : undefined;
+      if (lessThan(this.approximateEUREstimationAmount, MINIMUM_AMOUNT)) {
+        return this.$t('debitCard.errors.minAmount', {
+          min: MINIMUM_AMOUNT
+        }).toString();
+      }
+
+      if (greaterThan(this.approximateEUREstimationAmount, MAXIMUM_AMOUNT)) {
+        return this.$t('debitCard.errors.minAmount', {
+          max: MAXIMUM_AMOUNT
+        }).toString();
+      }
+      return undefined;
     },
     description(): string {
       return (
@@ -261,14 +275,36 @@ export default Vue.extend({
         return `${formatToNative(boughtUSDC)} USDC`;
       }
 
-      return '';
-    },
-    isNeedTransfer(): boolean {
-      if (this.inputAsset === undefined) {
-        return true;
+      const simpleVault = getSimpleYearnVaultTokenByAddress(
+        this.inputAsset.address,
+        this.networkInfo.network
+      );
+
+      if (simpleVault !== undefined && greaterThan(this.inputAmount, 0)) {
+        const newInputInTokens = multiply(
+          this.inputAmount,
+          this.vaultMultiplier
+        );
+
+        return `${formatToNative(newInputInTokens)} USDC`;
       }
 
-      return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
+      return '';
+    },
+    topUpTokenAddress(): string | undefined {
+      if (this.inputAsset === undefined) {
+        return undefined;
+      }
+
+      const unwrappedToken = (
+        this.debitCardOnChainService as DebitCardOnChainService
+      ).getUnwrappedToken(this.inputAsset);
+
+      if (unwrappedToken !== undefined) {
+        return unwrappedToken.address;
+      }
+
+      return this.inputAsset.address;
     },
     validTokens(): Array<TokenWithBalance> {
       const validAssetAddresses = validTopUpAssets(
@@ -308,8 +344,21 @@ export default Vue.extend({
       }
     }
   },
+  async mounted() {
+    await this.loadInfo();
+
+    if (this.emailHash === undefined || this.emailSignature === undefined) {
+      await this.$router.replace({
+        name: 'not-found-route'
+      });
+    }
+  },
   methods: {
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
+    ...mapActions('debitCard', {
+      getYearnVaultMultiplier: 'getYearnVaultMultiplier',
+      loadInfo: 'loadInfo'
+    }),
     ...mapActions('account', {
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
@@ -333,14 +382,12 @@ export default Vue.extend({
       this.unwrapGasLimit = '0';
       this.isProcessing = true;
       try {
-        const gasLimits = await estimateTopUpCompound(
+        const gasLimits = await (
+          this.debitCardOnChainService as DebitCardOnChainService
+        ).estimateTopUpCompound(
           this.inputAsset,
-          this.usdcAsset,
           this.inputAmount,
-          this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress
+          this.transferData
         );
 
         this.actionGasLimit = gasLimits.actionGasLimit;
@@ -422,8 +469,11 @@ export default Vue.extend({
 
             const referenceAmount =
               mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
-            let referenceToken =
-              mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
+            let referenceToken:
+              | TokenWithBalance
+              | SmallTokenInfoWithIcon
+              | SmallTokenInfo
+              | undefined = mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
             if (referenceToken === undefined) {
               // if reference token is an arbitrary token
               // but is evaluated as undefined, we preserve the last estimated amount
@@ -431,6 +481,22 @@ export default Vue.extend({
             }
 
             let inputInWei = toWei(referenceAmount, referenceToken.decimals);
+
+            const simpleVault = getSimpleYearnVaultTokenByAddress(
+              referenceToken.address,
+              this.networkInfo.network
+            );
+
+            if (simpleVault !== undefined) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                this.vaultMultiplier
+              );
+              referenceToken = simpleVault.commonToken;
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
 
             if (
               sameAddress(
@@ -479,7 +545,7 @@ export default Vue.extend({
               referenceToken = getCULTAssetData(this.networkInfo.network);
             }
 
-            if (isZero(referenceAmount) || referenceAmount === '') {
+            if (isZero(inputInWei) || referenceAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
               // to the estimated amount
@@ -585,8 +651,25 @@ export default Vue.extend({
             this.inputAmountNative = new BigNumber(
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
-            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            let referenceToken: SmallTokenInfo = tokenToSmallTokenInfo(
+              this.inputAsset
+            );
             let inputInWei = toWei(value, referenceToken.decimals);
+
+            const simpleVault = getSimpleYearnVaultTokenByAddress(
+              referenceToken.address,
+              this.networkInfo.network
+            );
+            if (simpleVault !== undefined) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                this.vaultMultiplier
+              );
+              referenceToken = simpleVault.commonToken;
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
 
             if (
               sameAddress(
@@ -624,18 +707,22 @@ export default Vue.extend({
               );
             }
 
-            this.transferData = await getTransferData(
-              this.usdcAsset.address,
-              referenceToken.address,
-              inputInWei,
-              true,
-              getSlippage(referenceToken.address, this.networkInfo.network),
-              this.networkInfo.network
-            );
+            if (!sameAddress(referenceToken.address, this.usdcAsset.address)) {
+              this.transferData = await getTransferData(
+                this.usdcAsset.address,
+                referenceToken.address,
+                inputInWei,
+                true,
+                getSlippage(referenceToken.address, this.networkInfo.network),
+                this.networkInfo.network
+              );
+            }
           } else {
             this.inputAmountNative = value;
 
-            let referenceToken = tokenToSmallTokenInfo(this.inputAsset);
+            let referenceToken: SmallTokenInfo = tokenToSmallTokenInfo(
+              this.inputAsset
+            );
             let inputInWei = toWei(
               convertAmountFromNativeValue(
                 value,
@@ -644,6 +731,21 @@ export default Vue.extend({
               ),
               this.inputAsset.decimals
             );
+
+            const simpleVault = getSimpleYearnVaultTokenByAddress(
+              referenceToken.address,
+              this.networkInfo.network
+            );
+            if (simpleVault !== undefined) {
+              const newInputInTokens = multiply(
+                fromWei(inputInWei, referenceToken.decimals),
+                this.vaultMultiplier
+              );
+              referenceToken = simpleVault.commonToken;
+              inputInWei = getInteger(
+                toWei(newInputInTokens, referenceToken.decimals)
+              );
+            }
 
             if (
               sameAddress(
@@ -727,6 +829,27 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       }
+      this.isLoading = true;
+
+      try {
+        if (isSimpleYearnVault(token.address, this.networkInfo.network)) {
+          this.vaultMultiplier = await this.getYearnVaultMultiplier(
+            token.address
+          );
+        }
+      } catch (err) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'debit-card.top-up.newToken',
+          message: 'can not get vault multiplier`',
+          data: {
+            error: err
+          }
+        });
+        Sentry.captureException("can't get vault multiplier");
+      } finally {
+        this.isLoading = false;
+      }
       this.isTokenSelectedByUser = true;
       this.inputAsset = token;
       this.transferData = undefined;
@@ -808,7 +931,10 @@ export default Vue.extend({
         return;
       }
 
-      if (this.isNeedTransfer && this.transferData === undefined) {
+      if (
+        !sameAddress(this.topUpTokenAddress, this.usdcAsset.address) &&
+        this.transferData === undefined
+      ) {
         addSentryBreadcrumb({
           type: 'error',
           category: 'debit-card.top-up.handleTxStart',
@@ -838,14 +964,12 @@ export default Vue.extend({
       this.changeStep('loader');
       this.transactionStep = 'Confirm';
       try {
-        await topUpCompound(
+        await (
+          this.debitCardOnChainService as DebitCardOnChainService
+        ).topUpCompound(
           this.inputAsset,
-          this.usdcAsset,
           this.inputAmount,
           this.transferData,
-          this.networkInfo.network,
-          this.provider.web3,
-          this.currentAddress,
           async (step: LoaderStep) => {
             this.transactionStep = step;
           },

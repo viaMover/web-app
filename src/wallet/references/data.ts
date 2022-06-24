@@ -1,6 +1,11 @@
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
+import {
+  getSimpleYearnVaultTokenByAddress,
+  getSimpleYearnVaultTokens,
+  isSimpleYearnVault
+} from '@/wallet/references/yearnVaultsData';
 import { SmallTokenInfo, SmallTokenInfoWithIcon, Token } from '@/wallet/types';
 
 import BALANCE_CHECKER_ABI from './abi/balances-checker-abi.json';
@@ -25,11 +30,14 @@ import NFT_SWEET_AND_SOUR_ABI from './abi/nft-sweet-and-sour.json';
 import NFT_UNEXPECTED_MOVE_ABI from './abi/nft-unexpected-move.json';
 import NFT_VAULTS_ABI from './abi/nft-vaults.json';
 import POWERCARD_STAKER_ABI from './abi/powercard-staker.json';
+import REVERSE_RECORDS_ABI from './abi/reverse-records-abi.json';
 import SAVINGS_PLUS_POOL_ABI from './abi/savings-plus-pool-abi.json';
 import SMART_TREASURY_ABI from './abi/smart-treasury.json';
 import SUSHI_UNI_PAIR_V2_ABI from './abi/sushi-uni-pair-v2.json';
 import UBT_STAKING_CONTRACT_ABI from './abi/ubt-staking-contract-abi.json';
+import UNS_RESOLVER_CONTRACT_ABI from './abi/uns-resolver-contract-abi.json';
 import WX_BTRFLY_ABI from './abi/wxbtrfly-abi.json';
+import YEARN_SIMPLE_VAULT_ABI from './abi/yearn/simple_vault_token.json';
 
 export type AddressMapKey =
   | 'MOVE_ADDRESS'
@@ -92,7 +100,56 @@ export type AddressMapKey =
   | 'DOLA_TOKEN_ADDRESS'
   | 'DCULT_TOKEN_ADDRESS'
   | 'LUSD_TOKEN_ADDRESS'
-  | 'SAVINGS_PLUS_POOL_ADDRESS';
+  | 'SAVINGS_PLUS_POOL_ADDRESS'
+  | 'AG_EUR_TOKEN_ADDRESS'
+  | 'L33T_TOKEN_ADDRESS'
+  | 'WHALE_TOKEN_ADDRESS'
+  | 'GENRE_TOKEN_ADDRESS'
+  | 'PIXEL_TOKEN_ADDRESS'
+  | 'MORK_TOKEN_ADDRESS'
+  | 'GOB_TOKEN_ADDRESS'
+  | 'ATS_TOKEN_ADDRESS'
+  | 'CALVIN_TOKEN_ADDRESS'
+  | 'AIN_TOKEN_ADDRESS'
+  | 'MARTE_TOKEN_ADDRESS'
+  | 'JULIEN_TOKEN_ADDRESS'
+  | 'SCOTT_TOKEN_ADDRESS'
+  | 'CAMI_TOKEN_ADDRESS'
+  | 'GREY_TOKEN_ADDRESS'
+  | 'JAMM_TOKEN_ADDRESS'
+  | 'SKULL_TOKEN_ADDRESS'
+  | 'TIDE_TOKEN_ADDRESS'
+  | 'KERMAN_TOKEN_ADDRESS'
+  | 'RDR_TOKEN_ADDRESS'
+  | 'LIFE_TOKEN_ADDRESS'
+  | 'FAMILY_TOKEN_ADDRESS'
+  | 'ALXO_TOKEN_ADDRESS'
+  | 'HUE_TOKEN_ADDRESS'
+  | 'OSINA_TOKEN_ADDRESS'
+  | 'LADZ_TOKEN_ADDRESS'
+  | 'YUMI_TOKEN_ADDRESS'
+  | 'RARE_TOKEN_ADDRESS'
+  | 'BEAR_TOKEN_ADDRESS'
+  | 'ARKE_TOKEN_ADDRESS'
+  | 'SWAGG_TOKEN_ADDRESS'
+  | 'TING_TOKEN_ADDRESS'
+  | 'DSGN_TOKEN_ADDRESS'
+  | 'PICA_TOKEN_ADDRESS'
+  | 'HERO_TOKEN_ADDRESS'
+  | 'FORCER_TOKEN_ADDRESS'
+  | 'BPC_TOKEN_ADDRESS'
+  | 'BAEPAY_TOKEN_ADDRESS'
+  | 'WGM_TOKEN_ADDRESS'
+  | 'PYGOZ_TOKEN_ADDRESS'
+  | 'GCASH_TOKEN_ADDRESS'
+  | 'BONES_TOKEN_ADDRESS'
+  | 'MNFT_TOKEN_ADDRESS'
+  | 'FIRST_TOKEN_ADDRESS'
+  | 'LDO_TOKEN_ADDRESS'
+  | 'ST_ETH_TOKEN_ADDRESS'
+  | 'ENS_REVERSE_RECORDS_CONTRACT'
+  | 'ENS_NFT_CONTRACT'
+  | 'UNS_RESOLVER_CONTRACT';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -158,7 +215,56 @@ const addresses = {
     CULT_TOKEN_ADDRESS: '0xf0f9D895aCa5c8678f706FB8216fa22957685A13',
     DOLA_TOKEN_ADDRESS: '0x865377367054516e17014CcdED1e7d814EDC9ce4',
     DCULT_TOKEN_ADDRESS: '0x2d77B594B9BBaED03221F7c63Af8C4307432daF1',
-    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0'
+    LUSD_TOKEN_ADDRESS: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
+    AG_EUR_TOKEN_ADDRESS: '0x1a7e4e63778B4f12a199C062f3eFdD288afCBce8',
+    L33T_TOKEN_ADDRESS: '0x35872fea6A4843fACBCDbCe99e3B69596A3680b8',
+    WHALE_TOKEN_ADDRESS: '0x9355372396e3F6daF13359B7b607a3374cc638e0',
+    GENRE_TOKEN_ADDRESS: '0xA392c35EC6900346aDEc720Abe50413F48Ee5143',
+    PIXEL_TOKEN_ADDRESS: '0x1e906717De2E4A4600F13b6909736b0346bDde3E',
+    MORK_TOKEN_ADDRESS: '0xf552b656022c218C26dAd43ad88881Fc04116F76',
+    GOB_TOKEN_ADDRESS: '0xE400013Df86249838B720eaB5a7F816aD82433c0',
+    ATS_TOKEN_ADDRESS: '0xE5f55a3b74874531a99359b833b92866A6609f6B',
+    CALVIN_TOKEN_ADDRESS: '0xdc8092AaF83e00Ebf9B01A2e90b7B7eF867ba503',
+    AIN_TOKEN_ADDRESS: '0x8BDfaE0F83a03F5fa98B0bDf339F56df3C9F8BD5',
+    MARTE_TOKEN_ADDRESS: '0x78a0eE7ad08E2C746518387BeA867BE0199514B8',
+    JULIEN_TOKEN_ADDRESS: '0xe6710e0CdA178f3D921f456902707B0d4C4A332B',
+    SCOTT_TOKEN_ADDRESS: '0x27fD686Db10E0aE047fe8FE1DE9830C0e0dC3CFA',
+    CAMI_TOKEN_ADDRESS: '0xA809CeDeE9B61956c768EAa10272dd5E0FD1A985',
+    GREY_TOKEN_ADDRESS: '0xFAD44249C2cd1F661BAc5f97C2Ff9f625ce27197',
+    JAMM_TOKEN_ADDRESS: '0x56687cf29Ac9751Ce2a4E764680B6aD7E668942e',
+    SKULL_TOKEN_ADDRESS: '0xBcc66ed2aB491e9aE7Bf8386541Fb17421Fa9d35',
+    TIDE_TOKEN_ADDRESS: '0x6da447a8992eC6580f398C5BAAf5fc5d30ddD08F',
+    KERMAN_TOKEN_ADDRESS: '0x7841B2A48D1F6e78ACeC359FEd6D874Eb8a0f63c',
+    RDR_TOKEN_ADDRESS: '0x3C9Ca73d5309d38c6F2C21b78b9aE1f4b2441188',
+    LIFE_TOKEN_ADDRESS: '0x2Ad128fBEFF2B781D028148DEc82bBe2498Dc08e',
+    FAMILY_TOKEN_ADDRESS: '0x833E4c02c47B7e38f5b9A80b26eb07D23d1961f4',
+    ALXO_TOKEN_ADDRESS: '0x4317Ea4820F8D9ea6A103553A89Cb261B6Ea7F2a',
+    HUE_TOKEN_ADDRESS: '0xDcfE18bc46f5A0Cd0d3Af0c2155d2bCB5AdE2fc5',
+    OSINA_TOKEN_ADDRESS: '0x39Ad22C916F42aF5f67371d6f2Fb0dab42321a89',
+    LADZ_TOKEN_ADDRESS: '0x1287c0509df9a475Ef178471aB2132b9dfD312B3',
+    YUMI_TOKEN_ADDRESS: '0x25859743ED0861665611B81E47682e889b48313B',
+    RARE_TOKEN_ADDRESS: '0x81B1bFD6CB9Ad42DB395c2a27F73D4DCf5777e2D',
+    BEAR_TOKEN_ADDRESS: '0xAf162491C0B21900C01F4Cc0F7110238AAcdebE7',
+    ARKE_TOKEN_ADDRESS: '0xA9248F8e40d4b9c3Ca8ebd8E07E9BCB942C616d8',
+    SWAGG_TOKEN_ADDRESS: '0xa19A40FbD7375431fAB013a4B08F00871B9a2791',
+    TING_TOKEN_ADDRESS: '0xd1B183f425F7E6A0C83aB1cd84cFDE2d84Ba049d',
+    DSGN_TOKEN_ADDRESS: '0x537A9095b78517597b5f2058EDcd6E1978095909',
+    PICA_TOKEN_ADDRESS: '0x1eCe1739DAE08253aE582C404511B37355B42C84',
+    HERO_TOKEN_ADDRESS: '0x862caA11AbE48c945D5361E80EaF19348C479240',
+    FORCER_TOKEN_ADDRESS: '0xC1fB6C015fC535aBD331D3029De76a62e412Fb23',
+    BPC_TOKEN_ADDRESS: '0xF21D65979bD89b28f05EF19F3c65dd2A1D02946D',
+    BAEPAY_TOKEN_ADDRESS: '0x6BFfa07a1B0ceBC474cE6833eAf2bE6326252449',
+    WGM_TOKEN_ADDRESS: '0x219803d17f3067eb53d521ba8948d2734f402f7d',
+    PYGOZ_TOKEN_ADDRESS: '0xbB98Fc1fD1080D2B8bdaD75c51D30B50c6F59b62',
+    GCASH_TOKEN_ADDRESS: '0xc53f6C2Ac35D30cc47Ddf3C320874b21dFA38791',
+    BONES_TOKEN_ADDRESS: '0x3A75731f9e16244dE01DD431636Db7c07D42A166',
+    MNFT_TOKEN_ADDRESS: '0xDB7eB3edE973665b1BB9F3016861E3255062E4ED',
+    FIRST_TOKEN_ADDRESS: '0x9903A4Cd589DA8e434f264deAFc406836418578E',
+    LDO_TOKEN_ADDRESS: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+    ST_ETH_TOKEN_ADDRESS: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+    ENS_REVERSE_RECORDS_CONTRACT: '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C',
+    ENS_NFT_CONTRACT: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+    UNS_RESOLVER_CONTRACT: '0x049aba7510f45BA5b64ea9E658E342F904DB358D'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -167,12 +273,16 @@ const addresses = {
     HOLY_VISOR_ADDRESS: '0x5c2508fd52DA2AB53361BD24B374bE35ed8cdCF0',
     USDC_TOKEN_ADDRESS: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     WETH_TOKEN_ADDRESS: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9'
+    BALANCE_CHECKER_ADDRESS: '0xf17adbb5094639142ca1c2add4ce0a0ef146c3f9',
+    ENS_REVERSE_RECORDS_CONTRACT: '0x72c33B247e62d0f1927E8d325d0358b8f9971C68',
+    ENS_NFT_CONTRACT: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
   },
   [Network.rinkeby]: {
     USDC_TOKEN_ADDRESS: '0xb6c8e5f00117136571d260bfb1baff62ddfd9960',
     BALANCE_CHECKER_ADDRESS: '0xc55386617db7b4021d87750daaed485eb3ab0154',
-    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134'
+    NFT_DICE: '0x2253067F3AF865abD7e279f80e272B89ae054134',
+    ENS_REVERSE_RECORDS_CONTRACT: '0x196eC7109e127A353B709a20da25052617295F6f',
+    ENS_NFT_CONTRACT: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
   },
   [Network.kovan]: {
     MOVE_ADDRESS: '0xF6e1AC0Fd5d90963624124fd20f8A209489D3621',
@@ -196,7 +306,8 @@ const addresses = {
     HOLY_HAND_ADDRESS: '0x568f6dc40b2520522dc4745d881c990e57672d94',
     UBT_TOKEN_ADDRESS: '0x7fbc10850cae055b27039af31bd258430e714c62',
     NFT_BASELEDGER_STAKING_OG: '0x2784c71d7F406232bcE50A724c64c7104fA516D8',
-    SAVINGS_PLUS_POOL_ADDRESS: '0x77D5333d97A092cA01A783468E53E550C379dc3C'
+    SAVINGS_PLUS_POOL_ADDRESS: '0x77D5333d97A092cA01A783468E53E550C379dc3C',
+    UNS_RESOLVER_CONTRACT: '0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f'
   },
   [Network.binance]: {
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
@@ -217,6 +328,10 @@ const addresses = {
   [Network.avalanche]: {
     HOLY_HAND_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
     USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
+  },
+  [Network.binance]: {
+    HOLY_HAND_ADDRESS: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
+    USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
   }
 } as AddressMap;
 
@@ -257,6 +372,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   ORDER_OF_LIBERTY_AVAILABLE_PRICES: Array<string>;
   SUBSIDIZED_WALLET_ADDRESSES: Array<string>;
   CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
+  USDC_SPECIFIC_DECIMALS: number;
 }>;
 type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -300,6 +416,9 @@ const constants = {
       toWei('100', getBaseAssetData(Network.polygon).decimals),
       toWei('1000', getBaseAssetData(Network.polygon).decimals)
     ]
+  },
+  [Network.binance]: {
+    USDC_SPECIFIC_DECIMALS: 18
   }
 } as ConstantsMap;
 export const lookupConstant = <
@@ -403,7 +522,7 @@ const getOhmAssetData = (network: Network): SmallTokenInfoWithIcon => {
 const getUSDCAssetData = (network: Network): SmallTokenInfoWithIcon => {
   return {
     address: lookupAddress(network, 'USDC_TOKEN_ADDRESS'),
-    decimals: 6,
+    decimals: lookupConstant(network, 'USDC_SPECIFIC_DECIMALS') ?? 6,
     symbol: 'USDC',
     iconURL:
       'https://token-icons.s3.amazonaws.com/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png'
@@ -432,6 +551,8 @@ const getUBTAssetData = (
       'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x8400D94A5cb0fa0D041a3788e395285d61c9ee5e/logo.png'
   };
 };
+
+const SavingsPlusUSDCDecimals = 6;
 
 const getAssetsForTreasury = (
   network: Network,
@@ -522,7 +643,54 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'GTC_TOKEN_ADDRESS'),
     lookupAddress(network, 'CULT_TOKEN_ADDRESS'),
     lookupAddress(network, 'DOLA_TOKEN_ADDRESS'),
-    lookupAddress(network, 'LUSD_TOKEN_ADDRESS')
+    lookupAddress(network, 'LUSD_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AG_EUR_TOKEN_ADDRESS'),
+    lookupAddress(network, 'L33T_TOKEN_ADDRESS'),
+    lookupAddress(network, 'WHALE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GENRE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'PIXEL_TOKEN_ADDRESS'),
+    lookupAddress(network, 'MORK_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GOB_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ATS_TOKEN_ADDRESS'),
+    lookupAddress(network, 'CALVIN_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AIN_TOKEN_ADDRESS'),
+    lookupAddress(network, 'MARTE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'JULIEN_TOKEN_ADDRESS'),
+    lookupAddress(network, 'SCOTT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'CAMI_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GREY_TOKEN_ADDRESS'),
+    lookupAddress(network, 'JAMM_TOKEN_ADDRESS'),
+    lookupAddress(network, 'SKULL_TOKEN_ADDRESS'),
+    lookupAddress(network, 'TIDE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'KERMAN_TOKEN_ADDRESS'),
+    lookupAddress(network, 'RDR_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LIFE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'FAMILY_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ALXO_TOKEN_ADDRESS'),
+    lookupAddress(network, 'HUE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'OSINA_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LADZ_TOKEN_ADDRESS'),
+    lookupAddress(network, 'YUMI_TOKEN_ADDRESS'),
+    lookupAddress(network, 'RARE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'BEAR_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ARKE_TOKEN_ADDRESS'),
+    lookupAddress(network, 'SWAGG_TOKEN_ADDRESS'),
+    lookupAddress(network, 'TING_TOKEN_ADDRESS'),
+    lookupAddress(network, 'DSGN_TOKEN_ADDRESS'),
+    lookupAddress(network, 'PICA_TOKEN_ADDRESS'),
+    lookupAddress(network, 'HERO_TOKEN_ADDRESS'),
+    lookupAddress(network, 'FORCER_TOKEN_ADDRESS'),
+    lookupAddress(network, 'BPC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'BAEPAY_TOKEN_ADDRESS'),
+    lookupAddress(network, 'WGM_TOKEN_ADDRESS'),
+    lookupAddress(network, 'PYGOZ_TOKEN_ADDRESS'),
+    lookupAddress(network, 'GCASH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'BONES_TOKEN_ADDRESS'),
+    lookupAddress(network, 'MNFT_TOKEN_ADDRESS'),
+    lookupAddress(network, 'FIRST_TOKEN_ADDRESS'),
+    lookupAddress(network, 'ST_ETH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'LDO_TOKEN_ADDRESS'),
+    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address)
   ];
 };
 
@@ -566,7 +734,14 @@ export {
   NFT_BASELEDGER_STAKING_OG_ABI,
   GALCX_ABI,
   DCULT_ABI,
+  YEARN_SIMPLE_VAULT_ABI,
   SAVINGS_PLUS_POOL_ABI,
+  getSimpleYearnVaultTokens,
+  getSimpleYearnVaultTokenByAddress,
+  isSimpleYearnVault,
   validTopUpAssets,
-  getSlippage
+  getSlippage,
+  SavingsPlusUSDCDecimals,
+  REVERSE_RECORDS_ABI,
+  UNS_RESOLVER_CONTRACT_ABI
 };

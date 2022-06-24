@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "^3.0.4",
+    "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",
     "@myetherwallet/mewconnect-web-client": "^2.2.0-beta.13",
@@ -25,6 +26,8 @@
     "@sentry/tracing": "^6.11.0",
     "@sentry/vue": "^6.11.0",
     "@types/socket.io-client": "^1.4.36",
+    "@uauth/js": "^2.0.0",
+    "@uauth/web3modal": "^2.0.0",
     "@walletconnect/web3-provider": "^1.6.6",
     "abi-decoder": "^2.4.0",
     "apollo-cache-inmemory": "^1.6.6",
@@ -62,6 +65,7 @@
     "vuex": "^3.6.2",
     "web3": "^v1.6.0",
     "web3-eth-abi": "^1.6.1",
+    "web3modal": "^1.9.8",
     "web3modal-vue": "./libs/web3modal-vue-v1.0.9.tgz"
   },
   "devDependencies": {

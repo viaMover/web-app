@@ -29,7 +29,7 @@
         />
         <h3 class="title">{{ nft.name }}</h3>
         <div class="description">
-          {{ $t(`NFTs.txtNFTs.${nft.id}.description`) }}
+          {{ nftDescription(nft) }}
         </div>
       </router-link>
     </div>
@@ -40,6 +40,8 @@
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
 import { mapGetters } from 'vuex';
+
+import { BaseNftAsset } from '@/store/modules/nft/types';
 
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 import { ContentWrapper } from '@/components/layout';
@@ -82,6 +84,20 @@ export default Vue.extend({
       return {
         name: id
       };
+    },
+    nftDescription(nft: BaseNftAsset): string | undefined {
+      if (this.$te(`NFTs.txtNFTs.${nft.id}.description`)) {
+        return this.$t(`NFTs.txtNFTs.${nft.id}.description`) as string;
+      }
+
+      const nftWithMeta = nft as BaseNftAsset & {
+        meta?: { description?: string };
+      };
+      if (nftWithMeta.meta?.description !== undefined) {
+        return nftWithMeta.meta.description;
+      }
+
+      return undefined;
     }
   }
 });
