@@ -71,7 +71,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 import BigNumber from 'bignumber.js';
 
-import { TransferData } from '@/services/0x/api';
+import { TransferData } from '@/services/v2/api/swap';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { sameAddress } from '@/utils/address';
 import { divide, multiply } from '@/utils/bigmath';
