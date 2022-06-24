@@ -98,7 +98,7 @@ jobs:
           curl -sL https://sentry.io/get-cli/ | bash
           export SENTRY_RELEASE=$GITHUB_SHA
           sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
-          sentry-cli releases set-commits $SENTRY_RELEASE --commit "web-app@$GITHUB_SHA"
+          sentry-cli releases set-commits $SENTRY_RELEASE --commit "viaMover/web-app@$GITHUB_SHA"
           sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist/www/js/*
           sentry-cli releases finalize $SENTRY_RELEASE
           sentry-cli releases deploys $SENTRY_RELEASE new -e $SENTRY_ENVIRONMENT
