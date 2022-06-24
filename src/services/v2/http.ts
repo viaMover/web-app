@@ -4,5 +4,6 @@ export enum ResponseHTTPErrorCode {
   TooManyRequests = 429,
   InternalServerError = 500,
   NotImplemented = 501,
-  TooManyOpenConnections = 503
+  TooManyOpenConnections = 503,
+  ServiceUnavailable = 503
 }
