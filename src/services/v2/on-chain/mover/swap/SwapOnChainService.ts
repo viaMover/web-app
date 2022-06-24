@@ -3,8 +3,8 @@ import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
-import { TransferData } from '@/services/v2/api/0x';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized';
+import { TransferData } from '@/services/v2/api/swap';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import {
   CompoundEstimateResponse,
