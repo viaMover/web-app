@@ -13,6 +13,7 @@ import {
   addSentryBreadcrumb,
   captureSentryException
 } from '@/services/v2/utils/sentry';
+import { isFeatureEnabled } from '@/settings';
 import store from '@/store/index';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -141,26 +142,29 @@ export class MoralisExplorer implements Explorer {
           this.setIsTokensListLoaded(true);
           return tokensWithNative;
         });
-      const erc20TransactionsPromise = this.getErc20Transactions(
-        MoralisExplorer.TRANSACTIONS_PER_BATCH
-      );
-      const nativeTransactionsPromise = this.getNativeTransactions(
-        MoralisExplorer.TRANSACTIONS_PER_BATCH
-      );
 
-      const [tokensWithPrices, erc20Transactions, nativeTransactions] =
-        await Promise.all([
-          tokensWithPricePromise,
-          erc20TransactionsPromise,
-          nativeTransactionsPromise
-        ]);
+      if (isFeatureEnabled('isTransactionsListEnabled', this.network)) {
+        const erc20TransactionsPromise = this.getErc20Transactions(
+          MoralisExplorer.TRANSACTIONS_PER_BATCH
+        );
+        const nativeTransactionsPromise = this.getNativeTransactions(
+          MoralisExplorer.TRANSACTIONS_PER_BATCH
+        );
 
-      const transactions = await this.parseTransactions(
-        tokensWithPrices,
-        erc20Transactions.transactions,
-        nativeTransactions.transactions
-      );
-      this.setTransactions(transactions);
+        const [tokensWithPrices, erc20Transactions, nativeTransactions] =
+          await Promise.all([
+            tokensWithPricePromise,
+            erc20TransactionsPromise,
+            nativeTransactionsPromise
+          ]);
+
+        const transactions = await this.parseTransactions(
+          tokensWithPrices,
+          erc20Transactions.transactions,
+          nativeTransactions.transactions
+        );
+        this.setTransactions(transactions);
+      }
     } finally {
       this.setIsTokensListLoaded(true);
       this.setIsTransactionsListLoaded(true);
@@ -453,6 +457,10 @@ export class MoralisExplorer implements Explorer {
 
       if (token.logo == '') {
         token.logo = localToken.logo;
+      }
+
+      if (token.symbol == '') {
+        token.logo = localToken.symbol;
       }
 
       if (
