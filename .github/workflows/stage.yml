@@ -29,16 +29,27 @@ jobs:
           openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-stg.enc -out deploy/keys-stg.dec
           mv deploy/keys-stg.dec src/settings/keys.ts
 
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build app
         run: yarn build-stage
 
-      - name: Upload artifact for deployment job
+      - name: Upload dist artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: app-stage
-          path: .
+          path: dist
+
+      - name: Upload deploy artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy-stage
+          path: deploy
 
   deploy-stage:
     needs: build-stage
@@ -57,6 +68,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app-stage
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: deploy-stage
 
       - name: Install Google Cloud SDK
         run: |
