@@ -27,16 +27,27 @@ jobs:
           openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-prod.enc -out deploy/keys-prod.dec
           mv deploy/keys-prod.dec src/settings/keys.ts
 
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build app
         run: yarn build-prod
 
-      - name: Upload artifact for deployment job
+      - name: Upload dist artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: app-prod
-          path: .
+          path: dist
+
+      - name: Upload deploy artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy-prod
+          path: deploy
 
   deploy-prod:
     needs: build-prod
@@ -55,6 +66,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app-prod
+          path: dist/
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: deploy-prod
+          path: deploy/
 
       - name: Install Google Cloud SDK
         run: |
@@ -76,7 +94,7 @@ jobs:
       - name: Create release and notify Sentry of deploy
         run: |
           curl -sL https://sentry.io/get-cli/ | bash
-          export SENTRY_RELEASE=$(sentry-cli releases propose-version)
+          export SENTRY_RELEASE=$env.GITHUB_SHA
           sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
           sentry-cli releases set-commits $SENTRY_RELEASE --auto --ignore-missing
           sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist/www/js/*
