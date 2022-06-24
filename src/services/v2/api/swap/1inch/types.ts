@@ -62,7 +62,7 @@ export type SwapResponse = {
   toToken: OneInchToken;
   toTokenAmount: string;
   fromTokenAmount: string;
-  protocols: Array<Protocol>;
+  protocols: Array<Protocol> | Array<Array<Protocol>>;
   tx: OneInchTx;
 };
 

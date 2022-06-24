@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/vue';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry, { exponentialDelay } from 'axios-retry';
 import dayjs from 'dayjs';
+import flattenDeep from 'lodash-es/flattenDeep';
 import Web3 from 'web3';
 
 import {
@@ -58,14 +59,16 @@ export class OneInchAPIService
     super(currentAddress, network);
     this.useAvailableTokens = useAvailableTokens;
     this.baseURL = this.lookupBaseURL(network);
-    this.client = axios.create({
-      baseURL: this.baseURL,
-      headers: {
-        Accept: 'application/json'
-      },
-      paramsSerializer: this.getParamsSerializer,
-      validateStatus: (status) => status === 200
-    });
+    this.client = this.applyAxiosInterceptors(
+      axios.create({
+        baseURL: this.baseURL,
+        headers: {
+          Accept: 'application/json'
+        },
+        paramsSerializer: this.getParamsSerializer,
+        validateStatus: (status) => status === 200
+      })
+    );
   }
 
   public canHandle(network: Network): boolean {
@@ -153,10 +156,31 @@ export class OneInchAPIService
       disableEstimate: true
     });
 
+    let swappingVia = '1inch';
+    try {
+      const protocolsFlattened = flattenDeep(data.protocols);
+      const maxPartValue = Math.max(...protocolsFlattened.map((p) => p.part));
+      const maxPartProtocol = protocolsFlattened.find(
+        (protocol) => protocol.part === maxPartValue
+      );
+      if (maxPartProtocol !== undefined) {
+        swappingVia = maxPartProtocol.name.replaceAll('_', ' ');
+      }
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'warning',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to format "swappingVia"',
+        data: {
+          error
+        }
+      });
+    }
+
     return {
       buyAmount: data.toTokenAmount,
       data: data.tx.data,
-      swappingVia: '1inch',
+      swappingVia: swappingVia,
       value: data.tx.value,
       sellAmount: data.fromTokenAmount,
       allowanceTarget: data.tx.to,
