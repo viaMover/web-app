@@ -5,18 +5,15 @@ on:
     branches:
       - develop
       - staging
+      - 'feature/**'
 
 jobs:
-  stage:
+  build-stage:
     runs-on: ubuntu-latest
 
     env:
       VUE_APP_IS_DEV: false
       CI_SECRET: ${{ secrets.CI_SECRET }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      SENTRY_ORG: holyheld
-      SENTRY_PROJECT: move-web-app
-      SENTRY_ENVIRONMENT: development
 
     steps:
       - name: Check out repository code
@@ -25,8 +22,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14.17.4
-      - name: Install yarn
-        run: npm install --global yarn
+          cache: 'yarn'
 
       - name: Prepare files to build static web app
         run: |
@@ -37,6 +33,30 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build app
         run: yarn build-stage
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-stage
+          path: .
+
+  deploy-stage:
+    needs: build-stage
+    runs-on: ubuntu-latest
+    environment: Staging
+
+    env:
+      CI_SECRET: ${{ secrets.CI_SECRET }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: holyheld
+      SENTRY_PROJECT: move-web-app
+      SENTRY_ENVIRONMENT: development
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: app-stage
 
       - name: Install Google Cloud SDK
         run: |
