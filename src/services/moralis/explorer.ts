@@ -455,12 +455,16 @@ export class MoralisExplorer implements Explorer {
         return token;
       }
 
-      if (token.logo == '') {
+      if (token.logo === '') {
         token.logo = localToken.logo;
       }
 
-      if (token.symbol == '') {
-        token.logo = localToken.symbol;
+      if (token.symbol === '') {
+        token.symbol = localToken.symbol;
+      }
+
+      if (token.name === '') {
+        token.name = localToken.name;
       }
 
       if (
