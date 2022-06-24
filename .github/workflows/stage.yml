@@ -68,11 +68,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: app-stage
+          path: dist/
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: deploy-stage
+          path: deploy/
 
       - name: Install Google Cloud SDK
         run: |
