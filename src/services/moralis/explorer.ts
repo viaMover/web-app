@@ -13,6 +13,7 @@ import {
   addSentryBreadcrumb,
   captureSentryException
 } from '@/services/v2/utils/sentry';
+import { isFeatureEnabled } from '@/settings';
 import store from '@/store/index';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -141,26 +142,29 @@ export class MoralisExplorer implements Explorer {
           this.setIsTokensListLoaded(true);
           return tokensWithNative;
         });
-      const erc20TransactionsPromise = this.getErc20Transactions(
-        MoralisExplorer.TRANSACTIONS_PER_BATCH
-      );
-      const nativeTransactionsPromise = this.getNativeTransactions(
-        MoralisExplorer.TRANSACTIONS_PER_BATCH
-      );
 
-      const [tokensWithPrices, erc20Transactions, nativeTransactions] =
-        await Promise.all([
-          tokensWithPricePromise,
-          erc20TransactionsPromise,
-          nativeTransactionsPromise
-        ]);
+      if (isFeatureEnabled('isTransactionsListAvailable', this.network)) {
+        const erc20TransactionsPromise = this.getErc20Transactions(
+          MoralisExplorer.TRANSACTIONS_PER_BATCH
+        );
+        const nativeTransactionsPromise = this.getNativeTransactions(
+          MoralisExplorer.TRANSACTIONS_PER_BATCH
+        );
 
-      const transactions = await this.parseTransactions(
-        tokensWithPrices,
-        erc20Transactions.transactions,
-        nativeTransactions.transactions
-      );
-      this.setTransactions(transactions);
+        const [tokensWithPrices, erc20Transactions, nativeTransactions] =
+          await Promise.all([
+            tokensWithPricePromise,
+            erc20TransactionsPromise,
+            nativeTransactionsPromise
+          ]);
+
+        const transactions = await this.parseTransactions(
+          tokensWithPrices,
+          erc20Transactions.transactions,
+          nativeTransactions.transactions
+        );
+        this.setTransactions(transactions);
+      }
     } finally {
       this.setIsTokensListLoaded(true);
       this.setIsTransactionsListLoaded(true);
@@ -369,9 +373,33 @@ export class MoralisExplorer implements Explorer {
   };
 
   private getErc20Tokens = async (): Promise<Array<TokenWithBalance>> => {
+    const baseAssetData = getBaseAssetData(this.network);
+
     if (this.ankrService !== undefined) {
       try {
-        return await this.ankrService.getTokens();
+        const tokens = await this.ankrService.getTokens();
+        if (
+          tokens.find((t) => sameAddress(t.address, baseAssetData.address)) !==
+          undefined
+        ) {
+          return tokens;
+        }
+        return [
+          ...tokens,
+          {
+            address: baseAssetData.address,
+            balance: '0',
+            priceUSD: store.getters['account/baseTokenPrice'],
+            marketCap: store.getters['account/getTokenMarketCap'](
+              baseAssetData.address
+            ),
+            decimals: baseAssetData.decimals,
+            logo: baseAssetData.iconURL,
+            name: baseAssetData.name,
+            symbol: baseAssetData.symbol,
+            color: store.getters['account/getTokenColor'](baseAssetData.address)
+          }
+        ];
       } catch (err) {
         addSentryBreadcrumb({
           type: 'error',
@@ -427,8 +455,16 @@ export class MoralisExplorer implements Explorer {
         return token;
       }
 
-      if (token.logo == '') {
+      if (token.logo === '') {
         token.logo = localToken.logo;
+      }
+
+      if (token.symbol === '') {
+        token.symbol = localToken.symbol;
+      }
+
+      if (token.name === '') {
+        token.name = localToken.name;
       }
 
       if (

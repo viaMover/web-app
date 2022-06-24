@@ -13,7 +13,7 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['ethereum', 'fantom', 'polygon', 'avalanche', 'binance'];
+const networks = ['arbitrum'];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -50,6 +50,8 @@ const getCoingeckoPlatform = (network) => {
       return 'avalanche';
     case 'binance':
       return 'binance-smart-chain';
+    case 'arbitrum':
+      return 'arbitrum-one';
   }
 };
 
@@ -526,7 +528,8 @@ const alsoIncludedTokens = {
   fantom: [],
   polygon: [],
   avalanche: [],
-  binance: []
+  binance: [],
+  arbitrum: []
 };
 
 const isDirEmpty = (dir) => {
@@ -885,6 +888,9 @@ const getWeb3 = (network) => {
       break;
     case 'binance':
       rpcUrl = 'https://bsc-dataseed.binance.org/';
+      break;
+    case 'arbitrum':
+      rpcUrl = 'https://arb1.arbitrum.io/rpc';
       break;
     default:
       throw new Error(`There is no RPC link for network: ${network}`);

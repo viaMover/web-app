@@ -18,6 +18,8 @@ const messages: VueI18n.LocaleMessageObject = {
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
   lblNewToMover: 'Looks like you are new to Mover',
+  lblTransactionListNotAvailable:
+    'Transaction list is not available in this network',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',
