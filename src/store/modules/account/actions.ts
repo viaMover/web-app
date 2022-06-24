@@ -15,7 +15,7 @@ import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
-import { MoverAssetsService } from '@/services/v2/api/mover/assets/MoverAssetsService';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';

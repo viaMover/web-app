@@ -26,7 +26,7 @@ export class MoverAssetsService {
     [Network.celo]: undefined,
     [Network.rinkeby]: undefined
   };
-  protected readonly sentryCategoryPrefix = 'asset service';
+  protected readonly sentryCategoryPrefix = 'assets.service';
   protected readonly client: AxiosInstance;
   protected readonly baseURL: string;
 
