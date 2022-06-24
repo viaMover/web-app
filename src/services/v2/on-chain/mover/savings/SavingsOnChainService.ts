@@ -4,8 +4,8 @@ import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 
-import { TransferData } from '@/services/0x/api';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
+import { TransferData } from '@/services/v2/api/swap';
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { PreparedAction } from '@/services/v2/on-chain/mover/subsidized/types';
@@ -222,8 +222,8 @@ export class SavingsOnChainService extends MoverOnChainService {
       if (gasLimitObj) {
         return {
           error: false,
-          actionGasLimit: '0',
-          approveGasLimit: this.addGasBuffer(gasLimitObj.toString())
+          approveGasLimit: '0',
+          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
         };
       }
     } catch (error) {

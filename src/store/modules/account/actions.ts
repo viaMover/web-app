@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/vue';
+import UAuthSPA from '@uauth/js';
 import sample from 'lodash-es/sample';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
@@ -13,16 +14,17 @@ import { getMOVEPriceInWETH, getSLPPriceInWETH } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
-import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
+import { SwapAPIService } from '@/services/v2/api/swap';
 import {
   CurrencyNotSupportedError,
   TheGraphAPIService
 } from '@/services/v2/api/theGraph';
+import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
 import { SavingsPlusOnChainService } from '@/services/v2/on-chain/mover/savings-plus';
@@ -39,6 +41,7 @@ import {
   setIsOlympusAvatarKnownToPersist
 } from '@/settings';
 import {
+  clearAllPersistItemsFromLocalStorage,
   getFromPersistStore,
   removeAccountBoundPersistItemsFromLocalStorage,
   removeExpiredPersistItemsFromLocalStorage,
@@ -77,7 +80,8 @@ import {
   NativeCurrency,
   PriceRecord,
   ProviderData,
-  RefreshWalletPayload
+  RefreshWalletPayload,
+  uauthOptions
 } from './types';
 import allAvatars from '@/../data/avatars.json';
 import { getOlympusAvatar, isOlympusAvatar } from '@/../data/olympus-avatar';
@@ -102,6 +106,7 @@ type Actions = {
   refreshWallet: Promise<void>;
   updateWalletAfterTxn: Promise<void>;
   waitWallet: Promise<boolean>;
+  clearPersistStorage: Promise<void>;
   disconnectWallet: Promise<void>;
   getBasicPrices: Promise<void>;
   getTokenPrice: Promise<string>;
@@ -361,6 +366,28 @@ const actions: ActionFuncs<
         networkId: chainId
       } as AccountData);
 
+      new UAuthSPA(uauthOptions)
+        .user()
+        .then((userData) => {
+          addSentryBreadcrumb({
+            type: 'debug',
+            message: 'Fetched user data from Unstoppable Domains',
+            category: 'refreshWallet.action.account.store',
+            data: userData
+          });
+
+          commit('setUnstoppableDomainsName', userData.sub);
+        })
+        .catch((error) => {
+          addSentryBreadcrumb({
+            type: 'warning',
+            data: error,
+            category: 'refreshWallet.action.account.store',
+            message:
+              'Failed to fetch user data using Unstoppable Domains client'
+          });
+        });
+
       if (!state.currentAddress || !state.networkInfo) {
         console.info("can't refresh wallet due to empty address");
         return;
@@ -527,6 +554,19 @@ const actions: ActionFuncs<
     );
     commit('setTheGraphAPIService', theGraphAPIService);
 
+    if (
+      isFeatureEnabled('isDebitCardTopUpEnabled', state.networkInfo.network)
+    ) {
+      const debitCardOnChainService = new DebitCardOnChainService(
+        state.currentAddress,
+        state.networkInfo.network,
+        state.provider.web3
+      );
+      dispatch('debitCard/setOnChainService', debitCardOnChainService, {
+        root: true
+      });
+    }
+
     let smartTreasuryBonusBalanceExecutor:
       | ISmartTreasuryBonusBalanceExecutor
       | undefined;
@@ -572,11 +612,11 @@ const actions: ActionFuncs<
     }
 
     if (isFeatureEnabled('isSwapEnabled', state.networkInfo.network)) {
-      const ZeroXService = new ZeroXAPIService(
+      const swapAPIService = new SwapAPIService(
         state.currentAddress,
         state.networkInfo.network
       );
-      commit('setSwapAPIService', ZeroXService);
+      commit('setSwapAPIService', swapAPIService);
 
       const swapOnChainService = new SwapOnChainService(
         state.currentAddress,
@@ -685,10 +725,24 @@ const actions: ActionFuncs<
       checkWalletConnection();
     });
   },
+  async clearPersistStorage(): Promise<void> {
+    clearAllPersistItemsFromLocalStorage();
+  },
   async disconnectWallet({ commit, state }): Promise<void> {
     if (state.currentAddress) {
       removeAccountBoundPersistItemsFromLocalStorage(state.currentAddress);
     }
+
+    await state.uauthClient.logout(uauthOptions).catch((error) => {
+      addSentryBreadcrumb({
+        type: 'warning',
+        category: 'disconnectWallet.action.account.store',
+        message: 'Failed to log out from Unstoppable Domains client',
+        data: {
+          error
+        }
+      });
+    });
 
     if (state.provider) {
       state.provider.providerBeforeClose();

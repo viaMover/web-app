@@ -3,8 +3,8 @@ import Vue from 'vue';
 import Fuse from 'fuse.js';
 
 import { Explorer } from '@/services/explorer';
-import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { SwapAPIService } from '@/services/v2/api/swap';
 import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import {
@@ -66,6 +66,7 @@ type Mutations = {
   setNativeCurrency: void;
   setCoinGeckoAPIService: void;
   setTheGraphAPIService: void;
+  setUnstoppableDomainsName: void;
 };
 
 const mutations: MutationFuncs<Mutations, AccountStoreState> = {
@@ -245,7 +246,7 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
     state.isOrderOfLibertySectionVisible =
       !state.isOrderOfLibertySectionVisible;
   },
-  setSwapAPIService(state, service: ZeroXAPIService): void {
+  setSwapAPIService(state, service: SwapAPIService): void {
     state.swapAPIService = service;
   },
   setSwapOnChainService(state, service: SwapOnChainService): void {
@@ -284,6 +285,9 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setTheGraphAPIService(state, service: TheGraphAPIService): void {
     state.theGraphAPIService = service;
+  },
+  setUnstoppableDomainsName(state, name: string): void {
+    state.unstoppableDomainsName = name;
   }
 };
 

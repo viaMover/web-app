@@ -3,7 +3,6 @@ import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
-import { TransferData } from '@/services/v2/api/0x';
 import {
   DepositOnlyTransactionData,
   DepositTransactionData,
@@ -13,6 +12,7 @@ import {
   WithdrawOnlyTransactionData,
   WithdrawTransactionData
 } from '@/services/v2/api/mover/savings-plus';
+import { TransferData } from '@/services/v2/api/swap';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import {
   CompoundEstimateResponse,

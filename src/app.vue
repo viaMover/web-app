@@ -36,6 +36,9 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import MewConnect from '@myetherwallet/mewconnect-web-client';
 import Portis from '@portis/web3';
+import UAuthSPA from '@uauth/js';
+import * as UAuthWeb3Modal from '@uauth/web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3ModalVue from 'web3modal-vue';
 
 import { greaterThan } from '@/utils/bigmath';
@@ -47,7 +50,7 @@ import { TopMessageModal } from './components/modals';
 import { sendGlobalTopMessageEvent } from './global-event-bus';
 import { addSentryBreadcrumb } from './services/v2/utils/sentry';
 import { APIKeys } from './settings';
-import { InitWalletPayload } from './store/modules/account/types';
+import { InitWalletPayload, uauthOptions } from './store/modules/account/types';
 import { CommonErrors } from './utils/errors';
 import { InitCallbacks } from './web3/callbacks';
 
@@ -83,6 +86,22 @@ export default Vue.extend({
         },
         metamask: {
           package: {}
+        },
+        'custom-uauth': {
+          display: UAuthWeb3Modal.display,
+          connector: UAuthWeb3Modal.connector,
+          package: UAuthSPA,
+          options: uauthOptions
+        },
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: APIKeys.INFURA_PROJECT_ID,
+            rpc: {
+              137: 'https://matic-mainnet.chainstacklabs.com',
+              250: 'https://rpc.ftm.tools/'
+            }
+          }
         }
       }
     };
@@ -134,6 +153,7 @@ export default Vue.extend({
     this.setIsDetecting(true);
     this.$nextTick(async () => {
       const web3modal = this.$refs.web3modal as any;
+      UAuthWeb3Modal.registerWeb3Modal(web3modal);
       this.setWeb3Modal(web3modal);
       if (web3modal.cachedProvider) {
         try {
@@ -154,6 +174,18 @@ export default Vue.extend({
             }
           });
           web3modal.clearCachedProvider();
+          await new UAuthSPA(uauthOptions)
+            .logout(uauthOptions)
+            .catch((error) => {
+              addSentryBreadcrumb({
+                type: 'warning',
+                category: 'app',
+                message: 'Failed to log out from Unstoppable Domains client',
+                data: {
+                  error
+                }
+              });
+            });
           Object.entries(localStorage)
             .map((x) => x[0])
             .filter((x) => x.startsWith('-walletlink'))

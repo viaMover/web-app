@@ -41,6 +41,7 @@ type Getters = {
   getOffchainExplorerHanlder: OffchainExplorerHanler | undefined;
   getCurrentAddresses: string[];
   nativeCurrencyFormatter: (value: number | string) => string;
+  resolvedDomainName: string | undefined;
 };
 
 const getters: GettersFuncs<Getters, AccountStoreState> = {
@@ -274,6 +275,18 @@ const getters: GettersFuncs<Getters, AccountStoreState> = {
       default:
         return (value) => `${formatter.sign}${formatToNative(value)}`;
     }
+  },
+  resolvedDomainName(
+    state,
+    getters,
+    rootState,
+    rootGetters
+  ): string | undefined {
+    if (state.unstoppableDomainsName) {
+      return state.unstoppableDomainsName;
+    }
+
+    return rootGetters['nft/resolvedNSName'];
   }
 };
 

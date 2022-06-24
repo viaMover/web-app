@@ -4,8 +4,8 @@ import Web3 from 'web3';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { TransferData } from '@/services/v2/api/0x';
 import { MoverAPISubsidizedService } from '@/services/v2/api/mover/subsidized';
+import { TransferData } from '@/services/v2/api/swap';
 import {
   AddTransactionToStoreHandler,
   EthPriceGetterHandler

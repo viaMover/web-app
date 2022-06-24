@@ -129,7 +129,7 @@ import { Properties as CssProperties } from 'csstype';
 import Web3 from 'web3';
 
 import { MoverError } from '@/services/v2';
-import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
+import { SwapAPIService, TransferData } from '@/services/v2/api/swap';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
 import { isFeatureEnabled } from '@/settings';
 import {
@@ -275,10 +275,17 @@ export default Vue.extend({
         return '';
       }
 
-      let rate = divide(
-        this.transferData.sellTokenToEthRate,
-        this.transferData.buyTokenToEthRate
-      );
+      let rate = '0';
+
+      if (
+        this.transferData.sellTokenToEthRate !== undefined &&
+        this.transferData.buyTokenToEthRate !== undefined
+      ) {
+        rate = divide(
+          this.transferData.sellTokenToEthRate,
+          this.transferData.buyTokenToEthRate
+        );
+      }
 
       if (!notZero(rate)) {
         rate = divide(
@@ -630,7 +637,7 @@ export default Vue.extend({
         console.error(`Transfer error`, error);
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapAPIService as ZeroXAPIService
+            this.swapAPIService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
@@ -698,7 +705,7 @@ export default Vue.extend({
         console.error('Transfer error', error);
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapAPIService as ZeroXAPIService
+            this.swapAPIService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
@@ -766,7 +773,7 @@ export default Vue.extend({
         console.error('Transfer error', error);
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapAPIService as ZeroXAPIService
+            this.swapAPIService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
@@ -834,7 +841,7 @@ export default Vue.extend({
         console.error('Transfer error', error);
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapAPIService as ZeroXAPIService
+            this.swapAPIService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
@@ -905,7 +912,7 @@ export default Vue.extend({
         console.error('Transfer error', error);
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapAPIService as ZeroXAPIService
+            this.swapAPIService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
@@ -933,7 +940,7 @@ export default Vue.extend({
         isInput ? inputAsset.decimals : outputAsset.decimals
       );
       const transferData = await (
-        this.swapAPIService as ZeroXAPIService
+        this.swapAPIService as SwapAPIService
       ).getTransferData(
         outputAsset.address,
         inputAsset.address,

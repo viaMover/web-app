@@ -1,10 +1,7 @@
-import VueI18n from 'vue-i18n';
-
 import * as Sentry from '@sentry/vue';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry from 'axios-retry';
 
-import { TransferData } from '@/services/0x/api';
 import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
 import { MultiChainAPIService } from '@/services/v2/api';
 import { ResponseHTTPErrorCode } from '@/services/v2/http';
@@ -13,6 +10,8 @@ import { getPureBaseAssetAddress, isBaseAsset } from '@/utils/address';
 import { greaterThan, multiply } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 
+import { ISwapper } from '../ISwapper';
+import { TransferData } from '../types';
 import {
   GeneralErrorCode,
   SwapQuoteParams,
@@ -24,7 +23,7 @@ import {
  * A wrapper class for interacting with 0x.org API
  * @see https://0x.org/docs/api
  */
-export class ZeroXAPIService extends MultiChainAPIService {
+export class ZeroXAPIService extends MultiChainAPIService implements ISwapper {
   protected baseURL: string;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = '0x.api.service';
@@ -38,23 +37,6 @@ export class ZeroXAPIService extends MultiChainAPIService {
     Network.celo,
     Network.optimism
   ];
-  protected static readonly swapSourceIcons = {
-    Uniswap_V2: '🦄',
-    Curve: '🧮',
-    Balancer: '⚖',
-    Balancer_V2: '⚖',
-    Bancor: '🕳',
-    Mooniswap: '🌑',
-    SnowSwap: '❄',
-    SushiSwap: '🍣',
-    'Shell Protocol': '🐚',
-    DODO: '🐣',
-    CREAM: '🍦',
-    CryptoCom: '🪙',
-    Uniswap_V3: '🦄',
-    ShibaSwap: '🐕',
-    OasisDEX: '🏝'
-  } as Record<string, string>;
 
   constructor(currentAddress: string, network: Network) {
     super(currentAddress, network);
@@ -69,6 +51,10 @@ export class ZeroXAPIService extends MultiChainAPIService {
         validateStatus: (status) => status === 200
       })
     );
+  }
+
+  public canHandle(network: Network): boolean {
+    return ZeroXAPIService.validNetworks.includes(network);
   }
 
   /**
@@ -119,30 +105,6 @@ export class ZeroXAPIService extends MultiChainAPIService {
     return (
       await this.client.get<SwapQuoteResponse>('/swap/v1/quote', { params })
     ).data;
-  }
-
-  public formatSwapSources = (swapSource: string): string =>
-    ZeroXAPIService.formatSwapSources(swapSource);
-
-  public static formatSwapSources = (swapSource: string): string => {
-    return ZeroXAPIService.swapSourceIcons[swapSource]
-      ? `${swapSource} ${ZeroXAPIService.swapSourceIcons[swapSource]}`
-      : swapSource;
-  };
-
-  public mapErrorMessage = (message: string, i18n?: VueI18n): string =>
-    ZeroXAPIService.mapErrorMessage(message, i18n);
-
-  public static mapErrorMessage(message: string, i18n?: VueI18n): string {
-    if (i18n === undefined) {
-      return message;
-    }
-
-    if (i18n.te(`swaps.errors.${message}`)) {
-      return i18n.t(`swaps.errors.${message}`) as string;
-    }
-
-    return message;
   }
 
   protected mapSwapQuote(data: SwapQuoteResponse): TransferData {
@@ -342,5 +304,9 @@ export class ZeroXAPIService extends MultiChainAPIService {
     }
 
     return address;
+  }
+
+  public getName(): string {
+    return 'ZeroXAPIService';
   }
 }
