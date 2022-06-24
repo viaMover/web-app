@@ -6,6 +6,7 @@ on:
       - develop
       - staging
       - 'feature/**'
+      - 'fix/**'
 
 jobs:
   build-stage:
