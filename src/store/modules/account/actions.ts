@@ -16,6 +16,7 @@ import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets/MoverAssetsService';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
@@ -51,7 +52,6 @@ import { ActionFuncs } from '@/store/types';
 import { toArray } from '@/utils/arrays';
 import { CommonErrors, errorToString } from '@/utils/errors';
 import { NetworkInfo } from '@/utils/networkTypes';
-import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import { getGasPrices } from '@/wallet/gas';
 import {
@@ -414,8 +414,13 @@ const actions: ActionFuncs<
           network: state.networkInfo.network
         });
 
+        if (state.assetService === undefined) {
+          throw new Error('Asset service is missing');
+        }
         console.info('getting all tokens...');
-        const allTokens = getAllTokens(state.networkInfo.network);
+        const allTokens = await state.assetService.getAllTokens(
+          state.networkInfo.network
+        );
         commit('setAllTokens', allTokens);
       }
 
@@ -666,6 +671,9 @@ const actions: ActionFuncs<
         root: true
       });
     }
+
+    const moverAssetsService = new MoverAssetsService();
+    commit('setMoverAssetsService', moverAssetsService);
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {
