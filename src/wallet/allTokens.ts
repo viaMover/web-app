@@ -4,6 +4,7 @@ import { Network } from '@/utils/networkTypes';
 
 import { getTestnetAssets } from './references/testnetAssets';
 import { Token } from './types';
+import assetListArbitrum from '@/../data/assets/assetList-arbitrum.json';
 import assetListAvalanche from '@/../data/assets/assetList-avalanche.json';
 import assetListBinance from '@/../data/assets/assetList-binance.json';
 import assetListEth from '@/../data/assets/assetList-ethereum.json';
@@ -25,7 +26,8 @@ export const availableNetworks = [
   Network.fantom,
   Network.polygon,
   Network.avalanche,
-  Network.binance
+  Network.binance,
+  Network.arbitrum
 ];
 
 const getAssetList = (network: Network): Array<AssetListType> => {
@@ -40,6 +42,8 @@ const getAssetList = (network: Network): Array<AssetListType> => {
       return assetListAvalanche;
     case Network.binance:
       return assetListBinance;
+    case Network.arbitrum:
+      return assetListArbitrum;
     default:
       return [];
   }

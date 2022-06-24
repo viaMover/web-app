@@ -32,6 +32,7 @@
         <asset-field
           :amount="output.amount"
           :asset="output.asset"
+          :disabled-select-amount="!isBuyAmountAvailable"
           :exclude-tokens="excludedOutputTokens"
           field-role="output"
           has-couple-tokens
@@ -265,6 +266,9 @@ export default Vue.extend({
       return this.swapAPIService.formatSwapSources(
         this.transferData.swappingVia
       );
+    },
+    isBuyAmountAvailable(): string {
+      return this.swapAPIService.isBuyAmountAvailable();
     },
     rateString(): string {
       if (
