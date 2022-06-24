@@ -97,7 +97,7 @@ export const networks = new Array<NetworkInfo>(
     chainId: 137,
     name: 'Polygon',
     network: Network.polygon,
-    explorer: 'https://polygonscan.com/',
+    explorer: 'https://polygonscan.com',
     subsidizedUrl: undefined,
     baseAsset: {
       address: 'eth',
@@ -145,7 +145,7 @@ export const networks = new Array<NetworkInfo>(
     chainId: 43114,
     name: 'Avalanche',
     network: Network.avalanche,
-    explorer: 'https://snowtrace.io/',
+    explorer: 'https://snowtrace.io',
     subsidizedUrl: undefined,
     baseAsset: {
       address: 'avax',
@@ -161,7 +161,7 @@ export const networks = new Array<NetworkInfo>(
     chainId: 42161,
     name: 'Arbitrum',
     network: Network.arbitrum,
-    explorer: 'https://arbiscan.io/',
+    explorer: 'https://arbiscan.io',
     subsidizedUrl: undefined,
     baseAsset: {
       address: 'areth',

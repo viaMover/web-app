@@ -51,7 +51,7 @@ import { mapState } from 'vuex';
 
 import * as Sentry from '@sentry/vue';
 
-import { TransferData } from '@/services/0x/api';
+import { TransferData } from '@/services/v2/api/swap';
 import { divide, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { getOhmAssetData } from '@/wallet/references/data';

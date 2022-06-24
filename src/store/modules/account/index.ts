@@ -44,7 +44,6 @@ export default {
     gasUpdating: false,
     gasUpdaterHandle: undefined,
     gasUpdaterCallers: [],
-
     nativeCurrency: NativeCurrency.USD,
 
     ethPrice: undefined,

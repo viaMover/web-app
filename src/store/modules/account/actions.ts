@@ -14,12 +14,12 @@ import { getMOVEPriceInWETH, getSLPPriceInWETH } from '@/services/chain';
 import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
-import { ZeroXAPIService } from '@/services/v2/api/0x';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
 import { MoverAPIStakingUbtService } from '@/services/v2/api/mover/staking-ubt';
+import { SwapAPIService } from '@/services/v2/api/swap';
 import {
   CurrencyNotSupportedError,
   TheGraphAPIService
@@ -380,7 +380,7 @@ const actions: ActionFuncs<
         })
         .catch((error) => {
           addSentryBreadcrumb({
-            type: 'warn',
+            type: 'warning',
             data: error,
             category: 'refreshWallet.action.account.store',
             message:
@@ -612,11 +612,11 @@ const actions: ActionFuncs<
     }
 
     if (isFeatureEnabled('isSwapEnabled', state.networkInfo.network)) {
-      const ZeroXService = new ZeroXAPIService(
+      const swapAPIService = new SwapAPIService(
         state.currentAddress,
         state.networkInfo.network
       );
-      commit('setSwapAPIService', ZeroXService);
+      commit('setSwapAPIService', swapAPIService);
 
       const swapOnChainService = new SwapOnChainService(
         state.currentAddress,
@@ -735,7 +735,7 @@ const actions: ActionFuncs<
 
     await state.uauthClient.logout(uauthOptions).catch((error) => {
       addSentryBreadcrumb({
-        type: 'warn',
+        type: 'warning',
         category: 'disconnectWallet.action.account.store',
         message: 'Failed to log out from Unstoppable Domains client',
         data: {
