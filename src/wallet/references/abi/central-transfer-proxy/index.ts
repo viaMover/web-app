@@ -2,6 +2,7 @@ import { AbiItem } from 'web3-utils';
 
 import { Network } from '@/utils/networkTypes';
 
+import arbitrum from './arbitrum.json';
 import avalanche from './avalanche.json';
 import binance from './binance.json';
 import fantom from './fantom.json';
@@ -13,7 +14,8 @@ const references = {
   [Network.fantom]: fantom,
   [Network.polygon]: polygon,
   [Network.avalanche]: avalanche,
-  [Network.binance]: binance
+  [Network.binance]: binance,
+  [Network.arbitrum]: arbitrum
 } as Record<Network, Array<AbiItem>>;
 
 export const getCentralTransferProxyAbi = (network: Network): AbiItem[] => {

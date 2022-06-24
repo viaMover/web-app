@@ -13,5 +13,7 @@ export interface ISwapper {
     slippage: string
   ): Promise<TransferData>;
 
+  isBuyAmountAvailable(): boolean;
+
   canHandle(network: Network): boolean;
 }

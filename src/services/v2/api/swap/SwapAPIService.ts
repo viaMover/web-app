@@ -23,6 +23,20 @@ export class SwapAPIService {
     );
   }
 
+  public isBuyAmountAvailable(): boolean {
+    const executor = this.executors.find((s) => s.canHandle(this.network));
+    if (executor === undefined) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to find suitable swap executor',
+        data: { network: this.network }
+      });
+      throw new NetworkFeatureNotSupportedError('Swaps', this.network);
+    }
+    return executor.isBuyAmountAvailable();
+  }
+
   public async getTransferData(
     buyTokenAddress: string,
     sellTokenAddress: string,

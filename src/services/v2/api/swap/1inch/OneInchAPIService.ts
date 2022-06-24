@@ -71,6 +71,10 @@ export class OneInchAPIService
     );
   }
 
+  public isBuyAmountAvailable(): boolean {
+    return false;
+  }
+
   public canHandle(network: Network): boolean {
     return OneInchAPIService.supportedNetworks.includes(network);
   }
