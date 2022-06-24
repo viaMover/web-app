@@ -1,10 +1,9 @@
-name: Build and Deploy to stage
+name: Build and Deploy to production
 
 on:
   push:
     branches:
-      - develop
-      - staging
+      - release
 
 jobs:
   stage:
@@ -16,7 +15,7 @@ jobs:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_ORG: holyheld
       SENTRY_PROJECT: move-web-app
-      SENTRY_ENVIRONMENT: development
+      SENTRY_ENVIRONMENT: production
 
     steps:
       - name: Check out repository code
@@ -30,13 +29,13 @@ jobs:
 
       - name: Prepare files to build static web app
         run: |
-          openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-stg.enc -out deploy/keys-stg.dec
-          mv deploy/keys-stg.dec src/settings/keys.ts
+          openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-prod.enc -out deploy/keys-prod.dec
+          mv deploy/keys-prod.dec src/settings/keys.ts
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build app
-        run: yarn build-stage
+        run: yarn build-prod
 
       - name: Install Google Cloud SDK
         run: |
@@ -52,9 +51,9 @@ jobs:
           mkdir deploy/www
           mv dist/* deploy/www/
           mv deploy/www dist/
-          cp deploy/moverwebapp-stg.yaml dist/
+          cp deploy/moverwebapp-prod.yaml dist/
           cd dist
-          /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-stg.yaml --promote
+          /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-prod.yaml --promote
       - name: Create release and notify Sentry of deploy
         run: |
           curl -sL https://sentry.io/get-cli/ | bash
