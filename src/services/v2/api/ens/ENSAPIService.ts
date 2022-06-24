@@ -10,7 +10,6 @@ export class ENSAPIService extends MultiChainAPIService {
   protected baseURL: string;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'ens.api.service';
-  protected static networkNotSupportedAlias = 'not_supported';
 
   constructor(currentAddress: string, network: Network) {
     super(currentAddress, network);
