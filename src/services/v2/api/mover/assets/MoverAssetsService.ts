@@ -8,13 +8,10 @@ import { availableNetworks } from '@/wallet/allTokens';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
 import { Token } from '@/wallet/types';
 
-import { AssetList } from './types';
+import { Asset } from './types';
 
 export class MoverAssetsService {
-  protected readonly assetsListsCache: Record<
-    Network,
-    AssetList[] | undefined
-  > = {
+  protected readonly assetsListsCache: Record<Network, Asset[] | undefined> = {
     [Network.mainnet]: undefined,
     [Network.binance]: undefined,
     [Network.polygon]: undefined,
@@ -67,14 +64,14 @@ export class MoverAssetsService {
     );
   }
 
-  private async getAssetsList(network: Network): Promise<Array<AssetList>> {
+  private async getAssetsList(network: Network): Promise<Array<Asset>> {
     const cachedAssetsList = this.assetsListsCache[network];
     if (cachedAssetsList !== undefined) {
       return cachedAssetsList;
     }
 
     const data = (
-      await this.client.get<Array<AssetList>>(
+      await this.client.get<Array<Asset>>(
         `assets/assetList-${this.mapToAssetListName(network)}.json`
       )
     ).data;

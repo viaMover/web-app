@@ -1,4 +1,4 @@
-export type AssetList = {
+export type Asset = {
   id: string;
   decimals: number;
   symbol: string;
