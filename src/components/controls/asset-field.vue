@@ -129,6 +129,10 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
+    disabledSelectAmount: {
+      type: Boolean,
+      default: false
+    },
     hasCoupleTokens: {
       type: Boolean,
       default: false
@@ -149,7 +153,7 @@ export default Vue.extend({
       return this.asset === undefined ? '—' : '0.00';
     },
     disabledInput(): boolean {
-      return this.asset === undefined;
+      return this.asset === undefined || this.disabledSelectAmount;
     },
     iconSrc(): string {
       return this.asset === undefined ? '' : this.asset.logo;

@@ -18,6 +18,7 @@ export interface Globals {
   isSavingsEnabled: GlobalSettings;
   isSwapEnabled: GlobalSettings;
   isExplorerEnabled: GlobalSettings;
+  isTransactionsListAvailable: GlobalSettings;
   isOffchainExplorerEnabled: GlobalSettings;
   isEarningsEnabled: GlobalSettings;
   isGovernanceEnabled: GlobalSettings;
@@ -76,9 +77,22 @@ const values: Globals = {
     Network.fantom,
     Network.polygon,
     Network.avalanche,
-    Network.binance
+    Network.binance,
+    Network.arbitrum
   ],
   isExplorerEnabled: [
+    Network.mainnet,
+    Network.binance,
+    Network.binanceTest,
+    Network.kovan,
+    Network.ropsten,
+    Network.rinkeby,
+    Network.avalanche,
+    Network.fantom,
+    Network.polygon,
+    Network.arbitrum
+  ],
+  isTransactionsListAvailable: [
     Network.mainnet,
     Network.binance,
     Network.binanceTest,
@@ -103,7 +117,8 @@ const values: Globals = {
     Network.polygon,
     Network.fantom,
     Network.avalanche,
-    Network.binance
+    Network.binance,
+    Network.arbitrum
   ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,

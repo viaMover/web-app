@@ -53,6 +53,10 @@ export class ZeroXAPIService extends MultiChainAPIService implements ISwapper {
     );
   }
 
+  public isBuyAmountAvailable(): boolean {
+    return true;
+  }
+
   public canHandle(network: Network): boolean {
     return ZeroXAPIService.validNetworks.includes(network);
   }

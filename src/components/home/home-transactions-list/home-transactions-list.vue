@@ -1,6 +1,9 @@
 <template>
   <transition name="fade">
     <home-transactions-list-skeleton v-if="showSkeleton" />
+    <div v-else-if="!isTransactionListAvailable" class="empty-state">
+      {{ $t('lblTransactionListNotAvailable') }}
+    </div>
     <div v-else-if="transactionGroups.length === 0" class="empty-state">
       {{ $t('newToMover') }}
     </div>
@@ -40,6 +43,7 @@ import { mapGetters, mapState } from 'vuex';
 import dayjs from 'dayjs';
 
 import { captureSentryException } from '@/services/v2/utils/sentry';
+import { isFeatureEnabled } from '@/settings';
 
 import HomeTransactionsListGroup from './home-transactions-list-group.vue';
 import HomeTransactionsListSkeleton from './home-transactions-list-skeleton.vue';
@@ -65,6 +69,12 @@ export default Vue.extend({
       'isTransactionsListLoaded',
       'explorer'
     ]),
+    isTransactionListAvailable(): boolean {
+      return isFeatureEnabled(
+        'isTransactionsListAvailable',
+        this.networkInfo?.network
+      );
+    },
     showSkeleton(): boolean {
       return (
         !this.isTransactionsListLoaded && this.transactionGroups.length === 0
