@@ -1,5 +1,8 @@
 import { TransactionResult } from '@/services/v2/on-chain';
 import { Network } from '@/utils/networkTypes';
+import { Token, TokenWithBalance } from '@/wallet/types';
+
+import { PictureDescriptor } from '@/components/html5';
 
 export type ListenerParams = {
   [TransactionState.Approve]: {
@@ -41,13 +44,13 @@ export type ListenerParams = {
   // @deprecated: unused for now
   [TransactionState.Rejected]: {
     error: unknown;
+    hash?: string;
   };
   // @deprecated: unused for now
   [TransactionState.Confirmed]: TransactionResult;
 };
 
 export enum TransactionState {
-  Started = 'started',
   Approve = 'approve',
   Swap = 'swap',
   Deposit = 'deposit',
@@ -61,8 +64,16 @@ export enum TransactionState {
 
 export type TransactionScenarioState = {
   type: TransactionState;
-  tokenAddress: string;
+  tokenAddress?: string;
+  picture?: PictureDescriptor;
   network: Network;
+};
+export type DisplayableTransactionScenarioState = {
+  index: number;
+  type: TransactionState;
+  network: Network;
+  picture?: PictureDescriptor;
+  token: Token | TokenWithBalance;
 };
 export type TransactionScenario = Array<TransactionScenarioState>;
 

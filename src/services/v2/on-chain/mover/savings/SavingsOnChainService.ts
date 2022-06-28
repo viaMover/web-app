@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 
+import savingsPicture from '@/assets/images/sections/savings';
 import { MoverAPISubsidizedRequestError } from '@/services/v2/api/mover/subsidized/MoverAPISubsidizedRequestError';
 import { TransferData } from '@/services/v2/api/swap';
 import { NetworkFeatureNotSupportedError } from '@/services/v2/NetworkFeatureNotSupportedError';
@@ -97,12 +98,17 @@ export class SavingsOnChainService extends MoverOnChainService {
   ): Promise<TransactionScenario> {
     try {
       const scenario = new Array<TransactionScenarioState>();
-      const needsApprove = this.needsApprove(
+      const needsApprove = await this.needsApprove(
         inputAsset,
         inputAmount,
         lookupAddress(this.network, 'HOLY_HAND_ADDRESS')
       );
       if (needsApprove) {
+        scenario.push({
+          type: TransactionState.AwaitingForInput,
+          tokenAddress: inputAsset.address,
+          network: this.network
+        });
         scenario.push({
           type: TransactionState.Approve,
           tokenAddress: inputAsset.address,
@@ -111,8 +117,19 @@ export class SavingsOnChainService extends MoverOnChainService {
       }
 
       scenario.push({
+        type: TransactionState.AwaitingForInput,
+        tokenAddress: inputAsset.address,
+        network: this.network
+      });
+      scenario.push({
         type: TransactionState.Deposit,
         tokenAddress: inputAsset.address,
+        network: this.network
+      });
+
+      scenario.push({
+        type: TransactionState.Confirmed,
+        picture: savingsPicture,
         network: this.network
       });
 
@@ -480,6 +497,9 @@ export class SavingsOnChainService extends MoverOnChainService {
         );
       }
 
+      eventBus.dispatch(TransactionState.AwaitingForInput, {
+        nextState: TransactionState.Deposit
+      });
       this.wrapWithSendMethodCallbacks(
         this.holyHandContract.methods
           .depositToPool(

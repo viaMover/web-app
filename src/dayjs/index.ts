@@ -4,6 +4,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjsDevHelper from 'dayjs/plugin/devHelper';
 import duration from 'dayjs/plugin/duration';
 import objectSupport from 'dayjs/plugin/objectSupport';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 import { Language } from '@/i18n';
@@ -19,6 +20,7 @@ export function init(): void {
   dayjs.extend(calendar);
   dayjs.extend(objectSupport);
   dayjs.extend(duration);
+  dayjs.extend(relativeTime);
 }
 
 export async function setDayjsLocale(locale: Language): Promise<boolean> {

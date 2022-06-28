@@ -570,6 +570,11 @@ export default Vue.extend({
 
       // todo: remove this workaround once ported savings to the 1.2
       const eb = new TransactionStateEventBus();
+      eb.on(
+        TransactionState.AwaitingForInput,
+        () => this.transactionStep === 'Confirm'
+      );
+      eb.on(TransactionState.Approve, () => this.transactionStep === 'Process');
       eb.on(TransactionState.Deposit, () => this.transactionStep === 'Process');
 
       this.step = 'loader';

@@ -119,9 +119,26 @@
     </form>
     <transaction-state-form
       v-else-if="step === 'loader'"
+      :end-network="currentNetwork"
+      :end-state-picture="savingsPicture"
       :event-bus="eventBus"
       :scenario="transactionScenario"
-    />
+      :start-network="currentNetwork"
+      :start-state-picture="inputAsset"
+    >
+      <div class="result">
+        <div class="left">
+          <review-statement
+            :description="formattedFullUSDCTotal"
+            :title="$t('amountYouDepositedInUSDC')"
+          />
+        </div>
+        <div class="right">
+          <custom-picture v-bind="savingsPicture" />
+          {{ formattedUSDCTotal }}
+        </div>
+      </div>
+    </transaction-state-form>
     <search-token-modal />
   </secondary-page>
 </template>
@@ -132,7 +149,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 
 import savingsPicture from '@/assets/images/sections/savings';
 import { MoverError } from '@/services/v2';
-import { TransferData, ZeroXAPIService } from '@/services/v2/api/0x';
+import { SwapAPIService, TransferData } from '@/services/v2/api/swap';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings';
 import { captureSentryException } from '@/services/v2/utils/sentry';
 import {
@@ -156,11 +173,11 @@ import { getSlippage } from '@/wallet/references/data';
 import { Token, TokenWithBalance } from '@/wallet/types';
 
 import { InputMode, LoaderStep } from '@/components/forms';
+import CustomPicture from '@/components/html5/custom-picture.vue';
 import AmountField from '@/components/v1.2/form-controls/amount-field.vue';
 import FormDirectionPair from '@/components/v1.2/form-controls/form-direction-pair.vue';
 import FormSwapMessage from '@/components/v1.2/form-controls/form-swap-message.vue';
 import FormUseAll from '@/components/v1.2/form-controls/form-use-all.vue';
-import LoaderForm from '@/components/v1.2/form-controls/loader-form/loader-form.vue';
 import SubmitButton from '@/components/v1.2/form-controls/submit-button.vue';
 import CustomSwitch from '@/components/v1.2/form-controls/switch-field.vue';
 import TokenSelector from '@/components/v1.2/form-controls/token-selector.vue';
@@ -174,6 +191,7 @@ type ProcessStep = 'prepare' | 'review' | 'loader';
 
 export default Vue.extend({
   components: {
+    CustomPicture,
     FormUseAll,
     ReviewStatement,
     SubmitButton,
@@ -275,6 +293,13 @@ export default Vue.extend({
       return this.formatAsCryptoWithSymbol(
         this.usdcTotal,
         this.outputAsset.symbol
+      );
+    },
+    formattedFullUSDCTotal(): string {
+      return this.formatAsCryptoWithSymbol(
+        this.usdcTotal,
+        this.outputAsset.symbol,
+        this.outputAsset.decimals
       );
     },
     balanceAfterDeposit(): string {
@@ -468,7 +493,7 @@ export default Vue.extend({
             );
             const inputInWei = toWei(value, this.inputAsset.decimals);
             this.transferData = await (
-              this.swapService as ZeroXAPIService
+              this.swapService as SwapAPIService
             ).getTransferData(
               this.outputAsset.address,
               this.inputAsset.address,
@@ -488,7 +513,7 @@ export default Vue.extend({
               this.inputAsset.decimals
             );
             this.transferData = await (
-              this.swapService as ZeroXAPIService
+              this.swapService as SwapAPIService
             ).getTransferData(
               this.outputAsset.address,
               this.inputAsset.address,
@@ -506,7 +531,7 @@ export default Vue.extend({
       } catch (error) {
         if (error instanceof MoverError) {
           this.transferError = (
-            this.swapService as ZeroXAPIService
+            this.swapService as SwapAPIService
           ).mapErrorMessage(error.message, this.$i18n);
         } else {
           this.transferError = this.$t('exchangeError') as string;
@@ -602,10 +627,8 @@ export default Vue.extend({
           this.approveGasLimit,
           this.eventBus
         );
-        this.transactionStep = 'Success';
         this.updateWalletAfterTxn();
       } catch (error) {
-        this.transactionStep = 'Reverted';
         captureSentryException(error);
       }
     }

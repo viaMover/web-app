@@ -6,7 +6,7 @@ export type IntercomPayload =
   | Intercom_.IntercomSettings
   | Record<string, string | number>;
 
-const isIntercomEnabled = isFeatureEnabled('isIntercomEnabled');
+export const isIntercomEnabled = isFeatureEnabled('isIntercomEnabled');
 
 export const bootIntercomSession = (
   userId: string,
@@ -68,4 +68,11 @@ export const toggleIntercomVisibility = (isVisible = true): void => {
   }
 
   window.Intercom('hide');
+};
+
+export const trackIntercomEvent = (
+  event: string,
+  payload?: Record<string, unknown>
+): void => {
+  Intercom('trackEvent', event, payload);
 };

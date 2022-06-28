@@ -3,6 +3,7 @@ import {
   captureException as originalCaptureException
 } from '@sentry/vue';
 
+import { isIntercomEnabled, trackIntercomEvent } from '@/router/intercom-utils';
 import { isConsoleEnabled } from '@/settings';
 
 export let addSentryBreadcrumb = originalAddSentryBreadcrumb;
@@ -31,6 +32,14 @@ export let captureSentryException = originalCaptureException;
 if (isConsoleEnabled()) {
   captureSentryException = (exception, captureContext) => {
     console.error(exception, { captureContext });
+    if (isIntercomEnabled) {
+      trackIntercomEvent('error', exception);
+    }
+    return originalCaptureException(exception, captureContext);
+  };
+} else if (isIntercomEnabled) {
+  captureSentryException = (exception, captureContext) => {
+    trackIntercomEvent('error', exception);
     return originalCaptureException(exception, captureContext);
   };
 }

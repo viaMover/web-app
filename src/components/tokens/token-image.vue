@@ -37,7 +37,7 @@ export default Vue.extend({
     },
     src: {
       type: String,
-      required: true
+      default: ''
     },
     fallbackSrcList: {
       type: Array as PropType<Array<string>>,
