@@ -1505,6 +1505,7 @@ const messages: VueI18n.LocaleMessageObject = {
     reserveTheTagButton: 'Reserve the $tag',
     shareButton: 'Share',
     errors: {
+      default: 'Oh no. Something went wrong',
       tag: {
         required: '$tag must be not empty',
         minLength: '$tag must contain at least {minLength} characters',
