@@ -7,7 +7,11 @@ import {
 } from '@/services/v2/api/mover';
 import { Network } from '@/utils/networkTypes';
 
-import { ReserveTagPayload, ReserveTagResponse } from './types';
+import {
+  LookupTagResponse,
+  ReserveTagPayload,
+  ReserveTagResponse
+} from './types';
 
 export class MoverAPITagService extends MoverAPIService {
   protected baseURL: string;
@@ -27,21 +31,35 @@ export class MoverAPITagService extends MoverAPIService {
   }
 
   public async reserveTag(tag: string): Promise<ReserveTagResponse> {
-    const sig = await this.web3Client.eth.personal.sign(
-      tag,
+    const dataToSign = {
+      name: tag
+    };
+
+    const signature = await this.web3Client.eth.personal.sign(
+      JSON.stringify(dataToSign),
       this.currentAddress,
       ''
     );
 
     const payload: ReserveTagPayload = {
-      tag: tag,
-      address: this.currentAddress,
-      signature: sig
+      data: dataToSign,
+      meta: {
+        address: this.currentAddress,
+        sig: signature
+      }
     };
     return (
       await this.client.post<MoverAPISuccessfulResponse<ReserveTagResponse>>(
         '/tag',
         payload
+      )
+    ).data.payload;
+  }
+
+  public async lookupTag(): Promise<LookupTagResponse> {
+    return (
+      await this.client.get<MoverAPISuccessfulResponse<LookupTagResponse>>(
+        `/tag/${this.currentAddress}`
       )
     ).data.payload;
   }

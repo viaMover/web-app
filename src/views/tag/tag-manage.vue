@@ -184,7 +184,7 @@ export default Vue.extend({
           }
         }
 
-        this.errorText = this.$t('errors.default') as string;
+        this.errorText = this.$t('tag.errors.default') as string;
       } finally {
         this.scrollButtonIntoView();
         this.isLoading = false;

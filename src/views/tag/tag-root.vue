@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { isFeatureEnabled } from '@/settings';
 
@@ -85,7 +85,11 @@ export default Vue.extend({
       return this.tag;
     }
   },
+  mounted() {
+    this.loadInfo();
+  },
   methods: {
+    ...mapActions('tag', ['loadInfo']),
     isFeatureEnabled,
     handleClose() {
       this.$router.replace({ name: 'home' });

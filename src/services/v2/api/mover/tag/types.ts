@@ -1,7 +1,15 @@
 export type ReserveTagPayload = {
-  tag: string;
-  address: string;
-  signature: string;
+  data: {
+    name: string;
+  };
+  meta: {
+    address: string;
+    sig: string;
+  };
 };
 
 export type ReserveTagResponse = void;
+
+export type LookupTagResponse = {
+  name: string;
+};
