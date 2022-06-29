@@ -674,6 +674,31 @@ const routes: Array<RouteConfig> = [
         );
       }
     }
+  ),
+  wrapWithMeta(
+    {
+      path: '/tag',
+      component: () =>
+        import(/* webpackChunkName: "tag" */ '@/views/tag/tag-root.vue'),
+      children: [
+        {
+          path: '',
+          name: 'tag-manage',
+          component: () =>
+            import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue')
+        }
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+
+        return isFeatureEnabled(
+          'isTagEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
   )
 ];
 
