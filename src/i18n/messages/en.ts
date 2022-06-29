@@ -1503,7 +1503,15 @@ const messages: VueI18n.LocaleMessageObject = {
       'Your $tag has to be unique. It must contain at least {minLength} character and be no more than {maxLength} characters. You can always change it later. Make sure you reserve yours.',
     chooseTheTagButton: 'Choose the $tag',
     reserveTheTagButton: 'Reserve the $tag',
-    shareButton: 'Share'
+    shareButton: 'Share',
+    errors: {
+      tag: {
+        required: '$tag must be not empty',
+        minLength: '$tag must contain at least {minLength} characters',
+        maxLength: '$tag must contain no more than {maxLength} characters',
+        alpha: '$tag must contain only letters'
+      }
+    }
   }
 };
 
