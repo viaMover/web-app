@@ -1485,6 +1485,25 @@ const messages: VueI18n.LocaleMessageObject = {
       lblEstimatedEarningsNextMonth: 'Estimated earnings this month',
       lblEstimatedEarningsAnnually: 'Estimated earnings annually'
     }
+  },
+  tag: {
+    bannerReserveTagTitle: 'Reserve your $tag now',
+    bannerReserveTagDescription:
+      'Choosing a $tag will allow your friends, family, and customers to pay you on the Mover Card',
+    bannerReserveTagButton: 'Reserve the $tag',
+    tag: 'Tag',
+    myTag: 'My $tag',
+    notReserved: 'Not reserved yet',
+    reserveTagTitle: 'Reserve $tag',
+    reserveTagDescription:
+      'Choosing a $tag for free will allow your friends, family, and customers to pay you on the Mover Card. No need to cash out manually, or give them your wallet address. Use your favorite projects on the card.',
+    yourTagTitle: 'Your $tag',
+    yourTagPlaceholder: 'your tag',
+    yourTagDescription:
+      'Your $tag has to be unique. It must contain at least {minLength} character and be no more than {maxLength} characters. You can always change it later. Make sure you reserve yours.',
+    chooseTheTagButton: 'Choose the $tag',
+    reserveTheTagButton: 'Reserve the $tag',
+    shareButton: 'Share'
   }
 };
 
