@@ -10,7 +10,8 @@
     <home-masthead v-else />
 
     <div class="cards">
-      <home-cards-debit-card v-if="isDebitCardEnabled" />
+      <home-cards-tag v-if="isTagEnabled" />
+      <home-cards-debit-card v-else-if="isDebitCardEnabled" />
       <home-cards-savings-deposit v-else-if="isSavingsEnabled" />
     </div>
 
@@ -34,6 +35,7 @@ import { isFeatureEnabled } from '@/settings';
 import {
   HomeCardsDebitCard,
   HomeCardsSavingsDeposit,
+  HomeCardsTag,
   HomeLeftRail,
   HomeMasthead,
   HomeMastheadMultichain,
@@ -50,6 +52,7 @@ export default Vue.extend({
     HomeMasthead,
     HomeMastheadMultichain,
     HomeNavigationSection,
+    HomeCardsTag,
     HomeCardsDebitCard,
     HomeCardsSavingsDeposit,
     SwapModal,
@@ -62,6 +65,9 @@ export default Vue.extend({
     ...mapState('nft', {
       orderOfLiberty: 'orderOfLiberty'
     }),
+    isTagEnabled(): boolean {
+      return isFeatureEnabled('isTagEnabled', this.currentNetwork);
+    },
     isDebitCardEnabled(): boolean {
       return isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network);
     },
