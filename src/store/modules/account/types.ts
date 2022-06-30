@@ -107,7 +107,7 @@ export type AccountStoreState = {
   coinGeckoAPIService: CoinGeckoAPIService | undefined;
   theGraphAPIService: TheGraphAPIService | undefined;
 
-  assetService: MoverAssetsService | undefined;
+  assetsService: MoverAssetsService | undefined;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {

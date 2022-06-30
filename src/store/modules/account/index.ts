@@ -75,7 +75,7 @@ export default {
     theGraphAPIService: undefined,
     coinGeckoAPIService: undefined,
 
-    assetService: undefined
+    assetsService: undefined
   },
   actions,
   getters,

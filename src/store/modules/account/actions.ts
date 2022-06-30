@@ -414,11 +414,11 @@ const actions: ActionFuncs<
           network: state.networkInfo.network
         });
 
-        if (state.assetService === undefined) {
+        if (state.assetsService === undefined) {
           throw new Error('Asset service is missing');
         }
         console.info('getting all tokens...');
-        const allTokens = await state.assetService.getAllTokens(
+        const allTokens = await state.assetsService.getAllTokens(
           state.networkInfo.network
         );
         commit('setAllTokens', allTokens);

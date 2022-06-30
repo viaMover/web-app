@@ -13,7 +13,18 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['ethereum', 'fantom', 'polygon', 'avalanche', 'binance'];
+export const MAX_ASSET_NAME = 30;
+
+const networks = ['binance'];
+
+const mapNetworkToAppNetwork = (network) => {
+  switch (network) {
+    case 'ethereum':
+      return 'mainnet';
+    default:
+      return network;
+  }
+};
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -726,7 +737,9 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
 
         data.color = await getAssetImageColor(data.imageUrl, address);
 
-        console.log('added token from coingecko:', data);
+        console.log(
+          `added token from coingecko ${i + 1}/${coingeckoList.length}`
+        );
         newAssets.push(data);
       } catch (err) {
         console.error("Can't add token from coingecko");
@@ -827,6 +840,12 @@ const enrichWithCoingeckoMarketData = async (assets) => {
   return res;
 };
 
+export const getTokenLogo = (checkSumAddress, network) => {
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${getTrustWalletBlockchainName(
+    network
+  )}/assets/${checkSumAddress}/logo.png`;
+};
+
 const filterCompleteTokenData = (assets) => {
   return assets.filter(
     (asset) =>
@@ -836,25 +855,29 @@ const filterCompleteTokenData = (assets) => {
   );
 };
 
-const preprocess = (assets) =>
+const preprocess = (assets, network) =>
   assets.map((asset) => ({
-    id: asset.id,
+    address: asset.id,
     decimals: asset.decimals,
     symbol: asset.symbol,
-    name: asset.name,
-    ...(asset.imageUrl ? { imageUrl: asset.imageUrl } : undefined),
+    priceUSD: '0',
+    network: mapNetworkToAppNetwork(network),
+    name: asset.name.slice(0, MAX_ASSET_NAME),
+    ...(asset.imageUrl
+      ? { logo: asset.imageUrl }
+      : { logo: getTokenLogo(asset.id, network) }),
     ...(asset.color ? { color: asset.color } : undefined),
-    ...(asset.marketCap ? { marketCap: asset.marketCap } : undefined)
+    ...(asset.marketCap ? { marketCap: asset.marketCap } : { marketCap: 0 })
   }));
 
 const deduplicate = (tokens) => {
   const knownAddresses = new Set();
   return tokens.reduce((acc, t) => {
-    if (knownAddresses.has(t.id.toLowerCase())) {
+    if (knownAddresses.has(t.address.toLowerCase())) {
       return acc;
     }
 
-    knownAddresses.add(t.id.toLowerCase());
+    knownAddresses.add(t.address.toLowerCase());
     return acc.concat(t);
   }, []);
 };
@@ -865,7 +888,7 @@ const sort = (assets) =>
 const save = (assets, network) =>
   writeFileSync(
     `./data/assetList-${network}.json`,
-    JSON.stringify(sort(deduplicate(preprocess(assets))))
+    JSON.stringify(sort(deduplicate(preprocess(assets, network))))
   );
 
 const getWeb3 = (network) => {
@@ -912,6 +935,7 @@ const generateNewList = async () => {
     console.log('assets enriched with Coingecko data length: ', assets.length);
     assets = await filterCompleteTokenData(assets);
     assets = await enrichWithCoingeckoMarketData(assets);
+    console.log('saving assets array with length: ', assets.length);
     save(assets, network);
   }
 };

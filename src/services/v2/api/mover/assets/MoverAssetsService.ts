@@ -11,21 +11,6 @@ import { Token } from '@/wallet/types';
 import { Asset } from './types';
 
 export class MoverAssetsService {
-  protected readonly assetsListsCache: Record<Network, Asset[] | undefined> = {
-    [Network.mainnet]: undefined,
-    [Network.binance]: undefined,
-    [Network.polygon]: undefined,
-    [Network.avalanche]: undefined,
-    [Network.fantom]: undefined,
-    [Network.polygon]: undefined,
-    [Network.arbitrum]: undefined,
-    [Network.ropsten]: undefined,
-    [Network.optimism]: undefined,
-    [Network.kovan]: undefined,
-    [Network.binanceTest]: undefined,
-    [Network.celo]: undefined,
-    [Network.rinkeby]: undefined
-  };
   protected readonly sentryCategoryPrefix = 'assets.service';
   protected readonly client: AxiosInstance;
   protected readonly baseURL: string;
@@ -51,32 +36,22 @@ export class MoverAssetsService {
             logo: asset.imageUrl ?? getTokenLogo(asset.id, network),
             color: asset.color,
             marketCap: asset.marketCap ?? 0,
-            priceUSD: '0'
+            priceUSD: '0',
+            network: network
           } as Token)
       );
     } else {
       assets = getTestnetAssets(network);
     }
-    return this.deduplicateByAddress(
-      assets.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-      })
-    );
+    return assets;
   }
 
   private async getAssetsList(network: Network): Promise<Array<Asset>> {
-    const cachedAssetsList = this.assetsListsCache[network];
-    if (cachedAssetsList !== undefined) {
-      return cachedAssetsList;
-    }
-
-    const data = (
+    return (
       await this.client.get<Array<Asset>>(
         `assets/assetList-${this.mapToAssetListName(network)}.json`
       )
     ).data;
-
-    return data;
   }
 
   protected deduplicateByAddress(tokens: Array<Token>): Array<Token> {

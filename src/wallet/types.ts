@@ -1,4 +1,6 @@
 import { TransactionMoveType } from '@/services/mover/transactions/types';
+import { Network } from '@/utils/networkTypes';
+
 export type SmallToken = SmallTokenInfo | Token | TokenWithBalance;
 
 export type SmallTokenInfo = {
@@ -19,6 +21,7 @@ export type Token = {
   color?: string;
 
   marketCap: number;
+  network: Network;
 };
 
 export const tokenToSmallTokenInfo = (t: Token): SmallTokenInfoWithIcon => ({

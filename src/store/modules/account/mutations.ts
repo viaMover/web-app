@@ -292,7 +292,7 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
     state.unstoppableDomainsName = name;
   },
   setMoverAssetsService(state, service: MoverAssetsService): void {
-    state.assetService = service;
+    state.assetsService = service;
   }
 };
 
