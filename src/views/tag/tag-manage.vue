@@ -147,6 +147,12 @@ export default Vue.extend({
   methods: {
     ...mapActions('tag', ['reserveTag', 'loadInfo']),
     async handleReserveTag(): Promise<void> {
+      if (this.reservedTag !== '' && this.tag === this.reservedTag) {
+        // TODO: add share logic
+        console.log('Share in Twitter');
+        return;
+      }
+
       this.errorText = '';
       this.$v.$touch();
       if (this.$v.$invalid) {
