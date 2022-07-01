@@ -37,7 +37,7 @@ handlers:
   upload: www/js/(.*)
   secure: always
   http_headers:
-    - Access-Control-Allow-Origin: https://stg.viamover.com
+    Access-Control-Allow-Origin: https://stg.viamover.com
 
 - url: /img/(.*)
   static_files: www/img/\1
@@ -59,7 +59,7 @@ handlers:
   upload: www/intercom-web-init.js
   secure: always
   http_headers:
-    - Access-Control-Allow-Origin: https://stg.viamover.com
+    Access-Control-Allow-Origin: https://stg.viamover.com
 
 - url: /remove-all
   static_files: www/remove-index.html
