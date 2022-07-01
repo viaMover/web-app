@@ -145,7 +145,7 @@ export default Vue.extend({
     );
   },
   methods: {
-    ...mapActions('tag', ['reserveTag']),
+    ...mapActions('tag', ['reserveTag', 'loadInfo']),
     async handleReserveTag(): Promise<void> {
       this.errorText = '';
       this.$v.$touch();

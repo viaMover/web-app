@@ -60,7 +60,7 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       addSentryBreadcrumb({
         type: 'error',
-        category: 'loadInfo.actions.tag.store',
+        category: 'reserveTag.actions.tag.store',
         message: 'Account state is not ready'
       });
       return;
@@ -76,7 +76,17 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
       commit('setAPIService');
     }
 
-    return service.reserveTag(tag);
+    try {
+      await service.reserveTag(tag);
+      commit('setTag', tag);
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'reserveTag.actions.tag.store',
+        message: 'Failed to fetch reserveTag'
+      });
+      throw error;
+    }
   },
   toggleIsBannerVisible({ commit }): void {
     commit('toggleIsBannerVisible');
