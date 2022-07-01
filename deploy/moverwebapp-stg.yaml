@@ -3,8 +3,6 @@ runtime: python27
 api_version: 1
 threadsafe: true
 default_expiration: "1m"
-skip_files:
-  - (.*)\.js\.map$
 
 automatic_scaling:
   target_cpu_utilization: 0.85
