@@ -1506,6 +1506,8 @@ const messages: VueI18n.LocaleMessageObject = {
     shareButton: 'Share',
     errors: {
       default: 'Oh no. Something went wrong',
+      ADDRESS_ALREADY_HAS_TAG: 'You already have a tag for this address',
+      ALREADY_EXISTS: 'Tag already exists',
       tag: {
         required: '$tag must be not empty',
         minLength: '$tag must contain at least {minLength} characters',

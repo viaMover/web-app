@@ -5,6 +5,7 @@ import {
   MoverAPIService,
   MoverAPISuccessfulResponse
 } from '@/services/v2/api/mover';
+import { isProduction } from '@/settings';
 import { Network } from '@/utils/networkTypes';
 
 import {
@@ -65,6 +66,8 @@ export class MoverAPITagService extends MoverAPIService {
   }
 
   protected lookupBaseURL(): string {
-    return 'https://apitag.viamover.com';
+    return isProduction()
+      ? 'https://apitag.viamover.com'
+      : 'https://apitagstg.viamover.com';
   }
 }
