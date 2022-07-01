@@ -10,7 +10,7 @@ export {
   getTreasuryBonus
 } from './treasury/treasury';
 
-export { PowercardState, PowerCardTimings } from './treasury/types';
+export type { PowercardState, PowerCardTimings } from './treasury/types';
 
 export { powercardBalance, getPowercardState } from './treasury/powercard';
 
@@ -53,13 +53,13 @@ export {
   getOrderOfLibertyData,
   claimOrderOfLiberty
 } from './nft/order-of-liberty/service';
-export { OrderOfLibertyData } from './nft/order-of-liberty/types';
+export type { OrderOfLibertyData } from './nft/order-of-liberty/types';
 
 export {
   getBaseledgerStakingOGData,
   claimBaseledgerStakingOG
 } from './nft/baseledger-staking-og/baseledger-staking-og';
-export { BaseledgerStakingOGData } from './nft/baseledger-staking-og/types';
+export type { BaseledgerStakingOGData } from './nft/baseledger-staking-og/types';
 export { getBaseledgerStakingOGSignature } from './nft/baseledger-staking-og/service';
 
 export {
