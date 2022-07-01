@@ -69,4 +69,4 @@ handlers:
   static_files: www/index.html
   upload: www/index.html
   secure: always
-  expiration: "1m"
+  expiration: "0d 0h"
