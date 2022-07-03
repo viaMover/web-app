@@ -83,7 +83,10 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
       addSentryBreadcrumb({
         type: 'error',
         category: 'reserveTag.actions.tag.store',
-        message: 'Failed to fetch reserveTag'
+        message: 'Failed to reserve tag',
+        data: {
+          error
+        }
       });
       throw error;
     }
