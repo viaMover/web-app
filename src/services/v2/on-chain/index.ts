@@ -10,7 +10,8 @@ export {
   isProviderRpcError,
   mapProviderRpcErrorToMessage
 } from './ProviderRPCError';
-export { ProviderRpcErrorCode, ProviderRpcError } from './ProviderRPCError';
+export type { ProviderRpcError } from './ProviderRPCError';
+export { ProviderRpcErrorCode } from './ProviderRPCError';
 
 export * as Mover from './mover';
 export * as ENS from './ens';
