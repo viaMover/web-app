@@ -7,6 +7,7 @@ import {
 } from '@/services/v2/api/mover';
 import { isProduction } from '@/settings';
 import { Network } from '@/utils/networkTypes';
+import { currentTimestamp } from '@/utils/time';
 
 import {
   LookupTagResponse,
@@ -33,7 +34,9 @@ export class MoverAPITagService extends MoverAPIService {
 
   public async reserveTag(tag: string): Promise<ReserveTagResponse> {
     const dataToSign = {
-      name: tag
+      name: tag,
+      address: this.currentAddress,
+      timestamp: currentTimestamp()
     };
 
     const signature = await this.web3Client.eth.personal.sign(

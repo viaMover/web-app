@@ -1,6 +1,8 @@
 export type ReserveTagPayload = {
   data: {
     name: string;
+    address: string;
+    timestamp: number;
   };
   meta: {
     address: string;
