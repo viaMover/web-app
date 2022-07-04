@@ -1507,7 +1507,7 @@ const messages: VueI18n.LocaleMessageObject = {
     reserveTheTagButton: 'Reserve the $tag',
     shareButton: 'Share',
     twit:
-      `This is proof of my tag - \${tag} ownership and reservation in \n` +
+      'This is proof of my tag - ${tag} ownership and reservation in \n' +
       '@viaMover. \n' +
       '\n' +
       '💲💲💲\n' +
