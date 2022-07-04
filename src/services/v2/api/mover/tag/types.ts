@@ -8,8 +8,12 @@ export type ReserveTagPayload = {
   };
 };
 
-export type ReserveTagResponse = void;
+export type ReserveTagResponse = {
+  name: string;
+  sig: string;
+};
 
 export type LookupTagResponse = {
   name: string;
+  sig: string;
 };

@@ -5,6 +5,12 @@ export type TagStoreState = {
   isBannerVisible: boolean;
 
   tag: string | undefined;
+  sig: string | undefined;
 
   apiService: MoverAPITagService | undefined;
+};
+
+export type SetTagAndSigArgs = {
+  tag: string;
+  sig: string;
 };

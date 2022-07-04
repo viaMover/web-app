@@ -17,6 +17,8 @@ const messages: VueI18n.LocaleMessageObject = {
   lblWallet: 'Wallet',
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
+  lblManageTagEmoji: '💲',
+  lblManageTag: '@:lblManageTagEmoji Manage tag',
   lblNewToMover: 'Looks like you are new to Mover',
   lblTransactionListNotAvailable:
     'Transaction list is not available in this network',
@@ -1504,6 +1506,12 @@ const messages: VueI18n.LocaleMessageObject = {
     chooseTheTagButton: 'Choose the $tag',
     reserveTheTagButton: 'Reserve the $tag',
     shareButton: 'Share',
+    twit:
+      `This is proof of my tag - \${tag} ownership and reservation in \n` +
+      '@viaMover. \n' +
+      '\n' +
+      '💲💲💲\n' +
+      '{sig}',
     errors: {
       default: 'Oh no. Something went wrong',
       ADDRESS_ALREADY_HAS_TAG: 'You already have a tag for this address',

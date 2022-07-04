@@ -41,7 +41,7 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
       }
 
       const result = await service.lookupTag();
-      commit('setTag', result.name);
+      commit('setTagAndSig', { tag: result.name, sig: result.sig });
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',
@@ -77,8 +77,8 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
     }
 
     try {
-      await service.reserveTag(tag);
-      commit('setTag', tag);
+      const response = await service.reserveTag(tag);
+      commit('setTagAndSig', { tag: response.name, sig: response.sig });
     } catch (error) {
       addSentryBreadcrumb({
         type: 'error',

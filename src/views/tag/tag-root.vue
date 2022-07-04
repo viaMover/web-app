@@ -82,7 +82,7 @@ export default Vue.extend({
         return this.$t('tag.notReserved') as string;
       }
 
-      return this.tag;
+      return `$${this.tag}`;
     }
   },
   mounted() {

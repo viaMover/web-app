@@ -11,6 +11,7 @@ const initialState: TagStoreState = {
   isBannerVisible: true,
 
   tag: undefined,
+  sig: undefined,
   apiService: undefined
 };
 

@@ -10,7 +10,7 @@
     <form
       class="form info"
       :class="{ error: $v.$anyError || errorText !== '' }"
-      @submit.prevent="handleReserveTag"
+      @submit.prevent="handleReserveTag($event)"
     >
       <div class="input-group" :class="{ error: $v.tag.$error }">
         <label>
@@ -57,7 +57,16 @@
 
       <div class="actions">
         <div class="group default">
+          <a
+            v-if="showShareButton"
+            class="button primary link-button"
+            :href="twitMessage"
+            target="_blank"
+          >
+            {{ $t('tag.shareButton') }}
+          </a>
           <action-button
+            v-else
             ref="button"
             class="primary"
             :disabled="isLoading || tag.length < 1 || $v.$error"
@@ -70,6 +79,7 @@
                 src="@/assets/images/ios-spinner-white.svg"
               />
             </div>
+
             <template v-else>
               {{ buttonText }}
             </template>
@@ -94,6 +104,8 @@ import {
 } from 'vuelidate/lib/validators';
 import { mapActions, mapState } from 'vuex';
 
+import party from 'party-js';
+
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 
@@ -117,15 +129,26 @@ export default Vue.extend({
   },
   computed: {
     ...mapState('tag', {
-      reservedTag: 'tag'
+      reservedTag: 'tag',
+      signature: 'sig'
     }),
+    showShareButton(): boolean {
+      return this.reservedTag !== '' && this.tag === this.reservedTag;
+    },
+    twitMessage(): string {
+      return (
+        'https://twitter.com/intent/tweet?text=' +
+        encodeURIComponent(
+          this.$t('tag.twit', {
+            tag: this.reservedTag,
+            sig: this.signature
+          }) as string
+        )
+      );
+    },
     buttonText(): string {
       if (this.tag === '') {
         return this.$t('tag.chooseTheTagButton') as string;
-      }
-
-      if (this.reservedTag !== '' && this.tag === this.reservedTag) {
-        return this.$t('tag.shareButton') as string;
       }
 
       return this.$t('tag.reserveTheTagButton') as string;
@@ -146,13 +169,7 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('tag', ['reserveTag', 'loadInfo']),
-    async handleReserveTag(): Promise<void> {
-      if (this.reservedTag !== '' && this.tag === this.reservedTag) {
-        // TODO: add share logic
-        console.log('Share in Twitter');
-        return;
-      }
-
+    async handleReserveTag($event: Event): Promise<void> {
       this.errorText = '';
       this.$v.$touch();
       if (this.$v.$invalid) {
@@ -163,6 +180,9 @@ export default Vue.extend({
       try {
         this.isLoading = true;
         await this.reserveTag(this.tag);
+        party.confetti($event.target as HTMLInputElement, {
+          count: party.variation.range(20, 40)
+        });
       } catch (error) {
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {

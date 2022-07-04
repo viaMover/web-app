@@ -1,10 +1,10 @@
 import { MoverAPITagService } from '@/services/v2/api/mover/tag';
 import { MutationFuncs } from '@/store/types';
 
-import { TagStoreState } from './types';
+import { SetTagAndSigArgs, TagStoreState } from './types';
 
 type Mutations = {
-  setTag: void;
+  setTagAndSig: void;
   setIsLoading: void;
   setIsBannerVisible: void;
   toggleIsBannerVisible: void;
@@ -12,8 +12,9 @@ type Mutations = {
 };
 
 const mutations: MutationFuncs<Mutations, TagStoreState> = {
-  setTag(state, tag: string | undefined): void {
+  setTagAndSig(state, { tag, sig }: SetTagAndSigArgs): void {
     state.tag = tag;
+    state.sig = sig;
   },
   setIsLoading(state, isLoading: boolean): void {
     state.isLoading = isLoading;
