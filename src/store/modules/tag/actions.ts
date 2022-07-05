@@ -1,4 +1,5 @@
-import { MoverAPITagService } from '@/services/v2/api/mover/tag';
+import { MoverAPIError } from '@/services/v2/api/mover';
+import { ErrorCode, MoverAPITagService } from '@/services/v2/api/mover/tag';
 import {
   addSentryBreadcrumb,
   captureSentryException
@@ -43,6 +44,21 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
       const result = await service.lookupTag();
       commit('setTagAndSig', { tag: result.name, sig: result.sig });
     } catch (error) {
+      if (
+        error instanceof MoverAPIError &&
+        error.shortMessage === ErrorCode.TagNotFound
+      ) {
+        addSentryBreadcrumb({
+          type: 'debug',
+          category: 'loadInfo.actions.tag.store',
+          message: 'Tag not found',
+          data: {
+            error
+          }
+        });
+        return;
+      }
+
       addSentryBreadcrumb({
         type: 'error',
         category: 'loadInfo.actions.tag.store',

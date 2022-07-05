@@ -19,3 +19,7 @@ export type LookupTagResponse = {
   name: string;
   sig: string;
 };
+
+export enum ErrorCode {
+  TagNotFound = 'NOT_FOUND'
+}
