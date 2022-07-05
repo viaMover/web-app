@@ -2,6 +2,12 @@
   <secondary-page class="manage set-email">
     <template v-slot:title>
       <secondary-page-header
+        v-if="showShareButton"
+        :description="$t('tag.shareTagDescription')"
+        :title="$t('tag.shareTagTitle', { tag: reservedTag })"
+      />
+      <secondary-page-header
+        v-else
         :description="$t('tag.reserveTagDescription')"
         :title="$t('tag.reserveTagTitle')"
       />
@@ -12,7 +18,11 @@
       :class="{ error: $v.$anyError || errorText !== '' }"
       @submit.prevent="handleReserveTag($event)"
     >
-      <div class="input-group" :class="{ error: $v.tag.$error }">
+      <div
+        v-if="!showShareButton"
+        class="input-group"
+        :class="{ error: $v.tag.$error }"
+      >
         <label>
           {{ $t('tag.yourTagTitle') }}
           <input
@@ -45,6 +55,9 @@
         <span v-if="!$v.tag.alpha" class="error-message">
           {{ $t('tag.errors.tag.alpha') }}
         </span>
+        <span v-if="!$v.tag.notSame" class="error-message">
+          {{ $t('tag.errors.tag.notSame') }}
+        </span>
         <p class="description">
           {{
             $t('tag.yourTagDescription', {
@@ -53,6 +66,10 @@
             })
           }}
         </p>
+      </div>
+      <div v-else class="whats-next">
+        <h2 class="title">{{ $t('tag.whatsNextTitle') }}</h2>
+        <p class="description">{{ $t('tag.whatsNextDescription') }}</p>
       </div>
 
       <div class="actions">
@@ -63,13 +80,18 @@
             :href="twitMessage"
             target="_blank"
           >
+            <img
+              alt="Twitter logo"
+              class="twitter-logo"
+              src="@/assets/images/twitter.svg"
+            />
             {{ $t('tag.shareButton') }}
           </a>
           <action-button
             v-else
             ref="button"
             class="primary"
-            :disabled="isLoading || tag.length < 1 || $v.$error"
+            :disabled="isLoading || tag.length < 2 || $v.$error"
             propagate-original-event
             type="submit"
           >
@@ -100,7 +122,9 @@ import {
   alpha,
   maxLength,
   minLength,
-  required
+  not,
+  required,
+  sameAs
 } from 'vuelidate/lib/validators';
 import { mapActions, mapState } from 'vuex';
 
@@ -123,6 +147,7 @@ export default Vue.extend({
     return {
       tag: '',
 
+      reservedNow: false,
       isLoading: false,
       errorText: ''
     };
@@ -133,7 +158,11 @@ export default Vue.extend({
       signature: 'sig'
     }),
     showShareButton(): boolean {
-      return this.reservedTag !== '' && this.tag === this.reservedTag;
+      return (
+        this.reservedTag !== '' &&
+        this.tag === this.reservedTag &&
+        this.reservedNow
+      );
     },
     twitMessage(): string {
       return (
@@ -151,10 +180,15 @@ export default Vue.extend({
         return this.$t('tag.chooseTheTagButton') as string;
       }
 
-      return this.$t('tag.reserveTheTagButton') as string;
+      if (this.reservedTag === undefined) {
+        return this.$t('tag.reserveTheTagButton') as string;
+      }
+
+      return this.$t('tag.changeTheTagButton') as string;
     }
   },
   mounted() {
+    party.settings.gravity = 400;
     this.$watch(
       () => this.reservedTag,
       (newVal) => {
@@ -180,8 +214,9 @@ export default Vue.extend({
       try {
         this.isLoading = true;
         await this.reserveTag(this.tag);
+        this.reservedNow = true;
         party.confetti($event.target as HTMLInputElement, {
-          count: party.variation.range(20, 40)
+          count: 75
         });
       } catch (error) {
         if (isProviderRpcError(error)) {
@@ -227,6 +262,7 @@ export default Vue.extend({
       required,
       minLength: minLength(2),
       maxLength: maxLength(20),
+      notSame: not(sameAs((vm) => vm.reservedTag)),
       alpha
     }
   }
