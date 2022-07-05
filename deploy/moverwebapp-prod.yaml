@@ -34,6 +34,8 @@ handlers:
   static_files: www/js/\1
   upload: www/js/(.*)
   secure: always
+  http_headers:
+    Access-Control-Allow-Origin: https://app.viamover.com
 
 - url: /img/(.*)
   static_files: www/img/\1
@@ -54,6 +56,8 @@ handlers:
   static_files: www/intercom-web-init.js
   upload: www/intercom-web-init.js
   secure: always
+  http_headers:
+    Access-Control-Allow-Origin: https://app.viamover.com
 
 - url: /remove-all
   static_files: www/remove-index.html
@@ -65,4 +69,4 @@ handlers:
   static_files: www/index.html
   upload: www/index.html
   secure: always
-  expiration: "1m"
+  expiration: "0d 0h"
