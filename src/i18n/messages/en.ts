@@ -1504,8 +1504,14 @@ const messages: VueI18n.LocaleMessageObject = {
     yourTagDescription:
       'Your $tag has to be unique. It must contain at least {minLength} character and be no more than {maxLength} characters. You can always change it later. Make sure you reserve yours.',
     chooseTheTagButton: 'Choose the $tag',
+    changeTheTagButton: 'Change the $tag',
     reserveTheTagButton: 'Reserve the $tag',
-    shareButton: 'Share',
+    shareButton: 'Flex on Twitter',
+    shareTagTitle: 'Congratulations, ${tag}',
+    shareTagDescription: 'You have successfully reserved your unique tag.',
+    whatsNextTitle: "What's next?",
+    whatsNextDescription:
+      'We will be rolling the open tag system shortly that will allow your favorite projects and protocols to create a flow on the Mover card. What you can do now is share you tag on Twitter. Let your friends reserve their tags, and let us know about your favorite projects you want us to integrate.',
     twit:
       'This is proof of my tag - ${tag} ownership and reservation in @viaMover. \n' +
       '\n' +
@@ -1519,7 +1525,8 @@ const messages: VueI18n.LocaleMessageObject = {
         required: '$tag must be not empty',
         minLength: '$tag must contain at least {minLength} characters',
         maxLength: '$tag must contain no more than {maxLength} characters',
-        alpha: '$tag must contain only letters'
+        alpha: '$tag must contain only letters',
+        notSame: 'new $tag should be different'
       }
     }
   }
