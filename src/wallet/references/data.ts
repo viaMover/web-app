@@ -149,7 +149,8 @@ export type AddressMapKey =
   | 'ST_ETH_TOKEN_ADDRESS'
   | 'ENS_REVERSE_RECORDS_CONTRACT'
   | 'ENS_NFT_CONTRACT'
-  | 'UNS_RESOLVER_CONTRACT';
+  | 'UNS_RESOLVER_CONTRACT'
+  | 'EXCHANGE_PROXY_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -324,7 +325,6 @@ const addresses = {
     HOLY_HAND_ADDRESS: '0xFDB9B2a9E3A94be3Bd134F6066065cccEa89926B',
     USDC_TOKEN_ADDRESS: '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75'
   },
-  [Network.arbitrum]: {},
   [Network.avalanche]: {
     HOLY_HAND_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
     USDC_TOKEN_ADDRESS: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664'
@@ -332,6 +332,11 @@ const addresses = {
   [Network.binance]: {
     HOLY_HAND_ADDRESS: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
     USDC_TOKEN_ADDRESS: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
+  },
+  [Network.arbitrum]: {
+    HOLY_HAND_ADDRESS: '0x34082fa0229979ffd8e6c327ce462ed6d619f9a2',
+    EXCHANGE_PROXY_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
+    USDC_TOKEN_ADDRESS: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'
   }
 } as AddressMap;
 

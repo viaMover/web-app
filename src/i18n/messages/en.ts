@@ -1,6 +1,6 @@
 import VueI18n from 'vue-i18n';
 
-import { ValidationErrorReason } from '@/services/v2/api/0x/types';
+import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
@@ -18,6 +18,8 @@ const messages: VueI18n.LocaleMessageObject = {
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
   lblNewToMover: 'Looks like you are new to Mover',
+  lblTransactionListNotAvailable:
+    'Transaction list is not available in this network',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',

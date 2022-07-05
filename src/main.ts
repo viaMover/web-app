@@ -52,7 +52,7 @@ if (!isDevelop()) {
     // We recommend adjusting this value in production
     tracesSampleRate: 1.0,
     logErrors: true,
-    environment: process.env.NODE_ENV,
+    environment: process.env.VUE_APP_SENTRY_ENV,
     trackComponents: true
   });
 }

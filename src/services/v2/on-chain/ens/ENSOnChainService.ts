@@ -57,13 +57,9 @@ export class ENSOnChainService extends OnChainService {
           );
         }
 
-        console.debug(arg);
-
         const allNames = await this.reverseRecordsContract.methods
           .getNames(arg)
           .call({ from: this.currentAddress });
-
-        console.debug(allNames);
 
         return allNames.filter((n) => n === namehash.normalize(n));
       },

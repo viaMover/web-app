@@ -1,0 +1,102 @@
+name: Build and Deploy to production
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  build-prod:
+    runs-on: ubuntu-latest
+
+    env:
+      VUE_APP_IS_DEV: false
+      CI_SECRET: ${{ secrets.CI_SECRET }}
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Use Node.js 14.17.4
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.17.4
+          cache: 'yarn'
+
+      - name: Prepare files to build static web app
+        run: |
+          openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/keys-prod.enc -out deploy/keys-prod.dec
+          mv deploy/keys-prod.dec src/settings/keys.ts
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build app
+        run: yarn build-prod
+
+      - name: Upload dist artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-prod
+          path: dist
+
+      - name: Upload deploy artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy-prod
+          path: deploy
+
+  deploy-prod:
+    needs: build-prod
+    runs-on: ubuntu-latest
+    environment: Production
+
+    env:
+      CI_SECRET: ${{ secrets.CI_SECRET }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: holyheld
+      SENTRY_PROJECT: move-web-app
+      SENTRY_ENVIRONMENT: production
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: app-prod
+          path: dist/
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: deploy-prod
+          path: deploy/
+
+      - name: Install Google Cloud SDK
+        run: |
+          wget -qO- https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-351.0.0-linux-x86_64.tar.gz | sudo tar xz -C /usr/local
+          sudo /usr/local/google-cloud-sdk/install.sh --quiet
+          sudo /usr/local/google-cloud-sdk/bin/gcloud components install app-engine-go
+      - name: Decrypt deploy key
+        run: |
+          openssl aes-256-cbc -pbkdf2 -iter 100000 -d -k $CI_SECRET -in deploy/deploykey-stg.enc -out deploy/deploykey-stg.json
+          /usr/local/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file deploy/deploykey-stg.json
+      - name: Deploy to GAE
+        run: |
+          mkdir deploy/www
+          mv dist/* deploy/www/
+          mv deploy/www dist/
+          cp deploy/moverwebapp-prod.yaml dist/
+          cd dist
+          /usr/local/google-cloud-sdk/bin/gcloud app deploy --project mcmannaman-208313 moverwebapp-prod.yaml --promote
+      - name: Create release and notify Sentry of deploy
+        run: |
+          curl -sL https://sentry.io/get-cli/ | bash
+          export SENTRY_RELEASE=$GITHUB_SHA
+          sentry-cli releases new -p $SENTRY_PROJECT $SENTRY_RELEASE
+          sentry-cli releases set-commits $SENTRY_RELEASE --commit "viaMover/web-app@$GITHUB_SHA"
+          sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist/www/js/*
+          sentry-cli releases finalize $SENTRY_RELEASE
+          sentry-cli releases deploys $SENTRY_RELEASE new -e $SENTRY_ENVIRONMENT

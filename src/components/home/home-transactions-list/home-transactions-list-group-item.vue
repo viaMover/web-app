@@ -36,6 +36,7 @@ import {
   formatToNative,
   getSignIfNeeded
 } from '@/utils/format';
+import { getNetwork } from '@/utils/networkTypes';
 import { Transaction, TransactionTypes } from '@/wallet/types';
 
 import { TokenImage } from '@/components/tokens';
@@ -150,11 +151,10 @@ export default Vue.extend({
       }
       return '';
     },
-    isLPToken(): boolean {
-      return false;
-    },
     txHref(): string {
-      return `https://etherscan.io/tx/${this.transaction.hash}`;
+      const base =
+        getNetwork(this.currentNetwork)?.explorer ?? 'https://etherscan.io';
+      return `${base}/tx/${this.transaction.hash}`;
     }
   }
 });

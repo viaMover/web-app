@@ -1,9 +1,8 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 
-import { TransferData } from '@/services/0x/api';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
-import { ZeroXAPIService } from '@/services/v2/api/0x';
+import { SwapAPIService, TransferData } from '@/services/v2/api/swap';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import {
   CompoundEstimateWithUnwrapResponse,
@@ -35,7 +34,7 @@ import { LoaderStep } from '@/components/forms';
 export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'debit-card.on-chain.service';
   specialTokenHandlers: Array<WrappedToken> = [];
-  swapService: ZeroXAPIService;
+  swapService: SwapAPIService;
   protected readonly usdcAssetData: SmallTokenInfo;
   protected readonly eursAssetData: SmallTokenInfo;
   protected readonly centralTransferProxyAddress: string;
@@ -43,7 +42,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
   constructor(currentAddress: string, network: Network, web3Client: Web3) {
     super(currentAddress, network, web3Client);
-    this.swapService = new ZeroXAPIService(currentAddress, network);
+    this.swapService = new SwapAPIService(currentAddress, network);
     this.usdcAssetData = getUSDCAssetData(network);
     this.eursAssetData = getEURSAssetData(network);
     this.centralTransferProxyAddress = lookupAddress(
