@@ -25,11 +25,12 @@
       >
         <label>
           {{ $t('tag.yourTagTitle') }}
-          <input
+          <the-mask
             v-model.trim="tag"
             autocomplete="off"
             autofocus
             :disabled="isLoading"
+            mask="$SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
             name="tag"
             :placeholder="$t('tag.yourTagPlaceholder')"
             type="text"
@@ -118,6 +119,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { TheMask } from 'vue-the-mask';
 import {
   alpha,
   maxLength,
@@ -141,7 +143,8 @@ export default Vue.extend({
   components: {
     SecondaryPage,
     SecondaryPageHeader,
-    ActionButton
+    ActionButton,
+    TheMask
   },
   data() {
     return {

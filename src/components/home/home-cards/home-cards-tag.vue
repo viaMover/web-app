@@ -5,7 +5,7 @@
     :description="$t('tag.bannerReserveTagDescription')"
     :image="image"
     is-black-close-btn
-    :opened="isVisible"
+    :opened="isInfoVisible"
     :title="$t('tag.bannerReserveTagTitle')"
     @button-click="handleButtonClick"
     @close="toggleInfo"
