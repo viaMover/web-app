@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueRouter, { NavigationFailureType, RouteConfig } from 'vue-router';
+import VueRouter, { RouteConfig } from 'vue-router';
 import { Store } from 'vuex';
 
 import { loadLanguageAsync } from '@/i18n';
@@ -749,8 +749,14 @@ router.beforeResolve(requireCustomCondition(router));
 
 router.onError((error) => {
   if (
-    VueRouter.isNavigationFailure(error, NavigationFailureType.duplicated) ||
-    VueRouter.isNavigationFailure(error, NavigationFailureType.redirected)
+    VueRouter.isNavigationFailure(
+      error,
+      VueRouter.NavigationFailureType.duplicated
+    ) ||
+    VueRouter.isNavigationFailure(
+      error,
+      VueRouter.NavigationFailureType.redirected
+    )
   ) {
     console.warn(`prevented navigation: ${error.message} (${error.type})`);
     return;

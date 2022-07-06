@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 
+import axios from 'axios';
+
 import en from './messages/en';
 
 Vue.use(VueI18n);
@@ -17,7 +19,7 @@ const loadedLanguages = ['en']; // our default language that is preloaded
 
 export function setI18nLanguage(lang: string): string {
   i18n.locale = lang;
-  // axios.defaults.headers.common["Accept-Language"] = lang;
+  axios.defaults.headers.common['Accept-Language'] = lang;
   document.querySelector('html')?.setAttribute('lang', lang);
   return lang;
 }
@@ -40,7 +42,11 @@ export async function loadLanguageAsync(lang?: string): Promise<string> {
   // If the language hasn't been loaded yet
   try {
     const messages = await import(
-      /* webpackChunkName: "lang-[request]" */ `@/i18n/messages/${lang}.ts`
+      /* webpackInclude: /\.ts/ */
+      /* webpackChunkName: "locales-[request]" */
+      /* webpackMode: "lazy" */
+      /* webpackPrefetch: true */
+      `@/i18n/messages/${lang}.ts`
     );
     i18n.setLocaleMessage(lang, messages.default);
     loadedLanguages.push(lang);
