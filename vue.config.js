@@ -1,9 +1,19 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const webpack = require('webpack');
+
 module.exports = {
   transpileDependencies: ['web3modal-vue'],
   css: {
     sourceMap: process.env.NODE_ENV !== 'production'
   },
   configureWebpack: {
+    plugins: process.env.SHRINK_CHUNKS
+      ? [
+          new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 2
+          })
+        ]
+      : [],
     devtool: 'sourcemap'
   },
   chainWebpack: (config) => {
