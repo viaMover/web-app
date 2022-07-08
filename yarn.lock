@@ -16354,7 +16354,7 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^4.0.0:
+webpack@4.46.0, webpack@^4.0.0:
   version "4.46.0"
   resolved "https://registry.nlark.com/webpack/download/webpack-4.46.0.tgz?cache=0&sync_timestamp=1620663870276&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fwebpack%2Fdownload%2Fwebpack-4.46.0.tgz#bf9b4404ea20a073605e0a011d188d77cb6ad542"
   integrity sha1-v5tEBOogoHNgXgoBHRiNd8tq1UI=
