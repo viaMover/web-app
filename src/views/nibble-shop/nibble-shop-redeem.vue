@@ -191,7 +191,7 @@ import { mapActions, mapState } from 'vuex';
 import * as Sentry from '@sentry/vue';
 
 import { NibbleShopApiError } from '@/services/mover/nibble-shop/types';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { isProviderRpcError } from '@/services/v2/on-chain';
 import { RedeemPayload } from '@/store/modules/shop/types';
 import { Asset, RedeemParams } from '@/store/modules/shop/types';
 

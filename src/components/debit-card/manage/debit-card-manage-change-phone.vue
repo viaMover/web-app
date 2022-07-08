@@ -88,7 +88,7 @@ import {
   DebitCardApiError,
   DebitCardNotSupportedCountryError
 } from '@/services/mover/debit-card';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { isProviderRpcError } from '@/services/v2/on-chain';
 import { mapCountryCodeToEmoji } from '@/utils/emoji';
 
 import { ActionButton } from '@/components/buttons';

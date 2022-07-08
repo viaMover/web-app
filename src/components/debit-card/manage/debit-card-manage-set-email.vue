@@ -88,7 +88,7 @@ import { email, required } from 'vuelidate/lib/validators';
 import { mapActions, mapGetters } from 'vuex';
 
 import { DebitCardApiError } from '@/services/mover/debit-card';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { isProviderRpcError } from '@/services/v2/on-chain';
 
 import { ActionButton } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
