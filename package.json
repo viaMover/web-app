@@ -7,6 +7,7 @@
     "serve-https": "vue-cli-service serve --port 3000 --https true",
     "serve-stage": "vue-cli-service serve --port 3000 --mode stage",
     "build-prod": "vue-cli-service build --modern",
+    "build-prod-no-modern": "vue-cli-service build --no-modern",
     "build-stage": "vue-cli-service build --mode stage --silent --modern",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
