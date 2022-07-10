@@ -91,7 +91,6 @@ export type Proposal = {
   status: ProposalStatus;
   votingActivity: number;
   communityVotingPower: number;
-  minimalVotingPower: number;
 };
 
 export type Vote = {
@@ -117,4 +116,5 @@ export type CurrentVotingInfo = {
   votingPower: number;
   communityVotingPower: number;
   minimalVotingPower: number; // to create a proposal
+  proposalDaysToRun: number; // fixme: ensure types are correct
 };
