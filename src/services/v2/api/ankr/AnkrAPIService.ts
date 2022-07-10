@@ -32,7 +32,8 @@ export class AnkrAPIService extends APIService {
     Network.polygon,
     Network.avalanche,
     Network.fantom,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ];
 
   constructor(

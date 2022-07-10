@@ -77,7 +77,8 @@ const values: Globals = {
     Network.polygon,
     Network.avalanche,
     Network.binance,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ],
   isExplorerEnabled: [
     Network.mainnet,
@@ -89,7 +90,8 @@ const values: Globals = {
     Network.avalanche,
     Network.fantom,
     Network.polygon,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ],
   isTransactionsListAvailable: [
     Network.mainnet,
@@ -100,7 +102,8 @@ const values: Globals = {
     Network.rinkeby,
     Network.avalanche,
     Network.fantom,
-    Network.polygon
+    Network.polygon,
+    Network.optimism
   ],
   isOffchainExplorerEnabled: [Network.mainnet],
   isEarningsEnabled: false,
@@ -117,7 +120,8 @@ const values: Globals = {
     Network.fantom,
     Network.avalanche,
     Network.binance,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
