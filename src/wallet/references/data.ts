@@ -1,6 +1,7 @@
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
+import { getIdleTokens } from '@/wallet/references/idleTokensData';
 import {
   getSimpleYearnVaultTokenByAddress,
   getSimpleYearnVaultTokens,
@@ -19,6 +20,7 @@ import GALCX_ABI from './abi/galcx-abi.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
+import IDLE_TOKEN_ABI from './abi/idle/idle-token-abi.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_BASELEDGER_STAKING_OG_ABI from './abi/nft-baseledger-staking-og.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
@@ -695,7 +697,8 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'FIRST_TOKEN_ADDRESS'),
     lookupAddress(network, 'ST_ETH_TOKEN_ADDRESS'),
     lookupAddress(network, 'LDO_TOKEN_ADDRESS'),
-    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address)
+    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address),
+    ...getIdleTokens(network).map((t) => t.wrapToken.address)
   ];
 };
 
@@ -748,5 +751,6 @@ export {
   getSlippage,
   SavingsPlusUSDCDecimals,
   REVERSE_RECORDS_ABI,
-  UNS_RESOLVER_CONTRACT_ABI
+  UNS_RESOLVER_CONTRACT_ABI,
+  IDLE_TOKEN_ABI
 };

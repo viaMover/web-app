@@ -29,7 +29,7 @@
     >
       <template v-slot:swap-message>
         <div
-          v-if="isSwapNeeded && formattedUSDCTotal && inputMode === 'TOKEN'"
+          v-if="isUsdc && formattedUSDCTotal && inputMode === 'TOKEN'"
           class="section swap-message"
         >
           {{ $t('forms.lblSwappingFor') }}
@@ -83,31 +83,22 @@ import {
   convertNativeAmountFromAmount,
   divide,
   fromWei,
-  getInteger,
   greaterThan,
   isZero,
   lessThan,
-  multiply,
-  toWei
+  multiply
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
 import {
-  getALCXAssetData,
-  getBTRFLYAssetData,
-  getCULTAssetData,
   getEURSAssetData,
-  getSimpleYearnVaultTokenByAddress,
   getSlippage,
   getUSDCAssetData,
-  isSimpleYearnVault,
-  lookupAddress,
   validTopUpAssets
 } from '@/wallet/references/data';
 import {
   SmallTokenInfo,
   SmallTokenInfoWithIcon,
-  tokenToSmallTokenInfo,
   TokenWithBalance
 } from '@/wallet/types';
 
@@ -172,6 +163,7 @@ export default Vue.extend({
       inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '',
       inputAmountNative: '',
+      formattedUSDCTotal: undefined as undefined | string,
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       usdcPriceInEur: undefined as undefined | string,
@@ -199,8 +191,6 @@ export default Vue.extend({
       'provider'
     ]),
     ...mapState('debitCard', {
-      wxBTRFLYrealIndex: 'wxBTRFLYrealIndex',
-      gALCXToALCXMultiplier: 'gALCXToALCXMultiplier',
       debitCardOnChainService: 'onChainService',
       emailHash: 'emailHash',
       emailSignature: 'emailSignature'
@@ -218,12 +208,11 @@ export default Vue.extend({
     nativeCurrencySymbol(): string {
       return this.nativeCurrency.toUpperCase();
     },
-    isSwapNeeded(): boolean {
+    isUsdc(): boolean {
       if (this.inputAsset === undefined) {
-        return true;
+        return false;
       }
-
-      return !sameAddress(this.inputAsset.address, this.usdcAsset.address);
+      return sameAddress(this.inputAsset.address, this.usdcAsset.address);
     },
     transferErrorComplex(): string | undefined {
       if (this.transferError !== undefined) {
@@ -244,9 +233,9 @@ export default Vue.extend({
     },
     description(): string {
       return (
-        this.isSwapNeeded
-          ? this.$t('debitCard.topUp.txtNonNativeAsset')
-          : this.$t('debitCard.topUp.txtNativeAsset')
+        this.isUsdc
+          ? this.$t('debitCard.topUp.txtNativeAsset')
+          : this.$t('debitCard.topUp.txtNonNativeAsset')
       ) as string;
     },
     hasBackButton(): boolean {
@@ -257,39 +246,6 @@ export default Vue.extend({
     },
     formattedNativeAmount(): string {
       return `${formatToNative(this.approximateEUREstimationAmount)} EUR`;
-    },
-    formattedUSDCTotal(): string {
-      if (this.inputAsset === undefined) {
-        return '0 USDC';
-      }
-
-      if (sameAddress(this.inputAsset.address, this.usdcAsset.address)) {
-        return `${formatToNative(this.inputAmount)} USDC`;
-      }
-
-      if (this.transferData !== undefined) {
-        const boughtUSDC = fromWei(
-          this.transferData.buyAmount,
-          this.usdcAsset.decimals
-        );
-        return `${formatToNative(boughtUSDC)} USDC`;
-      }
-
-      const simpleVault = getSimpleYearnVaultTokenByAddress(
-        this.inputAsset.address,
-        this.networkInfo.network
-      );
-
-      if (simpleVault !== undefined && greaterThan(this.inputAmount, 0)) {
-        const newInputInTokens = multiply(
-          this.inputAmount,
-          this.vaultMultiplier
-        );
-
-        return `${formatToNative(newInputInTokens)} USDC`;
-      }
-
-      return '';
     },
     topUpTokenAddress(): string | undefined {
       if (this.inputAsset === undefined) {
@@ -357,6 +313,7 @@ export default Vue.extend({
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     ...mapActions('debitCard', {
       getYearnVaultMultiplier: 'getYearnVaultMultiplier',
+      getIdleTokenMultiplier: 'getIdleTokenMultiplier',
       loadInfo: 'loadInfo'
     }),
     ...mapActions('account', {
@@ -428,7 +385,7 @@ export default Vue.extend({
     async handleUpdateAmount(val: string): Promise<void> {
       await this.updateAmount(val, this.inputMode);
     },
-    async updateApproximateEURSEstimationValue(mode: InputMode): Promise<void> {
+    async updateApproximateEURSEstimationValue(): Promise<void> {
       if (this.approximateEstimationDebounceHandler !== undefined) {
         // clear debounce handler to prevent last queued update from
         // being executed
@@ -467,85 +424,20 @@ export default Vue.extend({
               }
             }
 
-            const referenceAmount =
-              mode === 'TOKEN' ? this.inputAmount : this.inputAmountNative;
-            let referenceToken:
-              | TokenWithBalance
-              | SmallTokenInfoWithIcon
-              | SmallTokenInfo
-              | undefined = mode === 'TOKEN' ? this.inputAsset : this.usdcAsset;
-            if (referenceToken === undefined) {
+            if (this.inputAsset === undefined) {
               // if reference token is an arbitrary token
               // but is evaluated as undefined, we preserve the last estimated amount
               return;
             }
 
-            let inputInWei = toWei(referenceAmount, referenceToken.decimals);
+            const unwrappedData = await (
+              this.debitCardOnChainService as DebitCardOnChainService
+            ).getUnwrappedData(this.inputAsset, this.inputAmount);
 
-            const simpleVault = getSimpleYearnVaultTokenByAddress(
-              referenceToken.address,
-              this.networkInfo.network
-            );
+            const referenceToken: SmallTokenInfo = unwrappedData.unwrappedToken;
+            const inputInWei = unwrappedData.amountInWei;
 
-            if (simpleVault !== undefined) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                this.vaultMultiplier
-              );
-              referenceToken = simpleVault.commonToken;
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
-
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(
-                  this.networkInfo.network,
-                  'WX_BTRFLY_TOKEN_ADDRESS'
-                )
-              )
-            ) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                fromWei(this.wxBTRFLYrealIndex, 9)
-              );
-              referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
-
-            // gALCX unstake substitute
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
-              )
-            ) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                fromWei(this.gALCXToALCXMultiplier, 18)
-              );
-              referenceToken = getALCXAssetData(this.networkInfo.network);
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
-
-            // dCULT unstake substitute
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(this.networkInfo.network, 'DCULT_TOKEN_ADDRESS')
-              )
-            ) {
-              // keep the same input in WEI coz it's 1:1
-              referenceToken = getCULTAssetData(this.networkInfo.network);
-            }
-
-            if (isZero(inputInWei) || referenceAmount === '') {
+            if (isZero(inputInWei) || this.inputAmount === '') {
               // in case of 0 amount or token has been changed
               // we assume that no estimation required and reassign a 0
               // to the estimated amount
@@ -619,6 +511,48 @@ export default Vue.extend({
       this.usdcPriceInEur = res.result;
       return res.result;
     },
+    async calculateUscdNativeAmount(): Promise<void> {
+      if (this.inputAsset === undefined) {
+        this.formattedUSDCTotal = '0 USDC';
+        return;
+      }
+
+      // if token is pure USDC
+      if (sameAddress(this.inputAsset.address, this.usdcAsset.address)) {
+        this.formattedUSDCTotal = `${formatToNative(this.inputAmount)} USDC`;
+        return;
+      }
+
+      const unwrappedData = await (
+        this.debitCardOnChainService as DebitCardOnChainService
+      ).getUnwrappedData(this.inputAsset, this.inputAmount);
+
+      // if unwrapped token is USDC
+      if (
+        sameAddress(
+          unwrappedData.unwrappedToken.address,
+          this.usdcAsset.address
+        )
+      ) {
+        const boughtUSDC = fromWei(
+          unwrappedData.amountInWei,
+          this.usdcAsset.decimals
+        );
+        this.formattedUSDCTotal = `${formatToNative(boughtUSDC)} USDC`;
+        return;
+      }
+
+      // otherwise we should have a transfer data with usdc amount
+      if (this.transferData !== undefined) {
+        const boughtUSDC = fromWei(
+          this.transferData.buyAmount,
+          this.usdcAsset.decimals
+        );
+        this.formattedUSDCTotal = `${formatToNative(boughtUSDC)} USDC`;
+      }
+
+      this.formattedUSDCTotal = undefined;
+    },
     async updateAmount(value: string, mode: InputMode): Promise<void> {
       if (this.inputAsset === undefined || this.isLoading) {
         return;
@@ -629,7 +563,7 @@ export default Vue.extend({
       try {
         this.approximateEUREstimationAmount = '0';
         this.transferError = undefined;
-        if (!this.isSwapNeeded) {
+        if (this.isUsdc) {
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -651,61 +585,13 @@ export default Vue.extend({
             this.inputAmountNative = new BigNumber(
               convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
             ).toFixed(2);
-            let referenceToken: SmallTokenInfo = tokenToSmallTokenInfo(
-              this.inputAsset
-            );
-            let inputInWei = toWei(value, referenceToken.decimals);
 
-            const simpleVault = getSimpleYearnVaultTokenByAddress(
-              referenceToken.address,
-              this.networkInfo.network
-            );
-            if (simpleVault !== undefined) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                this.vaultMultiplier
-              );
-              referenceToken = simpleVault.commonToken;
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
+            const unwrappedData = await (
+              this.debitCardOnChainService as DebitCardOnChainService
+            ).getUnwrappedData(this.inputAsset, this.inputAmount);
 
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(
-                  this.networkInfo.network,
-                  'WX_BTRFLY_TOKEN_ADDRESS'
-                )
-              )
-            ) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                fromWei(this.wxBTRFLYrealIndex, 9)
-              );
-              referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
-
-            // gALCX unstake substitute
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
-              )
-            ) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                fromWei(this.gALCXToALCXMultiplier, 18)
-              );
-              referenceToken = getALCXAssetData(this.networkInfo.network);
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
+            const referenceToken: SmallTokenInfo = unwrappedData.unwrappedToken;
+            const inputInWei = unwrappedData.amountInWei;
 
             if (!sameAddress(referenceToken.address, this.usdcAsset.address)) {
               this.transferData = await getTransferData(
@@ -719,69 +605,17 @@ export default Vue.extend({
             }
           } else {
             this.inputAmountNative = value;
-
-            let referenceToken: SmallTokenInfo = tokenToSmallTokenInfo(
-              this.inputAsset
-            );
-            let inputInWei = toWei(
-              convertAmountFromNativeValue(
-                value,
-                this.inputAsset.priceUSD,
-                this.inputAsset.decimals
-              ),
+            this.inputAmount = convertAmountFromNativeValue(
+              value,
+              this.inputAsset.priceUSD,
               this.inputAsset.decimals
             );
+            const unwrappedData = await (
+              this.debitCardOnChainService as DebitCardOnChainService
+            ).getUnwrappedData(this.inputAsset, this.inputAmount);
 
-            const simpleVault = getSimpleYearnVaultTokenByAddress(
-              referenceToken.address,
-              this.networkInfo.network
-            );
-            if (simpleVault !== undefined) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                this.vaultMultiplier
-              );
-              referenceToken = simpleVault.commonToken;
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
-
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(
-                  this.networkInfo.network,
-                  'WX_BTRFLY_TOKEN_ADDRESS'
-                )
-              )
-            ) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                fromWei(this.wxBTRFLYrealIndex, 9)
-              );
-              referenceToken = getBTRFLYAssetData(this.networkInfo.network);
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
-
-            // gALCX unstake substitute
-            if (
-              sameAddress(
-                referenceToken.address,
-                lookupAddress(this.networkInfo.network, 'GALCX_TOKEN_ADDRESS')
-              )
-            ) {
-              const newInputInTokens = multiply(
-                fromWei(inputInWei, referenceToken.decimals),
-                fromWei(this.gALCXToALCXMultiplier, 18)
-              );
-              referenceToken = getALCXAssetData(this.networkInfo.network);
-              inputInWei = getInteger(
-                toWei(newInputInTokens, referenceToken.decimals)
-              );
-            }
+            const referenceToken: SmallTokenInfo = unwrappedData.unwrappedToken;
+            const inputInWei = unwrappedData.amountInWei;
 
             this.transferData = await getTransferData(
               this.usdcAsset.address,
@@ -791,13 +625,11 @@ export default Vue.extend({
               getSlippage(referenceToken.address, this.networkInfo.network),
               this.networkInfo.network
             );
-            this.inputAmount = fromWei(
-              this.transferData.sellAmount,
-              this.inputAsset.decimals
-            );
           }
         }
-        await this.updateApproximateEURSEstimationValue(mode);
+
+        await this.calculateUscdNativeAmount();
+        await this.updateApproximateEURSEstimationValue();
       } catch (error) {
         if (error instanceof ZeroXSwapError) {
           this.transferError = mapError(error.publicMessage);
@@ -829,34 +661,15 @@ export default Vue.extend({
       if (token === undefined) {
         return;
       }
-      this.isLoading = true;
+      this.isLoading = false;
 
-      try {
-        if (isSimpleYearnVault(token.address, this.networkInfo.network)) {
-          this.vaultMultiplier = await this.getYearnVaultMultiplier(
-            token.address
-          );
-        }
-      } catch (err) {
-        addSentryBreadcrumb({
-          type: 'error',
-          category: 'debit-card.top-up.newToken',
-          message: 'can not get vault multiplier`',
-          data: {
-            error: err
-          }
-        });
-        Sentry.captureException("can't get vault multiplier");
-      } finally {
-        this.isLoading = false;
-      }
       this.isTokenSelectedByUser = true;
       this.inputAsset = token;
       this.transferData = undefined;
       this.transferError = undefined;
       this.inputAmount = '';
       this.inputAmountNative = '';
-      this.updateApproximateEURSEstimationValue(this.inputMode);
+      this.updateApproximateEURSEstimationValue();
     },
     handleToggleInputMode(): void {
       if (this.inputMode === 'NATIVE') {

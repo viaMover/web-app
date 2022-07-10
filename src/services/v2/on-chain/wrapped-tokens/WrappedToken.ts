@@ -10,11 +10,21 @@ import { SmallToken, SmallTokenInfo } from '@/wallet/types';
 
 export abstract class WrappedToken extends PromiEventWrapper {
   readonly network: Network;
+  readonly web3: Web3;
+  readonly accountAddress: string;
 
-  constructor(network: Network) {
+  protected constructor(network: Network, web3: Web3, accountAddress: string) {
     super();
     this.network = network;
+    this.web3 = web3;
+    this.accountAddress = accountAddress;
   }
+
+  /**
+   * Returns an amount of unwrapped token received after unwrap
+   * @param wrappedTokenAmount - amount of wrapped token user wants to unwrap
+   */
+  abstract getUnwrappedAmount(wrappedTokenAmount: string): Promise<string>;
 
   /**
    * Returns an unwrapped token version
@@ -25,6 +35,7 @@ export abstract class WrappedToken extends PromiEventWrapper {
    * Returns whether the class can handle inputAsset
    * @description This predicate is used in responsibility checks
    * @param assetAddress token address to check
+   * @param network of address to check
    */
   abstract canHandle(assetAddress: string, network: Network): boolean;
 
@@ -35,9 +46,7 @@ export abstract class WrappedToken extends PromiEventWrapper {
    */
   abstract estimateUnwrap(
     inputAsset: SmallTokenInfo,
-    inputAmount: string,
-    web3: Web3,
-    accountAddress: string
+    inputAmount: string
   ): Promise<EstimateResponse>;
 
   /**
@@ -51,8 +60,6 @@ export abstract class WrappedToken extends PromiEventWrapper {
   abstract unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
-    web3: Web3,
-    accountAddress: string,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<string>;

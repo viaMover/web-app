@@ -19,16 +19,16 @@ import {
 } from '@/utils/bigmath';
 import { InMemoryCache } from '@/utils/cache';
 import { Network } from '@/utils/networkTypes';
-import { YEARN_SIMPLE_VAULT_ABI } from '@/wallet/references/data';
+import { IDLE_TOKEN_ABI } from '@/wallet/references/data';
 import {
-  getSimpleYearnVaultTokenByAddress,
-  YearnVaultData
-} from '@/wallet/references/yearnVaultsData';
+  getIdleTokenByAddress,
+  WrapTokenData
+} from '@/wallet/references/idleTokensData';
 import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 
-export class WrappedTokenYearn extends WrappedToken {
+export class WrappedTokenIdle extends WrappedToken {
   readonly sentryCategoryPrefix: string;
-  private readonly vault: YearnVaultData;
+  private readonly wrapTokenData: WrapTokenData;
   private readonly multiplierCache: InMemoryCache<string>;
 
   constructor(
@@ -38,29 +38,27 @@ export class WrappedTokenYearn extends WrappedToken {
     accountAddress: string
   ) {
     super(network, web3, accountAddress);
-    const vault = getSimpleYearnVaultTokenByAddress(
-      wrappedAssetAddress,
-      network
-    );
-    if (vault === undefined) {
+    const idleToken = getIdleTokenByAddress(wrappedAssetAddress, network);
+    if (idleToken === undefined) {
       throw new Error(
-        `Can't find simple yearn vault by address: ${wrappedAssetAddress}`
+        `Can't find idle token by address: ${wrappedAssetAddress}`
       );
     }
-    this.vault = vault;
-    this.sentryCategoryPrefix = `wrapped-token.simple-yearn.${this.vault.vaultToken.symbol}`;
+    this.wrapTokenData = idleToken;
+    this.sentryCategoryPrefix = `wrapped-token.idle-token.${this.wrapTokenData.wrapToken.symbol}`;
+
     this.multiplierCache = new InMemoryCache<string>(
       5 * 60,
       this.getMultiplier
     );
   }
 
-  getUnwrappedToken = (): SmallTokenInfo => this.vault.commonToken;
+  getUnwrappedToken = (): SmallTokenInfo => this.wrapTokenData.commonToken;
 
   canHandle(assetAddress: string, network: Network): boolean {
     return (
       network === this.network &&
-      sameAddress(this.vault.vaultToken.address, assetAddress)
+      sameAddress(this.wrapTokenData.wrapToken.address, assetAddress)
     );
   }
 
@@ -73,12 +71,12 @@ export class WrappedTokenYearn extends WrappedToken {
     inputAsset: SmallTokenInfo,
     inputAmount: string
   ): Promise<EstimateResponse> {
-    const contractABI = YEARN_SIMPLE_VAULT_ABI;
+    const contractABI = IDLE_TOKEN_ABI;
 
     try {
-      const simpleYearnVaultContract = new this.web3.eth.Contract(
+      const contract = new this.web3.eth.Contract(
         contractABI as AbiItem[],
-        this.vault.vaultToken.address
+        this.wrapTokenData.wrapToken.address
       );
 
       const transactionParams = {
@@ -93,9 +91,9 @@ export class WrappedTokenYearn extends WrappedToken {
         message: 'input amount in WEI',
         data: {
           inputAmountInWEI,
-          vaultName: this.vault.name,
-          vaultAddress: this.vault.vaultToken.address,
-          vaultCommonToken: this.vault.commonToken.address
+          idleName: this.wrapTokenData.name,
+          idleAddress: this.wrapTokenData.wrapToken.address,
+          idleCommonToken: this.wrapTokenData.commonToken.address
         }
       });
 
@@ -109,9 +107,7 @@ export class WrappedTokenYearn extends WrappedToken {
       });
 
       const gasLimitObj = await (
-        simpleYearnVaultContract.methods.withdraw(
-          inputAmountInWEI
-        ) as ContractSendMethod
+        contract.methods.withdraw(inputAmountInWEI) as ContractSendMethod
       ).estimateGas(transactionParams);
 
       if (gasLimitObj) {
@@ -162,7 +158,7 @@ export class WrappedTokenYearn extends WrappedToken {
     const balanceBeforeUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.vault.commonToken.address
+      this.wrapTokenData.commonToken.address
     );
 
     await this._unwrap(inputAsset, inputAmount, changeStepToProcess, gasLimit);
@@ -170,7 +166,7 @@ export class WrappedTokenYearn extends WrappedToken {
     const balanceAfterUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.vault.commonToken.address
+      this.wrapTokenData.commonToken.address
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
@@ -182,11 +178,11 @@ export class WrappedTokenYearn extends WrappedToken {
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contractABI = YEARN_SIMPLE_VAULT_ABI;
+    const contractABI = IDLE_TOKEN_ABI;
 
     const contract = new this.web3.eth.Contract(
       contractABI as AbiItem[],
-      this.vault.vaultToken.address
+      this.wrapTokenData.wrapToken.address
     );
 
     const transactionParams = {
@@ -205,9 +201,9 @@ export class WrappedTokenYearn extends WrappedToken {
       message: 'input amount in WEI',
       data: {
         inputAmountInWEI,
-        vaultName: this.vault.name,
-        vaultAddress: this.vault.vaultToken.address,
-        vaultCommonToken: this.vault.commonToken.address
+        idleName: this.wrapTokenData.name,
+        idleAddress: this.wrapTokenData.wrapToken.address,
+        idleCommonToken: this.wrapTokenData.commonToken.address
       }
     });
 
@@ -242,18 +238,20 @@ export class WrappedTokenYearn extends WrappedToken {
 
   private async getMultiplier(): Promise<string> {
     const contract = new this.web3.eth.Contract(
-      YEARN_SIMPLE_VAULT_ABI as AbiItem[],
-      this.vault.vaultToken.address
+      IDLE_TOKEN_ABI as AbiItem[],
+      this.wrapTokenData.wrapToken.address
     );
 
     const multiplier = await (
-      contract.methods.pricePerShare() as ContractSendMethod
+      contract.methods.tokenPriceWithFee(
+        this.accountAddress
+      ) as ContractSendMethod
     ).call({
       from: this.accountAddress
     });
 
     const multiplierInWei = convertToString(multiplier);
 
-    return fromWei(multiplierInWei, this.vault.vaultToken.decimals);
+    return fromWei(multiplierInWei, this.wrapTokenData.wrapToken.decimals);
   }
 }

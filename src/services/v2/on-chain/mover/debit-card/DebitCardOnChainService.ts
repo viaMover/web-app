@@ -8,15 +8,19 @@ import {
   CompoundEstimateWithUnwrapResponse,
   MoverOnChainService
 } from '@/services/v2/on-chain/mover';
-import { HolyHandContract } from '@/services/v2/on-chain/mover/types';
+import {
+  HolyHandContract,
+  UnwrappedData
+} from '@/services/v2/on-chain/mover/types';
 import { WrappedTokenDCult } from '@/services/v2/on-chain/wrapped-tokens/dCULT/token';
 import { WrappedTokenGALCX } from '@/services/v2/on-chain/wrapped-tokens/gALCX/token';
+import { WrappedTokenIdle } from '@/services/v2/on-chain/wrapped-tokens/idle/token';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { WrappedTokenWXBTRFLY } from '@/services/v2/on-chain/wrapped-tokens/wxBTRFLY/token';
 import { WrappedTokenYearn } from '@/services/v2/on-chain/wrapped-tokens/yearn/token';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { fromWei, toWei } from '@/utils/bigmath';
+import { fromWei, getInteger, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   getCentralTransferProxyAbi,
@@ -26,6 +30,7 @@ import {
   lookupAddress
 } from '@/wallet/references/data';
 import ethDefaults from '@/wallet/references/defaults';
+import { addresses as idleTokenAddresses } from '@/wallet/references/idleTokensData';
 import { addresses as yearnSimpleVaultAddresses } from '@/wallet/references/yearnVaultsData';
 import { SmallToken, SmallTokenInfo } from '@/wallet/types';
 
@@ -57,14 +62,50 @@ export class DebitCardOnChainService extends MoverOnChainService {
     for (const [n, vaults] of Object.entries(yearnSimpleVaultAddresses)) {
       for (const vault of vaults) {
         this.specialTokenHandlers.push(
-          new WrappedTokenYearn(vault.vaultToken.address, n as Network)
+          new WrappedTokenYearn(
+            vault.vaultToken.address,
+            n as Network,
+            this.web3Client,
+            this.currentAddress
+          )
         );
       }
     }
 
-    this.specialTokenHandlers.push(new WrappedTokenWXBTRFLY(Network.mainnet));
-    this.specialTokenHandlers.push(new WrappedTokenDCult(Network.mainnet));
-    this.specialTokenHandlers.push(new WrappedTokenGALCX(Network.mainnet));
+    for (const [n, idleTokens] of Object.entries(idleTokenAddresses)) {
+      for (const idleToken of idleTokens) {
+        this.specialTokenHandlers.push(
+          new WrappedTokenIdle(
+            idleToken.wrapToken.address,
+            n as Network,
+            this.web3Client,
+            this.currentAddress
+          )
+        );
+      }
+    }
+
+    this.specialTokenHandlers.push(
+      new WrappedTokenWXBTRFLY(
+        Network.mainnet,
+        this.web3Client,
+        this.currentAddress
+      )
+    );
+    this.specialTokenHandlers.push(
+      new WrappedTokenDCult(
+        Network.mainnet,
+        this.web3Client,
+        this.currentAddress
+      )
+    );
+    this.specialTokenHandlers.push(
+      new WrappedTokenGALCX(
+        Network.mainnet,
+        this.web3Client,
+        this.currentAddress
+      )
+    );
   }
 
   public getUnwrappedToken(inputAsset: SmallToken): SmallToken | undefined {
@@ -77,6 +118,30 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     return undefined;
+  }
+
+  public async getUnwrappedData(
+    inputAsset: SmallTokenInfo,
+    inputAmount: string
+  ): Promise<UnwrappedData> {
+    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
+      h.canHandle(inputAsset.address, this.network)
+    );
+
+    if (specialTokenHandler === undefined) {
+      return {
+        unwrappedToken: inputAsset,
+        amountInWei: toWei(inputAmount, inputAsset.decimals)
+      };
+    }
+
+    const newAmount = await specialTokenHandler.getUnwrappedAmount(inputAmount);
+    const unwrappedToken = specialTokenHandler.getUnwrappedToken();
+
+    return {
+      unwrappedToken: unwrappedToken,
+      amountInWei: getInteger(toWei(newAmount, unwrappedToken.decimals))
+    };
   }
 
   public async estimateTopUpCompound(
@@ -107,9 +172,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       try {
         estimation = await specialTokenHandler.estimateUnwrap(
           inputAsset,
-          inputAmount,
-          this.web3Client,
-          this.currentAddress
+          inputAmount
         );
       } catch (error) {
         addSentryBreadcrumb({
@@ -224,8 +287,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
       const inputAmountInWei = await specialTokenHandler.unwrap(
         inputAsset,
         inputAmount,
-        this.web3Client,
-        this.currentAddress,
         () => changeStep('Process'),
         unwrapGasLimit
       );
