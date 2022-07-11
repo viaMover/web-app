@@ -6,6 +6,7 @@ import { MoverError, ResponseHTTPErrorCode } from '@/services/v2';
 import { APIService } from '@/services/v2/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
+import { fromWei, greaterThan } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { Token, TokenWithBalance } from '@/wallet/types';
@@ -65,7 +66,10 @@ export class AlchemyAPIService extends APIService {
           jsonrpc: '2.0',
           id: 1,
           method: 'alchemy_getTokenBalances',
-          params: [this.currentAddress, 'DEFAULT_TOKENS']
+          params: [
+            this.currentAddress,
+            this.tokensData[network].map((t) => t.address)
+          ]
         } as Request
       )
     ).data;
@@ -89,10 +93,14 @@ export class AlchemyAPIService extends APIService {
       const token = this.tokensData[network].find((t) =>
         sameAddress(t.address, address)
       );
-      if (token !== undefined && t.tokenBalance !== null) {
+      if (
+        token !== undefined &&
+        t.tokenBalance !== null &&
+        greaterThan(t.tokenBalance, 0)
+      ) {
         result.push({
           ...token,
-          balance: String(parseInt(t.tokenBalance, 16))
+          balance: fromWei(String(parseInt(t.tokenBalance, 16)), token.decimals)
         });
       }
     }

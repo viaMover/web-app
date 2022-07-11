@@ -401,7 +401,10 @@ export class MoralisExplorer implements Explorer {
         ...tokens,
         {
           address: baseAssetData.address,
-          balance: await this.web3.eth.getBalance(this.accountAddress),
+          balance: fromWei(
+            await this.web3.eth.getBalance(this.accountAddress),
+            baseAssetData.decimals
+          ),
           priceUSD: store.getters['account/baseTokenPrice'],
           marketCap: store.getters['account/getTokenMarketCap'](
             baseAssetData.address
