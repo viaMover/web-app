@@ -7,6 +7,7 @@ import Web3 from 'web3';
 import { Explorer } from '@/services/explorer';
 import { NetworkAlias, TransactionsResponse } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
+import { AlchemyAPIService } from '@/services/v2/api/alchemy/AlchemyAPIService';
 import { AnkrAPIService } from '@/services/v2/api/ankr';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import {
@@ -50,6 +51,7 @@ export class MoralisExplorer implements Explorer {
   private erc20TransactionsCursor: string | null = null;
 
   private readonly ankrService: AnkrAPIService | undefined = undefined;
+  private readonly alchemyService: AlchemyAPIService | undefined = undefined;
 
   private static readonly erc20AbiApprove = [
     {
@@ -95,7 +97,8 @@ export class MoralisExplorer implements Explorer {
       addresses: Array<string>,
       nativeCurrency: NativeCurrency
     ) => Promise<PriceRecord>,
-    private readonly localTokens: Array<Token>
+    private readonly localTokens: Array<Token>,
+    private readonly web3: Web3
   ) {
     this.apiClient = axios.create({
       baseURL: this.apiURL,
@@ -107,9 +110,22 @@ export class MoralisExplorer implements Explorer {
     addABI(MoralisExplorer.erc20AbiApprove);
     // TODO: use real api key for ANKR
     try {
-      this.ankrService = new AnkrAPIService(this.accountAddress, '', [
-        this.network
-      ]);
+      if (AnkrAPIService.canHandle(this.network)) {
+        this.ankrService = new AnkrAPIService(this.accountAddress, '', [
+          this.network
+        ]);
+      }
+    } catch (e) {
+      captureSentryException(e);
+    }
+
+    try {
+      if (AlchemyAPIService.canHandle(this.network)) {
+        this.alchemyService = new AlchemyAPIService(
+          this.accountAddress,
+          'demo'
+        );
+      }
     } catch (e) {
       captureSentryException(e);
     }
@@ -129,6 +145,10 @@ export class MoralisExplorer implements Explorer {
       this.setIsTransactionsListLoaded(false);
       this.nativeTransactionsCursor = null;
       this.erc20TransactionsCursor = null;
+
+      if (!isFeatureEnabled('isTokenListAvailable', this.network)) {
+        return;
+      }
 
       const tokensWithPricePromise = this.getErc20Tokens()
         .then((tokens) => this.initialTokenEnrich(tokens))
@@ -374,6 +394,26 @@ export class MoralisExplorer implements Explorer {
 
   private getErc20Tokens = async (): Promise<Array<TokenWithBalance>> => {
     const baseAssetData = getBaseAssetData(this.network);
+
+    if (this.alchemyService !== undefined) {
+      const tokens = await this.alchemyService.getTokens(this.network);
+      return [
+        ...tokens,
+        {
+          address: baseAssetData.address,
+          balance: await this.web3.eth.getBalance(this.accountAddress),
+          priceUSD: store.getters['account/baseTokenPrice'],
+          marketCap: store.getters['account/getTokenMarketCap'](
+            baseAssetData.address
+          ),
+          decimals: baseAssetData.decimals,
+          logo: baseAssetData.iconURL,
+          name: baseAssetData.name,
+          symbol: baseAssetData.symbol,
+          color: store.getters['account/getTokenColor'](baseAssetData.address)
+        }
+      ];
+    }
 
     if (this.ankrService !== undefined) {
       try {

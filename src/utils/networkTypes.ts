@@ -201,7 +201,7 @@ export const networks = new Array<NetworkInfo>(
       symbol: 'OETH',
       name: 'Optimistic Eth',
       iconURL:
-        'https://github.com/trustwallet/assets/blob/master/blockchains/optimism/info/logo.png?'
+        'https://github.com/trustwallet/assets/raw/master/blockchains/optimism/info/logo.png'
     },
     rpcUrl: 'https://rpc.ankr.com/optimism'
   }
