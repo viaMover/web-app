@@ -2,7 +2,6 @@ export { MoverAPIGovernanceService } from './MoverAPIGovernanceService';
 
 export type {
   CreateProposalParams,
-  Choice,
   VotePayload,
   ProposalInfo,
   Proposal,
@@ -12,4 +11,4 @@ export type {
   VoteResponse
 } from './types';
 
-export { ProposalState, ProposalStatus } from './types';
+export { ProposalState, ProposalStatus, Choice } from './types';

@@ -6,30 +6,43 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
+
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 
 export default Vue.extend({
   name: 'GovernanceViewRoot',
-  computed: {
-    ...mapGetters('governance', {
-      proposalsIds: 'proposalsIds'
-    }),
-    pageProposalId(): string {
-      return this.$route.params.id;
-    }
-  },
-  async mounted() {
-    await this.loadInfo();
-    if (this.proposalsIds.includes(this.pageProposalId)) {
-      return;
-    }
+  mounted() {
+    this.$watch(
+      () => this.$route.params.id,
+      async (newVal: string | undefined) => {
+        if (newVal === undefined) {
+          return;
+        }
 
-    await this.$router.replace({ name: 'governance-view-all' });
+        try {
+          const loadedProposal = await this.loadProposalInfoById(newVal);
+          if (loadedProposal === undefined) {
+            return await this.$router.replace({ name: 'governance-view-all' });
+          }
+        } catch (error) {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'id.$watch.governance-view-root.ui',
+            message: 'Failed to obtain / get proposal info by id',
+            data: { error, newVal }
+          });
+          captureSentryException(error);
+        }
+      },
+      { immediate: true }
+    );
   },
   methods: {
-    ...mapActions('governance', {
-      loadInfo: 'loadInfo'
-    })
+    ...mapActions('governance', ['loadProposalInfoById'])
   }
 });
 </script>

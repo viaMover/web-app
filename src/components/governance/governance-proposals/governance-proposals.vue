@@ -1,13 +1,13 @@
 <template>
   <div class="statements-list">
-    <template v-if="isLoading">
+    <template v-if="isLoadingProposalInfoList">
       <governance-proposals-item-skeleton v-for="idx in 4" :key="idx" />
     </template>
     <template v-else>
       <governance-proposals-item
-        v-for="proposal in proposals"
-        :key="proposal.proposal.id"
-        :item="proposal.proposal"
+        v-for="item in proposalInfoList"
+        :key="item.proposal.id"
+        :item="item.proposal"
       />
     </template>
   </div>
@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 import GovernanceProposalsItem from './governance-proposals-item.vue';
 import GovernanceProposalsItemSkeleton from './governance-proposals-item-skeleton.vue';
@@ -27,10 +27,7 @@ export default Vue.extend({
     GovernanceProposalsItemSkeleton
   },
   computed: {
-    ...mapGetters('governance', {
-      isLoading: 'isLoading',
-      proposals: 'proposalsOrderedByEndingDesc'
-    })
+    ...mapState('governance', ['proposalInfoList', 'isLoadingProposalInfoList'])
   }
 });
 </script>

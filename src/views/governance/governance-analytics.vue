@@ -10,22 +10,22 @@
     <analytics-list>
       <analytics-list-item
         :description="proposalId"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblProposalId')"
       />
       <analytics-list-item
         :description="votingEndsText"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblVotingEnds')"
       />
       <analytics-list-item
         :description="proposalAuthor"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblProposer')"
       />
       <analytics-list-item
         :description="votingActivity"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblVotingActivity')"
       />
     </analytics-list>
@@ -33,22 +33,22 @@
     <analytics-list has-title :title="$t('governance.lblProposalStats')">
       <analytics-list-item
         :description="communityVotingPower"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblCommunityVotingPower')"
       />
       <analytics-list-item
         :description="votesFor"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblVotesFor')"
       />
       <analytics-list-item
         :description="votesAgainst"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblVotesAgainst')"
       />
       <analytics-list-item
         :description="currentOutcome"
-        :is-loading="displayAsIsLoading"
+        :is-loading="isLoading"
         :title="$t('governance.lblCurrentOutcome')"
       />
     </analytics-list>
@@ -57,11 +57,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { ProposalInfo } from '@/services/mover/governance';
+import { ProposalInfo } from '@/services/v2/api/mover/governance';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import { formatToDecimals } from '@/utils/format';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
@@ -76,25 +80,24 @@ export default Vue.extend({
     AnalyticsList,
     AnalyticsListItem
   },
+  data() {
+    return {
+      isLoading: false,
+      proposalInfo: undefined as ProposalInfo | undefined
+    };
+  },
   computed: {
-    ...mapGetters('governance', {
-      isLoading: 'isLoading',
-      proposal: 'proposal',
-      proposalCommunityVotingPower: 'proposalCommunityVotingPower',
-      proposalVotedFor: 'proposalVotedFor',
-      proposalVotedAgainst: 'proposalVotedAgainst',
-      proposalState: 'proposalState',
-      proposalVotingActivity: 'proposalVotingActivity'
-    }),
+    ...mapState('governance', ['proposalInfoList']),
     proposalId(): string {
-      return this.$route.params.id;
-    },
-    proposalInfo(): ProposalInfo | undefined {
-      return this.proposal(this.proposalId);
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
+      return this.proposalInfo.proposal.id;
     },
     pageTitle(): string {
       if (this.proposalInfo === undefined) {
-        return this.$t('governance.lblProposal').toString();
+        return this.$t('governance.lblProposal') as string;
       }
 
       return this.proposalInfo.proposal.title;
@@ -112,53 +115,90 @@ export default Vue.extend({
       }
 
       return dayjs
-        .unix(this.proposalInfo.proposal.end)
+        .unix(this.proposalInfo.proposal.endTs)
         .utc()
         .format('MMMM DD, HH:mm [UTC]');
     },
     communityVotingPower(): string {
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
       return formatToDecimals(
-        this.proposalCommunityVotingPower(this.proposalId),
+        this.proposalInfo.proposal.communityVotingPower,
         0
       );
     },
     votingActivity(): string {
-      return `${Math.ceil(this.proposalVotingActivity(this.proposalId))}%`;
-    },
-    votesFor(): string {
-      return formatToDecimals(this.proposalVotedFor(this.proposalId), 0);
-    },
-    votesAgainst(): string {
-      return formatToDecimals(this.proposalVotedAgainst(this.proposalId), 0);
-    },
-    currentOutcome(): string {
-      const proposalState = this.proposalState(this.proposalId);
-      if (this.$te(`governance.lblOutcome.${proposalState}`)) {
-        return this.$t(`governance.lblOutcome.${proposalState}`).toString();
+      if (this.proposalInfo === undefined) {
+        return '';
       }
 
-      return this.$t('governance.lblOutcome.quorumNotReached').toString();
+      return `${Math.ceil(this.proposalInfo.proposal.votingActivity)}%`;
     },
-    displayAsIsLoading(): boolean {
-      return this.proposalInfo === undefined || this.isLoading;
+    votesFor(): string {
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
+      return formatToDecimals(this.proposalInfo.stats.for, 0);
+    },
+    votesAgainst(): string {
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
+      return formatToDecimals(this.proposalInfo.stats.against, 0);
+    },
+    currentOutcome(): string {
+      if (this.proposalInfo === undefined) {
+        return '';
+      }
+
+      const status = this.proposalInfo.proposal.status;
+
+      if (this.$te(`governance.lblOutcome.${status}`)) {
+        return this.$t(`governance.lblOutcome.${status}`) as string;
+      }
+
+      return status;
     }
   },
-  watch: {
-    proposalId: {
-      async handler(newVal: string | undefined): Promise<void> {
+  mounted() {
+    this.$watch(
+      () => this.$route.params.id,
+      async (newVal: string | undefined) => {
         if (newVal === undefined) {
           return;
         }
 
-        await this.loadProposalInfo(newVal);
+        try {
+          this.isLoading = true;
+          const data = (this.proposalInfoList as Array<ProposalInfo>).find(
+            (item) => item.proposal.id === newVal
+          );
+          if (data === undefined) {
+            this.proposalInfo = await this.loadProposalInfoById(newVal);
+          } else {
+            this.proposalInfo = data;
+          }
+        } catch (error) {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'id.$watch.governance-analytics.ui',
+            message: 'Failed to obtain / get proposal info by id',
+            data: { error, newVal }
+          });
+          captureSentryException(error);
+        } finally {
+          this.isLoading = false;
+        }
       },
-      immediate: true
-    }
+      { immediate: true }
+    );
   },
   methods: {
-    ...mapActions('governance', {
-      loadProposalInfo: 'loadProposalInfo'
-    }),
+    ...mapActions('governance', ['loadProposalInfoById']),
     handleBack(): void {
       this.$router.replace({
         name: 'governance-view',

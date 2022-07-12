@@ -10,17 +10,17 @@
     <analytics-list>
       <analytics-list-item
         :description="myVotingPower"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblMyVotingPower')"
       />
       <analytics-list-item
         :description="timesVoted"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblTimesVoted')"
       />
       <analytics-list-item
         :description="proposalsCreated"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblProposalsCreated')"
       />
     </analytics-list>
@@ -28,32 +28,32 @@
     <analytics-list has-title :title="$t('governance.lblGovernanceStats')">
       <analytics-list-item
         :description="powerNeeded"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblPowerNeeded')"
       />
       <analytics-list-item
         :description="communityVotingPower"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblCommunityVotingPower')"
       />
       <analytics-list-item
         :description="totalNumberOfProposals"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblTotalNumberOfProposals')"
       />
       <analytics-list-item
         :description="openProposals"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblOpenProposals')"
       />
       <analytics-list-item
         :description="succeededProposals"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblSucceededProposals')"
       />
       <analytics-list-item
         :description="defeatedProposals"
-        :is-loading="isLoading"
+        :is-loading="isLoadingProposalInfoList"
         :title="$t('governance.lblDefeatedProposals')"
       />
     </analytics-list>
@@ -78,33 +78,29 @@ export default Vue.extend({
     AnalyticsListItem
   },
   computed: {
-    ...mapGetters('governance', {
-      isLoading: 'isLoading',
-      votingPowerSelf: 'votingPowerSelf',
-      communityVotingPowerRaw: 'communityVotingPower'
-    }),
-    ...mapState('governance', {
-      powerNeededToBecomeAProposer: 'powerNeededToBecomeAProposer'
-    }),
-    ...mapGetters('governance', {
-      timesVoted: 'timesVoted',
-      proposalsCreated: 'proposalsCreated',
-      totalNumberOfProposals: 'totalNumberOfProposals',
-      openProposals: 'openProposals',
-      succeededProposals: 'succeededProposals',
-      defeatedProposals: 'defeatedProposals'
-    }),
+    ...mapState('governance', [
+      'currentVotingInfo',
+      'isLoadingProposalInfoList'
+    ]),
+    ...mapGetters('governance', [
+      'timesVoted',
+      'proposalsCreated',
+      'totalNumberOfProposals',
+      'openProposals',
+      'succeededProposals',
+      'defeatedProposals'
+    ]),
+    myVotingPower(): string {
+      return formatToDecimals(this.currentVotingInfo.votingPower, 0);
+    },
+    communityVotingPower(): string {
+      return formatToDecimals(this.currentVotingInfo.communityVotingPower, 0);
+    },
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
     },
-    myVotingPower(): string {
-      return formatToDecimals(this.votingPowerSelf, 0);
-    },
     powerNeeded(): string {
-      return formatToDecimals(this.powerNeededToBecomeAProposer, 0);
-    },
-    communityVotingPower(): string {
-      return formatToDecimals(this.communityVotingPowerRaw, 0);
+      return formatToDecimals(this.currentVotingInfo.minimalVotingPower, 0);
     }
   },
   methods: {

@@ -65,12 +65,29 @@ export type VoteResponse = {
   ipfs: string; // ipfs hash to the vote
 };
 
+export type ProposalInfoAPIDto = {
+  proposal: Proposal;
+  votes?: Array<Vote>;
+  voteInfo?: {
+    voted: boolean;
+    ipfsHash?: string;
+    votingPower?: number;
+  };
+  stats: {
+    for: number;
+    against: number;
+  };
+};
+
 export type ProposalInfo = {
   proposal: Proposal;
   votes: Array<Vote>;
-  voted: boolean;
-  // if .voted -> vote ipfs hash
-  ipfsHash?: string;
+  voteInfo: {
+    voted: boolean;
+    // if .voted -> vote ipfs hash
+    ipfsHash: string | undefined;
+    votingPower: number;
+  };
   stats: {
     for: number;
     against: number;

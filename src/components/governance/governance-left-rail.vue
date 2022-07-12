@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="list">
         <navigation-section :section-name="$t('governance.lblMyGovernance')">
-          <template v-if="isLoading">
+          <template v-if="isLoadingProposalInfoList">
             <navigation-section-item-image-skeleton />
           </template>
           <template v-else>
@@ -28,7 +28,7 @@
         <navigation-section
           :section-name="$t('governance.lblManageGovernance')"
         >
-          <template v-if="isLoading">
+          <template v-if="isLoadingProposalInfoList">
             <navigation-section-item-image-skeleton
               v-for="idx in 2"
               :key="idx"
@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import { formatToDecimals } from '@/utils/format';
 
@@ -127,16 +127,13 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters('governance', {
-      isLoading: 'isLoading',
-      votingPowerSelf: 'votingPowerSelf'
-    }),
-    ...mapGetters('governance', {
-      hasEnoughVotingPowerToBecomeAProposer:
-        'hasEnoughVotingPowerToBecomeAProposer'
-    }),
+    ...mapState('governance', [
+      'isLoadingProposalInfoList',
+      'currentVotingInfo'
+    ]),
+    ...mapGetters('governance', ['hasEnoughVotingPowerToBecomeAProposer']),
     governancePower(): string {
-      return `${formatToDecimals(this.votingPowerSelf, 0)} Power`;
+      return `${formatToDecimals(this.currentVotingInfo.votingPower, 0)} Power`;
     }
   }
 });

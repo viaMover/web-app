@@ -31,8 +31,7 @@ import { mapGetters } from 'vuex';
 
 import dayjs from 'dayjs';
 
-import { Proposal } from '@/services/mover/governance';
-import { ProposalState } from '@/store/modules/governance/types';
+import { Proposal, ProposalStatus } from '@/services/v2/api/mover/governance';
 
 import { ProgressLoader } from '@/components/layout';
 
@@ -65,26 +64,27 @@ export default Vue.extend({
 
       return this.$t('governance.btnVote.simple').toString();
     },
-    proposalState(): ProposalState {
-      return this.proposalStateRaw(this.item.id);
-    },
     strokeColor(): string {
-      switch (this.proposalState) {
-        case 'accepted':
+      switch (this.item.status) {
+        case ProposalStatus.Passed:
           return '#30be16';
-        case 'defeated':
+        case ProposalStatus.Rejected:
           return '#ff585f';
         default:
           return '#000';
       }
     },
     itemProgress(): number {
-      if (['accepted', 'defeated'].includes(this.proposalState)) {
+      if (
+        [ProposalStatus.Passed, ProposalStatus.Rejected].includes(
+          this.item.status
+        )
+      ) {
         return 100;
       }
 
-      const elapsed = dayjs().unix() - this.item.start;
-      const proposalLifeSpan = this.item.end - this.item.start;
+      const elapsed = dayjs().unix() - this.item.startTs;
+      const proposalLifeSpan = this.item.endTs - this.item.startTs;
 
       return Math.round(100 * (elapsed / proposalLifeSpan));
     }

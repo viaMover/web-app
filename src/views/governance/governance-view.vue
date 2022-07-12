@@ -5,7 +5,7 @@
     </template>
 
     <div class="text">
-      <div v-if="proposal === undefined" class="skeleton-text">
+      <div v-if="proposalInfo === undefined || isLoading" class="skeleton-text">
         <pu-skeleton v-for="idx in 8" :key="idx" tag="p" />
       </div>
       <template v-else>
@@ -21,9 +21,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
-import { ProposalWithVotes } from '@/services/mover/governance';
+import { ProposalInfo } from '@/services/v2/api/mover/governance';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import { isFeatureEnabled } from '@/settings';
 
 import {
@@ -39,20 +43,19 @@ export default Vue.extend({
     SecondaryPageHeader,
     Markdown
   },
+  data() {
+    return {
+      isLoading: false,
+      proposalInfo: undefined as ProposalInfo | undefined
+    };
+  },
   computed: {
-    ...mapGetters('governance', {
-      proposal: 'proposal',
-      isLoading: 'isLoading'
-    }),
-    ...mapState('account', { networkInfo: 'networkInfo' }),
+    ...mapState('governance', ['proposalInfoList']),
     isGovernanceMarkdownEnabled(): boolean {
       return isFeatureEnabled(
         'isGovernanceMarkdownEnabled',
-        this.networkInfo?.network
+        this.currentNetwork
       );
-    },
-    proposalInfo(): ProposalWithVotes | undefined {
-      return this.proposal(this.$route.params.id);
     },
     pageTitle(): string {
       if (this.proposalInfo === undefined) {
@@ -62,7 +65,41 @@ export default Vue.extend({
       return this.proposalInfo.proposal.title;
     }
   },
+  mounted() {
+    this.$watch(
+      () => this.$route.params.id,
+      async (newVal: string | undefined) => {
+        if (newVal === undefined) {
+          return;
+        }
+
+        try {
+          this.isLoading = true;
+          const data = (this.proposalInfoList as Array<ProposalInfo>).find(
+            (item) => item.proposal.id === newVal
+          );
+          if (data === undefined) {
+            this.proposalInfo = await this.loadProposalInfoById(newVal);
+          } else {
+            this.proposalInfo = data;
+          }
+        } catch (error) {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'id.$watch.governance-view.ui',
+            message: 'Failed to obtain / get proposal info by id',
+            data: { error, newVal }
+          });
+          captureSentryException(error);
+        } finally {
+          this.isLoading = false;
+        }
+      },
+      { immediate: true }
+    );
+  },
   methods: {
+    ...mapActions('governance', ['loadProposalInfoById']),
     handleBack(): void {
       this.$router.replace({
         name: 'governance-view-all'

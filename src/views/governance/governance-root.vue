@@ -19,6 +19,11 @@
 import Vue from 'vue';
 import { mapActions } from 'vuex';
 
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
+
 import { ContentWrapper } from '@/components/layout';
 
 export default Vue.extend({
@@ -28,19 +33,29 @@ export default Vue.extend({
   },
   watch: {
     $route: {
-      async handler() {
-        await this.loadVotingPowerSelf();
-      }
+      handler() {
+        Promise.allSettled([
+          this.loadCurrentVotingInfo(),
+          this.loadProposalInfoList()
+        ]).catch((error) => {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'handler.$route.watch.governance-root.ui',
+            message: 'Failed to update governance root state',
+            data: { error }
+          });
+
+          captureSentryException(error);
+        });
+      },
+      immediate: true
     }
   },
-  async mounted() {
-    await this.loadInfo();
-  },
   methods: {
-    ...mapActions('governance', {
-      loadInfo: 'loadInfo',
-      loadVotingPowerSelf: 'loadCurrentVotingPowerSelf'
-    }),
+    ...mapActions('governance', [
+      'loadCurrentVotingInfo',
+      'loadProposalInfoList'
+    ]),
     handleClose(): void {
       this.$router.replace({ name: 'home' });
     }

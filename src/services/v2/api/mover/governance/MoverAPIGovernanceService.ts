@@ -20,6 +20,7 @@ import {
   GetProposalOrListOptions,
   GetProposalOrListRequestParams,
   ProposalInfo,
+  ProposalInfoAPIDto,
   SignedRequestPayload,
   VotePayload,
   VoteResponse
@@ -54,7 +55,7 @@ export class MoverAPIGovernanceService extends MoverAPIService {
   public async getProposalList(
     opts?: GetProposalOrListOptions
   ): Promise<Array<ProposalInfo>> {
-    return (
+    const data = (
       await this.client.get<MoverAPISuccessfulResponse<Array<ProposalInfo>>>(
         '/proposals',
         {
@@ -62,12 +63,14 @@ export class MoverAPIGovernanceService extends MoverAPIService {
         }
       )
     ).data.payload;
+
+    return data.map(this.mapProposalInfoAPIDto);
   }
 
   public async getLastProposal(
     opts?: GetProposalOrListOptions
   ): Promise<ProposalInfo> {
-    return (
+    const data = (
       await this.client.get<MoverAPISuccessfulResponse<ProposalInfo>>(
         '/proposals/last',
         {
@@ -75,6 +78,8 @@ export class MoverAPIGovernanceService extends MoverAPIService {
         }
       )
     ).data.payload;
+
+    return this.mapProposalInfoAPIDto(data);
   }
 
   public async getProposalById(
@@ -82,7 +87,7 @@ export class MoverAPIGovernanceService extends MoverAPIService {
     opts?: GetProposalOrListOptions
   ): Promise<ProposalInfo | undefined> {
     try {
-      return (
+      const data = (
         await this.client.get<MoverAPISuccessfulResponse<ProposalInfo>>(
           `/proposals/${id}`,
           {
@@ -90,6 +95,8 @@ export class MoverAPIGovernanceService extends MoverAPIService {
           }
         )
       ).data.payload;
+
+      return this.mapProposalInfoAPIDto(data);
     } catch (error) {
       if (error instanceof MoverAPIError) {
         if (error.shortMessage === ErrorCode.ProposalNotFound) {
@@ -220,6 +227,25 @@ export class MoverAPIGovernanceService extends MoverAPIService {
     return {
       voter_address: opts?.useAddress ?? true ? this.currentAddress : undefined,
       load_votes: opts?.includeVotes ?? false
+    };
+  }
+
+  protected mapProposalInfoAPIDto(data: ProposalInfoAPIDto): ProposalInfo {
+    return {
+      proposal: data.proposal,
+      votes: data.votes ?? [],
+      stats: data.stats,
+      voteInfo: data.voteInfo
+        ? {
+            voted: data.voteInfo.voted,
+            votingPower: data.voteInfo.votingPower ?? 0,
+            ipfsHash: data.voteInfo.ipfsHash
+          }
+        : {
+            voted: false,
+            votingPower: 0,
+            ipfsHash: undefined
+          }
     };
   }
 }

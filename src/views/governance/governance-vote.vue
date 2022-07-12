@@ -54,16 +54,20 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
+import { MoverAPIError } from '@/services/v2/api/mover';
 import {
   Choice,
-  Proposal,
-  VoteParams,
+  ProposalInfo,
   VoteResponse
-} from '@/services/mover/governance';
-import { GovernanceApiError } from '@/services/mover/governance';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
+} from '@/services/v2/api/mover/governance';
+import { isProviderRpcError } from '@/services/v2/on-chain';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
+import { VoteParams } from '@/store/modules/governance/types';
 import { formatToDecimals } from '@/utils/format';
 
 import { AnalyticsList, AnalyticsListItem } from '@/components/analytics-list';
@@ -82,27 +86,19 @@ export default Vue.extend({
   data() {
     return {
       errorText: '',
-      ipfsLink: '',
-      isLoading: false
+      isLoading: false,
+      isLoadingProposal: false,
+      proposalInfo: undefined as ProposalInfo | undefined
     };
   },
   computed: {
-    ...mapGetters('governance', {
-      proposal: 'proposal',
-      isStoreLoading: 'isLoading',
-      isAlreadyVoted: 'isAlreadyVoted',
-      alreadyVotedIpfsLink: 'ipfsLink',
-      votingPowerSelfOnProposal: 'votingPowerSelfOnProposal'
-    }),
+    ...mapState('governance', ['proposalInfoList']),
     pageTitle(): string {
       if (this.proposalInfo === undefined) {
         return this.$t('governance.lblProposal') as string;
       }
 
-      return this.proposalInfo.title;
-    },
-    proposalInfo(): Proposal | undefined {
-      return this.proposal(this.$route.params.id)?.proposal;
+      return this.proposalInfo.proposal.title;
     },
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
@@ -118,10 +114,7 @@ export default Vue.extend({
       return this.$t('governance.txtVoteAgainst') as string;
     },
     myVotingPower(): string {
-      return formatToDecimals(
-        this.votingPowerSelfOnProposal(this.proposalInfo?.id),
-        0
-      );
+      return formatToDecimals(this.proposalInfo?.voteInfo.votingPower ?? 0, 0);
     },
     voteButtonText(): string {
       if (this.isVoteFor) {
@@ -131,31 +124,58 @@ export default Vue.extend({
       return this.$t('governance.btnVoteAgainst.txt') as string;
     },
     ipfsLinkText(): string {
-      const alreadyVotedIpfsLink = this.alreadyVotedIpfsLink(
-        this.proposalInfo?.id
-      );
-      if (alreadyVotedIpfsLink) {
-        return this.formatIpfsLink(alreadyVotedIpfsLink);
+      const link = this.proposalInfo?.voteInfo.ipfsHash;
+      if (link === undefined) {
+        return '';
       }
 
-      return this.ipfsLink;
+      return this.formatIpfsLink(link);
     }
   },
   watch: {
     isVoteFor: {
       handler() {
         this.errorText = '';
-        this.ipfsLink = '';
         this.isLoading = false;
       },
       immediate: true
     }
   },
+  mounted() {
+    this.$watch(
+      () => this.$route.params.id,
+      async (newVal: string | undefined) => {
+        if (newVal === undefined) {
+          return;
+        }
+
+        try {
+          this.isLoadingProposal = true;
+          const data = (this.proposalInfoList as Array<ProposalInfo>).find(
+            (item) => item.proposal.id === newVal
+          );
+          if (data === undefined) {
+            this.proposalInfo = await this.loadProposalInfoById(newVal);
+          } else {
+            this.proposalInfo = data;
+          }
+        } catch (error) {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'id.$watch.governance-view.ui',
+            message: 'Failed to obtain / get proposal info by id',
+            data: { error, newVal }
+          });
+          captureSentryException(error);
+        } finally {
+          this.isLoadingProposal = false;
+        }
+      },
+      { immediate: true }
+    );
+  },
   methods: {
-    ...mapActions('governance', {
-      vote: 'vote',
-      loadProposalInfo: 'loadProposalInfo'
-    }),
+    ...mapActions('governance', ['loadProposalInfoById', 'vote']),
     handleClose(): void {
       this.$router.back();
     },
@@ -165,18 +185,15 @@ export default Vue.extend({
       }
 
       this.isLoading = true;
-      this.ipfsLink = '';
       this.errorText = '';
 
       try {
         const voteResult: VoteResponse = await this.vote({
-          proposalId: this.proposalInfo.id,
+          proposalId: this.proposalInfo.proposal.id,
           choice: this.isVoteFor ? Choice.For : Choice.Against
         } as VoteParams);
 
-        await this.loadProposalInfo(this.proposalInfo.id);
-
-        this.ipfsLink = this.formatIpfsLink(voteResult.ipfsHash);
+        await this.loadNewProposalInfo(voteResult.id);
       } catch (error) {
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
@@ -187,14 +204,20 @@ export default Vue.extend({
           }
         }
 
-        if (
-          error instanceof GovernanceApiError &&
-          this.$te(`governance.errors.${error.message}`)
-        ) {
-          this.errorText = this.$t(
-            `governance.errors.${error.message}`
-          ).toString();
-          return;
+        if (error instanceof MoverAPIError) {
+          if (this.$te(`governance.errors.${error.message}`)) {
+            this.errorText = this.$t(
+              `governance.errors.${error.message}`
+            ) as string;
+            return;
+          }
+
+          if (this.$te(`governance.errors.${error.shortMessage}`)) {
+            this.errorText = this.$t(
+              `governance.errors.${error.shortMessage}`
+            ) as string;
+            return;
+          }
         }
 
         this.errorText = this.$t('governance.errors.default').toString();
@@ -210,6 +233,22 @@ export default Vue.extend({
         name: 'governance-view',
         params: { id: this.$route.params.id }
       });
+    },
+    async loadNewProposalInfo(id: string): Promise<void> {
+      try {
+        this.isLoadingProposal = true;
+        this.proposalInfo = await this.loadProposalInfoById(id);
+      } catch (error) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: 'loadNewProposalInfo.governance-vote.ui',
+          message: 'Failed to obtain / get proposal info by id',
+          data: { error, id }
+        });
+        captureSentryException(error);
+      } finally {
+        this.isLoadingProposal = false;
+      }
     }
   }
 });
