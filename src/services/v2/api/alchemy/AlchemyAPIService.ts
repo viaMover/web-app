@@ -57,7 +57,7 @@ export class AlchemyAPIService extends APIService {
         message: `Cant find endpoint for this network: ${network}`,
         category: this.sentryCategoryPrefix
       });
-      throw new MoverError('get tokens error');
+      throw new NetworkFeatureNotSupportedError('Alchemy token list', network);
     }
     const res = (
       await this.client.post<Response<GetTokenBalancesResult>>(
