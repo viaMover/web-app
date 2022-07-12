@@ -104,6 +104,7 @@ const values: Globals = {
     Network.avalanche,
     Network.fantom,
     Network.polygon,
+    Network.arbitrum,
     Network.optimism
   ],
   isTransactionsListAvailable: [
