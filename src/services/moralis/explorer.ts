@@ -14,7 +14,7 @@ import {
   addSentryBreadcrumb,
   captureSentryException
 } from '@/services/v2/utils/sentry';
-import { isFeatureEnabled } from '@/settings';
+import { APIKeys, isFeatureEnabled } from '@/settings';
 import store from '@/store/index';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -123,7 +123,7 @@ export class MoralisExplorer implements Explorer {
       if (AlchemyAPIService.canHandle(this.network)) {
         this.alchemyService = new AlchemyAPIService(
           this.accountAddress,
-          'demo'
+          APIKeys.ALCHEMY_API_KEY
         );
       }
     } catch (e) {

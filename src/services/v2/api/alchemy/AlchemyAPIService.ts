@@ -2,7 +2,11 @@ import * as Sentry from '@sentry/vue';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
 
-import { MoverError, ResponseHTTPErrorCode } from '@/services/v2';
+import {
+  MoverError,
+  NetworkFeatureNotSupportedError,
+  ResponseHTTPErrorCode
+} from '@/services/v2';
 import { APIService } from '@/services/v2/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
