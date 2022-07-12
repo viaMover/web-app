@@ -7,6 +7,7 @@ import avalanche from './avalanche.json';
 import binance from './binance.json';
 import fantom from './fantom.json';
 import mainnet from './mainnet.json';
+import optimism from './optimism.json';
 import polygon from './polygon.json';
 
 const references = {
@@ -15,7 +16,8 @@ const references = {
   [Network.polygon]: polygon,
   [Network.avalanche]: avalanche,
   [Network.binance]: binance,
-  [Network.arbitrum]: arbitrum
+  [Network.arbitrum]: arbitrum,
+  [Network.optimism]: optimism
 } as Record<Network, Array<AbiItem>>;
 
 export const getCentralTransferProxyAbi = (network: Network): AbiItem[] => {

@@ -470,7 +470,8 @@ const actions: ActionFuncs<
                 currencies: nativeCurrency
               } as FetchTokenPricesByContractAddressesPayload),
             state.allTokens,
-            state.availableNetworks
+            state.availableNetworks,
+            state.provider.web3
           );
 
           explorerInitPromise

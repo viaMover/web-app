@@ -46,7 +46,8 @@ export class OneInchAPIService
     // Network.optimism,
     // Network.avalanche,
     // Network.fantom,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ];
   protected availableTokens: Map<string, OneInchToken> | undefined;
   protected useAvailableTokens: boolean;
