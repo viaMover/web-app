@@ -100,6 +100,7 @@ export class AlchemyAPIService extends APIService {
       ) {
         result.push({
           ...token,
+          priceUSD: '',
           balance: fromWei(String(parseInt(t.tokenBalance, 16)), token.decimals)
         });
       }
