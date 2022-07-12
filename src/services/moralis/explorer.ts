@@ -290,6 +290,9 @@ export class MoralisExplorer implements Explorer {
     );
 
     return tokens.map((t) => {
+      if (!addresses.includes(t.address)) {
+        return t;
+      }
       const retrievedPrice = getAssetPriceFromPriceRecord(
         pricesResponse,
         t.address,
