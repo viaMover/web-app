@@ -9,6 +9,7 @@ import assetListAvalanche from '@/../data/assets/assetList-avalanche.json';
 import assetListBinance from '@/../data/assets/assetList-binance.json';
 import assetListEth from '@/../data/assets/assetList-ethereum.json';
 import assetListFantom from '@/../data/assets/assetList-fantom.json';
+import assetListOptimism from '@/../data/assets/assetList-optimism.json';
 import assetListPolygon from '@/../data/assets/assetList-polygon.json';
 
 type AssetListType = {
@@ -27,7 +28,8 @@ export const availableNetworks = [
   Network.polygon,
   Network.avalanche,
   Network.binance,
-  Network.arbitrum
+  Network.arbitrum,
+  Network.optimism
 ];
 
 const getAssetList = (network: Network): Array<AssetListType> => {
@@ -44,6 +46,8 @@ const getAssetList = (network: Network): Array<AssetListType> => {
       return assetListBinance;
     case Network.arbitrum:
       return assetListArbitrum;
+    case Network.optimism:
+      return assetListOptimism;
     default:
       return [];
   }

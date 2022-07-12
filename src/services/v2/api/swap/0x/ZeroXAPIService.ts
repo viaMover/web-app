@@ -34,8 +34,7 @@ export class ZeroXAPIService extends MultiChainAPIService implements ISwapper {
     Network.polygon,
     Network.avalanche,
     Network.fantom,
-    Network.celo,
-    Network.optimism
+    Network.celo
   ];
 
   constructor(currentAddress: string, network: Network) {
