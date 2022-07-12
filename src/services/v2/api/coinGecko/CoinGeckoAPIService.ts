@@ -216,6 +216,8 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
         return 'avalanche';
       case Network.arbitrum:
         return 'arbitrum-one';
+      case Network.optimism:
+        return 'optimistic-ethereum';
       case Network.celo:
         return 'celo';
       default:

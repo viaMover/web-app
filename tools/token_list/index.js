@@ -13,7 +13,15 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['arbitrum'];
+const networks = [
+  'ethereum',
+  'fantom',
+  'polygon',
+  'avalanche',
+  'binance',
+  'arbitrum',
+  'optimism'
+];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -52,6 +60,8 @@ const getCoingeckoPlatform = (network) => {
       return 'binance-smart-chain';
     case 'arbitrum':
       return 'arbitrum-one';
+    case 'optimism':
+      return 'optimistic-ethereum';
   }
 };
 
@@ -529,7 +539,8 @@ const alsoIncludedTokens = {
   polygon: [],
   avalanche: [],
   binance: [],
-  arbitrum: []
+  arbitrum: [],
+  optimism: []
 };
 
 const isDirEmpty = (dir) => {
@@ -730,6 +741,7 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
         data.color = await getAssetImageColor(data.imageUrl, address);
 
         console.log('added token from coingecko:', data);
+        console.log(`${i + 1}/${coingeckoList.length}`);
         newAssets.push(data);
       } catch (err) {
         console.error("Can't add token from coingecko");
@@ -891,6 +903,9 @@ const getWeb3 = (network) => {
       break;
     case 'arbitrum':
       rpcUrl = 'https://arb1.arbitrum.io/rpc';
+      break;
+    case 'optimism':
+      rpcUrl = 'https://rpc.ankr.com/optimism';
       break;
     default:
       throw new Error(`There is no RPC link for network: ${network}`);
