@@ -1,11 +1,11 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
+import { IdleContract } from '@/services/v2/on-chain/wrapped-tokens/idle/types';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
@@ -30,14 +30,16 @@ export class WrappedTokenIdle extends WrappedToken {
   readonly sentryCategoryPrefix: string;
   private readonly wrapTokenData: WrapTokenData;
   private readonly multiplierCache: InMemoryCache<string>;
+  private readonly contract: IdleContract;
+  private readonly contractABI = IDLE_TOKEN_ABI;
 
   constructor(
     wrappedAssetAddress: string,
+    accountAddress: string,
     network: Network,
-    web3: Web3,
-    accountAddress: string
+    web3: Web3
   ) {
-    super(network, web3, accountAddress);
+    super(accountAddress, network, web3);
     const idleToken = getIdleTokenByAddress(wrappedAssetAddress, network);
     if (idleToken === undefined) {
       throw new Error(
@@ -47,13 +49,20 @@ export class WrappedTokenIdle extends WrappedToken {
     this.wrapTokenData = idleToken;
     this.sentryCategoryPrefix = `wrapped-token.idle-token.${this.wrapTokenData.wrapToken.symbol}`;
 
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI as AbiItem[],
+      this.wrapTokenData.wrapToken.address
+    );
+
     this.multiplierCache = new InMemoryCache<string>(
       5 * 60,
       this.getMultiplier
     );
   }
 
-  getUnwrappedToken = (): SmallTokenInfo => this.wrapTokenData.commonToken;
+  public getUnwrappedToken(): SmallTokenInfo {
+    return this.wrapTokenData.commonToken;
+  }
 
   canHandle(assetAddress: string, network: Network): boolean {
     return (
@@ -71,14 +80,7 @@ export class WrappedTokenIdle extends WrappedToken {
     inputAsset: SmallTokenInfo,
     inputAmount: string
   ): Promise<EstimateResponse> {
-    const contractABI = IDLE_TOKEN_ABI;
-
     try {
-      const contract = new this.web3.eth.Contract(
-        contractABI as AbiItem[],
-        this.wrapTokenData.wrapToken.address
-      );
-
       const transactionParams = {
         from: this.accountAddress
       } as TransactionsParams;
@@ -106,9 +108,9 @@ export class WrappedTokenIdle extends WrappedToken {
         }
       });
 
-      const gasLimitObj = await (
-        contract.methods.withdraw(inputAmountInWEI) as ContractSendMethod
-      ).estimateGas(transactionParams);
+      const gasLimitObj = await this.contract.methods
+        .redeemIdleToken(inputAmountInWEI)
+        .estimateGas(transactionParams);
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -178,13 +180,6 @@ export class WrappedTokenIdle extends WrappedToken {
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contractABI = IDLE_TOKEN_ABI;
-
-    const contract = new this.web3.eth.Contract(
-      contractABI as AbiItem[],
-      this.wrapTokenData.wrapToken.address
-    );
-
     const transactionParams = {
       from: this.accountAddress,
       gas: this.web3.utils.toBN(gasLimit).toNumber(),
@@ -224,9 +219,9 @@ export class WrappedTokenIdle extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        (
-          contract.methods.withdraw(inputAmountInWEI) as ContractSendMethod
-        ).send(transactionParams),
+        this.contract.methods
+          .redeemIdleToken(inputAmountInWEI)
+          .send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
@@ -237,18 +232,11 @@ export class WrappedTokenIdle extends WrappedToken {
   }
 
   private async getMultiplier(): Promise<string> {
-    const contract = new this.web3.eth.Contract(
-      IDLE_TOKEN_ABI as AbiItem[],
-      this.wrapTokenData.wrapToken.address
-    );
-
-    const multiplier = await (
-      contract.methods.tokenPriceWithFee(
-        this.accountAddress
-      ) as ContractSendMethod
-    ).call({
-      from: this.accountAddress
-    });
+    const multiplier = await this.contract.methods
+      .tokenPriceWithFee(this.accountAddress)
+      .call({
+        from: this.accountAddress
+      });
 
     const multiplierInWei = convertToString(multiplier);
 

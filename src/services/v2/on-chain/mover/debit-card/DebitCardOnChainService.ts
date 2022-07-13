@@ -64,9 +64,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
         this.specialTokenHandlers.push(
           new WrappedTokenYearn(
             vault.vaultToken.address,
+            this.currentAddress,
             n as Network,
-            this.web3Client,
-            this.currentAddress
+            this.web3Client
           )
         );
       }
@@ -77,9 +77,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
         this.specialTokenHandlers.push(
           new WrappedTokenIdle(
             idleToken.wrapToken.address,
+            this.currentAddress,
             n as Network,
-            this.web3Client,
-            this.currentAddress
+            this.web3Client
           )
         );
       }
@@ -87,23 +87,23 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
     this.specialTokenHandlers.push(
       new WrappedTokenWXBTRFLY(
+        this.currentAddress,
         Network.mainnet,
-        this.web3Client,
-        this.currentAddress
+        this.web3Client
       )
     );
     this.specialTokenHandlers.push(
       new WrappedTokenDCult(
+        this.currentAddress,
         Network.mainnet,
-        this.web3Client,
-        this.currentAddress
+        this.web3Client
       )
     );
     this.specialTokenHandlers.push(
       new WrappedTokenGALCX(
+        this.currentAddress,
         Network.mainnet,
-        this.web3Client,
-        this.currentAddress
+        this.web3Client
       )
     );
   }

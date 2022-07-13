@@ -1,11 +1,11 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
+import { gALCXContract } from '@/services/v2/on-chain/wrapped-tokens/gALCX/types';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
@@ -30,14 +30,21 @@ export class WrappedTokenGALCX extends WrappedToken {
   public readonly wrappedTokenAddress: string;
   public readonly unwrappedTokenAddress: string;
   private readonly multiplierCache: InMemoryCache<string>;
+  private readonly contract: gALCXContract;
 
   public readonly contractABI = GALCX_ABI;
 
-  constructor(network: Network, web3: Web3, accountAddress: string) {
-    super(network, web3, accountAddress);
+  constructor(accountAddress: string, network: Network, web3: Web3) {
+    super(accountAddress, network, web3);
     this.sentryCategoryPrefix = `wrapped-token.galcx`;
     this.wrappedTokenAddress = lookupAddress(network, 'GALCX_TOKEN_ADDRESS');
     this.unwrappedTokenAddress = lookupAddress(network, 'ALCX_TOKEN_ADDRESS');
+
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI as AbiItem[],
+      this.wrappedTokenAddress
+    );
+
     this.multiplierCache = new InMemoryCache<string>(
       5 * 60,
       this.getMultiplier
@@ -65,11 +72,6 @@ export class WrappedTokenGALCX extends WrappedToken {
     inputAmount: string
   ): Promise<EstimateResponse> {
     try {
-      const contract = new this.web3.eth.Contract(
-        this.contractABI as AbiItem[],
-        this.wrappedTokenAddress
-      );
-
       const transactionParams = {
         from: this.accountAddress
       } as TransactionsParams;
@@ -94,9 +96,9 @@ export class WrappedTokenGALCX extends WrappedToken {
         }
       });
 
-      const gasLimitObj = await (
-        contract.methods.unwrapToBTRFLY(inputAmountInWEI) as ContractSendMethod
-      ).estimateGas(transactionParams);
+      const gasLimitObj = await this.contract.methods
+        .unstake(inputAmountInWEI)
+        .estimateGas(transactionParams);
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -162,11 +164,6 @@ export class WrappedTokenGALCX extends WrappedToken {
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contract = new this.web3.eth.Contract(
-      this.contractABI as AbiItem[],
-      this.wrappedTokenAddress
-    );
-
     const transactionParams = {
       from: this.accountAddress,
       gas: this.web3.utils.toBN(gasLimit).toNumber(),
@@ -203,9 +200,7 @@ export class WrappedTokenGALCX extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        (contract.methods.unstake(inputAmountInWEI) as ContractSendMethod).send(
-          transactionParams
-        ),
+        this.contract.methods.unstake(inputAmountInWEI).send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
@@ -216,14 +211,7 @@ export class WrappedTokenGALCX extends WrappedToken {
   }
 
   private async getMultiplier(): Promise<string> {
-    const contract = new this.web3.eth.Contract(
-      GALCX_ABI as AbiItem[],
-      lookupAddress(this.network, 'GALCX_TOKEN_ADDRESS')
-    );
-
-    const multiplier = await (
-      contract.methods.exchangeRate() as ContractSendMethod
-    ).call({
+    const multiplier = await this.contract.methods.exchangeRate().call({
       from: this.accountAddress
     });
 

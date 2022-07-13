@@ -13,7 +13,7 @@ export abstract class WrappedToken extends PromiEventWrapper {
   readonly web3: Web3;
   readonly accountAddress: string;
 
-  protected constructor(network: Network, web3: Web3, accountAddress: string) {
+  protected constructor(accountAddress: string, network: Network, web3: Web3) {
     super();
     this.network = network;
     this.web3 = web3;

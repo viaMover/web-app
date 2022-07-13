@@ -1,12 +1,12 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
+import { WxBTRFLYContract } from '@/services/v2/on-chain/wrapped-tokens/wxBTRFLY/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import {
@@ -30,16 +30,21 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
   public readonly wrappedTokenAddress: string;
   public readonly unwrappedTokenAddress: string;
   public readonly contractABI = WX_BTRFLY_ABI;
+  private readonly contract: WxBTRFLYContract;
   private readonly multiplierCache: InMemoryCache<string>;
 
-  constructor(network: Network, web3: Web3, accountAddress: string) {
-    super(network, web3, accountAddress);
+  constructor(accountAddress: string, network: Network, web3: Web3) {
+    super(accountAddress, network, web3);
     this.sentryCategoryPrefix = `wrapped-token.wx-btrfl`;
     this.wrappedTokenAddress = lookupAddress(
       network,
       'WX_BTRFLY_TOKEN_ADDRESS'
     );
     this.unwrappedTokenAddress = lookupAddress(network, 'BTRFLY_TOKEN_ADDRESS');
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI as AbiItem[],
+      this.wrappedTokenAddress
+    );
 
     this.multiplierCache = new InMemoryCache<string>(5 * 60, this.getRealIndex);
   }
@@ -65,11 +70,6 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
     inputAmount: string
   ): Promise<EstimateResponse> {
     try {
-      const contract = new this.web3.eth.Contract(
-        this.contractABI as AbiItem[],
-        this.wrappedTokenAddress
-      );
-
       const transactionParams = {
         from: this.accountAddress
       } as TransactionsParams;
@@ -94,9 +94,9 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
         }
       });
 
-      const gasLimitObj = await (
-        contract.methods.unwrapToBTRFLY(inputAmountInWEI) as ContractSendMethod
-      ).estimateGas(transactionParams);
+      const gasLimitObj = await this.contract.methods
+        .unwrapToBTRFLY(inputAmountInWEI)
+        .estimateGas(transactionParams);
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -162,11 +162,6 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contract = new this.web3.eth.Contract(
-      this.contractABI as AbiItem[],
-      this.wrappedTokenAddress
-    );
-
     const transactionParams = {
       from: this.accountAddress,
       gas: this.web3.utils.toBN(gasLimit).toNumber(),
@@ -203,11 +198,9 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        (
-          contract.methods.unwrapToBTRFLY(
-            inputAmountInWEI
-          ) as ContractSendMethod
-        ).send(transactionParams),
+        this.contract.methods
+          .unwrapToBTRFLY(inputAmountInWEI)
+          .send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
@@ -222,12 +215,7 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
       from: this.accountAddress
     } as TransactionsParams;
 
-    const contract = new this.web3.eth.Contract(
-      WX_BTRFLY_ABI as AbiItem[],
-      lookupAddress(this.network, 'WX_BTRFLY_TOKEN_ADDRESS')
-    );
-
-    const realIndex = await contract.methods
+    const realIndex = await this.contract.methods
       .realIndex()
       .call(transactionParams);
 

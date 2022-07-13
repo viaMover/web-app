@@ -1,11 +1,11 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
+import { dCULTContract } from '@/services/v2/on-chain/wrapped-tokens/dCULT/types';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
@@ -22,14 +22,20 @@ export class WrappedTokenDCult extends WrappedToken {
   readonly sentryCategoryPrefix: string;
   public readonly wrappedTokenAddress: string;
   public readonly unwrappedTokenAddress: string;
+  private readonly contract: dCULTContract;
 
   public readonly contractABI = DCULT_ABI;
 
-  constructor(network: Network, web3: Web3, accountAddress: string) {
-    super(network, web3, accountAddress);
+  constructor(accountAddress: string, network: Network, web3: Web3) {
+    super(accountAddress, network, web3);
     this.sentryCategoryPrefix = `wrapped-token.dcult`;
     this.wrappedTokenAddress = lookupAddress(network, 'DCULT_TOKEN_ADDRESS');
     this.unwrappedTokenAddress = lookupAddress(network, 'CULT_TOKEN_ADDRESS');
+
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI as AbiItem[],
+      this.wrappedTokenAddress
+    );
   }
 
   public getUnwrappedToken(): SmallTokenInfo {
@@ -52,11 +58,6 @@ export class WrappedTokenDCult extends WrappedToken {
     inputAmount: string
   ): Promise<EstimateResponse> {
     try {
-      const contract = new this.web3.eth.Contract(
-        this.contractABI as AbiItem[],
-        this.wrappedTokenAddress
-      );
-
       const transactionParams = {
         from: this.accountAddress
       } as TransactionsParams;
@@ -81,9 +82,9 @@ export class WrappedTokenDCult extends WrappedToken {
         }
       });
 
-      const gasLimitObj = await (
-        contract.methods.unwrapToBTRFLY(inputAmountInWEI) as ContractSendMethod
-      ).estimateGas(transactionParams);
+      const gasLimitObj = await this.contract.methods
+        .withdraw('0', inputAmountInWEI)
+        .estimateGas(transactionParams);
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -149,11 +150,6 @@ export class WrappedTokenDCult extends WrappedToken {
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contract = new this.web3.eth.Contract(
-      this.contractABI as AbiItem[],
-      this.wrappedTokenAddress
-    );
-
     const transactionParams = {
       from: this.accountAddress,
       gas: this.web3.utils.toBN(gasLimit).toNumber(),
@@ -190,9 +186,9 @@ export class WrappedTokenDCult extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        (contract.methods.unstake(inputAmountInWEI) as ContractSendMethod).send(
-          transactionParams
-        ),
+        this.contract.methods
+          .withdraw('0', inputAmountInWEI)
+          .send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
