@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/vue';
+import Web3 from 'web3';
 
 import { APIKeys } from '@/settings';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
@@ -38,7 +39,8 @@ export const BuildExplorer = async (
     nativeCurrency: NativeCurrency
   ) => Promise<PriceRecord>,
   localTokens: Array<Token>,
-  availableNetworks: Array<Network>
+  availableNetworks: Array<Network>,
+  web3: Web3
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
@@ -53,7 +55,8 @@ export const BuildExplorer = async (
     setIsTokensListLoaded,
     setChartData,
     fetchTokensPriceByContractAddresses,
-    localTokens
+    localTokens,
+    web3
   );
 
   try {
