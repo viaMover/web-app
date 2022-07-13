@@ -46,7 +46,10 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
       this.wrappedTokenAddress
     );
 
-    this.multiplierCache = new InMemoryCache<string>(5 * 60, this.getRealIndex);
+    this.multiplierCache = new InMemoryCache<string>(
+      5 * 60,
+      this.getRealIndex.bind(this)
+    );
   }
 
   public getUnwrappedToken(): SmallTokenInfo {

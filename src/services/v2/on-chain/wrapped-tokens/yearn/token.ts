@@ -62,7 +62,7 @@ export class WrappedTokenYearn extends WrappedToken {
 
     this.multiplierCache = new InMemoryCache<string>(
       5 * 60,
-      this.getMultiplier
+      this.getMultiplier.bind(this)
     );
   }
 
