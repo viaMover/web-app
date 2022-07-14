@@ -26,6 +26,7 @@ module.exports = {
         .loader('url-loader')
         .tap((options) => {
           options.limit = Number.MAX_SAFE_INTEGER - 1;
+          options.name = 'img/[name].[contenthash:8].[ext]';
           return options;
         })
         .end();
@@ -40,14 +41,27 @@ module.exports = {
         .end();
     }
 
-    config.module
-      .rule('svg')
-      .use('file-loader')
-      .tap((options) => {
-        options.name = 'img/[name].[contenthash:8].[ext]';
-        return options;
-      })
-      .end();
+    if (process.env.SHRINK_RES) {
+      config.module
+        .rule('svg')
+        .use('url-loader')
+        .loader('url-loader')
+        .tap((options) => {
+          options.limit = Number.MAX_SAFE_INTEGER - 1;
+          options.name = 'img/[name].[contenthash:8].[ext]';
+          return options;
+        })
+        .end();
+    } else {
+      config.module
+        .rule('svg')
+        .use('file-loader')
+        .tap((options) => {
+          options.name = 'img/[name].[contenthash:8].[ext]';
+          return options;
+        })
+        .end();
+    }
 
     config.module
       .rule('media')
