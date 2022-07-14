@@ -25,9 +25,10 @@ module.exports = {
         .use('url-loader')
         .loader('url-loader')
         .tap((options) => {
-          options.limit = -1;
+          options.limit = Number.MAX_SAFE_INTEGER - 1;
           return options;
-        });
+        })
+        .end();
     } else {
       config.module
         .rule('images')
