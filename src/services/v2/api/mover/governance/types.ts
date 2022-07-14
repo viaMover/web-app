@@ -24,7 +24,14 @@ export enum ErrorCode {
   InternalServerError = 'INTERNAL_SERVER_ERROR',
   InvalidPayloadOrSignature = 'INCORRECT_SIGN_ERROR',
   SignedMessageMismatch = 'MESSAGE_MATCH_DATA_ERROR',
-  InsufficientVotingPower = 'NOT_ENOUGH_VP_ERROR'
+  InsufficientVotingPower = 'NOT_ENOUGH_VP_ERROR',
+  AlreadyVoted = 'ALREADY_VOTED_ERROR',
+  ProposalNotActive = 'PROPOSAL_NOT_ACTIVE_ERROR',
+  InvalidBlock = 'INVALID_BLOCK_ERROR',
+  EmptyProposalName = 'EMPTY_PROPOSAL_NAME_ERROR',
+  EmptyProposalBody = 'EMPTY_PROPOSAL_BODY_ERROR',
+  ProposalNameTooLarge = 'PROPOSAL_NAME_TOO_LARGE_ERROR',
+  ProposalDescriptionTooLarge = 'PROPOSAL_BODY_TOO_LARGE_ERROR'
 }
 
 export type SignedRequestPayload<T> = {

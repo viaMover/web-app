@@ -131,7 +131,12 @@ import {
   CreateProposalParams,
   CreateProposalResponse
 } from '@/services/v2/api/mover/governance';
+import { ErrorCode } from '@/services/v2/api/mover/governance/types';
 import { isProviderRpcError } from '@/services/v2/on-chain';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import { isFeatureEnabled } from '@/settings';
 import { formatToDecimals } from '@/utils/format';
 
@@ -215,11 +220,32 @@ export default Vue.extend({
           }
         });
       } catch (error) {
+        if (
+          error instanceof MoverAPIError &&
+          [
+            ErrorCode.EmptyProposalBody,
+            ErrorCode.EmptyProposalName,
+            ErrorCode.InsufficientVotingPower,
+            ErrorCode.ProposalNameTooLarge,
+            ErrorCode.ProposalDescriptionTooLarge
+          ].includes(error.shortMessage as ErrorCode)
+        ) {
+          // won't emit error to Sentry, write a warning
+          addSentryBreadcrumb({
+            type: 'warning',
+            category: 'handleSubmit.governance-create-proposal.ui',
+            message: 'Failed to create a proposal. Server validation failed',
+            data: {
+              error
+            }
+          });
+        } else {
+          captureSentryException(error);
+        }
+
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
-            this.errorText = this.$t(
-              `provider.errors.${error.code}`
-            ).toString();
+            this.errorText = this.$t(`provider.errors.${error.code}`) as string;
           }
           return;
         }

@@ -17,7 +17,8 @@ const initialState: GovernanceStoreState = {
   currentVotingInfo: {
     minimalVotingPower: 0,
     votingPower: 0,
-    communityVotingPower: 0
+    communityVotingPower: 0,
+    proposalDaysToRun: 0
   },
   currentVotingInfoPromise: undefined,
 

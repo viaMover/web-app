@@ -54,7 +54,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import { MoverAPIError } from '@/services/v2/api/mover';
 import {
@@ -62,6 +62,7 @@ import {
   ProposalInfo,
   VoteResponse
 } from '@/services/v2/api/mover/governance';
+import { ErrorCode } from '@/services/v2/api/mover/governance/types';
 import { isProviderRpcError } from '@/services/v2/on-chain';
 import {
   addSentryBreadcrumb,
@@ -195,6 +196,27 @@ export default Vue.extend({
 
         await this.loadNewProposalInfo(voteResult.id);
       } catch (error) {
+        if (
+          error instanceof MoverAPIError &&
+          [
+            ErrorCode.InsufficientVotingPower,
+            ErrorCode.AlreadyVoted,
+            ErrorCode.ProposalNotActive
+          ].includes(error.shortMessage as ErrorCode)
+        ) {
+          // won't emit error to Sentry, write a warning
+          addSentryBreadcrumb({
+            type: 'warning',
+            category: 'handleSubmit.governance-create-proposal.ui',
+            message: 'Failed to create a proposal. Server validation failed',
+            data: {
+              error
+            }
+          });
+        } else {
+          captureSentryException(error);
+        }
+
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(

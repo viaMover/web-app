@@ -1,5 +1,6 @@
 import VueI18n from 'vue-i18n';
 
+import { ErrorCode as GovernanceErrorCode } from '@/services/v2/api/mover/governance/types';
 import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
@@ -808,20 +809,19 @@ const messages: VueI18n.LocaleMessageObject = {
     txtProposalDescriptionPlaceholder: 'My proposal description',
     errors: {
       default: 'Oh no. Something went wrong',
-      'too large message': 'The description is too large',
-      'no voting power': 'You have no voting power to do this',
-      'not in voting window': 'The voting is already closed',
-      'too many requests':
-        'You are making too many requests, please wait at least 10 seconds then try again',
-      'already voted': 'Oh no. Seems like you already voted',
-      'not enough power to vote':
-        "Oh no. Seems like you don't have enough power to vote",
-      'not enough power to create a proposal':
-        "Oh no. Seems like you don't have enough power to create a proposal",
-      'voting is not started yet': 'Oh no. Voting is not started yet',
-      'voting is closed': 'Oh no. Voting is already closed',
-      'wrong timestamp':
-        "Oh no. The request too long, or your system is out of sync. Looks like you'll have to try again later"
+      [GovernanceErrorCode.ProposalNameTooLarge]: 'Proposal name is too large',
+      [GovernanceErrorCode.ProposalDescriptionTooLarge]:
+        'The description is too large',
+      [GovernanceErrorCode.InsufficientVotingPower]:
+        "Oh no. Seems like you don't have enough power to do this",
+      [GovernanceErrorCode.ProposalNotActive]: 'The voting is already closed',
+      [GovernanceErrorCode.AlreadyVoted]: 'Oh no. Seems like you already voted',
+      [GovernanceErrorCode.EmptyProposalBody]:
+        'Proposal description is required. Please provide a description',
+      [GovernanceErrorCode.EmptyProposalName]:
+        'Proposal title is required. Please provide a title',
+      [GovernanceErrorCode.InvalidBlock]:
+        "Oh no. The request took too long, or your system time is out-of-date. Looks like you'll have to try again later"
     },
     btnTogglePreview: 'Toggle preview',
     txtTogglePreview: 'Toggle markdown preview',

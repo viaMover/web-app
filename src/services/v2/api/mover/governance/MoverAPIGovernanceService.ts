@@ -111,7 +111,7 @@ export class MoverAPIGovernanceService extends MoverAPIService {
   public async getCurrentVotingInfo(): Promise<CurrentVotingInfo> {
     return (
       await this.client.get<MoverAPISuccessfulResponse<CurrentVotingInfo>>(
-        `/votingInfo`,
+        `/voting-info`,
         {
           params: {
             voter_address:

@@ -9,7 +9,7 @@ import { GovernanceStoreState } from './types';
 
 type Getters = {
   proposalsOrderedByEndingDesc: Array<ProposalInfo>;
-  lastProposal: ProposalInfo | undefined;
+  lastProposalInfo: ProposalInfo | undefined;
   timesVoted: number;
   proposalsCreated: number;
   totalNumberOfProposals: number;
@@ -25,12 +25,12 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
       (a, b) => b.proposal.endTs - a.proposal.endTs
     );
   },
-  lastProposal(state, getters): ProposalInfo | undefined {
+  lastProposalInfo(state, getters): ProposalInfo | undefined {
     return getters.proposalsOrderedByEndingDesc[0] ?? undefined;
   },
   timesVoted(state): number {
     return state.proposalInfoList.reduce((acc, item) => {
-      if (item.voted) {
+      if (item.voteInfo.voted) {
         return acc + 1;
       } else {
         return acc;
