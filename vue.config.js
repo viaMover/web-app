@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const webpack = require('webpack');
-
 module.exports = {
   transpileDependencies: ['web3modal-vue'],
   css: {
@@ -25,8 +22,7 @@ module.exports = {
         .use('url-loader')
         .loader('url-loader')
         .tap((options) => {
-          options.limit = Number.MAX_SAFE_INTEGER - 1;
-          options.name = 'img/[name].[contenthash:8].[ext]';
+          options.limit = true;
           return options;
         })
         .end();
@@ -42,16 +38,9 @@ module.exports = {
     }
 
     if (process.env.SHRINK_RES) {
-      config.module
-        .rule('svg')
-        .use('url-loader')
-        .loader('url-loader')
-        .tap((options) => {
-          options.limit = Number.MAX_SAFE_INTEGER - 1;
-          options.name = 'img/[name].[contenthash:8].[ext]';
-          return options;
-        })
-        .end();
+      const svgRule = config.module.rule('svg');
+      svgRule.uses.clear();
+      svgRule.use('vue-svg-loader').loader('vue-svg-loader');
     } else {
       config.module
         .rule('svg')
