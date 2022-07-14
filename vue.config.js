@@ -1,10 +1,10 @@
 module.exports = {
   transpileDependencies: ['web3modal-vue'],
-  css: {
-    sourceMap: process.env.NODE_ENV !== 'production'
-  },
+  productionSourceMap: false,
   configureWebpack: {
-    devtool: 'sourcemap'
+    optimization: {
+      splitChunks: false
+    }
   },
   chainWebpack: (config) => {
     config.module
