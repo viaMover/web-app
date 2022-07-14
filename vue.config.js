@@ -7,13 +7,6 @@ module.exports = {
     sourceMap: process.env.NODE_ENV !== 'production'
   },
   configureWebpack: {
-    plugins: process.env.SHRINK_CHUNKS
-      ? [
-          new webpack.optimize.LimitChunkCountPlugin({
-            maxChunks: 2
-          })
-        ]
-      : [],
     devtool: 'sourcemap'
   },
   chainWebpack: (config) => {
@@ -26,14 +19,25 @@ module.exports = {
       })
       .end();
 
-    config.module
-      .rule('images')
-      .use('url-loader')
-      .tap((options) => {
-        options.fallback.options.name = 'img/[name].[contenthash:8].[ext]';
-        return options;
-      })
-      .end();
+    if (process.env.SHRINK_RES) {
+      config.module
+        .rule('images')
+        .use('url-loader')
+        .loader('url-loader')
+        .tap((options) => {
+          options.limit = -1;
+          return options;
+        });
+    } else {
+      config.module
+        .rule('images')
+        .use('url-loader')
+        .tap((options) => {
+          options.fallback.options.name = 'img/[name].[contenthash:8].[ext]';
+          return options;
+        })
+        .end();
+    }
 
     config.module
       .rule('svg')
