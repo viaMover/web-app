@@ -732,6 +732,7 @@ const actions: ActionFuncs<
   async disconnectWallet({ commit, state }): Promise<void> {
     if (state.currentAddress) {
       removeAccountBoundPersistItemsFromLocalStorage(state.currentAddress);
+      removeAccountBoundPersistItemsFromLocalStorage('all');
     }
 
     await state.uauthClient.logout(uauthOptions).catch((error) => {

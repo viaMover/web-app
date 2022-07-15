@@ -133,6 +133,7 @@ import { mapActions, mapState } from 'vuex';
 import party from 'party-js';
 
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
+import { getFromPersistStore } from '@/settings/persist/utils';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { reserveTagInput } from '@/store/modules/tag/types';
 
@@ -217,8 +218,10 @@ export default Vue.extend({
 
       try {
         this.isLoading = true;
-        const partner = this.$route.params.partner;
-        console.log(partner);
+        let partner: string | undefined = this.$route.params.partner;
+        if (!partner) {
+          partner = await getFromPersistStore<string>('all', 'tag', 'partner');
+        }
         await this.reserveTag({
           tag: this.tag,
           partner: partner
