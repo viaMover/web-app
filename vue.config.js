@@ -47,20 +47,14 @@ module.exports = {
         .end();
     }
 
-    if (process.env.SHRINK_RES) {
-      const svgRule = config.module.rule('svg');
-      svgRule.uses.clear();
-      svgRule.use('vue-svg-loader').loader('vue-svg-loader');
-    } else {
-      config.module
-        .rule('svg')
-        .use('file-loader')
-        .tap((options) => {
-          options.name = 'img/[name].[contenthash:8].[ext]';
-          return options;
-        })
-        .end();
-    }
+    config.module
+      .rule('svg')
+      .use('file-loader')
+      .tap((options) => {
+        options.name = 'img/[name].[contenthash:8].[ext]';
+        return options;
+      })
+      .end();
 
     config.module
       .rule('media')

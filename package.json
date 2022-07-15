@@ -105,7 +105,6 @@
     "simple-git": "^2.39.0",
     "stylelint": "^13.13.1",
     "typescript": "~4.1.5",
-    "vue-svg-loader": "~0.16.0",
     "vue-template-compiler": "^2.6.11"
   },
   "gitHooks": {
