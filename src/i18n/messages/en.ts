@@ -17,6 +17,8 @@ const messages: VueI18n.LocaleMessageObject = {
   lblWallet: 'Wallet',
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
+  lblManageTagEmoji: '💲',
+  lblManageTag: '@:lblManageTagEmoji Manage tag',
   lblNewToMover: 'Looks like you are new to Mover',
   lblTransactionListNotAvailable:
     'Transaction list is not available in this network',
@@ -1485,6 +1487,48 @@ const messages: VueI18n.LocaleMessageObject = {
       lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
       lblEstimatedEarningsNextMonth: 'Estimated earnings this month',
       lblEstimatedEarningsAnnually: 'Estimated earnings annually'
+    }
+  },
+  tag: {
+    bannerReserveTagTitle: 'Reserve your $tag now',
+    bannerReserveTagDescription:
+      'Choosing a $tag will allow your friends, family, and customers to pay you on the Mover Card',
+    bannerReserveTagButton: 'Reserve the $tag',
+    tag: 'Tag',
+    myTag: 'My $tag',
+    notReserved: 'Not reserved yet',
+    reserveTagTitle: 'Reserve $tag',
+    reserveTagDescription:
+      'Mover $tag will allow your friends and smart contracts to easily pay you on the card from any supported network, with almost any token.',
+    yourTagTitle: 'Your $tag',
+    yourTagPlaceholder: 'your tag',
+    yourTagDescription:
+      'Your $tag has to be unique. It must contain at least {minLength} character and be no more than {maxLength} characters. You can always change it later. Make sure you reserve yours.',
+    chooseTheTagButton: 'Choose the $tag',
+    changeTheTagButton: 'Change the $tag',
+    reserveTheTagButton: 'Reserve the $tag',
+    shareButton: 'Flex on Twitter',
+    shareTagTitle: 'Congratulations, ${tag}',
+    shareTagDescription: 'You have successfully reserved your unique tag.',
+    whatsNextTitle: "What's next?",
+    whatsNextDescription:
+      'We will be rolling out the tag system shortly. Your support is integral and very appreciated 🙏. If you click on the button below, you will generate the tweet text, please do not post it right now, but instead copy it, and share it on July 25th, when we will publicly roll it out.',
+    twit:
+      'This is a proof of my ${tag} tag ownership and reservation in @viaMover.\n' +
+      '\n' +
+      '💲💲💲\n' +
+      '{sig}',
+    errors: {
+      default: 'Oh no. Something went wrong',
+      ADDRESS_ALREADY_HAS_TAG: 'You already have a tag for this address',
+      ALREADY_EXISTS: 'Tag already exists',
+      tag: {
+        required: '$tag must be not empty',
+        minLength: '$tag must contain at least {minLength} characters',
+        maxLength: '$tag must contain no more than {maxLength} characters',
+        alpha: '$tag must contain only letters',
+        notSame: 'new $tag should be different'
+      }
     }
   }
 };

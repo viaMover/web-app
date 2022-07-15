@@ -9,6 +9,7 @@ import {
 } from '@/router/descending-meta-wrapper';
 import { checkFeatureFlags } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
+import { PartnersList } from '@/services/v2/api/mover/tag';
 import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';
 import ConnectWallet from '@/views/connect-wallet.vue';
@@ -670,6 +671,45 @@ const routes: Array<RouteConfig> = [
         if (store === undefined) return false;
         return isFeatureEnabled(
           'isStakingUbtEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
+  ),
+  wrapWithMeta(
+    {
+      path: '/tag',
+      component: () =>
+        import(/* webpackChunkName: "tag" */ '@/views/tag/tag-root.vue'),
+      children: [
+        {
+          path: '',
+          name: 'tag-manage',
+          component: () =>
+            import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue')
+        },
+        {
+          path: 'reserve/:partner',
+          name: 'tag-partner-reserve',
+          component: () =>
+            import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue'),
+          beforeEnter: (to, from, next): void => {
+            if (PartnersList.includes(to.params.partner)) {
+              next();
+              return;
+            }
+            next({ name: 'not-found-route' });
+            return;
+          }
+        }
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+
+        return isFeatureEnabled(
+          'isTagEnabled',
           store.state?.account?.networkInfo?.network
         );
       }
