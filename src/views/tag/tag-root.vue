@@ -65,11 +65,18 @@ export default Vue.extend({
   data() {
     return {
       tagPicture: {
-        src: require('@/assets/images/tag@1x.png'),
+        src: require('@/assets/images/tag.png'),
         sources: [
           {
             src: require('@/assets/images/tag@2x.png'),
             variant: '2x'
+          }
+        ],
+        webpSources: [
+          { src: require('@/assets/images/tag.webp') },
+          {
+            variant: '2x',
+            src: require('@/assets/images/tag@2x.webp')
           }
         ]
       } as PictureDescriptor
