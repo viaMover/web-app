@@ -115,21 +115,21 @@ export default Vue.extend({
   data() {
     return {
       topUpPicture: {
-        src: require('@/assets/images/CardTopUpPreview.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/CardTopUpPreview.png',
         alt: this.$t('debitCard.lblCardTopUp') as string,
         sources: [
           {
-            src: require('@/assets/images/CardTopUpPreview@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/CardTopUpPreview@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       changeSkinPicture: {
-        src: require('@/assets/images/CardChangeSkinPreview.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/CardChangeSkinPreview.png',
         alt: this.$t('debitCard.lblChangeSkin') as string,
         sources: [
           {
-            src: require('@/assets/images/CardChangeSkinPreview@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/CardChangeSkinPreview@2x.png',
             variant: '2x'
           }
         ]

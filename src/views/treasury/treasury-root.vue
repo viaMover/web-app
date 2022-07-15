@@ -190,78 +190,92 @@ export default Vue.extend({
     return {
       treasury: {
         alt: this.$t('treasury.lblSmartTreasury'),
-        src: require('@/assets/images/SmartTreasury@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.png',
         sources: [
-          { src: require('@/assets/images/SmartTreasury@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/SmartTreasury@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@2x.webp'
           }
         ]
       } as PictureDescriptor,
       powerCard: {
         alt: this.$t('treasury.leftRail.lblPowerCard'),
-        src: require('@/assets/images/Powercard_icon@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Powercard_icon@1x.png',
         sources: [
-          { src: require('@/assets/images/Powercard_icon@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Powercard_icon@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Powercard_icon@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Powercard_icon@2x.png'
           }
         ],
         webpSources: []
       } as PictureDescriptor,
       increase: {
         alt: this.$t('treasury.leftRail.lblIncreaseBoost'),
-        src: require('@/assets/images/IncreaseBoost@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/IncreaseBoost@1x.png',
         sources: [
-          { src: require('@/assets/images/IncreaseBoost@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/IncreaseBoost@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/IncreaseBoost@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/IncreaseBoost@2x.png'
           }
         ],
         webpSources: []
       } as PictureDescriptor,
       decrease: {
         alt: this.$t('treasury.leftRail.lblDecreaseBoost'),
-        src: require('@/assets/images/DecreaseBoost@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/DecreaseBoost@1x.png',
         sources: [
-          { src: require('@/assets/images/DecreaseBoost@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/DecreaseBoost@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/DecreaseBoost@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/DecreaseBoost@2x.png'
           }
         ],
         webpSources: []
       } as PictureDescriptor,
       claimAndBurn: {
         alt: this.$t('treasury.leftRail.lblClaimAndBurn'),
-        src: require('@/assets/images/Claim&Burn@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Claim&Burn@1x.png',
         sources: [
-          { src: require('@/assets/images/Claim&Burn@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Claim&Burn@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Claim&Burn@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Claim&Burn@2x.png'
           }
         ],
         webpSources: []
       } as PictureDescriptor,
       analytics: {
         alt: this.$t('treasury.leftRail.lblGlobalAnalytics'),
-        src: require('@/assets/images/GlobalAnalytics@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalytics@1x.png',
         sources: [
-          { src: require('@/assets/images/GlobalAnalytics@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalytics@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/GlobalAnalytics@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalytics@2x.png'
           }
         ],
         webpSources: []

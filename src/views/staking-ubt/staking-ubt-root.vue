@@ -133,48 +133,52 @@ export default Vue.extend({
   data() {
     return {
       stakingUBT: {
-        src: require('@/assets/images/staking-ubt/Staking_General.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_General@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/staking-ubt/Staking_General.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_General@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General@2x.webp'
           }
         ]
       } as PictureDescriptor,
       global: {
         alt: 'Global',
-        src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png',
         sources: [
           {
-            src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_GlobalAnalytics@1x.png'
           },
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_GlobalAnalytics@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_GlobalAnalytics@2x.png'
           }
         ],
         webpSources: []
       } as PictureDescriptor,
       withdraw: {
-        src: require('@/assets/images/staking-ubt/Staking_Withdraw.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_Withdraw.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_Withdraw@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_Withdraw@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/staking-ubt/Staking_Withdraw.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_Withdraw.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_Withdraw@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_Withdraw@2x.webp'
           }
         ]
       } as PictureDescriptor

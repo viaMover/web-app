@@ -16,8 +16,14 @@
         muted="muted"
         playsinline="playsinline"
       >
-        <source src="@/assets/videos/welcome.webm" type="video/webm" />
-        <source src="@/assets/videos/welcome.mp4" type="video/mp4" />
+        <source
+          src="https://storage.googleapis.com/mover-webapp-assets/videos/welcome.webm"
+          type="video/webm"
+        />
+        <source
+          src="https://storage.googleapis.com/mover-webapp-assets/videos/welcome.mp4"
+          type="video/mp4"
+        />
       </video>
     </div>
 

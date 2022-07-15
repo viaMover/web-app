@@ -87,18 +87,20 @@ export default Vue.extend({
       step: 'prepare' as ProcessStep,
       transactionStep: undefined as LoaderStep | undefined,
       depositUbtPicture: {
-        src: require('@/assets/images/staking-ubt/Staking_General.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_General@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/staking-ubt/Staking_General.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_General@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General@2x.webp'
           }
         ]
       } as PictureDescriptor,

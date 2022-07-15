@@ -23,7 +23,7 @@
         <custom-picture
           :alt="$t('icon.txtTokenInfoAlt', { name: item.name })"
           :sources="pictureSources"
-          :src="require('@/assets/images/info.png')"
+          :src="'https://storage.googleapis.com/mover-webapp-assets/images/info.png'"
           :webp-sources="pictureWebpSources"
         />
       </a>
@@ -62,12 +62,22 @@ export default Vue.extend({
   data() {
     return {
       pictureSources: [
-        { src: require('@/assets/images/info.png') },
-        { src: require('@/assets/images/info2x.png'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/info.png'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/info2x.png',
+          variant: '2x'
+        }
       ],
       pictureWebpSources: [
-        { src: require('@/assets/images/info.webp') },
-        { src: require('@/assets/images/info2x.webp'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/info.webp'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/info2x.webp',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>
     };
   },

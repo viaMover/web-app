@@ -19,10 +19,16 @@ export default Vue.extend({
   },
   data() {
     return {
-      pictureSrc: require('@/assets/images/MOVE.png'),
+      pictureSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/images/MOVE.png',
       pictureSources: [
-        { src: require('@/assets/images/MOVE.png') },
-        { src: require('@/assets/images/MOVE@2x.png'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/MOVE.png'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/MOVE@2x.png',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>,
       pictureStyles: {
         boxShadow: '0px 0px 16px rgb(195, 236, 52)'

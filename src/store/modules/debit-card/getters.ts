@@ -145,20 +145,20 @@ export const mapSkin = (
       color: skin.color,
       picture: {
         alt: pictureAlt,
-        src: require(`@/assets/images/card-skins/${skin.id}@1x.png`),
+        src: `https://storage.googleapis.com/mover-webapp-assets/images/card-skins/${skin.id}@1x.png`,
         sources: [
           {
-            src: require(`@/assets/images/card-skins/${skin.id}@2x.png`),
+            src: `https://storage.googleapis.com/mover-webapp-assets/images/card-skins/${skin.id}@2x.png`,
             variant: '2x'
           }
         ]
       },
       previewPicture: {
         alt: pictureAlt,
-        src: require(`@/assets/images/card-skins/${skin.id}-preview@1x.png`),
+        src: `https://storage.googleapis.com/mover-webapp-assets/images/card-skins/${skin.id}-preview@1x.png`,
         sources: [
           {
-            src: require(`@/assets/images/card-skins/${skin.id}-preview@2x.png`),
+            src: `https://storage.googleapis.com/mover-webapp-assets/images/card-skins/${skin.id}-preview@2x.png`,
             variant: '2x'
           }
         ]

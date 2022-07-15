@@ -28,11 +28,11 @@ export default Vue.extend({
     return {
       isLoading: false,
       image: {
-        src: require('@/assets/images/banner-card-main@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/banner-card-main@1x.png',
         alt: this.$t('debitCard.lblDebitCard'),
         sources: [
           {
-            src: require('@/assets/images/banner-card-main@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/banner-card-main@2x.png',
             variant: '2x'
           }
         ]

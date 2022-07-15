@@ -146,19 +146,19 @@ export default Vue.extend({
       //current
       transactionStep: undefined as LoaderStep | undefined,
       ethPicture: {
-        src: require('@/assets/images/ETH.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/ETH.png',
         sources: [
           {
-            src: require('@/assets/images/ETH@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/ETH@2x.png',
             variant: '2x'
           }
         ]
       },
       usdcPicture: {
-        src: require('@/assets/images/USDC.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/USDC.png',
         sources: [
           {
-            src: require('@/assets/images/USDC@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/USDC@2x.png',
             variant: '2x'
           }
         ]

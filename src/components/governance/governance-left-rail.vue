@@ -93,33 +93,33 @@ export default Vue.extend({
   data() {
     return {
       picture: {
-        src: require('@/assets/images/governance.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/governance.png',
         alt: this.$t('governance.txtGovernanceImageAlt') as string,
         sources: [
           {
-            src: require('@/assets/images/governance@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/governance@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       createPicture: {
-        src: require('@/assets/images/governance.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/governance.png',
         alt: this.$t('governance.txtCreateAProposalAlt') as string,
         sources: [
           {
-            src: require('@/assets/images/governance@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/governance@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       globalAnalyticsPicture: {
-        src: require('@/assets/images/governance-global-analytics.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/governance-global-analytics.png',
         alt: this.$t(
           'governance.txtGovernanceGlobalAnalyticsImageAlt'
         ) as string,
         sources: [
           {
-            src: require('@/assets/images/governance-global-analytics@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/governance-global-analytics@2x.png',
             variant: '2x'
           }
         ]

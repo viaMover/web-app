@@ -136,42 +136,50 @@ export default Vue.extend({
     return {
       savings: {
         alt: 'Savings',
-        src: require('@/assets/images/Savings@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png',
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.webp'
           }
         ]
       } as PictureDescriptor,
       global: {
         alt: 'Global',
-        src: require('@/assets/images/Global@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Global@1x.png',
         sources: [
-          { src: require('@/assets/images/Global@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Global@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Global@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Global@2x.png'
           }
         ],
         webpSources: []
       } as PictureDescriptor,
       withdraw: {
         alt: 'Withdraw',
-        src: require('@/assets/images/Withdraw@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Withdraw@1x.png',
         sources: [
-          { src: require('@/assets/images/Withdraw@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Withdraw@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Withdraw@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Withdraw@2x.png'
           }
         ],
         webpSources: []

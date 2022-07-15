@@ -86,14 +86,14 @@ export default Vue.extend({
     return {
       withdraw: {
         alt: this.$t('earnings.olympus.txtWithdrawPictureAlt'),
-        src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@1x.png',
         sources: [
           {
-            src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@1x.png'
           },
           {
             variant: '2x',
-            src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@2x.png'
           }
         ]
       } as PictureDescriptor,

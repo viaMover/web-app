@@ -12,7 +12,7 @@
         data-keepplaying="data-keepplaying"
         loop="loop"
         muted="muted"
-        src="@/assets/videos/TransactionWalletWaiting.webm"
+        src="https://storage.googleapis.com/mover-webapp-assets/videos/TransactionWalletWaiting.webm"
       />
       <video
         v-else-if="selectedStepData.id === 'Process'"
@@ -20,7 +20,7 @@
         data-keepplaying="data-keepplaying"
         loop="loop"
         muted="muted"
-        src="@/assets/videos/TransactionProcessing.webm"
+        src="https://storage.googleapis.com/mover-webapp-assets/videos/TransactionProcessing.webm"
       />
       <video
         v-else-if="selectedStepData.id === 'Success'"
@@ -28,7 +28,7 @@
         data-keepplaying="data-keepplaying"
         loop="loop"
         muted="muted"
-        src="@/assets/videos/TransactionSuccess.webm"
+        src="https://storage.googleapis.com/mover-webapp-assets/videos/TransactionSuccess.webm"
       />
       <video
         v-else-if="selectedStepData.id === 'Reverted'"
@@ -36,7 +36,7 @@
         data-keepplaying="data-keepplaying"
         loop="loop"
         muted="muted"
-        src="@/assets/videos/TransactionFailed.webm"
+        src="https://storage.googleapis.com/mover-webapp-assets/videos/TransactionFailed.webm"
       />
     </div>
   </div>

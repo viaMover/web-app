@@ -215,66 +215,83 @@ export default Vue.extend({
       ModalType: ModalType,
       SwapType: SwapType,
       savingsPicture: {
-        src: require('@/assets/images/Savings@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png',
         webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
-          { src: require('@/assets/images/Savings@2x.webp'), variant: '2x' }
-        ],
-        sources: [
-          { src: require('@/assets/images/Savings@2x.png'), variant: '2x' }
-        ]
-      } as PictureDescriptor,
-      treasuryPicture: {
-        src: require('@/assets/images/SmartTreasury@1x.png'),
-        webpSources: [
-          { src: require('@/assets/images/SmartTreasury@1x.webp') },
           {
-            src: require('@/assets/images/SmartTreasury@2x.webp'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.webp'
+          },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.webp',
             variant: '2x'
           }
         ],
         sources: [
           {
-            src: require('@/assets/images/SmartTreasury@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.png',
+            variant: '2x'
+          }
+        ]
+      } as PictureDescriptor,
+      treasuryPicture: {
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.png',
+        webpSources: [
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.webp'
+          },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@2x.webp',
+            variant: '2x'
+          }
+        ],
+        sources: [
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       earningsPicture: {
-        src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@1x.png',
         sources: [
           {
-            src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       savingsPlusPicture: {
-        src: require('@/assets/images/SavingsPlus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.png',
         sources: [
-          { src: require('@/assets/images/SavingsPlus@2x.png'), variant: '2x' }
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@2x.png',
+            variant: '2x'
+          }
         ],
         webpSources: [
-          { src: require('@/assets/images/SavingsPlus@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SavingsPlus@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@2x.webp'
           }
         ]
       } as PictureDescriptor,
       stakingUBTPicture: {
-        src: require('@/assets/images/staking-ubt/Staking_General.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_General@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/staking-ubt/Staking_General.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/staking-ubt/Staking_General@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/staking-ubt/Staking_General@2x.webp'
           }
         ]
       } as PictureDescriptor

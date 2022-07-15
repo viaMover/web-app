@@ -58,33 +58,33 @@ export default Vue.extend({
   data() {
     return {
       stakePicture: {
-        src: require('@/assets/images/earnings-stake.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-stake.png',
         alt: this.$t('earnings.ethereum.txtStakePictureAlt') as string,
         sources: [
           {
-            src: require('@/assets/images/earnings-stake@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-stake@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       withdrawPicture: {
-        src: require('@/assets/images/earnings-withdraw.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-withdraw.png',
         alt: this.$t('earnings.ethereum.txtWithdrawPictureAlt') as string,
         sources: [
           {
-            src: require('@/assets/images/earnings-withdraw@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-withdraw@2x.png',
             variant: '2x'
           }
         ]
       } as PictureDescriptor,
       globalAnalyticsPicture: {
-        src: require('@/assets/images/earnings-global-analytics.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-global-analytics.png',
         alt: this.$t(
           'earnings.ethereum.txtGlobalAnalyticsPictureAlt'
         ) as string,
         sources: [
           {
-            src: require('@/assets/images/earnings-global-analytics@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-global-analytics@2x.png',
             variant: '2x'
           }
         ]

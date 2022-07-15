@@ -9,7 +9,8 @@ export const getOlympusAvatar = (i18n: IVueI18n | null): Avatar => ({
   imageAlt:
     (i18n?.t('icon.txtMovingWithOlympusAvatarAlt') as string) ??
     'Moving with Olympus',
-  imageSrc: require('@/assets/images/olympus_unique_avatar.png'),
+  imageSrc:
+    'https://storage.googleapis.com/mover-webapp-assets/images/olympus_unique_avatar.png',
   color: '#ecebeb'
 });
 

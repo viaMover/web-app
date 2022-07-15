@@ -73,37 +73,45 @@ export default Vue.extend({
       //TODO insert new image
       race: {
         alt: '',
-        src: require('@/assets/images/Savings@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png',
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.webp'
           }
         ]
       } as PictureDescriptor,
       leaderboard: {
         alt: '',
-        src: require('@/assets/images/Savings@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png',
         sources: [
-          { src: require('@/assets/images/Savings@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Savings@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Savings@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Savings@2x.webp'
           }
         ]
       } as PictureDescriptor

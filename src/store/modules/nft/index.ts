@@ -24,36 +24,38 @@ export default {
         availablePrices: []
       },
       picture: {
-        src: require('@/assets/images/order-of-liberty/preview@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview@1x.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/order-of-liberty/preview@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/order-of-liberty/preview@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/order-of-liberty/preview@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview@2x.webp'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/order-of-liberty/preview-big@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview-big@1x.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/order-of-liberty/preview-big@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview-big@2x.png'
           }
         ],
         webpSources: [
           {
-            src: require('@/assets/images/order-of-liberty/preview-big@1x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview-big@1x.webp'
           },
           {
             variant: '2x',
-            src: require('@/assets/images/order-of-liberty/preview-big@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/preview-big@2x.webp'
           }
         ]
       }
@@ -69,34 +71,38 @@ export default {
         totalClaimed: '0'
       },
       picture: {
-        src: require('@/assets/images/MovingWithOlympus.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympus.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/MovingWithOlympus@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympus@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/MovingWithOlympus.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympus.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/MovingWithOlympus@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympus@2x.webp'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/MovingWithOlympusBig.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympusBig.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/MovingWithOlympusBig@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympusBig@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/MovingWithOlympusBig.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympusBig.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/MovingWithOlympusBig@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/MovingWithOlympusBig@2x.webp'
           }
         ]
       }
@@ -107,34 +113,38 @@ export default {
       balance: '0',
       name: 'Unexpected Move',
       picture: {
-        src: require('@/assets/images/UnexpectedMove.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMove.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/UnexpectedMove@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMove@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/UnexpectedMove.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMove.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/UnexpectedMove@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMove@2x.webp'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/UnexpectedMoveBig.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMoveBig.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/UnexpectedMoveBig@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMoveBig@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/UnexpectedMoveBig.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMoveBig.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/UnexpectedMoveBig@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/UnexpectedMoveBig@2x.webp'
           }
         ]
       },
@@ -154,34 +164,38 @@ export default {
         totalAmount: '0'
       },
       picture: {
-        src: require('@/assets/images/SweetAndSour.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSour.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/SweetAndSour@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSour@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/SweetAndSour.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSour.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SweetAndSour@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSour@2x.webp'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/SweetAndSourBig.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSourBig.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/SweetAndSourBig@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSourBig@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/SweetAndSourBig.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSourBig.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SweetAndSourBig@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SweetAndSourBig@2x.webp'
           }
         ]
       }
@@ -196,34 +210,38 @@ export default {
         totalClaimed: '0'
       },
       picture: {
-        src: require('@/assets/images/Vaults.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Vaults.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/Vaults@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Vaults@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Vaults.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Vaults.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Vaults@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Vaults@2x.webp'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/VaultsBig.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/VaultsBig.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/VaultsBig@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/VaultsBig@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/VaultsBig.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/VaultsBig.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/VaultsBig@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/VaultsBig@2x.webp'
           }
         ]
       }
@@ -237,34 +255,38 @@ export default {
         totalClaimed: '0'
       },
       picture: {
-        src: require('@/assets/images/Dice_Project_More@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project_More@1x.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/Dice_Project_More@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project_More@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Dice_Project_More@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project_More@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Dice_Project_More@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project_More@2x.webp'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/Dice_Project@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project@1x.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/Dice_Project@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Dice_Project@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Dice_Project@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Dice_Project@2x.webp'
           }
         ]
       }
@@ -275,20 +297,20 @@ export default {
       balance: '0',
       name: '👨🐝☕️',
       picture: {
-        src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@1x.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/baseledger-staking-og/Baseledger_Staking_OG_Small@2x.png'
           }
         ]
       },
       bigPicture: {
-        src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Big@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/baseledger-staking-og/Baseledger_Staking_OG_Big@1x.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/baseledger-staking-og/Baseledger_Staking_OG_Big@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/baseledger-staking-og/Baseledger_Staking_OG_Big@2x.png'
           }
         ]
       },
@@ -303,34 +325,38 @@ export default {
           balance: '0',
           meta: undefined,
           picture: {
-            src: require('@/assets/images/SwapPassport.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassport.png',
             sources: [
               {
                 variant: '2x',
-                src: require('@/assets/images/SwapPassport@2x.png')
+                src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassport@2x.png'
               }
             ],
             webpSources: [
-              { src: require('@/assets/images/SwapPassport.webp') },
+              {
+                src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassport.webp'
+              },
               {
                 variant: '2x',
-                src: require('@/assets/images/SwapPassport@2x.webp')
+                src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassport@2x.webp'
               }
             ]
           },
           bigPicture: {
-            src: require('@/assets/images/SwapPassportBig.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassportBig.png',
             sources: [
               {
                 variant: '2x',
-                src: require('@/assets/images/SwapPassportBig@2x.png')
+                src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassportBig@2x.png'
               }
             ],
             webpSources: [
-              { src: require('@/assets/images/SwapPassportBig.webp') },
+              {
+                src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassportBig.webp'
+              },
               {
                 variant: '2x',
-                src: require('@/assets/images/SwapPassportBig@2x.webp')
+                src: 'https://storage.googleapis.com/mover-webapp-assets/images/SwapPassportBig@2x.webp'
               }
             ]
           }

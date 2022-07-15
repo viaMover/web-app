@@ -28,17 +28,19 @@ export default Vue.extend({
     return {
       isLoading: false,
       image: {
-        src: require('@/assets/images/order-of-liberty/home@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/home@1x.png',
         sources: [
           {
-            src: require('@/assets/images/order-of-liberty/home@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/home@2x.png',
             variant: '2x'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/order-of-liberty/home@1x.webp') },
           {
-            src: require('@/assets/images/order-of-liberty/home@2x.webp'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/home@1x.webp'
+          },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/home@2x.webp',
             variant: '2x'
           }
         ]

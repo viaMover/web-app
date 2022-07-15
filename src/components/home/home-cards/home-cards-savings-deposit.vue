@@ -28,19 +28,23 @@ export default Vue.extend({
     return {
       image: {
         alt: this.$t('savingsDepositCard.txtCardImageAlt'),
-        src: require('@/assets/images/SavingsDepositCard.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsDepositCard.png',
         sources: [
-          { src: require('@/assets/images/SavingsDepositCard.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsDepositCard.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SavingsDepositCard@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsDepositCard@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/SavingsDepositCard.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsDepositCard.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SavingsDepositCard@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsDepositCard@2x.webp'
           }
         ]
       } as PictureDescriptor

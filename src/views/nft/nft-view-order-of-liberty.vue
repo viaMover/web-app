@@ -175,10 +175,10 @@ export default Vue.extend({
       actionError: undefined as string | undefined,
       imageSrc: '',
       images: [
-        require('@/assets/images/order-of-liberty/picture1.png'),
-        require('@/assets/images/order-of-liberty/picture2.png'),
-        require('@/assets/images/order-of-liberty/picture3.png'),
-        require('@/assets/images/order-of-liberty/picture4.png')
+        'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/picture1.png',
+        'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/picture2.png',
+        'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/picture3.png',
+        'https://storage.googleapis.com/mover-webapp-assets/images/order-of-liberty/picture4.png'
       ]
     };
   },
@@ -208,7 +208,7 @@ export default Vue.extend({
     }
   },
   created(): void {
-    this.imageSrc = sample(this.images);
+    this.imageSrc = sample(this.images) ?? '';
   },
   mounted(): void {
     this.transactionStep = undefined;

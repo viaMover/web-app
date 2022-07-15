@@ -66,7 +66,7 @@
         loop="loop"
         muted="muted"
         playsinline="playsinline"
-        src="@/assets/videos/vaults.webm"
+        src="https://storage.googleapis.com/mover-webapp-assets/videos/vaults.webm"
       />
     </template>
 

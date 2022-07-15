@@ -65,11 +65,11 @@ export default Vue.extend({
   data() {
     return {
       navPicture: {
-        src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@1x.png',
         alt: 'unused' as string,
         sources: [
           {
-            src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@2x.png',
             variant: '2x'
           }
         ]

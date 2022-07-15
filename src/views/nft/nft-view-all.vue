@@ -55,19 +55,23 @@ export default Vue.extend({
   data() {
     return {
       headerImage: {
-        src: require('@/assets/images/NFT-Drops.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/NFT-Drops.png',
         sources: [
-          { src: require('@/assets/images/NFT-Drops.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/NFT-Drops.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/NFT-Drops@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/NFT-Drops@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/NFT-Drops.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/NFT-Drops.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/NFT-Drops@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/NFT-Drops@2x.webp'
           }
         ]
       } as PictureDescriptor

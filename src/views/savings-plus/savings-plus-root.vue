@@ -138,51 +138,64 @@ export default Vue.extend({
     return {
       savings: {
         alt: 'Savings plus',
-        src: require('@/assets/images/SavingsPlus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.png',
         sources: [
-          { src: require('@/assets/images/SavingsPlus@2x.png'), variant: '2x' }
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@2x.png',
+            variant: '2x'
+          }
         ],
         webpSources: [
-          { src: require('@/assets/images/SavingsPlus@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SavingsPlus@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@2x.webp'
           }
         ]
       } as PictureDescriptor,
       global: {
         alt: 'Global',
-        src: require('@/assets/images/GlobalAnalyticsSP@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalyticsSP@1x.png',
         sources: [
-          { src: require('@/assets/images/GlobalAnalyticsSP@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalyticsSP@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/GlobalAnalyticsSP@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalyticsSP@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/GlobalAnalyticsSP@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalyticsSP@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/GlobalAnalyticsSP@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/GlobalAnalyticsSP@2x.webp'
           }
         ]
       } as PictureDescriptor,
       withdraw: {
         alt: 'Withdraw',
-        src: require('@/assets/images/WithdrawSP@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/WithdrawSP@1x.png',
         sources: [
-          { src: require('@/assets/images/WithdrawSP@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/WithdrawSP@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/WithdrawSP@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/WithdrawSP@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/WithdrawSP@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/WithdrawSP@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/WithdrawSP@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/WithdrawSP@2x.webp'
           }
         ]
       } as PictureDescriptor

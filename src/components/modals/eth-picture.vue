@@ -19,10 +19,16 @@ export default Vue.extend({
   },
   data() {
     return {
-      pictureSrc: require('@/assets/images/ETH.png'),
+      pictureSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/images/ETH.png',
       pictureSources: [
-        { src: require('@/assets/images/ETH.png') },
-        { src: require('@/assets/images/ETH@2x.png'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/ETH.png'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/ETH@2x.png',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>,
       pictureStyles: {
         boxShadow: '0px 0px 16px rgba(53, 119, 190, 1)'

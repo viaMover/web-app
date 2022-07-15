@@ -16,11 +16,13 @@ export const allNibbleShopTokens: Asset[] = [
     title: 'The Cap',
     shortName: 'cap',
     preview: {
-      videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/CeoOfMoney.webm',
       background: '#dbe2e6'
     },
     page: {
-      videoSrc: require('@/assets/videos/CeoOfMoney.webm'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/CeoOfMoney.webm',
       background: '#dbe2e6'
     }
   },
@@ -38,11 +40,13 @@ export const allNibbleShopTokens: Asset[] = [
     title: 'Face mask',
     shortName: 'mask',
     preview: {
-      videoSrc: require('@/assets/videos/FaceMask.webm'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/FaceMask.webm',
       background: '#dde3e7'
     },
     page: {
-      videoSrc: require('@/assets/videos/FaceMask.webm'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/FaceMask.webm',
       background: '#dde3e7'
     }
   },
@@ -60,11 +64,13 @@ export const allNibbleShopTokens: Asset[] = [
     title: 'The OG T-Shirt',
     shortName: 'the OG T-shirt',
     preview: {
-      videoSrc: require('@/assets/videos/OGT.mp4'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/OGT.mp4',
       background: '#dbdbdb'
     },
     page: {
-      videoSrc: require('@/assets/videos/OGT.mp4'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/OGT.mp4',
       background: '#dbdbdb'
     }
   },
@@ -82,11 +88,13 @@ export const allNibbleShopTokens: Asset[] = [
     title: 'Power T-Shirt',
     shortName: 'power T-Shirt',
     preview: {
-      videoSrc: require('@/assets/videos/PowerTShirt.webm'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/PowerTShirt.webm',
       background: '#f0f6f8'
     },
     page: {
-      videoSrc: require('@/assets/videos/PowerTShirt.webm'),
+      videoSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/videos/PowerTShirt.webm',
       background: '#f0f6f8'
     }
   }

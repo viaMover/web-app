@@ -19,14 +19,25 @@ export default Vue.extend({
   },
   data() {
     return {
-      pictureSrc: require('@/assets/images/Details.png'),
+      pictureSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/images/Details.png',
       pictureSources: [
-        { src: require('@/assets/images/Details.png') },
-        { src: require('@/assets/images/Details@2x.png'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Details.png'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Details@2x.png',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>,
       pictureWebpSources: [
-        { src: require('@/assets/images/Details.webp') },
-        { src: require('@/assets/images/Details@2x.webp'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Details.webp'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Details@2x.webp',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>
     };
   }

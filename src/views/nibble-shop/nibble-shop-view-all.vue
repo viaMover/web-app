@@ -46,18 +46,20 @@ export default Vue.extend({
     return {
       headerImage: {
         alt: this.$t('nibbleShop.txtLogoAlt'),
-        src: require('@/assets/images/Nibble-Shop.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/Nibble-Shop.png',
         sources: [
           {
             variant: '2x',
-            src: require('@/assets/images/Nibble-Shop@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Nibble-Shop@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/Nibble-Shop.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Nibble-Shop.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/Nibble-Shop@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/Nibble-Shop@2x.webp'
           }
         ]
       } as PictureDescriptor

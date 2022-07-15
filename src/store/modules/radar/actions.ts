@@ -31,37 +31,37 @@ const actions: ActionFuncs<Actions, RadarStoreState, MutationType, GetterType> =
         {
           id: 0,
           name: 'Anton Z',
-          icon: require('@/assets/images/personal-lists-icon1.jpg'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/personal-lists-icon1.jpg',
           blackBorder: true
         },
         {
           id: 1,
           name: 'Anton M',
-          icon: require('@/assets/images/personal-lists-icon2.jpg'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/personal-lists-icon2.jpg',
           blackBorder: false
         },
         {
           id: 2,
           name: 'Monkey',
-          icon: require('@/assets/images/personal-lists-icon3.png'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/personal-lists-icon3.png',
           blackBorder: false
         },
         {
           id: 3,
           name: 'Magic',
-          icon: require('@/assets/images/personal-lists-icon4.jpg'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/personal-lists-icon4.jpg',
           blackBorder: false
         },
         {
           id: 4,
           name: 'vfat0',
-          icon: require('@/assets/images/personal-lists-icon5.png'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/personal-lists-icon5.png',
           blackBorder: true
         },
         {
           id: 5,
           name: 'vfat0',
-          icon: require('@/assets/images/personal-lists-icon5.png'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/personal-lists-icon5.png',
           blackBorder: true
         }
       ];
@@ -99,25 +99,25 @@ const actions: ActionFuncs<Actions, RadarStoreState, MutationType, GetterType> =
         {
           id: 0,
           name: 'Futur of Franc',
-          icon: require('@/assets/images/curated-lists-icon1.png'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/curated-lists-icon1.png',
           blackBorder: true
         },
         {
           id: 1,
           name: 'Ape Szn',
-          icon: require('@/assets/images/curated-lists-icon2.jpg'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/curated-lists-icon2.jpg',
           blackBorder: false
         },
         {
           id: 2,
           name: 'Comfy list',
-          icon: require('@/assets/images/curated-lists-icon3.png'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/curated-lists-icon3.png',
           blackBorder: true
         },
         {
           id: 3,
           name: 'Powerlist',
-          icon: require('@/assets/images/curated-lists-icon4.jpg'),
+          icon: 'https://storage.googleapis.com/mover-webapp-assets/images/curated-lists-icon4.jpg',
           blackBorder: false
         }
       ];

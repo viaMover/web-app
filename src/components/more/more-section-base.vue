@@ -41,20 +41,22 @@ import Vue from 'vue';
 import { CustomPicture, PictureDescriptor } from '@/components/html5';
 
 const picture: PictureDescriptor = {
-  src: require('@/assets/images/open_icon.png'),
+  src: 'https://storage.googleapis.com/mover-webapp-assets/images/open_icon.png',
   sources: [
-    { src: require('@/assets/images/open_icon.png') },
     {
-      src: require('@/assets/images/open_icon@2x.png'),
+      src: 'https://storage.googleapis.com/mover-webapp-assets/images/open_icon.png'
+    },
+    {
+      src: 'https://storage.googleapis.com/mover-webapp-assets/images/open_icon@2x.png',
       variant: '2x'
     }
   ],
   webpSources: [
     {
-      src: require('@/assets/images/open_icon.webp')
+      src: 'https://storage.googleapis.com/mover-webapp-assets/images/open_icon.webp'
     },
     {
-      src: require('@/assets/images/open_icon@2x.webp'),
+      src: 'https://storage.googleapis.com/mover-webapp-assets/images/open_icon@2x.webp',
       variant: '2x'
     }
   ]

@@ -108,19 +108,23 @@ export default Vue.extend({
       transactionStep: undefined as LoaderStep | undefined,
       treasury: {
         alt: this.$t('treasury.lblSmartTreasury') as string,
-        src: require('@/assets/images/SmartTreasury@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.png',
         sources: [
-          { src: require('@/assets/images/SmartTreasury@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/SmartTreasury@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SmartTreasury@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SmartTreasury@2x.webp'
           }
         ]
       } as PictureDescriptor,

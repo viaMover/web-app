@@ -33,7 +33,7 @@ export default Vue.extend({
     return {
       image: {
         alt: this.$t('vaultsRace.txtGamesAlt'),
-        src: require('@/assets/images/VaultsRace.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/VaultsRace.png',
         sources: [],
         webpSources: []
       } as PictureDescriptor

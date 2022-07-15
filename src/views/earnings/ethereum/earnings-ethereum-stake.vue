@@ -109,22 +109,22 @@ export default Vue.extend({
     return {
       stake: {
         alt: this.$t('earnings.ethereum.txtStakePictureAlt'),
-        src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@1x.png',
         sources: [
           {
-            src: require('@/assets/images/earnings-ethereum-and-olympus@1x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@1x.png'
           },
           {
             variant: '2x',
-            src: require('@/assets/images/earnings-ethereum-and-olympus@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/earnings-ethereum-and-olympus@2x.png'
           }
         ]
       } as PictureDescriptor,
       ethPicture: {
-        src: require('@/assets/images/ETH.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/ETH.png',
         sources: [
           {
-            src: require('@/assets/images/ETH@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/ETH@2x.png',
             variant: '2x'
           }
         ]

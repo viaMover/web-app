@@ -154,27 +154,31 @@ export default Vue.extend({
       transactionStep: undefined as LoaderStep | undefined,
       savings: {
         alt: this.$t('savingsPlus.lblSP'),
-        src: require('@/assets/images/SavingsPlus@1x.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.png',
         sources: [
-          { src: require('@/assets/images/SavingsPlus@1x.png') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.png'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SavingsPlus@2x.png')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@2x.png'
           }
         ],
         webpSources: [
-          { src: require('@/assets/images/SavingsPlus@1x.webp') },
+          {
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@1x.webp'
+          },
           {
             variant: '2x',
-            src: require('@/assets/images/SavingsPlus@2x.webp')
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/SavingsPlus@2x.webp'
           }
         ]
       } as PictureDescriptor,
       usdcPicture: {
-        src: require('@/assets/images/USDC.png'),
+        src: 'https://storage.googleapis.com/mover-webapp-assets/images/USDC.png',
         sources: [
           {
-            src: require('@/assets/images/USDC@2x.png'),
+            src: 'https://storage.googleapis.com/mover-webapp-assets/images/USDC@2x.png',
             variant: '2x'
           }
         ]

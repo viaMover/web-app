@@ -19,14 +19,25 @@ export default Vue.extend({
   },
   data() {
     return {
-      pictureSrc: require('@/assets/images/Flip.png'),
+      pictureSrc:
+        'https://storage.googleapis.com/mover-webapp-assets/images/Flip.png',
       pictureSources: [
-        { src: require('@/assets/images/Flip.png') },
-        { src: require('@/assets/images/Flip@2x.png'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Flip.png'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Flip@2x.png',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>,
       pictureWebpSources: [
-        { src: require('@/assets/images/Flip.webp') },
-        { src: require('@/assets/images/Flip@2x.webp'), variant: '2x' }
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Flip.webp'
+        },
+        {
+          src: 'https://storage.googleapis.com/mover-webapp-assets/images/Flip@2x.webp',
+          variant: '2x'
+        }
       ] as Array<PictureSourceDescriptor>
     };
   }

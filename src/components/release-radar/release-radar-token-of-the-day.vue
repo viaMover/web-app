@@ -12,7 +12,7 @@
           <img
             :alt="$t('radar.txtRuneAlt', { name: 'Rune' })"
             class="button-active"
-            src="@/assets/images/rune-icon.png"
+            src="https://storage.googleapis.com/mover-webapp-assets/images/rune-icon.png"
           />
         </div>
       </div>
