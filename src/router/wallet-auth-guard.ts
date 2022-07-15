@@ -11,13 +11,7 @@ export const requireWalletAuth =
     const store = router.app.$store;
 
     if (PartnersList.includes(to.params.partner)) {
-      await setToPersistStore(
-        'all',
-        'tag',
-        'partner',
-        to.params.partner,
-        5 * 60 * 1000
-      );
+      await setToPersistStore('all', 'tag', 'partner', to.params.partner);
     }
 
     if (excludedRouteNames.includes(to.name ?? '')) {
