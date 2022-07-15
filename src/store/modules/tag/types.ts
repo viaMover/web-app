@@ -10,6 +10,11 @@ export type TagStoreState = {
   apiService: MoverAPITagService | undefined;
 };
 
+export type reserveTagInput = {
+  tag: string;
+  partner: string | undefined;
+};
+
 export type SetTagAndSigArgs = {
   tag: string;
   sig: string;

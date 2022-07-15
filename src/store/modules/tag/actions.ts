@@ -9,7 +9,7 @@ import { ActionFuncs } from '@/store/types';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
-import { TagStoreState } from './types';
+import { reserveTagInput, TagStoreState } from './types';
 
 export type Actions = {
   loadInfo: Promise<void>;
@@ -72,7 +72,10 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
       commit('setIsLoading', false);
     }
   },
-  async reserveTag({ commit, state, rootState }, tag: string): Promise<void> {
+  async reserveTag(
+    { commit, state, rootState },
+    payload: reserveTagInput
+  ): Promise<void> {
     if (!ensureAccountStateIsSafe(rootState.account)) {
       addSentryBreadcrumb({
         type: 'error',
@@ -93,7 +96,7 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
     }
 
     try {
-      const response = await service.reserveTag(tag);
+      const response = await service.reserveTag(payload.tag, payload.partner);
       commit('setTagAndSig', { tag: response.name, sig: response.sig });
     } catch (error) {
       addSentryBreadcrumb({

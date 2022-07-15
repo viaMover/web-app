@@ -1499,7 +1499,7 @@ const messages: VueI18n.LocaleMessageObject = {
     notReserved: 'Not reserved yet',
     reserveTagTitle: 'Reserve $tag',
     reserveTagDescription:
-      'Choosing a $tag for free will allow your friends, family, and customers to pay you on the Mover Card. No need to cash out manually, or give them your wallet address. Use your favorite projects on the card.',
+      'Mover $tag will allow your friends and smart contracts to easily pay you on the card from any supported network, with almost any token.',
     yourTagTitle: 'Your $tag',
     yourTagPlaceholder: 'your tag',
     yourTagDescription:
@@ -1512,9 +1512,9 @@ const messages: VueI18n.LocaleMessageObject = {
     shareTagDescription: 'You have successfully reserved your unique tag.',
     whatsNextTitle: "What's next?",
     whatsNextDescription:
-      'We will be rolling the open tag system shortly that will allow your favorite projects and protocols to create a flow on the Mover card. What you can do now is share you tag on Twitter. Let your friends reserve their tags, and let us know about your favorite projects you want us to integrate.',
+      'We will be rolling out the tag system shortly. Your support is integral and very appreciated 🙏. If you click on the button below, you will generate the tweet text, please do not post it right now, but instead copy it, and share it on July 25th, when we will publicly roll it out.',
     twit:
-      'This is proof of my tag - ${tag} ownership and reservation in @viaMover. \n' +
+      'This is a proof of my ${tag} tag ownership and reservation in @viaMover.\n' +
       '\n' +
       '💲💲💲\n' +
       '{sig}',

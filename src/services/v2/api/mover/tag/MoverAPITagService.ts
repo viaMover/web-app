@@ -32,7 +32,10 @@ export class MoverAPITagService extends MoverAPIService {
     this.web3Client = web3Client;
   }
 
-  public async reserveTag(tag: string): Promise<ReserveTagResponse> {
+  public async reserveTag(
+    tag: string,
+    partner: string | undefined
+  ): Promise<ReserveTagResponse> {
     const dataToSign = {
       name: tag,
       address: this.currentAddress,
@@ -49,7 +52,8 @@ export class MoverAPITagService extends MoverAPIService {
       data: dataToSign,
       meta: {
         address: this.currentAddress,
-        sig: signature
+        sig: signature,
+        partner: partner
       }
     };
     return (

@@ -92,7 +92,7 @@
             v-else
             ref="button"
             class="primary"
-            :disabled="isLoading || tag.length < 2 || $v.$error"
+            :disabled="isLoading || tag.length < 1 || $v.$error"
             propagate-original-event
             type="submit"
           >
@@ -134,6 +134,7 @@ import party from 'party-js';
 
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
+import { reserveTagInput } from '@/store/modules/tag/types';
 
 import { ActionButton } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
@@ -216,7 +217,12 @@ export default Vue.extend({
 
       try {
         this.isLoading = true;
-        await this.reserveTag(this.tag);
+        const partner = this.$route.params.partner;
+        console.log(partner);
+        await this.reserveTag({
+          tag: this.tag,
+          partner: partner
+        } as reserveTagInput);
         this.reservedNow = true;
         party.confetti($event.target as HTMLInputElement, {
           count: 75
@@ -263,7 +269,7 @@ export default Vue.extend({
   validations: {
     tag: {
       required,
-      minLength: minLength(2),
+      minLength: minLength(1),
       maxLength: maxLength(20),
       notSame: not(sameAs((vm) => vm.reservedTag)),
       alpha

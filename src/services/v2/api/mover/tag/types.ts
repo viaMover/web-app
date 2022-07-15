@@ -7,6 +7,7 @@ export type ReserveTagPayload = {
   meta: {
     address: string;
     sig: string;
+    partner: string | undefined;
   };
 };
 

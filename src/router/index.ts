@@ -686,6 +686,12 @@ const routes: Array<RouteConfig> = [
           name: 'tag-manage',
           component: () =>
             import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue')
+        },
+        {
+          path: 'reserve/:partner',
+          name: 'tag-partner-reserve',
+          component: () =>
+            import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue')
         }
       ]
     },
