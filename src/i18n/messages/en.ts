@@ -1507,7 +1507,7 @@ const messages: VueI18n.LocaleMessageObject = {
     chooseTheTagButton: 'Choose the $tag',
     changeTheTagButton: 'Change the $tag',
     reserveTheTagButton: 'Reserve the $tag',
-    shareButton: 'Flex on Twitter',
+    shareButton: 'Copy but don’t flex yet',
     shareTagTitle: 'Congratulations, ${tag}',
     shareTagDescription: 'You have successfully reserved your unique tag.',
     whatsNextTitle: "What's next?",
