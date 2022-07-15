@@ -22,6 +22,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblNewToMover: 'Looks like you are new to Mover',
   lblTransactionListNotAvailable:
     'Transaction list is not available in this network',
+  lblTokenListNotAvailable: 'Token list is not available in this network',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',

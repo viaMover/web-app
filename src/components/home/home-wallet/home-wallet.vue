@@ -1,6 +1,9 @@
 <template>
   <div class="wallet">
-    <div v-if="showEmptyState" class="empty-state">
+    <div v-if="!isTokenListAvailable" class="empty-state">
+      {{ $t('lblTokenListNotAvailable') }}
+    </div>
+    <div v-else-if="showEmptyState" class="empty-state">
       {{ $t('lblNewToMover') }}
     </div>
     <div v-else class="list">
@@ -51,6 +54,7 @@
 import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
+import { isFeatureEnabled } from '@/settings';
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 
@@ -86,6 +90,9 @@ export default Vue.extend({
     }),
     ...mapGetters('shop', { nibbleShopItems: 'accountAssets' }),
     ...mapGetters('nft', { nftItems: 'accountNfts' }),
+    isTokenListAvailable(): boolean {
+      return isFeatureEnabled('isTokenListAvailable', this.currentNetwork);
+    },
     balanceNative(): string {
       return `$${formatToNative(this.balance)}`;
     },

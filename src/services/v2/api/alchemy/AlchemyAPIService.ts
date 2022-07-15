@@ -2,56 +2,36 @@ import * as Sentry from '@sentry/vue';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
 
-import { MoverError, ResponseHTTPErrorCode } from '@/services/v2';
+import {
+  MoverError,
+  NetworkFeatureNotSupportedError,
+  ResponseHTTPErrorCode
+} from '@/services/v2';
 import { APIService } from '@/services/v2/api';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
-import { getNetwork, Network } from '@/utils/networkTypes';
-import { TokenWithBalance } from '@/wallet/types';
+import { sameAddress } from '@/utils/address';
+import { fromWei, greaterThan } from '@/utils/bigmath';
+import { Network } from '@/utils/networkTypes';
+import { getAllTokens } from '@/wallet/allTokens';
+import { Token, TokenWithBalance } from '@/wallet/types';
 
-import {
-  AnkrNetwork,
-  GetAccountBalanceResult,
-  isError,
-  Request,
-  Response
-} from './types';
+import { GetTokenBalancesResult, isError, Request, Response } from './types';
 
 /**
- * A wrapper class for interacting with ANKR API (www.ankr.com)
- * @see https://documenter.getpostman.com/view/19024547/UVsEVUGQ#74b5cc68-fba2-415c-a53b-28c08818f970
+ * A wrapper class for interacting with Alchemy API (docs.alchemy.com)
+ * @see https://docs.alchemy.com/alchemy/enhanced-apis/token-api/how-to-get-token-balance-for-an-address
  */
-export class AnkrAPIService extends APIService {
-  protected baseURL: string;
+export class AlchemyAPIService extends APIService {
+  protected baseURL = '';
   protected apiKey: string;
-  protected networks: Array<AnkrNetwork> = [];
   protected readonly client: AxiosInstance;
-  protected readonly sentryCategoryPrefix = 'ankr.api.service';
-  protected static readonly validNetworks: Array<Network> = [
-    Network.mainnet,
-    Network.binance,
-    Network.polygon,
-    Network.avalanche,
-    Network.fantom,
-    Network.arbitrum
-  ];
+  protected readonly sentryCategoryPrefix = 'alchemy.api.service';
+  protected static readonly validNetworks: Array<Network> = [Network.optimism];
+  protected tokensData: Record<Network, Array<Token>>;
 
-  constructor(
-    currentAddress: string,
-    apiKey: string,
-    networks: Array<Network>
-  ) {
+  constructor(currentAddress: string, apiKey: string) {
     super(currentAddress);
-    this.baseURL = this.lookupBaseURL();
     this.apiKey = apiKey;
-    this.networks = networks.map((m) => {
-      const ankrNetwork = this.lookupNetworkId(m);
-      if (ankrNetwork === undefined) {
-        throw new MoverError(
-          `Network '${m}' is not supported by ${this.sentryCategoryPrefix}`
-        );
-      }
-      return ankrNetwork;
-    });
     this.client = this.applyAxiosInterceptors(
       axios.create({
         baseURL: this.baseURL,
@@ -62,22 +42,40 @@ export class AnkrAPIService extends APIService {
         validateStatus: (status) => status === 200
       })
     );
+    this.tokensData = {} as Record<Network, Array<Token>>;
+    AlchemyAPIService.validNetworks.forEach((n) => {
+      this.tokensData[n] = getAllTokens(n);
+    });
   }
 
   /**
    * Requests tokens by address (multichain)
    */
-  public getTokens = async (): Promise<Array<TokenWithBalance>> => {
+  public getTokens = async (
+    network: Network
+  ): Promise<Array<TokenWithBalance>> => {
+    const endpoint = this.lookupEndpointByNetwork(network);
+    if (endpoint === undefined) {
+      addSentryBreadcrumb({
+        type: 'error',
+        message: `Cant find endpoint for this network: ${network}`,
+        category: this.sentryCategoryPrefix
+      });
+      throw new NetworkFeatureNotSupportedError('Alchemy token list', network);
+    }
     const res = (
-      await this.client.post<Response<GetAccountBalanceResult>>('', {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'ankr_getAccountBalance',
-        params: {
-          blockchain: this.networks,
-          walletAddress: this.currentAddress
-        }
-      } as Request)
+      await this.client.post<Response<GetTokenBalancesResult>>(
+        `${endpoint}/${this.apiKey}`,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'alchemy_getTokenBalances',
+          params: [
+            this.currentAddress,
+            this.tokensData[network].map((t) => t.address)
+          ]
+        } as Request
+      )
     ).data;
 
     if (isError(res)) {
@@ -93,31 +91,26 @@ export class AnkrAPIService extends APIService {
       throw new MoverError('get tokens request error');
     }
 
-    return res.result.assets
-      .map((t) => {
-        let address = t.contractAddress;
-        let logo = t.thumbnail;
-        if (t.tokenType === 'NATIVE') {
-          const net = getNetwork(
-            this.lookupNetworkById(t.blockchain) ?? Network.mainnet
-          );
-          address = net?.baseAsset.address ?? '';
-          logo = net?.baseAsset.iconURL ?? '';
-        }
-        return {
-          address: address,
-          decimals: t.tokenDecimals,
-          symbol: t.tokenSymbol,
-          name: t.tokenName,
-          logo: logo,
-          priceUSD: t.tokenPrice,
-          marketCap: 0,
-          balance: t.balance
-        };
-      })
-      .map((t) => {
-        return t;
-      });
+    const result: Array<TokenWithBalance> = [];
+    for (const t of res.result.tokenBalances) {
+      const address = t.contractAddress;
+      const token = this.tokensData[network].find((t) =>
+        sameAddress(t.address, address)
+      );
+      if (
+        token !== undefined &&
+        t.tokenBalance !== null &&
+        greaterThan(t.tokenBalance, 0)
+      ) {
+        result.push({
+          ...token,
+          priceUSD: '',
+          balance: fromWei(String(parseInt(t.tokenBalance, 16)), token.decimals)
+        });
+      }
+    }
+
+    return result;
   };
 
   protected formatError = (error: unknown): never => {
@@ -227,56 +220,13 @@ export class AnkrAPIService extends APIService {
     return instance;
   };
 
-  protected static ensureNetworkIsSupported = (network?: Network): boolean => {
-    if (network === undefined) {
-      return false;
-    }
-
-    return AnkrAPIService.validNetworks.includes(network);
-  };
-
-  public lookupNetworkId = (network: Network): AnkrNetwork | undefined => {
+  public lookupEndpointByNetwork = (network: Network): string | undefined => {
     switch (network) {
-      case Network.mainnet:
-        return 'eth';
-      case Network.avalanche:
-        return 'avalanche';
-      case Network.fantom:
-        return 'fantom';
-      case Network.polygon:
-        return 'polygon';
-      case Network.arbitrum:
-        return 'arbitrum';
-      case Network.binance:
-        return 'bsc';
+      case Network.optimism:
+        return 'https://opt-mainnet.g.alchemy.com/v2';
       default:
         return undefined;
     }
-  };
-
-  public lookupNetworkById = (
-    ankrNetwork: AnkrNetwork
-  ): Network | undefined => {
-    switch (ankrNetwork) {
-      case 'eth':
-        return Network.mainnet;
-      case 'avalanche':
-        return Network.avalanche;
-      case 'fantom':
-        return Network.fantom;
-      case 'polygon':
-        return Network.polygon;
-      case 'arbitrum':
-        return Network.arbitrum;
-      case 'bsc':
-        return Network.binance;
-      default:
-        return undefined;
-    }
-  };
-
-  public lookupBaseURL = (): string => {
-    return 'https://rpc.ankr.com/multichain';
   };
 
   public static canHandle(network: Network): boolean {
