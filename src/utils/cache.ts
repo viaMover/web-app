@@ -18,6 +18,7 @@ export class InMemoryCache<T> {
 
     const val = await this.fallback();
     this.expirationTimestampMs = Date.now() + this.ttlSeconds * 1000;
+    this.value = val;
     return val;
   }
 }

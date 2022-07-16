@@ -12,6 +12,7 @@ import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import {
   convertToString,
+  divide,
   floorDivide,
   fromWei,
   multiply,
@@ -66,7 +67,9 @@ export class WrappedTokenYearn extends WrappedToken {
     );
   }
 
-  getUnwrappedToken = (): SmallTokenInfo => this.vault.commonToken;
+  getUnwrappedToken(): SmallTokenInfo {
+    return this.vault.commonToken;
+  }
 
   canHandle(assetAddress: string, network: Network): boolean {
     return (
@@ -78,6 +81,13 @@ export class WrappedTokenYearn extends WrappedToken {
   public async getUnwrappedAmount(wrappedTokenAmount: string): Promise<string> {
     const mul = await this.multiplierCache.get();
     return multiply(wrappedTokenAmount, mul);
+  }
+
+  public async getWrappedAmountByUnwrapped(
+    unwrappedTokenAmount: string
+  ): Promise<string> {
+    const mul = await this.multiplierCache.get();
+    return divide(unwrappedTokenAmount, mul);
   }
 
   async estimateUnwrap(

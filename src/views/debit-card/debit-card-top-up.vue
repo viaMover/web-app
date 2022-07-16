@@ -16,6 +16,8 @@
       :input-mode="inputMode"
       :is-loading="isLoading"
       :is-processing="isProcessing"
+      :max-amount="maxAmount"
+      :max-amount-native="maxAmountNative"
       :operation-description="$t('debitCard.topUp.txtApproximateEUREstimation')"
       :operation-title="approximateEUREstimationText"
       :output-asset-heading-text="$t('debitCard.topUp.lblAmountWeDepositIn')"
@@ -86,7 +88,8 @@ import {
   greaterThan,
   isZero,
   lessThan,
-  multiply
+  multiply,
+  toWei
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { calcTransactionFastNativePrice } from '@/wallet/actions/subsidized';
@@ -163,11 +166,12 @@ export default Vue.extend({
       inputAsset: undefined as TokenWithBalance | undefined,
       inputAmount: '',
       inputAmountNative: '',
+      maxAmount: undefined as string | undefined,
+      maxAmountNative: undefined as string | undefined,
       formattedUSDCTotal: undefined as undefined | string,
       transferData: undefined as TransferData | undefined,
       transferError: undefined as undefined | string,
       usdcPriceInEur: undefined as undefined | string,
-      vaultMultiplier: '1' as string,
 
       //to tx
       actionGasLimit: undefined as string | undefined,
@@ -256,11 +260,7 @@ export default Vue.extend({
         this.debitCardOnChainService as DebitCardOnChainService
       ).getUnwrappedToken(this.inputAsset);
 
-      if (unwrappedToken !== undefined) {
-        return unwrappedToken.address;
-      }
-
-      return this.inputAsset.address;
+      return unwrappedToken.address;
     },
     validTokens(): Array<TokenWithBalance> {
       const validAssetAddresses = validTopUpAssets(
@@ -312,8 +312,6 @@ export default Vue.extend({
   methods: {
     ...mapActions('modals', { setModalIsDisplayed: 'setIsDisplayed' }),
     ...mapActions('debitCard', {
-      getYearnVaultMultiplier: 'getYearnVaultMultiplier',
-      getIdleTokenMultiplier: 'getIdleTokenMultiplier',
       loadInfo: 'loadInfo'
     }),
     ...mapActions('account', {
@@ -432,7 +430,11 @@ export default Vue.extend({
 
             const unwrappedData = await (
               this.debitCardOnChainService as DebitCardOnChainService
-            ).getUnwrappedData(this.inputAsset, this.inputAmount);
+            ).getUnwrappedData(
+              this.inputAsset,
+              this.inputAmount,
+              this.inputAsset.priceUSD
+            );
 
             const referenceToken: SmallTokenInfo = unwrappedData.unwrappedToken;
             const inputInWei = unwrappedData.amountInWei;
@@ -525,7 +527,11 @@ export default Vue.extend({
 
       const unwrappedData = await (
         this.debitCardOnChainService as DebitCardOnChainService
-      ).getUnwrappedData(this.inputAsset, this.inputAmount);
+      ).getUnwrappedData(
+        this.inputAsset,
+        this.inputAmount,
+        this.inputAsset.priceUSD
+      );
 
       // if unwrapped token is USDC
       if (
@@ -563,7 +569,7 @@ export default Vue.extend({
       try {
         this.approximateEUREstimationAmount = '0';
         this.transferError = undefined;
-        if (this.isUsdc) {
+        if (sameAddress(this.inputAsset.address, this.usdcAsset.address)) {
           this.transferData = undefined;
           if (mode === 'TOKEN') {
             this.inputAmount = value;
@@ -582,13 +588,31 @@ export default Vue.extend({
         } else {
           if (mode === 'TOKEN') {
             this.inputAmount = value;
-            this.inputAmountNative = new BigNumber(
-              convertNativeAmountFromAmount(value, this.inputAsset.priceUSD)
-            ).toFixed(2);
+            console.log('new Amount:', value);
 
             const unwrappedData = await (
               this.debitCardOnChainService as DebitCardOnChainService
-            ).getUnwrappedData(this.inputAsset, this.inputAmount);
+            ).getUnwrappedData(
+              this.inputAsset,
+              this.inputAmount,
+              this.inputAsset.priceUSD
+            );
+
+            console.log('unwrappedData:', unwrappedData);
+
+            // try to use price from  unwrapped token
+            // in case of simple token unwrapped token will be the same token
+            const unwrappedAmount = fromWei(
+              unwrappedData.amountInWei,
+              unwrappedData.unwrappedToken.decimals
+            );
+
+            this.inputAmountNative = new BigNumber(
+              convertNativeAmountFromAmount(
+                unwrappedAmount,
+                unwrappedData.unwrappedTokenPrice
+              )
+            ).toFixed(2);
 
             const referenceToken: SmallTokenInfo = unwrappedData.unwrappedToken;
             const inputInWei = unwrappedData.amountInWei;
@@ -605,26 +629,61 @@ export default Vue.extend({
             }
           } else {
             this.inputAmountNative = value;
-            this.inputAmount = convertAmountFromNativeValue(
-              value,
-              this.inputAsset.priceUSD,
-              this.inputAsset.decimals
-            );
-            const unwrappedData = await (
+            console.log('new native Amount:', value);
+
+            const unwrappedToken = (
               this.debitCardOnChainService as DebitCardOnChainService
-            ).getUnwrappedData(this.inputAsset, this.inputAmount);
+            ).getUnwrappedToken(this.inputAsset);
 
-            const referenceToken: SmallTokenInfo = unwrappedData.unwrappedToken;
-            const inputInWei = unwrappedData.amountInWei;
+            console.log('unwrappedToken:', unwrappedToken);
 
-            this.transferData = await getTransferData(
-              this.usdcAsset.address,
-              referenceToken.address,
-              inputInWei,
-              true,
-              getSlippage(referenceToken.address, this.networkInfo.network),
-              this.networkInfo.network
+            const unwrappedTokenPrice = await (
+              this.debitCardOnChainService as DebitCardOnChainService
+            ).getUnwrappedTokenPrice(this.inputAsset, this.inputAsset.priceUSD);
+
+            console.log('unwrappedTokenPrice:', unwrappedTokenPrice);
+
+            const amountOfUnwrappedToken = convertAmountFromNativeValue(
+              value,
+              unwrappedTokenPrice,
+              unwrappedToken.decimals
             );
+
+            console.log('amountOfUnwrappedToken:', amountOfUnwrappedToken);
+
+            const wrappedData = await (
+              this.debitCardOnChainService as DebitCardOnChainService
+            ).getWrappedDataByUnwrapped(
+              this.inputAsset,
+              unwrappedToken,
+              amountOfUnwrappedToken
+            );
+
+            console.log('wrappedData:', wrappedData);
+
+            this.inputAmount = fromWei(
+              wrappedData.amountInWei,
+              wrappedData.wrappedToken.decimals
+            );
+
+            const referenceToken: SmallTokenInfo = unwrappedToken;
+            const inputInWei = toWei(
+              amountOfUnwrappedToken,
+              unwrappedToken.decimals
+            );
+
+            if (!sameAddress(referenceToken.address, this.usdcAsset.address)) {
+              this.transferData = await getTransferData(
+                this.usdcAsset.address,
+                referenceToken.address,
+                inputInWei,
+                true,
+                getSlippage(referenceToken.address, this.networkInfo.network),
+                this.networkInfo.network
+              );
+            } else {
+              this.transferData = undefined;
+            }
           }
         }
 
@@ -669,6 +728,22 @@ export default Vue.extend({
       this.transferError = undefined;
       this.inputAmount = '';
       this.inputAmountNative = '';
+
+      const unwrappedData = await (
+        this.debitCardOnChainService as DebitCardOnChainService
+      ).getUnwrappedData(token, token.balance, token.priceUSD);
+
+      this.maxAmount = token.balance;
+      this.maxAmountNative = multiply(
+        fromWei(
+          unwrappedData.amountInWei,
+          unwrappedData.unwrappedToken.decimals
+        ),
+        unwrappedData.unwrappedTokenPrice
+      );
+
+      console.log('unwrappedData|: ', unwrappedData);
+
       this.updateApproximateEURSEstimationValue();
     },
     handleToggleInputMode(): void {
@@ -682,16 +757,7 @@ export default Vue.extend({
       if (this.inputAsset === undefined) {
         return;
       }
-      if (this.inputMode === 'TOKEN') {
-        await this.updateAmount(this.inputAsset.balance, 'TOKEN');
-      } else {
-        await this.updateAmount(
-          new BigNumber(
-            multiply(this.inputAsset.balance, this.inputAsset.priceUSD)
-          ).toFixed(2, BigNumber.ROUND_DOWN),
-          'NATIVE'
-        );
-      }
+      await this.updateAmount(this.inputAsset.balance, 'TOKEN');
     },
     async handleTxStart(args: { isSmartTreasury: boolean }): Promise<void> {
       if (this.inputAsset === undefined) {

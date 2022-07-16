@@ -21,15 +21,23 @@ export abstract class WrappedToken extends PromiEventWrapper {
   }
 
   /**
+   * Returns an unwrapped token version
+   */
+  abstract getUnwrappedToken(): SmallTokenInfo;
+
+  /**
    * Returns an amount of unwrapped token received after unwrap
    * @param wrappedTokenAmount - amount of wrapped token user wants to unwrap
    */
   abstract getUnwrappedAmount(wrappedTokenAmount: string): Promise<string>;
 
   /**
-   * Returns an unwrapped token version
+   * Returns an amount of wrapped token by unwrapped amount
+   * @param unwrappedTokenAmount - amount of unwrapped token
    */
-  abstract getUnwrappedToken(): SmallTokenInfo;
+  abstract getWrappedAmountByUnwrapped(
+    unwrappedTokenAmount: string
+  ): Promise<string>;
 
   /**
    * Returns whether the class can handle inputAsset

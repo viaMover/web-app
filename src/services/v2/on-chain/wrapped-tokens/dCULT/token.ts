@@ -53,6 +53,12 @@ export class WrappedTokenDCult extends WrappedToken {
     return wrappedTokenAmount;
   }
 
+  public async getWrappedAmountByUnwrapped(
+    unwrappedTokenAmount: string
+  ): Promise<string> {
+    return unwrappedTokenAmount;
+  }
+
   public async estimateUnwrap(
     inputAsset: SmallTokenInfo,
     inputAmount: string

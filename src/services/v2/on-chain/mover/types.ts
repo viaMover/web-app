@@ -20,6 +20,12 @@ export type CompoundEstimateWithUnwrapResponse = CompoundEstimateResponse & {
 
 export type UnwrappedData = {
   unwrappedToken: SmallTokenInfo;
+  unwrappedTokenPrice: string;
+  amountInWei: string;
+};
+
+export type WrappedData = {
+  wrappedToken: SmallTokenInfo;
   amountInWei: string;
 };
 

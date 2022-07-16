@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
+import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
 import { SwapAPIService, TransferData } from '@/services/v2/api/swap';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import {
@@ -10,7 +11,8 @@ import {
 } from '@/services/v2/on-chain/mover';
 import {
   HolyHandContract,
-  UnwrappedData
+  UnwrappedData,
+  WrappedData
 } from '@/services/v2/on-chain/mover/types';
 import { WrappedTokenDCult } from '@/services/v2/on-chain/wrapped-tokens/dCULT/token';
 import { WrappedTokenGALCX } from '@/services/v2/on-chain/wrapped-tokens/gALCX/token';
@@ -18,9 +20,11 @@ import { WrappedTokenIdle } from '@/services/v2/on-chain/wrapped-tokens/idle/tok
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { WrappedTokenWXBTRFLY } from '@/services/v2/on-chain/wrapped-tokens/wxBTRFLY/token';
 import { WrappedTokenYearn } from '@/services/v2/on-chain/wrapped-tokens/yearn/token';
+import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import { NativeCurrency } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
-import { fromWei, getInteger, toWei } from '@/utils/bigmath';
+import { fromWei, getInteger, greaterThan, toWei } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
 import {
   getCentralTransferProxyAbi,
@@ -32,7 +36,7 @@ import {
 import ethDefaults from '@/wallet/references/defaults';
 import { addresses as idleTokenAddresses } from '@/wallet/references/idleTokensData';
 import { addresses as yearnSimpleVaultAddresses } from '@/wallet/references/yearnVaultsData';
-import { SmallToken, SmallTokenInfo } from '@/wallet/types';
+import { SmallToken, SmallTokenInfo, Token } from '@/wallet/types';
 
 import { LoaderStep } from '@/components/forms';
 
@@ -44,8 +48,15 @@ export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly eursAssetData: SmallTokenInfo;
   protected readonly centralTransferProxyAddress: string;
   protected readonly centralTransferProxyContract: HolyHandContract | undefined;
+  protected readonly coinGeckoAPIService: CoinGeckoAPIService;
 
-  constructor(currentAddress: string, network: Network, web3Client: Web3) {
+  constructor(
+    currentAddress: string,
+    network: Network,
+    web3Client: Web3,
+    protected readonly currency: NativeCurrency,
+    protected readonly getWalletTokens: () => Array<Token>
+  ) {
     super(currentAddress, network, web3Client);
     this.swapService = new SwapAPIService(currentAddress, network);
     this.usdcAssetData = getUSDCAssetData(network);
@@ -58,6 +69,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
       'HOLY_HAND_ADDRESS',
       getCentralTransferProxyAbi(network)
     );
+
+    this.coinGeckoAPIService = new CoinGeckoAPIService(currentAddress, network);
 
     for (const [n, vaults] of Object.entries(yearnSimpleVaultAddresses)) {
       for (const vault of vaults) {
@@ -108,7 +121,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     );
   }
 
-  public getUnwrappedToken(inputAsset: SmallToken): SmallToken | undefined {
+  public getUnwrappedToken(inputAsset: SmallToken): SmallToken {
     const specialTokenHandler = this.specialTokenHandlers.find((h) =>
       h.canHandle(inputAsset.address, this.network)
     );
@@ -117,12 +130,31 @@ export class DebitCardOnChainService extends MoverOnChainService {
       return specialTokenHandler.getUnwrappedToken();
     }
 
-    return undefined;
+    return inputAsset;
+  }
+
+  public async getUnwrappedTokenPrice(
+    inputAsset: SmallToken,
+    inputAssetPrice: string
+  ): Promise<string> {
+    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
+      h.canHandle(inputAsset.address, this.network)
+    );
+
+    if (specialTokenHandler !== undefined) {
+      const unwrappedTokenPrice = await this.getPriceByAddress(
+        specialTokenHandler.getUnwrappedToken().address
+      );
+      return unwrappedTokenPrice;
+    }
+
+    return inputAssetPrice;
   }
 
   public async getUnwrappedData(
     inputAsset: SmallTokenInfo,
-    inputAmount: string
+    inputAmount: string,
+    inputAssetPrice: string
   ): Promise<UnwrappedData> {
     const specialTokenHandler = this.specialTokenHandlers.find((h) =>
       h.canHandle(inputAsset.address, this.network)
@@ -131,16 +163,49 @@ export class DebitCardOnChainService extends MoverOnChainService {
     if (specialTokenHandler === undefined) {
       return {
         unwrappedToken: inputAsset,
-        amountInWei: toWei(inputAmount, inputAsset.decimals)
+        amountInWei: toWei(inputAmount, inputAsset.decimals),
+        unwrappedTokenPrice: inputAssetPrice
       };
     }
 
     const newAmount = await specialTokenHandler.getUnwrappedAmount(inputAmount);
     const unwrappedToken = specialTokenHandler.getUnwrappedToken();
 
+    const unwrappedTokenPrice = await this.getPriceByAddress(
+      unwrappedToken.address
+    );
+
     return {
       unwrappedToken: unwrappedToken,
-      amountInWei: getInteger(toWei(newAmount, unwrappedToken.decimals))
+      amountInWei: getInteger(toWei(newAmount, unwrappedToken.decimals)),
+      unwrappedTokenPrice: unwrappedTokenPrice
+    };
+  }
+
+  public async getWrappedDataByUnwrapped(
+    wrappedAsset: SmallTokenInfo,
+    unwrappedAsset: SmallTokenInfo,
+    unwrappedAmount: string
+  ): Promise<WrappedData> {
+    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
+      h.canHandle(wrappedAsset.address, this.network)
+    );
+
+    if (specialTokenHandler === undefined) {
+      // unwrappedAsset should be equal to wrappedAsset
+      return {
+        wrappedToken: unwrappedAsset,
+        amountInWei: toWei(unwrappedAmount, unwrappedAsset.decimals)
+      };
+    }
+
+    const newAmount = await specialTokenHandler.getWrappedAmountByUnwrapped(
+      unwrappedAmount
+    );
+
+    return {
+      wrappedToken: wrappedAsset,
+      amountInWei: getInteger(toWei(newAmount, wrappedAsset.decimals))
     };
   }
 
@@ -377,5 +442,49 @@ export class DebitCardOnChainService extends MoverOnChainService {
         changeStepToProcess
       );
     });
+  }
+
+  protected async getPriceByAddress(tokenAddress: string): Promise<string> {
+    console.log('getPriceByAddress: ', tokenAddress);
+    const walletTokens = this.getWalletTokens();
+    const inWalletToken = walletTokens.find((t) =>
+      sameAddress(tokenAddress, t.address)
+    );
+    if (
+      inWalletToken !== undefined &&
+      greaterThan(inWalletToken.priceUSD, '0')
+    ) {
+      return inWalletToken.priceUSD;
+    }
+
+    try {
+      const priceRecord =
+        await this.coinGeckoAPIService.getPricesByContractAddress(
+          tokenAddress,
+          this.currency
+        );
+      const price = getAssetPriceFromPriceRecord(
+        priceRecord,
+        tokenAddress,
+        this.currency
+      );
+
+      if (price !== undefined) {
+        return price;
+      }
+
+      return '0';
+    } catch (err) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: `${this.sentryCategoryPrefix}.getPriceByAddress`,
+        message: 'Failed to get price from coingecko',
+        data: {
+          tokenAddress,
+          currency: this.currency
+        }
+      });
+      return '0';
+    }
   }
 }
