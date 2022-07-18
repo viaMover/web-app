@@ -14,7 +14,6 @@ import { getBaseAssetData } from '@/wallet/references/data';
 import {
   APIPriceRecord,
   BaseAssetPriceRecord,
-  CachedPrice,
   Currency,
   GetPriceOptions,
   PriceRecord
@@ -26,7 +25,6 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'coinGecko.api.service';
   protected static readonly MaxChunkSize = 100;
-  private readonly pricesCache: Map<string, CachedPrice>;
 
   constructor(currentAddress: string, network: Network) {
     super(currentAddress, network);
@@ -49,8 +47,6 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
           (typeof error.response?.data === 'string' &&
             error.response.data.startsWith('Throttled')))
     });
-
-    this.pricesCache = new Map<string, CachedPrice>();
   }
 
   public async getPricesByContractAddress(
@@ -84,19 +80,6 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
     }
 
     let result: PriceRecord = {};
-
-    for (let i = addresses.length - 1; i >= 0; i--) {
-      const address = addresses[i];
-      const cachedPrice = this.pricesCache.get(address);
-      if (
-        cachedPrice != undefined &&
-        cachedPrice.expirationTimestampMs > Date.now()
-      ) {
-        console.log(`Get price for token address ${addresses[i]}`);
-        addresses.splice(i, 1);
-        result[address] = cachedPrice.value;
-      }
-    }
 
     // check if base asset address is present in the requested addresses
     const baseAssetAddress = getBaseAssetData(this.network).address;
@@ -215,11 +198,6 @@ export class CoinGeckoAPIService extends MultiChainAPIService {
         result[recoveredKey][currency] =
           data[assetAddress][currency].toString(10);
       }
-
-      this.pricesCache.set(recoveredKey, {
-        value: result[recoveredKey],
-        expirationTimestampMs: 5 * 60 * 1000
-      });
     }
 
     return result;

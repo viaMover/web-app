@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 
-import { NetworkFeatureNotSupportedError } from '@/services/v2';
-import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { MoverError, NetworkFeatureNotSupportedError } from '@/services/v2';
+import { TokenPriceService } from '@/services/v2/api/price';
 import { SwapAPIService, TransferData } from '@/services/v2/api/swap';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import {
@@ -20,7 +20,6 @@ import { WrappedTokenIdle } from '@/services/v2/on-chain/wrapped-tokens/idle/tok
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { WrappedTokenWXBTRFLY } from '@/services/v2/on-chain/wrapped-tokens/wxBTRFLY/token';
 import { WrappedTokenYearn } from '@/services/v2/on-chain/wrapped-tokens/yearn/token';
-import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { NativeCurrency } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -48,7 +47,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly eursAssetData: SmallTokenInfo;
   protected readonly centralTransferProxyAddress: string;
   protected readonly centralTransferProxyContract: HolyHandContract | undefined;
-  protected readonly coinGeckoAPIService: CoinGeckoAPIService;
+  protected readonly tokenPriceService: TokenPriceService;
 
   constructor(
     currentAddress: string,
@@ -70,7 +69,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       getCentralTransferProxyAbi(network)
     );
 
-    this.coinGeckoAPIService = new CoinGeckoAPIService(currentAddress, network);
+    this.tokenPriceService = new TokenPriceService(currentAddress, network);
 
     for (const [n, vaults] of Object.entries(yearnSimpleVaultAddresses)) {
       for (const vault of vaults) {
@@ -133,6 +132,12 @@ export class DebitCardOnChainService extends MoverOnChainService {
     return inputAsset;
   }
 
+  /**
+   * return price of the unwrapped token (return input price in case of simple token)
+   * throws exception in case of price is unavailable
+   * @param inputAsset
+   * @param inputAssetPrice
+   */
   public async getUnwrappedTokenPrice(
     inputAsset: SmallToken,
     inputAssetPrice: string
@@ -171,9 +176,22 @@ export class DebitCardOnChainService extends MoverOnChainService {
     const newAmount = await specialTokenHandler.getUnwrappedAmount(inputAmount);
     const unwrappedToken = specialTokenHandler.getUnwrappedToken();
 
-    const unwrappedTokenPrice = await this.getPriceByAddress(
-      unwrappedToken.address
-    );
+    let unwrappedTokenPrice = '0';
+    try {
+      unwrappedTokenPrice = await this.getPriceByAddress(
+        unwrappedToken.address
+      );
+    } catch (e) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: `${this.sentryCategoryPrefix}.getUnwrappedData`,
+        message: 'can not get unwrapped token price, return zero',
+        data: {
+          error: e,
+          assetAddress: unwrappedToken.address
+        }
+      });
+    }
 
     return {
       unwrappedToken: unwrappedToken,
@@ -445,7 +463,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
   }
 
   protected async getPriceByAddress(tokenAddress: string): Promise<string> {
-    console.log('getPriceByAddress: ', tokenAddress);
     const walletTokens = this.getWalletTokens();
     const inWalletToken = walletTokens.find((t) =>
       sameAddress(tokenAddress, t.address)
@@ -458,33 +475,26 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     try {
-      const priceRecord =
-        await this.coinGeckoAPIService.getPricesByContractAddress(
-          tokenAddress,
-          this.currency
-        );
-      const price = getAssetPriceFromPriceRecord(
-        priceRecord,
+      const price = await this.tokenPriceService.getPriceByContractAddress(
         tokenAddress,
         this.currency
       );
 
-      if (price !== undefined) {
-        return price;
-      }
-
-      return '0';
+      return price;
     } catch (err) {
       addSentryBreadcrumb({
         type: 'error',
         category: `${this.sentryCategoryPrefix}.getPriceByAddress`,
-        message: 'Failed to get price from coingecko',
+        message: 'Failed to get token price from token price',
         data: {
           tokenAddress,
           currency: this.currency
         }
       });
-      return '0';
+      throw new MoverError('Can not get token price', {
+        tokenAddress,
+        currency: this.currency
+      });
     }
   }
 }

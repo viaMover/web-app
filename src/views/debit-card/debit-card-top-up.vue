@@ -588,7 +588,15 @@ export default Vue.extend({
         } else {
           if (mode === 'TOKEN') {
             this.inputAmount = value;
-            console.log('new Amount:', value);
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'New token amount',
+              category: 'debit-card.top-up',
+              data: {
+                inputNativeAmount: value,
+                inputAsset: this.inputAsset
+              }
+            });
 
             const unwrappedData = await (
               this.debitCardOnChainService as DebitCardOnChainService
@@ -598,7 +606,16 @@ export default Vue.extend({
               this.inputAsset.priceUSD
             );
 
-            console.log('unwrappedData:', unwrappedData);
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'Unwrapped token data',
+              category: 'debit-card.top-up',
+              data: {
+                unwrappedToken: unwrappedData.unwrappedToken,
+                unwrappedTokenAmountInWei: unwrappedData.amountInWei,
+                unwrappedTokenPrice: unwrappedData.unwrappedTokenPrice
+              }
+            });
 
             // try to use price from  unwrapped token
             // in case of simple token unwrapped token will be the same token
@@ -629,19 +646,52 @@ export default Vue.extend({
             }
           } else {
             this.inputAmountNative = value;
-            console.log('new native Amount:', value);
+
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'New native amount',
+              category: 'debit-card.top-up',
+              data: {
+                inputNativeAmount: value,
+                inputAsset: this.inputAsset
+              }
+            });
 
             const unwrappedToken = (
               this.debitCardOnChainService as DebitCardOnChainService
             ).getUnwrappedToken(this.inputAsset);
 
-            console.log('unwrappedToken:', unwrappedToken);
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'unwrapped token',
+              category: 'debit-card.top-up',
+              data: {
+                unwrappedToken: unwrappedToken
+              }
+            });
 
-            const unwrappedTokenPrice = await (
-              this.debitCardOnChainService as DebitCardOnChainService
-            ).getUnwrappedTokenPrice(this.inputAsset, this.inputAsset.priceUSD);
+            let unwrappedTokenPrice = '0';
+            try {
+              unwrappedTokenPrice = await (
+                this.debitCardOnChainService as DebitCardOnChainService
+              ).getUnwrappedTokenPrice(
+                this.inputAsset,
+                this.inputAsset.priceUSD
+              );
+            } catch (err) {
+              this.transferError = this.$t('exchangeError') as string;
+              return;
+            }
 
-            console.log('unwrappedTokenPrice:', unwrappedTokenPrice);
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'unwrapped token price',
+              category: 'debit-card.top-up',
+              data: {
+                unwrappedToken: unwrappedToken,
+                unwrappedTokenPrice: unwrappedTokenPrice
+              }
+            });
 
             const amountOfUnwrappedToken = convertAmountFromNativeValue(
               value,
@@ -649,7 +699,16 @@ export default Vue.extend({
               unwrappedToken.decimals
             );
 
-            console.log('amountOfUnwrappedToken:', amountOfUnwrappedToken);
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'unwrapped token amount',
+              category: 'debit-card.top-up',
+              data: {
+                unwrappedToken: unwrappedToken,
+                unwrappedTokenPrice: unwrappedTokenPrice,
+                amountOfUnwrappedToken: amountOfUnwrappedToken
+              }
+            });
 
             const wrappedData = await (
               this.debitCardOnChainService as DebitCardOnChainService
@@ -659,7 +718,15 @@ export default Vue.extend({
               amountOfUnwrappedToken
             );
 
-            console.log('wrappedData:', wrappedData);
+            addSentryBreadcrumb({
+              type: 'info',
+              message: 'Wrapped token data',
+              category: 'debit-card.top-up',
+              data: {
+                wrappedToken: wrappedData.wrappedToken,
+                wrappedTokenAmountInWei: wrappedData.amountInWei
+              }
+            });
 
             this.inputAmount = fromWei(
               wrappedData.amountInWei,
