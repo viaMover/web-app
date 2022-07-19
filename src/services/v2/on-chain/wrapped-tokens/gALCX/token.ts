@@ -13,6 +13,7 @@ import {
   convertToString,
   divide,
   floorDivide,
+  fromWei,
   multiply,
   sub,
   toWei
@@ -29,7 +30,7 @@ import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 export class WrappedTokenGALCX extends WrappedToken {
   readonly sentryCategoryPrefix: string;
   public readonly wrappedTokenAddress: string;
-  public readonly unwrappedTokenAddress: string;
+  public readonly unwrappedToken: SmallTokenInfo;
   private readonly multiplierCache: InMemoryCache<string>;
   private readonly contract: gALCXContract;
 
@@ -39,7 +40,7 @@ export class WrappedTokenGALCX extends WrappedToken {
     super(accountAddress, network, web3);
     this.sentryCategoryPrefix = `wrapped-token.galcx`;
     this.wrappedTokenAddress = lookupAddress(network, 'GALCX_TOKEN_ADDRESS');
-    this.unwrappedTokenAddress = lookupAddress(network, 'ALCX_TOKEN_ADDRESS');
+    this.unwrappedToken = getALCXAssetData(network);
 
     this.contract = new this.web3.eth.Contract(
       this.contractABI as AbiItem[],
@@ -152,7 +153,7 @@ export class WrappedTokenGALCX extends WrappedToken {
     const balanceBeforeUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.unwrappedTokenAddress
+      this.unwrappedToken.address
     );
 
     await this._unwrap(inputAsset, inputAmount, changeStepToProcess, gasLimit);
@@ -160,7 +161,7 @@ export class WrappedTokenGALCX extends WrappedToken {
     const balanceAfterUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.unwrappedTokenAddress
+      this.unwrappedToken.address
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
@@ -219,10 +220,12 @@ export class WrappedTokenGALCX extends WrappedToken {
   }
 
   private async getMultiplier(): Promise<string> {
-    const multiplier = await this.contract.methods.exchangeRate().call({
+    const exchangeRate = await this.contract.methods.exchangeRate().call({
       from: this.accountAddress
     });
 
-    return convertToString(multiplier);
+    const multiplierInWei = convertToString(exchangeRate);
+
+    return fromWei(multiplierInWei, this.unwrappedToken.decimals);
   }
 }

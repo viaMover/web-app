@@ -13,6 +13,7 @@ import {
   convertToString,
   divide,
   floorDivide,
+  fromWei,
   multiply,
   sub,
   toWei
@@ -29,7 +30,7 @@ import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 export class WrappedTokenWXBTRFLY extends WrappedToken {
   readonly sentryCategoryPrefix: string;
   public readonly wrappedTokenAddress: string;
-  public readonly unwrappedTokenAddress: string;
+  public readonly unwrappedToken: SmallTokenInfo;
   public readonly contractABI = WX_BTRFLY_ABI;
   private readonly contract: WxBTRFLYContract;
   private readonly multiplierCache: InMemoryCache<string>;
@@ -41,7 +42,7 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
       network,
       'WX_BTRFLY_TOKEN_ADDRESS'
     );
-    this.unwrappedTokenAddress = lookupAddress(network, 'BTRFLY_TOKEN_ADDRESS');
+    this.unwrappedToken = getBTRFLYAssetData(network);
     this.contract = new this.web3.eth.Contract(
       this.contractABI as AbiItem[],
       this.wrappedTokenAddress
@@ -153,7 +154,7 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
     const balanceBeforeUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.unwrappedTokenAddress
+      this.unwrappedToken.address
     );
 
     await this._unwrap(inputAsset, inputAmount, changeStepToProcess, gasLimit);
@@ -161,7 +162,7 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
     const balanceAfterUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.unwrappedTokenAddress
+      this.unwrappedToken.address
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
@@ -230,6 +231,8 @@ export class WrappedTokenWXBTRFLY extends WrappedToken {
       .realIndex()
       .call(transactionParams);
 
-    return convertToString(realIndex);
+    const multiplierInWei = convertToString(realIndex);
+
+    return fromWei(multiplierInWei, this.unwrappedToken.decimals);
   }
 }

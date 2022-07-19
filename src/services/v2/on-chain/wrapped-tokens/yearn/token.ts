@@ -254,6 +254,6 @@ export class WrappedTokenYearn extends WrappedToken {
 
     const multiplierInWei = convertToString(multiplier);
 
-    return fromWei(multiplierInWei, this.vault.vaultToken.decimals);
+    return fromWei(multiplierInWei, this.vault.commonToken.decimals);
   }
 }

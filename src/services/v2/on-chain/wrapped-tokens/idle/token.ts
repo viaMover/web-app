@@ -248,6 +248,6 @@ export class WrappedTokenIdle extends WrappedToken {
 
     const multiplierInWei = convertToString(multiplier);
 
-    return fromWei(multiplierInWei, this.wrapTokenData.wrapToken.decimals);
+    return fromWei(multiplierInWei, this.wrapTokenData.commonToken.decimals);
   }
 }

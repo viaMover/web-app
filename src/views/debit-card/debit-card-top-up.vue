@@ -31,7 +31,7 @@
     >
       <template v-slot:swap-message>
         <div
-          v-if="isUsdc && formattedUSDCTotal && inputMode === 'TOKEN'"
+          v-if="!isUsdc && formattedUSDCTotal && inputMode === 'TOKEN'"
           class="section swap-message"
         >
           {{ $t('forms.lblSwappingFor') }}
@@ -394,6 +394,7 @@ export default Vue.extend({
       this.approximateEstimationDebounceHandler = window.setTimeout(
         async () => {
           try {
+            this.isLoading = true;
             const usdcPriceInEur = await this.getUsdcPriceInEur();
             if (usdcPriceInEur) {
               if (
@@ -487,6 +488,8 @@ export default Vue.extend({
               this.inputAmountNative,
               eursPerUsdc
             );
+          } finally {
+            this.isLoading = false;
           }
         },
         250
@@ -555,6 +558,7 @@ export default Vue.extend({
           this.usdcAsset.decimals
         );
         this.formattedUSDCTotal = `${formatToNative(boughtUSDC)} USDC`;
+        return;
       }
 
       this.formattedUSDCTotal = undefined;
@@ -795,6 +799,7 @@ export default Vue.extend({
       this.transferError = undefined;
       this.inputAmount = '';
       this.inputAmountNative = '';
+      this.formattedUSDCTotal = undefined;
 
       const unwrappedData = await (
         this.debitCardOnChainService as DebitCardOnChainService
