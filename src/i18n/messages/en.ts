@@ -1508,14 +1508,14 @@ const messages: VueI18n.LocaleMessageObject = {
     chooseTheTagButton: 'Choose the $tag',
     changeTheTagButton: 'Change the $tag',
     reserveTheTagButton: 'Reserve the $tag',
-    shareButton: 'Copy but don’t flex yet',
+    shareButton: 'Flex on Twitter',
     shareEmailButton:
       'or let us notify you via email when tags will be rolled out',
     shareTagTitle: 'Congratulations, ${tag}',
     shareTagDescription: 'You have successfully reserved your unique tag.',
     whatsNextTitle: "What's next?",
     whatsNextDescription:
-      'We will be rolling out the tag system shortly. Your support is integral and very appreciated 🙏. If you click on the button below, you will generate the tweet text, please do not post it right now, but instead copy it, and share it on July 25th, when we will publicly roll it out.',
+      'We will be rolling out the tag system shortly that will allow your favorite projects and protocols to create a flow on the Mover card. What you can do now is share your tag on Twitter. Let your friends reserve their tags, and let us know about your favorite projects you want us to integrate.',
     twit:
       'This is a proof of my ${tag} tag ownership and reservation in @viaMover.\n' +
       '\n' +

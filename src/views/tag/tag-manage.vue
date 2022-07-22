@@ -76,7 +76,7 @@
       </div>
 
       <div class="actions">
-        <div class="group default">
+        <div class="group">
           <a
             v-if="showShareButton"
             class="button primary link-button"
@@ -109,19 +109,18 @@
               {{ buttonText }}
             </template>
           </action-button>
+        </div>
 
+        <div v-if="showShareButton && !showEmailInput" class="group">
           <action-button
-            v-if="showShareButton && !showEmailInput"
             class="transparent icon button no-padding"
             @button-click="handleShareEmailButton"
           >
+            <img alt="mail icon" src="@/assets/images/mail.svg" />
             {{ $t('tag.shareEmailButton') }}
           </action-button>
 
-          <p
-            v-if="showShareButton && !showEmailInput"
-            class="email-description"
-          >
+          <p class="email-description">
             {{ $t('tag.emailDescription') }}
           </p>
         </div>
