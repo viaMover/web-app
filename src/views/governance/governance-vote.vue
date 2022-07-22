@@ -10,7 +10,7 @@
     <analytics-list>
       <analytics-list-item
         :description="myVotingPower"
-        :is-loading="isStoreLoading"
+        :is-loading="isLoadingProposal"
         :title="$t('governance.lblMyVotingPower')"
       />
       <analytics-list-item
@@ -33,7 +33,7 @@
       <div class="group default">
         <action-button
           class="primary"
-          :disabled="isLoading || isStoreLoading"
+          :disabled="isLoading || isLoadingProposal"
           @button-click="handleVote"
         >
           <div v-if="isLoading" class="loader-icon">

@@ -114,7 +114,7 @@ export type Proposal = {
   state: ProposalState;
   status: ProposalStatus;
   votingActivity: number;
-  communityVotingPower: number;
+  communityVotingPower: string;
 };
 
 export type Vote = {

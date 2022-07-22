@@ -195,6 +195,13 @@ const actions: ActionFuncs<
     if (proposalInfo !== undefined) {
       proposalInfo = {
         ...proposalInfo,
+        proposal: {
+          ...proposalInfo.proposal,
+          communityVotingPower: fromWei(
+            proposalInfo.proposal.communityVotingPower,
+            18
+          )
+        },
         voteInfo: {
           ...proposalInfo.voteInfo,
           votingPower: fromWei(proposalInfo.voteInfo.votingPower, 18)
