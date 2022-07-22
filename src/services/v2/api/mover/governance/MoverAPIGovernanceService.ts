@@ -153,7 +153,7 @@ export class MoverAPIGovernanceService extends MoverAPIService {
       await this.client.post<
         MoverAPISuccessfulResponse<CreateProposalResponse>
       >('/proposals/create', {
-        body: this.prepareSignedRequest(data)
+        ...(await this.prepareSignedRequest(data))
       })
     ).data.payload;
   }
@@ -168,7 +168,7 @@ export class MoverAPIGovernanceService extends MoverAPIService {
       await this.client.post<
         MoverAPISuccessfulResponse<CreateProposalResponse>
       >(`/proposals/${proposalId}/vote`, {
-        body: this.prepareSignedRequest(data)
+        ...(await this.prepareSignedRequest(data))
       })
     ).data.payload;
   }
@@ -238,12 +238,12 @@ export class MoverAPIGovernanceService extends MoverAPIService {
       voteInfo: data.voteInfo
         ? {
             voted: data.voteInfo.voted,
-            votingPower: data.voteInfo.votingPower ?? 0,
+            votingPower: data.voteInfo.votingPower ?? '0',
             ipfsHash: data.voteInfo.ipfsHash
           }
         : {
             voted: false,
-            votingPower: 0,
+            votingPower: '0',
             ipfsHash: undefined
           }
     };

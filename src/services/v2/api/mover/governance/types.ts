@@ -78,7 +78,7 @@ export type ProposalInfoAPIDto = {
   voteInfo?: {
     voted: boolean;
     ipfsHash?: string;
-    votingPower?: number;
+    votingPower?: string;
   };
   stats: {
     for: number;
@@ -93,7 +93,7 @@ export type ProposalInfo = {
     voted: boolean;
     // if .voted -> vote ipfs hash
     ipfsHash: string | undefined;
-    votingPower: number;
+    votingPower: string;
   };
   stats: {
     for: number;
@@ -137,8 +137,8 @@ export interface GetProposalOrListRequestParams {
 }
 
 export type CurrentVotingInfo = {
-  votingPower: number;
-  communityVotingPower: number;
-  minimalVotingPower: number; // to create a proposal
-  proposalDaysToRun: number; // fixme: ensure types are correct
+  votingPower: string;
+  communityVotingPower: string;
+  minimalVotingPower: string; // to create a proposal
+  votingDuration: number;
 };

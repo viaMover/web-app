@@ -763,6 +763,7 @@ const messages: VueI18n.LocaleMessageObject = {
     lblProposalOverview: 'Proposal overview',
     lblVotingPeriod: 'Voting period',
     lblDaysToRun: 'Days to run',
+    lblRemainingDays: '{days} days',
     lblMinimumVotingThreshold: 'Minimum voting threshold',
     lblProposer: 'Proposer',
     lblProposalId: '@:governance.lblProposal ID',

@@ -178,8 +178,13 @@ export default Vue.extend({
         this.currentNetwork
       );
     },
+    daysToRun(): string {
+      const days =
+        this.currentVotingInfo.votingDuration / 1000_000 / 1000 / 3600 / 24;
+      return this.$t('governance.lblRemainingDays', { days: days }) as string;
+    },
     minimumVotingThresholdText(): string {
-      return formatToDecimals(this.currentVotingInfo.proposalDaysToRun, 0);
+      return formatToDecimals(this.currentVotingInfo.minimalVotingPower, 0);
     },
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;

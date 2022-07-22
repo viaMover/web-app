@@ -57,11 +57,7 @@ import Vue from 'vue';
 import { mapActions, mapState } from 'vuex';
 
 import { MoverAPIError } from '@/services/v2/api/mover';
-import {
-  Choice,
-  ProposalInfo,
-  VoteResponse
-} from '@/services/v2/api/mover/governance';
+import { Choice, ProposalInfo } from '@/services/v2/api/mover/governance';
 import { ErrorCode } from '@/services/v2/api/mover/governance/types';
 import { isProviderRpcError } from '@/services/v2/on-chain';
 import {
@@ -189,12 +185,12 @@ export default Vue.extend({
       this.errorText = '';
 
       try {
-        const voteResult: VoteResponse = await this.vote({
+        await this.vote({
           proposalId: this.proposalInfo.proposal.id,
           choice: this.isVoteFor ? Choice.For : Choice.Against
         } as VoteParams);
 
-        await this.loadNewProposalInfo(voteResult.id);
+        await this.loadNewProposalInfo(this.proposalInfo.proposal.id);
       } catch (error) {
         if (
           error instanceof MoverAPIError &&

@@ -8,6 +8,7 @@ import {
 } from '@/services/v2/api/mover/governance';
 import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 import { ActionFuncs } from '@/store/types';
+import { fromWei } from '@/utils/bigmath';
 
 import { GetterType } from './getters';
 import { MutationType } from './mutations';
@@ -73,7 +74,14 @@ const actions: ActionFuncs<
 
         const promise = service.getLastProposal();
 
-        const lastProposal = await promise;
+        let lastProposal = await promise;
+        lastProposal = {
+          ...lastProposal,
+          voteInfo: {
+            ...lastProposal.voteInfo,
+            votingPower: fromWei(lastProposal.voteInfo.votingPower, 18)
+          }
+        };
         commit('upsertProposalInfoList', lastProposal);
         return lastProposal;
       } finally {
@@ -107,11 +115,22 @@ const actions: ActionFuncs<
       try {
         commit('setIsLoadingProposalInfoList', true);
 
-        const promise = service.getProposalList();
+        const proposalsListRaw = await service.getProposalList();
 
-        const lastProposal = await promise;
-        commit('upsertProposalInfoList', lastProposal);
-        return lastProposal;
+        const proposalsList: Array<ProposalInfo> = [];
+        for (const proposal of proposalsListRaw) {
+          const prop = {
+            ...proposal,
+            voteInfo: {
+              ...proposal.voteInfo,
+              votingPower: fromWei(proposal.voteInfo.votingPower, 18)
+            }
+          };
+          commit('upsertProposalInfoList', prop);
+          proposalsList.push(prop);
+        }
+
+        return proposalsList;
       } finally {
         commit('setIsLoadingProposalInfoList', false);
         commit('setProposalInfoListPromise', undefined);
@@ -138,18 +157,25 @@ const actions: ActionFuncs<
 
     const load = async () => {
       try {
-        return await service.getCurrentVotingInfo();
+        const cvi = await service.getCurrentVotingInfo();
+        cvi.votingPower = fromWei(cvi.votingPower, 18);
+        cvi.communityVotingPower = fromWei(cvi.communityVotingPower, 18);
+        cvi.minimalVotingPower = fromWei(cvi.minimalVotingPower, 18);
+        commit('setCurrentVotingInfo', cvi);
+        return cvi;
       } catch (error) {
         // if at least has a valid old state, use it
         if (
-          state.currentVotingInfo.votingPower > 0 &&
-          state.currentVotingInfo.communityVotingPower > 0 &&
-          state.currentVotingInfo.minimalVotingPower > 0
+          state.currentVotingInfo.votingPower !== '0' &&
+          state.currentVotingInfo.communityVotingPower !== '0' &&
+          state.currentVotingInfo.minimalVotingPower !== '0'
         ) {
           return state.currentVotingInfo;
         }
 
         throw error;
+      } finally {
+        commit('setCurrentVotingInfoPromise', undefined);
       }
     };
 
@@ -165,7 +191,16 @@ const actions: ActionFuncs<
       'getOrCreateService'
     );
 
-    const proposalInfo = service.getProposalById(id);
+    let proposalInfo = await service.getProposalById(id);
+    if (proposalInfo !== undefined) {
+      proposalInfo = {
+        ...proposalInfo,
+        voteInfo: {
+          ...proposalInfo.voteInfo,
+          votingPower: fromWei(proposalInfo.voteInfo.votingPower, 18)
+        }
+      };
+    }
     commit('upsertProposalInfoList', proposalInfo);
     return proposalInfo;
   },

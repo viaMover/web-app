@@ -15,10 +15,10 @@ const initialState: GovernanceStoreState = {
   proposalInfoList: [],
 
   currentVotingInfo: {
-    minimalVotingPower: 0,
-    votingPower: 0,
-    communityVotingPower: 0,
-    proposalDaysToRun: 0
+    minimalVotingPower: '0',
+    votingPower: '0',
+    communityVotingPower: '0',
+    votingDuration: 0
   },
   currentVotingInfoPromise: undefined,
 
