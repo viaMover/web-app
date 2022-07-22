@@ -145,6 +145,9 @@
           <span v-if="!$v.email.isValidEmail" class="error-message">
             {{ $t('tag.errors.email.invalid') }}
           </span>
+          <span v-if="emailErrorText !== ''" class="error-message">
+            {{ emailErrorText }}
+          </span>
           <action-button
             class="primary email-button"
             :disabled="isEmailLoading || $v.email.$error || email === ''"
@@ -184,11 +187,11 @@ import { mapActions, mapState } from 'vuex';
 import party from 'party-js';
 
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
+import { MoverAPITagService } from '@/services/v2/api/mover/tag';
 import { captureSentryException } from '@/services/v2/utils/sentry';
 import { getFromPersistStore } from '@/settings/persist/utils';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { reserveTagInput } from '@/store/modules/tag/types';
-import { asyncSleep } from '@/utils/time';
 
 import { ActionButton } from '@/components/buttons';
 import { SecondaryPage, SecondaryPageHeader } from '@/components/layout';
@@ -218,7 +221,8 @@ export default Vue.extend({
   computed: {
     ...mapState('tag', {
       reservedTag: 'tag',
-      signature: 'sig'
+      signature: 'sig',
+      tagService: 'apiService'
     }),
     showShareButton(): boolean {
       return (
@@ -270,13 +274,12 @@ export default Vue.extend({
       this.showEmailInput = true;
     },
     async handleSaveEmail(): Promise<void> {
-      this.errorText = '';
+      this.emailErrorText = '';
       this.$v.email.$touch();
 
       try {
         this.isEmailLoading = true;
-        await asyncSleep(5000);
-        //await this.setEmail(this.email);
+        await (this.tagService as MoverAPITagService).saveEmail(this.email);
         this.isEmailSaved = true;
       } catch (error) {
         captureSentryException(error);
