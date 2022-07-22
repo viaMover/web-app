@@ -39,6 +39,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblCollectibles: 'Collectibles',
   lblNoMoreTransactions: 'No more transactions',
   lblNoMoreTokens: 'No more tokens',
+  lblOK: 'OK',
   errors: {
     default: 'Oh no. Something went wrong. (Code: {code})',
     estimationFailed: 'Failed to estimate transaction'
@@ -1508,6 +1509,8 @@ const messages: VueI18n.LocaleMessageObject = {
     changeTheTagButton: 'Change the $tag',
     reserveTheTagButton: 'Reserve the $tag',
     shareButton: 'Copy but don’t flex yet',
+    shareEmailButton:
+      'or let us notify you via email when tags will be rolled out',
     shareTagTitle: 'Congratulations, ${tag}',
     shareTagDescription: 'You have successfully reserved your unique tag.',
     whatsNextTitle: "What's next?",
@@ -1518,6 +1521,11 @@ const messages: VueI18n.LocaleMessageObject = {
       '\n' +
       '💲💲💲\n' +
       '{sig}',
+    emailPlaceHolder: 'your@email.com',
+    lblYourEmail: 'Your email',
+    emailSaved: 'We will notify you!',
+    emailDescription:
+      'We will never contact you for any other reason, but to notify about the tags launch, and as soon as we do it, email will be automatically deleted.',
     errors: {
       default: 'Oh no. Something went wrong',
       ADDRESS_ALREADY_HAS_TAG: 'You already have a tag for this address',
@@ -1528,6 +1536,9 @@ const messages: VueI18n.LocaleMessageObject = {
         maxLength: '$tag must contain no more than {maxLength} characters',
         alpha: '$tag must contain only letters',
         notSame: 'new $tag should be different'
+      },
+      email: {
+        invalid: 'Enter a valid email address'
       }
     }
   }
