@@ -1,5 +1,4 @@
 import { AugmentedModule } from '@/store/types';
-import { toWei } from '@/utils/bigmath';
 
 import actions, { ActionType } from './actions';
 import getters, { GetterType } from './getters';
@@ -24,8 +23,6 @@ export default {
     orderState: undefined,
     phoneNumber: undefined,
     kycLink: undefined,
-    wxBTRFLYrealIndex: toWei(1, 9),
-    gALCXToALCXMultiplier: toWei(1.2, 18),
     onChainService: undefined
   },
   actions,

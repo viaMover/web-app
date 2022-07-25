@@ -6,10 +6,11 @@
         :popover-parent-id="accountButtonParentId"
       >
         <template v-slot:button>
-          <span class="title">{{ $t('lblYourWallet') }}</span>
+          <span class="title">{{ myWalletLabel }}</span>
           <arrow-down-icon v-once class="arrow" stroke="#3C3C4399" />
         </template>
         <span class="address">{{ currentAddressText }}</span>
+        <context-button-item :text="$t('lblManageTag')" @click="manageTag" />
         <context-button-item
           :text="$t('lblDisconnect')"
           @click="disconnectWallet"
@@ -81,9 +82,16 @@ export default Vue.extend({
       currentAddress: 'currentAddress',
       availableNetworks: 'availableNetworks'
     }),
+    ...mapState('tag', { reservedTag: 'tag' }),
     ...mapGetters('account', {
       resolvedDomainName: 'resolvedDomainName'
     }),
+    myWalletLabel(): string {
+      if (this.reservedTag !== undefined) {
+        return `$${this.reservedTag}`;
+      }
+      return this.$t('lblYourWallet') as string;
+    },
     currentAddressText(): string {
       if (this.resolvedDomainName !== undefined) {
         return this.resolvedDomainName;
@@ -115,6 +123,9 @@ export default Vue.extend({
       clearWalletState: 'disconnectWallet',
       switchEthereumChain: 'switchEthereumChain'
     }),
+    async manageTag(): Promise<void> {
+      await this.$router.push({ name: 'tag-manage' });
+    },
     async disconnectWallet(): Promise<void> {
       await this.clearWalletState();
       window.location.reload();

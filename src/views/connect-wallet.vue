@@ -144,6 +144,7 @@ export default Vue.extend({
           providerBeforeCloseCb: providerWithCb.onDisconnectCb,
           injected: false
         } as InitWalletPayload);
+        localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"walletconnect"');
       } catch (error) {
         addSentryBreadcrumb({
           type: 'error',
