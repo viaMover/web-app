@@ -4,7 +4,7 @@ import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
-  lblPageTitleDefault: 'Mover App',
+  lblPageTitleDefault: 'Mover - web3 debit card.',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
   lblYourWallet: 'Your wallet',
