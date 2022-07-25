@@ -40,7 +40,7 @@ export class OneInchAPIService
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = '1inch.api.service';
   protected static supportedNetworks: Array<Network> = [
-    // Network.mainnet,
+    Network.mainnet,
     // Network.binance,
     // Network.polygon,
     // Network.optimism,

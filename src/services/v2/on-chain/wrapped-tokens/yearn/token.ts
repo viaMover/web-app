@@ -7,9 +7,19 @@ import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
+import { YearnVaultContract } from '@/services/v2/on-chain/wrapped-tokens/yearn/types';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { floorDivide, multiply, sub, toWei } from '@/utils/bigmath';
+import {
+  convertToString,
+  divide,
+  floorDivide,
+  fromWei,
+  multiply,
+  sub,
+  toWei
+} from '@/utils/bigmath';
+import { InMemoryCache } from '@/utils/cache';
 import { Network } from '@/utils/networkTypes';
 import { YEARN_SIMPLE_VAULT_ABI } from '@/wallet/references/data';
 import {
@@ -22,8 +32,18 @@ export class WrappedTokenYearn extends WrappedToken {
   readonly sentryCategoryPrefix: string;
   private readonly vault: YearnVaultData;
 
-  constructor(wrappedAssetAddress: string, network: Network) {
-    super(network);
+  private readonly contractABI = YEARN_SIMPLE_VAULT_ABI;
+  private readonly contract: YearnVaultContract;
+
+  private readonly multiplierCache: InMemoryCache<string>;
+
+  constructor(
+    wrappedAssetAddress: string,
+    accountAddress: string,
+    network: Network,
+    web3: Web3
+  ) {
+    super(accountAddress, network, web3);
     const vault = getSimpleYearnVaultTokenByAddress(
       wrappedAssetAddress,
       network
@@ -35,9 +55,21 @@ export class WrappedTokenYearn extends WrappedToken {
     }
     this.vault = vault;
     this.sentryCategoryPrefix = `wrapped-token.simple-yearn.${this.vault.vaultToken.symbol}`;
+
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI as AbiItem[],
+      this.vault.vaultToken.address
+    );
+
+    this.multiplierCache = new InMemoryCache<string>(
+      5 * 60,
+      this.getMultiplier.bind(this)
+    );
   }
 
-  getUnwrappedToken = (): SmallTokenInfo => this.vault.commonToken;
+  getUnwrappedToken(): SmallTokenInfo {
+    return this.vault.commonToken;
+  }
 
   canHandle(assetAddress: string, network: Network): boolean {
     return (
@@ -46,22 +78,25 @@ export class WrappedTokenYearn extends WrappedToken {
     );
   }
 
+  public async getUnwrappedAmount(wrappedTokenAmount: string): Promise<string> {
+    const mul = await this.multiplierCache.get();
+    return multiply(wrappedTokenAmount, mul);
+  }
+
+  public async getWrappedAmountByUnwrapped(
+    unwrappedTokenAmount: string
+  ): Promise<string> {
+    const mul = await this.multiplierCache.get();
+    return divide(unwrappedTokenAmount, mul);
+  }
+
   async estimateUnwrap(
     inputAsset: SmallTokenInfo,
-    inputAmount: string,
-    web3: Web3,
-    accountAddress: string
+    inputAmount: string
   ): Promise<EstimateResponse> {
-    const contractABI = YEARN_SIMPLE_VAULT_ABI;
-
     try {
-      const simpleYearnVaultContract = new web3.eth.Contract(
-        contractABI as AbiItem[],
-        this.vault.vaultToken.address
-      );
-
       const transactionParams = {
-        from: accountAddress
+        from: this.accountAddress
       } as TransactionsParams;
 
       const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
@@ -87,11 +122,9 @@ export class WrappedTokenYearn extends WrappedToken {
         }
       });
 
-      const gasLimitObj = await (
-        simpleYearnVaultContract.methods.withdraw(
-          inputAmountInWEI
-        ) as ContractSendMethod
-      ).estimateGas(transactionParams);
+      const gasLimitObj = await this.contract.methods
+        .withdraw(inputAmountInWEI)
+        .estimateGas(transactionParams);
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -135,29 +168,20 @@ export class WrappedTokenYearn extends WrappedToken {
   async unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
-    web3: Web3,
-    accountAddress: string,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<string> {
     const balanceBeforeUnwrap = await currentBalance(
-      web3,
-      accountAddress,
+      this.web3,
+      this.accountAddress,
       this.vault.commonToken.address
     );
 
-    await this._unwrap(
-      inputAsset,
-      inputAmount,
-      web3,
-      accountAddress,
-      changeStepToProcess,
-      gasLimit
-    );
+    await this._unwrap(inputAsset, inputAmount, changeStepToProcess, gasLimit);
 
     const balanceAfterUnwrap = await currentBalance(
-      web3,
-      accountAddress,
+      this.web3,
+      this.accountAddress,
       this.vault.commonToken.address
     );
 
@@ -167,21 +191,12 @@ export class WrappedTokenYearn extends WrappedToken {
   private async _unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
-    web3: Web3,
-    accountAddress: string,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contractABI = YEARN_SIMPLE_VAULT_ABI;
-
-    const contract = new web3.eth.Contract(
-      contractABI as AbiItem[],
-      this.vault.vaultToken.address
-    );
-
     const transactionParams = {
-      from: accountAddress,
-      gas: web3.utils.toBN(gasLimit).toNumber(),
+      from: this.accountAddress,
+      gas: this.web3.utils.toBN(gasLimit).toNumber(),
       gasPrice: undefined,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null
@@ -218,9 +233,9 @@ export class WrappedTokenYearn extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        (
-          contract.methods.withdraw(inputAmountInWEI) as ContractSendMethod
-        ).send(transactionParams),
+        this.contract.methods
+          .withdraw(inputAmountInWEI)
+          .send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
@@ -228,5 +243,17 @@ export class WrappedTokenYearn extends WrappedToken {
 
       return;
     });
+  }
+
+  private async getMultiplier(): Promise<string> {
+    const multiplier = await (
+      this.contract.methods.pricePerShare() as ContractSendMethod
+    ).call({
+      from: this.accountAddress
+    });
+
+    const multiplierInWei = convertToString(multiplier);
+
+    return fromWei(multiplierInWei, this.vault.commonToken.decimals);
   }
 }

@@ -7,6 +7,7 @@ export const requireWalletAuth =
   (excludedRouteNames: Array<string>) =>
   async (to: Route, from: Route, next: NavigationGuardNext): Promise<void> => {
     const store = router.app.$store;
+
     if (excludedRouteNames.includes(to.name ?? '')) {
       next();
       return;

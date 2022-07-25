@@ -674,6 +674,41 @@ const routes: Array<RouteConfig> = [
         );
       }
     }
+  ),
+  wrapWithMeta(
+    {
+      path: '/tag',
+      component: () =>
+        import(/* webpackChunkName: "tag" */ '@/views/tag/tag-root.vue'),
+      children: [
+        {
+          path: '',
+          name: 'tag-manage',
+          component: () =>
+            import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue')
+        },
+        {
+          path: 'reserve/:partner',
+          name: 'tag-partner-reserve',
+          component: () =>
+            import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue'),
+          beforeEnter: (to, from, next): void => {
+            next({ name: 'tag-manage' });
+            return;
+          }
+        }
+      ]
+    },
+    {
+      customCondition: (store?: Store<RootStoreState>): boolean => {
+        if (store === undefined) return false;
+
+        return isFeatureEnabled(
+          'isTagEnabled',
+          store.state?.account?.networkInfo?.network
+        );
+      }
+    }
   )
 ];
 

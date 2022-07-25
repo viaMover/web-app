@@ -467,7 +467,7 @@ const actions: ActionFuncs<
             (addresses, nativeCurrency) =>
               dispatch('fetchTokensPriceByContractAddresses', {
                 contractAddresses: addresses,
-                currencies: nativeCurrency
+                currency: nativeCurrency
               } as FetchTokenPricesByContractAddressesPayload),
             state.allTokens,
             state.availableNetworks,
@@ -561,7 +561,9 @@ const actions: ActionFuncs<
       const debitCardOnChainService = new DebitCardOnChainService(
         state.currentAddress,
         state.networkInfo.network,
-        state.provider.web3
+        state.provider.web3,
+        state.nativeCurrency,
+        () => state.tokens
       );
       dispatch('debitCard/setOnChainService', debitCardOnChainService, {
         root: true
@@ -906,7 +908,7 @@ const actions: ActionFuncs<
         'account/fetchTokensPriceByContractAddresses',
         {
           contractAddresses: token.address,
-          currencies: state.nativeCurrency
+          currency: state.nativeCurrency
         } as FetchTokenPricesByContractAddressesPayload,
         { root: true }
       )) as PriceRecord;
@@ -935,10 +937,7 @@ const actions: ActionFuncs<
   },
   async fetchTokensPriceByContractAddresses(
     { state },
-    {
-      contractAddresses,
-      currencies
-    }: FetchTokenPricesByContractAddressesPayload
+    { contractAddresses, currency }: FetchTokenPricesByContractAddressesPayload
   ): Promise<PriceRecord> {
     let res: PriceRecord = {};
     const addresses = toArray(contractAddresses);
@@ -950,7 +949,7 @@ const actions: ActionFuncs<
 
       res = await state.coinGeckoAPIService.getPricesByContractAddress(
         contractAddresses,
-        currencies
+        currency
       );
     } catch (error) {
       addSentryBreadcrumb({
@@ -979,7 +978,7 @@ const actions: ActionFuncs<
         const theGraphResult =
           await state.theGraphAPIService.getPricesByContractAddress(
             contractAddressesOfStillMissingPrices,
-            currencies
+            currency
           );
         res = { ...res, ...theGraphResult };
       } catch (error) {
@@ -1012,7 +1011,7 @@ const actions: ActionFuncs<
       'fetchTokensPriceByContractAddresses',
       {
         contractAddresses: token.address,
-        currencies: state.nativeCurrency
+        currency: state.nativeCurrency
       } as FetchTokenPricesByContractAddressesPayload
     )) as PriceRecord;
 

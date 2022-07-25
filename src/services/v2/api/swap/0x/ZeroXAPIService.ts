@@ -28,7 +28,7 @@ export class ZeroXAPIService extends MultiChainAPIService implements ISwapper {
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = '0x.api.service';
   protected static readonly validNetworks: Array<Network> = [
-    Network.mainnet,
+    // Network.mainnet,
     Network.binance,
     Network.ropsten,
     Network.polygon,
