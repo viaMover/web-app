@@ -15,7 +15,9 @@
 
     <form
       class="form info"
-      :class="{ error: $v.$anyError || errorText !== '' }"
+      :class="{
+        error: $v.$anyError || errorText !== '' || emailErrorText !== ''
+      }"
       @submit.prevent="handleReserveTag($event)"
     >
       <div
@@ -74,7 +76,7 @@
       </div>
 
       <div class="actions">
-        <div class="group default">
+        <div class="group">
           <a
             v-if="showShareButton"
             class="button primary link-button"
@@ -109,9 +111,60 @@
           </action-button>
         </div>
 
+        <div v-if="showShareButton && !showEmailInput" class="group">
+          <action-button
+            class="transparent icon button no-padding"
+            @button-click="handleShareEmailButton"
+          >
+            <img alt="mail icon" src="@/assets/images/mail.svg" />
+            {{ $t('tag.shareEmailButton') }}
+          </action-button>
+
+          <p class="email-description">
+            {{ $t('tag.emailDescription') }}
+          </p>
+        </div>
+
         <div v-if="errorText !== ''" class="group error-message">
           {{ errorText }}
         </div>
+      </div>
+
+      <div
+        v-if="showShareButton && showEmailInput"
+        class="input-group email-group"
+      >
+        <p v-if="isEmailSaved">{{ $t('tag.emailSaved') }}</p>
+        <template v-else>
+          <input
+            v-model.trim="email"
+            autocomplete="true"
+            :placeholder="$t('tag.emailPlaceHolder')"
+            type="email"
+          />
+          <span v-if="!$v.email.isValidEmail" class="error-message">
+            {{ $t('tag.errors.email.invalid') }}
+          </span>
+          <span v-if="emailErrorText !== ''" class="error-message">
+            {{ emailErrorText }}
+          </span>
+          <action-button
+            class="primary email-button"
+            :disabled="isEmailLoading || $v.email.$error || email === ''"
+            @button-click="handleSaveEmail"
+          >
+            <div v-if="isEmailLoading" class="loader-icon">
+              <img
+                :alt="$t('icon.txtPendingIconAlt')"
+                src="@/assets/images/ios-spinner-white.svg"
+              />
+            </div>
+
+            <template v-else>
+              {{ $t('lblOK') }}
+            </template>
+          </action-button>
+        </template>
       </div>
     </form>
   </secondary-page>
@@ -122,6 +175,7 @@ import Vue from 'vue';
 import { TheMask } from 'vue-the-mask';
 import {
   alpha,
+  email,
   maxLength,
   minLength,
   not,
@@ -133,7 +187,8 @@ import { mapActions, mapState } from 'vuex';
 import party from 'party-js';
 
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
-import { getFromPersistStore } from '@/settings/persist/utils';
+import { MoverAPITagService } from '@/services/v2/api/mover/tag';
+import { captureSentryException } from '@/services/v2/utils/sentry';
 import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { reserveTagInput } from '@/store/modules/tag/types';
 
@@ -151,16 +206,22 @@ export default Vue.extend({
   data() {
     return {
       tag: '',
-
       reservedNow: false,
       isLoading: false,
-      errorText: ''
+      errorText: '',
+
+      email: '',
+      emailErrorText: '',
+      isEmailLoading: false,
+      showEmailInput: false,
+      isEmailSaved: false
     };
   },
   computed: {
     ...mapState('tag', {
       reservedTag: 'tag',
-      signature: 'sig'
+      signature: 'sig',
+      tagService: 'apiService'
     }),
     showShareButton(): boolean {
       return (
@@ -208,6 +269,24 @@ export default Vue.extend({
   },
   methods: {
     ...mapActions('tag', ['reserveTag', 'loadInfo']),
+    handleShareEmailButton(): void {
+      this.showEmailInput = true;
+    },
+    async handleSaveEmail(): Promise<void> {
+      this.emailErrorText = '';
+      this.$v.email.$touch();
+
+      try {
+        this.isEmailLoading = true;
+        await (this.tagService as MoverAPITagService).saveEmail(this.email);
+        this.isEmailSaved = true;
+      } catch (error) {
+        captureSentryException(error);
+        this.emailErrorText = this.$t('tag.errors.default') as string;
+      } finally {
+        this.isEmailLoading = false;
+      }
+    },
     async handleReserveTag($event: Event): Promise<void> {
       this.errorText = '';
       this.$v.$touch();
@@ -218,19 +297,16 @@ export default Vue.extend({
 
       try {
         this.isLoading = true;
-        let partner: string | undefined = this.$route.params.partner;
-        if (!partner) {
-          partner = await getFromPersistStore<string>('all', 'tag', 'partner');
-        }
         await this.reserveTag({
-          tag: this.tag,
-          partner: partner
+          tag: this.tag
         } as reserveTagInput);
         this.reservedNow = true;
         party.confetti($event.target as HTMLInputElement, {
           count: 75
         });
       } catch (error) {
+        captureSentryException(error);
+
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
             this.errorText = this.$t(
@@ -276,6 +352,9 @@ export default Vue.extend({
       maxLength: maxLength(20),
       notSame: not(sameAs((vm) => vm.reservedTag)),
       alpha
+    },
+    email: {
+      isValidEmail: email
     }
   }
 });

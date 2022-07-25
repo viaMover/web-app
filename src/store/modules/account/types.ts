@@ -189,7 +189,7 @@ export type PriceRecord = {
 
 export type FetchTokenPricesByContractAddressesPayload = {
   contractAddresses: Array<string> | string;
-  currencies: Array<NativeCurrency> | NativeCurrency;
+  currency: NativeCurrency;
 };
 
 export const uauthOptions: IUAuthOptions = {

@@ -204,6 +204,14 @@ export default Vue.extend({
       type: String,
       required: true
     },
+    maxAmount: {
+      type: String as PropType<string | undefined>,
+      default: undefined
+    },
+    maxAmountNative: {
+      type: String as PropType<string | undefined>,
+      default: undefined
+    },
     transferError: {
       type: String as PropType<string | undefined>,
       default: undefined
@@ -264,17 +272,21 @@ export default Vue.extend({
       }
 
       if (this.inputMode === 'TOKEN') {
-        return `${formatToDecimals(
-          this.asset.balance,
-          4,
-          BigNumber.ROUND_DOWN
-        )} ${this.asset.symbol}`;
+        let maxAmount = this.asset.balance;
+        if (this.maxAmount !== undefined) {
+          maxAmount = this.maxAmount;
+        }
+        return `${formatToDecimals(maxAmount, 4, BigNumber.ROUND_DOWN)} ${
+          this.asset.symbol
+        }`;
       }
-      return `$${formatToDecimals(
-        multiply(this.asset.balance, this.asset.priceUSD),
-        2,
-        BigNumber.ROUND_DOWN
-      )} ${this.nativeCurrencySymbol}`;
+      let maxAmountNative = multiply(this.asset.balance, this.asset.priceUSD);
+      if (this.maxAmountNative !== undefined) {
+        maxAmountNative = this.maxAmountNative;
+      }
+      return `$${formatToDecimals(maxAmountNative, 2, BigNumber.ROUND_DOWN)} ${
+        this.nativeCurrencySymbol
+      }`;
     },
     selectorStyle(): CssProperties {
       if (this.asset === undefined) {

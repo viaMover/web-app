@@ -5,7 +5,7 @@ import { AbiItem } from 'web3-utils';
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
-import { gALCXContract } from '@/services/v2/on-chain/wrapped-tokens/gALCX/types';
+import { IdleContract } from '@/services/v2/on-chain/wrapped-tokens/idle/types';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
@@ -20,31 +20,39 @@ import {
 } from '@/utils/bigmath';
 import { InMemoryCache } from '@/utils/cache';
 import { Network } from '@/utils/networkTypes';
+import { IDLE_TOKEN_ABI } from '@/wallet/references/data';
 import {
-  GALCX_ABI,
-  getALCXAssetData,
-  lookupAddress
-} from '@/wallet/references/data';
+  getIdleTokenByAddress,
+  WrapTokenData
+} from '@/wallet/references/idleTokensData';
 import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 
-export class WrappedTokenGALCX extends WrappedToken {
+export class WrappedTokenIdle extends WrappedToken {
   readonly sentryCategoryPrefix: string;
-  public readonly wrappedTokenAddress: string;
-  public readonly unwrappedToken: SmallTokenInfo;
+  private readonly wrapTokenData: WrapTokenData;
   private readonly multiplierCache: InMemoryCache<string>;
-  private readonly contract: gALCXContract;
+  private readonly contract: IdleContract;
+  private readonly contractABI = IDLE_TOKEN_ABI;
 
-  public readonly contractABI = GALCX_ABI;
-
-  constructor(accountAddress: string, network: Network, web3: Web3) {
+  constructor(
+    wrappedAssetAddress: string,
+    accountAddress: string,
+    network: Network,
+    web3: Web3
+  ) {
     super(accountAddress, network, web3);
-    this.sentryCategoryPrefix = `wrapped-token.galcx`;
-    this.wrappedTokenAddress = lookupAddress(network, 'GALCX_TOKEN_ADDRESS');
-    this.unwrappedToken = getALCXAssetData(network);
+    const idleToken = getIdleTokenByAddress(wrappedAssetAddress, network);
+    if (idleToken === undefined) {
+      throw new Error(
+        `Can't find idle token by address: ${wrappedAssetAddress}`
+      );
+    }
+    this.wrapTokenData = idleToken;
+    this.sentryCategoryPrefix = `wrapped-token.idle-token.${this.wrapTokenData.wrapToken.symbol}`;
 
     this.contract = new this.web3.eth.Contract(
       this.contractABI as AbiItem[],
-      this.wrappedTokenAddress
+      this.wrapTokenData.wrapToken.address
     );
 
     this.multiplierCache = new InMemoryCache<string>(
@@ -54,13 +62,13 @@ export class WrappedTokenGALCX extends WrappedToken {
   }
 
   public getUnwrappedToken(): SmallTokenInfo {
-    return getALCXAssetData(this.network);
+    return this.wrapTokenData.commonToken;
   }
 
-  public canHandle(assetAddress: string, network: Network): boolean {
+  canHandle(assetAddress: string, network: Network): boolean {
     return (
       network === this.network &&
-      sameAddress(this.wrappedTokenAddress, assetAddress)
+      sameAddress(this.wrapTokenData.wrapToken.address, assetAddress)
     );
   }
 
@@ -76,7 +84,7 @@ export class WrappedTokenGALCX extends WrappedToken {
     return divide(unwrappedTokenAmount, mul);
   }
 
-  public async estimateUnwrap(
+  async estimateUnwrap(
     inputAsset: SmallTokenInfo,
     inputAmount: string
   ): Promise<EstimateResponse> {
@@ -92,7 +100,10 @@ export class WrappedTokenGALCX extends WrappedToken {
         category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'input amount in WEI',
         data: {
-          inputAmountInWEI
+          inputAmountInWEI,
+          idleName: this.wrapTokenData.name,
+          idleAddress: this.wrapTokenData.wrapToken.address,
+          idleCommonToken: this.wrapTokenData.commonToken.address
         }
       });
 
@@ -106,7 +117,7 @@ export class WrappedTokenGALCX extends WrappedToken {
       });
 
       const gasLimitObj = await this.contract.methods
-        .unstake(inputAmountInWEI)
+        .redeemIdleToken(inputAmountInWEI)
         .estimateGas(transactionParams);
 
       if (gasLimitObj) {
@@ -138,13 +149,17 @@ export class WrappedTokenGALCX extends WrappedToken {
         }
       });
 
-      throw new OnChainServiceError('Failed to estimate unwrap').wrap(error);
+      throw new OnChainServiceError(
+        'Failed to estimate simple yearn vault unwrap'
+      ).wrap(error);
     }
 
-    throw new OnChainServiceError('Failed to estimate unwrap: empty gas limit');
+    throw new OnChainServiceError(
+      'Failed to estimate simple yearn vault unwrap: empty gas limit'
+    );
   }
 
-  public async unwrap(
+  async unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     changeStepToProcess: () => Promise<void>,
@@ -153,7 +168,7 @@ export class WrappedTokenGALCX extends WrappedToken {
     const balanceBeforeUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.unwrappedToken.address
+      this.wrapTokenData.commonToken.address
     );
 
     await this._unwrap(inputAsset, inputAmount, changeStepToProcess, gasLimit);
@@ -161,13 +176,13 @@ export class WrappedTokenGALCX extends WrappedToken {
     const balanceAfterUnwrap = await currentBalance(
       this.web3,
       this.accountAddress,
-      this.unwrappedToken.address
+      this.wrapTokenData.commonToken.address
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
   }
 
-  protected async _unwrap(
+  private async _unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
     changeStepToProcess: () => Promise<void>,
@@ -188,7 +203,10 @@ export class WrappedTokenGALCX extends WrappedToken {
       category: `${this.sentryCategoryPrefix}.execute-unwrap`,
       message: 'input amount in WEI',
       data: {
-        inputAmountInWEI
+        inputAmountInWEI,
+        idleName: this.wrapTokenData.name,
+        idleAddress: this.wrapTokenData.wrapToken.address,
+        idleCommonToken: this.wrapTokenData.commonToken.address
       }
     });
 
@@ -209,7 +227,9 @@ export class WrappedTokenGALCX extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        this.contract.methods.unstake(inputAmountInWEI).send(transactionParams),
+        this.contract.methods
+          .redeemIdleToken(inputAmountInWEI)
+          .send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
@@ -220,12 +240,14 @@ export class WrappedTokenGALCX extends WrappedToken {
   }
 
   private async getMultiplier(): Promise<string> {
-    const exchangeRate = await this.contract.methods.exchangeRate().call({
-      from: this.accountAddress
-    });
+    const multiplier = await this.contract.methods
+      .tokenPriceWithFee(this.accountAddress)
+      .call({
+        from: this.accountAddress
+      });
 
-    const multiplierInWei = convertToString(exchangeRate);
+    const multiplierInWei = convertToString(multiplier);
 
-    return fromWei(multiplierInWei, this.unwrappedToken.decimals);
+    return fromWei(multiplierInWei, this.wrapTokenData.commonToken.decimals);
   }
 }

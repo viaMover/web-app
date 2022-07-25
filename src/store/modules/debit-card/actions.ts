@@ -2,10 +2,7 @@ import * as Sentry from '@sentry/vue';
 import dayjs from 'dayjs';
 import { SHA3 } from 'sha3';
 
-import { getGALCXToALCXMultiplier } from '@/services/chain/gALCX/multiplier';
 import { checkIsNftPresent } from '@/services/chain/nft/utils';
-import { getRealIndex } from '@/services/chain/wxbtrfly/wxbtrfly';
-import { getYearnVaultMultiplier } from '@/services/chain/yearn-vaults/simple';
 import {
   BaseReturn,
   changePhoneNumber,
@@ -17,7 +14,6 @@ import {
   validatePhoneNumber
 } from '@/services/mover/debit-card';
 import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
-import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import {
   deleteEmailHashFromPersist,
   getAvailableSkinsFromPersist,
@@ -28,7 +24,6 @@ import {
   setCurrentSkinToPersist,
   setEmailHashToPersist
 } from '@/settings';
-import { ensureAccountStateIsSafe } from '@/store/modules/account/types';
 
 import { ActionFuncs } from '../../types';
 import { allSkins, defaultSkin } from './consts';
@@ -55,9 +50,6 @@ type Actions = {
   validatePhoneNumber: Promise<void>;
   setOrderState: void;
   changePhoneNumber: Promise<void>;
-  loadWxBTRFLYrealIndex: Promise<void>;
-  loadGALCXToALCXMultiplier: Promise<void>;
-  getYearnVaultMultiplier: Promise<string>;
   setOnChainService: any;
 };
 
@@ -172,11 +164,7 @@ const actions: ActionFuncs<
           throw new DebitCardApiError(res.error, res.shortError);
         }
 
-        await Promise.all([
-          dispatch('loadGALCXToALCXMultiplier'),
-          dispatch('loadWxBTRFLYrealIndex'),
-          dispatch('handleInfoResult', res.result)
-        ]);
+        await Promise.all([dispatch('handleInfoResult', res.result)]);
 
         commit('setIsLoading', false);
         commit('setIsInitialized', true);
@@ -632,86 +620,6 @@ const actions: ActionFuncs<
     } catch (error) {
       console.error('failed to change phone number', error);
       Sentry.captureException(error);
-      throw error;
-    }
-  },
-  async loadWxBTRFLYrealIndex({ commit, rootState }): Promise<void> {
-    if (rootState.account?.currentAddress === undefined) {
-      throw new Error('failed to get current address');
-    }
-
-    if (rootState.account?.provider?.web3 === undefined) {
-      throw new Error('failed to get web3 provider');
-    }
-
-    if (rootState.account?.networkInfo?.network === undefined) {
-      throw new Error('failed to get network');
-    }
-    try {
-      const wxBTRFLYrealIndex = await getRealIndex(
-        rootState.account.networkInfo.network,
-        rootState.account.provider.web3,
-        rootState.account.currentAddress
-      );
-      commit('setWxBTRFLYrealIndex', wxBTRFLYrealIndex);
-    } catch (error) {
-      console.error('failed to get WxBTRFLY realindex', error);
-      Sentry.captureException(error);
-    }
-  },
-  async loadGALCXToALCXMultiplier({ commit, rootState }): Promise<void> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      throw new Error(
-        'Account state is not ready. Failed to load gALCXToALCXMultiplier'
-      );
-    }
-
-    try {
-      const multiplier = await getGALCXToALCXMultiplier(
-        rootState.account.networkInfo.network,
-        rootState.account.provider.web3,
-        rootState.account.currentAddress
-      );
-      commit('setGALCXToALCXMultiplier', multiplier);
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: 'debit-card.store.loadGALCXToALCXMultiplier',
-        message: 'Failed to load gALCXToALCXMultiplier',
-        data: {
-          error
-        }
-      });
-    }
-  },
-  async getYearnVaultMultiplier(
-    { commit, rootState },
-    tokenAddress: string
-  ): Promise<string> {
-    if (!ensureAccountStateIsSafe(rootState.account)) {
-      throw new Error(
-        'Account state is not ready. Failed to load year vault multiplier'
-      );
-    }
-
-    try {
-      const multiplier = await getYearnVaultMultiplier(
-        rootState.account.networkInfo.network,
-        rootState.account.provider.web3,
-        tokenAddress,
-        rootState.account.currentAddress
-      );
-      return multiplier;
-    } catch (error) {
-      addSentryBreadcrumb({
-        type: 'error',
-        category: 'debit-card.store.getYearnVaultMultiplier',
-        message: 'Failed to load yearn multiplier',
-        data: {
-          error
-        }
-      });
-
       throw error;
     }
   },

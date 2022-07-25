@@ -4,7 +4,7 @@ import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
-  lblPageTitleDefault: 'Mover App',
+  lblPageTitleDefault: 'Mover - web3 debit card.',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
   lblYourWallet: 'Your wallet',
@@ -39,6 +39,7 @@ const messages: VueI18n.LocaleMessageObject = {
   lblCollectibles: 'Collectibles',
   lblNoMoreTransactions: 'No more transactions',
   lblNoMoreTokens: 'No more tokens',
+  lblOK: 'OK',
   errors: {
     default: 'Oh no. Something went wrong. (Code: {code})',
     estimationFailed: 'Failed to estimate transaction'
@@ -1507,17 +1508,25 @@ const messages: VueI18n.LocaleMessageObject = {
     chooseTheTagButton: 'Choose the $tag',
     changeTheTagButton: 'Change the $tag',
     reserveTheTagButton: 'Reserve the $tag',
-    shareButton: 'Copy but don’t flex yet',
+    shareButton: 'Flex on Twitter',
+    shareEmailButton:
+      'or let us notify you via email when tags will be rolled out',
     shareTagTitle: 'Congratulations, ${tag}',
     shareTagDescription: 'You have successfully reserved your unique tag.',
     whatsNextTitle: "What's next?",
     whatsNextDescription:
-      'We will be rolling out the tag system shortly. Your support is integral and very appreciated 🙏. If you click on the button below, you will generate the tweet text, please do not post it right now, but instead copy it, and share it on July 25th, when we will publicly roll it out.',
+      'We will be rolling out the tag system shortly that will allow your favorite projects and protocols to create a flow on the Mover card. What you can do now is share your tag on Twitter. Let your friends reserve their tags, and let us know about your favorite projects you want us to integrate.',
     twit:
       'This is a proof of my ${tag} tag ownership and reservation in @viaMover.\n' +
       '\n' +
       '💲💲💲\n' +
-      '{sig}',
+      '{sig}\n' +
+      'app.viamover.com/tag',
+    emailPlaceHolder: 'your@email.com',
+    lblYourEmail: 'Your email',
+    emailSaved: 'We will notify you!',
+    emailDescription:
+      'We will never contact you for any other reason, but to notify about the tags launch, and as soon as we do it, email will be automatically deleted.',
     errors: {
       default: 'Oh no. Something went wrong',
       ADDRESS_ALREADY_HAS_TAG: 'You already have a tag for this address',
@@ -1528,6 +1537,9 @@ const messages: VueI18n.LocaleMessageObject = {
         maxLength: '$tag must contain no more than {maxLength} characters',
         alpha: '$tag must contain only letters',
         notSame: 'new $tag should be different'
+      },
+      email: {
+        invalid: 'Enter a valid email address'
       }
     }
   }

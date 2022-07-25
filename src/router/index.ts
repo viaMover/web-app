@@ -9,7 +9,6 @@ import {
 } from '@/router/descending-meta-wrapper';
 import { checkFeatureFlags } from '@/router/feature-flag-guard';
 import { requireWalletAuth } from '@/router/wallet-auth-guard';
-import { PartnersList } from '@/services/v2/api/mover/tag';
 import { isFeatureEnabled } from '@/settings';
 import { RootStoreState } from '@/store/types';
 import ConnectWallet from '@/views/connect-wallet.vue';
@@ -694,11 +693,7 @@ const routes: Array<RouteConfig> = [
           component: () =>
             import(/* webpackChunkName: "tag" */ '@/views/tag/tag-manage.vue'),
           beforeEnter: (to, from, next): void => {
-            if (PartnersList.includes(to.params.partner)) {
-              next();
-              return;
-            }
-            next({ name: 'not-found-route' });
+            next({ name: 'tag-manage' });
             return;
           }
         }

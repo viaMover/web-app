@@ -24,3 +24,11 @@ export type LookupTagResponse = {
 export enum ErrorCode {
   TagNotFound = 'NOT_FOUND'
 }
+
+export type SaveEmailPayload = {
+  email: string;
+};
+
+export type SaveEmailResponse = {
+  email: string;
+};

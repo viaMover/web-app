@@ -38,7 +38,7 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
           rootState.account.networkInfo.network,
           rootState.account.provider.web3
         );
-        commit('setAPIService');
+        commit('setAPIService', service);
       }
 
       const result = await service.lookupTag();
@@ -92,7 +92,7 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
         rootState.account.networkInfo.network,
         rootState.account.provider.web3
       );
-      commit('setAPIService');
+      commit('setAPIService', service);
     }
 
     try {

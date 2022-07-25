@@ -12,7 +12,9 @@ import { currentTimestamp } from '@/utils/time';
 import {
   LookupTagResponse,
   ReserveTagPayload,
-  ReserveTagResponse
+  ReserveTagResponse,
+  SaveEmailPayload,
+  SaveEmailResponse
 } from './types';
 
 export class MoverAPITagService extends MoverAPIService {
@@ -30,6 +32,17 @@ export class MoverAPITagService extends MoverAPIService {
       })
     );
     this.web3Client = web3Client;
+  }
+
+  public async saveEmail(email: string): Promise<void> {
+    const payload: SaveEmailPayload = {
+      email: email
+    };
+
+    await this.client.post<MoverAPISuccessfulResponse<SaveEmailResponse>>(
+      '/tag/notify/email',
+      payload
+    );
   }
 
   public async reserveTag(
