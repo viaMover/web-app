@@ -1520,7 +1520,8 @@ const messages: VueI18n.LocaleMessageObject = {
       'This is a proof of my ${tag} tag ownership and reservation in @viaMover.\n' +
       '\n' +
       '💲💲💲\n' +
-      '{sig}',
+      '{sig}\n' +
+      'app.viamover.com/tag',
     emailPlaceHolder: 'your@email.com',
     lblYourEmail: 'Your email',
     emailSaved: 'We will notify you!',
