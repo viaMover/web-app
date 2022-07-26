@@ -17,6 +17,8 @@ module.exports = {
     config
       .plugin('html')
       .tap((args) => {
+        console.debug(publicPath, process.env.VUE_APP_PUBLIC_HOST);
+
         args[0].title = 'Mover - web3 debit card.';
         args[0].meta = {
           description: "The only web3 card you'll ever need - Mover.",
