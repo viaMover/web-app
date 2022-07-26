@@ -15,7 +15,6 @@ jobs:
     env:
       VUE_APP_IS_DEV: false
       CI_SECRET: ${{ secrets.CI_SECRET }}
-      VUE_APP_PUBLIC_HOST: ${{ secrets.VUE_APP_PUBLIC_HOST }}
 
     steps:
       - name: Check out repository code
