@@ -5,7 +5,6 @@ const publicPath = process.env.VUE_APP_PUBLIC_HOST ?? '/';
  */
 module.exports = {
   productionSourceMap: true,
-  publicPath: publicPath,
   transpileDependencies: ['web3modal-vue'],
   css: {
     sourceMap: process.env.NODE_ENV !== 'production'
