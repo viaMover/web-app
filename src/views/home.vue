@@ -1,5 +1,5 @@
 <template>
-  <content-wrapper class="home" has-left-rail page-content-class="centered">
+  <content-wrapper class="home" page-content-class="centered">
     <!--    <template v-slot:left-rail>-->
     <!--      <home-left-rail />-->
     <!--    </template>-->
