@@ -1521,7 +1521,7 @@ const messages: VueI18n.LocaleMessageObject = {
       '\n' +
       '💲💲💲\n' +
       '{sig}\n' +
-      'app.viamover.com/tag',
+      'https://app.viamover.com',
     emailPlaceHolder: 'your@email.com',
     lblYourEmail: 'Your email',
     emailSaved: 'We will notify you!',
