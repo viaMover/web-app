@@ -42,7 +42,8 @@ const messages: VueI18n.LocaleMessageObject = {
   lblOK: 'OK',
   errors: {
     default: 'Oh no. Something went wrong. (Code: {code})',
-    estimationFailed: 'Failed to estimate transaction'
+    estimationFailed: 'Failed to estimate transaction',
+    notSupportedChainId: 'Chain is not supported yet (Chain Id: {chainId})'
   },
   connect: {
     txtMoverDescription:
