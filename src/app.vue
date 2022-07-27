@@ -41,6 +41,7 @@ import * as UAuthWeb3Modal from '@uauth/web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3ModalVue from 'web3modal-vue';
 
+import { NetworkNotSupportedError } from '@/services/v2/NetworkNotSupportedError';
 import { greaterThan } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import Mobile from '@/views/mobile.vue';
@@ -190,12 +191,22 @@ export default Vue.extend({
             .map((x) => x[0])
             .filter((x) => x.startsWith('-walletlink'))
             .forEach((x) => localStorage.removeItem(x));
-          sendGlobalTopMessageEvent(
-            this.$t('errors.default', {
-              code: CommonErrors.CACHED_PROVIDER_CONNECT_ERROR
-            }) as string,
-            'error'
-          );
+
+          if (error instanceof NetworkNotSupportedError) {
+            sendGlobalTopMessageEvent(
+              (this.$t('errors.notSupportedChainId', {
+                chainId: error.getChainId()
+              }) as string) ?? 'Oh no. Something went wrong',
+              'error'
+            );
+          } else {
+            sendGlobalTopMessageEvent(
+              this.$t('errors.default', {
+                code: CommonErrors.CACHED_PROVIDER_CONNECT_ERROR
+              }) as string,
+              'error'
+            );
+          }
         }
       }
       this.setIsDetecting(false);
