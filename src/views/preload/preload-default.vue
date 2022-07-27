@@ -1,18 +1,18 @@
 <template>
-  <content-wrapper class="home" has-left-rail>
-    <template v-slot:left-rail>
-      <aside class="left-rail wallet history">
-        <div class="wrapper">
-          <pu-skeleton class="button-group skeleton" height="32px" tag="div" />
-          <div class="wallet">
-            <div class="list">
-              <preload-left-rail-wallet-tokens is-loading />
-              <preload-left-rail-wallet-collectibles is-loading />
-            </div>
-          </div>
-        </div>
-      </aside>
-    </template>
+  <content-wrapper class="home" page-content-class="centered">
+    <!--    <template v-slot:left-rail>-->
+    <!--      <aside class="left-rail wallet history">-->
+    <!--        <div class="wrapper">-->
+    <!--          <pu-skeleton class="button-group skeleton" height="32px" tag="div" />-->
+    <!--          <div class="wallet">-->
+    <!--            <div class="list">-->
+    <!--              <preload-left-rail-wallet-tokens is-loading />-->
+    <!--              <preload-left-rail-wallet-collectibles is-loading />-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </aside>-->
+    <!--    </template>-->
 
     <div class="masthead">
       <pu-skeleton circle class="avatar" tag="div" />
@@ -60,8 +60,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import PreloadLeftRailWalletCollectibles from '@/components/home/home-wallet/home-wallet-collectibles-wrapper.vue';
-import PreloadLeftRailWalletTokens from '@/components/home/home-wallet/home-wallet-tokens-wrapper.vue';
+// import PreloadLeftRailWalletCollectibles from '@/components/home/home-wallet/home-wallet-collectibles-wrapper.vue';
+// import PreloadLeftRailWalletTokens from '@/components/home/home-wallet/home-wallet-tokens-wrapper.vue';
 import { ContentWrapper } from '@/components/layout';
 import { NavigationSection } from '@/components/navigation';
 
@@ -69,8 +69,8 @@ export default Vue.extend({
   name: 'PreloadDefault',
   components: {
     ContentWrapper,
-    PreloadLeftRailWalletTokens,
-    PreloadLeftRailWalletCollectibles,
+    // PreloadLeftRailWalletTokens,
+    // PreloadLeftRailWalletCollectibles,
     NavigationSection
   }
 });
