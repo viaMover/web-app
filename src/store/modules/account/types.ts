@@ -24,7 +24,7 @@ export type TransactionGroup = {
 export type AccountData = {
   addresses: Array<string>;
   balance: string | undefined;
-  networkId: number | undefined;
+  networkInfo: NetworkInfo;
 };
 
 export type ProviderData = {

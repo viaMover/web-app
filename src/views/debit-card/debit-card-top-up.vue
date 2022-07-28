@@ -783,8 +783,7 @@ export default Vue.extend({
         id: ModalType.SearchToken,
         value: true,
         payload: {
-          useWalletTokens: true,
-          forceTokenArray: this.validTokens
+          useWalletTokens: true
         }
       });
 

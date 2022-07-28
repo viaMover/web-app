@@ -1,3 +1,4 @@
+import { MoverError } from '@/services/v2';
 import { MoverAPIError } from '@/services/v2/api/mover';
 import { ErrorCode, MoverAPITagService } from '@/services/v2/api/mover/tag';
 import {
@@ -28,9 +29,14 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
           addSentryBreadcrumb({
             type: 'error',
             category: 'loadInfo.actions.tag.store',
-            message: 'Account state is not ready'
+            message: 'Account state is not ready',
+            data: {
+              currentAddress: rootState.account?.currentAddress,
+              provider: rootState.account?.provider,
+              network: rootState.account?.networkInfo?.network
+            }
           });
-          return;
+          throw new MoverError('Account state is not ready');
         }
 
         service = new MoverAPITagService(
@@ -80,9 +86,14 @@ const actions: ActionFuncs<Actions, TagStoreState, MutationType, GetterType> = {
       addSentryBreadcrumb({
         type: 'error',
         category: 'reserveTag.actions.tag.store',
-        message: 'Account state is not ready'
+        message: 'Account state is not ready',
+        data: {
+          currentAddress: rootState.account?.currentAddress,
+          provider: rootState.account?.provider,
+          network: rootState.account?.networkInfo?.network
+        }
       });
-      return;
+      throw new MoverError('Account state is not ready');
     }
 
     let service = state.apiService;
