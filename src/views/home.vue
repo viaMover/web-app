@@ -1,8 +1,8 @@
 <template>
-  <content-wrapper class="home" has-left-rail>
-    <template v-slot:left-rail>
-      <home-left-rail />
-    </template>
+  <content-wrapper class="home" page-content-class="centered">
+    <!--    <template v-slot:left-rail>-->
+    <!--      <home-left-rail />-->
+    <!--    </template>-->
 
     <home-masthead-multichain
       v-if="isFeatureEnabled('isMultiChainMastheadEnabled')"
@@ -36,7 +36,7 @@ import {
   HomeCardsDebitCard,
   HomeCardsSavingsDeposit,
   HomeCardsTag,
-  HomeLeftRail,
+  // HomeLeftRail,
   HomeMasthead,
   HomeMastheadMultichain,
   HomeNavigationSection
@@ -48,7 +48,7 @@ export default Vue.extend({
   name: 'Home',
   components: {
     ContentWrapper,
-    HomeLeftRail,
+    // HomeLeftRail,
     HomeMasthead,
     HomeMastheadMultichain,
     HomeNavigationSection,

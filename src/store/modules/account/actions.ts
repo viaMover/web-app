@@ -24,6 +24,7 @@ import {
   CurrencyNotSupportedError,
   TheGraphAPIService
 } from '@/services/v2/api/theGraph';
+import { NetworkNotSupportedError } from '@/services/v2/NetworkNotSupportedError';
 import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { ISmartTreasuryBonusBalanceExecutor } from '@/services/v2/on-chain/mover/ISmartTreasuryBonusBalanceExecutor';
 import { SavingsOnChainService } from '@/services/v2/on-chain/mover/savings/SavingsOnChainService';
@@ -50,7 +51,7 @@ import {
 import { ActionFuncs } from '@/store/types';
 import { toArray } from '@/utils/arrays';
 import { CommonErrors, errorToString } from '@/utils/errors';
-import { NetworkInfo } from '@/utils/networkTypes';
+import { getNetworkByChainId, NetworkInfo } from '@/utils/networkTypes';
 import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import { getGasPrices } from '@/wallet/gas';
@@ -319,16 +320,16 @@ const actions: ActionFuncs<
         injected: payload.injected,
         init: true
       } as RefreshWalletPayload);
-    } catch (err) {
-      console.log("can't init the wallet");
-      console.log(err);
-      sendGlobalTopMessageEvent(
-        (rootState.i18n?.t('errors.default', {
-          code: CommonErrors.INIT_WALLET_ERROR
-        }) as string) ?? 'Oh no. Something went wrong',
-        'error'
-      );
-      throw err;
+    } catch (error) {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'app.account',
+        message: "Can't init wallet",
+        data: {
+          error
+        }
+      });
+      throw error;
     }
   },
   async refreshWallet(
@@ -360,10 +361,16 @@ const actions: ActionFuncs<
 
       const chainId = await state.provider.web3.eth.getChainId();
 
+      const networkInfo = getNetworkByChainId(chainId);
+
+      if (networkInfo === undefined) {
+        throw new NetworkNotSupportedError(chainId);
+      }
+
       commit('setAccountData', {
         addresses: accounts,
         balance: balance,
-        networkId: chainId
+        networkInfo: networkInfo
       } as AccountData);
 
       new UAuthSPA(uauthOptions)
