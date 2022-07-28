@@ -4,7 +4,7 @@ import { ValidationErrorReason } from '@/services/v2/api/swap/0x/types';
 import { NftAssetId } from '@/store/modules/nft/types';
 
 const messages: VueI18n.LocaleMessageObject = {
-  lblPageTitleDefault: 'Mover App',
+  lblPageTitleDefault: 'Mover - web3 debit card.',
   lblWelcome: 'Welcome',
   lblBalance: 'Balance',
   lblYourWallet: 'Your wallet',
@@ -17,9 +17,12 @@ const messages: VueI18n.LocaleMessageObject = {
   lblWallet: 'Wallet',
   lblDisconnectEmoji: '🚪',
   lblDisconnect: '@:lblDisconnectEmoji Disconnect',
+  lblManageTagEmoji: '💲',
+  lblManageTag: '@:lblManageTagEmoji Manage tag',
   lblNewToMover: 'Looks like you are new to Mover',
   lblTransactionListNotAvailable:
     'Transaction list is not available in this network',
+  lblTokenListNotAvailable: 'Token list is not available in this network',
   lblMore: 'More',
   lblPageTitleSuffix: 'Portfolio',
   lblInsufficientBalance: 'Insufficient Balance',
@@ -36,9 +39,11 @@ const messages: VueI18n.LocaleMessageObject = {
   lblCollectibles: 'Collectibles',
   lblNoMoreTransactions: 'No more transactions',
   lblNoMoreTokens: 'No more tokens',
+  lblOK: 'OK',
   errors: {
     default: 'Oh no. Something went wrong. (Code: {code})',
-    estimationFailed: 'Failed to estimate transaction'
+    estimationFailed: 'Failed to estimate transaction',
+    notSupportedChainId: 'Chain is not supported yet (Chain Id: {chainId})'
   },
   connect: {
     txtMoverDescription:
@@ -1484,6 +1489,59 @@ const messages: VueI18n.LocaleMessageObject = {
       lblEstimatedEarningsTomorrow: 'Estimated earnings tomorrow',
       lblEstimatedEarningsNextMonth: 'Estimated earnings this month',
       lblEstimatedEarningsAnnually: 'Estimated earnings annually'
+    }
+  },
+  tag: {
+    bannerReserveTagTitle: 'Reserve your $tag now',
+    bannerReserveTagDescription:
+      'Choosing a $tag will allow your friends, family, and customers to pay you on the Mover Card',
+    bannerReserveTagButton: 'Reserve the $tag',
+    tag: 'Tag',
+    myTag: 'My $tag',
+    notReserved: 'Not reserved yet',
+    reserveTagTitle: 'Reserve $tag',
+    reserveTagDescription:
+      'Mover $tag will allow your friends and smart contracts to easily pay you on the card from any supported network, with almost any token.',
+    yourTagTitle: 'Your $tag',
+    yourTagPlaceholder: 'your tag',
+    yourTagDescription:
+      'Your $tag has to be unique. It must contain at least {minLength} character and be no more than {maxLength} characters. You can always change it later. Make sure you reserve yours.',
+    chooseTheTagButton: 'Choose the $tag',
+    changeTheTagButton: 'Change the $tag',
+    reserveTheTagButton: 'Reserve the $tag',
+    shareButton: 'Flex on Twitter',
+    shareEmailButton:
+      'or let us notify you via email when tags will be rolled out',
+    shareTagTitle: 'Congratulations, ${tag}',
+    shareTagDescription: 'You have successfully reserved your unique tag.',
+    whatsNextTitle: "What's next?",
+    whatsNextDescription:
+      'We will be rolling out the tag system shortly that will allow your favorite projects and protocols to create a flow on the Mover card. What you can do now is share your tag on Twitter. Let your friends reserve their tags, and let us know about your favorite projects you want us to integrate.',
+    twit:
+      'This is a proof of my ${tag} tag ownership and reservation in @viaMover.\n' +
+      '\n' +
+      '💲💲💲\n' +
+      '{sig}\n' +
+      'app.viamover.com/tag',
+    emailPlaceHolder: 'your@email.com',
+    lblYourEmail: 'Your email',
+    emailSaved: 'We will notify you!',
+    emailDescription:
+      'We will never contact you for any other reason, but to notify about the tags launch, and as soon as we do it, email will be automatically deleted.',
+    errors: {
+      default: 'Oh no. Something went wrong',
+      ADDRESS_ALREADY_HAS_TAG: 'You already have a tag for this address',
+      ALREADY_EXISTS: 'Tag already exists',
+      tag: {
+        required: '$tag must be not empty',
+        minLength: '$tag must contain at least {minLength} characters',
+        maxLength: '$tag must contain no more than {maxLength} characters',
+        alpha: '$tag must contain only letters',
+        notSame: 'new $tag should be different'
+      },
+      email: {
+        invalid: 'Enter a valid email address'
+      }
     }
   }
 };

@@ -74,6 +74,7 @@ import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { convertNativeAmountFromAmount, notZero } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
+import { Network } from '@/utils/networkTypes';
 import { getMoboAssetData, getUSDCAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
@@ -163,7 +164,8 @@ export default Vue.extend({
         priceUSD: this.usdcNativePrice,
         logo: this.moboTokenInfo.iconURL,
         balance: this.treasuryBonus ?? '0',
-        marketCap: Number.MAX_SAFE_INTEGER
+        marketCap: Number.MAX_SAFE_INTEGER,
+        network: Network.mainnet
       };
     },
     hasBackButton(): boolean {

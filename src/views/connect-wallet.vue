@@ -67,6 +67,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import QRCode from 'qrcode';
 
 import { sendGlobalTopMessageEvent } from '@/global-event-bus';
+import { NetworkNotSupportedError } from '@/services/v2/NetworkNotSupportedError';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { APIKeys } from '@/settings';
 import { InitWalletPayload, uauthOptions } from '@/store/modules/account/types';
@@ -144,6 +145,7 @@ export default Vue.extend({
           providerBeforeCloseCb: providerWithCb.onDisconnectCb,
           injected: false
         } as InitWalletPayload);
+        localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"walletconnect"');
       } catch (error) {
         addSentryBreadcrumb({
           type: 'error',
@@ -229,12 +231,21 @@ export default Vue.extend({
             error
           }
         });
-        sendGlobalTopMessageEvent(
-          this.$t('errors.default', {
-            code: CommonErrors.OTHER_PROVIDER_INIT_ERROR
-          }) as string,
-          'error'
-        );
+        if (error instanceof NetworkNotSupportedError) {
+          sendGlobalTopMessageEvent(
+            (this.$t('errors.notSupportedChainId', {
+              chainId: error.getChainId()
+            }) as string) ?? 'Oh no. Something went wrong',
+            'error'
+          );
+        } else {
+          sendGlobalTopMessageEvent(
+            this.$t('errors.default', {
+              code: CommonErrors.OTHER_PROVIDER_INIT_ERROR
+            }) as string,
+            'error'
+          );
+        }
         return;
       }
     }

@@ -1,4 +1,4 @@
-import { Transaction } from '@/wallet/types';
+import { SmallTokenInfo, Transaction } from '@/wallet/types';
 
 import { ContractMethod, CustomContractType } from '../types';
 
@@ -16,6 +16,17 @@ export type CompoundEstimateResponse = {
 
 export type CompoundEstimateWithUnwrapResponse = CompoundEstimateResponse & {
   unwrapGasLimit: string;
+};
+
+export type UnwrappedData = {
+  unwrappedToken: SmallTokenInfo;
+  unwrappedTokenPrice: string;
+  amountInWei: string;
+};
+
+export type WrappedData = {
+  wrappedToken: SmallTokenInfo;
+  amountInWei: string;
 };
 
 export type HolyHandContract = CustomContractType<{

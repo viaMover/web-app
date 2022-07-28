@@ -25,7 +25,7 @@ export type TransactionGroup = {
 export type AccountData = {
   addresses: Array<string>;
   balance: string | undefined;
-  networkId: number | undefined;
+  networkInfo: NetworkInfo;
 };
 
 export type ProviderData = {
@@ -192,7 +192,7 @@ export type PriceRecord = {
 
 export type FetchTokenPricesByContractAddressesPayload = {
   contractAddresses: Array<string> | string;
-  currencies: Array<NativeCurrency> | NativeCurrency;
+  currency: NativeCurrency;
 };
 
 export const uauthOptions: IUAuthOptions = {

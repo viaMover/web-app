@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/vue';
+import Web3 from 'web3';
 
+import { MoverAssetsService } from '@/services/v2/api/mover/assets';
 import { APIKeys } from '@/settings';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { Network } from '@/utils/networkTypes';
@@ -38,7 +40,9 @@ export const BuildExplorer = async (
     nativeCurrency: NativeCurrency
   ) => Promise<PriceRecord>,
   localTokens: Array<Token>,
-  availableNetworks: Array<Network>
+  availableNetworks: Array<Network>,
+  web3: Web3,
+  assetService: MoverAssetsService
 ): Promise<Explorer> => {
   const moralisExplorer = new MoralisExplorer(
     accountAddress,
@@ -53,7 +57,9 @@ export const BuildExplorer = async (
     setIsTokensListLoaded,
     setChartData,
     fetchTokensPriceByContractAddresses,
-    localTokens
+    localTokens,
+    web3,
+    assetService
   );
 
   try {

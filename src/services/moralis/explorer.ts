@@ -7,13 +7,15 @@ import Web3 from 'web3';
 import { Explorer } from '@/services/explorer';
 import { NetworkAlias, TransactionsResponse } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
+import { AlchemyAPIService } from '@/services/v2/api/alchemy/AlchemyAPIService';
 import { AnkrAPIService } from '@/services/v2/api/ankr';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import {
   addSentryBreadcrumb,
   captureSentryException
 } from '@/services/v2/utils/sentry';
-import { isFeatureEnabled } from '@/settings';
+import { APIKeys, isFeatureEnabled } from '@/settings';
 import store from '@/store/index';
 import { NativeCurrency, PriceRecord } from '@/store/modules/account/types';
 import { sameAddress } from '@/utils/address';
@@ -50,6 +52,7 @@ export class MoralisExplorer implements Explorer {
   private erc20TransactionsCursor: string | null = null;
 
   private readonly ankrService: AnkrAPIService | undefined = undefined;
+  private readonly alchemyService: AlchemyAPIService | undefined = undefined;
 
   private static readonly erc20AbiApprove = [
     {
@@ -95,7 +98,9 @@ export class MoralisExplorer implements Explorer {
       addresses: Array<string>,
       nativeCurrency: NativeCurrency
     ) => Promise<PriceRecord>,
-    private readonly localTokens: Array<Token>
+    private readonly localTokens: Array<Token>,
+    private readonly web3: Web3,
+    private readonly assetService: MoverAssetsService
   ) {
     this.apiClient = axios.create({
       baseURL: this.apiURL,
@@ -107,9 +112,23 @@ export class MoralisExplorer implements Explorer {
     addABI(MoralisExplorer.erc20AbiApprove);
     // TODO: use real api key for ANKR
     try {
-      this.ankrService = new AnkrAPIService(this.accountAddress, '', [
-        this.network
-      ]);
+      if (AnkrAPIService.canHandle(this.network)) {
+        this.ankrService = new AnkrAPIService(this.accountAddress, '', [
+          this.network
+        ]);
+      }
+    } catch (e) {
+      captureSentryException(e);
+    }
+
+    try {
+      if (AlchemyAPIService.canHandle(this.network)) {
+        this.alchemyService = new AlchemyAPIService(
+          this.accountAddress,
+          APIKeys.ALCHEMY_API_KEY,
+          this.assetService
+        );
+      }
     } catch (e) {
       captureSentryException(e);
     }
@@ -129,6 +148,10 @@ export class MoralisExplorer implements Explorer {
       this.setIsTransactionsListLoaded(false);
       this.nativeTransactionsCursor = null;
       this.erc20TransactionsCursor = null;
+
+      if (!isFeatureEnabled('isTokenListAvailable', this.network)) {
+        return;
+      }
 
       const tokensWithPricePromise = this.getErc20Tokens()
         .then((tokens) => this.initialTokenEnrich(tokens))
@@ -270,6 +293,9 @@ export class MoralisExplorer implements Explorer {
     );
 
     return tokens.map((t) => {
+      if (!addresses.includes(t.address)) {
+        return t;
+      }
       const retrievedPrice = getAssetPriceFromPriceRecord(
         pricesResponse,
         t.address,
@@ -311,7 +337,8 @@ export class MoralisExplorer implements Explorer {
           logo: baseAssetData.iconURL,
           name: baseAssetData.name,
           symbol: baseAssetData.symbol,
-          color: store.getters['account/getTokenColor'](baseAssetData.address)
+          color: store.getters['account/getTokenColor'](baseAssetData.address),
+          network: this.network
         }
       ];
     } catch (err) {
@@ -375,6 +402,30 @@ export class MoralisExplorer implements Explorer {
   private getErc20Tokens = async (): Promise<Array<TokenWithBalance>> => {
     const baseAssetData = getBaseAssetData(this.network);
 
+    if (this.alchemyService !== undefined) {
+      const tokens = await this.alchemyService.getTokens(this.network);
+      return [
+        ...tokens,
+        {
+          address: baseAssetData.address,
+          balance: fromWei(
+            await this.web3.eth.getBalance(this.accountAddress),
+            baseAssetData.decimals
+          ),
+          priceUSD: store.getters['account/baseTokenPrice'],
+          marketCap: store.getters['account/getTokenMarketCap'](
+            baseAssetData.address
+          ),
+          decimals: baseAssetData.decimals,
+          logo: baseAssetData.iconURL,
+          name: baseAssetData.name,
+          symbol: baseAssetData.symbol,
+          color: store.getters['account/getTokenColor'](baseAssetData.address),
+          network: this.network
+        }
+      ];
+    }
+
     if (this.ankrService !== undefined) {
       try {
         const tokens = await this.ankrService.getTokens();
@@ -397,7 +448,10 @@ export class MoralisExplorer implements Explorer {
             logo: baseAssetData.iconURL,
             name: baseAssetData.name,
             symbol: baseAssetData.symbol,
-            color: store.getters['account/getTokenColor'](baseAssetData.address)
+            color: store.getters['account/getTokenColor'](
+              baseAssetData.address
+            ),
+            network: this.network
           }
         ];
       } catch (err) {
@@ -432,7 +486,8 @@ export class MoralisExplorer implements Explorer {
           marketCap: 0,
           name: t.name,
           priceUSD: '',
-          symbol: t.symbol
+          symbol: t.symbol,
+          network: this.network
         }));
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -728,7 +783,8 @@ export class MoralisExplorer implements Explorer {
         marketCap: 0,
         name: t.name,
         priceUSD: '0',
-        symbol: t.symbol
+        symbol: t.symbol,
+        network: this.network
       }));
     } catch (e) {
       if (axios.isAxiosError(e)) {

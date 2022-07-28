@@ -6,5 +6,6 @@ export const availableNetworks = [
   Network.polygon,
   Network.avalanche,
   Network.binance,
-  Network.arbitrum
+  Network.arbitrum,
+  Network.optimism
 ];

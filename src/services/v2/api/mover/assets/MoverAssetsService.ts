@@ -1,8 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { getTokenLogo } from '@/services/trustwallet/logo';
 import { isProduction } from '@/settings';
-import { MAX_ASSET_NAME } from '@/utils/consts';
 import { Network } from '@/utils/networkTypes';
 import { availableNetworks } from '@/wallet/allTokens';
 import { getTestnetAssets } from '@/wallet/references/testnetAssets';
@@ -14,6 +12,7 @@ export class MoverAssetsService {
   protected readonly sentryCategoryPrefix = 'assets.service';
   protected readonly client: AxiosInstance;
   protected readonly baseURL: string;
+  protected readonly tokensCache: Map<Network, Array<Token>>;
 
   constructor() {
     this.baseURL = isProduction()
@@ -21,9 +20,14 @@ export class MoverAssetsService {
       : 'https://token-list-back-staging-dot-mcmannaman-208313.ey.r.appspot.com';
 
     this.client = axios.create({ baseURL: this.baseURL });
+    this.tokensCache = new Map<Network, Array<Token>>();
   }
 
   public async getAllTokens(network: Network): Promise<Array<Token>> {
+    const cachedData = this.tokensCache.get(network);
+    if (cachedData !== undefined) {
+      return cachedData;
+    }
     let assets: Array<Token>;
     if (availableNetworks.includes(network)) {
       assets = (await this.getAssetsList(network)).map(
@@ -32,8 +36,8 @@ export class MoverAssetsService {
             address: asset.id,
             decimals: asset.decimals,
             symbol: asset.symbol,
-            name: asset.name.slice(0, MAX_ASSET_NAME),
-            logo: asset.imageUrl ?? getTokenLogo(asset.id, network),
+            name: asset.name,
+            logo: asset.imageUrl ?? '',
             color: asset.color,
             marketCap: asset.marketCap ?? 0,
             priceUSD: '0',
@@ -43,6 +47,7 @@ export class MoverAssetsService {
     } else {
       assets = getTestnetAssets(network);
     }
+    this.tokensCache.set(network, assets);
     return assets;
   }
 
@@ -52,19 +57,6 @@ export class MoverAssetsService {
         `assets/assetList-${this.mapToAssetListName(network)}.json`
       )
     ).data;
-  }
-
-  protected deduplicateByAddress(tokens: Array<Token>): Array<Token> {
-    const knownAddresses = new Set();
-    return tokens.reduce((acc, t) => {
-      if (knownAddresses.has(t.address)) {
-        return acc;
-      }
-
-      knownAddresses.add(t.address);
-      acc.push(t);
-      return acc;
-    }, new Array<Token>());
   }
 
   private mapToAssetListName(network: Network): string {

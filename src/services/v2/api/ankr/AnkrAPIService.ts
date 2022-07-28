@@ -112,7 +112,8 @@ export class AnkrAPIService extends APIService {
           logo: logo,
           priceUSD: t.tokenPrice,
           marketCap: 0,
-          balance: t.balance
+          balance: t.balance,
+          network: this.lookupNetworkById(t.blockchain) ?? Network.mainnet
         };
       })
       .map((t) => {
@@ -278,4 +279,8 @@ export class AnkrAPIService extends APIService {
   public lookupBaseURL = (): string => {
     return 'https://rpc.ankr.com/multichain';
   };
+
+  public static canHandle(network: Network): boolean {
+    return this.validNetworks.includes(network);
+  }
 }

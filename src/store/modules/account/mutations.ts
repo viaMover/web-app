@@ -20,7 +20,6 @@ import { sortAndDeduplicateTokens } from '@/store/modules/account/utils/tokens';
 import { sortAndDeduplicateTransactions } from '@/store/modules/account/utils/transactions';
 import { MutationFuncs } from '@/store/types';
 import { sameAddress } from '@/utils/address';
-import { getNetworkByChainId } from '@/utils/networkTypes';
 import { OffchainExplorerHanler } from '@/wallet/offchainExplorer';
 import { GasData, Token, TokenWithBalance, Transaction } from '@/wallet/types';
 
@@ -186,14 +185,10 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setAccountData(state, ad: AccountData): void {
     state.addresses = ad.addresses;
+    state.balance = ad.balance;
+    state.networkInfo = ad.networkInfo;
     if (ad.addresses) {
       state.currentAddress = ad.addresses[0];
-    }
-    state.balance = ad.balance;
-    if (ad.networkId !== undefined) {
-      state.networkInfo = getNetworkByChainId(ad.networkId);
-    } else {
-      state.networkInfo = undefined;
     }
   },
   clearWalletData(state): void {

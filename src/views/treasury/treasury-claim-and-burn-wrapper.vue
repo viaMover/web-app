@@ -81,6 +81,7 @@ import {
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
+import { Network } from '@/utils/networkTypes';
 import { getMoveAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
@@ -210,7 +211,8 @@ export default Vue.extend({
           priceUSD: this.moveNativePrice,
           logo: move.iconURL,
           balance: moveWalletBalance,
-          marketCap: Number.MAX_SAFE_INTEGER
+          marketCap: Number.MAX_SAFE_INTEGER,
+          network: Network.mainnet
         }
       ];
     }
