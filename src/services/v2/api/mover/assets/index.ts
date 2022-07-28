@@ -1,0 +1,1 @@
+export { MoverAssetsService } from './MoverAssetsService';

@@ -8,12 +8,12 @@ import {
   ResponseHTTPErrorCode
 } from '@/services/v2';
 import { APIService } from '@/services/v2/api';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
 import { fromWei, greaterThan } from '@/utils/bigmath';
 import { Network } from '@/utils/networkTypes';
-import { getAllTokens } from '@/wallet/allTokens';
-import { Token, TokenWithBalance } from '@/wallet/types';
+import { TokenWithBalance } from '@/wallet/types';
 
 import { GetTokenBalancesResult, isError, Request, Response } from './types';
 
@@ -27,9 +27,12 @@ export class AlchemyAPIService extends APIService {
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix = 'alchemy.api.service';
   protected static readonly validNetworks: Array<Network> = [Network.optimism];
-  protected tokensData: Record<Network, Array<Token>>;
 
-  constructor(currentAddress: string, apiKey: string) {
+  constructor(
+    currentAddress: string,
+    apiKey: string,
+    protected readonly assetService: MoverAssetsService
+  ) {
     super(currentAddress);
     this.apiKey = apiKey;
     this.client = this.applyAxiosInterceptors(
@@ -42,10 +45,6 @@ export class AlchemyAPIService extends APIService {
         validateStatus: (status) => status === 200
       })
     );
-    this.tokensData = {} as Record<Network, Array<Token>>;
-    AlchemyAPIService.validNetworks.forEach((n) => {
-      this.tokensData[n] = getAllTokens(n);
-    });
   }
 
   /**
@@ -63,6 +62,7 @@ export class AlchemyAPIService extends APIService {
       });
       throw new NetworkFeatureNotSupportedError('Alchemy token list', network);
     }
+    const allTokens = await this.assetService.getAllTokens(network);
     const res = (
       await this.client.post<Response<GetTokenBalancesResult>>(
         `${endpoint}/${this.apiKey}`,
@@ -70,10 +70,7 @@ export class AlchemyAPIService extends APIService {
           jsonrpc: '2.0',
           id: 1,
           method: 'alchemy_getTokenBalances',
-          params: [
-            this.currentAddress,
-            this.tokensData[network].map((t) => t.address)
-          ]
+          params: [this.currentAddress, allTokens.map((t) => t.address)]
         } as Request
       )
     ).data;
@@ -94,9 +91,7 @@ export class AlchemyAPIService extends APIService {
     const result: Array<TokenWithBalance> = [];
     for (const t of res.result.tokenBalances) {
       const address = t.contractAddress;
-      const token = this.tokensData[network].find((t) =>
-        sameAddress(t.address, address)
-      );
+      const token = allTokens.find((t) => sameAddress(t.address, address));
       if (
         token !== undefined &&
         t.tokenBalance !== null &&

@@ -606,7 +606,8 @@ const getAssetsForTreasury = (
       name: move.name,
       priceUSD: moveNativePrice,
       logo: move.iconURL,
-      marketCap: Number.MAX_SAFE_INTEGER
+      marketCap: Number.MAX_SAFE_INTEGER,
+      network: Network.mainnet
     },
     {
       address: slp.address,
@@ -615,7 +616,8 @@ const getAssetsForTreasury = (
       name: 'Sushi MOVE-ETH LP',
       priceUSD: slpNativePrice,
       logo: 'https://protocol-icons.s3.amazonaws.com/sushi-exchange.png',
-      marketCap: Number.MAX_SAFE_INTEGER
+      marketCap: Number.MAX_SAFE_INTEGER,
+      network: Network.mainnet
     }
   ];
 };

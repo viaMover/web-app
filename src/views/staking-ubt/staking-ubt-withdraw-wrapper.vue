@@ -57,6 +57,7 @@ import {
   multiply
 } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { getUBTAssetData } from '@/wallet/references/data';
 import { TokenWithBalance } from '@/wallet/types';
 
@@ -155,7 +156,8 @@ export default Vue.extend({
         logo: data.iconURL,
         balance: this.UBTBalance,
         marketCap: Number.MAX_SAFE_INTEGER,
-        color: this.getTokenColor(data.address)
+        color: this.getTokenColor(data.address),
+        network: Network.mainnet
       };
     },
     estimatedAnnualEarnings(): string {

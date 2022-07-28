@@ -54,6 +54,7 @@ import * as Sentry from '@sentry/vue';
 import { TransferData } from '@/services/v2/api/swap';
 import { divide, multiply } from '@/utils/bigmath';
 import { formatToNative } from '@/utils/format';
+import { Network } from '@/utils/networkTypes';
 import { getOhmAssetData } from '@/wallet/references/data';
 import { SmallTokenInfoWithIcon, TokenWithBalance } from '@/wallet/types';
 
@@ -140,7 +141,8 @@ export default Vue.extend({
         priceUSD: this.ohmNativePrice,
         logo: this.ohmAssetData.iconURL,
         balance: this.olympusBalance,
-        marketCap: Number.MAX_SAFE_INTEGER
+        marketCap: Number.MAX_SAFE_INTEGER,
+        network: Network.mainnet
       };
     },
     ohmAssetData(): SmallTokenInfoWithIcon {

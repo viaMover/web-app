@@ -15,6 +15,7 @@ import { getEURSPriceInWETH } from '@/services/chain/token-prices/token-prices';
 import { BuildExplorer } from '@/services/explorer';
 import { NetworkFeatureNotSupportedError } from '@/services/v2';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets';
 import { MoverAPISavingsService } from '@/services/v2/api/mover/savings';
 import { MoverAPISavingsPlusService } from '@/services/v2/api/mover/savings-plus';
 import { MoverAPISmartTreasuryService } from '@/services/v2/api/mover/smart-treasury';
@@ -52,7 +53,6 @@ import { ActionFuncs } from '@/store/types';
 import { toArray } from '@/utils/arrays';
 import { CommonErrors, errorToString } from '@/utils/errors';
 import { getNetworkByChainId, NetworkInfo } from '@/utils/networkTypes';
-import { getAllTokens } from '@/wallet/allTokens';
 import { getBaseTokenPrice } from '@/wallet/baseTokenPrice';
 import { getGasPrices } from '@/wallet/gas';
 import {
@@ -421,8 +421,13 @@ const actions: ActionFuncs<
           network: state.networkInfo.network
         });
 
+        if (state.assetsService === undefined) {
+          throw new Error('Asset service is missing');
+        }
         console.info('getting all tokens...');
-        const allTokens = getAllTokens(state.networkInfo.network);
+        const allTokens = await state.assetsService.getAllTokens(
+          state.networkInfo.network
+        );
         commit('setAllTokens', allTokens);
       }
 
@@ -478,7 +483,8 @@ const actions: ActionFuncs<
               } as FetchTokenPricesByContractAddressesPayload),
             state.allTokens,
             state.availableNetworks,
-            state.provider.web3
+            state.provider.web3,
+            state.assetsService as MoverAssetsService
           );
 
           explorerInitPromise
@@ -676,6 +682,9 @@ const actions: ActionFuncs<
         root: true
       });
     }
+
+    const moverAssetsService = new MoverAssetsService();
+    commit('setMoverAssetsService', moverAssetsService);
   },
   async updateWalletAfterTxn({ state, dispatch }): Promise<void> {
     const nftInfoPromise = dispatch('nft/loadNFTInfo', undefined, {

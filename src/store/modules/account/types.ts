@@ -6,6 +6,7 @@ import { provider } from 'web3-core';
 
 import { Explorer } from '@/services/explorer';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets/MoverAssetsService';
 import { SwapAPIService } from '@/services/v2/api/swap';
 import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
@@ -105,6 +106,8 @@ export type AccountStoreState = {
 
   coinGeckoAPIService: CoinGeckoAPIService | undefined;
   theGraphAPIService: TheGraphAPIService | undefined;
+
+  assetsService: MoverAssetsService | undefined;
 };
 
 export type SafeAccountStoreState = AccountStoreState & {

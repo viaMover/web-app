@@ -9,6 +9,7 @@ import { NetworkAlias, TransactionsResponse } from '@/services/moralis/types';
 import { isError } from '@/services/responses';
 import { AlchemyAPIService } from '@/services/v2/api/alchemy/AlchemyAPIService';
 import { AnkrAPIService } from '@/services/v2/api/ankr';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets';
 import { getAssetPriceFromPriceRecord } from '@/services/v2/utils/price';
 import {
   addSentryBreadcrumb,
@@ -98,7 +99,8 @@ export class MoralisExplorer implements Explorer {
       nativeCurrency: NativeCurrency
     ) => Promise<PriceRecord>,
     private readonly localTokens: Array<Token>,
-    private readonly web3: Web3
+    private readonly web3: Web3,
+    private readonly assetService: MoverAssetsService
   ) {
     this.apiClient = axios.create({
       baseURL: this.apiURL,
@@ -123,7 +125,8 @@ export class MoralisExplorer implements Explorer {
       if (AlchemyAPIService.canHandle(this.network)) {
         this.alchemyService = new AlchemyAPIService(
           this.accountAddress,
-          APIKeys.ALCHEMY_API_KEY
+          APIKeys.ALCHEMY_API_KEY,
+          this.assetService
         );
       }
     } catch (e) {
@@ -334,7 +337,8 @@ export class MoralisExplorer implements Explorer {
           logo: baseAssetData.iconURL,
           name: baseAssetData.name,
           symbol: baseAssetData.symbol,
-          color: store.getters['account/getTokenColor'](baseAssetData.address)
+          color: store.getters['account/getTokenColor'](baseAssetData.address),
+          network: this.network
         }
       ];
     } catch (err) {
@@ -416,7 +420,8 @@ export class MoralisExplorer implements Explorer {
           logo: baseAssetData.iconURL,
           name: baseAssetData.name,
           symbol: baseAssetData.symbol,
-          color: store.getters['account/getTokenColor'](baseAssetData.address)
+          color: store.getters['account/getTokenColor'](baseAssetData.address),
+          network: this.network
         }
       ];
     }
@@ -443,7 +448,10 @@ export class MoralisExplorer implements Explorer {
             logo: baseAssetData.iconURL,
             name: baseAssetData.name,
             symbol: baseAssetData.symbol,
-            color: store.getters['account/getTokenColor'](baseAssetData.address)
+            color: store.getters['account/getTokenColor'](
+              baseAssetData.address
+            ),
+            network: this.network
           }
         ];
       } catch (err) {
@@ -478,7 +486,8 @@ export class MoralisExplorer implements Explorer {
           marketCap: 0,
           name: t.name,
           priceUSD: '',
-          symbol: t.symbol
+          symbol: t.symbol,
+          network: this.network
         }));
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -774,7 +783,8 @@ export class MoralisExplorer implements Explorer {
         marketCap: 0,
         name: t.name,
         priceUSD: '0',
-        symbol: t.symbol
+        symbol: t.symbol,
+        network: this.network
       }));
     } catch (e) {
       if (axios.isAxiosError(e)) {

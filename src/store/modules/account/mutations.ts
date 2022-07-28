@@ -4,6 +4,7 @@ import Fuse from 'fuse.js';
 
 import { Explorer } from '@/services/explorer';
 import { CoinGeckoAPIService } from '@/services/v2/api/coinGecko';
+import { MoverAssetsService } from '@/services/v2/api/mover/assets/MoverAssetsService';
 import { SwapAPIService } from '@/services/v2/api/swap';
 import { TheGraphAPIService } from '@/services/v2/api/theGraph';
 import { SwapOnChainService } from '@/services/v2/on-chain/mover/swap';
@@ -66,6 +67,7 @@ type Mutations = {
   setCoinGeckoAPIService: void;
   setTheGraphAPIService: void;
   setUnstoppableDomainsName: void;
+  setMoverAssetsService: void;
 };
 
 const mutations: MutationFuncs<Mutations, AccountStoreState> = {
@@ -283,6 +285,9 @@ const mutations: MutationFuncs<Mutations, AccountStoreState> = {
   },
   setUnstoppableDomainsName(state, name: string): void {
     state.unstoppableDomainsName = name;
+  },
+  setMoverAssetsService(state, service: MoverAssetsService): void {
+    state.assetsService = service;
   }
 };
 

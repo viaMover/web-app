@@ -112,7 +112,8 @@ export class AnkrAPIService extends APIService {
           logo: logo,
           priceUSD: t.tokenPrice,
           marketCap: 0,
-          balance: t.balance
+          balance: t.balance,
+          network: this.lookupNetworkById(t.blockchain) ?? Network.mainnet
         };
       })
       .map((t) => {

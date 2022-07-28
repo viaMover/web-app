@@ -104,7 +104,7 @@ import {
 } from '@/utils/bigmath';
 import { formatToDecimals, formatToNative } from '@/utils/format';
 import { GasListenerMixin } from '@/utils/gas-listener-mixin';
-import { getNetwork } from '@/utils/networkTypes';
+import { getNetwork, Network } from '@/utils/networkTypes';
 import {
   getUSDCAssetData,
   SavingsPlusUSDCDecimals
@@ -234,7 +234,8 @@ export default Vue.extend({
         priceUSD: this.usdcNativePrice,
         logo: usdcAsset.iconURL,
         balance: this.balance,
-        marketCap: Number.MAX_SAFE_INTEGER
+        marketCap: Number.MAX_SAFE_INTEGER,
+        network: Network.mainnet
       };
     },
     estimatedAnnualEarnings(): string {

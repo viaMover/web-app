@@ -72,7 +72,9 @@ export default {
     swapAPIService: undefined,
     swapOnChainService: undefined,
     theGraphAPIService: undefined,
-    coinGeckoAPIService: undefined
+    coinGeckoAPIService: undefined,
+
+    assetsService: undefined
   },
   actions,
   getters,
