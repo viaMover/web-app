@@ -41,6 +41,7 @@ if (!isDevelop()) {
   Sentry.init({
     Vue,
     dsn: 'https://60ca92e2ab5145578629635f9f85d375@o485123.ingest.sentry.io/5930795',
+    tunnel: '/sentry/evt',
     integrations: [
       new Integrations.BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
