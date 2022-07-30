@@ -4,6 +4,7 @@ import {
   ProposalStatus
 } from '@/services/v2/api/mover/governance';
 import { GettersFuncs } from '@/store/types';
+import { greaterThan } from '@/utils/bigmath';
 
 import { GovernanceStoreState } from './types';
 
@@ -81,8 +82,8 @@ const getters: GettersFuncs<Getters, GovernanceStoreState> = {
     }, 0);
   },
   hasEnoughVotingPowerToBecomeAProposer(state): boolean {
-    return (
-      state.currentVotingInfo.votingPower >
+    return greaterThan(
+      state.currentVotingInfo.votingPower,
       state.currentVotingInfo.minimalVotingPower
     );
   }

@@ -52,7 +52,9 @@ const mutations: MutationFuncs<Mutations, GovernanceStoreState> = {
       slice.splice(replaceIndex, 1, newVal);
     }
 
-    state.proposalInfoList = slice;
+    state.proposalInfoList = slice.sort(
+      (a, b) => b.proposal.createdTs - a.proposal.createdTs
+    );
   },
   setCurrentVotingInfo(state, info: CurrentVotingInfo) {
     state.currentVotingInfo = info;

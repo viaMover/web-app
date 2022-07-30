@@ -80,6 +80,10 @@ const actions: ActionFuncs<
           voteInfo: {
             ...lastProposal.voteInfo,
             votingPower: fromWei(lastProposal.voteInfo.votingPower, 18)
+          },
+          stats: {
+            for: fromWei(lastProposal.stats.for, 18),
+            against: fromWei(lastProposal.stats.against, 18)
           }
         };
         commit('upsertProposalInfoList', lastProposal);
@@ -124,6 +128,10 @@ const actions: ActionFuncs<
             voteInfo: {
               ...proposal.voteInfo,
               votingPower: fromWei(proposal.voteInfo.votingPower, 18)
+            },
+            stats: {
+              for: fromWei(proposal.stats.for, 18),
+              against: fromWei(proposal.stats.against, 18)
             }
           };
           commit('upsertProposalInfoList', prop);
@@ -205,6 +213,10 @@ const actions: ActionFuncs<
         voteInfo: {
           ...proposalInfo.voteInfo,
           votingPower: fromWei(proposalInfo.voteInfo.votingPower, 18)
+        },
+        stats: {
+          for: fromWei(proposalInfo.stats.for, 18),
+          against: fromWei(proposalInfo.stats.against, 18)
         }
       };
     }

@@ -81,8 +81,8 @@ export type ProposalInfoAPIDto = {
     votingPower?: string;
   };
   stats: {
-    for: number;
-    against: number;
+    for: string;
+    against: string;
   };
 };
 
@@ -96,8 +96,8 @@ export type ProposalInfo = {
     votingPower: string;
   };
   stats: {
-    for: number;
-    against: number;
+    for: string;
+    against: string;
   };
 };
 
