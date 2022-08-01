@@ -78,6 +78,7 @@ import { mapError } from '@/services/0x/errors';
 import { getUsdcPriceInEur } from '@/services/coingecko/tokens';
 import { DebitCardOnChainService } from '@/services/v2/on-chain/mover/debit-card';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
+import { isFeatureEnabled } from '@/settings';
 import { Modal as ModalType } from '@/store/modules/modals/types';
 import { isBaseAsset, sameAddress } from '@/utils/address';
 import {
@@ -301,6 +302,13 @@ export default Vue.extend({
     }
   },
   async mounted() {
+    if (
+      !this.isFeatureEnabled('isDebitCardTopUpEnabled', this.currentNetwork)
+    ) {
+      await this.$router.replace({
+        name: 'not-found-route'
+      });
+    }
     await this.loadInfo();
 
     if (this.emailHash === undefined || this.emailSignature === undefined) {
@@ -317,6 +325,7 @@ export default Vue.extend({
     ...mapActions('account', {
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
+    isFeatureEnabled,
     handleBack(): void {
       if (this.step === 'review') {
         this.$router.back();
