@@ -302,9 +302,7 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    if (
-      !this.isFeatureEnabled('isDebitCardTopUpEnabled', this.currentNetwork)
-    ) {
+    if (!isFeatureEnabled('isDebitCardTopUpEnabled', this.currentNetwork)) {
       await this.$router.replace({
         name: 'not-found-route'
       });
@@ -325,7 +323,6 @@ export default Vue.extend({
     ...mapActions('account', {
       updateWalletAfterTxn: 'updateWalletAfterTxn'
     }),
-    isFeatureEnabled,
     handleBack(): void {
       if (this.step === 'review') {
         this.$router.back();
