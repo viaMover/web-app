@@ -188,6 +188,22 @@ export const networks = new Array<NetworkInfo>(
         'https://github.com/trustwallet/assets/raw/master/blockchains/fantom/info/logo.png'
     },
     rpcUrl: 'https://rpc.ftm.tools/'
+  },
+  {
+    chainId: 10,
+    name: 'Optimism',
+    network: Network.optimism,
+    explorer: 'https://optimistic.etherscan.io',
+    subsidizedUrl: undefined,
+    baseAsset: {
+      address: 'oeth',
+      decimals: 18,
+      symbol: 'OETH',
+      name: 'Optimistic Eth',
+      iconURL:
+        'https://github.com/trustwallet/assets/raw/master/blockchains/optimism/info/logo.png'
+    },
+    rpcUrl: 'https://rpc.ankr.com/optimism'
   }
 );
 

@@ -1,8 +1,8 @@
 <template>
-  <content-wrapper class="home" has-left-rail>
-    <template v-slot:left-rail>
-      <home-left-rail />
-    </template>
+  <content-wrapper class="home" page-content-class="centered">
+    <!--    <template v-slot:left-rail>-->
+    <!--      <home-left-rail />-->
+    <!--    </template>-->
 
     <home-masthead-multichain
       v-if="isFeatureEnabled('isMultiChainMastheadEnabled')"
@@ -10,7 +10,8 @@
     <home-masthead v-else />
 
     <div class="cards">
-      <home-cards-debit-card v-if="isDebitCardEnabled" />
+      <home-cards-tag v-if="isTagEnabled" />
+      <home-cards-debit-card v-else-if="isDebitCardEnabled" />
       <home-cards-savings-deposit v-else-if="isSavingsEnabled" />
     </div>
 
@@ -34,7 +35,8 @@ import { isFeatureEnabled } from '@/settings';
 import {
   HomeCardsDebitCard,
   HomeCardsSavingsDeposit,
-  HomeLeftRail,
+  HomeCardsTag,
+  // HomeLeftRail,
   HomeMasthead,
   HomeMastheadMultichain,
   HomeNavigationSection
@@ -46,10 +48,11 @@ export default Vue.extend({
   name: 'Home',
   components: {
     ContentWrapper,
-    HomeLeftRail,
+    // HomeLeftRail,
     HomeMasthead,
     HomeMastheadMultichain,
     HomeNavigationSection,
+    HomeCardsTag,
     HomeCardsDebitCard,
     HomeCardsSavingsDeposit,
     SwapModal,
@@ -62,6 +65,9 @@ export default Vue.extend({
     ...mapState('nft', {
       orderOfLiberty: 'orderOfLiberty'
     }),
+    isTagEnabled(): boolean {
+      return isFeatureEnabled('isTagEnabled', this.currentNetwork);
+    },
     isDebitCardEnabled(): boolean {
       return isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network);
     },

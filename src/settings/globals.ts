@@ -18,6 +18,7 @@ export interface Globals {
   isSavingsEnabled: GlobalSettings;
   isSwapEnabled: GlobalSettings;
   isExplorerEnabled: GlobalSettings;
+  isTokenListAvailable: GlobalSettings;
   isTransactionsListAvailable: GlobalSettings;
   isOffchainExplorerEnabled: GlobalSettings;
   isEarningsEnabled: GlobalSettings;
@@ -40,6 +41,7 @@ export interface Globals {
   isStakingUbtEnabled: GlobalSettings;
   isStakingUbtFieldReducerEnabled: GlobalSettings;
   hideSlippageSelector: GlobalSettings;
+  isTagEnabled: GlobalSettings;
 }
 
 export const isProduction = (): boolean => {
@@ -77,7 +79,8 @@ const values: Globals = {
     Network.polygon,
     Network.avalanche,
     Network.binance,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ],
   isExplorerEnabled: [
     Network.mainnet,
@@ -89,7 +92,21 @@ const values: Globals = {
     Network.avalanche,
     Network.fantom,
     Network.polygon,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
+  ],
+  isTokenListAvailable: [
+    Network.mainnet,
+    Network.binance,
+    Network.binanceTest,
+    Network.kovan,
+    Network.ropsten,
+    Network.rinkeby,
+    Network.avalanche,
+    Network.fantom,
+    Network.polygon,
+    Network.arbitrum,
+    Network.optimism
   ],
   isTransactionsListAvailable: [
     Network.mainnet,
@@ -117,7 +134,8 @@ const values: Globals = {
     Network.fantom,
     Network.avalanche,
     Network.binance,
-    Network.arbitrum
+    Network.arbitrum,
+    Network.optimism
   ],
   isMultiChainMastheadEnabled: true,
   isHomeSwapModalEnabled: true,
@@ -127,7 +145,8 @@ const values: Globals = {
   isGasListenerEnabled: [Network.mainnet],
   isStakingUbtEnabled: [Network.mainnet],
   isStakingUbtFieldReducerEnabled: true,
-  hideSlippageSelector: true
+  hideSlippageSelector: true,
+  isTagEnabled: true
 };
 
 export const isFeatureEnabled = <T extends keyof Globals>(

@@ -278,4 +278,8 @@ export class AnkrAPIService extends APIService {
   public lookupBaseURL = (): string => {
     return 'https://rpc.ankr.com/multichain';
   };
+
+  public static canHandle(network: Network): boolean {
+    return this.validNetworks.includes(network);
+  }
 }

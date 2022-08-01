@@ -26,8 +26,6 @@ type Mutations = {
   setPhoneNumber: void;
   setOrderState: void;
   setKycLink: void;
-  setWxBTRFLYrealIndex: void;
-  setGALCXToALCXMultiplier: void;
   setOnChainService: void;
 };
 
@@ -79,12 +77,6 @@ const mutations: MutationFuncs<Mutations, DebitCardStoreState> = {
   },
   setKycLink(state, link: string | undefined): void {
     state.kycLink = link;
-  },
-  setWxBTRFLYrealIndex(state, realIndex: string): void {
-    state.wxBTRFLYrealIndex = realIndex;
-  },
-  setGALCXToALCXMultiplier(state, multiplier: string): void {
-    state.gALCXToALCXMultiplier = multiplier;
   },
   setOnChainService(state, service: DebitCardOnChainService): void {
     state.onChainService = service;

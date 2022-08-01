@@ -28,8 +28,6 @@ export type DebitCardStoreState = {
   phoneNumber: string | undefined;
   orderState: OrderState | undefined;
   kycLink: string | undefined;
-  wxBTRFLYrealIndex: string;
-  gALCXToALCXMultiplier: string;
 
   onChainService: DebitCardOnChainService | undefined;
 };

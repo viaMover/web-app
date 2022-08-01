@@ -1,15 +1,24 @@
 import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
-import { ContractSendMethod } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
 import { currentBalance } from '@/services/chain/erc20/balance';
 import { OnChainServiceError } from '@/services/v2/on-chain';
 import { EstimateResponse } from '@/services/v2/on-chain/mover';
+import { gALCXContract } from '@/services/v2/on-chain/wrapped-tokens/gALCX/types';
 import { WrappedToken } from '@/services/v2/on-chain/wrapped-tokens/WrappedToken';
 import { addSentryBreadcrumb } from '@/services/v2/utils/sentry';
 import { sameAddress } from '@/utils/address';
-import { floorDivide, multiply, sub, toWei } from '@/utils/bigmath';
+import {
+  convertToString,
+  divide,
+  floorDivide,
+  fromWei,
+  multiply,
+  sub,
+  toWei
+} from '@/utils/bigmath';
+import { InMemoryCache } from '@/utils/cache';
 import { Network } from '@/utils/networkTypes';
 import {
   GALCX_ABI,
@@ -21,15 +30,27 @@ import { SmallToken, SmallTokenInfo, TransactionsParams } from '@/wallet/types';
 export class WrappedTokenGALCX extends WrappedToken {
   readonly sentryCategoryPrefix: string;
   public readonly wrappedTokenAddress: string;
-  public readonly unwrappedTokenAddress: string;
+  public readonly unwrappedToken: SmallTokenInfo;
+  private readonly multiplierCache: InMemoryCache<string>;
+  private readonly contract: gALCXContract;
 
   public readonly contractABI = GALCX_ABI;
 
-  constructor(network: Network) {
-    super(network);
+  constructor(accountAddress: string, network: Network, web3: Web3) {
+    super(accountAddress, network, web3);
     this.sentryCategoryPrefix = `wrapped-token.galcx`;
     this.wrappedTokenAddress = lookupAddress(network, 'GALCX_TOKEN_ADDRESS');
-    this.unwrappedTokenAddress = lookupAddress(network, 'ALCX_TOKEN_ADDRESS');
+    this.unwrappedToken = getALCXAssetData(network);
+
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI as AbiItem[],
+      this.wrappedTokenAddress
+    );
+
+    this.multiplierCache = new InMemoryCache<string>(
+      5 * 60,
+      this.getMultiplier.bind(this)
+    );
   }
 
   public getUnwrappedToken(): SmallTokenInfo {
@@ -43,20 +64,25 @@ export class WrappedTokenGALCX extends WrappedToken {
     );
   }
 
+  public async getUnwrappedAmount(wrappedTokenAmount: string): Promise<string> {
+    const mul = await this.multiplierCache.get();
+    return multiply(wrappedTokenAmount, mul);
+  }
+
+  public async getWrappedAmountByUnwrapped(
+    unwrappedTokenAmount: string
+  ): Promise<string> {
+    const mul = await this.multiplierCache.get();
+    return divide(unwrappedTokenAmount, mul);
+  }
+
   public async estimateUnwrap(
     inputAsset: SmallTokenInfo,
-    inputAmount: string,
-    web3: Web3,
-    accountAddress: string
+    inputAmount: string
   ): Promise<EstimateResponse> {
     try {
-      const contract = new web3.eth.Contract(
-        this.contractABI as AbiItem[],
-        this.wrappedTokenAddress
-      );
-
       const transactionParams = {
-        from: accountAddress
+        from: this.accountAddress
       } as TransactionsParams;
 
       const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
@@ -79,9 +105,9 @@ export class WrappedTokenGALCX extends WrappedToken {
         }
       });
 
-      const gasLimitObj = await (
-        contract.methods.unwrapToBTRFLY(inputAmountInWEI) as ContractSendMethod
-      ).estimateGas(transactionParams);
+      const gasLimitObj = await this.contract.methods
+        .unstake(inputAmountInWEI)
+        .estimateGas(transactionParams);
 
       if (gasLimitObj) {
         const gasLimit = gasLimitObj.toString();
@@ -121,30 +147,21 @@ export class WrappedTokenGALCX extends WrappedToken {
   public async unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
-    web3: Web3,
-    accountAddress: string,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<string> {
     const balanceBeforeUnwrap = await currentBalance(
-      web3,
-      accountAddress,
-      this.unwrappedTokenAddress
+      this.web3,
+      this.accountAddress,
+      this.unwrappedToken.address
     );
 
-    await this._unwrap(
-      inputAsset,
-      inputAmount,
-      web3,
-      accountAddress,
-      changeStepToProcess,
-      gasLimit
-    );
+    await this._unwrap(inputAsset, inputAmount, changeStepToProcess, gasLimit);
 
     const balanceAfterUnwrap = await currentBalance(
-      web3,
-      accountAddress,
-      this.unwrappedTokenAddress
+      this.web3,
+      this.accountAddress,
+      this.unwrappedToken.address
     );
 
     return sub(balanceAfterUnwrap, balanceBeforeUnwrap);
@@ -153,19 +170,12 @@ export class WrappedTokenGALCX extends WrappedToken {
   protected async _unwrap(
     inputAsset: SmallToken,
     inputAmount: string,
-    web3: Web3,
-    accountAddress: string,
     changeStepToProcess: () => Promise<void>,
     gasLimit: string
   ): Promise<TransactionReceipt> {
-    const contract = new web3.eth.Contract(
-      this.contractABI as AbiItem[],
-      this.wrappedTokenAddress
-    );
-
     const transactionParams = {
-      from: accountAddress,
-      gas: web3.utils.toBN(gasLimit).toNumber(),
+      from: this.accountAddress,
+      gas: this.web3.utils.toBN(gasLimit).toNumber(),
       gasPrice: undefined,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null
@@ -199,9 +209,7 @@ export class WrappedTokenGALCX extends WrappedToken {
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       this.wrapWithSendMethodCallbacks(
-        (contract.methods.unstake(inputAmountInWEI) as ContractSendMethod).send(
-          transactionParams
-        ),
+        this.contract.methods.unstake(inputAmountInWEI).send(transactionParams),
         resolve,
         reject,
         changeStepToProcess
@@ -209,5 +217,15 @@ export class WrappedTokenGALCX extends WrappedToken {
 
       return;
     });
+  }
+
+  private async getMultiplier(): Promise<string> {
+    const exchangeRate = await this.contract.methods.exchangeRate().call({
+      from: this.accountAddress
+    });
+
+    const multiplierInWei = convertToString(exchangeRate);
+
+    return fromWei(multiplierInWei, this.unwrappedToken.decimals);
   }
 }

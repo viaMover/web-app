@@ -1,6 +1,7 @@
 import { sameAddress } from '@/utils/address';
 import { toWei } from '@/utils/bigmath';
 import { getNetwork, Network } from '@/utils/networkTypes';
+import { getIdleTokens } from '@/wallet/references/idleTokensData';
 import {
   getSimpleYearnVaultTokenByAddress,
   getSimpleYearnVaultTokens,
@@ -19,6 +20,7 @@ import GALCX_ABI from './abi/galcx-abi.json';
 import HOLY_PASSAGE_ABI from './abi/holy-passage.json';
 import HOLY_POOL_ABI from './abi/holy-pool.json';
 import HOLY_VISOR_ABI from './abi/holy-visor.json';
+import IDLE_TOKEN_ABI from './abi/idle/idle-token-abi.json';
 import MASTER_CHEF_ABI from './abi/master-chef.json';
 import NFT_BASELEDGER_STAKING_OG_ABI from './abi/nft-baseledger-staking-og.json';
 import NFT_DICE_ABI from './abi/nft-dice.json';
@@ -150,7 +152,19 @@ export type AddressMapKey =
   | 'ENS_REVERSE_RECORDS_CONTRACT'
   | 'ENS_NFT_CONTRACT'
   | 'UNS_RESOLVER_CONTRACT'
-  | 'EXCHANGE_PROXY_ADDRESS';
+  | 'EXCHANGE_PROXY_ADDRESS'
+  | 'IBAUD_TOKEN_ADDRESS'
+  | 'IBEUR_TOKEN_ADDRESS'
+  | 'IBKRW_TOKEN_ADDRESS'
+  | 'IBJPY_TOKEN_ADDRESS'
+  | 'IBGBP_TOKEN_ADDRESS'
+  | 'IBCHF_TOKEN_ADDRESS'
+  | 'TIC_TOKEN_ADDRESS'
+  | 'WAMPL_TOKEN_ADDRESS'
+  | 'FORTH_TOKEN_ADDRESS'
+  | 'FOX_TOKEN_ADDRESS'
+  | 'AMPL_TOKEN_ADDRESS'
+  | 'AAMPL_TOKEN_ADDRESS';
 
 type AddressMapNetworkEntry = Readonly<Record<AddressMapKey, string>>;
 type AddressMap = Readonly<Record<Network, AddressMapNetworkEntry>>;
@@ -160,6 +174,7 @@ const addresses = {
     MOVE_ADDRESS: '0x3FA729B4548beCBAd4EaB6EF18413470e6D5324C',
     MOBO_ADDRESS: '0x94f748bfd1483750a7df01acd993213ab64c960f',
     HOLY_HAND_ADDRESS: '0x1eF7A557cfA8436ee08790e3F2b190b8937fDa0E',
+    EXCHANGE_PROXY_ADDRESS: '0xCbf944Ad94e7bd190d6752e28F8c09bE1dA10198',
     HOLY_PASSAGE_ADDRESS: '0x39ac24FD08991B1d69A9ef7189Bc718C988fF5B3',
     HOLY_SAVINGS_POOL_ADDRESS: '0xAF985437DCA19DEFf89e61F83Cd526b272523719',
     HOLY_VISOR_ADDRESS: '0x636356f857f89AF15Cb67735b68B9b673b5Cda6c',
@@ -265,7 +280,19 @@ const addresses = {
     ST_ETH_TOKEN_ADDRESS: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
     ENS_REVERSE_RECORDS_CONTRACT: '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C',
     ENS_NFT_CONTRACT: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
-    UNS_RESOLVER_CONTRACT: '0x049aba7510f45BA5b64ea9E658E342F904DB358D'
+    UNS_RESOLVER_CONTRACT: '0x049aba7510f45BA5b64ea9E658E342F904DB358D',
+    IBAUD_TOKEN_ADDRESS: '0xFAFdF0C4c1CB09d430Bf88c75D88BB46DAe09967',
+    IBEUR_TOKEN_ADDRESS: '0x96E61422b6A9bA0e068B6c5ADd4fFaBC6a4aae27',
+    IBKRW_TOKEN_ADDRESS: '0x95dFDC8161832e4fF7816aC4B6367CE201538253',
+    IBJPY_TOKEN_ADDRESS: '0x5555f75e3d5278082200Fb451D1b6bA946D8e13b',
+    IBGBP_TOKEN_ADDRESS: '0x69681f8fde45345C3870BCD5eaf4A05a60E7D227',
+    IBCHF_TOKEN_ADDRESS: '0x1CC481cE2BD2EC7Bf67d1Be64d4878b16078F309',
+    TIC_TOKEN_ADDRESS: '0x2163383C1F4E74fE36c50E6154C7F18d9Fd06d6f',
+    WAMPL_TOKEN_ADDRESS: '0xEDB171C18cE90B633DB442f2A6F72874093b49Ef',
+    FORTH_TOKEN_ADDRESS: '0x77FbA179C79De5B7653F68b5039Af940AdA60ce0',
+    FOX_TOKEN_ADDRESS: '0xc770EEfAd204B5180dF6a14Ee197D99d808ee52d',
+    AMPL_TOKEN_ADDRESS: '0xD46bA6D942050d489DBd938a2C909A5d5039A161',
+    AAMPL_TOKEN_ADDRESS: '0x1E6bb68Acec8fefBD87D192bE09bb274170a0548'
   },
   [Network.ropsten]: {
     MOVE_ADDRESS: '0x3B055b3c00E8e27bB84a1E98391443Bff4049129',
@@ -337,6 +364,11 @@ const addresses = {
     HOLY_HAND_ADDRESS: '0x34082fa0229979ffd8e6c327ce462ed6d619f9a2',
     EXCHANGE_PROXY_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
     USDC_TOKEN_ADDRESS: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'
+  },
+  [Network.optimism]: {
+    HOLY_HAND_ADDRESS: '0x34082fA0229979fFD8E6c327ce462eD6d619F9a2',
+    EXCHANGE_PROXY_ADDRESS: '0x4632F0a161216Fda13f4beCe327516cC9c5357d0',
+    USDC_TOKEN_ADDRESS: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607'
   }
 } as AddressMap;
 
@@ -695,7 +727,20 @@ const validTopUpAssets = (network: Network): Array<string> => {
     lookupAddress(network, 'FIRST_TOKEN_ADDRESS'),
     lookupAddress(network, 'ST_ETH_TOKEN_ADDRESS'),
     lookupAddress(network, 'LDO_TOKEN_ADDRESS'),
-    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address)
+    lookupAddress(network, 'IBAUD_TOKEN_ADDRESS'),
+    lookupAddress(network, 'IBEUR_TOKEN_ADDRESS'),
+    lookupAddress(network, 'IBKRW_TOKEN_ADDRESS'),
+    lookupAddress(network, 'IBJPY_TOKEN_ADDRESS'),
+    lookupAddress(network, 'IBGBP_TOKEN_ADDRESS'),
+    lookupAddress(network, 'IBCHF_TOKEN_ADDRESS'),
+    lookupAddress(network, 'TIC_TOKEN_ADDRESS'),
+    lookupAddress(network, 'WAMPL_TOKEN_ADDRESS'),
+    lookupAddress(network, 'FORTH_TOKEN_ADDRESS'),
+    lookupAddress(network, 'FOX_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AMPL_TOKEN_ADDRESS'),
+    lookupAddress(network, 'AAMPL_TOKEN_ADDRESS'),
+    ...getSimpleYearnVaultTokens(network).map((v) => v.vaultToken.address),
+    ...getIdleTokens(network).map((t) => t.wrapToken.address)
   ];
 };
 
@@ -748,5 +793,6 @@ export {
   getSlippage,
   SavingsPlusUSDCDecimals,
   REVERSE_RECORDS_ABI,
-  UNS_RESOLVER_CONTRACT_ABI
+  UNS_RESOLVER_CONTRACT_ABI,
+  IDLE_TOKEN_ABI
 };

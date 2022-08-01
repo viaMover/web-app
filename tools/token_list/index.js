@@ -13,7 +13,15 @@ import { basename, join } from 'path';
 import simpleGit from 'simple-git';
 import Web3 from 'web3';
 
-const networks = ['arbitrum'];
+const networks = [
+  'ethereum',
+  'fantom',
+  'polygon',
+  'avalanche',
+  'binance',
+  'arbitrum',
+  'optimism'
+];
 
 const getDecimalsFromContract = async (address, web3) => {
   const tokenContract = new web3.eth.Contract(
@@ -52,6 +60,8 @@ const getCoingeckoPlatform = (network) => {
       return 'binance-smart-chain';
     case 'arbitrum':
       return 'arbitrum-one';
+    case 'optimism':
+      return 'optimistic-ethereum';
   }
 };
 
@@ -523,13 +533,86 @@ const alsoIncludedTokens = {
       id: '0xFBEB78a723b8087fD2ea7Ef1afEc93d35E8Bed42',
       decimals: 18,
       name: 'UNI yVault'
+    },
+    {
+      symbol: 'ibAUD',
+      id: '0xFAFdF0C4c1CB09d430Bf88c75D88BB46DAe09967',
+      decimals: 18,
+      name: 'Iron Bank AUD'
+    },
+    {
+      symbol: 'ibEUR',
+      id: '0x96E61422b6A9bA0e068B6c5ADd4fFaBC6a4aae27',
+      decimals: 18,
+      name: 'Iron Bank EUR'
+    },
+    {
+      symbol: 'ibKRW',
+      id: '0x95dFDC8161832e4fF7816aC4B6367CE201538253',
+      decimals: 18,
+      name: 'Iron Bank KRW'
+    },
+    {
+      symbol: 'ibJPY',
+      id: '0x5555f75e3d5278082200Fb451D1b6bA946D8e13b',
+      decimals: 18,
+      name: 'Iron Bank JPY'
+    },
+    {
+      symbol: 'ibGBP',
+      id: '0x69681f8fde45345C3870BCD5eaf4A05a60E7D227',
+      decimals: 18,
+      name: 'Iron Bank GBP'
+    },
+    {
+      symbol: 'ibCHF',
+      id: '0x1CC481cE2BD2EC7Bf67d1Be64d4878b16078F309',
+      decimals: 18,
+      name: 'Iron Bank CHF'
+    },
+    {
+      symbol: 'TIC',
+      id: '0x2163383C1F4E74fE36c50E6154C7F18d9Fd06d6f',
+      decimals: 18,
+      name: 'ElasticSwap Tic Token'
+    },
+    {
+      symbol: 'WAMPL',
+      id: '0xEDB171C18cE90B633DB442f2A6F72874093b49Ef',
+      decimals: 18,
+      name: 'Wrapped Ampleforth'
+    },
+    {
+      symbol: 'FORTH',
+      id: '0x77FbA179C79De5B7653F68b5039Af940AdA60ce0',
+      decimals: 18,
+      name: 'Ampleforth Governance'
+    },
+    {
+      symbol: 'FOX',
+      id: '0xc770EEfAd204B5180dF6a14Ee197D99d808ee52d',
+      decimals: 18,
+      name: 'FOX'
+    },
+    {
+      symbol: 'AMPL',
+      id: '0xD46bA6D942050d489DBd938a2C909A5d5039A161',
+      decimals: 9,
+      name: 'Ampleforth'
+    },
+    {
+      symbol: 'aAMPL',
+      id: '0x1E6bb68Acec8fefBD87D192bE09bb274170a0548',
+      decimals: 9,
+      name: 'Aave interest bearing AMPL'
     }
   ],
   fantom: [],
   polygon: [],
   avalanche: [],
   binance: [],
-  arbitrum: []
+  arbitrum: [],
+  optimism: []
 };
 
 const isDirEmpty = (dir) => {
@@ -730,6 +813,7 @@ const enrichWithCoingeckoData = async (assets, network, web3) => {
         data.color = await getAssetImageColor(data.imageUrl, address);
 
         console.log('added token from coingecko:', data);
+        console.log(`${i + 1}/${coingeckoList.length}`);
         newAssets.push(data);
       } catch (err) {
         console.error("Can't add token from coingecko");
@@ -891,6 +975,9 @@ const getWeb3 = (network) => {
       break;
     case 'arbitrum':
       rpcUrl = 'https://arb1.arbitrum.io/rpc';
+      break;
+    case 'optimism':
+      rpcUrl = 'https://rpc.ankr.com/optimism';
       break;
     default:
       throw new Error(`There is no RPC link for network: ${network}`);

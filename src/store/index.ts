@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import { Theme } from '@/settings/theme';
+import tag from '@/store/modules/tag';
 
 import actions from './actions';
 import account from './modules/account';
@@ -39,7 +40,8 @@ const store = new Vuex.Store<RootStoreState>({
     nft,
     stakingUBT,
     shop,
-    debitCard
+    debitCard,
+    tag
   }
 });
 export default store;
