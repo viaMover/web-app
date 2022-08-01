@@ -188,8 +188,8 @@ import party from 'party-js';
 
 import { MoverAPIError } from '@/services/v2/api/mover/MoverAPIError';
 import { MoverAPITagService } from '@/services/v2/api/mover/tag';
+import { isProviderRpcError } from '@/services/v2/on-chain';
 import { captureSentryException } from '@/services/v2/utils/sentry';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { reserveTagInput } from '@/store/modules/tag/types';
 
 import { ActionButton } from '@/components/buttons';
