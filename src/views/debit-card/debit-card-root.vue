@@ -157,7 +157,7 @@ export default Vue.extend({
     },
     showTopUp(): boolean {
       return (
-        isFeatureEnabled('isDebitCardTopUpEnabled') &&
+        isFeatureEnabled('isDebitCardTopUpEnabled', this.currentNetwork) &&
         this.cardState === 'active'
       );
     },

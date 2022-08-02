@@ -3,7 +3,7 @@
     <nav class="sections">
       <navigation-section hide-header>
         <navigation-section-item-image
-          v-if="isDebitCardTopUpEnabled"
+          v-if="isDebitCardEnabled"
           class="no-hover"
           :description="debitCardDescription"
           :description-class="debitCardDescriptionClass"
@@ -358,6 +358,9 @@ export default Vue.extend({
           this.networkInfo?.network
         ) && isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network)
       );
+    },
+    isDebitCardEnabled(): boolean {
+      return isFeatureEnabled('isDebitCardEnabled', this.networkInfo?.network);
     },
     isEarningsEnabled(): boolean {
       return isFeatureEnabled('isEarningsEnabled', this.networkInfo?.network);

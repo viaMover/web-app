@@ -62,7 +62,7 @@ const values: Globals = {
   isSavingsPlusOverviewSomeFieldsEnabled: false,
   isSwapPassportEnabled: false,
   isReleaseRadarEnabled: false,
-  isDebitCardEnabled: [Network.mainnet],
+  isDebitCardEnabled: true,
   isGovernanceMarkdownEnabled: false,
   isBondsEnabled: false,
   isNibbleShopEnabled: [Network.mainnet],
