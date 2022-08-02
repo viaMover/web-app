@@ -1,11 +1,3 @@
-import dayjs from 'dayjs';
-
-import {
-  defaultProposalDurationDays,
-  getDefaultMinimumVotingThresholdMultiplier,
-  getDefaultPowerNeededToBecomeAProposer,
-  moverSpaceId
-} from '@/services/mover/governance';
 import { isProduction } from '@/settings';
 import { AugmentedModule } from '@/store/types';
 
@@ -14,27 +6,29 @@ import getters, { GetterType } from './getters';
 import mutations, { MutationType } from './mutations';
 import { GovernanceStoreState } from './types';
 
-const now = dayjs().unix();
+const initialState: GovernanceStoreState = {
+  isLoadingLastProposalInfo: false,
+  lastProposalInfoPromise: undefined,
+
+  isLoadingProposalInfoList: false,
+  proposalInfoListPromise: undefined,
+  proposalInfoList: [],
+
+  currentVotingInfo: {
+    minimalVotingPower: '0',
+    votingPower: '0',
+    communityVotingPower: '0',
+    votingDuration: 0
+  },
+  currentVotingInfoPromise: undefined,
+
+  service: undefined
+};
 
 export default {
   namespaced: true,
   strict: !isProduction(),
-  state: {
-    isLoadingMinimal: false,
-    isLoading: false,
-
-    spaceInfo: { data: undefined, expDate: Date.now() },
-    proposals: new Map(),
-
-    communityVotingPower: { data: '0', expDate: Date.now() },
-    votingPowerSelf: { data: '0', expDate: Date.now() },
-    proposalDurationDays: defaultProposalDurationDays,
-    powerNeededToBecomeAProposer: getDefaultPowerNeededToBecomeAProposer(now),
-    minimumVotingThresholdMultiplier:
-      getDefaultMinimumVotingThresholdMultiplier(now),
-    spaceId: moverSpaceId,
-    blockNumberCached: { data: undefined, expDate: Date.now() }
-  },
+  state: () => initialState,
   actions,
   getters,
   mutations

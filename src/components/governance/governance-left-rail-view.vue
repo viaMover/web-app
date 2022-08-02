@@ -4,18 +4,18 @@
       <div class="list">
         <navigation-section
           hide-header
-          :is-loading="proposalInfo === undefined"
+          :is-loading="proposalInfo === undefined || isLoading"
           skeleton-component="navigation-section-item-emoji-skeleton"
           :skeleton-components-count="3"
         >
           <navigation-section-item-emoji
-            v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
+            v-if="showVotePageLinks"
             :emoji="$t('governance.btnVoteFor.emoji')"
             :navigate-to="voteForPage"
             :text="$t('governance.btnVoteFor.txt')"
           />
           <navigation-section-item-emoji
-            v-if="!!proposalInfo && proposalInfo.proposal.state !== 'closed'"
+            v-if="showVotePageLinks"
             :emoji="$t('governance.btnVoteAgainst.emoji')"
             :navigate-to="voteAgainstPage"
             :text="$t('governance.btnVoteAgainst.txt')"
@@ -34,9 +34,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RawLocation } from 'vue-router';
-import { mapGetters } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
-import { ProposalInfo } from '@/services/mover/governance';
+import {
+  ProposalInfo,
+  ProposalState
+} from '@/services/v2/api/mover/governance';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 
 import {
   NavigationSection,
@@ -49,16 +56,16 @@ export default Vue.extend({
     NavigationSection,
     NavigationSectionItemEmoji
   },
+  data() {
+    return {
+      proposalInfo: undefined as ProposalInfo | undefined,
+      isLoading: false
+    };
+  },
   computed: {
-    ...mapGetters('governance', {
-      proposalsIds: 'proposalsIds',
-      proposal: 'proposal'
-    }),
-    pageProposalId(): string {
-      return this.$route.params.id;
-    },
-    proposalInfo(): ProposalInfo | undefined {
-      return this.proposal(this.pageProposalId);
+    ...mapState('governance', ['proposalInfoList']),
+    showVotePageLinks(): boolean {
+      return this.proposalInfo?.proposal.state === ProposalState.Active;
     },
     voteForPage(): RawLocation {
       if (this.proposalInfo === undefined) {
@@ -90,6 +97,42 @@ export default Vue.extend({
         params: { id: this.proposalInfo.proposal.id }
       };
     }
+  },
+  mounted() {
+    this.$watch(
+      () => this.$route.params.id,
+      async (newVal: string | undefined) => {
+        if (newVal === undefined) {
+          return;
+        }
+
+        try {
+          this.isLoading = true;
+          const data = (this.proposalInfoList as Array<ProposalInfo>).find(
+            (item) => item.proposal.id === newVal
+          );
+          if (data === undefined) {
+            this.proposalInfo = await this.loadProposalInfoById(newVal);
+          } else {
+            this.proposalInfo = data;
+          }
+        } catch (error) {
+          addSentryBreadcrumb({
+            type: 'error',
+            category: 'id.$watch.governance-analytics.ui',
+            message: 'Failed to obtain / get proposal info by id',
+            data: { error, newVal }
+          });
+          captureSentryException(error);
+        } finally {
+          this.isLoading = false;
+        }
+      },
+      { immediate: true }
+    );
+  },
+  methods: {
+    ...mapActions('governance', ['loadProposalInfoById'])
   }
 });
 </script>

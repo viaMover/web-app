@@ -61,8 +61,3 @@ export {
 } from './nft/baseledger-staking-og/baseledger-staking-og';
 export type { BaseledgerStakingOGData } from './nft/baseledger-staking-og/types';
 export { getBaseledgerStakingOGSignature } from './nft/baseledger-staking-og/service';
-
-export {
-  getVotingPower,
-  getCommunityVotingPower
-} from './governance/governance';

@@ -99,7 +99,7 @@
       </div>
       <action-button
         class="primary"
-        :disabled="isLoading || isStoreLoading"
+        :disabled="isLoading"
         propagate-original-event
         tabindex="4"
         type="submit"
@@ -124,15 +124,20 @@
 <script lang="ts">
 import Vue from 'vue';
 import { maxLength, required } from 'vuelidate/lib/validators';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
+import { MoverAPIError } from '@/services/v2/api/mover';
 import {
-  CreateProposalResponse,
-  GovernanceApiError
-} from '@/services/mover/governance';
+  CreateProposalParams,
+  CreateProposalResponse
+} from '@/services/v2/api/mover/governance';
+import { ErrorCode } from '@/services/v2/api/mover/governance/types';
+import { isProviderRpcError } from '@/services/v2/on-chain';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 import { isFeatureEnabled } from '@/settings';
-import { CreateProposalPayload } from '@/store/modules/governance/types';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { formatToDecimals } from '@/utils/format';
 
 import { ActionButton } from '@/components/buttons';
@@ -166,32 +171,27 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapState('governance', {
-      daysToRun: 'proposalDurationDays'
-    }),
-    ...mapGetters('governance', {
-      isStoreLoading: 'isLoading',
-      minimumVotingThreshold: 'minimumVotingThreshold'
-    }),
-    ...mapState('account', { networkInfo: 'networkInfo' }),
+    ...mapState('governance', ['currentVotingInfo']),
     isGovernanceMarkdownEnabled(): boolean {
       return isFeatureEnabled(
         'isGovernanceMarkdownEnabled',
-        this.networkInfo?.network
+        this.currentNetwork
       );
     },
+    daysToRun(): string {
+      const days =
+        this.currentVotingInfo.votingDuration / 1000_000 / 1000 / 3600 / 24;
+      return this.$t('governance.lblRemainingDays', { days: days }) as string;
+    },
     minimumVotingThresholdText(): string {
-      return formatToDecimals(this.minimumVotingThreshold, 0);
+      return formatToDecimals(this.currentVotingInfo.minimalVotingPower, 0);
     },
     hasBackButton(): boolean {
       return this.$route.path.split('/').filter((part) => !!part).length > 1;
     }
   },
   methods: {
-    ...mapActions('governance', {
-      createProposal: 'createProposal',
-      loadProposalInfo: 'loadProposalInfo'
-    }),
+    ...mapActions('governance', ['createProposal']),
     handleBack(): void {
       this.$router.replace({ name: 'governance-view-all' });
     },
@@ -205,20 +205,19 @@ export default Vue.extend({
         return;
       }
 
-      this.errorText = '';
-      this.isLoading = true;
-
       try {
+        this.errorText = '';
+        this.isLoading = true;
+
         const createdProposal: CreateProposalResponse =
           await this.createProposal({
-            title: this.proposalTemplate.title,
-            description: this.proposalTemplate.description
-          } as CreateProposalPayload);
+            name: this.proposalTemplate.title,
+            body: this.proposalTemplate.description
+          } as CreateProposalParams);
 
         this.$v.proposalTemplate.$reset();
         this.proposalTemplate = { title: '', description: '' };
 
-        await this.loadProposalInfo(createdProposal.id);
         await this.$router.replace({
           name: 'governance-view',
           params: {
@@ -226,26 +225,53 @@ export default Vue.extend({
           }
         });
       } catch (error) {
+        if (
+          error instanceof MoverAPIError &&
+          [
+            ErrorCode.EmptyProposalBody,
+            ErrorCode.EmptyProposalName,
+            ErrorCode.InsufficientVotingPower,
+            ErrorCode.ProposalNameTooLarge,
+            ErrorCode.ProposalDescriptionTooLarge
+          ].includes(error.shortMessage as ErrorCode)
+        ) {
+          // won't emit error to Sentry, write a warning
+          addSentryBreadcrumb({
+            type: 'warning',
+            category: 'handleSubmit.governance-create-proposal.ui',
+            message: 'Failed to create a proposal. Server validation failed',
+            data: {
+              error
+            }
+          });
+        } else {
+          captureSentryException(error);
+        }
+
         if (isProviderRpcError(error)) {
           if (this.$te(`provider.errors.${error.code}`)) {
-            this.errorText = this.$t(
-              `provider.errors.${error.code}`
-            ).toString();
+            this.errorText = this.$t(`provider.errors.${error.code}`) as string;
           }
           return;
         }
 
-        if (
-          error instanceof GovernanceApiError &&
-          this.$te(`governance.errors.${error.message}`)
-        ) {
-          this.errorText = this.$t(
-            `governance.errors.${error.message}`
-          ).toString();
-          return;
+        if (error instanceof MoverAPIError) {
+          if (this.$te(`governance.errors.${error.message}`)) {
+            this.errorText = this.$t(
+              `governance.errors.${error.message}`
+            ) as string;
+            return;
+          }
+
+          if (this.$te(`governance.errors.${error.shortMessage}`)) {
+            this.errorText = this.$t(
+              `governance.errors.${error.shortMessage}`
+            ) as string;
+            return;
+          }
         }
 
-        this.errorText = this.$t('governance.errors.default').toString();
+        this.errorText = this.$t('governance.errors.default') as string;
       } finally {
         this.isLoading = false;
       }

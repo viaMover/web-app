@@ -8,10 +8,12 @@
   >
     <div class="item-container">
       <governance-proposals-item
-        v-if="!isLoading && lastProposal !== undefined"
-        :item="lastProposal"
+        v-if="!isLoadingLastProposalInfo && lastProposalInfo !== undefined"
+        :item="lastProposalInfo.proposal"
       />
-      <governance-proposals-item-skeleton v-else-if="isLoading" />
+      <governance-proposals-item-skeleton
+        v-else-if="isLoadingLastProposalInfo"
+      />
     </div>
 
     <router-link class="button" :to="{ name: 'governance-view-all' }">
@@ -22,9 +24,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import { Proposal } from '@/services/mover/governance';
+import { ProposalState } from '@/services/v2/api/mover/governance';
+import {
+  addSentryBreadcrumb,
+  captureSentryException
+} from '@/services/v2/utils/sentry';
 
 import {
   GovernanceProposalsItem,
@@ -41,35 +47,35 @@ export default Vue.extend({
     GovernanceProposalsItemSkeleton
   },
   computed: {
-    ...mapGetters('governance', {
-      isLoading: 'isLoading'
-    }),
-    ...mapGetters('governance', {
-      lastProposalRaw: 'lastProposal'
-    }),
-    lastProposal(): Proposal | undefined {
-      return this.lastProposalRaw?.proposal;
-    },
+    ...mapState('governance', ['isLoadingLastProposalInfo']),
+    ...mapGetters('governance', ['lastProposalInfo']),
     statusText(): string {
-      if (this.lastProposal === undefined) {
+      if (this.lastProposalInfo === undefined) {
         return '';
       }
 
-      switch ((this.lastProposal as Proposal).state) {
-        case 'closed':
+      switch (this.lastProposalInfo.proposal.state) {
+        case ProposalState.Closed:
           return this.$t('governance.lblVotingStatus.closed').toString();
         default:
           return this.$t('governance.lblVotingStatus.active').toString();
       }
     }
   },
-  async mounted() {
-    await this.loadMinimalInfo();
+  mounted() {
+    this.loadLastProposalInfo().catch((error) => {
+      addSentryBreadcrumb({
+        type: 'error',
+        category: 'mounted.more-section-governance.ui',
+        message: 'Failed to load last propsal',
+        data: { error }
+      });
+
+      captureSentryException(error);
+    });
   },
   methods: {
-    ...mapActions('governance', {
-      loadMinimalInfo: 'loadMinimalInfo'
-    })
+    ...mapActions('governance', ['loadLastProposalInfo'])
   }
 });
 </script>

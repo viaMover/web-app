@@ -233,8 +233,8 @@ import {
   DebitCardApiError,
   DebitCardNotSupportedCountryError
 } from '@/services/mover/debit-card';
+import { isProviderRpcError } from '@/services/v2/on-chain';
 import { OrderCardParams } from '@/store/modules/debit-card/types';
-import { isProviderRpcError } from '@/store/modules/governance/utils';
 import { mapCountryCodeToEmoji } from '@/utils/emoji';
 import { validateName } from '@/utils/validators';
 
